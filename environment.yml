@@ -1,0 +1,14 @@
+name: paired-tag
+channels:
+  - bioconda
+  - conda-forge
+  - defaults
+dependencies:
+  - bowtie=1.3.1
+  - bowtie2
+  - samtools>=1.3.1
+  - trim-galore
+  - star
+  - fastqc
+  - perl
+  - make
