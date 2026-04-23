@@ -1,8 +1,8 @@
-# Xu Lab — Paired data analysis
+# Xu Lab — Computations
 
-This repository collects **Paired-Tag / paired multimodal** analysis assets used in the Xu lab: preprocessing and mapping scripts, `reachtools`, reference files, and downstream R workflows.
+**XuLab-Computations** is the Xu lab’s shared repository for computational workflows and tooling. It currently centers on **Paired-Tag / paired multimodal** analysis: preprocessing and mapping scripts, `reachtools`, reference files, and downstream R workflows. Additional pipelines may live alongside this tree over time.
 
-The core pipeline and documentation live under [`Paired-Tag/`](Paired-Tag/).
+The Paired-Tag pipeline and its documentation live under [`Paired-Tag/`](Paired-Tag/).
 
 ## Repository layout
 
