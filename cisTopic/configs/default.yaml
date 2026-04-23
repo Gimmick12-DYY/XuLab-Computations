@@ -1,0 +1,90 @@
+# -----------------------------------------------------------------------------
+# Default configuration for the cisTopic TF-imputation pipeline.
+# Paths are placeholders — edit before running on your cluster.
+# Every parameter may also be overridden on the command line with --<name>.
+# -----------------------------------------------------------------------------
+
+paths:
+  # Input R object: sparse regions x cells matrix (e.g. CTCF_bin1000_mtx.rds)
+  input_rds:   /path/to/CTCF_bin1000_mtx.rds
+
+  # Where the pipeline writes intermediate and final outputs.
+  work_dir:    /path/to/work/cistopic_ctcf
+
+  # Path to the MALLET binary. Download once per cluster with:
+  #   wget https://github.com/mimno/Mallet/releases/download/v202108/Mallet-202108-bin.tar.gz
+  #   tar -xf Mallet-202108-bin.tar.gz
+  mallet_path: /path/to/Mallet-202108/bin/mallet
+
+# -----------------------------------------------------------------------------
+# Region / cell pre-filtering
+# -----------------------------------------------------------------------------
+filter:
+  # Drop regions (bins) whose summed count across all cells is below this.
+  # Whole-genome 1-kb bins are >95% near-zero; without filtering LDA wastes
+  # huge amounts of RAM and iteration time on vocabulary noise.
+  min_counts_per_region: 30
+
+  # Drop regions present (>=1 count) in fewer than this many cells.
+  min_cells_per_region: 10
+
+  # Drop cells with fewer than this many non-zero regions after the region filter.
+  min_regions_per_cell: 500
+
+  # If true, binarize the input matrix (any count -> 1) before LDA.
+  # This is the standard cisTopic input; set false only if you have a good reason.
+  binarize_input: true
+
+# -----------------------------------------------------------------------------
+# LDA (MALLET) parameters
+# -----------------------------------------------------------------------------
+lda:
+  # Grid of topic counts to train. cisTopic paper typically lands in 15-50.
+  n_topics: [10, 20, 30, 40, 50, 60]
+
+  # Dirichlet priors. cisTopic paper: alpha = 50/T, beta = 0.1.
+  alpha: 50
+  alpha_by_topic: true    # true  -> alpha is interpreted as 50/T per topic
+  eta: 0.1
+  eta_by_topic: false
+
+  iterations: 500
+  threads: 16
+  random_seed: 555
+  # Java heap size passed to MALLET via the MALLET_MEMORY env var.
+  memory: 200G
+
+# -----------------------------------------------------------------------------
+# Model selection
+# -----------------------------------------------------------------------------
+select:
+  # Metric used to pick the best K. Options:
+  #   "arun_2010"       (lower is better)
+  #   "cao_juan_2009"   (lower is better)
+  #   "mimno_2011"      (higher is better; coherence)
+  #   "loglikelihood"   (higher is better; cisTopic paper default)
+  #   "manual"          (use select.manual_k)
+  primary_metric: loglikelihood
+  manual_k: null
+
+# -----------------------------------------------------------------------------
+# Imputation (predictive distribution P(r|c) = phi^T theta)
+# -----------------------------------------------------------------------------
+impute:
+  # "theta_phi_only"  -> save only cell_topic (theta) and region_topic (phi);
+  #                      the full imputed matrix can be reconstructed on demand.
+  # "hdf5_all"        -> write float32 HDF5 for every region that survived filtering.
+  # "hdf5_variable"   -> write HDF5 only for the top-variable regions (see n_top_variable).
+  mode: theta_phi_only
+
+  scale_factor: 1000000          # pycisTopic default
+  n_top_variable: 200000         # used only when mode == hdf5_variable
+
+# -----------------------------------------------------------------------------
+# Optional downstream analyses (step 06)
+# -----------------------------------------------------------------------------
+downstream:
+  run_umap: true
+  run_binarize_topics: true
+  # Any of: "otsu", "yen", "li", "aucell".  "otsu" is the pycisTopic default.
+  binarize_method: otsu
