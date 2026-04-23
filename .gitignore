@@ -1,4 +1,5 @@
 # Nested clone metadata — track files under Paired-Tag/, not a second .git tree
 Paired-Tag/.git/
+data/
 
 .DS_Store
