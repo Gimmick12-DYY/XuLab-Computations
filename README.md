@@ -11,6 +11,8 @@ Additional pipelines may live alongside this tree over time.
 
 | Path | Purpose |
 |------|---------|
+| [`README.md`](README.md) | This top-level guide for repository structure, setup, and quick-start workflows |
+| [`.gitignore`](.gitignore) | Ignore rules for generated data and local tooling artifacts |
 | [`environment.yml`](environment.yml) | Conda env **`paired-tag`**: aligners and QC for Paired-Tag (Bowtie, Bowtie2, STAR, Trim Galore, Samtools, FastQC, Perl, Make) |
 | [`Paired-Tag/README.md`](Paired-Tag/README.md) | End-to-end Paired-Tag preprocessing: barcode extraction, DNA/RNA mapping, matrix merge |
 | [`Paired-Tag/pipeline/readme.md`](Paired-Tag/pipeline/readme.md) | Wrapper pipeline (`run.sh`) and file naming conventions |
@@ -21,7 +23,13 @@ Additional pipelines may live alongside this tree over time.
 | [`Paired-Tag/rscripts/`](Paired-Tag/rscripts/) | QC plots, Seurat, and integration examples |
 | [`Paired-Tag/refereces/`](Paired-Tag/refereces/) | Cellular barcode FASTA/Bowtie indexes and RNA/bin annotation lists |
 | [`Paired-Tag/remove_pileup/`](Paired-Tag/remove_pileup/) | Scripts to count/remove pileups from BAM-derived data (`remove_pileups.py`, `run.sh`) |
-| [`cisTopic/README.md`](cisTopic/README.md) | cisTopic LDA + imputation pipeline; own conda env, `configs/default.yaml`, Python/R scripts, SLURM `sbatch` templates |
+| [`cisTopic/README.md`](cisTopic/README.md) | cisTopic LDA + imputation pipeline details, data scale notes, and references |
+| [`cisTopic/environment.yml`](cisTopic/environment.yml) | Conda env **`cistopic`** (Python/R stack; `pycisTopic` installed from GitHub via pip) |
+| [`cisTopic/configs/default.yaml`](cisTopic/configs/default.yaml) | Main runtime configuration (input/work paths, MALLET path, filtering, LDA grid, imputation mode) |
+| [`cisTopic/scripts/`](cisTopic/scripts/) | Pipeline scripts `00`-`07`: inspect/export/build/LDA/select/impute/downstream/eval |
+| [`cisTopic/slurm/`](cisTopic/slurm/) | SLURM templates to submit each cisTopic stage and chained dependencies |
+| [`cisTopic/scripts/cistopic_ctcf/`](cisTopic/scripts/cistopic_ctcf/) | Example working directory with generated run outputs (`mm`, `obj`, `models`, `select`, `impute`, `downstream`, `eval`) |
+| [`Mallet-202108/`](Mallet-202108/) | Local MALLET distribution used by cisTopic (`paths.mallet_path`) |
 
 Folder names `shellscrips` and `refereces` match the upstream Paired-Tag layout.
 
@@ -41,7 +49,11 @@ conda env create -f cisTopic/environment.yml
 conda activate cistopic
 ```
 
-See [`cisTopic/README.md`](cisTopic/README.md) for MALLET setup and `configs/default.yaml`.
+Notes:
+- `pycisTopic` is installed from GitHub in `cisTopic/environment.yml` (not from PyPI).
+- `paths.mallet_path` in `cisTopic/configs/default.yaml` must point to a real MALLET binary, e.g. `Mallet-202108/bin/mallet`.
+
+See [`cisTopic/README.md`](cisTopic/README.md) for full setup details.
 
 ## Paired-Tag quick workflow
 
@@ -54,7 +66,24 @@ For a single entry point with fixed paths, see [`Paired-Tag/pipeline/run.sh`](Pa
 
 ## cisTopic quick pointer
 
-High level: inspect `.rds` → export Matrix Market → build CistopicObject → MALLET LDA over a topic grid → select topic count K → save `theta`/`phi` (and optionally full imputed `P(r|c)`). Run locally or chain SLURM jobs under [`cisTopic/slurm/`](cisTopic/slurm/). Full steps, storage notes, and citations are in [`cisTopic/README.md`](cisTopic/README.md).
+High level: inspect `.rds` → export Matrix Market → build CistopicObject → MALLET LDA over a topic grid → select topic count K → save `theta`/`phi` (and optionally full imputed `P(r|c)`) → optional downstream UMAP/topic binarization.
+
+The current workflow in this repo has been run end-to-end (`02` to `06`) and now includes a held-out reconstruction benchmark:
+
+```bash
+conda run -n cistopic python cisTopic/scripts/07_eval_heldout.py \
+  --config cisTopic/configs/default.yaml \
+  --n-samples 100000 --seed 42
+```
+
+This writes AUROC/AUPRC benchmarking outputs under `<work_dir>/eval/`:
+- `heldout_eval.json`
+- `heldout_eval.tsv`
+- `heldout_eval.png`
+
+You can also run strict held-out mode by first creating a masked matrix with `--prepare-holdout`, then retraining and scoring with `--holdout-split` (see script header in `cisTopic/scripts/07_eval_heldout.py`).
+
+Run locally or chain SLURM jobs under [`cisTopic/slurm/`](cisTopic/slurm/). Full steps, storage notes, and citations are in [`cisTopic/README.md`](cisTopic/README.md).
 
 ## License and attribution
 
