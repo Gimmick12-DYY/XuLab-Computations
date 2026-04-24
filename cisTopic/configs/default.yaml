@@ -23,13 +23,13 @@ filter:
   # Drop regions (bins) whose summed count across all cells is below this.
   # Whole-genome 1-kb bins are >95% near-zero; without filtering LDA wastes
   # huge amounts of RAM and iteration time on vocabulary noise.
-  min_counts_per_region: 30
+  min_counts_per_region: 1
 
   # Drop regions present (>=1 count) in fewer than this many cells.
-  min_cells_per_region: 10
+  min_cells_per_region: 1
 
   # Drop cells with fewer than this many non-zero regions after the region filter.
-  min_regions_per_cell: 500
+  min_regions_per_cell: 50
 
   # If true, binarize the input matrix (any count -> 1) before LDA.
   # This is the standard cisTopic input; set false only if you have a good reason.
