@@ -26,8 +26,8 @@ dependencies:
   - bioconductor-summarizedexperiment
   - r-seurat           # only needed if the .rds turns out to be a Seurat object
   - pip:
-      - pycisTopic
-      # MALLET itself is not a pip/conda package; download the binary separately:
-      #   wget https://github.com/mimno/Mallet/releases/download/v202108/Mallet-202108-bin.tar.gz
-      #   tar -xf Mallet-202108-bin.tar.gz
-      # and point `mallet_path` in configs/default.yaml at Mallet-202108/bin/mallet
+      - git+https://github.com/aertslab/pycisTopic.git
+  # MALLET itself is not a pip/conda package; download the binary separately:
+  #   wget https://github.com/mimno/Mallet/releases/download/v202108/Mallet-202108-bin.tar.gz
+  #   tar -xf Mallet-202108-bin.tar.gz
+  # and point `mallet_path` in configs/default.yaml at Mallet-202108/bin/mallet

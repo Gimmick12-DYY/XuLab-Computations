@@ -6,15 +6,15 @@
 
 paths:
   # Input R object: sparse regions x cells matrix (e.g. CTCF_bin1000_mtx.rds)
-  input_rds:   /path/to/CTCF_bin1000_mtx.rds
+  input_rds:   /Users/dyy/Documents/Project_Repo/XuLab-Computations/data/CTCF_bin1000_mtx.rds
 
   # Where the pipeline writes intermediate and final outputs.
-  work_dir:    /path/to/work/cistopic_ctcf
+  work_dir:    /Users/dyy/Documents/Project_Repo/XuLab-Computations/cisTopic/scripts/cistopic_ctcf
 
   # Path to the MALLET binary. Download once per cluster with:
   #   wget https://github.com/mimno/Mallet/releases/download/v202108/Mallet-202108-bin.tar.gz
   #   tar -xf Mallet-202108-bin.tar.gz
-  mallet_path: /path/to/Mallet-202108/bin/mallet
+  mallet_path: /Users/dyy/Documents/Project_Repo/XuLab-Computations/Mallet-202108/bin/mallet
 
 # -----------------------------------------------------------------------------
 # Region / cell pre-filtering
