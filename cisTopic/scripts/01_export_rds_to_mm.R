@@ -32,7 +32,7 @@ suppressPackageStartupMessages({
 })
 
 option_list <- list(
-  make_option(c("-i", "--input"),  type = "character", help = "Input .rds file"),
+  make_option(c("-i", "--input"),  type = "character", help = "Input file (.rds/.RData/.rda/.mtx)"),
   make_option(c("-o", "--outdir"), type = "character", help = "Output directory")
 )
 opt <- parse_args(OptionParser(option_list = option_list))
@@ -42,8 +42,41 @@ if (is.null(opt$input) || is.null(opt$outdir))
 
 dir.create(opt$outdir, showWarnings = FALSE, recursive = TRUE)
 
+load_input_object <- function(path) {
+  # 1) Standard .rds
+  obj <- tryCatch(readRDS(path), error = function(e) e)
+  if (!inherits(obj, "error")) {
+    message("[01] Loaded with readRDS().")
+    return(obj)
+  }
+  message("[01] readRDS() failed: ", conditionMessage(obj))
+
+  # 2) .RData/.rda (or misnamed file) loaded into a temporary environment
+  tmp_env <- new.env(parent = emptyenv())
+  ld <- tryCatch(load(path, envir = tmp_env), error = function(e) e)
+  if (!inherits(ld, "error")) {
+    message("[01] Loaded with load() (RData-style).")
+    if (length(ld) == 1L) return(get(ld[[1]], envir = tmp_env))
+    return(setNames(lapply(ld, function(nm) get(nm, envir = tmp_env)), ld))
+  }
+  message("[01] load() failed: ", conditionMessage(ld))
+
+  # 3) Matrix Market with wrong extension
+  mm <- tryCatch(Matrix::readMM(path), error = function(e) e)
+  if (!inherits(mm, "error")) {
+    message("[01] Loaded with Matrix::readMM() (Matrix Market format).")
+    return(as(mm, "CsparseMatrix"))
+  }
+  message("[01] readMM() failed: ", conditionMessage(mm))
+
+  stop(
+    "Could not parse input as RDS, RData, or Matrix Market.\n",
+    "Please verify the file format and extension."
+  )
+}
+
 message("[01] Reading ", opt$input)
-obj <- readRDS(opt$input)
+obj <- load_input_object(opt$input)
 
 # ---- Resolve to a sparse dgCMatrix -------------------------------------------
 extract_counts <- function(x) {

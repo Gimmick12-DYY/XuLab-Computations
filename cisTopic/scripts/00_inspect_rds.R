@@ -7,10 +7,11 @@
 # row/column names, and a rough sparsity estimate. Writes nothing.
 #
 # Usage:
-#   Rscript 00_inspect_rds.R --input /path/to/CTCF_bin1000_mtx.rds
+#   Rscript 00_inspect_rds.R --input path/to/data.rds
 # -----------------------------------------------------------------------------
 
 suppressPackageStartupMessages({
+  library(Matrix)
   library(optparse)
 })
 
@@ -25,8 +26,42 @@ if (is.null(opt$input))
 
 hr <- function(c = "-") cat(strrep(c, 72), "\n", sep = "")
 
+load_input_object <- function(path) {
+  # 1) Standard .rds
+  obj <- tryCatch(readRDS(path), error = function(e) e)
+  if (!inherits(obj, "error")) {
+    message("[00] Loaded with readRDS().")
+    return(obj)
+  }
+  message("[00] readRDS() failed: ", conditionMessage(obj))
+
+  # 2) .RData/.rda (or misnamed file) loaded into a temporary environment
+  tmp_env <- new.env(parent = emptyenv())
+  ld <- tryCatch(load(path, envir = tmp_env), error = function(e) e)
+  if (!inherits(ld, "error")) {
+    message("[00] Loaded with load() (RData-style).")
+    if (length(ld) == 1L) return(get(ld[[1]], envir = tmp_env))
+    return(setNames(lapply(ld, function(nm) get(nm, envir = tmp_env)), ld))
+  }
+  message("[00] load() failed: ", conditionMessage(ld))
+
+  # 3) Matrix Market with wrong extension
+  mm <- tryCatch(Matrix::readMM(path), error = function(e) e)
+  if (!inherits(mm, "error")) {
+    message("[00] Loaded with Matrix::readMM() (Matrix Market format).")
+    return(as(mm, "CsparseMatrix"))
+  }
+  message("[00] readMM() failed: ", conditionMessage(mm))
+
+  stop(
+    "Could not parse input as RDS, RData, or Matrix Market.\n",
+    "This file may be a different format (e.g. HDF5/loom/10x or text) with a .rds extension.\n",
+    "Please verify how CTCF_bin1000_mtx.rds was generated."
+  )
+}
+
 cat("Reading: ", opt$input, "\n", sep = "")
-obj <- readRDS(opt$input)
+obj <- load_input_object(opt$input)
 
 hr("=")
 cat("class(): ", paste(class(obj), collapse = " / "), "\n", sep = "")
