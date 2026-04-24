@@ -1,5 +1,5 @@
 # Nested clone metadata — track files under Paired-Tag/, not a second .git tree
 Paired-Tag/.git/
 data/
-
+cisTopic/scripts/cistopic_ctcf
 .DS_Store
