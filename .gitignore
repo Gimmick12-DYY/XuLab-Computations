@@ -3,4 +3,5 @@ Paired-Tag/.git/
 data/
 cisTopic/scripts/cistopic_ctcf
 Mallet-202108/
+cisTopic/scripts/__pycache__
 .DS_Store
