@@ -2,6 +2,8 @@
 # -----------------------------------------------------------------------------
 # 01_export_rds_to_mm.R
 #
+# The dataloader script for the modified cisTopic pipeline for ManyTFs.
+#
 # Load an .rds file that contains a single-cell regions x cells count matrix
 # and export it as a Matrix Market file (.mtx.gz) plus accompanying
 # regions.tsv.gz and barcodes.tsv.gz, which is the format consumed by

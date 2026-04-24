@@ -2,7 +2,7 @@
 # -----------------------------------------------------------------------------
 # 00_inspect_rds.R
 #
-# Read-only sanity check for an .rds file before running 01_export_rds_to_mm.R.
+# Sanity check for the .rds data file before running 01_export_rds_to_mm.R.
 # Prints class(), dim(), slotNames(), assay names (if applicable), a preview of
 # row/column names, and a rough sparsity estimate. Writes nothing.
 #
