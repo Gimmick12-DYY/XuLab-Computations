@@ -12,6 +12,7 @@ import logging
 import os
 import pickle
 import sys
+import time
 from pathlib import Path
 
 from _cfg import base_parser, load_config, resolve_paths
@@ -83,20 +84,37 @@ def main() -> int:
         n_topics, iterations, threads, alpha, alpha_by_topic, eta,
     )
 
-    models = run_cgs_models_mallet(
-        cistopic_obj,
-        n_topics=n_topics,
-        n_cpu=threads,
-        n_iter=iterations,
-        random_state=seed,
-        alpha=alpha,
-        alpha_by_topic=alpha_by_topic,
-        eta=eta,
-        eta_by_topic=eta_by_topic,
-        tmp_path=str(tmp_path),
-        save_path=str(save_path),
-        mallet_path=str(mallet_path),
-    )
+    models = []
+    total_models = len(n_topics)
+    for idx, topic_count in enumerate(n_topics, start=1):
+        log.info(
+            "[%d/%d] Starting MALLET model for K=%d",
+            idx, total_models, topic_count,
+        )
+        model_start = time.perf_counter()
+        trained = run_cgs_models_mallet(
+            cistopic_obj,
+            n_topics=[topic_count],
+            n_cpu=threads,
+            n_iter=iterations,
+            random_state=seed,
+            alpha=alpha,
+            alpha_by_topic=alpha_by_topic,
+            eta=eta,
+            eta_by_topic=eta_by_topic,
+            tmp_path=str(tmp_path),
+            save_path=str(save_path),
+            mallet_path=str(mallet_path),
+        )
+        elapsed_s = time.perf_counter() - model_start
+        if isinstance(trained, list):
+            models.extend(trained)
+        else:
+            models.append(trained)
+        log.info(
+            "[%d/%d] Finished K=%d in %.1f min",
+            idx, total_models, topic_count, elapsed_s / 60.0,
+        )
 
     out = save_path / "models.pkl"
     log.info("Pickling %d model(s) -> %s", len(models), out)
