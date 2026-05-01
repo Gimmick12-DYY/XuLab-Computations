@@ -1,0 +1,7 @@
+[Fri May  1 03:51:21 AM EDT 2026] Starting full pipeline
+ROOT_DIR=/work/users/d/y/dyy12/XuLab/cisTopic
+CFG=/work/users/d/y/dyy12/XuLab/cisTopic/configs/default.yaml
+[Fri May  1 03:51:26 AM EDT 2026] Step 01: export RDS -> mm
+Step 01 uses Rscript scripts/01_export_rds_to_mm.R
+NULL
+[Fri May  1 03:51:38 AM EDT 2026] Step 02: build cisTopic object

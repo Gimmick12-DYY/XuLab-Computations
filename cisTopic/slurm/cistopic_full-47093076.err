@@ -1,0 +1,40 @@
+Module ERROR: Magic cookie '#%Module' missing
+  In '/nas/longleaf/apps/lmod/modulefiles/rhel9/r/4.4.0.lua'
+  Please contact <root@localhost>
+[01] Reading /work/users/d/y/dyy12/XuLab/data/CTCF_bin1000_mtx.rds
+[01] readRDS() failed: unknown input format
+[01] Loaded with load() (RData-style).
+[01] Matrix is 3031053 regions x 10410 cells (nnz = 768200).
+[01] Writing /work/users/d/y/dyy12/XuLab/cisTopic/scripts/cistopic_ctcf/mm/matrix.mtx.gz
+[01] Writing /work/users/d/y/dyy12/XuLab/cisTopic/scripts/cistopic_ctcf/mm/regions.tsv.gz
+[01] Writing /work/users/d/y/dyy12/XuLab/cisTopic/scripts/cistopic_ctcf/mm/barcodes.tsv.gz
+[01] Done.
+2026-05-01 03:51:39,478 INFO Reading /work/users/d/y/dyy12/XuLab/cisTopic/scripts/cistopic_ctcf/mm/matrix.mtx.gz
+2026-05-01 03:51:41,137 INFO Loaded 3031053 regions x 10410 cells, nnz=768200
+2026-05-01 03:51:41,181 INFO Region filter (counts >= 5, cells >= 10): keeping 322 / 3031053 (0.01%)
+2026-05-01 03:51:41,185 INFO Binarising input matrix (count > 0 -> 1).
+2026-05-01 03:51:41,185 INFO Cell filter (regions >= 30): keeping 0 / 10410 cells.
+2026-05-01 03:51:41,185 INFO Post-filter matrix: 322 regions x 0 cells, nnz=0
+/nas/longleaf/home/dyy12/.conda/envs/cistopic/lib/python3.11/site-packages/pycisTopic/__init__.py:3: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+  from pkg_resources import DistributionNotFound, get_distribution
+2026-05-01 03:51:48,490 INFO Creating CistopicObject...
+2026-05-01 03:51:48,491 INFO Creating CistopicObject
+Traceback (most recent call last):
+  File "/work/users/d/y/dyy12/XuLab/cisTopic/scripts/02_build_cistopic_obj.py", line 141, in <module>
+    sys.exit(main())
+             ^^^^^^
+  File "/work/users/d/y/dyy12/XuLab/cisTopic/scripts/02_build_cistopic_obj.py", line 113, in main
+    cistopic_obj = create_cistopic_object(
+                   ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/nas/longleaf/home/dyy12/.conda/envs/cistopic/lib/python3.11/site-packages/pycisTopic/cistopic_class.py", line 592, in create_cistopic_object
+    binary_matrix = sp.binarize(fragment_matrix, threshold=is_acc - 1)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/nas/longleaf/home/dyy12/.conda/envs/cistopic/lib/python3.11/site-packages/sklearn/utils/_param_validation.py", line 213, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/nas/longleaf/home/dyy12/.conda/envs/cistopic/lib/python3.11/site-packages/sklearn/preprocessing/_data.py", line 2160, in binarize
+    X = check_array(X, accept_sparse=["csr", "csc"], force_writeable=True, copy=copy)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/nas/longleaf/home/dyy12/.conda/envs/cistopic/lib/python3.11/site-packages/sklearn/utils/validation.py", line 1096, in check_array
+    raise ValueError(
+ValueError: Found array with 0 feature(s) (shape=(322, 0)) while a minimum of 1 is required.
