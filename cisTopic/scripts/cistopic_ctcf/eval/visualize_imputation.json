@@ -1,0 +1,67 @@
+{
+  "space": "full",
+  "region_mode": "original_top_cells",
+  "original_shape": [
+    3031053,
+    10410
+  ],
+  "imputed_shape_filtered": [
+    597236,
+    10410
+  ],
+  "coverage_regions_fraction": 0.19703911478948075,
+  "original_nnz": 768200,
+  "original_density_full": 2.4346135958097032e-05,
+  "imputed_density_full_gt0": 0.19703911478948075,
+  "scale_factor_attr": 1000000.0,
+  "scale_in_h5_used": 1000020.3125,
+  "imputed_prob_sum_per_cell": {
+    "mean": 0.9999796325775663,
+    "median": 0.9999751448631287,
+    "std": 0.00047872645632540044,
+    "min": 0.9975813031196594,
+    "p10": 0.9994625866413116,
+    "p90": 1.0005052447319032,
+    "p99": 1.0013792955875396,
+    "max": 1.0021636486053467
+  },
+  "original_fragments_per_cell": {
+    "mean": 76.02170989433237,
+    "median": 37.0,
+    "std": 196.2057153039167,
+    "min": 19.0,
+    "p10": 22.0,
+    "p90": 120.0,
+    "p99": 781.7299999999996,
+    "max": 6479.0
+  },
+  "imputed_expected_sum_per_cell": {
+    "mean": 76.02158248488658,
+    "median": 36.99383157491684,
+    "std": 196.1800493243043,
+    "min": 18.99403405189514,
+    "p10": 21.998547208309173,
+    "p90": 120.08964729309082,
+    "p99": 780.9834137767549,
+    "max": 6477.88664740324
+  },
+  "subsample": {
+    "shape": [
+      1000,
+      5000
+    ],
+    "orig_density": 0.000926,
+    "imputed_vmax_q99": 3.6681299134215746e-05
+  },
+  "modeled_space_subsample": {
+    "n_rows": 1000,
+    "density_original": 0.0009324,
+    "imputed_vmax_q99": 3.668887853564228e-05
+  },
+  "full_space_stratified_subsample": {
+    "n_modeled_rows": 500,
+    "n_unmodeled_rows": 500,
+    "density_original": 0.0005474,
+    "imputed_vmax_q99": 3.638438927737291e-05
+  }
+}

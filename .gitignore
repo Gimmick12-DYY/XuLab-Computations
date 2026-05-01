@@ -1,7 +1,11 @@
 # Nested clone metadata — track files under Paired-Tag/, not a second .git tree
 Paired-Tag/.git/
 data/
-cisTopic/scripts/cistopic_ctcf
+cisTopic/scripts/cistopic_ctcf/models
+cisTopic/scripts/cistopic_ctcf/select
+cisTopic/scripts/cistopic_ctcf/tmp_mallet
+cisTopic/scripts/cistopic_ctcf/impute
 Mallet-202108/
 cisTopic/scripts/__pycache__
 .DS_Store
+*.pkl
