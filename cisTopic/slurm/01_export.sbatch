@@ -7,7 +7,10 @@
 #SBATCH --time=02:00:00
 
 set -euo pipefail
-CFG="${CFG:-configs/default.yaml}"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ROOT_DIR="$(cd "${SCRIPT_DIR}/.." && pwd)"
+cd "${ROOT_DIR}"
+CFG="${CFG:-${ROOT_DIR}/configs/default.yaml}"
 
 # yq is the most portable way to read a YAML path; falls back to python.
 read_yaml() {
@@ -29,6 +32,6 @@ INPUT_RDS=$(read_yaml .paths.input_rds)
 WORK_DIR=$(read_yaml  .paths.work_dir)
 
 module load R/4.3 || true
-Rscript cisTopic/scripts/01_export_rds_to_mm.R \
+Rscript scripts/01_export_rds_to_mm.R \
   --input  "$INPUT_RDS" \
   --outdir "$WORK_DIR/mm"

@@ -7,9 +7,12 @@
 #SBATCH --time=04:00:00
 
 set -euo pipefail
-CFG="${CFG:-configs/default.yaml}"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ROOT_DIR="$(cd "${SCRIPT_DIR}/.." && pwd)"
+cd "${ROOT_DIR}"
+CFG="${CFG:-${ROOT_DIR}/configs/default.yaml}"
 
 source "$(conda info --base)/etc/profile.d/conda.sh"
 conda activate cistopic
 
-python cisTopic/scripts/02_build_cistopic_obj.py --config "$CFG"
+python scripts/02_build_cistopic_obj.py --config "$CFG"

@@ -1,0 +1,478 @@
+#!/usr/bin/env python
+# -----------------------------------------------------------------------------
+# 09_visualize_imputation.py
+#
+# Replicates the cisTopic paper Supplementary Fig. 15 visual comparison
+# (drop-out estimation) for our data, with a *fair* side-by-side comparison.
+#
+# The unfairness of a naive plot is that the imputed matrix is dense (every
+# entry is a tiny but nonzero P(r|c)) while the original is binary {0, 1} and
+# extremely sparse. We address that with two things:
+#
+#   1. count-space rescaling
+#      Imputed P(r|c) is multiplied by the *original* per-cell fragment count,
+#      giving "expected fragments per region per cell" which is on the same
+#      scale as the observed counts.
+#
+#   2. density-matched binarisation
+#      A third panel shows the imputed matrix thresholded so that its density
+#      equals the original binarised density, making the "where is signal?"
+#      comparison strictly apples-to-apples.
+#
+# Outputs (under <work_dir>/eval/):
+#   visualize_imputation_heatmap.png          three-panel paper-style figure
+#   visualize_imputation_counts.png           two-panel count-space figure
+#   visualize_imputation_per_cell.png         per-cell distributions + scatter
+#   visualize_imputation_per_cell.tsv         per-cell numbers (full 10k cells)
+#   visualize_imputation.json                 every number in one place
+# -----------------------------------------------------------------------------
+from __future__ import annotations
+
+import gzip
+import json
+import logging
+import sys
+from pathlib import Path
+
+import h5py
+import matplotlib
+
+matplotlib.use("Agg")
+import matplotlib.pyplot as plt  # noqa: E402
+import numpy as np  # noqa: E402
+import scipy.io as sio  # noqa: E402
+import scipy.sparse as sp  # noqa: E402
+from scipy.cluster.hierarchy import leaves_list, linkage  # noqa: E402
+
+from _cfg import base_parser, load_config, resolve_paths  # noqa: E402
+
+log = logging.getLogger("09_viz")
+logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
+
+
+def _read_lines_gz(path: Path) -> list[str]:
+    with gzip.open(path, "rt") as fh:
+        return [ln.rstrip("\n") for ln in fh]
+
+
+def _quantile_summary(arr: np.ndarray) -> dict:
+    arr = np.asarray(arr, dtype=np.float64).ravel()
+    if arr.size == 0:
+        return {k: float("nan") for k in
+                ("mean", "median", "std", "min", "p10", "p25", "p75", "p90", "p99", "max")}
+    return {
+        "mean":   float(arr.mean()),
+        "median": float(np.median(arr)),
+        "std":    float(arr.std()),
+        "min":    float(arr.min()),
+        "p10":    float(np.percentile(arr, 10)),
+        "p25":    float(np.percentile(arr, 25)),
+        "p75":    float(np.percentile(arr, 75)),
+        "p90":    float(np.percentile(arr, 90)),
+        "p99":    float(np.percentile(arr, 99)),
+        "max":    float(arr.max()),
+    }
+
+
+def _orig_stats(orig_counts: sp.csr_matrix) -> dict:
+    R, C = orig_counts.shape
+    nnz = int(orig_counts.nnz)
+    counts_per_cell = np.asarray(orig_counts.sum(axis=0)).ravel()
+    binary_per_cell = np.diff(orig_counts.tocsc().indptr).astype(np.int64)
+    counts_per_region = np.asarray(orig_counts.sum(axis=1)).ravel()
+    binary_per_region = np.diff(orig_counts.indptr).astype(np.int64)
+    return {
+        "shape": [int(R), int(C)],
+        "nnz": nnz,
+        "density": float(nnz) / float(R * C),
+        "total_fragments": int(orig_counts.sum()),
+        "fragments_per_cell":            _quantile_summary(counts_per_cell),
+        "accessible_regions_per_cell":   _quantile_summary(binary_per_cell),
+        "fragments_per_region":          _quantile_summary(counts_per_region),
+        "accessible_cells_per_region":   _quantile_summary(binary_per_region),
+    }
+
+
+def _imputed_stats(Prc_prob: np.ndarray, scale_in_h5: float, thresholds: list[float]) -> dict:
+    R, C = Prc_prob.shape
+    flat = Prc_prob.reshape(-1)
+    rng = np.random.default_rng(0)
+    sample = rng.choice(flat, size=min(flat.size, 50_000_000), replace=False)
+    above = {f"{t:g}": float((Prc_prob > t).mean()) for t in thresholds}
+    sum_per_cell = Prc_prob.sum(axis=0)
+    sum_per_region = Prc_prob.sum(axis=1)
+    above_per_cell = {
+        f"{t:g}": _quantile_summary((Prc_prob > t).sum(axis=0)) for t in thresholds
+    }
+    return {
+        "shape": [int(R), int(C)],
+        "h5_stored_scale": float(scale_in_h5),
+        "value_distribution_probability": _quantile_summary(sample),
+        "fraction_above_probability_threshold": above,
+        "sum_probability_per_cell":   _quantile_summary(sum_per_cell),
+        "sum_probability_per_region": _quantile_summary(sum_per_region),
+        "regions_above_probability_per_cell": above_per_cell,
+    }
+
+
+def _pick_regions(Prc: np.ndarray, n: int, mode: str, rng: np.random.Generator) -> np.ndarray:
+    R = Prc.shape[0]
+    n = min(n, R)
+    if mode == "variable":
+        score = Prc.var(axis=1)
+    elif mode == "topaccessible":
+        score = Prc.sum(axis=1)
+    elif mode == "random":
+        return rng.choice(R, size=n, replace=False)
+    else:
+        raise ValueError(f"Unknown region mode: {mode}")
+    return np.argsort(score)[::-1][:n]
+
+
+def _cluster_order(mat: np.ndarray, axis: int, method: str = "average",
+                   metric: str = "correlation") -> np.ndarray:
+    data = mat if axis == 0 else mat.T
+    n = data.shape[0]
+    if n <= 1:
+        return np.arange(n)
+    log.info("Clustering axis=%d (%d x %d, method=%s, metric=%s)...",
+             axis, data.shape[0], data.shape[1], method, metric)
+    z = linkage(data, method=method, metric=metric, optimal_ordering=False)
+    return leaves_list(z)
+
+
+def _density_matched_threshold(Prc_sub: np.ndarray, target_density: float) -> float:
+    """Return threshold t such that mean(Prc_sub > t) ≈ target_density."""
+    target_density = max(min(float(target_density), 0.999), 1e-9)
+    q = 1.0 - target_density
+    return float(np.quantile(Prc_sub, q))
+
+
+def _plot_three_panel(orig_bin_sub: np.ndarray,
+                      Prc_sub: np.ndarray,
+                      imp_bin_sub: np.ndarray,
+                      orig_density: float,
+                      out_png: Path) -> None:
+    fig, axes = plt.subplots(1, 3, figsize=(20, 8), sharey=True)
+    cmap = "Reds"
+
+    R, C = orig_bin_sub.shape
+
+    axes[0].imshow(orig_bin_sub, aspect="auto", cmap=cmap, vmin=0, vmax=1,
+                   interpolation="nearest")
+    axes[0].set_title(
+        f"Original (binarised)\n{R} regions x {C} cells, density={orig_density:.3g}"
+    )
+    axes[0].set_ylabel("regions (clustered, top-variable subsample)")
+    axes[0].set_xlabel("cells (clustered)")
+
+    # Imputed continuous: vmax taken at the SAME density as original so saturation matches.
+    imp_vmax = _density_matched_threshold(Prc_sub, orig_density)
+    if imp_vmax <= 0:
+        imp_vmax = float(Prc_sub.max() or 1.0)
+    axes[1].imshow(Prc_sub, aspect="auto", cmap=cmap, vmin=0, vmax=imp_vmax,
+                   interpolation="nearest")
+    axes[1].set_title(
+        f"cisTopic imputed P(r|c) (continuous)\nvmax = q(1-orig_density) = {imp_vmax:.4g}"
+    )
+    axes[1].set_xlabel("cells (clustered, same order)")
+
+    # Imputed binarised at density-matched threshold.
+    imp_density = float(imp_bin_sub.mean())
+    axes[2].imshow(imp_bin_sub, aspect="auto", cmap=cmap, vmin=0, vmax=1,
+                   interpolation="nearest")
+    axes[2].set_title(
+        f"Imputed binarised at orig density\nimp density={imp_density:.3g}, threshold={imp_vmax:.4g}"
+    )
+    axes[2].set_xlabel("cells (clustered, same order)")
+
+    fig.suptitle("cisTopic drop-out prediction (paper Supp. Fig. 15 style)", fontsize=13)
+    fig.tight_layout()
+    fig.savefig(out_png, dpi=160)
+    plt.close(fig)
+
+
+def _plot_count_space(orig_count_sub: np.ndarray,
+                      imp_expected_sub: np.ndarray,
+                      out_png: Path,
+                      vmax_quantile: float = 0.999) -> None:
+    """Both panels in expected-count units: same vmin/vmax => same color = same magnitude."""
+    fig, axes = plt.subplots(1, 2, figsize=(14, 8), sharey=True)
+    cmap = "Reds"
+    # vmax taken across both panels at given high quantile; clip to >= 1 so binary
+    # original entries (count >= 1) are clearly visible.
+    combined_q = float(np.quantile(
+        np.concatenate([orig_count_sub.ravel(), imp_expected_sub.ravel()]), vmax_quantile
+    ))
+    vmax = max(combined_q, 1.0)
+
+    axes[0].imshow(orig_count_sub, aspect="auto", cmap=cmap, vmin=0, vmax=vmax,
+                   interpolation="nearest")
+    axes[0].set_title(f"Original counts (vmax=q{vmax_quantile:.3f}={vmax:.3g})")
+    axes[0].set_ylabel("regions")
+    axes[0].set_xlabel("cells")
+
+    axes[1].imshow(imp_expected_sub, aspect="auto", cmap=cmap, vmin=0, vmax=vmax,
+                   interpolation="nearest")
+    axes[1].set_title("Imputed expected counts = P(r|c) x fragments_per_cell")
+    axes[1].set_xlabel("cells")
+
+    fig.suptitle("cisTopic imputation in count space (same color scale)", fontsize=13)
+    fig.tight_layout()
+    fig.savefig(out_png, dpi=160)
+    plt.close(fig)
+
+
+def _plot_per_cell(counts_per_cell: np.ndarray, binary_per_cell: np.ndarray,
+                   imp_sum_per_cell: np.ndarray,
+                   imp_expected_per_cell: np.ndarray,
+                   out_png: Path) -> None:
+    fig, axes = plt.subplots(2, 2, figsize=(12, 9))
+
+    axes[0, 0].hist(counts_per_cell, bins=80, color="#a33", alpha=0.85)
+    axes[0, 0].set_title("Original: fragments per cell")
+    axes[0, 0].set_xlabel("# fragments")
+    axes[0, 0].set_ylabel("# cells")
+
+    axes[0, 1].hist(binary_per_cell, bins=80, color="#a33", alpha=0.85)
+    axes[0, 1].set_title("Original: accessible regions per cell")
+    axes[0, 1].set_xlabel("# regions with count > 0")
+
+    axes[1, 0].hist(imp_sum_per_cell, bins=80, color="#36a", alpha=0.85)
+    axes[1, 0].set_title("Imputed: sum P(r|c) per cell (raw probability)")
+    axes[1, 0].set_xlabel("sum P(r|c)")
+
+    # Imputed expected counts per cell == original fragments per cell by construction
+    # (since sum P(r|c) over r = 1 and we multiplied by fragments_per_cell).
+    # So we instead show: expected counts at top regions per cell as a useful proxy.
+    axes[1, 1].scatter(counts_per_cell, imp_expected_per_cell, s=4, alpha=0.5, color="#a33")
+    lim = max(counts_per_cell.max(), imp_expected_per_cell.max()) * 1.05
+    axes[1, 1].plot([0, lim], [0, lim], "k--", lw=0.7, alpha=0.6)
+    axes[1, 1].set_xlim(0, lim)
+    axes[1, 1].set_ylim(0, lim)
+    axes[1, 1].set_title("Per cell: original fragments vs imputed expected sum")
+    axes[1, 1].set_xlabel("# original fragments per cell")
+    axes[1, 1].set_ylabel("imputed expected fragments per cell")
+
+    fig.tight_layout()
+    fig.savefig(out_png, dpi=150)
+    plt.close(fig)
+
+
+def main() -> int:
+    ap = base_parser(__doc__ or "")
+    ap.add_argument("--imputed-h5", type=str, default=None,
+                    help="Path to imputed HDF5 (default: <impute>/imputed_Prc_hdf5_all.h5).")
+    ap.add_argument("--mm-dir", type=str, default=None,
+                    help="Directory containing original mm files (default: paths.mm).")
+    ap.add_argument("--n-regions", type=int, default=20000,
+                    help="Number of regions to subsample for the heatmap.")
+    ap.add_argument("--n-cells", type=int, default=5000,
+                    help="Number of cells to subsample for the heatmap.")
+    ap.add_argument("--region-mode", type=str, default="variable",
+                    choices=["variable", "topaccessible", "random"])
+    ap.add_argument("--cluster-method", type=str, default="average")
+    ap.add_argument("--cluster-metric", type=str, default="correlation")
+    ap.add_argument("--no-cluster", action="store_true")
+    ap.add_argument("--seed", type=int, default=42)
+    ap.add_argument("--out-name", type=str, default="visualize_imputation")
+    ap.add_argument("--count-vmax-quantile", type=float, default=0.999,
+                    help="Quantile for count-space figure vmax (clip below 1).")
+    args = ap.parse_args()
+
+    cfg = resolve_paths(load_config(args.config), args.work_dir)
+    rng = np.random.default_rng(args.seed)
+
+    mm_dir = Path(args.mm_dir) if args.mm_dir else Path(cfg["paths"]["mm"])
+    mtx_path = mm_dir / "matrix.mtx.gz"
+    reg_path = mm_dir / "regions.tsv.gz"
+    bar_path = mm_dir / "barcodes.tsv.gz"
+    for p in (mtx_path, reg_path, bar_path):
+        if not p.exists():
+            log.error("Missing original input: %s", p); return 1
+
+    impute_dir = Path(cfg["paths"]["impute"])
+    h5_path = Path(args.imputed_h5) if args.imputed_h5 else impute_dir / "imputed_Prc_hdf5_all.h5"
+    if not h5_path.exists():
+        log.error(
+            "Imputed HDF5 not found: %s\nRun 05_impute.py with impute.mode hdf5_all/hdf5_variable.",
+            h5_path,
+        )
+        return 1
+
+    eval_dir = Path(cfg["paths"]["work_dir"]) / "eval"
+    eval_dir.mkdir(parents=True, exist_ok=True)
+
+    # -- load original (counts) ---------------------------------------------
+    log.info("Reading original matrix: %s", mtx_path)
+    orig_counts = sio.mmread(mtx_path).tocsr()
+    orig_regs = _read_lines_gz(reg_path)
+    orig_bars = _read_lines_gz(bar_path)
+    if orig_counts.shape != (len(orig_regs), len(orig_bars)):
+        log.error("Shape mismatch: matrix %s vs regions/barcodes %s/%s",
+                  orig_counts.shape, len(orig_regs), len(orig_bars))
+        return 1
+    log.info("Original counts: %d regions x %d cells, nnz=%d (density=%.3g)",
+             *orig_counts.shape, orig_counts.nnz,
+             orig_counts.nnz / float(orig_counts.shape[0] * orig_counts.shape[1]))
+
+    # -- load imputed; auto-detect whether scale_factor was applied --------
+    log.info("Reading imputed HDF5: %s", h5_path)
+    with h5py.File(h5_path, "r") as h5:
+        imp_regs = [s.decode() if isinstance(s, bytes) else str(s) for s in h5["regions"][:]]
+        imp_bars = [s.decode() if isinstance(s, bytes) else str(s) for s in h5["barcodes"][:]]
+        Prc = h5["Prc"][...].astype(np.float32, copy=False)
+        h5_scale_attr = float(h5.attrs.get("scale_factor", 0.0)) or 0.0
+
+    actual_sum_per_cell = float(Prc.sum(axis=0).mean())
+    if abs(actual_sum_per_cell - 1.0) < 0.05:
+        scale_in_h5 = 1.0  # raw P(r|c)
+    else:
+        scale_in_h5 = actual_sum_per_cell  # whatever it was scaled to
+    log.info("Imputed: %s, sum-per-cell=%.4g (h5 attr says %.4g) -> treating stored scale as %.4g",
+             Prc.shape, actual_sum_per_cell, h5_scale_attr, scale_in_h5)
+    Prc_prob = Prc / scale_in_h5  # back to true probability (sum per cell == 1)
+
+    # -- align indices (imputed -> original) --------------------------------
+    reg_to_orig = {r: i for i, r in enumerate(orig_regs)}
+    bar_to_orig = {b: i for i, b in enumerate(orig_bars)}
+    try:
+        row_idx = np.array([reg_to_orig[r] for r in imp_regs], dtype=np.int64)
+        col_idx = np.array([bar_to_orig[b] for b in imp_bars], dtype=np.int64)
+    except KeyError as e:
+        log.error("Imputed name not in original: %s", e); return 1
+    log.info("Imputed regions cover %d / %d (%.2f%%); cells cover %d / %d (%.2f%%).",
+             len(imp_regs), len(orig_regs), 100.0 * len(imp_regs) / len(orig_regs),
+             len(imp_bars), len(orig_bars), 100.0 * len(imp_bars) / len(orig_bars))
+
+    # -- per-cell vectors ---------------------------------------------------
+    counts_per_cell = np.asarray(orig_counts.sum(axis=0)).ravel()
+    binary_per_cell = np.diff(orig_counts.tocsc().indptr).astype(np.int64)
+    cell_orig_idx = col_idx
+    fragments_for_imp_cells = counts_per_cell[cell_orig_idx]  # length C_imp
+
+    # -- numbers ------------------------------------------------------------
+    log.info("Computing numbers...")
+    thresholds = [0.0, 1e-6, 1e-5, 1e-4, 1e-3, 1e-2, 1e-1]
+    stats = {
+        "config": str(args.config),
+        "mm_dir": str(mm_dir),
+        "imputed_h5": str(h5_path),
+        "scale_detection": {
+            "h5_attr_scale_factor": h5_scale_attr,
+            "actual_sum_per_cell_mean": actual_sum_per_cell,
+            "scale_in_h5_used": scale_in_h5,
+        },
+        "original": _orig_stats(orig_counts),
+        "imputed": _imputed_stats(Prc_prob, scale_in_h5, thresholds),
+    }
+
+    # Per-cell side-by-side TSV (full 10k cells; cells in imputed only).
+    imp_sum_prob_per_cell = Prc_prob.sum(axis=0)  # ~1.0
+    imp_above_per_cell_1e4 = (Prc_prob > 1e-4).sum(axis=0)
+    imp_above_per_cell_1e3 = (Prc_prob > 1e-3).sum(axis=0)
+
+    per_cell_tsv = eval_dir / f"{args.out_name}_per_cell.tsv"
+    with open(per_cell_tsv, "w") as fh:
+        fh.write("cell\torig_fragments\torig_accessible_regions\timp_sum_prob\t"
+                 "imp_regions_above_1e-4\timp_regions_above_1e-3\n")
+        for j, b in enumerate(imp_bars):
+            j_orig = bar_to_orig[b]
+            fh.write(
+                f"{b}\t"
+                f"{int(counts_per_cell[j_orig])}\t"
+                f"{int(binary_per_cell[j_orig])}\t"
+                f"{float(imp_sum_prob_per_cell[j]):.4g}\t"
+                f"{int(imp_above_per_cell_1e4[j])}\t"
+                f"{int(imp_above_per_cell_1e3[j])}\n"
+            )
+    log.info("Wrote %s", per_cell_tsv)
+
+    # -- subsample for figures ----------------------------------------------
+    log.info("Subsampling: regions=%d (mode=%s), cells=%d",
+             args.n_regions, args.region_mode, args.n_cells)
+    reg_pick = _pick_regions(Prc_prob, args.n_regions, args.region_mode, rng)
+    cell_pick = rng.choice(Prc_prob.shape[1], size=min(args.n_cells, Prc_prob.shape[1]), replace=False)
+
+    Prc_prob_sub = Prc_prob[reg_pick][:, cell_pick]
+    orig_aligned_rows = row_idx[reg_pick]
+    orig_aligned_cols = col_idx[cell_pick]
+    orig_count_sub = orig_counts[orig_aligned_rows][:, orig_aligned_cols].toarray()
+    orig_bin_sub = (orig_count_sub > 0).astype(np.int8)
+
+    # Cluster on imputed P(r|c) (paper convention) and apply to all matrices.
+    if args.no_cluster:
+        region_order = np.arange(Prc_prob_sub.shape[0])
+        cell_order   = np.arange(Prc_prob_sub.shape[1])
+    else:
+        region_order = _cluster_order(Prc_prob_sub, axis=0,
+                                      method=args.cluster_method,
+                                      metric=args.cluster_metric)
+        cell_order   = _cluster_order(Prc_prob_sub, axis=1,
+                                      method=args.cluster_method,
+                                      metric=args.cluster_metric)
+    Prc_prob_sub   = Prc_prob_sub[region_order][:, cell_order]
+    orig_count_sub = orig_count_sub[region_order][:, cell_order]
+    orig_bin_sub   = orig_bin_sub[region_order][:, cell_order]
+
+    # Density-matched threshold => binarised imputed at the same density as original.
+    orig_density_sub = float(orig_bin_sub.mean())
+    imp_threshold = _density_matched_threshold(Prc_prob_sub, orig_density_sub)
+    imp_bin_sub = (Prc_prob_sub > imp_threshold).astype(np.int8)
+
+    # Count-space figure: imputed expected counts using original per-cell fragments.
+    imp_expected_sub = Prc_prob_sub * fragments_for_imp_cells[cell_pick][cell_order][None, :]
+    log.info("Subsample density: original=%.3g, imputed-binarised=%.3g (threshold=%.4g)",
+             orig_density_sub, float(imp_bin_sub.mean()), imp_threshold)
+    log.info("Count-space ranges: orig max=%.0f, imputed expected max=%.4g",
+             orig_count_sub.max(), imp_expected_sub.max())
+
+    # -- figures ------------------------------------------------------------
+    out_three  = eval_dir / f"{args.out_name}_heatmap.png"
+    out_counts = eval_dir / f"{args.out_name}_counts.png"
+    out_per_cell = eval_dir / f"{args.out_name}_per_cell.png"
+
+    _plot_three_panel(orig_bin_sub, Prc_prob_sub, imp_bin_sub,
+                      orig_density=orig_density_sub, out_png=out_three)
+    log.info("Wrote %s", out_three)
+
+    _plot_count_space(orig_count_sub.astype(np.float32), imp_expected_sub,
+                      out_png=out_counts, vmax_quantile=args.count_vmax_quantile)
+    log.info("Wrote %s", out_counts)
+
+    imp_expected_per_cell = (Prc_prob.sum(axis=0) * fragments_for_imp_cells)
+    _plot_per_cell(counts_per_cell[col_idx], binary_per_cell[col_idx],
+                   imp_sum_prob_per_cell, imp_expected_per_cell, out_png=out_per_cell)
+    log.info("Wrote %s", out_per_cell)
+
+    # -- json ---------------------------------------------------------------
+    out_json = eval_dir / f"{args.out_name}.json"
+    out_json.write_text(json.dumps(stats, indent=2, default=str) + "\n")
+    log.info("Wrote %s", out_json)
+
+    # -- console summary ----------------------------------------------------
+    o = stats["original"]
+    i = stats["imputed"]
+    log.info("=== Summary ===")
+    log.info("Original: shape=%s nnz=%d density=%.3g total_fragments=%d",
+             o["shape"], o["nnz"], o["density"], o["total_fragments"])
+    log.info("Original fragments/cell:    median=%.1f  p10=%.1f  p90=%.1f  max=%.0f",
+             o["fragments_per_cell"]["median"], o["fragments_per_cell"]["p10"],
+             o["fragments_per_cell"]["p90"],   o["fragments_per_cell"]["max"])
+    log.info("Original access regions/cell: median=%.1f  p10=%.1f  p90=%.1f  max=%.0f",
+             o["accessible_regions_per_cell"]["median"],
+             o["accessible_regions_per_cell"]["p10"],
+             o["accessible_regions_per_cell"]["p90"],
+             o["accessible_regions_per_cell"]["max"])
+    log.info("Imputed sum-prob/cell median=%.3g (should be 1.0)",
+             i["sum_probability_per_cell"]["median"])
+    log.info("Imputed regions above 1e-4/cell median=%.0f, above 1e-3/cell median=%.0f",
+             i["regions_above_probability_per_cell"]["0.0001"]["median"],
+             i["regions_above_probability_per_cell"]["0.001"]["median"])
+    log.info("Subsample density: original=%.3g matched threshold=%.4g (imputed binarised at %.3g)",
+             orig_density_sub, imp_threshold, float(imp_bin_sub.mean()))
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

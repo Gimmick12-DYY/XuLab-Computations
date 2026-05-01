@@ -6,15 +6,15 @@
 
 paths:
   # Input R object: sparse regions x cells matrix (e.g. CTCF_bin1000_mtx.rds)
-  input_rds:   /Users/dyy/Documents/Project_Repo/XuLab-Computations/data/CTCF_bin1000_mtx.rds
+  input_rds:   /work/users/d/y/dyy12/XuLab/data/CTCF_bin1000_mtx.rds
 
   # Where the pipeline writes intermediate and final outputs.
-  work_dir:    /Users/dyy/Documents/Project_Repo/XuLab-Computations/cisTopic/scripts/cistopic_ctcf
+  work_dir:    /work/users/d/y/dyy12/XuLab/cisTopic/scripts/cistopic_ctcf
 
   # Path to the MALLET binary. Download once per cluster with:
   #   wget https://github.com/mimno/Mallet/releases/download/v202108/Mallet-202108-bin.tar.gz
   #   tar -xf Mallet-202108-bin.tar.gz
-  mallet_path: /Users/dyy/Documents/Project_Repo/XuLab-Computations/Mallet-202108/bin/mallet
+  mallet_path: /work/users/d/y/dyy12/XuLab/Mallet-202108/bin/mallet
 
 # -----------------------------------------------------------------------------
 # Region / cell pre-filtering
@@ -29,7 +29,7 @@ filter:
   min_cells_per_region: 1
 
   # Drop cells with fewer than this many non-zero regions after the region filter.
-  min_regions_per_cell: 50
+  min_regions_per_cell: 10
 
   # If true, binarize the input matrix (any count -> 1) before LDA.
   # This is the standard cisTopic input; set false only if you have a good reason.
@@ -40,7 +40,7 @@ filter:
 # -----------------------------------------------------------------------------
 lda:
   # Grid of topic counts to train. cisTopic paper typically lands in 15-50.
-  n_topics: [100, 200, 300, 400, 500]
+  n_topics: [100, 125, 150, 175, 200]
 
   # Dirichlet priors. cisTopic paper: alpha = 50/T, beta = 0.1.
   alpha: 50
@@ -64,8 +64,8 @@ select:
   #   "mimno_2011"      (higher is better; coherence)
   #   "loglikelihood"   (higher is better; cisTopic paper default)
   #   "manual"          (use select.manual_k)
-  primary_metric: loglikelihood
-  manual_k: null
+  primary_metric: manual
+  manual_k: 125
 
 # -----------------------------------------------------------------------------
 # Imputation (predictive distribution P(r|c) = phi^T theta)
@@ -75,7 +75,7 @@ impute:
   #                      the full imputed matrix can be reconstructed on demand.
   # "hdf5_all"        -> write float32 HDF5 for every region that survived filtering.
   # "hdf5_variable"   -> write HDF5 only for the top-variable regions (see n_top_variable).
-  mode: theta_phi_only
+  mode: hdf5_all
 
   scale_factor: 1000000          # pycisTopic default
   n_top_variable: 200000         # used only when mode == hdf5_variable

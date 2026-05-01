@@ -104,6 +104,27 @@ def main() -> int:
     mtx = np.asarray(imputed.mtx, dtype=np.float32)
     feat = list(imputed.feature_names)
     cnames = list(imputed.cell_names)
+
+    # pycisTopic's behaviour around scale_factor varies between versions.
+    # We always want the saved HDF5 to contain P(r|c) * scale_factor so that
+    # sum over regions per cell == scale_factor (e.g. 1e6 = CPM) and downstream
+    # comparisons can recover P(r|c) by dividing by scale_factor.
+    desired_scale = float(imp.get("scale_factor", 1_000_000))
+    sum_per_cell = float(np.asarray(mtx.sum(axis=0)).mean())
+    log.info(
+        "impute_accessibility returned sum-per-cell mean=%.4g; desired scale_factor=%.0f",
+        sum_per_cell, desired_scale,
+    )
+    if sum_per_cell <= 0:
+        log.warning("Imputed matrix sum-per-cell is non-positive; skipping rescale.")
+    elif abs(sum_per_cell - desired_scale) / desired_scale > 0.01:
+        factor = desired_scale / sum_per_cell
+        log.warning(
+            "Per-cell sum (%.4g) differs from configured scale_factor (%.0f); "
+            "rescaling matrix by %.4g so HDF5 stores P(r|c) * scale_factor.",
+            sum_per_cell, desired_scale, factor,
+        )
+        mtx = mtx * factor
     log.info("Imputed matrix shape: %s (float32 => %.1f GiB)",
              mtx.shape, mtx.nbytes / 1024**3)
 

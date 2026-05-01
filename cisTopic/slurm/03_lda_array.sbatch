@@ -11,7 +11,10 @@
 # same values as lda.n_topics in your config.
 
 set -euo pipefail
-CFG="${CFG:-configs/default.yaml}"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ROOT_DIR="$(cd "${SCRIPT_DIR}/.." && pwd)"
+cd "${ROOT_DIR}"
+CFG="${CFG:-${ROOT_DIR}/configs/default.yaml}"
 
 K_LIST=(10 20 30 40 50 60)
 K=${K_LIST[$SLURM_ARRAY_TASK_ID]}
@@ -20,4 +23,4 @@ source "$(conda info --base)/etc/profile.d/conda.sh"
 conda activate cistopic
 export MALLET_MEMORY="${MALLET_MEMORY:-200G}"
 
-python cisTopic/scripts/03_run_lda_mallet.py --config "$CFG" --n-topics "$K"
+python scripts/03_run_lda_mallet.py --config "$CFG" --n-topics "$K"

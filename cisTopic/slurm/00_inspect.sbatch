@@ -10,7 +10,10 @@
 # a login node too (single CPU, no writes).
 
 set -euo pipefail
-CFG="${CFG:-configs/default.yaml}"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ROOT_DIR="$(cd "${SCRIPT_DIR}/.." && pwd)"
+cd "${ROOT_DIR}"
+CFG="${CFG:-${ROOT_DIR}/configs/default.yaml}"
 
 read_yaml() {
   if command -v yq >/dev/null 2>&1; then
@@ -29,4 +32,4 @@ PY
 INPUT_RDS=$(read_yaml .paths.input_rds)
 
 module load R/4.3 || true
-Rscript cisTopic/scripts/00_inspect_rds.R --input "$INPUT_RDS"
+Rscript scripts/00_inspect_rds.R --input "$INPUT_RDS"
