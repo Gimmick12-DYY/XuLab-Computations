@@ -23,13 +23,24 @@ filter:
   # Drop regions (bins) whose summed count across all cells is below this.
   # Whole-genome 1-kb bins are >95% near-zero; without filtering LDA wastes
   # huge amounts of RAM and iteration time on vocabulary noise.
-  min_counts_per_region: 1
+  #
+  # NOTE on calibration for 1-kb bin scATAC: the previous loose filters
+  # (1/1/10) left ~74 nonzero bins per cell and ~1.3 cells per bin, so the
+  # Dirichlet priors swamped the evidence and LDA returned near-uniform
+  # topic-region/cell-topic matrices (theta max P(k|c) ~ 0.05 vs >= 0.3
+  # expected). The values below trim the singleton vocabulary so LDA actually
+  # sees signal. The HDF5 written by 05_impute.py is still padded back to the
+  # full pre-filter region list, so dropped regions appear as zero rows in
+  # the imputed matrix and downstream tools (bedGraph/bigWig) keep the
+  # original genome coordinate system.
+  min_counts_per_region: 5
 
   # Drop regions present (>=1 count) in fewer than this many cells.
-  min_cells_per_region: 1
+  min_cells_per_region: 10
 
   # Drop cells with fewer than this many non-zero regions after the region filter.
-  min_regions_per_cell: 10
+  # Conservative starting point; raise after inspecting post-filter cell coverage.
+  min_regions_per_cell: 30
 
   # If true, binarize the input matrix (any count -> 1) before LDA.
   # This is the standard cisTopic input; set false only if you have a good reason.
@@ -39,13 +50,25 @@ filter:
 # LDA (MALLET) parameters
 # -----------------------------------------------------------------------------
 lda:
-  # Grid of topic counts to train. cisTopic paper typically lands in 15-50.
-  n_topics: [100, 125, 150, 175, 200]
+  # Grid of topic counts to train. The cisTopic paper lands in 15-50 on
+  # filtered ATAC peaks; on 1-kb bin scATAC with sparse counts, going past
+  # ~75 topics over-parameterises and drives theta toward the prior.
+  n_topics: [20, 30, 50, 75]
 
-  # Dirichlet priors. cisTopic paper: alpha = 50/T, beta = 0.1.
-  alpha: 50
-  alpha_by_topic: true    # true  -> alpha is interpreted as 50/T per topic
-  eta: 0.1
+  # Dirichlet priors.
+  #   alpha (cell-topic prior). cisTopic paper recommends alpha = 50/T, but
+  #   that assumes documents (cells) have many counts. Sparse 1-kb-bin cells
+  #   carry ~tens-hundreds of counts, so alpha = 50 (=> alpha/K = ~0.4-2.5)
+  #   dominates the evidence and pushes every cell toward a uniform topic
+  #   mixture. Lowering to 5 gives alpha/K ~ 0.07-0.25 -- prior weak relative
+  #   to the data so theta can actually peak on a few topics per cell.
+  alpha: 5
+  alpha_by_topic: true    # true  -> alpha is interpreted as alpha/T per topic
+
+  #   eta (topic-region prior). With ~50-100k vocab post-filter, eta=0.1 puts
+  #   thousands of prior pseudo-counts per topic vs. only ~10k observed
+  #   token-assignments per topic, smearing phi. eta=0.01 reverses that.
+  eta: 0.01
   eta_by_topic: false
 
   iterations: 500
@@ -65,7 +88,7 @@ select:
   #   "loglikelihood"   (higher is better; cisTopic paper default)
   #   "manual"          (use select.manual_k)
   primary_metric: manual
-  manual_k: 125
+  manual_k: 50          # placeholder; re-pick from the new grid after 03/04
 
 # -----------------------------------------------------------------------------
 # Imputation (predictive distribution P(r|c) = phi^T theta)

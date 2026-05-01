@@ -6,11 +6,17 @@
 # which is what the paper describes as "imputation of drop-outs". Depending on
 # impute.mode in the config we either:
 #   * save only theta (cell-topic) and phi (region-topic) as parquet + npy, or
-#   * materialise the full dense imputed matrix into an HDF5 file (float32),
-#     optionally restricted to the top-variable regions.
+#   * materialise the imputed matrix into an HDF5 file (float32). The HDF5 row
+#     axis is aligned to the *full pre-filter* region list (mm/regions.tsv.gz),
+#     so its shape matches the original input matrix (R_full x C). Regions that
+#     were dropped by the 02_build filters - or by hdf5_variable's top-K
+#     selection - are stored as zeros and compress to ~nothing under gzip,
+#     which lets downstream tools (e.g. bedGraph/bigWig export) map row index
+#     directly to genome interval without an extra alignment step.
 # -----------------------------------------------------------------------------
 from __future__ import annotations
 
+import gzip
 import logging
 import pickle
 import sys
@@ -125,18 +131,64 @@ def main() -> int:
             sum_per_cell, desired_scale, factor,
         )
         mtx = mtx * factor
-    log.info("Imputed matrix shape: %s (float32 => %.1f GiB)",
+    log.info("Imputed (modeled) matrix shape: %s (float32 => %.1f GiB)",
              mtx.shape, mtx.nbytes / 1024**3)
 
+    # Pad back to the original pre-filter region shape so the HDF5 row axis
+    # matches the input matrix 1:1. mm/regions.tsv.gz is written by
+    # 01_export_rds_to_mm.R before any filtering.
+    mm_regions_path = Path(cfg["paths"]["mm"]) / "regions.tsv.gz"
+    if not mm_regions_path.exists():
+        log.error("Cannot pad to full shape: %s missing.", mm_regions_path)
+        return 1
+    with gzip.open(mm_regions_path, "rt") as fh:
+        full_regions = [ln.rstrip("\n") for ln in fh]
+    R_full = len(full_regions)
+
+    modeled_to_pos = {r: i for i, r in enumerate(feat)}
+    full_to_modeled = np.fromiter(
+        (modeled_to_pos.get(r, -1) for r in full_regions),
+        dtype=np.int64, count=R_full,
+    )
+    n_present = int((full_to_modeled >= 0).sum())
+    if n_present != len(feat):
+        log.warning("Modeled regions not all matched in full list: %d/%d found.",
+                    n_present, len(feat))
+    log.info(
+        "Padding to full region space: R_modeled=%d -> R_full=%d (%.2f%% rows present).",
+        len(feat), R_full, 100.0 * n_present / max(R_full, 1),
+    )
+
+    C = mtx.shape[1]
     h5_path = out_dir / f"imputed_Prc_{mode}.h5"
-    log.info("Writing HDF5 -> %s", h5_path)
+    log.info("Writing HDF5 -> %s (shape %d x %d)", h5_path, R_full, C)
     with h5py.File(h5_path, "w") as h5:
-        h5.create_dataset("Prc", data=mtx, compression="gzip", compression_opts=4,
-                          chunks=(min(4096, mtx.shape[0]), min(512, mtx.shape[1])))
-        h5.create_dataset("regions",  data=np.asarray(feat,   dtype="S"))
-        h5.create_dataset("barcodes", data=np.asarray(cnames, dtype="S"))
-        h5.attrs["scale_factor"] = float(imp.get("scale_factor", 1_000_000))
-        h5.attrs["mode"] = mode
+        dset = h5.create_dataset(
+            "Prc",
+            shape=(R_full, C),
+            dtype=np.float32,
+            compression="gzip", compression_opts=4,
+            chunks=(min(4096, R_full), min(512, C)),
+            fillvalue=np.float32(0.0),
+        )
+        # Stream rows in chunks so we don't allocate a second R_full x C
+        # dense copy on top of the modeled mtx already in memory.
+        chunk_rows = 50_000
+        for start in range(0, R_full, chunk_rows):
+            end = min(start + chunk_rows, R_full)
+            idx = full_to_modeled[start:end]
+            present = idx >= 0
+            if not present.any():
+                continue  # rely on fillvalue=0; chunks compress away
+            block = np.zeros((end - start, C), dtype=np.float32)
+            block[present] = mtx[idx[present]]
+            dset[start:end] = block
+        h5.create_dataset("regions",  data=np.asarray(full_regions, dtype="S"))
+        h5.create_dataset("barcodes", data=np.asarray(cnames,       dtype="S"))
+        h5.attrs["scale_factor"]      = float(imp.get("scale_factor", 1_000_000))
+        h5.attrs["mode"]              = mode
+        h5.attrs["n_modeled_regions"] = int(len(feat))
+        h5.attrs["n_full_regions"]    = int(R_full)
 
     log.info("Done.")
     return 0
