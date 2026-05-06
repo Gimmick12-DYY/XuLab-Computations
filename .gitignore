@@ -7,5 +7,10 @@ cisTopic/scripts/cistopic_ctcf/tmp_mallet
 cisTopic/scripts/cistopic_ctcf/impute
 Mallet-202108/
 cisTopic/scripts/__pycache__
+FITSpython/__pycache__
+FITS/work/
+FITS/scripts/__pycache__
 .DS_Store
 *.pkl
+*.err
+*.out
