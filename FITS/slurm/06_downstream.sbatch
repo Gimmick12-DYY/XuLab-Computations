@@ -1,10 +1,10 @@
 #!/bin/bash
-#SBATCH --job-name=fits_04_phase2
+#SBATCH --job-name=fits_06_downstream
 #SBATCH --output=%x-%j.out
 #SBATCH --error=%x-%j.err
 #SBATCH --cpus-per-task=4
-#SBATCH --mem=64G
-#SBATCH --time=02:00:00
+#SBATCH --mem=32G
+#SBATCH --time=01:00:00
 
 set -euo pipefail
 
@@ -25,4 +25,4 @@ CONDA_ENV="${CONDA_ENV:-fits}"
 source "$(conda info --base)/etc/profile.d/conda.sh"
 conda activate "${CONDA_ENV}"
 
-python scripts/04_run_fits_phase2.py --config "$CFG"
+python scripts/06_downstream.py --config "$CFG"

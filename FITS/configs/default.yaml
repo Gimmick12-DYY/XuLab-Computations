@@ -1,18 +1,105 @@
-paths:
-  input_rds: /work/users/d/y/dyy12/XuLab/data/CTCF_bin1000_mtx.rds
-  work_dir: /work/users/d/y/dyy12/XuLab/FITS/work/ctcf
-  fits_repo: /work/users/d/y/dyy12/XuLab/FITS/FITSpython
+# -----------------------------------------------------------------------------
+# Default configuration for the FITS (Forest of Imputation Trees) TF imputation
+# pipeline. Workflow mirrors cisTopic so artefacts (HDF5 imputed matrix) are
+# directly comparable.
+# -----------------------------------------------------------------------------
 
+paths:
+  # Input R object: sparse regions x cells matrix (e.g. CTCF_bin1000_mtx.rds)
+  input_rds:   /work/users/d/y/dyy12/XuLab/data/CTCF_bin1000_mtx.rds
+
+  # Where the pipeline writes intermediate and final outputs.
+  work_dir:    /work/users/d/y/dyy12/XuLab/FITS/work/ctcf
+
+  # Local clone of FITSpython (https://github.com/reggenlab/FITSpython).
+  fits_repo:   /work/users/d/y/dyy12/XuLab/FITS/FITSpython
+
+# -----------------------------------------------------------------------------
+# Region / cell pre-filtering — same knobs and defaults as cisTopic so that the
+# "modeled" matrix is identical between the two pipelines and results can be
+# compared apples-to-apples.
+# -----------------------------------------------------------------------------
+filter:
+  # 1-kb-bin CTCF scATAC is extremely sparse: 768k nonzeros over 3.03M
+  # regions x 10410 cells (~74 nonzero bins per cell, ~1.3 cells per bin in
+  # the nonzero subset). Survivors at progressively stricter min_cells_per_region:
+  #   >=1: 597236   >=2: 119356   >=3: 29679   >=5: 4914   >=10: 322
+  # We sit at >=2 to drop singleton bins while keeping a 119k-region vocabulary.
+  min_counts_per_region: 2
+  min_cells_per_region:  2
+
+  # Drop cells with fewer than this many nonzero regions after the region filter.
+  min_regions_per_cell:  5
+
+  # Binarize the input matrix (count > 0 -> 1) before downstream processing.
+  # cisTopic standard; for FITS this also guarantees the dense CSV stays small
+  # in disk size.
+  binarize_input: true
+
+# -----------------------------------------------------------------------------
+# FITS dense-input preparation
+#
+# FITS expects a dense CSV (rows = sites, cols = samples). Even after the
+# cisTopic-style filter the matrix is ~119k regions x 10410 cells, which is
+# intractable for FITS Phase1L's tree growth. We therefore pick a top-N
+# subset of the *filtered* regions and let 05_impute.py pad imputed values
+# back into the full pre-filter region universe so eval scripts can compare
+# at full scale.
+# -----------------------------------------------------------------------------
 prepare:
-  # FITS expects dense CSV; full matrix is too large. Subset to manageable regions.
-  region_selection: top_cells   # top_cells | top_counts | random
-  n_regions: 2000
+  # Region selection within the filtered universe.
+  #   "top_cells"  -> regions with the most nonzero cells (most informative)
+  #   "top_counts" -> regions with the highest total signal
+  #   "random"     -> random sample (seeded)
+  region_selection: top_cells
+  # Number of regions to feed to FITS. Set to null to disable subsetting and
+  # try to run FITS on the entire filtered matrix (likely intractable on CTCF).
+  n_regions: 10000
   seed: 42
 
+# -----------------------------------------------------------------------------
+# FITS execution
+# -----------------------------------------------------------------------------
 fits:
-  large_mode: auto              # auto | small | large
+  # "auto"  -> small (main_FITS1/2.py) when n_cells <= 3000, else large (FITSPhase1L/2L.py)
+  # "small" -> force main_FITS1.py + main_FITS2.py
+  # "large" -> force FITSPhase1L.py + FITSPhase2L.py
+  large_mode: auto
   phase1_depth: 4
   phase1_output_prefix: FITS_OUTPUT
 
+# -----------------------------------------------------------------------------
+# Imputation HDF5 output
+# Same schema cisTopic writes, so 07-11 evaluate on either pipeline output.
+# -----------------------------------------------------------------------------
+impute:
+  # Multiplier applied so that sum-over-regions per cell ~= scale_factor.
+  # Eval scripts auto-detect the actual per-cell sum mean and rescale into
+  # probability space, so this is mostly a convention.
+  scale_factor: 1000000
+
+# -----------------------------------------------------------------------------
+# Optional downstream analyses (step 06). FITS has no topic decomposition, so
+# UMAP / topic binarisation are off by default; users can extend this script
+# later for additional analyses.
+# -----------------------------------------------------------------------------
+downstream:
+  run_umap: false
+  run_binarize_topics: false
+
+# -----------------------------------------------------------------------------
+# Step 07-11 evaluation knobs (defaults cisTopic uses).
+# -----------------------------------------------------------------------------
+eval:
+  n_samples: 100000        # heldout positives = negatives count
+  seed: 42
+  compare_space: counts    # 08: "binary" (AUROC) or "counts" (Pearson)
+  region_sample: 20000     # 08: per-region AUROC sub-sample
+  cell_sample: 0           # 08: per-cell AUROC sub-sample (0 = all)
+  nonzero_thresholds: [0, 1e-8, 3e-8, 1e-7, 3e-7, 1e-6, 3e-6, 1e-5, 3e-5, 1e-4]
+  fragmentation_thresholds: [1e-7, 1e-6, 3e-6, 1e-5, 3e-5, 1e-4]
+
+# Legacy compare-only thresholds (kept for backwards compatibility — not used
+# by the new pipeline; see eval.nonzero_thresholds instead).
 compare:
   thresholds: [0.0, 1e-6, 3e-6, 1e-5, 3e-5, 1e-4, 3e-4, 1e-3]

@@ -1,10 +1,12 @@
 #!/bin/bash
-#SBATCH --job-name=fits_01_export
+#SBATCH --job-name=fits_00_inspect
 #SBATCH --output=%x-%j.out
 #SBATCH --error=%x-%j.err
-#SBATCH --cpus-per-task=2
+#SBATCH --cpus-per-task=1
 #SBATCH --mem=64G
-#SBATCH --time=02:00:00
+#SBATCH --time=00:30:00
+
+# Read-only inspection of the .rds before running the pipeline.
 
 set -euo pipefail
 
@@ -34,17 +36,12 @@ read_yaml() {
     python - <<PY
 import sys, yaml
 with open("$CFG") as fh: c = yaml.safe_load(fh)
-keys = "$1".lstrip('.').split('.')
 v = c
-for k in keys: v = v[k]
+for k in "$1".lstrip('.').split('.'): v = v[k]
 print(v)
 PY
   fi
 }
 
 INPUT_RDS=$(read_yaml .paths.input_rds)
-WORK_DIR=$(read_yaml  .paths.work_dir)
-
-Rscript scripts/01_export_rds_to_mm.R \
-  --input  "$INPUT_RDS" \
-  --outdir "$WORK_DIR/mm"
+Rscript scripts/00_inspect_rds.R --input "$INPUT_RDS"

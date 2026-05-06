@@ -1,10 +1,14 @@
 #!/bin/bash
-#SBATCH --job-name=fits_04_phase2
+#SBATCH --job-name=fits_05_impute
 #SBATCH --output=%x-%j.out
 #SBATCH --error=%x-%j.err
 #SBATCH --cpus-per-task=4
 #SBATCH --mem=64G
 #SBATCH --time=02:00:00
+
+# Wrap FITS Phase2 output as imputed_Prc_hdf5_all.h5 (cisTopic-compatible
+# schema). Memory scales with R_full * C — for the CTCF dataset (3M x 10K
+# float32 with gzip-4) the streamed write peaks at ~10 GB.
 
 set -euo pipefail
 
@@ -25,4 +29,4 @@ CONDA_ENV="${CONDA_ENV:-fits}"
 source "$(conda info --base)/etc/profile.d/conda.sh"
 conda activate "${CONDA_ENV}"
 
-python scripts/04_run_fits_phase2.py --config "$CFG"
+python scripts/05_impute.py --config "$CFG"

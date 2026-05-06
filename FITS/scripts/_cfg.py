@@ -32,11 +32,13 @@ def resolve_paths(cfg: dict, work_dir_override: str | None = None) -> dict:
     cfg['paths']['work_dir'] = str(wd)
 
     subdirs = {
-        'mm': wd / 'mm',
+        'mm':         wd / 'mm',
         'fits_input': wd / 'fits_input',
-        'fits_run': wd / 'fits_run',
-        'eval': wd / 'eval',
-        'logs': wd / 'logs',
+        'fits_run':   wd / 'fits_run',
+        'impute':     wd / 'impute',
+        'downstream': wd / 'downstream',
+        'eval':       wd / 'eval',
+        'logs':       wd / 'logs',
     }
     for d in subdirs.values():
         d.mkdir(parents=True, exist_ok=True)
