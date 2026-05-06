@@ -33,7 +33,6 @@ suppressPackageStartupMessages({
   library(dplyr)
   library(stringi)
   library(GenomicRanges)
-  library(rtracklayer)
 })
 
 option_list <- list(
@@ -114,7 +113,19 @@ CTCF_bins_gr_raw <- GRanges(
 
 # -- blacklist ---------------------------------------------------------------
 message('[prep] Reading blacklist BED ', LOCAL$blacklist_bed_gz)
-blacklist_gr <- import.bed(LOCAL$blacklist_bed_gz)
+# Avoid hard dependency on rtracklayer::import.bed (not always installed).
+blacklist_df <- read.table(LOCAL$blacklist_bed_gz, sep = '\t',
+                           stringsAsFactors = FALSE, comment.char = '',
+                           quote = '', header = FALSE)
+if (ncol(blacklist_df) < 3L) {
+  stop('Blacklist BED appears malformed: expected at least 3 columns, got ',
+       ncol(blacklist_df))
+}
+blacklist_gr <- GRanges(
+  seqnames = blacklist_df[[1]],
+  ranges   = IRanges(start = as.numeric(blacklist_df[[2]]) + 1,
+                     end   = as.numeric(blacklist_df[[3]]))
+)
 hits_bl <- findOverlaps(CTCF_bins_gr_raw, blacklist_gr)
 blacklist_indices <- unique(queryHits(hits_bl))
 message(sprintf('[prep] Blacklist drops %d / %d bins (%.2f%%).',
