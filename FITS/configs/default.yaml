@@ -1,0 +1,18 @@
+paths:
+  input_rds: /work/users/d/y/dyy12/XuLab/data/CTCF_bin1000_mtx.rds
+  work_dir: /work/users/d/y/dyy12/XuLab/FITS/work/ctcf
+  fits_repo: /work/users/d/y/dyy12/XuLab/FITS/FITSpython
+
+prepare:
+  # FITS expects dense CSV; full matrix is too large. Subset to manageable regions.
+  region_selection: top_cells   # top_cells | top_counts | random
+  n_regions: 2000
+  seed: 42
+
+fits:
+  large_mode: auto              # auto | small | large
+  phase1_depth: 4
+  phase1_output_prefix: FITS_OUTPUT
+
+compare:
+  thresholds: [0.0, 1e-6, 3e-6, 1e-5, 3e-5, 1e-4, 3e-4, 1e-3]

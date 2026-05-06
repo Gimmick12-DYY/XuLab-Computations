@@ -1,0 +1,16 @@
+name: fits
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.11
+  - pip
+  - numpy
+  - scipy
+  - pyyaml
+  - matplotlib
+  - r-base=4.4
+  - r-matrix
+  - r-optparse
+  - pip:
+      - MulticoreTSNE
