@@ -1,6 +1,7 @@
 name: fits
 channels:
   - conda-forge
+  - bioconda
   - defaults
 dependencies:
   - python=3.11
@@ -21,8 +22,6 @@ dependencies:
   - bioconductor-singlecellexperiment
   - bioconductor-summarizedexperiment
   - r-seurat
-  - pip:
-      - MulticoreTSNE
   # FITSpython itself is cloned separately:
   #   git clone https://github.com/reggenlab/FITSpython
   # and `paths.fits_repo` in configs/default.yaml is pointed at the clone.
