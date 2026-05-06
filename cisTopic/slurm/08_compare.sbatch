@@ -16,6 +16,9 @@
 #   IMPUTED_H5=/path/to/imputed.h5   override imputed file (defaults to
 #                                    <impute>/imputed_Prc_hdf5_all.h5)
 #   MM_DIR=/path/to/mm               override original-matrix directory
+#   COMPARE_SPACE=binary|counts      binary AUROC view or count-space Pearson view
+#   EXPORT_FILLED_MTX=1              write <out>_filled_filtered.mtx with zero fill-in
+#   FILL_THRESHOLD=0.1               minimum expected count to fill a zero
 
 set -euo pipefail
 
@@ -45,6 +48,9 @@ CMD=(
 if [[ -n "${IMPUTED_H5:-}" ]];   then CMD+=(--imputed-h5  "$IMPUTED_H5");   fi
 if [[ -n "${MM_DIR:-}" ]];       then CMD+=(--mm-dir      "$MM_DIR");       fi
 if [[ -n "${REGIONS_BED:-}" ]];  then CMD+=(--regions-bed "$REGIONS_BED");  fi
+if [[ -n "${COMPARE_SPACE:-}" ]]; then CMD+=(--compare-space "$COMPARE_SPACE"); fi
+if [[ "${EXPORT_FILLED_MTX:-0}" == "1" ]]; then CMD+=(--export-filled-mtx); fi
+if [[ -n "${FILL_THRESHOLD:-}" ]]; then CMD+=(--fill-threshold "$FILL_THRESHOLD"); fi
 
 echo "Running: ${CMD[*]}"
 "${CMD[@]}"

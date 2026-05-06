@@ -7,7 +7,8 @@
 #SBATCH --time=04:00:00
 
 # Reproduce cisTopic Supp. Fig. 15 style heatmap (original vs imputed)
-# and report concrete density / per-cell numbers.
+# and report concrete density / per-cell numbers. Uses row/column clustering
+# only (scipy), not UMAP — no dependency on 06_downstream or umap-learn.
 
 set -euo pipefail
 

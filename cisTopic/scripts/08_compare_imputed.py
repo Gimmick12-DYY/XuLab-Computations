@@ -4,6 +4,7 @@
 #
 # Side-by-side comparison of the cisTopic-imputed accessibility P(r|c) against
 # the *original* observed matrix (the one written by 01_export_rds_to_mm.R).
+# No UMAP; runs from matrix + HDF5 only.
 #
 # Two reporting spaces:
 #
@@ -70,6 +71,16 @@ def _safe_auprc(y: np.ndarray, s: np.ndarray) -> float:
     if y.min() == y.max():
         return float("nan")
     return float(average_precision_score(y, s))
+
+
+def _safe_corr(y: np.ndarray, s: np.ndarray) -> float:
+    y = np.asarray(y, dtype=np.float64).ravel()
+    s = np.asarray(s, dtype=np.float64).ravel()
+    if y.size == 0 or s.size == 0:
+        return float("nan")
+    if np.std(y) == 0 or np.std(s) == 0:
+        return float("nan")
+    return float(np.corrcoef(y, s)[0, 1])
 
 
 def _parse_bed(path: Path) -> list[tuple[str, int, int]]:
@@ -149,6 +160,31 @@ def _per_axis_auroc(
     return out
 
 
+def _per_axis_corr(
+    y_dense: np.ndarray,
+    s_dense: np.ndarray,
+    axis: int,
+    sample_n: int | None,
+    rng: np.random.Generator,
+) -> np.ndarray:
+    """Per-region/per-cell Pearson correlation for count-space comparisons."""
+    n = y_dense.shape[0] if axis == 1 else y_dense.shape[1]
+    if sample_n is not None and sample_n > 0 and sample_n < n:
+        idx = np.sort(rng.choice(n, size=sample_n, replace=False))
+    else:
+        idx = np.arange(n)
+    out = np.full(n, np.nan, dtype=np.float64)
+    for k in idx:
+        if axis == 1:
+            yk = y_dense[k]
+            sk = s_dense[k]
+        else:
+            yk = y_dense[:, k]
+            sk = s_dense[:, k]
+        out[k] = _safe_corr(yk, sk)
+    return out
+
+
 # --- main --------------------------------------------------------------------
 def main() -> int:
     ap = base_parser(__doc__ or "")
@@ -164,6 +200,16 @@ def main() -> int:
                     help="Number of regions to sub-sample for per-region AUROC (memory).")
     ap.add_argument("--cell-sample", type=int, default=0,
                     help="Number of cells to sub-sample for per-cell AUROC (0 = all).")
+    ap.add_argument("--compare-space", type=str, default="binary",
+                    choices=["binary", "counts"],
+                    help="binary: evaluate observed>0 vs P(r|c); "
+                         "counts: evaluate observed counts vs expected counts.")
+    ap.add_argument("--export-filled-mtx", action="store_true",
+                    help="Write a filtered-space MatrixMarket where zeros are replaced "
+                         "by imputed expected counts above --fill-threshold.")
+    ap.add_argument("--fill-threshold", type=float, default=0.0,
+                    help="For --export-filled-mtx: only fill zeros with expected count "
+                         ">= this value.")
     ap.add_argument("--seed", type=int, default=42)
     ap.add_argument("--out-name", type=str, default="compare_imputed")
     args = ap.parse_args()
@@ -201,7 +247,6 @@ def main() -> int:
         return 1
     log.info("Original: %d regions x %d cells, nnz=%d (density=%.3g)",
              *orig.shape, orig.nnz, orig.nnz / float(orig.shape[0] * orig.shape[1]))
-    # Binarise to match what LDA modelled.
     orig_bin = (orig > 0).astype(np.int8)
 
     # -- load imputed (filtered regions x cells, dense float32) ---------------
@@ -228,9 +273,19 @@ def main() -> int:
              len(imp_regs), len(orig_regs), 100.0 * len(imp_regs) / len(orig_regs),
              len(imp_bars), len(orig_bars), 100.0 * len(imp_bars) / len(orig_bars))
 
-    # Original sub-matrix that exactly matches the imputed orientation/order.
-    orig_aligned = orig_bin[row_idx][:, col_idx].toarray().astype(np.int8)
-    assert orig_aligned.shape == Prc.shape
+    # Original sub-matrix exactly matching imputed orientation/order.
+    orig_counts_aligned = orig[row_idx][:, col_idx].toarray().astype(np.float32)
+    orig_aligned = (orig_counts_aligned > 0).astype(np.int8)
+    assert orig_aligned.shape == Prc.shape == orig_counts_aligned.shape
+
+    # Convert HDF5 values back to probability then to expected counts if needed.
+    scale_in_h5 = float(np.asarray(Prc.sum(axis=0)).mean())
+    if scale_in_h5 <= 0:
+        scale_in_h5 = 1.0
+    Prc_prob = Prc / scale_in_h5
+    fragments_per_cell = np.asarray(orig.sum(axis=0)).ravel().astype(np.float32)
+    fragments_aligned = fragments_per_cell[col_idx]
+    exp_counts_aligned = Prc_prob * fragments_aligned[None, :]
 
     # Optional BED subset (TF-bin-wise hook).
     if args.regions_bed:
@@ -245,7 +300,10 @@ def main() -> int:
         log.info("BED overlaps %d / %d of imputed (filtered) bins (%.3f%%).",
                  int(imp_mask.sum()), len(imp_mask), 100.0 * imp_mask.mean())
         orig_aligned = orig_aligned[imp_mask]
+        orig_counts_aligned = orig_counts_aligned[imp_mask]
         Prc = Prc[imp_mask]
+        Prc_prob = Prc_prob[imp_mask]
+        exp_counts_aligned = exp_counts_aligned[imp_mask]
         kept_imp_regs = [imp_regs[i] for i in np.where(imp_mask)[0]]
         bed_kept_full_rows = full_mask  # for lifted-space stats below
     else:
@@ -253,43 +311,69 @@ def main() -> int:
         bed_kept_full_rows = None
 
     # -- summary stats --------------------------------------------------------
-    obs_density_filt = float(orig_aligned.mean())
-    pred_mean_filt = float(Prc.mean())
-    log.info("Filtered space: observed density=%.5f, predicted mean=%.5g",
-             obs_density_filt, pred_mean_filt)
+    compare_binary = args.compare_space == "binary"
+    if compare_binary:
+        y_filt = orig_aligned
+        s_filt = Prc_prob
+        obs_summary = float(y_filt.mean())
+        pred_summary = float(s_filt.mean())
+        log.info("Filtered binary space: observed density=%.5f, predicted mean P(r|c)=%.5g",
+                 obs_summary, pred_summary)
+    else:
+        y_filt = orig_counts_aligned
+        s_filt = exp_counts_aligned
+        obs_summary = float(y_filt.mean())
+        pred_summary = float(s_filt.mean())
+        log.info("Filtered count space: observed mean count=%.5f, predicted expected mean=%.5f",
+                 obs_summary, pred_summary)
 
     # Sub-sample (region, cell) pairs for global AUROC/AUPRC to avoid OOM.
-    R_f, C_f = orig_aligned.shape
+    R_f, C_f = y_filt.shape
     pair_n = min(2_000_000, R_f * C_f)
     pr = rng.integers(0, R_f, size=pair_n, dtype=np.int64)
     pc = rng.integers(0, C_f, size=pair_n, dtype=np.int64)
-    yp = orig_aligned[pr, pc]
-    sp_ = Prc[pr, pc]
+    yp = y_filt[pr, pc]
+    sp_ = s_filt[pr, pc]
     metrics_filt = {
         "n_regions": int(R_f),
         "n_cells": int(C_f),
-        "observed_density": obs_density_filt,
-        "predicted_mean": pred_mean_filt,
-        "global_auroc": _safe_auroc(yp, sp_),
-        "global_auprc": _safe_auprc(yp, sp_),
-        "pearson_pairs": float(np.corrcoef(yp.astype(np.float32), sp_)[0, 1]),
+        "compare_space": args.compare_space,
+        "observed_mean": obs_summary,
+        "predicted_mean": pred_summary,
+        "global_auroc": _safe_auroc(yp, sp_) if compare_binary else float("nan"),
+        "global_auprc": _safe_auprc(yp, sp_) if compare_binary else float("nan"),
+        "pearson_pairs": _safe_corr(yp.astype(np.float32), sp_),
         "n_pairs_sampled": int(pair_n),
     }
 
     # Per-region / per-cell AUROC (sub-sampled if asked).
-    log.info("Per-region AUROC over %d regions (sample=%s)...",
-             R_f, args.region_sample or "all")
-    region_auroc = _per_axis_auroc(orig_aligned, Prc, axis=1,
-                                   sample_n=args.region_sample, rng=rng)
-    log.info("Per-cell   AUROC over %d cells (sample=%s)...",
-             C_f, args.cell_sample or "all")
-    cell_auroc = _per_axis_auroc(orig_aligned, Prc, axis=0,
-                                 sample_n=args.cell_sample, rng=rng)
+    if compare_binary:
+        log.info("Per-region AUROC over %d regions (sample=%s)...",
+                 R_f, args.region_sample or "all")
+        region_metric = _per_axis_auroc(y_filt, s_filt, axis=1,
+                                        sample_n=args.region_sample, rng=rng)
+        log.info("Per-cell   AUROC over %d cells (sample=%s)...",
+                 C_f, args.cell_sample or "all")
+        cell_metric = _per_axis_auroc(y_filt, s_filt, axis=0,
+                                      sample_n=args.cell_sample, rng=rng)
+        metrics_filt["per_region_metric_name"] = "auroc"
+        metrics_filt["per_cell_metric_name"] = "auroc"
+    else:
+        log.info("Per-region Pearson correlation over %d regions (sample=%s)...",
+                 R_f, args.region_sample or "all")
+        region_metric = _per_axis_corr(y_filt, s_filt, axis=1,
+                                       sample_n=args.region_sample, rng=rng)
+        log.info("Per-cell   Pearson correlation over %d cells (sample=%s)...",
+                 C_f, args.cell_sample or "all")
+        cell_metric = _per_axis_corr(y_filt, s_filt, axis=0,
+                                     sample_n=args.cell_sample, rng=rng)
+        metrics_filt["per_region_metric_name"] = "pearson_r"
+        metrics_filt["per_cell_metric_name"] = "pearson_r"
 
-    metrics_filt["per_region_auroc_mean"] = float(np.nanmean(region_auroc))
-    metrics_filt["per_region_auroc_median"] = float(np.nanmedian(region_auroc))
-    metrics_filt["per_cell_auroc_mean"] = float(np.nanmean(cell_auroc))
-    metrics_filt["per_cell_auroc_median"] = float(np.nanmedian(cell_auroc))
+    metrics_filt["per_region_metric_mean"] = float(np.nanmean(region_metric))
+    metrics_filt["per_region_metric_median"] = float(np.nanmedian(region_metric))
+    metrics_filt["per_cell_metric_mean"] = float(np.nanmean(cell_metric))
+    metrics_filt["per_cell_metric_median"] = float(np.nanmedian(cell_metric))
 
     # -- lifted-space metrics (zeros for filtered-out rows) -------------------
     # We avoid materialising the full 3M x 10K dense predicted matrix. Instead:
@@ -336,7 +420,7 @@ def main() -> int:
         ic = col_lookup[cidx]
         s_lift = np.zeros(ridx.size, dtype=np.float32)
         ok = (ir >= 0) & (ic >= 0)
-        s_lift[ok] = Prc[ir[ok], ic[ok]]
+        s_lift[ok] = Prc_prob[ir[ok], ic[ok]]
         metrics_lifted = {
             "n_regions": int(R_o if bed_kept_full_rows is None
                               else int(bed_kept_full_rows.sum())),
@@ -373,50 +457,64 @@ def main() -> int:
     out_json.write_text(json.dumps(summary, indent=2, default=str) + "\n")
 
     with open(out_reg, "w") as fh:
-        fh.write("region\tobs_density\tpred_mean\tauroc\n")
+        fh.write(f"region\tobs_mean\tpred_mean\t{metrics_filt['per_region_metric_name']}\n")
         # write a sample to keep the file small.
-        sub = np.where(~np.isnan(region_auroc))[0]
+        sub = np.where(~np.isnan(region_metric))[0]
         if sub.size > 50_000:
             sub = rng.choice(sub, size=50_000, replace=False)
         for i in sub:
-            fh.write(f"{kept_imp_regs[i]}\t{orig_aligned[i].mean():.6f}\t"
-                     f"{Prc[i].mean():.6g}\t{region_auroc[i]:.6f}\n")
+            fh.write(f"{kept_imp_regs[i]}\t{y_filt[i].mean():.6f}\t"
+                     f"{s_filt[i].mean():.6g}\t{region_metric[i]:.6f}\n")
 
     with open(out_cell, "w") as fh:
-        fh.write("cell\tobs_density\tpred_mean\tauroc\n")
+        fh.write(f"cell\tobs_mean\tpred_mean\t{metrics_filt['per_cell_metric_name']}\n")
         for i in range(C_f):
-            if np.isnan(cell_auroc[i]):
+            if np.isnan(cell_metric[i]):
                 continue
-            fh.write(f"{imp_bars[i]}\t{orig_aligned[:, i].mean():.6f}\t"
-                     f"{Prc[:, i].mean():.6g}\t{cell_auroc[i]:.6f}\n")
+            fh.write(f"{imp_bars[i]}\t{y_filt[:, i].mean():.6f}\t"
+                     f"{s_filt[:, i].mean():.6g}\t{cell_metric[i]:.6f}\n")
 
-    # Diagnostic figure: AUROC distributions + observed-vs-pred density scatter.
+    # Diagnostic figure: per-axis metric distributions + observed-vs-pred scatter.
     fig, axes = plt.subplots(1, 3, figsize=(15, 4))
-    valid_r = region_auroc[~np.isnan(region_auroc)]
-    valid_c = cell_auroc[~np.isnan(cell_auroc)]
+    valid_r = region_metric[~np.isnan(region_metric)]
+    valid_c = cell_metric[~np.isnan(cell_metric)]
     axes[0].hist(valid_r, bins=50, color="#3a7", alpha=0.85)
-    axes[0].axvline(0.5, color="k", lw=0.6, ls=":")
-    axes[0].set_title(f"Per-region AUROC (n={valid_r.size})")
-    axes[0].set_xlabel("AUROC")
+    axes[0].axvline(0.5 if compare_binary else 0.0, color="k", lw=0.6, ls=":")
+    axes[0].set_title(f"Per-region {metrics_filt['per_region_metric_name']} (n={valid_r.size})")
+    axes[0].set_xlabel(metrics_filt["per_region_metric_name"])
     axes[1].hist(valid_c, bins=50, color="#37a", alpha=0.85)
-    axes[1].axvline(0.5, color="k", lw=0.6, ls=":")
-    axes[1].set_title(f"Per-cell AUROC (n={valid_c.size})")
-    axes[1].set_xlabel("AUROC")
-    # Density-vs-pred scatter (region-level).
-    obs_rd = orig_aligned.mean(axis=1)
-    pred_rd = Prc.mean(axis=1)
+    axes[1].axvline(0.5 if compare_binary else 0.0, color="k", lw=0.6, ls=":")
+    axes[1].set_title(f"Per-cell {metrics_filt['per_cell_metric_name']} (n={valid_c.size})")
+    axes[1].set_xlabel(metrics_filt["per_cell_metric_name"])
+    # Region-level observed-vs-pred scatter.
+    obs_rd = y_filt.mean(axis=1)
+    pred_rd = s_filt.mean(axis=1)
     sub = rng.choice(obs_rd.size, size=min(20_000, obs_rd.size), replace=False)
     axes[2].scatter(obs_rd[sub], pred_rd[sub], s=2, alpha=0.4, color="#a33")
-    axes[2].set_xlabel("Observed region density (binarised)")
-    axes[2].set_ylabel("Predicted region mean P(r|c)")
-    axes[2].set_title("Region-level: observed vs predicted")
+    if compare_binary:
+        axes[2].set_xlabel("Observed region density (binarised)")
+        axes[2].set_ylabel("Predicted region mean P(r|c)")
+    else:
+        axes[2].set_xlabel("Observed region mean counts")
+        axes[2].set_ylabel("Predicted region mean expected counts")
+    axes[2].set_title(f"Region-level: observed vs predicted ({args.compare_space})")
     fig.suptitle(
-        f"cisTopic imputation vs original  ({R_f}x{C_f} filtered, "
-        f"AUROC={metrics_filt['global_auroc']:.3f})"
+        f"cisTopic imputation vs original ({args.compare_space}, {R_f}x{C_f} filtered, "
+        f"pair-pearson={metrics_filt['pearson_pairs']:.3f})"
     )
     fig.tight_layout()
     fig.savefig(out_png, dpi=150)
     plt.close(fig)
+
+    if args.export_filled_mtx:
+        # Replace only observed zeros by expected counts above threshold.
+        filled = orig_counts_aligned.copy()
+        replace_mask = (filled <= 0) & (exp_counts_aligned >= float(args.fill_threshold))
+        filled[replace_mask] = exp_counts_aligned[replace_mask]
+        out_filled = eval_dir / f"{args.out_name}_filled_filtered.mtx"
+        sio.mmwrite(str(out_filled), sp.coo_matrix(filled))
+        log.info("Wrote: %s  (filled %d zero entries, threshold=%.4g)",
+                 out_filled, int(replace_mask.sum()), float(args.fill_threshold))
 
     log.info("Wrote: %s", out_json)
     log.info("Wrote: %s", out_reg)

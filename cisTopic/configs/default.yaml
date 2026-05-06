@@ -108,7 +108,8 @@ impute:
 # Optional downstream analyses (step 06)
 # -----------------------------------------------------------------------------
 downstream:
-  run_umap: true
+  # Imputation QC figures (09/08/11) do not use UMAP; set true only if you want topic-space UMAP.
+  run_umap: false
   run_binarize_topics: true
   # Any of: "otsu", "yen", "li", "aucell".  "otsu" is the pycisTopic default.
   binarize_method: otsu

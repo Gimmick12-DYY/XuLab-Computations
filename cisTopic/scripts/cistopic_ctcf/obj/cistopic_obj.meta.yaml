@@ -1,5 +1,5 @@
-n_regions_in: 597236
-n_cells_in: 10410
-nnz: 768200
+n_regions_in: 119356
+n_cells_in: 10296
+nnz: 289903
 binarized: True
 obj_path: /work/users/d/y/dyy12/XuLab/cisTopic/scripts/cistopic_ctcf/obj/cistopic_obj.pkl

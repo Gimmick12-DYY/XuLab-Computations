@@ -1,0 +1,36 @@
+{
+  "config": "/work/users/d/y/dyy12/XuLab/cisTopic/configs/default.yaml",
+  "mm_dir": "/work/users/d/y/dyy12/XuLab/cisTopic/scripts/cistopic_ctcf/mm",
+  "imputed_h5": "/work/users/d/y/dyy12/XuLab/cisTopic/scripts/cistopic_ctcf/impute/imputed_Prc_hdf5_all.h5",
+  "regions_bed": null,
+  "h5_attrs": {
+    "mode": "hdf5_all",
+    "n_full_regions": 3031053,
+    "n_modeled_regions": 119356,
+    "scale_factor": 1000000.0
+  },
+  "filtered_space": {
+    "n_regions": 3031053,
+    "n_cells": 10296,
+    "observed_density": 2.453626726280487e-05,
+    "predicted_mean": 0.32991987466812134,
+    "global_auroc": 0.6440707888170245,
+    "global_auprc": 0.0006700733943946026,
+    "pearson_pairs": 0.01691724874233239,
+    "n_pairs_sampled": 2000000,
+    "per_region_auroc_mean": 0.5833519490455465,
+    "per_region_auroc_median": 0.5,
+    "per_cell_auroc_mean": 0.6813169582427295,
+    "per_cell_auroc_median": 0.6780049734396654
+  },
+  "lifted_space": {
+    "n_regions": 3031053,
+    "n_cells": 10410,
+    "observed_density": 2.4346135958097032e-05,
+    "global_auroc": 0.6353896991909758,
+    "global_auprc": 0.0011305294378639488,
+    "n_pairs_sampled": 2000000,
+    "fraction_pairs_zero_predicted": 0.9609445
+  },
+  "n_imputed_regions_kept": 3031053
+}

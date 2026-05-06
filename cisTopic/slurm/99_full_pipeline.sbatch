@@ -3,15 +3,17 @@
 #SBATCH --output=%x-%j.out
 #SBATCH --error=%x-%j.err
 #SBATCH --cpus-per-task=16
-#SBATCH --mem=64G
+#SBATCH --mem=192G
 #SBATCH --time=72:00:00
 
-# Run the full cisTopic pipeline in one SLURM job allocation.
+# Run the full cisTopic pipeline in one SLURM job allocation (end-to-end rerun).
 #
 # Default order:
 #   00_inspect (optional) -> 01_export -> 02_build -> 03_lda
 #   -> 04_select -> 05_impute -> 06_downstream (optional)
 #   -> 07_eval (optional) -> 08_compare (optional)
+#   -> 09_visualize (optional) -> 10_nonzero_complexity (optional)
+#   -> 11_per_cell_fragmentation (optional)
 #
 # Usage:
 #   sbatch slurm/99_full_pipeline.sbatch
@@ -19,7 +21,12 @@
 # Common overrides:
 #   sbatch --export=ALL,CFG=/path/to/config.yaml slurm/99_full_pipeline.sbatch
 #   sbatch --export=ALL,RUN_DOWNSTREAM=0,RUN_EVAL=0,RUN_COMPARE=0 slurm/99_full_pipeline.sbatch
+#   sbatch --export=ALL,RUN_VISUALIZE=0,RUN_NONZERO=0,RUN_FRAGMENTATION=0 slurm/99_full_pipeline.sbatch
 #   sbatch --export=ALL,REGIONS_BED=/path/to/peaks.bed slurm/99_full_pipeline.sbatch
+#   sbatch --export=ALL,NO_UMAP=1 slurm/99_full_pipeline.sbatch   # force-skip topic UMAP in step 06
+#
+# Request more time/memory only if needed, e.g.:
+#   sbatch --mem=256G --time=96:00:00 slurm/99_full_pipeline.sbatch
 
 set -euo pipefail
 
@@ -45,18 +52,42 @@ RUN_INSPECT="${RUN_INSPECT:-0}"
 RUN_DOWNSTREAM="${RUN_DOWNSTREAM:-1}"
 RUN_EVAL="${RUN_EVAL:-1}"
 RUN_COMPARE="${RUN_COMPARE:-1}"
+RUN_VISUALIZE="${RUN_VISUALIZE:-1}"
+RUN_NONZERO="${RUN_NONZERO:-1}"
+RUN_FRAGMENTATION="${RUN_FRAGMENTATION:-1}"
 
 # Optional compare/eval knobs
 REGIONS_BED="${REGIONS_BED:-}"
 IMPUTED_H5="${IMPUTED_H5:-}"
 MM_DIR="${MM_DIR:-}"
+COMPARE_SPACE="${COMPARE_SPACE:-counts}"
+EXPORT_FILLED_MTX="${EXPORT_FILLED_MTX:-0}"
+FILL_THRESHOLD="${FILL_THRESHOLD:-0.0}"
 N_SAMPLES="${N_SAMPLES:-100000}"
 SEED="${SEED:-42}"
 OUT_NAME="${OUT_NAME:-heldout_eval}"
+NO_UMAP="${NO_UMAP:-0}"
+
+# Step 09 (heatmap QC) — separate out-name so it does not clash with 07_eval
+N_REGIONS="${N_REGIONS:-1000}"
+N_CELLS="${N_CELLS:-5000}"
+SPACE="${SPACE:-full}"
+REGION_MODE="${REGION_MODE:-original_top_cells}"
+VIZ_OUT_NAME="${VIZ_OUT_NAME:-visualize_imputation}"
+NOCLUSTER="${NOCLUSTER:-0}"
+
+# Steps 10 / 11
+NONZERO_THRESHOLDS="${NONZERO_THRESHOLDS:-0,1e-8,3e-8,1e-7,3e-7,1e-6,3e-6,1e-5,3e-5,1e-4}"
+NONZERO_CHUNK_ROWS="${NONZERO_CHUNK_ROWS:-2000}"
+NONZERO_OUT_NAME="${NONZERO_OUT_NAME:-nonzero_complexity}"
+FRAG_THRESHOLDS="${FRAG_THRESHOLDS:-1e-7,1e-6,3e-6,1e-5,3e-5,1e-4}"
+FRAG_CHUNK_ROWS="${FRAG_CHUNK_ROWS:-10000}"
+FRAG_OUT_NAME="${FRAG_OUT_NAME:-per_cell_fragmentation}"
 
 echo "[$(date)] Starting full pipeline"
 echo "ROOT_DIR=${ROOT_DIR}"
 echo "CFG=${CFG}"
+echo "Steps: DOWNSTREAM=${RUN_DOWNSTREAM} EVAL=${RUN_EVAL} COMPARE=${RUN_COMPARE} VIZ=${RUN_VISUALIZE} NONZERO=${RUN_NONZERO} FRAG=${RUN_FRAGMENTATION} INSPECT=${RUN_INSPECT}"
 
 if [[ -f /etc/profile.d/modules.sh ]]; then
   # shellcheck source=/dev/null
@@ -117,7 +148,10 @@ python scripts/05_impute.py --config "${CFG}"
 
 if [[ "${RUN_DOWNSTREAM}" == "1" ]]; then
   echo "[$(date)] Step 06: downstream"
-  python scripts/06_downstream.py --config "${CFG}"
+  DS_CMD=(python scripts/06_downstream.py --config "${CFG}")
+  if [[ "${NO_UMAP}" == "1" ]]; then DS_CMD+=(--no-umap); fi
+  echo "Running: ${DS_CMD[*]}"
+  "${DS_CMD[@]}"
 fi
 
 if [[ "${RUN_EVAL}" == "1" ]]; then
@@ -134,12 +168,64 @@ if [[ "${RUN_COMPARE}" == "1" ]]; then
   CMP_CMD=(
     python scripts/08_compare_imputed.py
     --config "${CFG}"
+    --compare-space "${COMPARE_SPACE}"
   )
   if [[ -n "${IMPUTED_H5}" ]]; then CMP_CMD+=(--imputed-h5 "${IMPUTED_H5}"); fi
   if [[ -n "${MM_DIR}" ]]; then CMP_CMD+=(--mm-dir "${MM_DIR}"); fi
   if [[ -n "${REGIONS_BED}" ]]; then CMP_CMD+=(--regions-bed "${REGIONS_BED}"); fi
+  if [[ "${EXPORT_FILLED_MTX}" == "1" ]]; then CMP_CMD+=(--export-filled-mtx); fi
+  if [[ -n "${FILL_THRESHOLD}" ]]; then CMP_CMD+=(--fill-threshold "${FILL_THRESHOLD}"); fi
   echo "Running: ${CMP_CMD[*]}"
   "${CMP_CMD[@]}"
+fi
+
+if [[ "${RUN_VISUALIZE}" == "1" ]]; then
+  echo "[$(date)] Step 09: imputation heatmaps / per-cell summaries (no UMAP)"
+  VIZ_CMD=(
+    python scripts/09_visualize_imputation.py
+    --config "${CFG}"
+    --n-regions "${N_REGIONS}"
+    --n-cells "${N_CELLS}"
+    --space "${SPACE}"
+    --region-mode "${REGION_MODE}"
+    --seed "${SEED}"
+    --out-name "${VIZ_OUT_NAME}"
+  )
+  if [[ -n "${IMPUTED_H5}" ]]; then VIZ_CMD+=(--imputed-h5 "${IMPUTED_H5}"); fi
+  if [[ -n "${MM_DIR}" ]]; then VIZ_CMD+=(--mm-dir "${MM_DIR}"); fi
+  if [[ "${NOCLUSTER}" == "1" ]]; then VIZ_CMD+=(--no-cluster); fi
+  echo "Running: ${VIZ_CMD[*]}"
+  "${VIZ_CMD[@]}"
+fi
+
+if [[ "${RUN_NONZERO}" == "1" ]]; then
+  echo "[$(date)] Step 10: nonzero complexity vs thresholds"
+  NZ_CMD=(
+    python scripts/10_nonzero_complexity.py
+    --config "${CFG}"
+    --thresholds "${NONZERO_THRESHOLDS}"
+    --chunk-rows "${NONZERO_CHUNK_ROWS}"
+    --out-name "${NONZERO_OUT_NAME}"
+  )
+  if [[ -n "${IMPUTED_H5}" ]]; then NZ_CMD+=(--imputed-h5 "${IMPUTED_H5}"); fi
+  if [[ -n "${MM_DIR}" ]]; then NZ_CMD+=(--mm-dir "${MM_DIR}"); fi
+  echo "Running: ${NZ_CMD[*]}"
+  "${NZ_CMD[@]}"
+fi
+
+if [[ "${RUN_FRAGMENTATION}" == "1" ]]; then
+  echo "[$(date)] Step 11: per-cell fragmentation (original vs imputed)"
+  FR_CMD=(
+    python scripts/11_per_cell_fragmentation.py
+    --config "${CFG}"
+    --thresholds "${FRAG_THRESHOLDS}"
+    --chunk-rows "${FRAG_CHUNK_ROWS}"
+    --out-name "${FRAG_OUT_NAME}"
+  )
+  if [[ -n "${IMPUTED_H5}" ]]; then FR_CMD+=(--imputed-h5 "${IMPUTED_H5}"); fi
+  if [[ -n "${MM_DIR}" ]]; then FR_CMD+=(--mm-dir "${MM_DIR}"); fi
+  echo "Running: ${FR_CMD[*]}"
+  "${FR_CMD[@]}"
 fi
 
 echo "[$(date)] Full pipeline completed."

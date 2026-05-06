@@ -1,0 +1,33 @@
+{
+  "n_pos": 100000,
+  "n_neg": 100000,
+  "n_regions": 119356,
+  "n_cells": 10296,
+  "matrix_density": 0.000235906506852249,
+  "K": 30,
+  "seed": 42,
+  "impute_dir": "/work/users/d/y/dyy12/XuLab/cisTopic/scripts/cistopic_ctcf/impute",
+  "holdout_split": null,
+  "results": {
+    "random": {
+      "auroc": 0.5007628939000001,
+      "auprc": 0.5009191301361731
+    },
+    "region_freq": {
+      "auroc": 0.57457776375,
+      "auprc": 0.5639972493106054
+    },
+    "cell_freq": {
+      "auroc": 0.7725800715500001,
+      "auprc": 0.7948091310068451
+    },
+    "independence": {
+      "auroc": 0.7865849061499999,
+      "auprc": 0.8070567588431794
+    },
+    "cisTopic (phi@theta)": {
+      "auroc": 0.9196321503,
+      "auprc": 0.8894971671763754
+    }
+  }
+}

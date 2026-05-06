@@ -1,4 +1,6 @@
 #!/usr/bin/env python
+# Imputation assessment heatmaps: scipy hierarchical clustering on subsampled
+# matrices only — no UMAP (independent of 06_downstream.py / umap-learn).
 from __future__ import annotations
 
 import gzip
@@ -135,7 +137,7 @@ def main() -> int:
     else:
         # filtered space only
         if args.region_mode == 'original_top_cells':
-            region_pick_imp = np.argsort(np.diff(orig[row_idx].indptr))[::-1][:min(args.n_regions, Prc_prob.shape[0])]
+            region_pick_imp = np.argsort(np.diff(orig[row_idx].indptr))[::-1][:min(args.n_regions, Rf)]
         elif args.region_mode == 'imputed_variable':
             score = Prc.var(axis=1)
             region_pick_imp = np.argsort(score)[::-1][:min(args.n_regions, Rf)]

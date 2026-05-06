@@ -2,8 +2,8 @@
 # -----------------------------------------------------------------------------
 # 06_downstream.py   (optional)
 #
-# Sanity-check downstream analyses you can run once imputation is done:
-#   * UMAP of the topic-cell distribution (a cheap-but-useful QC plot)
+# Optional analyses after imputation:
+#   * UMAP on cell-topic weights (off by default; enable downstream.run_umap in YAML)
 #   * Per-topic region binarisation (Otsu / Yen / Li / AUCell)
 # -----------------------------------------------------------------------------
 from __future__ import annotations
@@ -45,7 +45,7 @@ def main() -> int:
     out_dir = Path(cfg["paths"]["downstream"])
 
     # --- UMAP on topic-cell ---------------------------------------------------
-    if not args.no_umap and dwn.get("run_umap", True):
+    if not args.no_umap and dwn.get("run_umap", False):
         import umap
 
         theta = np.asarray(cistopic_obj.selected_model.cell_topic).T   # cells x K

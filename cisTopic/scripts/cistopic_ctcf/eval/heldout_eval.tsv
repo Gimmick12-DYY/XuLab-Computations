@@ -1,0 +1,6 @@
+scorer	auroc	auprc
+random	0.500763	0.500919
+region_freq	0.574578	0.563997
+cell_freq	0.772580	0.794809
+independence	0.786585	0.807057
+cisTopic (phi@theta)	0.919632	0.889497

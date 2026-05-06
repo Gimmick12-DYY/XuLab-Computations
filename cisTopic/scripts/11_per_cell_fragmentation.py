@@ -6,6 +6,7 @@
 # For binarised scATAC-seq this is the per-cell fragment count (number of
 # accessible bins). After cisTopic imputation every (region, cell) carries a
 # positive P(r|c), so we count entries above a series of thresholds.
+# No UMAP; runs from matrix + HDF5 only.
 #
 # Outputs (under <work_dir>/eval/):
 #   <out_name>.tsv   per-cell counts: original nnz, imputed nnz at each threshold

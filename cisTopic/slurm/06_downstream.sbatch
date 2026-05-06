@@ -22,8 +22,13 @@ fi
 cd "${ROOT_DIR}"
 
 CFG="${CFG:-${ROOT_DIR}/configs/default.yaml}"
+# Force-skip UMAP even if config is changed (optional): NO_UMAP=1 sbatch ...
+NO_UMAP="${NO_UMAP:-0}"
 
 source "$(conda info --base)/etc/profile.d/conda.sh"
 conda activate cistopic
 
-python scripts/06_downstream.py --config "$CFG"
+CMD=(python scripts/06_downstream.py --config "$CFG")
+if [[ "${NO_UMAP}" == "1" ]]; then CMD+=(--no-umap); fi
+echo "Running: ${CMD[*]}"
+"${CMD[@]}"
