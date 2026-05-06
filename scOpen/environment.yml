@@ -1,0 +1,28 @@
+name: scopen
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - python=3.9          # scOpen tested through 3.9; safest target
+  - pip
+  - numpy
+  - scipy
+  - pandas
+  - pyarrow
+  - h5py
+  - pytables           # required by scopen for 10Xh5 format support
+  - scikit-learn
+  - matplotlib
+  - seaborn
+  - pyyaml
+  - tqdm
+  - kneed              # rank elbow detection used by scopen --estimate_rank
+  - r-base>=4.3
+  - r-matrix
+  - r-optparse
+  - bioconductor-singlecellexperiment
+  - bioconductor-summarizedexperiment
+  - r-seurat
+  - pip:
+      - scopen

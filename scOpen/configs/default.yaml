@@ -1,0 +1,76 @@
+# -----------------------------------------------------------------------------
+# Default configuration for the scOpen TF imputation pipeline.
+# Workflow mirrors cisTopic / FITS so the same eval scripts (07-11) and the
+# downstream/ comparison work on either pipeline's HDF5 output.
+# -----------------------------------------------------------------------------
+
+paths:
+  input_rds:   /work/users/d/y/dyy12/XuLab/data/CTCF_bin1000_mtx.rds
+  work_dir:    /work/users/d/y/dyy12/XuLab/scOpen/work/ctcf
+
+# -----------------------------------------------------------------------------
+# Region / cell pre-filtering — same knobs and defaults as cisTopic / FITS so
+# the modeled matrix is identical across all three pipelines.
+# -----------------------------------------------------------------------------
+filter:
+  # CTCF survivors at progressively stricter min_cells_per_region:
+  #   >=1: 597236   >=2: 119356   >=3: 29679   >=5: 4914   >=10: 322
+  # We sit at >=2 (matches cisTopic and FITS).
+  min_counts_per_region: 2
+  min_cells_per_region:  2
+  min_regions_per_cell:  5
+  # scOpen expects a binary peak-by-cell input and TF-IDF transforms it
+  # internally. Leave true.
+  binarize_input: true
+
+# -----------------------------------------------------------------------------
+# scOpen NMF parameters
+# -----------------------------------------------------------------------------
+scopen:
+  # If true, scopen runs over a rank grid and picks the elbow (kneedle).
+  # If false, uses fixed n_components.
+  estimate_rank: true
+  min_n_components: 5
+  max_n_components: 30
+  step_n_components: 5
+  # Used only when estimate_rank: false.
+  n_components: 30
+  # Regularization weight. Paper recommends 1.0 for imputation accuracy.
+  alpha: 1.0
+  # CCD iterations.
+  max_iter: 500
+  # NMF init scheme. nndsvd is the scopen default and gives reproducible runs.
+  init: nndsvd
+  random_state: 42
+  # Number of cores. With estimate_rank=true scopen parallelises across the
+  # rank grid (one core per rank), so a value matching len(grid) is ideal.
+  nc: 6
+  verbose: 0
+
+# -----------------------------------------------------------------------------
+# Imputation HDF5 output (cisTopic-compatible schema)
+# -----------------------------------------------------------------------------
+impute:
+  # Multiplier applied so that sum-over-regions per cell ~= scale_factor.
+  # Eval scripts auto-detect the actual per-cell sum mean and rescale into
+  # probability space, so this is mostly a convention.
+  scale_factor: 1000000
+
+# -----------------------------------------------------------------------------
+# Optional downstream analyses (step 06)
+# -----------------------------------------------------------------------------
+downstream:
+  run_umap: false
+  run_binarize_topics: false
+
+# -----------------------------------------------------------------------------
+# Step 07-11 evaluation knobs (defaults shared with cisTopic / FITS).
+# -----------------------------------------------------------------------------
+eval:
+  n_samples: 100000
+  seed: 42
+  compare_space: counts
+  region_sample: 20000
+  cell_sample: 0
+  nonzero_thresholds: [0, 1e-8, 3e-8, 1e-7, 3e-7, 1e-6, 3e-6, 1e-5, 3e-5, 1e-4]
+  fragmentation_thresholds: [1e-7, 1e-6, 3e-6, 1e-5, 3e-5, 1e-4]
