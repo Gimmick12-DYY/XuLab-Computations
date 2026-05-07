@@ -1,6 +1,6 @@
 # -----------------------------------------------------------------------------
 # Default configuration for the cisTopic TF-imputation pipeline.
-# Paths are placeholders — edit before running on your cluster.
+# Paths are placeholders -- edit before running on your cluster.
 # Every parameter may also be overridden on the command line with --<name>.
 # -----------------------------------------------------------------------------
 
@@ -21,19 +21,14 @@ paths:
 # -----------------------------------------------------------------------------
 filter:
   # 1-kb-bin CTCF scATAC is *extremely* sparse: 768k nonzeros over 3.03M
-  # regions x 10410 cells (~74 nonzero bins per cell, ~1.3 cells per bin in
-  # the nonzero subset). Survivors at progressively stricter min_cells_per_region:
+  # regions x 10410 cells. Survivors at progressively stricter
+  # min_cells_per_region:
   #   >=1: 597236   >=2: 119356   >=3: 29679   >=5: 4914   >=10: 322
-  # Anything stricter than 2 collapses the matrix and kills the cell axis
-  # (run was cistopic_full-47093076 with >=10: 322 regions x 0 cells).
-  # We sit at >=2 - drops the ~478k singleton bins that contributed noise to
+  # We sit at >=2 -- drops the ~478k singleton bins that contributed noise to
   # the previous degenerate LDA run, keeps a 119k-region vocabulary with
-  # median 14 nonzero bins per cell.
-  #
-  # The HDF5 written by 05_impute.py is padded back to the full pre-filter
-  # region list, so dropped bins appear as zero rows in the imputed matrix
-  # and downstream tools (bedGraph/bigWig) keep the original genome
-  # coordinate system.
+  # median 14 nonzero bins per cell. cisTopic's MALLET LDA is documented to
+  # need this filter for stability, so we keep it here even though FITS and
+  # scOpen do not.
   min_counts_per_region: 2
 
   # Drop regions present (>=1 count) in fewer than this many cells.
@@ -51,65 +46,32 @@ filter:
 # LDA (MALLET) parameters
 # -----------------------------------------------------------------------------
 lda:
-  # Grid of topic counts to train. With ~290k token-assignments after the
-  # min_cells>=2 filter, K above ~50 gives <6k tokens/topic and runs into
-  # the eta prior. Cap the grid here.
   n_topics: [10, 15, 20, 30, 50]
 
-  # Dirichlet priors.
-  #   alpha (cell-topic prior). cisTopic's paper formula alpha = 50/T assumes
-  #   cells with many counts; here cells carry ~14 nonzero bins (median), so
-  #   alpha = 50 (=> alpha/K ~ 1-5) swamps the evidence and pushes every cell
-  #   toward the uniform topic mixture. alpha = 3 gives alpha/K ~ 0.06-0.3,
-  #   leaving prior pseudo-counts per cell at ~3 vs. evidence ~14.
   alpha: 3
-  alpha_by_topic: true    # true  -> alpha is interpreted as alpha/T per topic
-
-  #   eta (topic-region prior). With 119k vocab post-filter and ~290k tokens,
-  #   eta = 0.1 puts ~12k prior pseudo-counts per topic vs. ~10k observed -
-  #   prior >= data, so phi cannot concentrate. eta = 0.01 gives ~1.2k prior
-  #   per topic vs. 6k-29k observed depending on K.
+  alpha_by_topic: true
   eta: 0.01
   eta_by_topic: false
 
   iterations: 500
   threads: 16
   random_seed: 555
-  # Java heap size passed to MALLET via the MALLET_MEMORY env var.
   memory: 200G
 
 # -----------------------------------------------------------------------------
 # Model selection
 # -----------------------------------------------------------------------------
 select:
-  # Metric used to pick the best K. Options:
-  #   "arun_2010"       (lower is better)
-  #   "cao_juan_2009"   (lower is better)
-  #   "mimno_2011"      (higher is better; coherence)
-  #   "loglikelihood"   (higher is better; cisTopic paper default)
-  #   "manual"          (use select.manual_k)
   primary_metric: manual
-  manual_k: 30          # placeholder; re-pick from the new grid after 03/04
+  manual_k: 30
 
 # -----------------------------------------------------------------------------
-# Imputation (predictive distribution P(r|c) = phi^T theta)
+# Imputation output (predictive distribution P(r|c) ~ phi @ theta)
+#
+# Step 05 writes <work>/impute/{factors.npz, regions.tsv, barcodes.tsv,
+# meta.json} (plus theta/phi as parquet + npy for backwards compatibility).
+# Downstream comparisons live under XuLab/downstream/ and consume those files
+# directly via the universal compare_pos_neg.py.
 # -----------------------------------------------------------------------------
 impute:
-  # "theta_phi_only"  -> save only cell_topic (theta) and region_topic (phi);
-  #                      the full imputed matrix can be reconstructed on demand.
-  # "hdf5_all"        -> write float32 HDF5 for every region that survived filtering.
-  # "hdf5_variable"   -> write HDF5 only for the top-variable regions (see n_top_variable).
-  mode: hdf5_all
-
-  scale_factor: 1000000          # pycisTopic default
-  n_top_variable: 200000         # used only when mode == hdf5_variable
-
-# -----------------------------------------------------------------------------
-# Optional downstream analyses (step 06)
-# -----------------------------------------------------------------------------
-downstream:
-  # Imputation QC figures (09/08/11) do not use UMAP; set true only if you want topic-space UMAP.
-  run_umap: false
-  run_binarize_topics: true
-  # Any of: "otsu", "yen", "li", "aucell".  "otsu" is the pycisTopic default.
-  binarize_method: otsu
+  scale_factor: 1000000

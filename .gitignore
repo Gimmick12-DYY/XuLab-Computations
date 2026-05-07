@@ -10,6 +10,7 @@ cisTopic/scripts/__pycache__
 FITSpython/__pycache__
 FITS/work/
 FITS/scripts/__pycache__
+scOpen/work/
 .DS_Store
 *.pkl
 *.err

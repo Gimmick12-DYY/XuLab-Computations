@@ -2,14 +2,13 @@
 #SBATCH --job-name=cistopic_05_impute
 #SBATCH --output=%x-%j.out
 #SBATCH --error=%x-%j.err
-#SBATCH --cpus-per-task=8
-#SBATCH --mem=64G
-#SBATCH --time=08:00:00
+#SBATCH --cpus-per-task=4
+#SBATCH --mem=32G
+#SBATCH --time=01:00:00
 
-# Memory-heavy step if impute.mode is "hdf5_all" or "hdf5_variable":
-# materialising phi^T @ theta for ~1M regions x 10K cells takes ~40 GB in
-# float32, peaking much higher in pycisTopic's internal copies. Adjust --mem
-# to your actual surviving region count.
+# Persist phi (R x K) and theta (K x C) to <work>/impute/{factors.npz,
+# regions.tsv, barcodes.tsv, meta.json}. We never materialise the full
+# phi @ theta product, so memory is dominated by the factors themselves.
 
 set -euo pipefail
 
