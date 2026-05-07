@@ -2,8 +2,8 @@
 #SBATCH --job-name=scopen_full
 #SBATCH --output=%x-%j.out
 #SBATCH --error=%x-%j.err
-#SBATCH --cpus-per-task=8
-#SBATCH --mem=192G
+#SBATCH --cpus-per-task=32
+#SBATCH --mem=96G
 #SBATCH --time=24:00:00
 
 # Run the scOpen imputation pipeline end-to-end:

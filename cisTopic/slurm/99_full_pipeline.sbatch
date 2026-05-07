@@ -2,8 +2,8 @@
 #SBATCH --job-name=cistopic_full
 #SBATCH --output=%x-%j.out
 #SBATCH --error=%x-%j.err
-#SBATCH --cpus-per-task=16
-#SBATCH --mem=192G
+#SBATCH --cpus-per-task=32
+#SBATCH --mem=96G
 #SBATCH --time=72:00:00
 
 # Run the cisTopic imputation pipeline end-to-end:
