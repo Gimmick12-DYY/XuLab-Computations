@@ -6,9 +6,9 @@
 #SBATCH --mem=64G
 #SBATCH --time=02:00:00
 
-# Wrap FITS Phase2 output as imputed_Prc_hdf5_all.h5 (cisTopic-compatible
-# schema). Memory scales with R_full * C — for the CTCF dataset (3M x 10K
-# float32 with gzip-4) the streamed write peaks at ~10 GB.
+# Persist FITS Phase2 output as <work>/impute/{matrix.npy, regions.tsv,
+# barcodes.tsv, meta.json}. Memory scales with the FITS-modeled subset only
+# (top-N regions x C cells), so this is small.
 
 set -euo pipefail
 

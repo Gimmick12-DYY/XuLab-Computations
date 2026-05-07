@@ -6,7 +6,8 @@ channels:
 dependencies:
   - python=3.9          # scOpen tested through 3.9; safest target
   - pip
-  - numpy
+  # PyTables (tables) must match NumPy ABI; NumPy 2.x breaks older pytables wheels.
+  - numpy>=1.24,<2
   - scipy
   - pandas
   - pyarrow

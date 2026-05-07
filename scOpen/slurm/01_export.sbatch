@@ -20,12 +20,14 @@ fi
 cd "${ROOT_DIR}"
 
 CFG="${CFG:-${ROOT_DIR}/configs/default.yaml}"
+CONDA_ENV="${CONDA_ENV:-scopen}"
 
 if [[ -f /etc/profile.d/modules.sh ]]; then
   # shellcheck source=/dev/null
   source /etc/profile.d/modules.sh
 fi
-module load r/4.4.0 || true
+source "$(conda info --base)/etc/profile.d/conda.sh"
+conda activate "${CONDA_ENV}"
 
 read_yaml() {
   if command -v yq >/dev/null 2>&1; then

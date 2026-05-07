@@ -82,8 +82,31 @@ ensure_file <- function(key) {
   if (file.exists(path)) return(path)
   if (isTRUE(opt$`no-download`))
     stop(sprintf('Missing %s and --no-download was passed.', path))
-  message(sprintf('[prep] Downloading %s -> %s', URLS[[key]], path))
-  download.file(URLS[[key]], destfile = path, quiet = TRUE, mode = 'wb')
+  url <- URLS[[key]]
+  message(sprintf('[prep] Downloading %s -> %s', url, path))
+  # Longleaf network can be bursty; use a longer timeout and retry loop.
+  old_timeout <- getOption('timeout')
+  on.exit(options(timeout = old_timeout), add = TRUE)
+  options(timeout = max(600, old_timeout))
+  ok <- FALSE
+  for (attempt in 1:4) {
+    if (attempt > 1L) {
+      message(sprintf('[prep] Retry %d/4 for %s', attempt, key))
+      Sys.sleep(2L * attempt)
+    }
+    tryCatch({
+      download.file(url, destfile = path, quiet = TRUE, mode = 'wb')
+      sz <- suppressWarnings(file.info(path)$size)
+      if (!is.na(sz) && sz > 0) ok <- TRUE
+    }, error = function(e) {
+      message(sprintf('[prep] Download failed (%s): %s', key, conditionMessage(e)))
+    })
+    if (ok) break
+    if (file.exists(path)) file.remove(path)
+  }
+  if (!ok) {
+    stop(sprintf('Failed to download %s after retries: %s', key, url))
+  }
   path
 }
 

@@ -2,21 +2,22 @@
 # -----------------------------------------------------------------------------
 # 02_prepare_scopen_input.py
 #
-# Apply cisTopic-style region/cell filtering and (optional) binarisation to the
-# Matrix Market output of 01_export_rds_to_mm.R, then write a 10X-format input
-# directory that scOpen can ingest:
+# Convert the Matrix Market output of 01_export_rds_to_mm.R into the 10X-format
+# directory scOpen ingests:
 #
 #   <work>/scopen_input/
-#     matrix.mtx     un-gzipped, integer-valued, regions x cells
-#     barcodes.tsv   one barcode per line
-#     peaks.bed      tab-separated chrom\tstart\tend (parsed from chr:start-end)
+#     matrix.mtx          un-gzipped, integer-valued, regions x cells
+#     barcodes.tsv        one barcode per line
+#     peaks.bed           tab-separated chrom\tstart\tend
+#     regions.tsv         original chr:start-end strings, in row order
 #
 # scOpen's `--input_format 10X` loader reads the mtx via scipy.io.mmread and
 # rebuilds peak IDs as `<chrom>:<start>-<end>`, so we keep the BED columns in
 # sync with our region naming convention.
 #
-# Unlike FITS, scOpen accepts sparse input natively, so there is NO top-N
-# region subset — we run scOpen on the entire post-filter universe.
+# We do NOT apply any cisTopic-style cell/region filter -- scOpen handles
+# sparse input natively (TF-IDF + sparse NMF) and does not need that filter
+# to converge.
 # -----------------------------------------------------------------------------
 from __future__ import annotations
 
@@ -59,24 +60,21 @@ def _region_to_bed_row(name: str) -> tuple[str, str, str]:
 
 def main() -> int:
     ap = base_parser(__doc__ or '')
-    ap.add_argument('--min-counts-per-region', type=int, default=None)
-    ap.add_argument('--min-cells-per-region',  type=int, default=None)
-    ap.add_argument('--min-regions-per-cell',  type=int, default=None)
     ap.add_argument('--no-binarize', action='store_true')
+    ap.add_argument('--drop-zero-rows', action='store_true', default=True,
+                    help='Drop regions with zero counts across all cells. '
+                         'These are uninformative and waste memory in scOpen NMF. '
+                         'Default: True.')
+    ap.add_argument('--no-drop-zero-rows', dest='drop_zero_rows',
+                    action='store_false')
     args = ap.parse_args()
 
     cfg = resolve_paths(load_config(args.config), args.work_dir)
     flt = cfg.setdefault('filter', {})
 
-    for k, v in (
-        ('min_counts_per_region', args.min_counts_per_region),
-        ('min_cells_per_region',  args.min_cells_per_region),
-        ('min_regions_per_cell',  args.min_regions_per_cell),
-    ):
-        if v is not None:
-            flt[k] = v
     if args.no_binarize:
         flt['binarize_input'] = False
+    binarize = bool(flt.get('binarize_input', True))
 
     mm_dir = Path(cfg['paths']['mm'])
     mtx_path = mm_dir / 'matrix.mtx.gz'
@@ -98,37 +96,26 @@ def main() -> int:
     log.info('Loaded %d regions x %d cells, nnz=%d (density=%.3g)',
              *mat.shape, mat.nnz, mat.nnz / float(mat.shape[0] * mat.shape[1]))
 
-    # -- region filter --------------------------------------------------------
-    min_counts = int(flt.get('min_counts_per_region', 0))
-    min_cells  = int(flt.get('min_cells_per_region', 0))
-    if min_counts > 0 or min_cells > 0:
-        row_sum = np.asarray(mat.sum(axis=1)).ravel()
-        row_nnz = np.diff(mat.indptr)
-        keep_rows = (row_sum >= min_counts) & (row_nnz >= min_cells)
-        log.info(
-            'Region filter (counts>=%d, cells>=%d): keeping %d / %d (%.2f%%)',
-            min_counts, min_cells, int(keep_rows.sum()), len(keep_rows),
-            100.0 * keep_rows.mean(),
-        )
-        mat = mat[keep_rows]
-        regions = regions[keep_rows]
-
     # -- binarise -------------------------------------------------------------
-    if flt.get('binarize_input', True):
+    if binarize:
         log.info('Binarising matrix (count > 0 -> 1).')
         mat = mat.astype(bool).astype(np.int8)
 
-    # -- cell filter ----------------------------------------------------------
-    min_regs = int(flt.get('min_regions_per_cell', 0))
-    if min_regs > 0:
-        col_nnz = np.diff(mat.tocsc().indptr)
-        keep_cols = col_nnz >= min_regs
-        log.info('Cell filter (regions>=%d): keeping %d / %d cells.',
-                 min_regs, int(keep_cols.sum()), len(keep_cols))
-        mat = mat[:, keep_cols]
-        barcodes = barcodes[keep_cols]
+    # -- drop all-zero rows ---------------------------------------------------
+    # NMF cannot do anything useful with all-zero rows, so we drop them. This
+    # is NOT the cisTopic-style quality filter -- it just removes rows that
+    # contribute zero information to the factorisation.
+    if args.drop_zero_rows:
+        row_nnz = np.diff(mat.indptr)
+        keep_rows = row_nnz > 0
+        n_drop = int((~keep_rows).sum())
+        if n_drop > 0:
+            log.info('Dropping %d / %d all-zero rows; keeping %d.',
+                     n_drop, len(keep_rows), int(keep_rows.sum()))
+            mat = mat[keep_rows]
+            regions = regions[keep_rows]
 
-    log.info('Post-filter matrix: %d regions x %d cells, nnz=%d',
+    log.info('scOpen input matrix: %d regions x %d cells, nnz=%d',
              *mat.shape, mat.nnz)
 
     # -- write 10X-format input directory ------------------------------------
@@ -138,6 +125,7 @@ def main() -> int:
     matrix_path  = out_dir / 'matrix.mtx'
     barcode_path = out_dir / 'barcodes.tsv'
     peak_path    = out_dir / 'peaks.bed'
+    regions_path = out_dir / 'regions.tsv'
 
     log.info('Writing %s', matrix_path)
     sio.mmwrite(str(matrix_path), sp.coo_matrix(mat),
@@ -152,25 +140,19 @@ def main() -> int:
             chrom, s, e = _region_to_bed_row(str(r))
             fh.write(f'{chrom}\t{s}\t{e}\n')
 
-    # Persist filtered region list (in original chr:start-end format) so step
-    # 05 can pad the imputed matrix back into the full pre-filter universe.
-    _write_lines(list(regions), out_dir / 'regions.filtered.tsv')
+    _write_lines(list(regions), regions_path)
 
     meta = {
-        'filtered_shape':        [int(mat.shape[0]), int(mat.shape[1])],
-        'n_regions_in_universe': int(len(regions)),
-        'n_cells':               int(len(barcodes)),
-        'filter': {
-            'min_counts_per_region': min_counts,
-            'min_cells_per_region':  min_cells,
-            'min_regions_per_cell':  min_regs,
-            'binarize_input':        bool(flt.get('binarize_input', True)),
-        },
-        'nnz':                   int(mat.nnz),
-        'matrix_path':           str(matrix_path),
-        'barcodes_path':         str(barcode_path),
-        'peaks_path':            str(peak_path),
-        'regions_filtered_path': str(out_dir / 'regions.filtered.tsv'),
+        'shape':              [int(mat.shape[0]), int(mat.shape[1])],
+        'n_regions':          int(mat.shape[0]),
+        'n_cells':            int(mat.shape[1]),
+        'binarize_input':     binarize,
+        'drop_zero_rows':     bool(args.drop_zero_rows),
+        'nnz':                int(mat.nnz),
+        'matrix_path':        str(matrix_path),
+        'barcodes_path':      str(barcode_path),
+        'peaks_path':         str(peak_path),
+        'regions_path':       str(regions_path),
     }
     (out_dir / 'prepare_meta.json').write_text(json.dumps(meta, indent=2) + '\n')
     log.info('Done.')

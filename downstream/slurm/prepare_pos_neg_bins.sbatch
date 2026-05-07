@@ -44,7 +44,6 @@ if [[ -f /etc/profile.d/modules.sh ]]; then
   # shellcheck source=/dev/null
   source /etc/profile.d/modules.sh
 fi
-module load r/4.4.0 || true
 
 source "$(conda info --base)/etc/profile.d/conda.sh"
 conda activate "${CONDA_ENV}"

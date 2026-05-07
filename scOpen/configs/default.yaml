@@ -1,7 +1,8 @@
 # -----------------------------------------------------------------------------
 # Default configuration for the scOpen TF imputation pipeline.
-# Workflow mirrors cisTopic / FITS so the same eval scripts (07-11) and the
-# downstream/ comparison work on either pipeline's HDF5 output.
+# Step 05 writes a compact factored output that the universal
+# downstream/compare_pos_neg.py consumes directly; post-imputation analyses
+# live under XuLab/downstream/.
 # -----------------------------------------------------------------------------
 
 paths:
@@ -9,18 +10,14 @@ paths:
   work_dir:    /work/users/d/y/dyy12/XuLab/scOpen/work/ctcf
 
 # -----------------------------------------------------------------------------
-# Region / cell pre-filtering — same knobs and defaults as cisTopic / FITS so
-# the modeled matrix is identical across all three pipelines.
+# Pre-processing
+#
+# scOpen's TF-IDF + sparse NMF handles the full input universe natively, so we
+# do NOT apply the cisTopic-style cell/region quality filter. The only thing
+# step 02 does is binarise (scOpen expects a binary peak-by-cell input) and
+# drop all-zero rows that cannot contribute to NMF.
 # -----------------------------------------------------------------------------
 filter:
-  # CTCF survivors at progressively stricter min_cells_per_region:
-  #   >=1: 597236   >=2: 119356   >=3: 29679   >=5: 4914   >=10: 322
-  # We sit at >=2 (matches cisTopic and FITS).
-  min_counts_per_region: 2
-  min_cells_per_region:  2
-  min_regions_per_cell:  5
-  # scOpen expects a binary peak-by-cell input and TF-IDF transforms it
-  # internally. Leave true.
   binarize_input: true
 
 # -----------------------------------------------------------------------------
@@ -48,29 +45,9 @@ scopen:
   verbose: 0
 
 # -----------------------------------------------------------------------------
-# Imputation HDF5 output (cisTopic-compatible schema)
+# Imputation output
+#
+# Step 05 writes <work>/impute/{factors.npz, regions.tsv, barcodes.tsv, meta.json}.
 # -----------------------------------------------------------------------------
 impute:
-  # Multiplier applied so that sum-over-regions per cell ~= scale_factor.
-  # Eval scripts auto-detect the actual per-cell sum mean and rescale into
-  # probability space, so this is mostly a convention.
   scale_factor: 1000000
-
-# -----------------------------------------------------------------------------
-# Optional downstream analyses (step 06)
-# -----------------------------------------------------------------------------
-downstream:
-  run_umap: false
-  run_binarize_topics: false
-
-# -----------------------------------------------------------------------------
-# Step 07-11 evaluation knobs (defaults shared with cisTopic / FITS).
-# -----------------------------------------------------------------------------
-eval:
-  n_samples: 100000
-  seed: 42
-  compare_space: counts
-  region_sample: 20000
-  cell_sample: 0
-  nonzero_thresholds: [0, 1e-8, 3e-8, 1e-7, 3e-7, 1e-6, 3e-6, 1e-5, 3e-5, 1e-4]
-  fragmentation_thresholds: [1e-7, 1e-6, 3e-6, 1e-5, 3e-5, 1e-4]

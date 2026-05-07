@@ -6,9 +6,9 @@
 #SBATCH --mem=64G
 #SBATCH --time=02:00:00
 
-# Reconstruct W @ H, pad to full pre-filter region universe, write
-# imputed_Prc_hdf5_all.h5 (cisTopic-compatible schema). Memory peaks at
-# ~2-3x the W and H matrices since we stream rows of W @ H in chunks.
+# Persist scOpen factorisation as <work>/impute/{factors.npz, regions.tsv,
+# barcodes.tsv, meta.json}. Memory is dominated by W and H themselves; we
+# never materialise the full dense product.
 
 set -euo pipefail
 
