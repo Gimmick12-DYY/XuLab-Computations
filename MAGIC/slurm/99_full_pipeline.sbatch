@@ -2,8 +2,8 @@
 #SBATCH --job-name=magic_full
 #SBATCH --output=%x-%j.out
 #SBATCH --error=%x-%j.err
-#SBATCH --cpus-per-task=8
-#SBATCH --mem=128G
+#SBATCH --cpus-per-task=4
+#SBATCH --mem=96G
 #SBATCH --time=12:00:00
 
 # Run the MAGIC imputation pipeline end-to-end:
@@ -39,7 +39,6 @@ if [[ -f /etc/profile.d/modules.sh ]]; then
   # shellcheck source=/dev/null
   source /etc/profile.d/modules.sh
 fi
-module load r/4.4.0 || true
 
 source "$(conda info --base)/etc/profile.d/conda.sh"
 conda activate "${CONDA_ENV}"

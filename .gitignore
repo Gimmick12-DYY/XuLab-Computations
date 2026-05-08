@@ -11,6 +11,7 @@ FITSpython/__pycache__
 FITS/work/
 FITS/scripts/__pycache__
 scOpen/work/
+MAGIC/work/
 downstream/cache/
 downstream/bins/
 downstream/pos_neg_all4/

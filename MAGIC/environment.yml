@@ -6,9 +6,9 @@ channels:
 dependencies:
   - python=3.10
   - pip
-  - numpy
+  - numpy<2
   - scipy
-  - pandas
+  - pandas>=2.1,<2.3
   - pyarrow
   - h5py
   - scikit-learn

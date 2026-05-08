@@ -85,7 +85,7 @@ def main() -> int:
 
     # MAGIC wants cells x features; transpose once.
     log.info('Transposing to cells x regions for MAGIC...')
-    X = mat.T.tocsr()  # cells x regions
+    X = mat.T.tocsr().astype(np.float32)  # cells x regions
     del mat
     log.info('  shape (cells x regions) = %s, nnz=%d', X.shape, X.nnz)
 
@@ -127,7 +127,8 @@ def main() -> int:
 
     log.info('Running MAGIC.fit_transform on %d cells x %d regions ...',
              X.shape[0], X.shape[1])
-    X_magic = op.fit_transform(X)
+    # Ask MAGIC explicitly for all features; avoids an internal warning path.
+    X_magic = op.fit_transform(X, genes='all_genes')
     if hasattr(X_magic, 'values'):  # pandas DataFrame
         X_magic = X_magic.values
     X_magic = np.asarray(X_magic, dtype=np.float32)

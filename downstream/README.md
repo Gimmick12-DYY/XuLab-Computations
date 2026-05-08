@@ -1,7 +1,8 @@
 # Downstream cross-pipeline analyses
 
-Scripts that consume the `imputed_Prc_hdf5_all.h5` written by either pipeline
-(cisTopic or FITS) plus the raw `mm/` matrix, and produce comparisons.
+Scripts that consume compact imputation outputs written by each pipeline
+(`factors.npz` or `matrix.npy` + `regions.tsv` + `barcodes.tsv`) plus the raw
+`mm/` matrix, and produce comparisons.
 
 ## Bin-level positive vs negative CTCF signal
 
@@ -19,8 +20,8 @@ hg38 v2 blacklist, then computes:
   match the positive count (seed defaults to 2026, matching the notebook)
 
 Blacklist bins are excluded from both pools. Indices are emitted in the
-**original mm row space** (i.e. directly index into `imputed_Prc_hdf5_all.h5`'s
-`Prc` rows).
+**original mm row space** (`bin_idx_orig`) and each row also includes
+`bin_name` (`chr:start-end`) so imputed matrices can be aligned by region name.
 
 ```bash
 Rscript downstream/prepare_pos_neg_bins.R \
@@ -39,7 +40,7 @@ Outputs:
 | `pos_neg_bins.meta.json` | source URLs, blacklist count, n_pos/n_neg, seed |
 
 `mm/regions.tsv.gz` only needs to be done once per data set — the same bin
-index file works for any imputed HDF5 derived from that input.
+index file works for any imputed output derived from that input.
 
 SLURM:
 
@@ -54,18 +55,25 @@ CACHE_DIR=/work/.../downstream/cache \
 ### Step 2 — compare across pipelines
 
 `compare_pos_neg.py` accepts any number of `--input LABEL=PATH` pairs where
-`PATH` is either a directory containing `matrix.mtx.gz` (raw counts) or an
-HDF5 file with a `Prc` dataset (imputed). It computes the per-bin total signal
-at the positive and negative bins, reports AUROC / KS / median ratio, and
-writes a multi-panel ECDF figure plus a single-panel AUROC bar chart.
+`PATH` is one of:
+
+* a directory containing `matrix.mtx.gz` (raw counts),
+* a directory containing `factors.npz` + `regions.tsv` (factored imputed output),
+* a directory containing `matrix.npy` + `regions.tsv` (dense imputed output),
+* or a legacy HDF5 file with a `Prc` dataset.
+
+It computes the per-bin total signal at the positive and negative bins,
+reports AUROC / KS / median ratio, and writes multi-panel ECDF + AUROC plots.
 
 ```bash
 python downstream/compare_pos_neg.py \
   --bins-tsv /work/.../downstream/bins/pos_neg_bins.tsv \
   --out-dir  /work/.../downstream/pos_neg \
   --input raw=/work/.../cistopic_ctcf/mm \
-  --input cisTopic=/work/.../cistopic_ctcf/impute/imputed_Prc_hdf5_all.h5 \
-  --input FITS=/work/.../FITS/work/ctcf/impute/imputed_Prc_hdf5_all.h5
+  --input cisTopic=/work/.../cistopic_ctcf/impute \
+  --input FITS=/work/.../FITS/work/ctcf/impute \
+  --input scOpen=/work/.../scOpen/work/ctcf/impute \
+  --input MAGIC=/work/.../MAGIC/work/ctcf/impute
 ```
 
 Outputs (under `--out-dir`):
@@ -75,7 +83,7 @@ Outputs (under `--out-dir`):
 | `compare_pos_neg.png` | one ECDF panel per `--input`, pos vs neg curves overlaid |
 | `compare_pos_neg_auroc.png` | AUROC bar chart, one bar per input |
 | `compare_pos_neg.json` | per-input AUROC, KS statistic + p-value, pos/neg medians, log2(median ratio), zero fractions |
-| `compare_pos_neg.tsv` | long-form per-bin signal table (`input`, `group`, `bin_idx_orig`, `signal`) for replotting |
+| `compare_pos_neg.tsv` | long-form per-bin signal table (`input`, `group`, `bin_idx_orig`, `bin_name`, `modeled_in_input`, `in_modeled_union`, `signal`) for replotting |
 
 SLURM:
 
@@ -83,7 +91,7 @@ SLURM:
 sbatch --export=ALL,\
 BINS_TSV=/work/.../downstream/bins/pos_neg_bins.tsv,\
 OUT_DIR=/work/.../downstream/pos_neg,\
-INPUTS="raw=/work/.../cistopic_ctcf/mm cisTopic=/work/.../cistopic_ctcf/impute/imputed_Prc_hdf5_all.h5 FITS=/work/.../FITS/work/ctcf/impute/imputed_Prc_hdf5_all.h5" \
+INPUTS="raw=/work/.../cistopic_ctcf/mm cisTopic=/work/.../cistopic_ctcf/impute FITS=/work/.../FITS/work/ctcf/impute scOpen=/work/.../scOpen/work/ctcf/impute MAGIC=/work/.../MAGIC/work/ctcf/impute" \
   downstream/slurm/compare_pos_neg.sbatch
 ```
 

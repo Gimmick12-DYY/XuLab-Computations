@@ -2,7 +2,7 @@
 #SBATCH --job-name=cistopic_full
 #SBATCH --output=%x-%j.out
 #SBATCH --error=%x-%j.err
-#SBATCH --cpus-per-task=8
+#SBATCH --cpus-per-task=4
 #SBATCH --mem=96G
 #SBATCH --time=24:00:00
 

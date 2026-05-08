@@ -40,15 +40,15 @@ magic:
   # often picks t in [3, 12] for scATAC-style data. Smaller t = less smoothing.
   t: auto
   # PCA components for affinity (None disables PCA -- only useful at <1000 features).
-  n_pca: 100
+  n_pca: 50
   # 'exact' is the reference solver; 'approximate' uses landmarks for very large
   # cell counts (>50k). At ~10k cells exact is fine.
-  solver: exact
+  solver: approximate
   # graphtools knn_dist metric.
   knn_dist: euclidean
   random_state: 42
   # Threads for the affinity computation and matrix multiplications.
-  n_jobs: 8
+  n_jobs: 4
   # Verbosity: 0 (silent) .. 2 (debug).
   verbose: 1
 
