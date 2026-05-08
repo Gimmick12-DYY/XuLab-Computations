@@ -1,0 +1,66 @@
+# -----------------------------------------------------------------------------
+# Default configuration for the MAGIC TF imputation pipeline.
+# Step 05 writes a compact dense-matrix output that the universal
+# downstream/compare_pos_neg.py consumes directly; post-imputation analyses
+# live under XuLab/downstream/.
+# -----------------------------------------------------------------------------
+
+paths:
+  # Input R object: sparse regions x cells matrix (e.g. CTCF_bin1000_mtx.rds)
+  input_rds:   /work/users/d/y/dyy12/XuLab/data/CTCF_bin1000_mtx.rds
+
+  # Where the pipeline writes intermediate and final outputs.
+  work_dir:    /work/users/d/y/dyy12/XuLab/MAGIC/work/ctcf
+
+# -----------------------------------------------------------------------------
+# Pre-processing
+#
+# MAGIC operates on a cells x features dense matrix and accepts sparse input
+# directly. We do NOT apply the cisTopic-style cell/region quality filter --
+# MAGIC's diffusion handles sparsity by design. We do binarise (MAGIC was
+# originally designed for counts but binarised scATAC-seq is the standard
+# scOpen / cisTopic input, and lets us compare apples-to-apples) and drop
+# all-zero rows that contribute nothing to the affinity computation.
+# -----------------------------------------------------------------------------
+filter:
+  binarize_input:  true
+  drop_zero_rows:  true
+
+# -----------------------------------------------------------------------------
+# MAGIC parameters (Van Dijk et al. 2018, see https://github.com/KrishnaswamyLab/MAGIC)
+# -----------------------------------------------------------------------------
+magic:
+  # Number of nearest neighbours from which to compute kernel bandwidth.
+  knn: 5
+  # Maximum kNN with non-zero connection. Defaults to 3 * knn when null.
+  knn_max: null
+  # Decay rate of kernel tails (alpha). null disables alpha-decaying kernel.
+  decay: 1
+  # Diffusion time. Integer or "auto" (kneedle on Procrustes residual). "auto"
+  # often picks t in [3, 12] for scATAC-style data. Smaller t = less smoothing.
+  t: auto
+  # PCA components for affinity (None disables PCA -- only useful at <1000 features).
+  n_pca: 100
+  # 'exact' is the reference solver; 'approximate' uses landmarks for very large
+  # cell counts (>50k). At ~10k cells exact is fine.
+  solver: exact
+  # graphtools knn_dist metric.
+  knn_dist: euclidean
+  random_state: 42
+  # Threads for the affinity computation and matrix multiplications.
+  n_jobs: 8
+  # Verbosity: 0 (silent) .. 2 (debug).
+  verbose: 1
+
+# -----------------------------------------------------------------------------
+# Imputation output
+#
+# Step 05 writes <work>/impute/{matrix.npy, regions.tsv, barcodes.tsv, meta.json}.
+# matrix.npy is a (n_modeled_regions, n_cells) float32 array; the rows are
+# aligned to regions.tsv and the cols to barcodes.tsv.
+# -----------------------------------------------------------------------------
+impute:
+  # Multiplier applied so that sum-over-regions per cell ~= scale_factor.
+  # Eval scripts auto-detect the actual per-cell sum mean and rescale into
+  # probability space, so this is mostly a convention.
+  scale_factor: 1000000

@@ -1,0 +1,26 @@
+name: magic
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - python=3.10
+  - pip
+  - numpy
+  - scipy
+  - pandas
+  - pyarrow
+  - h5py
+  - scikit-learn
+  - matplotlib
+  - seaborn
+  - pyyaml
+  - tqdm
+  - r-base>=4.3
+  - r-matrix
+  - r-optparse
+  - bioconductor-singlecellexperiment
+  - bioconductor-summarizedexperiment
+  - r-seurat
+  - pip:
+      - magic-impute    # provides the `magic` python module (van Dijk et al. 2018)
