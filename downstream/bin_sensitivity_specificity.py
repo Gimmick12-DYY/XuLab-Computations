@@ -2,34 +2,29 @@
 # -----------------------------------------------------------------------------
 # bin_sensitivity_specificity.py
 #
-# **Bin-level** sensitivity / specificity using the cCRE-derived ground truth
-# from prepare_pos_neg_bins.R (the same positive / negative bin set that
-# `Bin_posVSneg.ipynb` produces). For each imputation pipeline:
+# Bin-level coverage report. For each pipeline and each bin set (positive /
+# negative bins from prepare_pos_neg_bins.R), report the fraction of bins
+# whose per-bin total imputed signal exceeds the chosen threshold.
 #
-#   1. Compute per-bin signal at the positive bins and the negative bins
-#      (sum across cells, exactly like compare_pos_neg.py).
-#   2. Treat each bin as one classification example:
-#         pos bin with signal > t   -> TP
-#         pos bin with signal <= t  -> FN
-#         neg bin with signal > t   -> FP
-#         neg bin with signal <= t  -> TN
-#      so   sensitivity = TP / n_pos,    specificity = TN / n_neg.
-#   3. Sweep thresholds and report sens / spec / precision / F1 / MCC, plus
-#      AUROC / AUPR and two natural operating points:
-#         * max-F1 threshold
-#         * Youden J = max(sens + spec - 1)
+#   pos_coverage = #(positive bins with signal > t) / n_pos
+#   neg_coverage = #(negative bins with signal > t) / n_neg
 #
-# This is the bin-level analogue of sensitivity_specificity.py (which uses raw
-# observed counts as ground truth across all entries). The two are complementary:
-#   * `sensitivity_specificity.py` -- "does the imputer recover what raw saw?"
-#   * `bin_sensitivity_specificity.py` -- "does the imputer separate true CTCF
-#     regulatory bins from background?"
+# Threshold modes (top-K wins when set; otherwise sparsity matching; otherwise
+# fixed threshold):
+#   --top-k N             : every pipeline calls its top-N bins (apples-to-apples).
+#   --match-to LABEL      : SPARSITY-MATCHED. K = number of bins called by LABEL
+#                           (default 'raw') at --threshold. K can be scaled by
+#                           --match-multiplier. Every pipeline (including LABEL)
+#                           then calls its top-K bins.
+#   --threshold T         : fallback when neither is set; covered = signal > T.
+#
+# No ROC / AUPR / F1 -- just coverage at a comparable signal level.
 #
 # Each --input PATH is one of:
-#   * directory with matrix.mtx.gz       (raw counts; e.g. <work>/mm)
-#   * directory with factors.npz + regions.tsv   (cisTopic / scOpen)
-#   * directory with matrix.npy  + regions.tsv   (FITS / MAGIC)
-#   * legacy HDF5 file with /Prc                 (older runs)
+#   * directory with matrix.mtx.gz                (raw counts; e.g. <work>/mm)
+#   * directory with factors.npz + regions.tsv    (cisTopic / scOpen)
+#   * directory with matrix.npy  + regions.tsv    (FITS / MAGIC)
+#   * legacy HDF5 file with /Prc                  (older runs)
 #
 # Usage:
 #   python bin_sensitivity_specificity.py \
@@ -37,7 +32,6 @@
 #     --out-dir  /work/.../downstream/bin_sensitivity_specificity \
 #     --input raw=/work/.../mm \
 #     --input cisTopic=/work/.../cistopic_ctcf/impute \
-#     --input FITS=/work/.../FITS/work/ctcf/impute \
 #     --input scOpen=/work/.../scOpen/work/ctcf/impute \
 #     --input MAGIC=/work/.../MAGIC/work/ctcf/impute
 # -----------------------------------------------------------------------------
@@ -56,9 +50,8 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt  # noqa: E402
 import numpy as np  # noqa: E402
 import scipy.io as sio  # noqa: E402
-from sklearn.metrics import average_precision_score, roc_auc_score, roc_curve, precision_recall_curve  # noqa: E402
 
-log = logging.getLogger('bin_sens_spec')
+log = logging.getLogger('bin_coverage')
 logging.basicConfig(level=logging.INFO, format='%(asctime)s %(levelname)s %(message)s')
 
 
@@ -108,7 +101,11 @@ def load_bins_tsv(path: Path) -> tuple[np.ndarray, np.ndarray, list[str], list[s
 
 
 # -----------------------------------------------------------------------------
-# Per-bin total-signal loaders (mirror compare_pos_neg.py)
+# Per-bin total-signal loaders
+#
+# Each returns (signal, modeled_mask):
+#   signal[k]   = sum of imputed (or raw) counts across cells at bin k
+#   modeled[k]  = True if bin k is present in the imputer's modeled universe
 # -----------------------------------------------------------------------------
 def per_bin_total_from_mm(mm_dir: Path, bin_idx: np.ndarray
                            ) -> tuple[np.ndarray, np.ndarray]:
@@ -225,7 +222,21 @@ def detect_input_kind(path: Path) -> str:
         cand = list(path.glob('*.h5')) + list(path.glob('*.hdf5'))
         if cand:
             return 'hdf5_in_dir'
-    raise SystemExit(f'Cannot determine input kind from {path}')
+        try:
+            names = sorted(p.name for p in path.iterdir() if p.is_file())
+        except OSError as exc:
+            names = [f'<oserror: {exc}>']
+        head = names[:40]
+        more = f' (+{len(names) - 40} more)' if len(names) > 40 else ''
+        raise SystemExit(
+            f'Cannot determine input kind from {path}. Expected one of: '
+            'factors.npz + regions.tsv; matrix.npy + regions.tsv; matrix.mtx.gz; '
+            f'or a *.h5 / *.hdf5 file (FITS: run scripts/05_impute.py after Phase 2). '
+            f'Files present: {head!r}{more}'
+        )
+    if not path.exists():
+        raise SystemExit(f'Input path does not exist: {path}')
+    raise SystemExit(f'Unsupported input path (not a file or directory): {path}')
 
 
 def per_bin_total(label: str, path: Path, bin_idx: np.ndarray,
@@ -249,212 +260,166 @@ def per_bin_total(label: str, path: Path, bin_idx: np.ndarray,
 
 
 # -----------------------------------------------------------------------------
-# Threshold sweep + metrics
+# Coverage core
 # -----------------------------------------------------------------------------
-def auto_thresholds(signal: np.ndarray, n_thresholds: int) -> np.ndarray:
-    """Per-pipeline quantile-based threshold grid over the union of pos+neg signals.
-
-    Includes 0.0 as a top-right ROC anchor, plus the inf anchor in the
-    threshold sweep code itself.
-    """
-    s = signal[~np.isnan(signal)]
-    if s.size == 0:
-        return np.array([0.0])
-    qs = np.concatenate([
-        np.linspace(0.001, 0.5,  n_thresholds // 4, endpoint=False),
-        np.linspace(0.5,   0.9,  n_thresholds // 4, endpoint=False),
-        np.linspace(0.9,   0.99, n_thresholds // 4, endpoint=False),
-        np.linspace(0.99,  0.999, n_thresholds - 3 * (n_thresholds // 4), endpoint=True),
-    ])
-    thr = np.quantile(s, np.clip(qs, 0.0, 1.0))
-    thr = np.concatenate([[0.0], thr])
-    return np.unique(thr)
-
-
-def sweep_metrics(y_true: np.ndarray, signal: np.ndarray,
-                   thresholds: np.ndarray) -> dict[str, np.ndarray]:
-    """For each threshold t, compute TP/FP/FN/TN treating signal > t as pred-positive."""
-    pos_mask = y_true.astype(bool)
-    pos_total = int(pos_mask.sum())
-    neg_total = int((~pos_mask).sum())
-
-    T = len(thresholds)
-    TP = np.empty(T, dtype=np.int64)
-    FP = np.empty(T, dtype=np.int64)
-    for i, t in enumerate(thresholds):
-        pred = signal > t
-        tp = int(np.sum(pred & pos_mask))
-        fp = int(np.sum(pred & ~pos_mask))
-        TP[i] = tp; FP[i] = fp
-    FN = pos_total - TP
-    TN = neg_total - FP
-
-    eps = 1e-30
-    sens = TP / max(pos_total, 1)
-    spec = TN / max(neg_total, 1)
-    prec = np.where(TP + FP > 0, TP / np.maximum(TP + FP, eps), 0.0)
-    f1   = np.where(prec + sens > 0, 2 * prec * sens / np.maximum(prec + sens, eps), 0.0)
-    acc  = (TP + TN) / max(pos_total + neg_total, 1)
-    fpr  = 1.0 - spec
-    num  = TP.astype(np.float64) * TN - FP.astype(np.float64) * FN
-    denom = np.sqrt((TP + FP).astype(np.float64) * (TP + FN) * (TN + FP) * (TN + FN))
-    mcc = np.where(denom > 0, num / np.maximum(denom, eps), 0.0)
-    youden = sens + spec - 1.0
-
+def coverage_for_group(signal: np.ndarray, modeled: np.ndarray,
+                        covered: np.ndarray) -> dict[str, float | int]:
+    """Coverage stats for a single bin group (pos or neg) given a pre-computed
+    boolean ``covered`` mask aligned with ``signal``."""
+    n = int(signal.size)
+    n_modeled = int(modeled.sum())
+    n_covered = int(covered.sum())
+    n_covered_modeled = int((covered & modeled).sum())
     return {
-        'thresholds': np.asarray(thresholds, dtype=np.float64),
-        'TP': TP, 'FP': FP, 'FN': FN, 'TN': TN,
-        'sens': sens, 'spec': spec, 'prec': prec,
-        'f1': f1, 'mcc': mcc, 'acc': acc, 'fpr': fpr, 'tpr': sens,
-        'youden': youden,
-        'pos_total': pos_total, 'neg_total': neg_total,
+        'n':                       n,
+        'n_modeled':               n_modeled,
+        'n_covered':               n_covered,
+        'n_covered_modeled':       n_covered_modeled,
+        'coverage':                (n_covered / n) if n else float('nan'),
+        'coverage_pct':            (100.0 * n_covered / n) if n else float('nan'),
+        'coverage_modeled':        (n_covered_modeled / n_modeled) if n_modeled else float('nan'),
+        'coverage_modeled_pct':    (100.0 * n_covered_modeled / n_modeled) if n_modeled else float('nan'),
     }
 
 
-def operating_points(metrics: dict[str, np.ndarray]) -> dict[str, dict[str, float]]:
-    """Pick max-F1 and max-Youden thresholds; return their (t, sens, spec, F1, MCC)."""
-    out: dict[str, dict[str, float]] = {}
-    thr = metrics['thresholds']
-    if not thr.size:
-        return out
-    bf = int(np.argmax(metrics['f1']))
-    by = int(np.argmax(metrics['youden']))
-    for name, idx in (('max_f1', bf), ('youden_j', by)):
-        out[name] = {
-            'threshold':   float(thr[idx]),
-            'sensitivity': float(metrics['sens'][idx]),
-            'specificity': float(metrics['spec'][idx]),
-            'precision':   float(metrics['prec'][idx]),
-            'f1':          float(metrics['f1'][idx]),
-            'mcc':         float(metrics['mcc'][idx]),
-            'youden_j':    float(metrics['youden'][idx]),
-            'tp':          int(metrics['TP'][idx]),
-            'fp':          int(metrics['FP'][idx]),
-            'fn':          int(metrics['FN'][idx]),
-            'tn':          int(metrics['TN'][idx]),
-        }
-    return out
+def called_mask_threshold(signal: np.ndarray, threshold: float) -> np.ndarray:
+    """Mask of bins with signal > threshold."""
+    return signal > threshold
+
+
+def called_mask_top_k(signal: np.ndarray, k: int,
+                       rng: np.random.Generator | None = None
+                       ) -> tuple[np.ndarray, float, dict[str, int]]:
+    """Pick the top-``k`` bins by signal with **random tie-breaking** at the
+    cutoff value.
+
+    Without random tie-breaking, ``argpartition`` resolves ties by array
+    position. Because our bin array is ``concatenate([pos_bins, neg_bins])``,
+    that gives a spurious advantage to pos bins whenever an imputer has many
+    tied zeros (e.g. cisTopic, which models a small subset and is zero
+    everywhere else). With random tie-breaking, ties at the cutoff are
+    resolved by uniform sampling so neither group is favored.
+
+    Returns ``(mask, cutoff_value, info)`` where ``info`` reports how many bins
+    were strictly above the cutoff vs. tied at it (and how many of the tied
+    ones were sampled into the mask). ``mask.sum() == k`` (clipped to [0, n]).
+    """
+    n = signal.size
+    info: dict[str, int] = {'n_above_cutoff': 0, 'n_tied_at_cutoff': 0,
+                             'n_tied_picked': 0}
+    if k <= 0:
+        return np.zeros(n, dtype=bool), float('inf'), info
+    if k >= n:
+        return np.ones(n, dtype=bool), float('-inf'), info
+    cutoff = float(np.partition(signal, n - k)[n - k])
+    above = signal > cutoff
+    n_above = int(above.sum())
+    tied_idx = np.where(signal == cutoff)[0]
+    info['n_above_cutoff']   = n_above
+    info['n_tied_at_cutoff'] = int(tied_idx.size)
+    need = k - n_above
+    info['n_tied_picked']    = int(need)
+    mask = above.copy()
+    if need > 0 and tied_idx.size:
+        if rng is None:
+            picked = tied_idx[:need]  # deterministic fallback
+        else:
+            picked = rng.choice(tied_idx, size=min(need, tied_idx.size),
+                                 replace=False)
+        mask[picked] = True
+    return mask, cutoff, info
+
+
+def _safe_log2_ratio(num: float, den: float, eps: float = 1e-30) -> float:
+    return float(np.log2(max(num, eps) / max(den, eps)))
+
+
+def intensity_stats(signal: np.ndarray, pos_mask: np.ndarray,
+                    neg_mask: np.ndarray) -> dict[str, float | int]:
+    """Intensity separation stats on the *called* bins."""
+    pos_vals = signal[pos_mask]
+    neg_vals = signal[neg_mask]
+    pos_n = int(pos_vals.size)
+    neg_n = int(neg_vals.size)
+    pos_mean = float(pos_vals.mean()) if pos_n else float('nan')
+    neg_mean = float(neg_vals.mean()) if neg_n else float('nan')
+    pos_median = float(np.median(pos_vals)) if pos_n else float('nan')
+    neg_median = float(np.median(neg_vals)) if neg_n else float('nan')
+    return {
+        'n_pos_called': pos_n,
+        'n_neg_called': neg_n,
+        'pos_mean_called': pos_mean,
+        'neg_mean_called': neg_mean,
+        'pos_median_called': pos_median,
+        'neg_median_called': neg_median,
+        'log2_mean_ratio_called': _safe_log2_ratio(pos_mean, neg_mean),
+        'log2_median_ratio_called': _safe_log2_ratio(pos_median, neg_median),
+    }
 
 
 # -----------------------------------------------------------------------------
 # Plotting
 # -----------------------------------------------------------------------------
-def _color_cycle(n: int) -> list[str]:
-    cmap = plt.get_cmap('tab10' if n <= 10 else 'tab20')
-    return [cmap(i % cmap.N) for i in range(n)]
-
-
-def plot_roc(per_input: list[dict], view: str, out_path: Path) -> None:
-    fig, ax = plt.subplots(figsize=(6.5, 6))
-    ax.plot([0, 1], [0, 1], color='k', lw=0.5, ls=':')
-    colors = _color_cycle(len(per_input))
-    for info, c in zip(per_input, colors):
-        v = info['views'].get(view)
-        if not v or v['y_true'].size == 0:
-            continue
-        fpr, tpr, _ = roc_curve(v['y_true'], v['signal'])
-        ax.plot(fpr, tpr, lw=1.4, color=c,
-                label=f'{info["label"]}  AUROC={v["auroc"]:.3f}')
-    ax.set_xlabel('False positive rate (1 − specificity)')
-    ax.set_ylabel('True positive rate (sensitivity)')
-    ax.set_xlim(0, 1); ax.set_ylim(0, 1.01)
-    ax.set_title(f'Bin-level ROC vs cCRE ground truth  [{view}]')
-    ax.legend(frameon=False, fontsize=9)
-    fig.tight_layout(); fig.savefig(out_path, dpi=150); plt.close(fig)
-
-
-def plot_pr(per_input: list[dict], view: str, out_path: Path) -> None:
-    fig, ax = plt.subplots(figsize=(6.5, 6))
-    colors = _color_cycle(len(per_input))
-    for info, c in zip(per_input, colors):
-        v = info['views'].get(view)
-        if not v or v['y_true'].size == 0:
-            continue
-        prec, rec, _ = precision_recall_curve(v['y_true'], v['signal'])
-        ax.plot(rec, prec, lw=1.4, color=c,
-                label=f'{info["label"]}  AUPR={v["aupr"]:.3f}')
-    ax.set_xlabel('Recall (sensitivity)')
-    ax.set_ylabel('Precision')
-    ax.set_xlim(0, 1); ax.set_ylim(0, 1.01)
-    ax.set_title(f'Bin-level precision-recall vs cCRE ground truth  [{view}]')
-    ax.legend(frameon=False, fontsize=9)
-    fig.tight_layout(); fig.savefig(out_path, dpi=150); plt.close(fig)
-
-
-def plot_sens_spec_vs_threshold(per_input: list[dict], view: str,
-                                  out_path: Path) -> None:
-    n = len(per_input)
-    cols = min(n, 3)
-    rows = (n + cols - 1) // cols
-    fig, axes = plt.subplots(rows, cols, figsize=(5.5 * cols, 4 * rows),
-                              squeeze=False)
-    flat = axes.flatten()
-    for i, info in enumerate(per_input):
-        ax = flat[i]
-        v = info['views'].get(view)
-        if not v or v['y_true'].size == 0:
-            ax.set_title(f'{info["label"]}  (empty subset)')
-            ax.axis('off'); continue
-        m = v['metrics']
-        thr = m['thresholds']
-        ax.plot(thr, m['sens'], color='#c33', lw=1.4, label='sensitivity')
-        ax.plot(thr, m['spec'], color='#33c', lw=1.4, label='specificity')
-        ax.plot(thr, m['f1'],   color='#888', lw=1.0, ls='--', label='F1')
-        try:
-            min_pos = thr[thr > 0].min() if (thr > 0).any() else 1e-6
-            ax.set_xscale('symlog', linthresh=max(min_pos, 1e-6))
-        except Exception:
-            pass
-        ops = v['op_points']
-        if 'max_f1' in ops:
-            ax.axvline(ops['max_f1']['threshold'], color='k', lw=0.7, ls=':',
-                       label=f'max-F1 t={ops["max_f1"]["threshold"]:.3g}')
-        if 'youden_j' in ops:
-            ax.axvline(ops['youden_j']['threshold'], color='gray', lw=0.7, ls='-.',
-                       label=f'Youden J t={ops["youden_j"]["threshold"]:.3g}')
-        ax.set_xlabel('per-bin signal threshold')
-        ax.set_ylim(0, 1.02)
-        ax.set_title(f'{info["label"]}  AUROC={v["auroc"]:.3f}  AUPR={v["aupr"]:.3f}',
-                     fontsize=10)
-        ax.legend(frameon=False, fontsize=8)
-    for j in range(len(per_input), len(flat)):
-        flat[j].axis('off')
-    fig.suptitle(f'Bin-level sens / spec / F1 vs threshold  [{view}]')
-    fig.tight_layout(); fig.savefig(out_path, dpi=150); plt.close(fig)
-
-
-def plot_metric_bars(per_input: list[dict], view: str, out_path: Path) -> None:
+def plot_coverage_bars(per_input: list[dict], out_path: Path,
+                        title: str, y_label: str) -> None:
     labels = [i['label'] for i in per_input]
-    def _g(info: dict, key: str, fallback=float('nan')) -> float:
-        v = info['views'].get(view)
-        if not v: return fallback
-        if key in v: return float(v[key])
-        op = v['op_points'].get('max_f1')
-        return float(op[key]) if (op and key in op) else fallback
-    auroc = [_g(i, 'auroc') for i in per_input]
-    aupr  = [_g(i, 'aupr')  for i in per_input]
-    f1max = [_g(i, 'f1')    for i in per_input]
-    sens  = [_g(i, 'sensitivity') for i in per_input]
-    spec  = [_g(i, 'specificity') for i in per_input]
+    pos_pct = [i['pos']['coverage_pct'] for i in per_input]
+    neg_pct = [i['neg']['coverage_pct'] for i in per_input]
     x = np.arange(len(labels))
-    width = 0.16
-    fig, ax = plt.subplots(figsize=(max(6, 1.2 * len(labels) + 3), 4))
-    bars = []
-    bars.append(ax.bar(x - 2*width, auroc, width, label='AUROC',           color='#3B7EA1'))
-    bars.append(ax.bar(x -   width, aupr,  width, label='AUPR',            color='#888'))
-    bars.append(ax.bar(x,           f1max, width, label='max F1',          color='#C44E52'))
-    bars.append(ax.bar(x +   width, sens,  width, label='sens @ max-F1',   color='#55A868'))
-    bars.append(ax.bar(x + 2*width, spec,  width, label='spec @ max-F1',   color='#CCB974'))
-    for grp, vals in zip(bars, (auroc, aupr, f1max, sens, spec)):
-        for b, val in zip(grp, vals):
-            if not np.isnan(val):
-                ax.text(b.get_x() + b.get_width() / 2, val + 0.01, f'{val:.3f}',
-                        ha='center', va='bottom', fontsize=7)
-    ax.axhline(0.5, color='k', lw=0.4, ls=':')
-    ax.set_xticks(x); ax.set_xticklabels(labels, rotation=30, ha='right')
-    ax.set_ylim(0, 1.05); ax.set_ylabel('metric')
-    ax.set_title(f'Bin-level sens / spec summary  [{view}]')
-    ax.legend(frameon=False, fontsize=8, ncol=3)
+    width = 0.38
+    fig, ax = plt.subplots(figsize=(max(6, 1.3 * len(labels) + 2), 4.2))
+    b1 = ax.bar(x - width / 2, pos_pct, width, label='Positive bins',
+                 color='#C44E52')
+    b2 = ax.bar(x + width / 2, neg_pct, width, label='Negative bins',
+                 color='#4C72B0')
+    for grp, vals in ((b1, pos_pct), (b2, neg_pct)):
+        for b, v in zip(grp, vals):
+            if not np.isnan(v):
+                ax.text(b.get_x() + b.get_width() / 2, v + 0.5,
+                        f'{v:.1f}%', ha='center', va='bottom', fontsize=8)
+    sublabels = [
+        f't={i["threshold"]:.3g}\n(K={i["pos"]["n_covered"] + i["neg"]["n_covered"]})'
+        for i in per_input
+    ]
+    ax2 = ax.secondary_xaxis('bottom')
+    ax2.set_xticks(x)
+    ax2.set_xticklabels(sublabels, fontsize=7)
+    ax2.spines['bottom'].set_visible(False)
+    ax2.tick_params(axis='x', which='both', length=0, pad=18)
+    ax.set_xticks(x)
+    ax.set_xticklabels(labels, rotation=0, ha='center')
+    y_top = max(100, (max(pos_pct + neg_pct + [0]) + 3))
+    ax.set_ylim(0, y_top)
+    ax.set_ylabel(y_label)
+    ax.set_title(title)
+    ax.legend(frameon=False)
+    ax.axhline(100, color='k', lw=0.4, ls=':')
+    fig.tight_layout(); fig.savefig(out_path, dpi=150); plt.close(fig)
+
+
+def plot_intensity_lift_bars(per_input: list[dict], out_path: Path) -> None:
+    labels = [i['label'] for i in per_input]
+    med_lift = [i['intensity_called']['log2_median_ratio_called'] for i in per_input]
+    mean_lift = [i['intensity_called']['log2_mean_ratio_called'] for i in per_input]
+    x = np.arange(len(labels))
+    width = 0.38
+    fig, ax = plt.subplots(figsize=(max(6, 1.3 * len(labels) + 2), 4.2))
+    b1 = ax.bar(x - width / 2, med_lift, width, label='log2 median(pos/neg)',
+                 color='#55A868')
+    b2 = ax.bar(x + width / 2, mean_lift, width, label='log2 mean(pos/neg)',
+                 color='#8172B2')
+    for grp, vals in ((b1, med_lift), (b2, mean_lift)):
+        for b, v in zip(grp, vals):
+            if not np.isnan(v):
+                ax.text(b.get_x() + b.get_width() / 2, v + (0.05 if v >= 0 else -0.1),
+                        f'{v:.2f}', ha='center',
+                        va='bottom' if v >= 0 else 'top', fontsize=8)
+    ax.axhline(0, color='k', lw=0.6, ls=':')
+    ax.set_xticks(x)
+    ax.set_xticklabels(labels, rotation=0, ha='center')
+    ax.set_ylabel('Positive-vs-negative intensity lift (called bins)')
+    ax.set_title('Imputation complexity gain on called bins')
+    ax.legend(frameon=False)
     fig.tight_layout(); fig.savefig(out_path, dpi=150); plt.close(fig)
 
 
@@ -462,57 +427,49 @@ def plot_metric_bars(per_input: list[dict], view: str, out_path: Path) -> None:
 # Persistence
 # -----------------------------------------------------------------------------
 def write_tsv(per_input: list[dict], out_path: Path) -> None:
-    cols = ['input', 'view', 'kind', 'threshold',
-            'TP', 'FP', 'FN', 'TN',
-            'sensitivity', 'specificity', 'precision',
-            'F1', 'MCC', 'accuracy', 'youden_J']
+    cols = ['input', 'kind', 'group', 'mode', 'threshold',
+            'n', 'n_modeled', 'n_covered', 'n_covered_modeled',
+            'coverage_pct', 'coverage_modeled_pct']
     with open(out_path, 'w') as fh:
         fh.write('\t'.join(cols) + '\n')
         for info in per_input:
-            for view, v in info['views'].items():
-                if not v or v['y_true'].size == 0:
-                    continue
-                m = v['metrics']
-                thr = m['thresholds']
-                for k in range(thr.size):
-                    fh.write('\t'.join([
-                        info['label'], view, info['kind'],
-                        f'{thr[k]:.6g}',
-                        str(int(m['TP'][k])),
-                        str(int(m['FP'][k])),
-                        str(int(m['FN'][k])),
-                        str(int(m['TN'][k])),
-                        f"{m['sens'][k]:.6g}",
-                        f"{m['spec'][k]:.6g}",
-                        f"{m['prec'][k]:.6g}",
-                        f"{m['f1'][k]:.6g}",
-                        f"{m['mcc'][k]:.6g}",
-                        f"{m['acc'][k]:.6g}",
-                        f"{m['youden'][k]:.6g}",
-                    ]) + '\n')
+            for group in ('pos', 'neg'):
+                s = info[group]
+                fh.write('\t'.join([
+                    info['label'], info['kind'], group,
+                    info['mode'], f"{info['threshold']:.6g}",
+                    str(s['n']), str(s['n_modeled']),
+                    str(s['n_covered']), str(s['n_covered_modeled']),
+                    f"{s['coverage_pct']:.4f}",
+                    f"{s['coverage_modeled_pct']:.4f}",
+                ]) + '\n')
 
 
 def build_summary(per_input: list[dict], bins_tsv: str,
-                   n_pos: int, n_neg: int) -> dict:
+                   default_threshold: float, match_to: str | None,
+                   match_multiplier: float, top_k: int | None,
+                   target_calls: int | None) -> dict:
     out_inputs: list[dict] = []
     for info in per_input:
-        for view, v in info['views'].items():
-            if not v: continue
-            out_inputs.append({
-                'label':       info['label'],
-                'view':        view,
-                'kind':        info['kind'],
-                'n_pos':       int(v['y_true'].sum()) if v['y_true'].size else 0,
-                'n_neg':       int((v['y_true'] == 0).sum()) if v['y_true'].size else 0,
-                'auroc':       float(v.get('auroc', float('nan'))),
-                'aupr':        float(v.get('aupr',  float('nan'))),
-                'op_points':   v['op_points'],
-            })
+        out_inputs.append({
+            'label':     info['label'],
+            'kind':      info['kind'],
+            'path':      info['path'],
+            'mode':      info['mode'],
+            'threshold': info['threshold'],
+            'n_called':  info['n_called'],
+            'intensity_called': info['intensity_called'],
+            'pos':       info['pos'],
+            'neg':       info['neg'],
+        })
     return {
-        'bins_tsv': bins_tsv,
-        'n_pos_total': int(n_pos),
-        'n_neg_total': int(n_neg),
-        'inputs': out_inputs,
+        'bins_tsv':          bins_tsv,
+        'default_threshold': default_threshold,
+        'match_to':          match_to,
+        'match_multiplier':  match_multiplier,
+        'top_k':             top_k,
+        'target_calls':      target_calls,
+        'inputs':            out_inputs,
     }
 
 
@@ -531,16 +488,25 @@ def main() -> int:
                     help='LABEL=PATH; PATH = mm/ directory, factored/dense '
                          'impute/ directory, or legacy HDF5 file. May be '
                          'passed multiple times.')
-    ap.add_argument('--out-name', type=str, default='bin_sensitivity_specificity')
-    ap.add_argument('--n-thresholds', type=int, default=64,
-                    help='Number of auto thresholds per pipeline (default 64).')
-    ap.add_argument('--thresholds', type=str, default=None,
-                    help='Comma-separated absolute thresholds. Default: auto '
-                         '(per-pipeline quantile-based over the union of pos+neg signals).')
-    ap.add_argument('--no-modeled-view', dest='modeled_view', action='store_false',
-                    default=True,
-                    help='Skip the "modeled-only" view.')
+    ap.add_argument('--out-name', type=str, default='bin_coverage')
+    ap.add_argument('--threshold', type=float, default=0.0,
+                    help='Per-bin signal threshold for the reference input '
+                         '(or, with --no-match, every input). Default 0.0.')
+    ap.add_argument('--match-to', type=str, default='raw',
+                    help='Reference input label for sparsity-matched coverage. '
+                         'Default "raw"; pass "" or use --no-match to disable.')
+    ap.add_argument('--no-match', dest='match_to', action='store_const', const='',
+                    help='Disable sparsity matching; use --threshold everywhere.')
+    ap.add_argument('--match-multiplier', type=float, default=1.0,
+                    help='Scale the reference K by this factor when --match-to '
+                         'is active (default 1.0).')
+    ap.add_argument('--top-k', type=int, default=None,
+                    help='Explicit number of top bins to call for every '
+                         'pipeline. Overrides --match-to / --match-multiplier.')
+    ap.add_argument('--seed', type=int, default=2026,
+                    help='RNG seed for top-K tie-breaking (default 2026).')
     args = ap.parse_args()
+    rng = np.random.default_rng(args.seed)
 
     args.out_dir.mkdir(parents=True, exist_ok=True)
 
@@ -550,124 +516,129 @@ def main() -> int:
 
     bin_idx = np.concatenate([pos_idx, neg_idx])
     bin_names = pos_nm + neg_nm
-    y_true = np.concatenate([np.ones(pos_idx.size,  dtype=np.int8),
-                             np.zeros(neg_idx.size, dtype=np.int8)])
+    n_pos = int(pos_idx.size)
 
-    user_thr: np.ndarray | None = None
-    if args.thresholds:
-        ts = sorted(float(t.strip()) for t in args.thresholds.split(',') if t.strip())
-        if ts:
-            user_thr = np.asarray(ts, dtype=np.float64)
-            log.info('Using %d user-supplied thresholds across all pipelines', user_thr.size)
-
-    per_input: list[dict] = []
+    # First pass: load per-bin signal for every input.
+    raw_inputs: list[dict] = []
+    input_labels = [lbl for lbl, _ in args.inputs]
     for label, path in args.inputs:
         log.info('Input %r -> %s', label, path)
         signal, modeled, kind = per_bin_total(label, path, bin_idx, bin_names)
-        log.info('  kind=%s  modeled=%d/%d (%.1f%%)  signal[mean=%.4g, max=%.4g]',
-                 kind, int(modeled.sum()), modeled.size,
-                 100.0 * modeled.mean(),
-                 float(signal.mean()), float(signal.max()))
-
-        views: dict[str, dict] = {}
-
-        # FULL view: all positive + negative bins; unmodeled => signal already 0.
-        full_thr = user_thr if user_thr is not None else auto_thresholds(
-            signal, args.n_thresholds
-        )
-        if y_true.size and signal.size:
-            try:
-                auroc = float(roc_auc_score(y_true, signal))
-            except Exception:
-                auroc = float('nan')
-            try:
-                aupr = float(average_precision_score(y_true, signal))
-            except Exception:
-                aupr = float('nan')
-        else:
-            auroc = aupr = float('nan')
-        full_metrics = sweep_metrics(y_true, signal, full_thr)
-        views['full'] = {
-            'y_true':    y_true,
-            'signal':    signal,
-            'metrics':   full_metrics,
-            'auroc':     auroc,
-            'aupr':      aupr,
-            'op_points': operating_points(full_metrics),
-        }
-
-        # MODELED view: bins whose name is present in the imputer's modeled
-        # universe (signal lookup hit the imputed regions.tsv). Only meaningful
-        # for non-mm inputs; for mm we treat all bins as modeled.
-        if args.modeled_view and kind != 'mm':
-            mod_mask = modeled.astype(bool)
-            y_mod = y_true[mod_mask]
-            sig_mod = signal[mod_mask]
-            if y_mod.size and y_mod.min() != y_mod.max():
-                m_thr = user_thr if user_thr is not None else auto_thresholds(
-                    sig_mod, args.n_thresholds
-                )
-                try:
-                    auroc_m = float(roc_auc_score(y_mod, sig_mod))
-                except Exception:
-                    auroc_m = float('nan')
-                try:
-                    aupr_m = float(average_precision_score(y_mod, sig_mod))
-                except Exception:
-                    aupr_m = float('nan')
-                m_metrics = sweep_metrics(y_mod, sig_mod, m_thr)
-                views['modeled'] = {
-                    'y_true':    y_mod,
-                    'signal':    sig_mod,
-                    'metrics':   m_metrics,
-                    'auroc':     auroc_m,
-                    'aupr':      aupr_m,
-                    'op_points': operating_points(m_metrics),
-                    'n_in_view': int(mod_mask.sum()),
-                }
-
-        per_input.append({
+        raw_inputs.append({
             'label': label, 'path': str(path), 'kind': kind,
-            'views': views,
-            'signal_modeled_mask': modeled,
+            'signal': signal, 'modeled': modeled,
         })
 
-        for view, v in views.items():
-            ops = v['op_points'].get('max_f1', {})
-            log.info(
-                '  [%-7s] AUROC=%.4f AUPR=%.4f  max-F1=%.3f@t=%.3g  '
-                'sens=%.3f spec=%.3f',
-                view, v['auroc'], v['aupr'],
-                ops.get('f1', float('nan')),
-                ops.get('threshold', float('nan')),
-                ops.get('sensitivity', float('nan')),
-                ops.get('specificity', float('nan')),
+    # Decide target_calls (K). Top-K (if set) wins; else sparsity match against
+    # the reference at --threshold, scaled by --match-multiplier; else fixed
+    # threshold for everyone.
+    target_calls: int | None = None
+    ref_label = args.match_to or ''
+    match_source = ''
+    if args.top_k is not None and args.top_k > 0:
+        target_calls = int(args.top_k)
+        match_source = f'--top-k {target_calls}'
+        ref_label = ''  # uniform top-K; no asymmetric reference
+    elif ref_label:
+        ref = next((r for r in raw_inputs if r['label'] == ref_label), None)
+        if ref is None:
+            log.warning('--match-to %r not in inputs %s; falling back to fixed threshold',
+                        ref_label, input_labels)
+            ref_label = ''
+        else:
+            base_k = int(called_mask_threshold(ref['signal'], args.threshold).sum())
+            target_calls = int(round(base_k * args.match_multiplier))
+            target_calls = min(max(target_calls, 0), int(ref['signal'].size))
+            match_source = (
+                f'reference={ref_label!r} at t={args.threshold:g} '
+                f'(base_K={base_k}) × {args.match_multiplier:g}'
             )
+    if target_calls is not None:
+        log.info('Top-K = %d (%s)', target_calls, match_source)
+    else:
+        log.info('No top-K; using fixed threshold %.6g for every input',
+                 args.threshold)
+
+    # Second pass: per-input call masks. When target_calls is set, every input
+    # (including any reference) gets the same top-K rule for honest comparison.
+    per_input: list[dict] = []
+    for rec in raw_inputs:
+        label = rec['label']
+        signal = rec['signal']; modeled = rec['modeled']; kind = rec['kind']
+
+        if target_calls is not None:
+            mask, cutoff, tie_info = called_mask_top_k(signal, target_calls, rng)
+            thr = float(cutoff)
+            mode = 'top_k'
+            if tie_info['n_tied_at_cutoff'] > tie_info['n_tied_picked']:
+                log.info('  %s: cutoff %.6g had %d ties; %d above, %d sampled '
+                         'from ties (random tie-break; seed %d)',
+                         label, cutoff,
+                         tie_info['n_tied_at_cutoff'],
+                         tie_info['n_above_cutoff'],
+                         tie_info['n_tied_picked'],
+                         args.seed)
+        else:
+            mask = called_mask_threshold(signal, args.threshold)
+            thr = float(args.threshold)
+            mode = 'fixed'
+
+        pos_mask = mask[:n_pos];   neg_mask = mask[n_pos:]
+        pos_stats = coverage_for_group(signal[:n_pos], modeled[:n_pos], pos_mask)
+        neg_stats = coverage_for_group(signal[n_pos:], modeled[n_pos:], neg_mask)
+        lift_stats = intensity_stats(signal, pos_mask, neg_mask)
+
+        log.info(
+            '  %s [%s, t=%.6g]  pos: %d/%d (%.2f%%; modeled %.2f%%)  '
+            'neg: %d/%d (%.2f%%; modeled %.2f%%)  total_calls=%d  '
+            'log2(med pos/neg)=%.3f',
+            label, mode, thr,
+            pos_stats['n_covered'], pos_stats['n'], pos_stats['coverage_pct'],
+            pos_stats['coverage_modeled_pct'],
+            neg_stats['n_covered'], neg_stats['n'], neg_stats['coverage_pct'],
+            neg_stats['coverage_modeled_pct'],
+            int(mask.sum()),
+            lift_stats['log2_median_ratio_called'],
+        )
+
+        per_input.append({
+            'label': label, 'path': rec['path'], 'kind': kind,
+            'mode': mode, 'threshold': thr,
+            'n_called': int(mask.sum()),
+            'intensity_called': lift_stats,
+            'pos': pos_stats, 'neg': neg_stats,
+        })
 
     tsv_path = args.out_dir / f'{args.out_name}.tsv'
     write_tsv(per_input, tsv_path)
     log.info('Wrote %s', tsv_path)
 
-    summary = build_summary(per_input, str(args.bins_tsv), pos_idx.size, neg_idx.size)
+    summary = build_summary(per_input, str(args.bins_tsv),
+                             args.threshold, ref_label or None,
+                             args.match_multiplier, args.top_k,
+                             target_calls)
     json_path = args.out_dir / f'{args.out_name}.json'
     json_path.write_text(json.dumps(summary, indent=2, default=float) + '\n')
     log.info('Wrote %s', json_path)
 
-    views_to_plot = ['full']
-    if args.modeled_view:
-        views_to_plot.append('modeled')
-    for view in views_to_plot:
-        plot_roc(per_input, view, args.out_dir / f'{args.out_name}_roc_{view}.png')
-        plot_pr( per_input, view, args.out_dir / f'{args.out_name}_pr_{view}.png')
-        plot_sens_spec_vs_threshold(
-            per_input, view,
-            args.out_dir / f'{args.out_name}_sens_spec_{view}.png',
-        )
-        plot_metric_bars(
-            per_input, view,
-            args.out_dir / f'{args.out_name}_bars_{view}.png',
-        )
-        log.info('Wrote ROC / PR / sens-spec / bars figures for view=%s', view)
+    png_path = args.out_dir / f'{args.out_name}.png'
+    if target_calls is not None:
+        if args.top_k is not None and args.top_k > 0:
+            title = f'Bin coverage at top-K (K={target_calls}; --top-k)'
+        else:
+            mult_suffix = (f' × {args.match_multiplier:g}'
+                           if args.match_multiplier != 1.0 else '')
+            title = (f'Bin coverage at top-K (K={target_calls}; matched to '
+                     f'{ref_label!r} at t={args.threshold:g}{mult_suffix})')
+        y_lbl = '% of bins among each pipeline\u2019s top-K'
+    else:
+        title = f'Bin coverage (signal > {args.threshold:g})'
+        y_lbl = f'% of bins with signal > {args.threshold:g}'
+    plot_coverage_bars(per_input, png_path, title=title, y_label=y_lbl)
+    log.info('Wrote %s', png_path)
+    lift_png_path = args.out_dir / f'{args.out_name}_intensity_lift.png'
+    plot_intensity_lift_bars(per_input, lift_png_path)
+    log.info('Wrote %s', lift_png_path)
 
     return 0
 
