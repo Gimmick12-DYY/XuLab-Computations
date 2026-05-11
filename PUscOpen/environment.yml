@@ -1,0 +1,34 @@
+name: puscopen
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - python=3.10
+  - pip
+  - numpy<2
+  - scipy
+  - pandas>=2.1,<2.3
+  - pyarrow
+  - h5py
+  - pytables
+  - scikit-learn
+  - matplotlib
+  - seaborn
+  - pyyaml
+  - tqdm
+  - kneed
+  - r-base>=4.3
+  - r-matrix
+  - r-optparse
+  - r-dplyr
+  - r-stringi
+  - r-jsonlite
+  - bioconductor-genomicranges
+  - bioconductor-rtracklayer
+  - bioconductor-iranges
+  - bioconductor-singlecellexperiment
+  - bioconductor-summarizedexperiment
+  - r-seurat
+  - pip:
+      - scopen
