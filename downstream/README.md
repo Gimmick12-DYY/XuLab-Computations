@@ -114,12 +114,102 @@ that case is to also rerun the analysis with `--bins-tsv` restricted to
 positives that fall inside the FITS subset (filter the TSV before passing it
 in).
 
+## Sensitivity / specificity vs raw observed matrix
+
+`sensitivity_specificity.py` treats `raw[r, c] > 0` (binarised) as the ground
+truth label and `imputed[r, c]` as a continuous score, sweeps thresholds via
+a **streaming histogram pass** through the modeled rows, and reports per
+pipeline:
+
+* `TP / TN / FP / FN` at every threshold
+* `sensitivity` (= TPR = recall), `specificity` (= TNR), `precision`, `F1`,
+  `MCC`, `accuracy`
+* **AUROC** and **AUPR** (trapezoidal integration over the curves)
+* **max-F1 threshold** and the sens / spec achieved there
+* **sparsity-matched threshold** — the threshold where `#(imputed > t)` is
+  closest to the raw nonzero count, i.e. the calibration point that produces
+  the same number of "calls" as the raw observed matrix
+
+Two reporting views are emitted for every pipeline:
+
+| view | description |
+|---|---|
+| `modeled` | only rows present in the imputer's `regions.tsv` (per-pipeline universe; fair when comparing imputers that model different region sets) |
+| `full`    | all raw rows; unmodeled raw nonzeros are counted as FN at every threshold (penalises pipelines for *not* modeling a row at all — e.g. FITS at 10 K subset) |
+
+The script never materialises the full dense imputed matrix; it streams in
+row blocks (default 2000 rows) and accumulates a 2-row histogram (`pos` /
+`neg`) per pass. Memory peaks at ~`chunk_rows × n_cells × 4` bytes per
+pipeline (≈ 80 MB for 2000 × 10410 float32).
+
+```bash
+python downstream/sensitivity_specificity.py \
+  --mm-dir   /work/.../cistopic_ctcf/mm \
+  --out-dir  /work/.../downstream/sensitivity_specificity \
+  --input cisTopic=/work/.../cistopic_ctcf/impute \
+  --input FITS=/work/.../FITS/work/ctcf/impute \
+  --input scOpen=/work/.../scOpen/work/ctcf/impute \
+  --input MAGIC=/work/.../MAGIC/work/ctcf/impute
+```
+
+Outputs (under `--out-dir`):
+
+| file | contents |
+|---|---|
+| `sensitivity_specificity.tsv` | long-form: input, view, threshold, TP/FP/FN/TN, sens/spec/prec/F1/MCC/acc |
+| `sensitivity_specificity.json` | per-input summary: AUROC, AUPR, max-F1 + threshold, sparsity-matched threshold + sens/spec |
+| `sensitivity_specificity_roc_{modeled,full}.png` | ROC curves overlaid across pipelines, one figure per view |
+| `sensitivity_specificity_pr_{modeled,full}.png`  | precision-recall curves overlaid across pipelines |
+| `sensitivity_specificity_sens_spec_{modeled,full}.png` | sens / spec / F1 vs threshold, one panel per pipeline |
+| `sensitivity_specificity_bars_{modeled,full}.png` | AUROC / AUPR / max-F1 / sens@match / spec@match bar chart |
+
+By default the script picks **per-pipeline quantile-based thresholds** (48
+points spanning quantiles 0.001 → 0.999 with right-tail emphasis, plus 0.0
+as a top-right ROC anchor). This is the right choice for ROC / AUPR — score
+scales differ across pipelines and AUROC is invariant to monotonic
+rescaling. Pass `--thresholds 0.01,0.1,0.5,...` to force a fixed grid across
+all pipelines.
+
+SLURM:
+
+```bash
+sbatch --export=ALL,\
+MM_DIR=/work/.../cistopic_ctcf/mm,\
+OUT_DIR=/work/.../downstream/sensitivity_specificity,\
+INPUTS="cisTopic=/work/.../cistopic_ctcf/impute FITS=/work/.../FITS/work/ctcf/impute scOpen=/work/.../scOpen/work/ctcf/impute MAGIC=/work/.../MAGIC/work/ctcf/impute" \
+  downstream/slurm/sensitivity_specificity.sbatch
+```
+
+### Reading the output
+
+* **Class imbalance is extreme** (~99.998 % zeros for CTCF at 1 kb).
+  Specificity is therefore high almost by default; sensitivity is the
+  discriminating axis.
+* **AUROC near 0.5** at the modeled view means the imputer is no better than
+  random at separating raw positives from raw negatives within rows it
+  modeled. **AUROC near 1.0** means imputed values rank raw nonzeros above
+  raw zeros almost perfectly.
+* **AUPR is the harder bar** under heavy class imbalance — the random
+  baseline is `pos_total / total` ≈ 2 × 10⁻⁵, not 0.5.
+* **`sparsity_match_threshold`** is the calibration point most users care
+  about — *"what sens / spec does the imputer hit when it makes the same
+  number of positive calls as the raw matrix did?"* If `sens@match` is
+  meaningfully higher than the raw density, the imputer is recovering signal
+  beyond the observed positives, which is the imputation goal.
+* **Caveat on "FP"**: a raw zero that becomes a high imputed value can be
+  either a wrong call OR a recovered dropout. The ROC / PR metrics treat
+  every raw zero as a negative; for biologically-grounded validation
+  combine with the `compare_pos_neg.py` bin-level CTCF cCRE analysis.
+
 ## Conda env
 
-Both scripts work in either pipeline's conda env:
+All three scripts (`prepare_pos_neg_bins.R`, `compare_pos_neg.py`,
+`sensitivity_specificity.py`) work in any of the pipeline conda envs:
 
 * `cistopic` — already includes R + Bioconductor (`GenomicRanges`,
-  `rtracklayer`) needed by step 1, plus h5py/scipy for step 2.
-* `fits` — also has h5py/scipy/scikit-learn; for step 1 you need the
-  Bioconductor packages, so prefer `cistopic` for the R step. The env
-  `CONDA_ENV` variable on the SLURM template selects which env to activate.
+  `rtracklayer`) needed by `prepare_pos_neg_bins.R`, plus h5py / scipy for
+  the Python steps.
+* `fits` / `scopen` / `magic` — also have h5py / scipy / scikit-learn; for
+  the R step you need the Bioconductor packages, so prefer `cistopic` there.
+  The `CONDA_ENV` env var on each SLURM template selects which env to
+  activate.
