@@ -188,22 +188,66 @@ def main() -> int:
     nb_counts = _neighborhood_counts(regions, signal, nb_bp, nb_thr)
     has_support = (nb_counts >= nb_min) | (signal > 4.0 * nb_thr)
 
-    # Damping factor: 1.0 if supported, 0.25 otherwise. A soft penalty keeps
-    # downstream metrics meaningful (the bins still appear in the matrix
-    # rather than being silently zeroed).
-    damp = np.where(has_support, 1.0, 0.25).astype(np.float32)
-    n_damped = int((~has_support).sum())
-    log.info('Neighborhood post-filter: damped %d / %d bins (%.2f%%)',
-             n_damped, len(regions), 100.0 * n_damped / max(len(regions), 1))
+    # --------------------------------------------------------------------
+    # Damping. Two modes:
+    #   * hard (legacy):  1.0 if supported, otherwise damp_unsupported (was
+    #                     0.25 hard-coded; now configurable).
+    #   * soft:           continuous factor that grows smoothly with both
+    #                     local neighbor support and the bin's own signal,
+    #                     never going below damp_floor.
+    # --------------------------------------------------------------------
+    soft_damp = bool(pf.get('soft_damp', False))
+    damp_floor = float(pf.get('damp_floor', 0.5))
+    damp_unsupported = float(pf.get('damp_unsupported', 0.25))
+    soft_neighbor_target = float(pf.get('soft_neighbor_target',
+                                        max(nb_min * 2, 2)))
+
+    if soft_damp:
+        nb_ratio = nb_counts.astype(np.float64) / max(soft_neighbor_target, 1e-6)
+        nb_factor = np.clip(nb_ratio, 0.0, 1.0)
+        sig_factor = np.clip(signal / max(4.0 * nb_thr, 1e-12), 0.0, 1.0)
+        support = np.maximum(nb_factor, sig_factor)
+        damp = np.clip(support, damp_floor, 1.0).astype(np.float32)
+        n_damped = int((damp < 1.0).sum())
+        log.info(
+            'Soft post-filter: target_neighbors=%.2f, damp_floor=%.2f; '
+            'damped (factor<1) %d / %d bins (%.2f%%), '
+            'mean_damp=%.4g, min_damp=%.4g',
+            soft_neighbor_target, damp_floor,
+            n_damped, len(regions),
+            100.0 * n_damped / max(len(regions), 1),
+            float(damp.mean()), float(damp.min()),
+        )
+    else:
+        damp = np.where(has_support, 1.0, damp_unsupported).astype(np.float32)
+        n_damped = int((~has_support).sum())
+        log.info('Hard post-filter (legacy): damped %d / %d bins (%.2f%%) '
+                 'to %.2f',
+                 n_damped, len(regions),
+                 100.0 * n_damped / max(len(regions), 1), damp_unsupported)
 
     # ------------------------------------------------------------------
-    # Optional multiplicative PU prior
+    # Optional multiplicative PU prior. ``pu_weight_alpha`` controls the
+    # exponent on pu_score: 0 disables PU influence, 1 = linear (legacy),
+    # values >1 sharpen PU influence (closer to a hard mask). Floor avoids
+    # collapsing low-PU bins to zero in the final matrix.
     # ------------------------------------------------------------------
     multiply_by_pu = bool(pf.get('multiply_by_pu', True))
+    pu_alpha = float(pf.get('pu_weight_alpha', 1.0))
+    pu_floor = float(pf.get('pu_weight_floor', 0.0))
     if multiply_by_pu:
-        damp = (damp * pu_aligned.astype(np.float32))
-        log.info('damp *= pu_score  (mean factor = %.4g, p90 = %.4g)',
-                 float(damp.mean()), float(np.quantile(damp, 0.9)))
+        pu_factor = np.clip(pu_aligned, 0.0, 1.0)
+        if pu_alpha != 1.0:
+            pu_factor = np.power(pu_factor, pu_alpha)
+        pu_factor = np.clip(pu_factor, pu_floor, 1.0).astype(np.float32)
+        damp = damp * pu_factor
+        log.info(
+            'damp *= pu_score**%.2f (floor=%.2f, mean=%.4g, p10=%.4g, p90=%.4g)',
+            pu_alpha, pu_floor,
+            float(damp.mean()),
+            float(np.quantile(damp, 0.1)),
+            float(np.quantile(damp, 0.9)),
+        )
 
     # ------------------------------------------------------------------
     # Persist
@@ -238,6 +282,20 @@ def main() -> int:
         'neighbor_threshold': {
             'value':  float(nb_thr),
             'origin': nb_thr_origin,
+        },
+        'soft_damp':         soft_damp,
+        'damp_floor':        damp_floor,
+        'damp_unsupported':  damp_unsupported,
+        'soft_neighbor_target': soft_neighbor_target,
+        'pu_weight_alpha':   pu_alpha,
+        'pu_weight_floor':   pu_floor,
+        'damp_summary': {
+            'mean':   float(damp.mean()),
+            'median': float(np.median(damp)),
+            'min':    float(damp.min()),
+            'p10':    float(np.quantile(damp, 0.10)),
+            'p90':    float(np.quantile(damp, 0.90)),
+            'frac_lt_1.0': float((damp < 1.0).mean()),
         },
         'n_damped':          n_damped,
         'multiply_by_pu':    multiply_by_pu,

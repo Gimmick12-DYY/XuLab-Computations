@@ -2,7 +2,7 @@
 #SBATCH --job-name=puscopen_full
 #SBATCH --output=%x-%j.out
 #SBATCH --error=%x-%j.err
-#SBATCH --cpus-per-task=8
+#SBATCH --cpus-per-task=4
 #SBATCH --mem=128G
 #SBATCH --time=18:00:00
 
@@ -46,11 +46,13 @@ source "$(conda info --base)/etc/profile.d/conda.sh"
 conda activate "${CONDA_ENV}"
 
 read_yaml() {
-  python - <<PY
-import yaml
-c=yaml.safe_load(open("$CFG"))
-v=c
-for k in "$1".lstrip('.').split('.'): v=v[k]
+  python3 - "$CFG" "$1" <<'PY'
+import sys, yaml
+cfg_path, key = sys.argv[1], sys.argv[2]
+c = yaml.safe_load(open(cfg_path)) or {}
+v = c
+for k in key.lstrip('.').split('.'):
+    v = v[k]
 print(v)
 PY
 }

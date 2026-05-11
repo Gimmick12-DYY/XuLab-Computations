@@ -47,9 +47,18 @@ stopifnot(!is.null(opt$config))
 
 # Tiny YAML loader -- we don't add a yaml R dep just for this; rely on python.
 read_yaml_py <- function(path) {
-  raw <- system2('python3', c('-c', sprintf(
-    "import yaml, json; print(json.dumps(yaml.safe_load(open(%s)) or {}))",
-    sprintf("'%s'", path))), stdout=TRUE, stderr=TRUE)
+  py_file <- tempfile(fileext = '.py')
+  writeLines(c(
+    "import json, sys, yaml",
+    "cfg = yaml.safe_load(open(sys.argv[1])) or {}",
+    "print(json.dumps(cfg))"
+  ), py_file)
+  raw <- system2('python3', c(py_file, path), stdout=TRUE, stderr=TRUE)
+  status <- attr(raw, 'status')
+  if (!is.null(status) && status != 0) {
+    stop(sprintf('Failed to parse YAML %s via python3: %s',
+                 path, paste(raw, collapse='\n')))
+  }
   jsonlite::fromJSON(paste(raw, collapse=''), simplifyVector=TRUE)
 }
 cfg <- read_yaml_py(opt$config)
@@ -223,20 +232,179 @@ if (!is.null(mask_cfg$exclude_mappability_bed)) {
 
 # -----------------------------------------------------------------------------
 # Aggregate raw signal per bin so the PU classifier has signal features.
-# We only read the column nonzero pattern; counts aren't needed beyond log10.
+# We compute: total_count, n_cells_observed, max_count_per_bin.
 # -----------------------------------------------------------------------------
 mtx_path <- file.path(mm_dir, 'matrix.mtx.gz')
 total_count <- numeric(N_bins)
 n_cells_observed <- integer(N_bins)
+max_count_per_bin <- numeric(N_bins)
+n_cells_total <- 0L
 if (file.exists(mtx_path)) {
   message('[mask] Reading raw matrix for per-bin signal aggregates ...')
   M <- Matrix::readMM(mtx_path)
   M <- as(M, 'CsparseMatrix')
   if (nrow(M) != N_bins)
     stop(sprintf('Matrix rows (%d) != bins (%d).', nrow(M), N_bins))
+  n_cells_total <- ncol(M)
   total_count <- as.numeric(Matrix::rowSums(M))
   bin_M <- as(M > 0, 'CsparseMatrix')
   n_cells_observed <- as.integer(Matrix::rowSums(bin_M))
+  # Per-row max via triplet representation; vectorised in C.
+  M_T <- as(M, 'TsparseMatrix')
+  if (length(M_T@x) > 0) {
+    row_idx <- M_T@i + 1L
+    agg_max <- tapply(M_T@x, row_idx, max)
+    max_count_per_bin[as.integer(names(agg_max))] <- as.numeric(agg_max)
+  }
+  rm(M_T)
+}
+fraction_cells_observed <- if (n_cells_total > 0)
+  n_cells_observed / n_cells_total else numeric(N_bins)
+
+# -----------------------------------------------------------------------------
+# Richer per-bin features (item 6 in PUscOpen tuning plan):
+#   * distance to nearest annotation hit (top-N CTCF, 293T-CA cCRE, cCRE_CTCF)
+#   * neighbour count of annotation hits within fixed windows
+#   * chromosome flags (X/Y)
+#   * optional GC content (if mask.fasta_bsgenome resolvable)
+#   * optional mean mappability (if mask.mappability_bigwig provided)
+# Distances are reported as log10(min(d, 1e6) + 1); -1 means no annotation
+# available (used by the PU classifier as a sentinel that downstream coerces
+# to 0 via NaN filling).
+# -----------------------------------------------------------------------------
+LOG10_DIST_CAP <- 1e6
+
+nearest_log10_dist <- function(bins_gr, ann_gr) {
+  if (is.null(ann_gr) || length(ann_gr) == 0L)
+    return(rep(NA_real_, length(bins_gr)))
+  d <- suppressWarnings(GenomicRanges::distanceToNearest(
+    bins_gr, ann_gr, ignore.strand=TRUE))
+  out <- rep(NA_real_, length(bins_gr))
+  if (length(d) > 0) {
+    qh <- S4Vectors::queryHits(d)
+    dd <- S4Vectors::mcols(d)$distance
+    out[qh] <- log10(pmin(as.numeric(dd), LOG10_DIST_CAP) + 1)
+  }
+  out
+}
+
+count_in_window <- function(bins_gr, ann_gr, halfwidth_bp) {
+  if (is.null(ann_gr) || length(ann_gr) == 0L)
+    return(integer(length(bins_gr)))
+  bins_ext <- resize(bins_gr,
+                     width = width(bins_gr) + 2L * as.integer(halfwidth_bp),
+                     fix   = 'center')
+  as.integer(GenomicRanges::countOverlaps(bins_ext, ann_gr))
+}
+
+# Build helper annotation GRanges (some may be empty)
+top_gr <- NULL
+if (any(top_mask)) {
+  top_gr <- bins_gr[top_mask]
+}
+
+ca_gr <- NULL
+if (any(mask_293T_CA)) {
+  ca_gr <- bins_gr[mask_293T_CA]
+}
+ctcfb_gr <- NULL
+if (any(mask_CTCF)) {
+  ctcfb_gr <- bins_gr[mask_CTCF]
+}
+
+message('[mask] Computing distance / density / chromosome features ...')
+dist_log_top_CTCF <- nearest_log10_dist(bins_gr, top_gr)
+dist_log_cCRE_293T_CA <- nearest_log10_dist(bins_gr, ca_gr)
+dist_log_cCRE_CTCF <- nearest_log10_dist(bins_gr, ctcfb_gr)
+
+n_top_CTCF_within_50kb <- count_in_window(bins_gr, top_gr, 50000L)
+n_cCRE_293T_within_5kb <- count_in_window(bins_gr, ca_gr, 5000L)
+n_cCRE_CTCF_within_50kb <- count_in_window(bins_gr, ctcfb_gr, 50000L)
+
+chrom_str <- as.character(seqnames(bins_gr))
+is_chrX <- as.integer(chrom_str %in% c('chrX', 'X'))
+is_chrY <- as.integer(chrom_str %in% c('chrY', 'Y'))
+
+# Optional: GC content. Two source modes:
+#   * mask.gc_bsgenome   = "BSgenome.Hsapiens.UCSC.hg38" (or similar)
+#   * mask.gc_fasta_path = "/path/to/hg38.fa" (uses Rsamtools::FaFile)
+# If neither resolves, fall back to NA.
+gc_content <- rep(NA_real_, N_bins)
+gc_source <- 'none'
+if (!is.null(mask_cfg$gc_bsgenome)) {
+  pkg <- as.character(mask_cfg$gc_bsgenome)
+  ok <- tryCatch({
+    if (!requireNamespace(pkg, quietly = TRUE)) {
+      message('[mask] gc_bsgenome=', pkg, ' not installed; skipping GC.')
+      FALSE
+    } else {
+      suppressPackageStartupMessages(library(pkg, character.only = TRUE))
+      requireNamespace('Biostrings', quietly = TRUE)
+    }
+  }, error = function(e) FALSE)
+  if (isTRUE(ok)) {
+    bsg <- get(pkg)
+    message('[mask] Computing GC content from ', pkg, ' ...')
+    gc_content <- as.numeric(Biostrings::letterFrequency(
+      Biostrings::getSeq(bsg, bins_gr), letters='GC', as.prob=TRUE))
+    gc_source <- paste0('bsgenome:', pkg)
+  }
+} else if (!is.null(mask_cfg$gc_fasta_path) &&
+           file.exists(mask_cfg$gc_fasta_path)) {
+  ok <- tryCatch(requireNamespace('Rsamtools', quietly = TRUE) &&
+                 requireNamespace('Biostrings', quietly = TRUE),
+                 error = function(e) FALSE)
+  if (isTRUE(ok)) {
+    message('[mask] Computing GC content from FASTA ', mask_cfg$gc_fasta_path)
+    fa <- Rsamtools::FaFile(mask_cfg$gc_fasta_path)
+    seqs <- tryCatch(Biostrings::getSeq(fa, bins_gr),
+                     error = function(e) NULL)
+    if (!is.null(seqs)) {
+      gc_content <- as.numeric(Biostrings::letterFrequency(
+        seqs, letters='GC', as.prob=TRUE))
+      gc_source <- paste0('fasta:', mask_cfg$gc_fasta_path)
+    }
+  } else {
+    message('[mask] Rsamtools/Biostrings missing; skipping GC.')
+  }
+}
+
+# Optional: mean mappability per bin from a bigWig file.
+mappability_mean <- rep(NA_real_, N_bins)
+mapp_source <- 'none'
+if (!is.null(mask_cfg$mappability_bigwig) &&
+    file.exists(mask_cfg$mappability_bigwig)) {
+  ok <- tryCatch(requireNamespace('rtracklayer', quietly = TRUE),
+                 error = function(e) FALSE)
+  if (isTRUE(ok)) {
+    message('[mask] Reading mappability bigWig ', mask_cfg$mappability_bigwig)
+    bw <- tryCatch(
+      rtracklayer::import.bw(mask_cfg$mappability_bigwig, which = bins_gr),
+      error = function(e) { message('[mask] bigWig import failed: ',
+                                    conditionMessage(e)); NULL })
+    if (!is.null(bw)) {
+      # Weighted mean of score across overlapping intervals per bin.
+      ov <- GenomicRanges::findOverlaps(bins_gr, bw)
+      if (length(ov) > 0) {
+        qh <- S4Vectors::queryHits(ov)
+        sh <- S4Vectors::subjectHits(ov)
+        widths <- pmin(end(bins_gr)[qh], end(bw)[sh]) -
+                  pmax(start(bins_gr)[qh], start(bw)[sh]) + 1L
+        widths <- pmax(widths, 0L)
+        scores <- as.numeric(bw$score[sh])
+        # weighted sum / weight sum per bin.
+        ws <- widths * scores
+        sum_ws <- tapply(ws,    qh, sum, na.rm=TRUE)
+        sum_w  <- tapply(widths, qh, sum, na.rm=TRUE)
+        idx <- as.integer(names(sum_w))
+        denom <- as.numeric(sum_w); denom[denom == 0] <- NA_real_
+        mappability_mean[idx] <- as.numeric(sum_ws) / denom
+        mapp_source <- paste0('bigwig:', mask_cfg$mappability_bigwig)
+      }
+    }
+  } else {
+    message('[mask] rtracklayer missing; skipping mappability.')
+  }
 }
 
 # -----------------------------------------------------------------------------
@@ -298,19 +466,31 @@ write.table(mask_bed_df, mask_bed_path, sep='\t', quote=FALSE,
             row.names=FALSE, col.names=FALSE)
 
 features <- data.frame(
-  bin_idx_orig         = seq_len(N_bins) - 1L,
-  bin_name             = bin_names,
-  in_cCRE_293T         = as.integer(mask_293T),
-  in_cCRE_293T_CA      = as.integer(mask_293T_CA),
-  in_cCRE_CTCF         = as.integer(mask_CTCF),
-  in_top_N_CTCF        = as.integer(top_mask),
-  ctcf_zscore_max      = top_score,
-  motif_hit_count      = motif_count,
-  log10_total_count    = log10(total_count + 1),
-  log10_n_cells_observed = log10(n_cells_observed + 1),
-  blacklist            = as.integer(blacklist_mask),
-  mappability_drop     = as.integer(mappability_drop),
-  mask_keep            = as.integer(keep)
+  bin_idx_orig             = seq_len(N_bins) - 1L,
+  bin_name                 = bin_names,
+  in_cCRE_293T             = as.integer(mask_293T),
+  in_cCRE_293T_CA          = as.integer(mask_293T_CA),
+  in_cCRE_CTCF             = as.integer(mask_CTCF),
+  in_top_N_CTCF            = as.integer(top_mask),
+  ctcf_zscore_max          = top_score,
+  motif_hit_count          = motif_count,
+  log10_total_count        = log10(total_count + 1),
+  log10_n_cells_observed   = log10(n_cells_observed + 1),
+  log10_max_count          = log10(max_count_per_bin + 1),
+  fraction_cells_observed  = fraction_cells_observed,
+  dist_log_top_CTCF        = dist_log_top_CTCF,
+  dist_log_cCRE_293T_CA    = dist_log_cCRE_293T_CA,
+  dist_log_cCRE_CTCF       = dist_log_cCRE_CTCF,
+  n_top_CTCF_within_50kb   = n_top_CTCF_within_50kb,
+  n_cCRE_293T_within_5kb   = n_cCRE_293T_within_5kb,
+  n_cCRE_CTCF_within_50kb  = n_cCRE_CTCF_within_50kb,
+  gc_content               = gc_content,
+  mappability_mean         = mappability_mean,
+  is_chrX                  = is_chrX,
+  is_chrY                  = is_chrY,
+  blacklist                = as.integer(blacklist_mask),
+  mappability_drop         = as.integer(mappability_drop),
+  mask_keep                = as.integer(keep)
 )
 write.table(features, features_path, sep='\t', quote=FALSE, row.names=FALSE)
 
@@ -327,6 +507,11 @@ meta <- list(
     blacklist        = sum(blacklist_mask),
     mappability_drop = sum(mappability_drop)
   ),
+  feature_sources = list(
+    gc          = gc_source,
+    mappability = mapp_source
+  ),
+  n_cells_total = n_cells_total,
   files = files,
   positive_seed = list(n_top=n_top, require_293T_CA=require_293T_CA),
   outputs = list(

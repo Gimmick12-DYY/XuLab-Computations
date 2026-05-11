@@ -43,6 +43,14 @@ mask:
   # exclude. Leave null if you don't have one.
   exclude_mappability_bed: null
 
+  # ----- Optional richer per-bin features (auto-skipped if unavailable) -----
+  # GC content: provide a BSgenome package name OR a FASTA path. Skipped if
+  # the package isn't installed or the file doesn't exist.
+  gc_bsgenome:        null   # e.g. "BSgenome.Hsapiens.UCSC.hg38"
+  gc_fasta_path:      null   # e.g. "/path/to/hg38.fa"
+  # Mean mappability per bin from a bigWig file (needs rtracklayer).
+  mappability_bigwig: null   # e.g. "/path/to/wgEncodeCrgMapabilityAlign100mer.bigWig"
+
   # Known-positive seed for the PU classifier. Same recipe as
   # Bin_posVSneg.ipynb: top-N HEK293 CTCF cCREs (by 293 CTCF z-score),
   # restricted to HEK293T-CA.
@@ -56,15 +64,31 @@ mask:
 pu:
   # Features fed to the classifier. Every name must exist as a column in
   # bin_features.tsv (written by step 02). Numeric columns are used as-is;
-  # boolean columns become 0/1.
+  # boolean columns become 0/1. Unknown columns raise; missing values become 0.
   features:
     - in_cCRE_293T
     - in_cCRE_293T_CA
     - in_cCRE_CTCF
     - motif_hit_count
     - ctcf_zscore_max         # NaN -> filled with 0
-    - log10_total_count       # bin-level raw signal aggregate
+    - log10_total_count
     - log10_n_cells_observed
+    # Richer signal/context features (added in step 02; gracefully NaN
+    # if upstream data is missing).
+    - log10_max_count
+    - fraction_cells_observed
+    - dist_log_top_CTCF
+    - dist_log_cCRE_293T_CA
+    - dist_log_cCRE_CTCF
+    - n_top_CTCF_within_50kb
+    - n_cCRE_293T_within_5kb
+    - n_cCRE_CTCF_within_50kb
+    # Optional features -- columns are written by step 02 but values may be
+    # NaN if the source (FASTA / BSgenome / mappability bigWig) is unset.
+    - gc_content
+    - mappability_mean
+    - is_chrX
+    - is_chrY
 
   # Classifier choice. "logistic" is fast and well-calibrated; "rf" is more
   # expressive but slower and less calibrated.
@@ -74,19 +98,33 @@ pu:
   hold_out_fraction: 0.20       # 20 % of seed positives held out for step 07
 
   # Threshold used by step 04 to decide which bins make the refined mask.
-  # "auto" picks the threshold that keeps approximately the union of all
-  # seed positives + their PU-implied counterparts; or pass a float in [0, 1].
-  refined_mask_threshold: auto
+  # Supported forms:
+  #   * "auto"               -> median PU score of seed positives (legacy,
+  #                              tends to over-prune since seed scores cluster
+  #                              near 1.0)
+  #   * "top_k:<N>"          -> retain the top N bins by PU score within the
+  #                              geometric mask (random tie-break w/ seed=42)
+  #   * "quantile:<q>"       -> q-th quantile of pu_score over mask_keep
+  #                              (e.g. quantile:0.95 keeps top 5%)
+  #   * "seed_quantile:<q>"  -> q-th quantile of pu_score over seed positives
+  #                              (e.g. seed_quantile:0.05 keeps everything
+  #                              above the 5th percentile of seed scores)
+  #   * <float>              -> fixed numeric threshold on pu_score
+  # Default: top_k:50000 -> ~16x larger refined universe than the legacy
+  # "auto" recipe in our HEK293T benchmark.
+  refined_mask_threshold: "top_k:50000"
 
 # -----------------------------------------------------------------------------
 # Stage 3 -- scOpen on refined mask (step 04_run_scopen.py)
 # -----------------------------------------------------------------------------
 scopen:
-  estimate_rank:    true
+  # Legacy knee-based rank estimation. Disabled by default in favour of the
+  # explicit rank_sweep below, which is more robust to the kl.knee=None bug.
+  estimate_rank:    false
   min_n_components: 5
   max_n_components: 30
   step_n_components: 5
-  n_components:     30          # used when estimate_rank: false
+  n_components:     50          # used when estimate_rank: false AND no rank_sweep
   # Bumping alpha is the cleanest tuning lever against over-imputation
   # *within* the refined mask. 1.0 is the scOpen paper default; try 2-3
   # to be more conservative.
@@ -96,6 +134,22 @@ scopen:
   random_state:     42
   nc:               6
   verbose:          0
+
+  # Rank sweep -- run scOpen at each k and pick the best by held-out
+  # AUROC (using PU's holdout_positives.tsv as the gold standard). Set to
+  # null/empty to disable and use a single n_components run.
+  rank_sweep: [30, 50, 80, 120]
+
+  # Continuous PU row weighting (item 3 in PUscOpen tuning plan). When
+  # true, every bin's nonzero counts are multiplied by a per-row integer
+  # scale derived from (pu_score + row_weight_floor)**row_weight_alpha,
+  # clipped to [1, row_weight_scale_max]. Default values keep low-PU
+  # bins at scale=1 (they still participate) and boost high-PU bins up
+  # to scale=row_weight_scale_max.
+  row_weight_by_pu:     true
+  row_weight_alpha:     1.0
+  row_weight_floor:     0.05
+  row_weight_scale_max: 5
 
 # -----------------------------------------------------------------------------
 # Stage 4 -- neighborhood post-filter (step 05_postfilter.py)
@@ -110,10 +164,25 @@ postfilter:
   min_neighbors:      1
   neighbor_threshold: auto
 
-  # If true, multiply the per-(bin, cell) scOpen value by the bin's PU score
-  # so the final score reflects "imputer thinks this bin is high signal AND
-  # the PU model thinks this bin is plausibly positive a priori".
-  multiply_by_pu:     true
+  # Damping mode (item 4 in PUscOpen tuning plan).
+  #   soft_damp: true  -> continuous factor in [damp_floor, 1.0] based on
+  #                       neighbour count and own-signal. No bin is fully
+  #                       zeroed; previously-zeroed bins now keep at least
+  #                       damp_floor of their imputed value.
+  #   soft_damp: false -> hard rule: keep at 1.0 if supported, otherwise
+  #                       damp by damp_unsupported (legacy 0.25).
+  soft_damp:             true
+  damp_floor:            0.5
+  damp_unsupported:      0.25
+  soft_neighbor_target:  2     # neighbour count at which support saturates
+
+  # Multiplicative PU prior on the final per-(bin, cell) signal.
+  # Continuous form (item 3): damp *= clip(pu_score^pu_weight_alpha,
+  # pu_weight_floor, 1). Set pu_weight_alpha=0 to disable; larger alpha
+  # behaves more like a hard mask.
+  multiply_by_pu:        true
+  pu_weight_alpha:       1.0
+  pu_weight_floor:       0.0
 
 # -----------------------------------------------------------------------------
 # Stage 5 -- persistence (step 06_impute.py)

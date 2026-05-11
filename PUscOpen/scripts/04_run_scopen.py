@@ -26,6 +26,7 @@ import sys
 from pathlib import Path
 
 import numpy as np
+import pandas as pd
 import scipy.io as sio
 import scipy.sparse as sp
 
@@ -59,8 +60,8 @@ def _bed_row(name: str) -> tuple[str, str, str]:
 
 
 def _build_scopen_cmd(bin_path: str, input_dir: Path, run_dir: Path,
-                      output_prefix: str, sc: dict, estimate_rank: bool
-                      ) -> list[str]:
+                      output_prefix: str, sc: dict, estimate_rank: bool,
+                      n_components_override: int | None = None) -> list[str]:
     cmd = [
         bin_path,
         '--input',         str(input_dir),
@@ -84,8 +85,46 @@ def _build_scopen_cmd(bin_path: str, input_dir: Path, run_dir: Path,
             '--step_n_components', str(int(sc.get('step_n_components', 5))),
         ]
     else:
-        cmd += ['--n_components', str(int(sc.get('n_components', 30)))]
+        k = int(n_components_override
+                if n_components_override is not None
+                else sc.get('n_components', 30))
+        cmd += ['--n_components', str(k)]
     return cmd
+
+
+def _holdout_auroc(W_path: Path, H_path: Path, holdout_names: set[str]
+                   ) -> tuple[float, int] | None:
+    """Score a (W, H) fit by AUROC of per-bin signal totals on holdout
+    positives vs. all other refined-mask bins.
+
+    Returns (auroc, n_holdout_in_mask) or None if W/H is unreadable.
+    """
+    try:
+        W_df = pd.read_csv(W_path, sep='\t', index_col=0)
+        H_df = pd.read_csv(H_path, sep='\t', index_col=0)
+    except Exception as e:
+        log.warning('Could not score (%s, %s): %s', W_path, H_path, e)
+        return None
+    if W_df.shape[1] != H_df.shape[0]:
+        return None
+    regions = list(W_df.index.astype(str))
+    W = W_df.to_numpy(dtype=np.float64, copy=False)
+    H_sum = H_df.to_numpy(dtype=np.float64, copy=False).sum(axis=1)
+    signal = W @ H_sum
+    y = np.array([(r in holdout_names) for r in regions], dtype=bool)
+    n_pos = int(y.sum())
+    n_neg = int((~y).sum())
+    if n_pos == 0 or n_neg == 0:
+        return None
+    order = np.argsort(-signal, kind='mergesort')
+    ranks = np.empty_like(order, dtype=np.float64)
+    ranks[order] = np.arange(1, signal.size + 1)
+    # Mann-Whitney U via rank sum on positives (lower rank = higher score).
+    sum_ranks_pos = float(ranks[y].sum())
+    u = sum_ranks_pos - n_pos * (n_pos + 1) / 2.0
+    # We ranked descending, so "AUROC of pos > neg" = 1 - u / (n_pos * n_neg).
+    auroc = 1.0 - u / (n_pos * n_neg)
+    return float(auroc), n_pos
 
 
 def main() -> int:
@@ -122,6 +161,24 @@ def main() -> int:
         log.error('Refined mask is empty; nothing to feed to scOpen.')
         return 1
     log.info('Refined mask: %d bins', len(refined_names))
+
+    # Per-bin PU scores (for optional row weighting and rank-sweep scoring).
+    pu_scores_path = Path(cfg['paths']['pu']) / 'pu_scores.tsv'
+    pu_by_name: dict[str, float] = {}
+    holdout_names: set[str] = set()
+    if pu_scores_path.exists():
+        pu_df = pd.read_csv(pu_scores_path, sep='\t')
+        pu_by_name = dict(zip(pu_df['bin_name'].astype(str),
+                              pu_df['pu_score'].astype(float)))
+        if 'in_holdout_pos' in pu_df.columns:
+            holdout_names = set(
+                pu_df.loc[pu_df['in_holdout_pos'] == 1, 'bin_name'].astype(str)
+            )
+        log.info('Loaded pu_scores for %d bins (%d holdout positives).',
+                 len(pu_by_name), len(holdout_names))
+    else:
+        log.warning('No pu_scores.tsv at %s; row weighting / rank sweep skipped.',
+                    pu_scores_path)
 
     log.info('Reading raw matrix %s', mtx_path)
     mat = sio.mmread(mtx_path).tocsr()
@@ -170,6 +227,44 @@ def main() -> int:
              *sub.shape, int(sub.nnz))
 
     # ------------------------------------------------------------------
+    # Optional: row-weight by PU score before scOpen.
+    #   sub[r, c] := sub[r, c] * (pu_score[r] + pu_floor) ** pu_alpha
+    # Implementation note: scOpen's input must be integer counts in 10X mm
+    # format, so we approximate continuous weighting by replicating each
+    # nonzero entry's contribution via a per-row scale. We multiply the raw
+    # int matrix by a small integer scalar derived from the PU weight; this
+    # preserves scOpen's count expectations while reflecting confidence.
+    # ------------------------------------------------------------------
+    row_weight_by_pu = bool(sc.get('row_weight_by_pu', False))
+    row_weight_alpha = float(sc.get('row_weight_alpha', 1.0))
+    row_weight_floor = float(sc.get('row_weight_floor', 0.05))
+    row_weight_scale_max = int(sc.get('row_weight_scale_max', 10))
+    row_pu = None
+    if row_weight_by_pu and pu_by_name:
+        row_pu = np.array(
+            [float(pu_by_name.get(n, 0.0)) for n in kept_names],
+            dtype=np.float64,
+        )
+        row_pu = np.clip(row_pu, 0.0, 1.0)
+        w = np.power(row_pu + row_weight_floor, row_weight_alpha)
+        if w.max() > 0:
+            w_scale = (w / w.max()) * row_weight_scale_max
+        else:
+            w_scale = np.ones_like(w)
+        w_int = np.clip(np.rint(w_scale), 1, row_weight_scale_max).astype(np.int32)
+        log.info(
+            'row_weight_by_pu=True alpha=%.2f floor=%.2f scale_max=%d; '
+            'per-row int scale: min=%d median=%d max=%d',
+            row_weight_alpha, row_weight_floor, row_weight_scale_max,
+            int(w_int.min()), int(np.median(w_int)), int(w_int.max()),
+        )
+        # Use int32 to avoid int8 overflow when row_weight_scale_max > 127.
+        sub = sub.astype(np.int32)
+        diag = sp.diags(w_int.astype(np.int32),
+                        shape=(sub.shape[0], sub.shape[0]), format='csr')
+        sub = (diag @ sub).tocsr()
+
+    # ------------------------------------------------------------------
     # Write 10X-format input directory
     # ------------------------------------------------------------------
     in_dir = Path(cfg['paths']['scopen_input'])
@@ -206,27 +301,104 @@ def main() -> int:
     run_dir = Path(cfg['paths']['scopen_run'])
     run_dir.mkdir(parents=True, exist_ok=True)
     use_estimate_rank = bool(sc.get('estimate_rank', True))
-    cmd = _build_scopen_cmd(bin_path, in_dir, run_dir, args.output_prefix, sc,
-                            use_estimate_rank)
-    log.info('Running: %s', ' '.join(cmd))
-    r = subprocess.run(cmd, cwd=run_dir)
-    if r.returncode != 0 and use_estimate_rank:
-        fallback_k = int(sc.get('n_components', sc.get('max_n_components', 30)))
-        log.warning('scopen rank-estimation failed (rc=%d); retrying with '
-                    '--n-components %d.', r.returncode, fallback_k)
-        sc_fb = dict(sc); sc_fb['n_components'] = fallback_k
-        cmd = _build_scopen_cmd(bin_path, in_dir, run_dir, args.output_prefix, sc_fb, False)
-        log.info('Running fallback: %s', ' '.join(cmd))
-        r = subprocess.run(cmd, cwd=run_dir)
-
-    if r.returncode != 0:
-        log.error('scopen exited with status %d', r.returncode)
-        return r.returncode
-
-    (run_dir / 'scopen_cmd.txt').write_text(' '.join(cmd) + '\n')
-
+    rank_sweep = sc.get('rank_sweep')
     expected_w = run_dir / f'{args.output_prefix}_peaks.txt'
     expected_h = run_dir / f'{args.output_prefix}_barcodes.txt'
+
+    if rank_sweep:
+        # Disable estimate_rank when sweeping.
+        try:
+            sweep_ks = sorted(set(int(k) for k in rank_sweep))
+        except (TypeError, ValueError) as e:
+            raise SystemExit(f'scopen.rank_sweep must be a list of ints: {e}')
+        log.info('Rank sweep enabled over %s (estimate_rank disabled).', sweep_ks)
+        sweep_dir = run_dir / 'rank_sweep'
+        sweep_dir.mkdir(parents=True, exist_ok=True)
+        results: list[dict] = []
+        for k in sweep_ks:
+            prefix_k = f'{args.output_prefix}_k{k}'
+            k_run_dir = sweep_dir / f'k{k}'
+            k_run_dir.mkdir(parents=True, exist_ok=True)
+            cmd_k = _build_scopen_cmd(
+                bin_path, in_dir, k_run_dir, prefix_k, sc,
+                estimate_rank=False, n_components_override=k,
+            )
+            log.info('Sweep k=%d  cmd: %s', k, ' '.join(cmd_k))
+            r_k = subprocess.run(cmd_k, cwd=k_run_dir)
+            if r_k.returncode != 0:
+                log.warning('Sweep k=%d failed (rc=%d); skipping.', k, r_k.returncode)
+                continue
+            w_k = k_run_dir / f'{prefix_k}_peaks.txt'
+            h_k = k_run_dir / f'{prefix_k}_barcodes.txt'
+            if not (w_k.exists() and h_k.exists()):
+                log.warning('Sweep k=%d produced no W/H; skipping.', k)
+                continue
+            scored = _holdout_auroc(w_k, h_k, holdout_names) if holdout_names else None
+            results.append({
+                'k': k, 'w': w_k, 'h': h_k,
+                'auroc': None if scored is None else scored[0],
+                'n_holdout': None if scored is None else scored[1],
+            })
+            log.info('  k=%d  auroc=%s  n_holdout=%s',
+                     k,
+                     'NA' if scored is None else f'{scored[0]:.4g}',
+                     'NA' if scored is None else scored[1])
+
+        if not results:
+            log.error('Rank sweep produced no successful fits.')
+            return 4
+        # Pick the highest holdout AUROC if any are scored; otherwise the
+        # largest k that ran (more capacity is usually safer when blind).
+        scored_only = [r for r in results if r['auroc'] is not None]
+        if scored_only:
+            best = max(scored_only, key=lambda d: d['auroc'])
+            log.info('Best k by holdout AUROC: %d (auroc=%.4g)', best['k'], best['auroc'])
+        else:
+            best = max(results, key=lambda d: d['k'])
+            log.info('No holdout scoring available; picking largest k=%d.', best['k'])
+        # Copy the best k's W/H to the canonical names so downstream
+        # (steps 05, 06) finds them unchanged.
+        shutil.copy(best['w'], expected_w)
+        shutil.copy(best['h'], expected_h)
+        (run_dir / 'rank_sweep_summary.json').write_text(
+            json.dumps({
+                'sweep_ks': sweep_ks,
+                'results': [
+                    {'k': r['k'],
+                     'auroc': r['auroc'],
+                     'n_holdout': r['n_holdout'],
+                     'w': str(r['w']),
+                     'h': str(r['h'])}
+                    for r in results
+                ],
+                'chosen_k': best['k'],
+                'chosen_w': str(best['w']),
+                'chosen_h': str(best['h']),
+            }, indent=2) + '\n'
+        )
+        (run_dir / 'scopen_cmd.txt').write_text(
+            '# rank_sweep over ' + ' '.join(str(k) for k in sweep_ks)
+            + f'\n# chose k={best["k"]}\n'
+        )
+    else:
+        cmd = _build_scopen_cmd(bin_path, in_dir, run_dir, args.output_prefix, sc,
+                                use_estimate_rank)
+        log.info('Running: %s', ' '.join(cmd))
+        r = subprocess.run(cmd, cwd=run_dir)
+        if r.returncode != 0 and use_estimate_rank:
+            fallback_k = int(sc.get('n_components', sc.get('max_n_components', 30)))
+            log.warning('scopen rank-estimation failed (rc=%d); retrying with '
+                        '--n-components %d.', r.returncode, fallback_k)
+            sc_fb = dict(sc); sc_fb['n_components'] = fallback_k
+            cmd = _build_scopen_cmd(bin_path, in_dir, run_dir, args.output_prefix,
+                                    sc_fb, False)
+            log.info('Running fallback: %s', ' '.join(cmd))
+            r = subprocess.run(cmd, cwd=run_dir)
+        if r.returncode != 0:
+            log.error('scopen exited with status %d', r.returncode)
+            return r.returncode
+        (run_dir / 'scopen_cmd.txt').write_text(' '.join(cmd) + '\n')
+
     if not expected_w.exists() or not expected_h.exists():
         log.error('scopen finished but W (%s) or H (%s) is missing.',
                   expected_w, expected_h)

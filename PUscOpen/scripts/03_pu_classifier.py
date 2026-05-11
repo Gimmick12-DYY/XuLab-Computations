@@ -58,17 +58,23 @@ def _bed_row(name: str) -> tuple[str, int, int] | None:
     return m.group(1), int(m.group(2)), int(m.group(3))
 
 
-def _coerce_features(df: pd.DataFrame, feature_names: list[str]) -> np.ndarray:
+def _coerce_features(df: pd.DataFrame, feature_names: list[str]
+                     ) -> tuple[np.ndarray, list[str], list[str]]:
     """Pull requested feature columns into a numeric matrix.
 
     Booleans / ints stay as-is; floats with NaN are filled with 0. Missing
-    columns raise.
+    columns produce an all-zero column with a warning (so step 03 keeps
+    working against a slightly older bin_features.tsv).
     """
-    cols = []
+    cols, used, skipped = [], [], []
+    n = len(df)
     for f in feature_names:
         if f not in df.columns:
-            raise SystemExit(f'Feature {f!r} not found in bin_features.tsv; '
-                             f'available: {list(df.columns)}')
+            log.warning('Feature %r not in bin_features.tsv; filling with 0. '
+                        'Re-run step 02 to refresh.', f)
+            cols.append(np.zeros(n, dtype=np.float32))
+            skipped.append(f)
+            continue
         v = df[f].to_numpy()
         if v.dtype == bool:
             v = v.astype(np.float32)
@@ -76,7 +82,9 @@ def _coerce_features(df: pd.DataFrame, feature_names: list[str]) -> np.ndarray:
             v = np.asarray(v, dtype=np.float32)
             v = np.where(np.isnan(v), 0.0, v)
         cols.append(v)
-    return np.stack(cols, axis=1).astype(np.float32)
+        used.append(f)
+    X = np.stack(cols, axis=1).astype(np.float32)
+    return X, used, skipped
 
 
 def _make_classifier(kind: str, random_state: int):
@@ -109,23 +117,114 @@ def _cv_oof_scores(X: np.ndarray, s: np.ndarray, kind: str, n_splits: int,
     return oof
 
 
-def _pick_threshold(refined: np.ndarray, seed_in_mask: np.ndarray,
-                    mode: str | float) -> tuple[float, str]:
-    """Resolve refined_mask_threshold to a numeric cutoff."""
+def _pick_threshold(pu_score: np.ndarray, mask_keep: np.ndarray,
+                    seed_in_mask: np.ndarray,
+                    mode: str | float) -> tuple[float, str, np.ndarray | None]:
+    """Resolve refined_mask_threshold to a numeric cutoff.
+
+    Returns (threshold, origin_string, override_mask). When override_mask is
+    not None, the caller should use it directly as the refined mask (it
+    already intersects mask_keep) -- this is how top_k:<N> mode works, since
+    the geometric threshold is just a side-effect of the K-th score, not the
+    decision rule.
+
+    Supported forms for ``mode``:
+      * float in [0, 1]            -> fixed numeric threshold on pu_score
+      * "auto"                     -> median of seed-positive PU scores
+      * "top_k:<N>"                -> keep the top-N bins among mask_keep
+                                     (random tie-break with seed=42)
+      * "quantile:<q>"             -> use the q-th quantile of pu_score over
+                                     mask_keep as the cutoff. q in [0, 1];
+                                     e.g. q=0.95 keeps the top 5% of mask_keep
+      * "seed_quantile:<q>"        -> use the q-th quantile of pu_score over
+                                     SEED positives only. e.g. q=0.05 keeps
+                                     anything above the 5th percentile of
+                                     seed scores (much more permissive than
+                                     "auto"/median).
+    """
     if isinstance(mode, (int, float)) and not isinstance(mode, bool):
-        return float(mode), f'fixed:{float(mode)}'
-    s = str(mode).lower() if mode is not None else 'auto'
+        return float(mode), f'fixed:{float(mode)}', None
+
+    raw = '' if mode is None else str(mode).strip()
+    s = raw.lower()
+
+    # top_k:<N>
+    if s.startswith('top_k:') or s.startswith('topk:'):
+        try:
+            k = int(s.split(':', 1)[1])
+        except ValueError as e:
+            raise SystemExit(f'Cannot parse top_k from {mode!r}: {e}') from None
+        if k <= 0:
+            raise SystemExit(f'top_k must be >= 1, got {k}')
+        # Score is only relevant within mask_keep; everything else is excluded.
+        scored_idx = np.where(mask_keep)[0]
+        if scored_idx.size == 0:
+            return 0.5, 'top_k:no_mask_keep', None
+        k_eff = int(min(k, scored_idx.size))
+        scores = pu_score[scored_idx]
+        if k_eff >= scored_idx.size:
+            override = mask_keep.copy()
+            cutoff = float(scores.min()) if scores.size else 0.0
+            return cutoff, f'top_k:{k}->{k_eff} (full mask_keep)', override
+        rng = np.random.default_rng(42)
+        cutoff = float(np.partition(scores, scored_idx.size - k_eff)
+                        [scored_idx.size - k_eff])
+        strictly_above = scores > cutoff
+        n_above = int(strictly_above.sum())
+        need = k_eff - n_above
+        tied = np.where(scores == cutoff)[0]
+        chosen = np.zeros(scored_idx.size, dtype=bool)
+        chosen[strictly_above] = True
+        if need > 0 and tied.size > 0:
+            pick = rng.choice(tied, size=min(need, tied.size), replace=False)
+            chosen[pick] = True
+        override = np.zeros_like(mask_keep)
+        override[scored_idx[chosen]] = True
+        # Sanity: |override| should equal k_eff.
+        return cutoff, f'top_k:{k}->{int(override.sum())} (cutoff={cutoff:.4g})', override
+
+    # quantile:<q>  (over mask_keep)
+    if s.startswith('quantile:'):
+        try:
+            q = float(s.split(':', 1)[1])
+        except ValueError as e:
+            raise SystemExit(f'Cannot parse quantile from {mode!r}: {e}') from None
+        if not (0.0 <= q <= 1.0):
+            raise SystemExit(f'quantile must be in [0,1], got {q}')
+        if mask_keep.any():
+            cutoff = float(np.quantile(pu_score[mask_keep], q))
+        else:
+            cutoff = 0.5
+        return cutoff, f'quantile:{q}->{cutoff:.4g} (over mask_keep)', None
+
+    # seed_quantile:<q>
+    if s.startswith('seed_quantile:'):
+        try:
+            q = float(s.split(':', 1)[1])
+        except ValueError as e:
+            raise SystemExit(f'Cannot parse seed_quantile from {mode!r}: {e}') from None
+        if not (0.0 <= q <= 1.0):
+            raise SystemExit(f'seed_quantile must be in [0,1], got {q}')
+        if seed_in_mask.any():
+            cutoff = float(np.quantile(pu_score[seed_in_mask], q))
+        elif mask_keep.any():
+            cutoff = float(np.quantile(pu_score[mask_keep], q))
+        else:
+            cutoff = 0.5
+        return cutoff, f'seed_quantile:{q}->{cutoff:.4g}', None
+
     if s == 'auto':
         # Keep about as many bins as the union of seed positives + bins whose
         # PU score is >= the median of seed-positive scores.
         if seed_in_mask.any():
-            median_pos = float(np.median(refined[seed_in_mask]))
-            return median_pos, f'auto:median_seed_pu={median_pos:.4g}'
-        return 0.5, 'auto:default0.5_no_seed'
+            median_pos = float(np.median(pu_score[seed_in_mask]))
+            return median_pos, f'auto:median_seed_pu={median_pos:.4g}', None
+        return 0.5, 'auto:default0.5_no_seed', None
+
     try:
-        return float(s), f'fixed:{float(s)}'
+        return float(s), f'fixed:{float(s)}', None
     except ValueError:
-        return 0.5, 'auto:fallback0.5'
+        return 0.5, 'auto:fallback0.5', None
 
 
 def main() -> int:
@@ -200,9 +299,13 @@ def main() -> int:
     # whole point is to check whether the trained model can recover them.
     # ------------------------------------------------------------------
     s = train_pos.astype(np.int8)
-    X = _coerce_features(df, feat_names)
-    log.info('Feature matrix: %s, positive class fraction (train) = %.4g',
-             X.shape, float(s.mean()))
+    X, feat_used, feat_skipped = _coerce_features(df, feat_names)
+    log.info('Feature matrix: %s (used=%d, skipped=%d), '
+             'positive class fraction (train) = %.4g',
+             X.shape, len(feat_used), len(feat_skipped), float(s.mean()))
+    if feat_skipped:
+        log.warning('Skipped features (filled with 0): %s',
+                    ', '.join(feat_skipped))
 
     # ------------------------------------------------------------------
     # Stage 1: out-of-fold P(s=1 | x) -- used for the calibration constant
@@ -238,12 +341,27 @@ def main() -> int:
     # Threshold -> refined mask. Refined mask must also satisfy the
     # geometric mask_keep flag from step 02.
     # ------------------------------------------------------------------
-    thresh_value, thresh_origin = _pick_threshold(pu_score, train_pos, refined_thresh_cfg)
-    refined = (pu_score >= thresh_value) & mask_keep
+    thresh_value, thresh_origin, override = _pick_threshold(
+        pu_score, mask_keep, train_pos, refined_thresh_cfg
+    )
+    if override is not None:
+        refined = override & mask_keep
+    else:
+        refined = (pu_score >= thresh_value) & mask_keep
     log.info('Refined-mask threshold=%.4g (%s); refined bins=%d / %d (%.2f%% of mask_keep)',
              thresh_value, thresh_origin,
              int(refined.sum()), int(mask_keep.sum()),
              100.0 * refined.sum() / max(int(mask_keep.sum()), 1))
+    if seed_pos.any():
+        seed_recall = float((seed_pos & refined).sum()) / float(seed_pos.sum())
+        log.info('Seed-positive recall inside refined mask: %d / %d (%.2f%%)',
+                 int((seed_pos & refined).sum()), int(seed_pos.sum()),
+                 100.0 * seed_recall)
+    if holdout_mask.any():
+        h_recall = float((holdout_mask & refined).sum()) / float(holdout_mask.sum())
+        log.info('Held-out positive recall inside refined mask: %d / %d (%.2f%%)',
+                 int((holdout_mask & refined).sum()), int(holdout_mask.sum()),
+                 100.0 * h_recall)
 
     # ------------------------------------------------------------------
     # Persist
@@ -285,6 +403,8 @@ def main() -> int:
     meta = {
         'classifier':           classifier_kind,
         'features':             feat_names,
+        'features_used':        feat_used,
+        'features_skipped':     feat_skipped,
         'cv_folds':             cv,
         'random_state':         rs,
         'hold_out_fraction':    holdout_frac,

@@ -28,6 +28,7 @@
 #   FITS_DIR      (default: ${ROOT_DIR}/FITS/work/ctcf/impute) — disabled below during full FITS rerun
 #   SCOPEN_DIR    (default: ${ROOT_DIR}/scOpen/work/ctcf/impute)
 #   MAGIC_DIR     (default: ${ROOT_DIR}/MAGIC/work/ctcf/impute)
+#   PUSCOPEN_DIR  (default: ${ROOT_DIR}/PUscOpen/work/ctcf/impute)
 #   CONDA_ENV     conda env (default: cistopic; FITS/scopen/magic envs work too)
 #   OUT_NAME      basename for output files (default: bin_coverage)
 #   THRESHOLD     reference signal threshold (default 0; "any nonzero signal")
@@ -62,11 +63,12 @@ CISTOPIC_DIR="${CISTOPIC_DIR:-${ROOT_DIR}/cisTopic/scripts/cistopic_ctcf/impute}
 # FITS_DIR="${FITS_DIR:-${ROOT_DIR}/FITS/work/ctcf/impute}"  # re-enable after FITS 05_impute export exists
 SCOPEN_DIR="${SCOPEN_DIR:-${ROOT_DIR}/scOpen/work/ctcf/impute}"
 MAGIC_DIR="${MAGIC_DIR:-${ROOT_DIR}/MAGIC/work/ctcf/impute}"
+PUSCOPEN_DIR="${PUSCOPEN_DIR:-${ROOT_DIR}/PUscOpen/work/ctcf/impute}"
 
 if [[ -z "${INPUTS:-}" ]]; then
   # FITS temporarily omitted (full FITS rerun / empty impute/). Restore:
-  # INPUTS="raw=${MM_DIR} cisTopic=${CISTOPIC_DIR} FITS=${FITS_DIR} scOpen=${SCOPEN_DIR} MAGIC=${MAGIC_DIR}"
-  INPUTS="raw=${MM_DIR} cisTopic=${CISTOPIC_DIR} scOpen=${SCOPEN_DIR} MAGIC=${MAGIC_DIR}"
+  # INPUTS="raw=${MM_DIR} cisTopic=${CISTOPIC_DIR} FITS=${FITS_DIR} scOpen=${SCOPEN_DIR} MAGIC=${MAGIC_DIR} PUscOpen=${PUSCOPEN_DIR}"
+  INPUTS="raw=${MM_DIR} cisTopic=${CISTOPIC_DIR} scOpen=${SCOPEN_DIR} MAGIC=${MAGIC_DIR} PUscOpen=${PUSCOPEN_DIR}"
 fi
 
 if [[ -z "${BINS_TSV:-}" || -z "${OUT_DIR:-}" || -z "${INPUTS:-}" ]]; then

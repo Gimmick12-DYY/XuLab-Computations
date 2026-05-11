@@ -12,9 +12,10 @@ FITS/work/
 FITS/scripts/__pycache__
 scOpen/work/
 MAGIC/work/
+PUscOpen/work/
 downstream/cache/
 downstream/bins/
-downstream/pos_neg_all5
+downstream/pos_neg_all6
 downstream/sensitivity_specificity/
 downstream/bin_sensitivity_specificity/
 downstream/__pycache__/

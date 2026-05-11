@@ -28,11 +28,13 @@ fi
 module load r/4.4.0 || true
 
 read_yaml() {
-  python - <<PY
-import yaml
-c=yaml.safe_load(open("$CFG"))
-v=c
-for k in "$1".lstrip('.').split('.'): v=v[k]
+  python3 - "$CFG" "$1" <<'PY'
+import sys, yaml
+cfg_path, key = sys.argv[1], sys.argv[2]
+c = yaml.safe_load(open(cfg_path)) or {}
+v = c
+for k in key.lstrip('.').split('.'):
+    v = v[k]
 print(v)
 PY
 }

@@ -586,7 +586,12 @@ def main() -> int:
         pos_mask = mask[:n_pos];   neg_mask = mask[n_pos:]
         pos_stats = coverage_for_group(signal[:n_pos], modeled[:n_pos], pos_mask)
         neg_stats = coverage_for_group(signal[n_pos:], modeled[n_pos:], neg_mask)
-        lift_stats = intensity_stats(signal, pos_mask, neg_mask)
+        # intensity_stats expects full-length boolean masks aligned to full signal
+        pos_mask_full = np.zeros(signal.size, dtype=bool)
+        neg_mask_full = np.zeros(signal.size, dtype=bool)
+        pos_mask_full[:n_pos] = pos_mask
+        neg_mask_full[n_pos:] = neg_mask
+        lift_stats = intensity_stats(signal, pos_mask_full, neg_mask_full)
 
         log.info(
             '  %s [%s, t=%.6g]  pos: %d/%d (%.2f%%; modeled %.2f%%)  '

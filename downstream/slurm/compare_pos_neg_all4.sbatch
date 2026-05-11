@@ -6,8 +6,8 @@
 #SBATCH --mem=96G
 #SBATCH --time=04:00:00
 
-# Build bins (if missing) and compare 5 matrices:
-#   raw + cisTopic + FITS + scOpen + MAGIC
+# Build bins (if missing) and compare 6 matrices:
+#   raw + cisTopic + FITS + scOpen + MAGIC + PUscOpen
 #
 # Each pipeline now writes its imputed output as a small directory
 # (factors.npz / matrix.npy + regions.tsv + barcodes.tsv + meta.json),
@@ -15,7 +15,7 @@
 #
 # Optional overrides:
 #   ROOT_DIR, CONDA_ENV, MM_DIR, BINS_TSV, BINS_OUT_DIR, CACHE_DIR,
-#   POSNEG_OUT_DIR, CISTOPIC_DIR, FITS_DIR, SCOPEN_DIR, MAGIC_DIR,
+#   POSNEG_OUT_DIR, CISTOPIC_DIR, FITS_DIR, SCOPEN_DIR, MAGIC_DIR, PUSCOPEN_DIR,
 #   OUT_NAME, N_TOP, SEED
 
 set -euo pipefail
@@ -28,14 +28,15 @@ BINS_OUT_DIR="${BINS_OUT_DIR:-${ROOT_DIR}/downstream/bins}"
 BINS_TSV="${BINS_TSV:-${BINS_OUT_DIR}/pos_neg_bins.tsv}"
 CACHE_DIR="${CACHE_DIR:-${ROOT_DIR}/downstream/cache}"
 
-POSNEG_OUT_DIR="${POSNEG_OUT_DIR:-${ROOT_DIR}/downstream/pos_neg_all5}"
-OUT_NAME="${OUT_NAME:-compare_pos_neg_all5}"
+POSNEG_OUT_DIR="${POSNEG_OUT_DIR:-${ROOT_DIR}/downstream/pos_neg_all6}"
+OUT_NAME="${OUT_NAME:-compare_pos_neg_all6}"
 
 # New compact-output directories produced by each pipeline's 05_impute step.
 CISTOPIC_DIR="${CISTOPIC_DIR:-${ROOT_DIR}/cisTopic/scripts/cistopic_ctcf/impute}"
 FITS_DIR="${FITS_DIR:-${ROOT_DIR}/FITS/work/ctcf/impute}"
 SCOPEN_DIR="${SCOPEN_DIR:-${ROOT_DIR}/scOpen/work/ctcf/impute}"
 MAGIC_DIR="${MAGIC_DIR:-${ROOT_DIR}/MAGIC/work/ctcf/impute}"
+PUSCOPEN_DIR="${PUSCOPEN_DIR:-${ROOT_DIR}/PUscOpen/work/ctcf/impute}"
 
 N_TOP="${N_TOP:-10000}"
 SEED="${SEED:-2026}"
@@ -55,7 +56,7 @@ if [[ ! -f "${BINS_TSV}" ]]; then
     --seed "${SEED}"
 fi
 
-echo "[$(date)] Running 5-way pos/neg comparison"
+echo "[$(date)] Running 6-way pos/neg comparison"
 python "${ROOT_DIR}/downstream/compare_pos_neg.py" \
   --bins-tsv "${BINS_TSV}" \
   --out-dir "${POSNEG_OUT_DIR}" \
@@ -64,7 +65,8 @@ python "${ROOT_DIR}/downstream/compare_pos_neg.py" \
   --input "cisTopic=${CISTOPIC_DIR}" \
   --input "FITS=${FITS_DIR}" \
   --input "scOpen=${SCOPEN_DIR}" \
-  --input "MAGIC=${MAGIC_DIR}"
+  --input "MAGIC=${MAGIC_DIR}" \
+  --input "PUscOpen=${PUSCOPEN_DIR}"
 
 echo "[$(date)] Done."
 echo "Outputs:"
