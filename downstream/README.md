@@ -201,10 +201,95 @@ INPUTS="cisTopic=/work/.../cistopic_ctcf/impute FITS=/work/.../FITS/work/ctcf/im
   every raw zero as a negative; for biologically-grounded validation
   combine with the `compare_pos_neg.py` bin-level CTCF cCRE analysis.
 
+## Bin-level sensitivity / specificity (cCRE-derived ground truth)
+
+`bin_sensitivity_specificity.py` is the bin-level analogue of
+`sensitivity_specificity.py`. The two answer different questions:
+
+| script | ground truth | what it asks |
+|---|---|---|
+| `sensitivity_specificity.py` | `raw[r, c] > 0`; every (region, cell) entry | "Does the imputer recover the entries the raw matrix saw?" |
+| `bin_sensitivity_specificity.py` | `pos_neg_bins.tsv` (cCRE-derived); each **bin** is one example | "Does the imputer separate true CTCF-regulatory bins from background?" |
+
+The bin-level version uses the same positive / negative bin set the notebook
+produces (top-10 K HEK293 CTCF cCREs ∩ HEK293T-CA, plus a size-matched random
+sample of bins that overlap zero CTCF-bound cCREs in SCREEN). Each bin is
+one classification example; the per-bin score is the sum-of-signal across
+cells (same as `compare_pos_neg.py` uses). At a given threshold:
+
+```
+sensitivity = #(positive bins with signal > t) / n_pos
+specificity = #(negative bins with signal <= t) / n_neg
+```
+
+```bash
+python downstream/bin_sensitivity_specificity.py \
+  --bins-tsv /work/.../downstream/bins/pos_neg_bins.tsv \
+  --out-dir  /work/.../downstream/bin_sensitivity_specificity \
+  --input raw=/work/.../mm \
+  --input cisTopic=/work/.../cistopic_ctcf/impute \
+  --input FITS=/work/.../FITS/work/ctcf/impute \
+  --input scOpen=/work/.../scOpen/work/ctcf/impute \
+  --input MAGIC=/work/.../MAGIC/work/ctcf/impute
+```
+
+Per pipeline (and per view: `full` + `modeled`) the script reports
+
+* per-threshold **TP / FP / FN / TN**, sens / spec / precision / F1 / MCC /
+  accuracy / Youden's J
+* **AUROC** and **AUPR** via `sklearn.metrics`
+* two natural operating points:
+  * **max-F1** threshold and its sens / spec
+  * **Youden J** threshold (max `sens + spec − 1`)
+
+Outputs (under `--out-dir`):
+
+| file | contents |
+|---|---|
+| `bin_sensitivity_specificity.tsv` | long-form per-threshold table |
+| `bin_sensitivity_specificity.json` | per-input AUROC, AUPR, max-F1 + Youden-J operating points |
+| `bin_sensitivity_specificity_roc_{full,modeled}.png` | ROC curves overlaid across pipelines |
+| `bin_sensitivity_specificity_pr_{full,modeled}.png` | precision-recall curves overlaid |
+| `bin_sensitivity_specificity_sens_spec_{full,modeled}.png` | sens / spec / F1 vs threshold (one panel per pipeline, with max-F1 and Youden-J markers) |
+| `bin_sensitivity_specificity_bars_{full,modeled}.png` | AUROC / AUPR / max-F1 / sens@max-F1 / spec@max-F1 bar chart |
+
+Run cost: only a few thousand bins per evaluation set, so the whole
+multi-pipeline run takes seconds once the per-bin signals are computed; the
+slow part is reading the imputed matrices for the lookup, which is the same
+cost as `compare_pos_neg.py`.
+
+SLURM:
+
+```bash
+sbatch downstream/slurm/bin_sensitivity_specificity.sbatch
+```
+
+(uses the same default paths as `compare_pos_neg_all4.sbatch`; override
+`MM_DIR`, `CISTOPIC_DIR`, `FITS_DIR`, `SCOPEN_DIR`, `MAGIC_DIR`, or `INPUTS`
+to point elsewhere)
+
+### Reading the output
+
+* **AUROC** here is *bin-level* — how well the per-bin imputed total ranks
+  CTCF cCRE bins above background bins. It is **not** comparable in absolute
+  terms to the AUROC reported by `sensitivity_specificity.py`, which is
+  entry-level over (region, cell) pairs.
+* **`full` vs `modeled` view**: in `full`, bins that fall outside the
+  imputer's modeled universe contribute signal=0 (so the imputer is
+  penalised for not modeling those bins at all). In `modeled`, those bins
+  are excluded; this is the fair view for imputers that work on a restricted
+  region set (e.g. FITS at 10 K, or scOpen with a candidate-region BED).
+  For the `raw=mm` input there is no modeling so only the `full` view exists.
+* **max-F1 vs Youden J**: F1 weights positives more heavily (good when
+  imbalance matters); Youden J is the threshold maximising the diagnostic
+  trade-off and is the natural choice when pos / neg counts are balanced
+  (which they are here by construction).
+
 ## Conda env
 
-All three scripts (`prepare_pos_neg_bins.R`, `compare_pos_neg.py`,
-`sensitivity_specificity.py`) work in any of the pipeline conda envs:
+All four scripts (`prepare_pos_neg_bins.R`, `compare_pos_neg.py`,
+`sensitivity_specificity.py`, `bin_sensitivity_specificity.py`) work in any
+of the pipeline conda envs:
 
 * `cistopic` — already includes R + Bioconductor (`GenomicRanges`,
   `rtracklayer`) needed by `prepare_pos_neg_bins.R`, plus h5py / scipy for
