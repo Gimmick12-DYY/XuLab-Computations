@@ -285,11 +285,146 @@ to point elsewhere)
   trade-off and is the natural choice when pos / neg counts are balanced
   (which they are here by construction).
 
+## Per-cell UMI / signal-sum distribution
+
+`umi_distribution.py` computes per-cell totals (column sums) for the raw
+matrix and every imputed pipeline, aligns them to a common barcode order,
+and emits the distribution as a long-form TSV, a wide TSV (for replotting),
+a summary JSON, and three figures (overlaid log-x histogram, ECDF,
+boxplot).
+
+Per-cell sums are computed without materialising the dense matrix:
+
+| input format | per-cell sum recipe |
+|---|---|
+| `mm/matrix.mtx.gz` | scipy `mat.sum(axis=0)` on the loaded sparse CSR |
+| `factors.npz` (cisTopic / scOpen) | `(W.sum(axis=0) @ H) * per_cell_factor` |
+| `matrix.npy` (FITS / MAGIC) | chunked `arr[s:e].sum(axis=0)` over an mmap |
+| `matrix_csr.npz` (PUscOpen) | scipy `mat.sum(axis=0)` |
+| legacy HDF5 `/Prc` | chunked `ds[s:e, :].sum(axis=0)` |
+
+`--align-to LABEL` picks the barcode-order anchor (default: the first
+`--input`, which the SLURM wrapper sets to `raw`). Cells absent from a given
+input are reported as `NA` in the wide TSV and excluded from that input's
+distribution.
+
+```bash
+python downstream/umi_distribution.py \
+  --out-dir /work/.../downstream/umi_distribution \
+  --input raw=/work/.../mm \
+  --input cisTopic=/work/.../cistopic_ctcf/impute \
+  --input FITS=/work/.../FITS/work/ctcf/impute \
+  --input scOpen=/work/.../scOpen/work/ctcf/impute \
+  --input MAGIC=/work/.../MAGIC/work/ctcf/impute \
+  --input PUscOpen=/work/.../PUscOpen/work/ctcf/impute
+```
+
+Outputs (under `--out-dir`):
+
+| file | contents |
+|---|---|
+| `umi_distribution.tsv` | long-form: input, kind, barcode, umi_total |
+| `umi_distribution_wide.tsv` | barcode × pipeline matrix of per-cell totals (NA for missing barcodes) |
+| `umi_distribution_stats.json` | per-input mean / median / p10 / p90 / p99 / std + missing-barcode counts |
+| `umi_distribution_hist.png` | overlaid log-x histogram |
+| `umi_distribution_ecdf.png` | overlaid ECDF |
+| `umi_distribution_box.png` | boxplot across pipelines |
+
+Reading note: imputed scales are not directly comparable to raw counts —
+each pipeline's `05_impute.py` rescales per-cell sums to a target
+`scale_factor` (defaults to `1e6`, CPM-like), so the y-axes track sums of
+*scaled* signal rather than UMIs. The pipelines should agree closely after
+rescaling; large gaps between them point to either over-imputation
+(rescaled sums far below the others) or aggressive masking (PUscOpen's per-
+cell sum is over the refined-mask rows only).
+
+SLURM:
+
+```bash
+sbatch downstream/slurm/umi_distribution.sbatch
+```
+
+## Raw vs imputed coordinate diff (lost positives)
+
+`raw_vs_imputed_diff.py` answers: **how many of the raw `1`s did each
+imputer downgrade?** At every raw-nonzero `(region, cell)` coordinate it
+looks up the imputed value from each input and reports the distribution of
+`delta = imputed - raw` plus per-threshold "lost positive" counts. A raw=1
+position with imputed value below threshold `t` counts as lost.
+
+The lookup is name-aligned (regions by `chr:start-end`, cells by barcode),
+so any pipeline that drops rows (FITS top-N, scOpen drop-zero, PUscOpen
+refined mask) is fairly penalised: raw positives outside the imputed input's
+modeled space are counted as `imputed = 0` (and therefore lost at every
+positive threshold).
+
+Per-coordinate value lookup is vectorised:
+
+| input format | how the lookup works |
+|---|---|
+| `factors.npz` | `np.einsum('ik,ki->i', W[rows], H[:, cols]) * per_cell_factor` (chunked) |
+| `matrix.npy` | `arr[rows, cols]` (chunked, mmap-backed) |
+| `matrix_csr.npz` | `mat[rows, cols]` (paired CSR advanced indexing, chunked) |
+| HDF5 `/Prc` | row-batched: load unique rows once, then index columns |
+
+For context the script also samples `--n-zero-sample` (default 200 K) raw
+zero coordinates and reports the imputed-value distribution there, which
+catches "imputed-only gains" that didn't exist in the raw matrix.
+
+```bash
+python downstream/raw_vs_imputed_diff.py \
+  --mm-dir   /work/.../mm \
+  --out-dir  /work/.../downstream/raw_vs_imputed_diff \
+  --thresholds 0,0.001,0.01,0.05,0.1,0.5,1.0 \
+  --input cisTopic=/work/.../cistopic_ctcf/impute \
+  --input FITS=/work/.../FITS/work/ctcf/impute \
+  --input scOpen=/work/.../scOpen/work/ctcf/impute \
+  --input MAGIC=/work/.../MAGIC/work/ctcf/impute \
+  --input PUscOpen=/work/.../PUscOpen/work/ctcf/impute
+```
+
+Outputs (under `--out-dir`):
+
+| file | contents |
+|---|---|
+| `raw_vs_imputed_diff.tsv` | per-pipeline per-threshold table: TP/FN, lost / recovered counts and fractions |
+| `raw_vs_imputed_diff_per_cell.tsv` | per-cell lost-positive counts at the smallest threshold (only cells with loss > 0) |
+| `raw_vs_imputed_diff.json` | summary: imp@raw=1 stats, delta stats, imp@raw=0 stats, per-threshold rows, per-cell + per-bin loss stats |
+| `..._imp_at_raw_pos.png` | overlaid `log1p(imputed)` histograms at raw=1 coords |
+| `..._delta.png` | overlaid `imputed - raw` histograms (negative = imputer underestimated) |
+| `..._per_cell_lost.png` | boxplot of per-cell lost counts at the default threshold |
+| `..._imp_at_raw_zero.png` | imputed-value histogram at sampled raw=0 coords (skipped if `--n-zero-sample 0`) |
+
+Reading the metrics:
+
+* `frac_eq_zero` (in `imp_at_raw_pos_stats`) is the fraction of raw-positive
+  coordinates where the imputer literally returned 0. For pipelines that
+  restrict the modeled region set, this floor is exactly the fraction of
+  raw positives that fell *outside* the modeled rows. PUscOpen's refined
+  mask trades a higher `frac_eq_zero` against a tighter false-positive
+  surface; a high `frac_eq_zero` is not by itself a defect.
+* `delta_stats.frac_negative` is the fraction of raw-positive coords where
+  `imputed < raw`. With binarised raw and imputed values in `[0, 1]` (or a
+  CPM-like rescale that puts most values much greater than 1) this is
+  almost always close to 1 — what matters is the *distribution* of the
+  delta, not its sign. Read the `delta` histogram for the spread.
+* `n_lost / n_raw_positive` at small thresholds (`t = 0` or `t = 0.001`) is
+  the cleanest "did the imputer keep raw-observed signal alive" number;
+  larger thresholds shift the question toward "did the imputer assign
+  notable signal to the raw-observed coords".
+
+SLURM:
+
+```bash
+sbatch downstream/slurm/raw_vs_imputed_diff.sbatch
+```
+
 ## Conda env
 
-All four scripts (`prepare_pos_neg_bins.R`, `compare_pos_neg.py`,
-`sensitivity_specificity.py`, `bin_sensitivity_specificity.py`) work in any
-of the pipeline conda envs:
+All six scripts (`prepare_pos_neg_bins.R`, `compare_pos_neg.py`,
+`sensitivity_specificity.py`, `bin_sensitivity_specificity.py`,
+`umi_distribution.py`, `raw_vs_imputed_diff.py`) work in any of the pipeline
+conda envs:
 
 * `cistopic` — already includes R + Bioconductor (`GenomicRanges`,
   `rtracklayer`) needed by `prepare_pos_neg_bins.R`, plus h5py / scipy for
