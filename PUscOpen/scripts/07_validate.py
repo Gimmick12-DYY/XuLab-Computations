@@ -38,6 +38,7 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt  # noqa: E402
 import numpy as np  # noqa: E402
 import pandas as pd  # noqa: E402
+from scipy import sparse  # noqa: E402
 from sklearn.metrics import average_precision_score, roc_auc_score, roc_curve  # noqa: E402
 
 from _cfg import base_parser, load_config, resolve_paths
@@ -68,9 +69,12 @@ def main() -> int:
 
     holdout_path  = pu_dir / 'holdout_positives.tsv'
     pu_scores_path = pu_dir / 'pu_scores.tsv'
-    imp_matrix_path = imp_dir / 'matrix.npy'
+    imp_csr_path = imp_dir / 'matrix_csr.npz'
+    imp_dense_path = imp_dir / 'matrix.npy'
     imp_regions_path = imp_dir / 'regions.tsv'
-    for p in (holdout_path, pu_scores_path, imp_matrix_path, imp_regions_path):
+    use_csr = imp_csr_path.is_file()
+    matrix_path = imp_csr_path if use_csr else imp_dense_path
+    for p in (holdout_path, pu_scores_path, matrix_path, imp_regions_path):
         if not p.exists():
             log.error('Missing %s; run earlier steps first.', p)
             return 1
@@ -104,8 +108,11 @@ def main() -> int:
     ctrl_names = set(names_all[ctrl_idx].tolist())
     log.info('  %d control bins (outside geometric mask)', n_ctrl)
 
-    log.info('Loading final imputed matrix %s', imp_matrix_path)
-    matrix = np.load(imp_matrix_path, mmap_mode='r')
+    log.info('Loading final imputed matrix %s', matrix_path)
+    if use_csr:
+        matrix = sparse.load_npz(imp_csr_path)
+    else:
+        matrix = np.load(imp_dense_path, mmap_mode='r')
     imp_regions = _read_lines(imp_regions_path)
     name_to_row = {nm: i for i, nm in enumerate(imp_regions)}
     log.info('  imputed matrix shape=%s; %d region IDs',
@@ -123,8 +130,12 @@ def main() -> int:
         if not rows:
             return np.zeros(0, dtype=np.float64), absent
         rows_arr = np.asarray(rows, dtype=np.int64)
-        sub = np.asarray(matrix[rows_arr, :], dtype=np.float64)
-        sig = sub.sum(axis=1)
+        if use_csr:
+            sub = matrix[rows_arr]
+            sig = np.asarray(sub.sum(axis=1)).ravel().astype(np.float64)
+        else:
+            sub = np.asarray(matrix[rows_arr, :], dtype=np.float64)
+            sig = sub.sum(axis=1)
         return sig, absent
 
     pos_sig, pos_absent = _signal(holdout_names)
@@ -207,7 +218,7 @@ def main() -> int:
         'best_f1':                   max((r['F1'] for r in rows), default=float('nan')),
         'best_f1_threshold':         float(max(rows, key=lambda r: r['F1'])['threshold']) if rows else float('nan'),
         'recall_at_k':               recall_at_k_table,
-        'imputed_matrix':            str(imp_matrix_path),
+        'imputed_matrix':            str(matrix_path),
         'holdout_positives':         str(holdout_path),
     }
     json_path = val_dir / f'{args.out_name}.json'

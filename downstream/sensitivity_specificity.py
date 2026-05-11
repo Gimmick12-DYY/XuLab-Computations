@@ -11,6 +11,7 @@
 # Each --input PATH is one of:
 #   * directory with factors.npz + regions.tsv   (cisTopic / scOpen)
 #   * directory with matrix.npy  + regions.tsv   (FITS / MAGIC)
+#   * directory with matrix_csr.npz + regions.tsv (PUscOpen full-mm CSR)
 #   * legacy HDF5 file with /Prc                 (older runs; may include /barcodes)
 #
 # The raw matrix is loaded from --mm-dir (must contain matrix.mtx.gz +
@@ -81,6 +82,8 @@ def detect_input_kind(path: Path) -> str:
             return 'hdf5'
         raise SystemExit(f'Unsupported input file: {path}')
     if path.is_dir():
+        if (path / 'matrix_csr.npz').exists() and (path / 'regions.tsv').exists():
+            return 'csr_full'
         if (path / 'factors.npz').exists() and (path / 'regions.tsv').exists():
             return 'factored'
         if (path / 'matrix.npy').exists() and (path / 'regions.tsv').exists():
@@ -203,6 +206,16 @@ def imputed_n_columns(path: Path, kind: str) -> int:
     if kind == 'factored':
         with np.load(path / 'factors.npz') as z:
             return int(z['H'].shape[1])
+    if kind == 'csr_full':
+        meta = path / 'meta.json'
+        if meta.is_file():
+            try:
+                sh = json.loads(meta.read_text()).get('shape')
+                if sh and len(sh) >= 2:
+                    return int(sh[1])
+            except (json.JSONDecodeError, OSError, TypeError, ValueError):
+                pass
+        return int(sp.load_npz(path / 'matrix_csr.npz').shape[1])
     if kind == 'dense':
         return int(np.load(path / 'matrix.npy', mmap_mode='r').shape[1])
     if kind == 'hdf5':
@@ -256,6 +269,18 @@ def iter_chunks_dense(impute_dir: Path, raw_name_to_row: dict[str, int],
         yield raw_idx[s:e], block
 
 
+def iter_chunks_csr(impute_dir: Path, raw_name_to_row: dict[str, int],
+                     chunk_rows: int) -> Iterator[tuple[np.ndarray, np.ndarray]]:
+    """Stream full-mm CSR imputation in dense row blocks (zeros on empty rows)."""
+    sm = sp.load_npz(impute_dir / 'matrix_csr.npz')
+    raw_idx = _name_to_raw_idx(impute_dir / 'regions.tsv', raw_name_to_row)
+    n = sm.shape[0]
+    for s in range(0, n, chunk_rows):
+        e = min(s + chunk_rows, n)
+        block = sm[s:e].toarray().astype(np.float32, copy=False)
+        yield raw_idx[s:e], block
+
+
 def iter_chunks_hdf5(h5_path: Path, raw_name_to_row: dict[str, int],
                       chunk_rows: int) -> Iterator[tuple[np.ndarray, np.ndarray]]:
     with h5py.File(h5_path, 'r') as h5:
@@ -279,6 +304,8 @@ def iter_chunks(path: Path, kind: str, raw_name_to_row: dict[str, int],
                  chunk_rows: int) -> Iterator[tuple[np.ndarray, np.ndarray]]:
     if kind == 'factored':
         yield from iter_chunks_factored(path, raw_name_to_row, chunk_rows)
+    elif kind == 'csr_full':
+        yield from iter_chunks_csr(path, raw_name_to_row, chunk_rows)
     elif kind == 'dense':
         yield from iter_chunks_dense(path, raw_name_to_row, chunk_rows)
     elif kind == 'hdf5':

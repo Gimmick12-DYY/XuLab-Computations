@@ -273,6 +273,7 @@ def main() -> int:
     seed_pos = df[args.seed_positive_column].to_numpy().astype(bool)
     mask_keep = df[args.mask_keep_column].to_numpy().astype(bool)
     n_seed_pos = int(seed_pos.sum())
+    n_forced_neg = 0
     if n_seed_pos == 0:
         raise SystemExit('No seed positives; cannot train PU.')
     log.info('Seed positives: %d ; geometric-mask bins: %d',
@@ -364,6 +365,43 @@ def main() -> int:
                  100.0 * h_recall)
 
     # ------------------------------------------------------------------
+    # Optional: union benchmark negatives into refined mask (must already be
+    # in geometric mask_keep — step 02 can OR them into mask via
+    # mask.union_benchmark_labels).
+    # ------------------------------------------------------------------
+    paths_cfg = cfg.get('paths') or {}
+    bench_tsv = paths_cfg.get('benchmark_bins_tsv')
+    if pu_cfg.get('force_include_benchmark_negatives') and bench_tsv:
+        bt = Path(str(bench_tsv))
+        if bt.is_file():
+            bdf = pd.read_csv(bt, sep='\t')
+            if 'label' in bdf.columns and 'bin_name' in bdf.columns:
+                neg_names = set(
+                    bdf.loc[bdf['label'].astype(str) == 'neg', 'bin_name'].astype(str)
+                )
+                name_to_i = dict(zip(df['bin_name'].astype(str), range(len(df))))
+                n_neg_in_mask = 0
+                for nm in neg_names:
+                    i = name_to_i.get(nm)
+                    if i is None or not mask_keep[i]:
+                        continue
+                    n_neg_in_mask += 1
+                    if not refined[i]:
+                        refined[i] = True
+                        n_forced_neg += 1
+                log.info(
+                    'Force-include benchmark negatives: added %d new refined bins; '
+                    '%d / %d neg names in geometric mask.',
+                    n_forced_neg, n_neg_in_mask, len(neg_names),
+                )
+            else:
+                log.warning('%s missing label/bin_name columns; skip force.', bt)
+        else:
+            log.warning('benchmark_bins_tsv not found: %s', bench_tsv)
+
+    log.info('Refined mask after optional neg union: %d bins', int(refined.sum()))
+
+    # ------------------------------------------------------------------
     # Persist
     # ------------------------------------------------------------------
     pu_dir.mkdir(parents=True, exist_ok=True)
@@ -419,6 +457,9 @@ def main() -> int:
             'origin': thresh_origin,
         },
         'n_refined_mask':       int(refined.sum()),
+        'force_include_benchmark_negatives': bool(
+            pu_cfg.get('force_include_benchmark_negatives')),
+        'n_forced_neg_into_refined': int(n_forced_neg),
         'pu_score_distribution': {
             'mean':   float(pu_score.mean()),
             'median': float(np.median(pu_score)),

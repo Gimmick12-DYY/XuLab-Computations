@@ -27,6 +27,12 @@ paths:
   # containing the same file names (or run prepare_pos_neg_bins.R once).
   annotation_dir: /work/users/d/y/dyy12/XuLab/downstream/cache
 
+  # Optional path to pos_neg_bins.tsv for *debug only*. Do **not** put benchmark
+  # true negatives into the biological mask: they are controls for evaluation,
+  # not part of the CTCF / cCRE hypothesis space. Full-mm CSR padding (step 06)
+  # already gives downstream a fair row for every bin without training on neg.
+  benchmark_bins_tsv: null
+
 # -----------------------------------------------------------------------------
 # Stage 1 -- geometric candidate mask (step 02_build_mask.R)
 # -----------------------------------------------------------------------------
@@ -50,6 +56,10 @@ mask:
   gc_fasta_path:      null   # e.g. "/path/to/hg38.fa"
   # Mean mappability per bin from a bigWig file (needs rtracklayer).
   mappability_bigwig: null   # e.g. "/path/to/wgEncodeCrgMapabilityAlign100mer.bigWig"
+
+  # Rarely: OR specific benchmark labels into mask_keep (e.g. a held-out pos
+  # list). Leave empty — do not add random negatives here.
+  union_benchmark_labels: []
 
   # Known-positive seed for the PU classifier. Same recipe as
   # Bin_posVSneg.ipynb: top-N HEK293 CTCF cCREs (by 293 CTCF z-score),
@@ -113,6 +123,10 @@ pu:
   # Default: top_k:50000 -> ~16x larger refined universe than the legacy
   # "auto" recipe in our HEK293T benchmark.
   refined_mask_threshold: "top_k:50000"
+
+  # If true, union benchmark negatives into refined_mask (not recommended:
+  # pollutes PU/scOpen with non-candidate genome). Keep false.
+  force_include_benchmark_negatives: false
 
 # -----------------------------------------------------------------------------
 # Stage 3 -- scOpen on refined mask (step 04_run_scopen.py)
@@ -189,3 +203,8 @@ postfilter:
 # -----------------------------------------------------------------------------
 impute:
   scale_factor: 1000000   # per-cell sum target after rescale
+  # When true: write regions.tsv = full mm/regions.tsv(.gz) row order and
+  # matrix_csr.npz = CSR float32 of shape (n_mm_bins, n_cells) with nonzeros
+  # only on refined rows (fair to downstream compare_pos_neg / sensitivity).
+  # When false: legacy compact matrix.npy + regions.tsv (refined rows only).
+  align_to_mm: true

@@ -11,18 +11,22 @@
 # impute.scale_factor (CPM-like; mostly a convention so all five pipelines
 # end up on the same scale).
 #
-# We stream rows in chunks so peak memory is ~chunk_rows * n_cells * 4 bytes.
-# Output matches the FITS/MAGIC schema, so the downstream/* scripts work
-# unchanged.
-#
 # Outputs (under <work>/impute/):
-#   matrix.npy     float32 (R_refined, C) dense matrix
-#   regions.tsv    one chr:start-end per row
-#   barcodes.tsv   one barcode per col
-#   meta.json
+#   Default impute.align_to_mm: true
+#     regions.tsv     full mm row order (copied from mm/regions.tsv.gz)
+#     matrix_csr.npz  scipy CSR float32, shape (n_mm_bins, n_cells), nnz only
+#                     on refined-mask rows (fair vs full-matrix pipelines)
+#     barcodes.tsv    one barcode per col
+#     meta.json
+#   Legacy impute.align_to_mm: false
+#     matrix.npy      float32 (R_refined, C)
+#     regions.tsv     refined rows only
+#     barcodes.tsv
+#     meta.json
 # -----------------------------------------------------------------------------
 from __future__ import annotations
 
+import gzip
 import json
 import logging
 import sys
@@ -30,11 +34,23 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
+from scipy import sparse
 
 from _cfg import base_parser, load_config, resolve_paths
 
 log = logging.getLogger('06_impute')
 logging.basicConfig(level=logging.INFO, format='%(asctime)s %(levelname)s %(message)s')
+
+
+def _read_mm_region_lines(mm_dir: Path) -> list[str]:
+    reg_gz = mm_dir / 'regions.tsv.gz'
+    reg_plain = mm_dir / 'regions.tsv'
+    if reg_gz.is_file():
+        with gzip.open(reg_gz, 'rt') as fh:
+            return [ln.rstrip('\n') for ln in fh if ln.strip()]
+    if reg_plain.is_file():
+        return [ln for ln in reg_plain.read_text().splitlines() if ln.strip()]
+    raise SystemExit(f'Missing {reg_gz} and {reg_plain}; cannot align to mm.')
 
 
 def main() -> int:
@@ -49,10 +65,12 @@ def main() -> int:
     imp_cfg = cfg.setdefault('impute', {})
     if args.scale_factor is not None:
         imp_cfg['scale_factor'] = args.scale_factor
+    align_to_mm = bool(imp_cfg.get('align_to_mm', True))
 
     run_dir = Path(cfg['paths']['scopen_run'])
     pf_dir  = Path(cfg['paths']['postfilter'])
     imp_dir = Path(cfg['paths']['impute'])
+    mm_dir  = Path(cfg['paths']['mm'])
     imp_dir.mkdir(parents=True, exist_ok=True)
 
     w_path = run_dir / f'{args.output_prefix}_peaks.txt'
@@ -88,9 +106,6 @@ def main() -> int:
              float(np.quantile(damp, 0.10)),
              float(np.quantile(damp, 0.90)))
 
-    # Optionally rescale per-cell sums to a target scale_factor. We compute
-    # the rescale factor once (cheap: (W.sum(axis=0)) @ H ) and apply during
-    # chunked writes.
     desired_scale = float(imp_cfg.get('scale_factor', 1_000_000))
     rescale_factor = 1.0
     rescaled_flag = False
@@ -105,14 +120,100 @@ def main() -> int:
         else:
             log.warning('Per-cell sum mean <= 0; storing values verbatim.')
 
-    matrix_path  = imp_dir / 'matrix.npy'
-    regions_out  = imp_dir / 'regions.tsv'
     barcodes_out = imp_dir / 'barcodes.tsv'
     meta_out     = imp_dir / 'meta.json'
+    barcodes_out.write_text('\n'.join(barcodes) + '\n')
 
+    if align_to_mm:
+        full_regions = _read_mm_region_lines(mm_dir)
+        N = len(full_regions)
+        name_to_row = {nm: i for i, nm in enumerate(full_regions)}
+        try:
+            full_rows = np.array([name_to_row[nm] for nm in regions], dtype=np.int64)
+        except KeyError as e:
+            raise SystemExit(
+                f'Refined region {e!r} missing from mm regions list; '
+                f'cannot align output.'
+            ) from e
+        if len(full_rows) != len(regions):
+            raise SystemExit('internal: refined name list length mismatch')
+        if N == 0 or C == 0:
+            raise SystemExit('empty mm regions or zero cells')
+
+        contrib = np.zeros(N, dtype=np.int64)
+        contrib[full_rows] = C
+        indptr = np.zeros(N + 1, dtype=np.int64)
+        np.cumsum(contrib, out=indptr[1:])
+        nnz = int(indptr[-1])
+        log.info('Building CSR aligned to mm: shape=(%d, %d), nnz=%d (%.3g MB data)',
+                 N, C, nnz, nnz * 4 / (1024 ** 2))
+
+        data = np.empty(nnz, dtype=np.float32)
+        indices = np.empty(nnz, dtype=np.int32)
+        write_off = indptr[:-1].copy()
+
+        chunk = max(1, int(args.chunk_rows))
+        for s in range(0, Rm, chunk):
+            e = min(s + chunk, Rm)
+            block = (W[s:e] @ H).astype(np.float32, copy=False)
+            block *= damp[s:e, None]
+            if rescaled_flag:
+                block *= np.float32(rescale_factor)
+            for off, loc in enumerate(range(s, e)):
+                g = int(full_rows[loc])
+                start = int(write_off[g])
+                data[start:start + C] = block[off]
+                indices[start:start + C] = np.arange(C, dtype=np.int32)
+                write_off[g] = start + C
+
+        csr = sparse.csr_matrix((data, indices, indptr), shape=(N, C), dtype=np.float32)
+        csr.check_format(full_check=False)
+
+        csr_path = imp_dir / 'matrix_csr.npz'
+        sparse.save_npz(csr_path, csr)
+        log.info('Wrote %s', csr_path)
+
+        regions_out = imp_dir / 'regions.tsv'
+        log.info('Writing full regions list %s (%d lines) ...', regions_out, N)
+        with open(regions_out, 'w') as fh:
+            for line in full_regions:
+                fh.write(line + '\n')
+
+        # Remove legacy compact artifact if present from an older run.
+        legacy = imp_dir / 'matrix.npy'
+        if legacy.exists():
+            legacy.unlink()
+            log.info('Removed stale %s', legacy)
+
+        summary = {
+            'pipeline':       'PUscOpen',
+            'format':         'csr_full_mm',
+            'matrix_path':    str(csr_path),
+            'regions_path':   str(regions_out),
+            'barcodes_path':  str(barcodes_out),
+            'shape':          [int(N), int(C)],
+            'nnz':            int(csr.nnz),
+            'n_modeled_rows': int(Rm),
+            'n_cells':        int(C),
+            'rank_k':         int(W.shape[1]),
+            'scale_factor':   desired_scale,
+            'rescale_factor': float(rescale_factor),
+            'rescaled':       rescaled_flag,
+            'align_to_mm':    True,
+            'source_w':       str(w_path),
+            'source_h':       str(h_path),
+            'damping':        str(damp_path),
+        }
+        meta_out.write_text(json.dumps(summary, indent=2) + '\n')
+        log.info('Done: %s', summary)
+        return 0
+
+    # ----- Legacy compact dense output -----
+    matrix_path  = imp_dir / 'matrix.npy'
+    regions_out  = imp_dir / 'regions.tsv'
     log.info('Materialising %s (shape=%s, dtype=float32) ...', matrix_path, (Rm, C))
     out = np.lib.format.open_memmap(matrix_path, mode='w+', dtype=np.float32,
-                                    shape=(Rm, C))
+                                     shape=(Rm, C))
     chunk = max(1, int(args.chunk_rows))
     for s in range(0, Rm, chunk):
         e = min(s + chunk, Rm)
@@ -124,7 +225,10 @@ def main() -> int:
     out.flush(); del out
 
     regions_out.write_text('\n'.join(regions) + '\n')
-    barcodes_out.write_text('\n'.join(barcodes) + '\n')
+
+    csr_path = imp_dir / 'matrix_csr.npz'
+    if csr_path.exists():
+        csr_path.unlink()
 
     summary = {
         'pipeline':       'PUscOpen',
@@ -139,6 +243,7 @@ def main() -> int:
         'scale_factor':   desired_scale,
         'rescale_factor': float(rescale_factor),
         'rescaled':       rescaled_flag,
+        'align_to_mm':    False,
         'source_w':       str(w_path),
         'source_h':       str(h_path),
         'damping':        str(damp_path),

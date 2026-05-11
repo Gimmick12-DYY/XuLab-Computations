@@ -3,7 +3,7 @@
 #SBATCH --output=%x-%j.out
 #SBATCH --error=%x-%j.err
 #SBATCH --cpus-per-task=4
-#SBATCH --mem=64G
+#SBATCH --mem=128G
 #SBATCH --time=01:00:00
 
 # Bin-level coverage of positive / negative bin sets (from prepare_pos_neg_bins.R).

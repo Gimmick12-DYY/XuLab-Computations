@@ -445,6 +445,32 @@ if (isTRUE(mask_cfg$exclude_blacklist)) {
 }
 keep <- keep & !mappability_drop
 
+# Optional: OR benchmark bins (e.g. evaluation negatives) into the mask so PU
+# sees them as unlabeled and they can enter the refined / imputed set.
+bench_tsv <- cfg$paths$benchmark_bins_tsv %||% NULL
+lab_union <- mask_cfg$union_benchmark_labels %||% NULL
+if (!is.null(bench_tsv) && !is.null(lab_union) && length(lab_union) > 0 &&
+    file.exists(bench_tsv)) {
+  message('[mask] Union benchmark bins from ', bench_tsv, ' labels=',
+          paste(unlist(lab_union), collapse=','))
+  bf <- read.table(bench_tsv, header=TRUE, sep='\t', stringsAsFactors=FALSE,
+                   comment.char='', quote='')
+  if (!all(c('label', 'bin_name') %in% colnames(bf)))
+    stop('benchmark_bins_tsv must have columns label and bin_name')
+  labs <- unlist(lab_union)
+  for (lb in labs) {
+    hit <- !is.na(bf$label) & !is.na(bf$bin_name) & (bf$label == lb)
+    nm <- unique(as.character(bf$bin_name[hit]))
+    j <- match(nm, bin_names)
+    j <- j[!is.na(j)]
+    if (length(j) > 0L) {
+      keep[j] <- TRUE
+      message(sprintf('[mask]   label=%s matched %d / %d bin names in universe',
+                      lb, length(j), sum(hit)))
+    }
+  }
+}
+
 n_keep <- sum(keep)
 message(sprintf('[mask] Final mask: %d / %d bins (%.2f%%) after rules: %s',
                 n_keep, N_bins, 100 * n_keep / max(N_bins, 1),

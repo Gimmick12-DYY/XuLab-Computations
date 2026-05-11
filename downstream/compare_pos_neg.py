@@ -19,11 +19,14 @@
 #   * directory with factors.npz         -> factored output (cisTopic / scOpen)
 #                                           => signal = (W[i] @ H.sum(axis=1))
 #                                                       * per_cell_factor
-#   * directory with matrix.npy          -> dense imputed matrix (FITS)
+#   * directory with matrix.npy          -> dense imputed matrix (FITS / MAGIC)
+#   * directory with matrix_csr.npz    -> CSR aligned to full mm rows (PUscOpen)
 #   * file ending in .h5 / .hdf5         -> legacy padded HDF5 with /Prc
 #
 # All non-mm formats are matched by region NAME (chr:start-end) via regions.tsv;
 # bins whose names are missing from the modeled regions get signal=0.
+# CSR full-mm inputs list every mm bin; ``modeled`` is True only for rows with
+# stored nonzeros (actually imputed), not for all-zero padding rows.
 #
 # Usage:
 #   python compare_pos_neg.py \
@@ -49,6 +52,7 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt  # noqa: E402
 import numpy as np  # noqa: E402
 import scipy.io as sio  # noqa: E402
+from scipy import sparse  # noqa: E402
 from scipy.stats import ks_2samp  # noqa: E402
 from sklearn.metrics import roc_auc_score  # noqa: E402
 
@@ -189,6 +193,42 @@ def per_bin_total_from_dense(impute_dir: Path, bin_names: list[str]
     return signal, modeled
 
 
+def per_bin_total_from_csr(impute_dir: Path, bin_names: list[str]
+                            ) -> tuple[np.ndarray, np.ndarray]:
+    """Per-bin total from scipy CSR (full mm row alignment, nnz on modeled rows)."""
+    csr_path = impute_dir / 'matrix_csr.npz'
+    regions_path = impute_dir / 'regions.tsv'
+    log.info('  loading CSR output: %s + %s', csr_path, regions_path)
+    sm = sparse.load_npz(csr_path)
+    name_to_row = _build_name_to_row(regions_path)
+
+    wanted_rows: list[int] = []
+    name_to_query: list[int] = []
+    for k, name in enumerate(bin_names):
+        row = name_to_row.get(name)
+        if row is not None:
+            wanted_rows.append(row)
+            name_to_query.append(k)
+    if not wanted_rows:
+        return (np.zeros(len(bin_names), dtype=np.float64),
+                np.zeros(len(bin_names), dtype=bool))
+    wanted = np.asarray(wanted_rows, dtype=np.int64)
+    sub = sm[wanted]
+    bin_totals = np.asarray(sub.sum(axis=1)).ravel().astype(np.float64)
+    # Rows exist in the full-mm matrix for every benchmark bin, but most are
+    # explicit all-zero rows (no nnz). Count as "modeled" only if scOpen wrote
+    # mass into that row — otherwise the union mask would cover the whole
+    # panel and modeled-only AUROC would duplicate the full-universe view.
+    row_nnz = np.asarray(sub.getnnz(axis=1)).ravel().astype(np.int32)
+
+    signal = np.zeros(len(bin_names), dtype=np.float64)
+    modeled = np.zeros(len(bin_names), dtype=bool)
+    for ti, q in enumerate(name_to_query):
+        signal[q] = bin_totals[ti]
+        modeled[q] = bool(row_nnz[ti] > 0)
+    return signal, modeled
+
+
 def per_bin_total_from_hdf5(h5_path: Path, bin_idx: np.ndarray,
                              chunk: int = 50_000
                              ) -> tuple[np.ndarray, np.ndarray]:
@@ -221,6 +261,8 @@ def detect_input_kind(path: Path) -> str:
             return 'hdf5'
         raise SystemExit(f'Unsupported input file: {path}')
     if path.is_dir():
+        if (path / 'matrix_csr.npz').exists() and (path / 'regions.tsv').exists():
+            return 'csr_full'
         if (path / 'factors.npz').exists() and (path / 'regions.tsv').exists():
             return 'factored'
         if (path / 'matrix.npy').exists() and (path / 'regions.tsv').exists():
@@ -238,6 +280,8 @@ def per_bin_total(label: str, path: Path, bin_idx: np.ndarray,
     kind = detect_input_kind(path)
     if kind == 'mm':
         sig, mod = per_bin_total_from_mm(path, bin_idx)
+    elif kind == 'csr_full':
+        sig, mod = per_bin_total_from_csr(path, bin_names)
     elif kind == 'factored':
         sig, mod = per_bin_total_from_factored(path, bin_names)
     elif kind == 'dense':

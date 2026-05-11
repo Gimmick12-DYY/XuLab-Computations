@@ -24,6 +24,7 @@
 #   * directory with matrix.mtx.gz                (raw counts; e.g. <work>/mm)
 #   * directory with factors.npz + regions.tsv    (cisTopic / scOpen)
 #   * directory with matrix.npy  + regions.tsv    (FITS / MAGIC)
+#   * directory with matrix_csr.npz + regions.tsv (PUscOpen full-mm CSR)
 #   * legacy HDF5 file with /Prc                  (older runs)
 #
 # Usage:
@@ -50,6 +51,7 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt  # noqa: E402
 import numpy as np  # noqa: E402
 import scipy.io as sio  # noqa: E402
+from scipy import sparse  # noqa: E402
 
 log = logging.getLogger('bin_coverage')
 logging.basicConfig(level=logging.INFO, format='%(asctime)s %(levelname)s %(message)s')
@@ -183,6 +185,35 @@ def per_bin_total_from_dense(impute_dir: Path, bin_names: list[str]
     return signal, modeled
 
 
+def per_bin_total_from_csr(impute_dir: Path, bin_names: list[str]
+                            ) -> tuple[np.ndarray, np.ndarray]:
+    csr_path = impute_dir / 'matrix_csr.npz'
+    regions_path = impute_dir / 'regions.tsv'
+    log.info('  loading CSR output: %s + %s', csr_path, regions_path)
+    sm = sparse.load_npz(csr_path)
+    name_to_row = _build_name_to_row(regions_path)
+    wanted_rows: list[int] = []
+    name_to_query: list[int] = []
+    for k, name in enumerate(bin_names):
+        row = name_to_row.get(name)
+        if row is not None:
+            wanted_rows.append(row)
+            name_to_query.append(k)
+    if not wanted_rows:
+        return (np.zeros(len(bin_names), dtype=np.float64),
+                np.zeros(len(bin_names), dtype=bool))
+    wanted = np.asarray(wanted_rows, dtype=np.int64)
+    sub = sm[wanted]
+    bin_totals = np.asarray(sub.sum(axis=1)).ravel().astype(np.float64)
+    row_nnz = np.asarray(sub.getnnz(axis=1)).ravel().astype(np.int32)
+    signal = np.zeros(len(bin_names), dtype=np.float64)
+    modeled = np.zeros(len(bin_names), dtype=bool)
+    for ti, q in enumerate(name_to_query):
+        signal[q] = bin_totals[ti]
+        modeled[q] = bool(row_nnz[ti] > 0)
+    return signal, modeled
+
+
 def per_bin_total_from_hdf5(h5_path: Path, bin_idx: np.ndarray,
                              chunk: int = 50_000
                              ) -> tuple[np.ndarray, np.ndarray]:
@@ -213,6 +244,8 @@ def detect_input_kind(path: Path) -> str:
             return 'hdf5'
         raise SystemExit(f'Unsupported input file: {path}')
     if path.is_dir():
+        if (path / 'matrix_csr.npz').exists() and (path / 'regions.tsv').exists():
+            return 'csr_full'
         if (path / 'factors.npz').exists() and (path / 'regions.tsv').exists():
             return 'factored'
         if (path / 'matrix.npy').exists() and (path / 'regions.tsv').exists():
@@ -230,7 +263,8 @@ def detect_input_kind(path: Path) -> str:
         more = f' (+{len(names) - 40} more)' if len(names) > 40 else ''
         raise SystemExit(
             f'Cannot determine input kind from {path}. Expected one of: '
-            'factors.npz + regions.tsv; matrix.npy + regions.tsv; matrix.mtx.gz; '
+            'matrix_csr.npz + regions.tsv; factors.npz + regions.tsv; '
+            'matrix.npy + regions.tsv; matrix.mtx.gz; '
             f'or a *.h5 / *.hdf5 file (FITS: run scripts/05_impute.py after Phase 2). '
             f'Files present: {head!r}{more}'
         )
@@ -244,6 +278,8 @@ def per_bin_total(label: str, path: Path, bin_idx: np.ndarray,
     kind = detect_input_kind(path)
     if kind == 'mm':
         sig, mod = per_bin_total_from_mm(path, bin_idx)
+    elif kind == 'csr_full':
+        sig, mod = per_bin_total_from_csr(path, bin_names)
     elif kind == 'factored':
         sig, mod = per_bin_total_from_factored(path, bin_names)
     elif kind == 'dense':
