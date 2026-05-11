@@ -37,24 +37,55 @@ def main() -> int:
 
     script = 'main_FITS2.py' if mode == 'small' else 'FITSPhase2L.py'
 
-    before = {p.resolve() for p in run_dir.glob('*')}
+    # Phase2L writes ``<name2save>.txt`` (default ``FITS_OUTPUT.txt``) in cwd.
+    # It does not accept ``-o`` from this wrapper, so the basename is fixed unless
+    # FITSPhase2L.py is edited.
+    out_prefix = str(fits_cfg.get('phase1_output_prefix', 'FITS_OUTPUT'))
+    canonical_txt = (run_dir / f'{out_prefix}.txt').resolve()
+
+    before_mtime: dict[Path, float] = {}
+    for p in run_dir.glob('*'):
+        if not p.is_file():
+            continue
+        try:
+            before_mtime[p.resolve()] = p.stat().st_mtime
+        except OSError:
+            pass
+
     cmd = [sys.executable, str(repo / script), '-i', str(inp)]
     log.info('Running Phase2 (%s mode): %s', mode, ' '.join(cmd))
     r = subprocess.run(cmd, cwd=run_dir)
     if r.returncode != 0:
         return r.returncode
 
-    after = sorted([p.resolve() for p in run_dir.glob('*') if p.resolve() not in before], key=lambda p: p.stat().st_mtime)
-    candidates = [p for p in after if p.suffix.lower() in ('.csv', '.txt', '.tsv')]
-    if not candidates:
-        # fallback to newest csv-like file in run dir
-        candidates = sorted([p.resolve() for p in run_dir.glob('*.csv')], key=lambda p: p.stat().st_mtime)
-
-    if not candidates:
-        log.error('Could not locate FITS output matrix in %s', run_dir)
-        return 3
-
-    out_path = candidates[-1]
+    if canonical_txt.is_file():
+        out_path = canonical_txt
+    else:
+        # Prefer brand-new files; also accept existing paths whose mtime changed
+        # (Phase2 overwrites FITS_OUTPUT.txt, so it is never "new" by path set).
+        touched: list[Path] = []
+        for p in run_dir.glob('*'):
+            if not p.is_file():
+                continue
+            pr = p.resolve()
+            try:
+                m = p.stat().st_mtime
+            except OSError:
+                continue
+            prev = before_mtime.get(pr)
+            if prev is None or m > prev + 1e-6:
+                touched.append(pr)
+        candidates = [p for p in touched if p.suffix.lower() in ('.csv', '.txt', '.tsv')]
+        if not candidates:
+            candidates = sorted(
+                [p.resolve() for p in run_dir.glob('*')
+                 if p.is_file() and p.suffix.lower() in ('.csv', '.txt', '.tsv')],
+                key=lambda p: p.stat().st_mtime,
+            )
+        if not candidates:
+            log.error('Could not locate FITS output matrix in %s', run_dir)
+            return 3
+        out_path = candidates[-1]
     (run_dir / 'fits_imputed_path.txt').write_text(str(out_path) + '\n')
     log.info('Detected FITS imputed output: %s', out_path)
     return 0

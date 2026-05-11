@@ -15,6 +15,8 @@ MAGIC/work/
 downstream/cache/
 downstream/bins/
 downstream/pos_neg_all4/
+downstream/sensitivity_specificity/
+downstream/__pycache__/
 .DS_Store
 *.pkl
 *.err

@@ -11,7 +11,7 @@
 # Each --input PATH is one of:
 #   * directory with factors.npz + regions.tsv   (cisTopic / scOpen)
 #   * directory with matrix.npy  + regions.tsv   (FITS / MAGIC)
-#   * legacy HDF5 file with /Prc                 (older runs)
+#   * legacy HDF5 file with /Prc                 (older runs; may include /barcodes)
 #
 # The raw matrix is loaded from --mm-dir (must contain matrix.mtx.gz +
 # regions.tsv.gz + barcodes.tsv.gz). Rows of the imputed matrix are aligned to
@@ -126,12 +126,48 @@ def _read_barcodes_plain(path: Path) -> list[str]:
     return [ln.rstrip('\n') for ln in path.read_text().splitlines() if ln.strip()]
 
 
+def _first_hdf5_impute_path(impute_path: Path) -> Path | None:
+    if impute_path.is_file() and impute_path.suffix.lower() in ('.h5', '.hdf5'):
+        return impute_path
+    if impute_path.is_dir():
+        cand = sorted(list(impute_path.glob('*.h5')) + list(impute_path.glob('*.hdf5')))
+        if cand:
+            return cand[0]
+    return None
+
+
+def _barcodes_from_hdf5(h5_path: Path) -> list[str] | None:
+    if not h5_path.is_file():
+        return None
+    try:
+        if not h5py.is_hdf5(str(h5_path)):
+            return None
+    except Exception:
+        return None
+    with h5py.File(h5_path, 'r') as h5:
+        if 'barcodes' not in h5:
+            return None
+        out: list[str] = []
+        for s in h5['barcodes'][:]:
+            if isinstance(s, str):
+                out.append(s)
+            elif isinstance(s, (bytes, bytearray)):
+                out.append(s.decode())
+            else:
+                out.append(bytes(s).decode())
+        return out
+
+
 def load_impute_raw_column_indices(impute_path: Path, raw_barcodes: list[str]) -> np.ndarray:
     """Map each imputed cell column to a raw matrix column index (int64).
 
-    If ``impute_path/barcodes.tsv`` or ``barcodes.tsv.gz`` exists, its lines
-    must be a subset of ``raw_barcodes`` (same strings as in the raw MM).
-    Otherwise returns ``0..C_raw-1`` (caller must ensure imputed width matches).
+    Resolution order:
+
+    1. ``<impute>/barcodes.tsv`` or ``barcodes.tsv.gz`` (next to factors/matrix).
+    2. First ``*.h5`` / ``*.hdf5`` under the input path: dataset ``/barcodes`` if present.
+    3. Otherwise ``0..C_raw-1`` (caller must ensure imputed width matches raw).
+
+    Barcode strings must exist in ``raw_barcodes`` (raw ``barcodes.tsv.gz``).
     """
     base = impute_path.parent if impute_path.is_file() else impute_path
     lines: list[str] | None = None
@@ -144,6 +180,10 @@ def load_impute_raw_column_indices(impute_path: Path, raw_barcodes: list[str]) -
         else:
             lines = _read_barcodes_plain(p)
         break
+    if lines is None:
+        h5_path = _first_hdf5_impute_path(impute_path)
+        if h5_path is not None:
+            lines = _barcodes_from_hdf5(h5_path)
     n_raw = len(raw_barcodes)
     if lines is None:
         return np.arange(n_raw, dtype=np.int64)
