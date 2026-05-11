@@ -1,0 +1,122 @@
+# -----------------------------------------------------------------------------
+# PUscOpen: positive-unlabeled-aware, mask-restricted scOpen pipeline.
+#
+# Step summary:
+#   00_inspect_rds.R          read-only sanity check on the .rds
+#   01_export_rds_to_mm.R     .rds -> Matrix Market + region/cell TSVs
+#   02_build_mask.R           build geometric candidate mask from cCREs +
+#                             optional CTCF motif BED + blacklist exclusion;
+#                             emit per-bin features for the PU classifier
+#   03_pu_classifier.py       Elkan-Noto PU model on per-bin features; emit
+#                             per-bin probability + refined mask + held-out
+#                             positive set for step 07 validation
+#   04_run_scopen.py          restrict matrix to refined-mask bins, run scOpen
+#   05_postfilter.py          reconstruct W@H, apply neighborhood-consistency
+#                             rule, optionally multiply by PU score
+#   06_impute.py              persist <work>/impute/{matrix.npy, regions.tsv,
+#                             barcodes.tsv, meta.json}
+#   07_validate.py            recall/precision on held-out positives vs random
+# -----------------------------------------------------------------------------
+
+paths:
+  input_rds:   /work/users/d/y/dyy12/XuLab/data/CTCF_bin1000_mtx.rds
+  work_dir:    /work/users/d/y/dyy12/XuLab/PUscOpen/work/ctcf
+
+  # Reuse the cached annotation BEDs that downstream/prepare_pos_neg_bins.R
+  # already downloads. If you have a fresh tree, point this at any directory
+  # containing the same file names (or run prepare_pos_neg_bins.R once).
+  annotation_dir: /work/users/d/y/dyy12/XuLab/downstream/cache
+
+# -----------------------------------------------------------------------------
+# Stage 1 -- geometric candidate mask (step 02_build_mask.R)
+# -----------------------------------------------------------------------------
+mask:
+  # Which annotations to fold into the mask. Each is OR-combined; if *all*
+  # use_* flags are false the mask is the full genome minus the blacklist.
+  use_cCRE_293T:   true     # bins overlapping any HEK293T cCRE (any class)
+  use_cCRE_293T_CA: true    # restrict 293T to CA classes (chromatin accessible)
+  use_cCRE_CTCF:   true     # bins overlapping any GRCh38-cCREs.CTCF-bound entry
+  use_motif:       false    # require a CTCF motif hit (needs motif_bed)
+  motif_bed:       null     # e.g. JASPAR CTCF FIMO hits BED; null disables
+  exclude_blacklist:  true  # remove blacklist bins from the mask
+  # Optional mappability mask: path to a BED of low-mappability regions to
+  # exclude. Leave null if you don't have one.
+  exclude_mappability_bed: null
+
+  # Known-positive seed for the PU classifier. Same recipe as
+  # Bin_posVSneg.ipynb: top-N HEK293 CTCF cCREs (by 293 CTCF z-score),
+  # restricted to HEK293T-CA.
+  positive_seed:
+    n_top:        10000
+    require_293T_CA: true
+
+# -----------------------------------------------------------------------------
+# Stage 2 -- PU classifier (step 03_pu_classifier.py)
+# -----------------------------------------------------------------------------
+pu:
+  # Features fed to the classifier. Every name must exist as a column in
+  # bin_features.tsv (written by step 02). Numeric columns are used as-is;
+  # boolean columns become 0/1.
+  features:
+    - in_cCRE_293T
+    - in_cCRE_293T_CA
+    - in_cCRE_CTCF
+    - motif_hit_count
+    - ctcf_zscore_max         # NaN -> filled with 0
+    - log10_total_count       # bin-level raw signal aggregate
+    - log10_n_cells_observed
+
+  # Classifier choice. "logistic" is fast and well-calibrated; "rf" is more
+  # expressive but slower and less calibrated.
+  classifier:        logistic   # one of: logistic, rf
+  random_state:      42
+  cv_folds:          5
+  hold_out_fraction: 0.20       # 20 % of seed positives held out for step 07
+
+  # Threshold used by step 04 to decide which bins make the refined mask.
+  # "auto" picks the threshold that keeps approximately the union of all
+  # seed positives + their PU-implied counterparts; or pass a float in [0, 1].
+  refined_mask_threshold: auto
+
+# -----------------------------------------------------------------------------
+# Stage 3 -- scOpen on refined mask (step 04_run_scopen.py)
+# -----------------------------------------------------------------------------
+scopen:
+  estimate_rank:    true
+  min_n_components: 5
+  max_n_components: 30
+  step_n_components: 5
+  n_components:     30          # used when estimate_rank: false
+  # Bumping alpha is the cleanest tuning lever against over-imputation
+  # *within* the refined mask. 1.0 is the scOpen paper default; try 2-3
+  # to be more conservative.
+  alpha:            1.0
+  max_iter:         500
+  init:             nndsvd
+  random_state:     42
+  nc:               6
+  verbose:          0
+
+# -----------------------------------------------------------------------------
+# Stage 4 -- neighborhood post-filter (step 05_postfilter.py)
+# -----------------------------------------------------------------------------
+postfilter:
+  # Apply a CTCF-aware neighborhood rule: a bin gets to keep its imputed
+  # signal only if at least min_neighbors bins within +/- neighborhood_bp on
+  # the same chromosome also have imputed signal > neighbor_threshold (a
+  # quantile of the per-bin imputed total; "auto" = median of pos-overlapping
+  # bins).
+  neighborhood_bp:    10000
+  min_neighbors:      1
+  neighbor_threshold: auto
+
+  # If true, multiply the per-(bin, cell) scOpen value by the bin's PU score
+  # so the final score reflects "imputer thinks this bin is high signal AND
+  # the PU model thinks this bin is plausibly positive a priori".
+  multiply_by_pu:     true
+
+# -----------------------------------------------------------------------------
+# Stage 5 -- persistence (step 06_impute.py)
+# -----------------------------------------------------------------------------
+impute:
+  scale_factor: 1000000   # per-cell sum target after rescale

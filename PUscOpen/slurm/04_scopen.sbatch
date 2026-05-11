@@ -1,0 +1,28 @@
+#!/bin/bash
+#SBATCH --job-name=pusc_04_scopen
+#SBATCH --output=%x-%j.out
+#SBATCH --error=%x-%j.err
+#SBATCH --cpus-per-task=8
+#SBATCH --mem=64G
+#SBATCH --time=12:00:00
+
+set -euo pipefail
+
+SUBMIT_DIR="${SLURM_SUBMIT_DIR:-$(pwd)}"
+if [[ -d "${SUBMIT_DIR}/scripts" && -d "${SUBMIT_DIR}/configs" ]]; then
+  ROOT_DIR="${SUBMIT_DIR}"
+elif [[ -d "${SUBMIT_DIR}/../scripts" && -d "${SUBMIT_DIR}/../configs" ]]; then
+  ROOT_DIR="$(cd "${SUBMIT_DIR}/.." && pwd)"
+else
+  SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+  ROOT_DIR="$(cd "${SCRIPT_DIR}/.." && pwd)"
+fi
+cd "${ROOT_DIR}"
+
+CFG="${CFG:-${ROOT_DIR}/configs/default.yaml}"
+CONDA_ENV="${CONDA_ENV:-puscopen}"
+
+source "$(conda info --base)/etc/profile.d/conda.sh"
+conda activate "${CONDA_ENV}"
+
+python scripts/04_run_scopen.py --config "$CFG"
