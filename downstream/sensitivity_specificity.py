@@ -19,6 +19,10 @@
 # count as predicted-negative everywhere (so a pipeline that models a small
 # region subset is penalised by FNs from unmodeled positives, as expected).
 #
+# Columns are aligned by barcode: if the impute directory has barcodes.tsv
+# (or .gz), each imputed column maps to the matching raw column; otherwise we
+# assume the same column order and width as the raw matrix.
+#
 # Memory: we stream the imputed matrix in row blocks (default 2000 rows) and
 # never materialise the full dense product. The per-pipeline cost is one pass
 # through the modeled rows + one histogram per chunk.
@@ -118,6 +122,58 @@ def load_raw_mm(mm_dir: Path) -> tuple[sp.csr_matrix, dict[str, int], list[str]]
     return mat, name_to_row, barcodes
 
 
+def _read_barcodes_plain(path: Path) -> list[str]:
+    return [ln.rstrip('\n') for ln in path.read_text().splitlines() if ln.strip()]
+
+
+def load_impute_raw_column_indices(impute_path: Path, raw_barcodes: list[str]) -> np.ndarray:
+    """Map each imputed cell column to a raw matrix column index (int64).
+
+    If ``impute_path/barcodes.tsv`` or ``barcodes.tsv.gz`` exists, its lines
+    must be a subset of ``raw_barcodes`` (same strings as in the raw MM).
+    Otherwise returns ``0..C_raw-1`` (caller must ensure imputed width matches).
+    """
+    base = impute_path.parent if impute_path.is_file() else impute_path
+    lines: list[str] | None = None
+    for name in ('barcodes.tsv', 'barcodes.tsv.gz'):
+        p = base / name
+        if not p.exists():
+            continue
+        if name.endswith('.gz'):
+            lines = _read_lines_gz(p)
+        else:
+            lines = _read_barcodes_plain(p)
+        break
+    n_raw = len(raw_barcodes)
+    if lines is None:
+        return np.arange(n_raw, dtype=np.int64)
+    raw_to_col = {b: i for i, b in enumerate(raw_barcodes)}
+    out = np.empty(len(lines), dtype=np.int64)
+    for j, bc in enumerate(lines):
+        if bc not in raw_to_col:
+            raise SystemExit(
+                f'Impute barcode {bc!r} (line {j + 1}) not found in raw '
+                f'barcodes.tsv.gz ({base})'
+            )
+        out[j] = raw_to_col[bc]
+    return out
+
+
+def imputed_n_columns(path: Path, kind: str) -> int:
+    if kind == 'factored':
+        with np.load(path / 'factors.npz') as z:
+            return int(z['H'].shape[1])
+    if kind == 'dense':
+        return int(np.load(path / 'matrix.npy', mmap_mode='r').shape[1])
+    if kind == 'hdf5':
+        h5_path = path if path.is_file() else (
+            sorted(list(path.glob('*.h5')) + list(path.glob('*.hdf5')))[0]
+        )
+        with h5py.File(h5_path, 'r') as h5:
+            return int(h5['Prc'].shape[1])
+    raise SystemExit(f'Unhandled input kind {kind}')
+
+
 # -----------------------------------------------------------------------------
 # Imputed chunk iterators
 #
@@ -139,8 +195,9 @@ def iter_chunks_factored(impute_dir: Path, raw_name_to_row: dict[str, int],
         per_cell_factor = float(z['per_cell_factor']) if 'per_cell_factor' in z.files else 1.0
         # Avoid keeping a reference to the closed npz: copy into RAM. W is small
         # (n_regions x k), H is small (k x n_cells); both float32.
-        W = np.asarray(W, dtype=np.float32, copy=True)
-        H = np.asarray(H, dtype=np.float32, copy=True)
+        # np.asarray(..., copy=) needs NumPy >= 2; np.array(..., copy=) works on 1.x.
+        W = np.array(W, dtype=np.float32, copy=True)
+        H = np.array(H, dtype=np.float32, copy=True)
     Rm = W.shape[0]
     for s in range(0, Rm, chunk_rows):
         e = min(s + chunk_rows, Rm)
@@ -247,6 +304,7 @@ def stream_confusion(path: Path, kind: str, raw: sp.csr_matrix,
                       raw_name_to_row: dict[str, int],
                       thresholds: np.ndarray,
                       chunk_rows: int,
+                      raw_col_indices: np.ndarray,
                       ) -> dict[str, np.ndarray | int]:
     """For each threshold t, accumulate (TP, FP) by histogramming imputed
     values stratified by raw label. Returns (TP, TN, FP, FN, pos_total, neg_total)."""
@@ -261,10 +319,14 @@ def stream_confusion(path: Path, kind: str, raw: sp.csr_matrix,
     n_rows_seen = 0
     n_rows_unmatched = 0
     pos_total_unmodeled = 0  # raw nnz in rows that were NOT modeled (always FN)
+    pos_extra_modeled_cols = 0  # raw positives in modeled rows, raw cols absent from impute
 
     # Pre-compute set of modeled raw row indices so we can credit unmodeled FNs.
     raw_total_pos = int(raw.nnz)
     raw_total_size = int(raw.shape[0]) * int(raw.shape[1])
+
+    impute_cover = np.zeros(raw.shape[1], dtype=bool)
+    impute_cover[raw_col_indices] = True
 
     modeled_raw_rows: set[int] = set()
     for raw_idx, block in iter_chunks(path, kind, raw_name_to_row, chunk_rows):
@@ -273,7 +335,8 @@ def stream_confusion(path: Path, kind: str, raw: sp.csr_matrix,
         n_rows_unmatched += int((~ok).sum())
         if not ok.any():
             continue
-        raw_rows = np.asarray(raw[raw_idx[ok]].toarray(), dtype=bool)  # (n_chunk, C)
+        sub = raw[raw_idx[ok]][:, raw_col_indices]
+        raw_rows = (sub.toarray() > 0)  # (n_chunk, n_impute_cols) aligned to block
         imp = block[ok]
         modeled_raw_rows.update(int(i) for i in raw_idx[ok].tolist())
 
@@ -305,7 +368,14 @@ def stream_confusion(path: Path, kind: str, raw: sp.csr_matrix,
             sub = raw[unmodeled_rows]
             pos_total_unmodeled = int(sub.nnz)
 
-    full_pos_total = pos_total_modeled + pos_total_unmodeled
+    # Raw positives in modeled rows at raw columns with no imputed score (dropped cells).
+    if modeled_raw_rows and not bool(np.all(impute_cover)):
+        for r in modeled_raw_rows:
+            inds = raw.getrow(int(r)).indices
+            if inds.size:
+                pos_extra_modeled_cols += int(np.sum(~impute_cover[inds]))
+
+    full_pos_total = pos_total_modeled + pos_extra_modeled_cols + pos_total_unmodeled
     full_neg_total = raw_total_size - full_pos_total
 
     out = {
@@ -328,6 +398,7 @@ def stream_confusion(path: Path, kind: str, raw: sp.csr_matrix,
         'n_rows_modeled':     int(n_rows_seen),
         'n_rows_unmatched':   int(n_rows_unmatched),
         'pos_total_unmodeled': int(pos_total_unmodeled),
+        'pos_extra_modeled_cols': int(pos_extra_modeled_cols),
     }
     return out
 
@@ -393,11 +464,24 @@ def sparsity_match_idx(TP: np.ndarray, FP: np.ndarray,
 # -----------------------------------------------------------------------------
 def evaluate_input(label: str, path: Path,
                     raw: sp.csr_matrix, raw_name_to_row: dict[str, int],
+                    raw_barcodes: list[str],
                     thresholds: np.ndarray | None, n_thresholds: int,
                     chunk_rows: int, rng: np.random.Generator
                     ) -> dict:
     kind = detect_input_kind(path)
     log.info('Input %r (%s) -> %s', label, kind, path)
+
+    raw_col_indices = load_impute_raw_column_indices(path, raw_barcodes)
+    n_impute = imputed_n_columns(path, kind)
+    if int(raw_col_indices.size) != n_impute:
+        raise SystemExit(
+            f'{label}: barcode map length {raw_col_indices.size} != imputed '
+            f'n_columns={n_impute} ({path}). Add barcodes.tsv matching columns.'
+        )
+    if raw_col_indices.size != len(raw_barcodes) or not np.array_equal(
+            raw_col_indices, np.arange(len(raw_barcodes), dtype=np.int64)):
+        log.info('  impute barcodes: %d cells aligned to raw (%d raw barcodes)',
+                 raw_col_indices.size, len(raw_barcodes))
 
     if thresholds is None:
         log.info('  picking auto thresholds (sample 4M values)...')
@@ -410,12 +494,13 @@ def evaluate_input(label: str, path: Path,
                  thr.size, float(thr.min()), float(thr.max()))
 
     log.info('  streaming confusion-matrix histogram (chunk_rows=%d)', chunk_rows)
-    conf = stream_confusion(path, kind, raw, raw_name_to_row, thr, chunk_rows)
+    conf = stream_confusion(path, kind, raw, raw_name_to_row, thr, chunk_rows,
+                            raw_col_indices)
     log.info('  modeled rows seen=%d (unmatched=%d); modeled raw pos=%d, neg=%d; '
-             'unmodeled raw pos=%d',
+             'unmodeled raw pos=%d; modeled-row raw pos in dropped cols=%d',
              conf['n_rows_modeled'], conf['n_rows_unmatched'],
              conf['pos_total_modeled'], conf['neg_total_modeled'],
-             conf['pos_total_unmodeled'])
+             conf['pos_total_unmodeled'], conf['pos_extra_modeled_cols'])
 
     metrics: dict[str, dict] = {}
     for view in ('modeled', 'full'):
@@ -452,6 +537,7 @@ def evaluate_input(label: str, path: Path,
         'metrics':     metrics,
         'n_rows_modeled':      conf['n_rows_modeled'],
         'pos_total_unmodeled': conf['pos_total_unmodeled'],
+        'pos_extra_modeled_cols': conf['pos_extra_modeled_cols'],
     }
 
 
@@ -649,7 +735,7 @@ def main() -> int:
     args.out_dir.mkdir(parents=True, exist_ok=True)
     rng = np.random.default_rng(args.seed)
 
-    raw, raw_name_to_row, _barcodes = load_raw_mm(args.mm_dir)
+    raw, raw_name_to_row, barcodes = load_raw_mm(args.mm_dir)
 
     if args.thresholds:
         user_thr = np.asarray(sorted(float(t.strip()) for t in args.thresholds.split(',')
@@ -661,7 +747,7 @@ def main() -> int:
 
     per_input: list[dict] = []
     for label, path in args.inputs:
-        info = evaluate_input(label, path, raw, raw_name_to_row,
+        info = evaluate_input(label, path, raw, raw_name_to_row, barcodes,
                               thresholds=user_thr,
                               n_thresholds=args.n_thresholds,
                               chunk_rows=args.chunk_rows,
