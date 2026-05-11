@@ -9,16 +9,19 @@
 # Compute sensitivity / specificity / AUROC / AUPR / max-F1 for each imputation
 # pipeline against the raw observed (binarised) matrix.
 #
-# Required env vars:
-#   MM_DIR        directory with matrix.mtx.gz + regions.tsv.gz + barcodes.tsv.gz
-#                 (the raw observed matrix used as ground truth)
-#   OUT_DIR       output directory for plots / JSON / TSV
-#   INPUTS        space-separated LABEL=PATH pairs, e.g.
-#                 INPUTS="cisTopic=/work/.../cistopic_ctcf/impute \
-#                         FITS=/work/.../FITS/work/ctcf/impute \
-#                         scOpen=/work/.../scOpen/work/ctcf/impute \
-#                         MAGIC=/work/.../MAGIC/work/ctcf/impute"
-# Optional env vars:
+# Defaults match compare_pos_neg_all4.sbatch (this XuLab tree). Override any path
+# by exporting the variable before sbatch.
+#
+# Optional env vars (defaults shown):
+#   ROOT_DIR      repo root (default: auto from submit dir, else /work/users/d/y/dyy12/XuLab)
+#   MM_DIR        raw matrix dir: matrix.mtx.gz + regions.tsv.gz + barcodes.tsv.gz
+#                 (default: ${ROOT_DIR}/cisTopic/scripts/cistopic_ctcf/mm)
+#   OUT_DIR       output directory (default: ${ROOT_DIR}/downstream/sensitivity_specificity)
+#   INPUTS        space-separated LABEL=PATH pairs; if unset, built from the dirs below
+#   CISTOPIC_DIR  (default: ${ROOT_DIR}/cisTopic/scripts/cistopic_ctcf/impute)
+#   FITS_DIR      (default: ${ROOT_DIR}/FITS/work/ctcf/impute)
+#   SCOPEN_DIR    (default: ${ROOT_DIR}/scOpen/work/ctcf/impute)
+#   MAGIC_DIR     (default: ${ROOT_DIR}/MAGIC/work/ctcf/impute)
 #   CONDA_ENV     conda env (default: cistopic; FITS/scopen/magic envs work too)
 #   OUT_NAME      basename for output files (default: sensitivity_specificity)
 #   THRESHOLDS    comma-separated absolute thresholds (default: auto per-pipeline)
@@ -28,20 +31,36 @@
 
 set -euo pipefail
 
-SUBMIT_DIR="${SLURM_SUBMIT_DIR:-$(pwd)}"
-if [[ -d "${SUBMIT_DIR}/downstream" ]]; then
-  ROOT_DIR="${SUBMIT_DIR}"
-elif [[ -f "${SUBMIT_DIR}/sensitivity_specificity.py" ]]; then
-  ROOT_DIR="$(cd "${SUBMIT_DIR}/.." && pwd)"
-else
-  SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-  ROOT_DIR="$(cd "${SCRIPT_DIR}/../.." && pwd)"
+if [[ -z "${ROOT_DIR:-}" ]]; then
+  SUBMIT_DIR="${SLURM_SUBMIT_DIR:-$(pwd)}"
+  if [[ -d "${SUBMIT_DIR}/downstream" ]]; then
+    ROOT_DIR="${SUBMIT_DIR}"
+  elif [[ -f "${SUBMIT_DIR}/sensitivity_specificity.py" ]]; then
+    ROOT_DIR="$(cd "${SUBMIT_DIR}/.." && pwd)"
+  else
+    SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+    ROOT_DIR="$(cd "${SCRIPT_DIR}/../.." && pwd)"
+  fi
 fi
+ROOT_DIR="${ROOT_DIR:-/work/users/d/y/dyy12/XuLab}"
+
 DOWN_DIR="${ROOT_DIR}/downstream"
 cd "${ROOT_DIR}"
 
+MM_DIR="${MM_DIR:-${ROOT_DIR}/cisTopic/scripts/cistopic_ctcf/mm}"
+OUT_DIR="${OUT_DIR:-${ROOT_DIR}/downstream/sensitivity_specificity}"
+
+CISTOPIC_DIR="${CISTOPIC_DIR:-${ROOT_DIR}/cisTopic/scripts/cistopic_ctcf/impute}"
+FITS_DIR="${FITS_DIR:-${ROOT_DIR}/FITS/work/ctcf/impute}"
+SCOPEN_DIR="${SCOPEN_DIR:-${ROOT_DIR}/scOpen/work/ctcf/impute}"
+MAGIC_DIR="${MAGIC_DIR:-${ROOT_DIR}/MAGIC/work/ctcf/impute}"
+
+if [[ -z "${INPUTS:-}" ]]; then
+  INPUTS="cisTopic=${CISTOPIC_DIR} FITS=${FITS_DIR} scOpen=${SCOPEN_DIR} MAGIC=${MAGIC_DIR}"
+fi
+
 if [[ -z "${MM_DIR:-}" || -z "${OUT_DIR:-}" || -z "${INPUTS:-}" ]]; then
-  echo "Required: MM_DIR=<mm/>, OUT_DIR=<dir>, INPUTS=\"label1=path1 label2=path2 ...\"" >&2
+  echo "Required: MM_DIR=<mm/>, OUT_DIR=<dir>, INPUTS=\"label1=path1 label2=path2 ...\" (or rely on defaults under ROOT_DIR)" >&2
   exit 1
 fi
 CONDA_ENV="${CONDA_ENV:-cistopic}"
