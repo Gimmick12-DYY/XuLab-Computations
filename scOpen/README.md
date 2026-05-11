@@ -33,6 +33,79 @@ the full filtered matrix. The paper benchmarks scOpen at ~3 h on
 10k cells × 100k peaks with a peak ~16 GB memory footprint, so this should
 be tractable on a normal compute node.
 
+## Over-imputation in genome-wide bin data, and how to mitigate it
+
+scOpen was designed for **peak-by-cell** matrices: every row is a candidate
+open-chromatin site already filtered by bulk-level peak calling. Genome-wide
+1-kb bins violate that assumption — roughly 95 % of the genome is
+heterochromatin or gene desert with zero true accessibility, and scOpen's
+NMF will smear small TF-IDF signals into those rows ("over-imputation"). On
+the CTCF dataset this shows up as a much smoother imputed-signal
+distribution than the raw, including in regions that should never carry
+CTCF binding.
+
+This pipeline exposes two complementary mitigations:
+
+### 1. Restrict the input to a candidate-region BED (recommended)
+
+`filter.candidate_regions_bed` (also `--candidate-bed PATH` on
+`02_prepare_scopen_input.py`) drops bins that don't overlap any interval in
+the supplied BED *before* scOpen sees them. The factorisation is computed
+only over plausible candidate regions, so unmodeled bins stay zero in the
+final imputed matrix and cannot be over-imputed.
+
+`filter.candidate_invert: true` (or `--candidate-invert`) flips the BED
+into a blacklist (drop bins that DO overlap), useful for excluding
+problematic regions like the ENCODE blacklist.
+
+Recommended candidate BEDs for CTCF in HEK293T (already cached by
+`downstream/prepare_pos_neg_bins.R`):
+
+| BED | what it captures |
+|---|---|
+| `SCREEN-293T-cCRE-ENCFF529BOG.bed` | 293T cCRE universe (all classes) |
+| `SCREEN-293-cCRE-ENCFF439DDQ_ENCFF885SUR_ENCFF128UTY.bed` | 293 cCRE universe |
+| union of the two | broadest "potentially accessible" mask, recommended for cross-cell-type robustness |
+
+Example:
+
+```yaml
+filter:
+  binarize_input:        true
+  drop_zero_rows:        true
+  candidate_regions_bed: /work/.../downstream/cache/SCREEN-293T-cCRE-ENCFF529BOG.bed
+  candidate_invert:      false
+```
+
+After step 02 the `prepare_meta.json` reports the mask stats:
+
+```json
+"candidate_filter": {
+  "candidate_regions_bed": ".../SCREEN-293T-cCRE-ENCFF529BOG.bed",
+  "candidate_invert": false,
+  "n_bed_intervals": 257_345,
+  "n_regions_overlap": 119_356,
+  "n_regions_kept": 119_356
+}
+```
+
+so you can sanity-check the overlap fraction before launching the longer
+NMF step.
+
+### 2. Tune scOpen to be more conservative
+
+If a candidate BED is not available or you want to additionally tighten the
+in-painting, the most useful knobs in `scopen.*` are:
+
+| knob | effect |
+|---|---|
+| `alpha` (default 1.0) | regularisation weight. Bump to **2.0–5.0** to penalise reconstruction error in low-signal rows; the NMF then puts less mass into truly-negative regions. |
+| `max_n_components` (default 30) | top of the rank grid. Smaller `k` = less expressive factorisation = less aggressive in-painting. Try **15–20** for low-heterogeneity data (e.g. one cell type). |
+| `estimate_rank: false` + small `n_components` | force a conservative fixed rank, useful when the kneedle picks an over-rich model. |
+
+These can be combined with the candidate-BED filter; the BED mask is the
+sharper instrument and should be the first thing to try.
+
 ## Pipeline layout
 
 ```text

@@ -12,16 +12,51 @@ paths:
 # -----------------------------------------------------------------------------
 # Pre-processing
 #
-# scOpen's TF-IDF + sparse NMF handles the full input universe natively, so we
-# do NOT apply the cisTopic-style cell/region quality filter. The only thing
-# step 02 does is binarise (scOpen expects a binary peak-by-cell input) and
-# drop all-zero rows that cannot contribute to NMF.
+# scOpen's TF-IDF + sparse NMF handles a sparse input natively, but it was
+# designed for peak-by-cell matrices where every row is a *candidate* open-
+# chromatin site. Genome-wide 1 kb bins violate that assumption: roughly 95 %
+# of the genome is heterochromatin / gene desert with zero true accessibility,
+# and scOpen happily smooths small TF-IDF signals into those truly-negative
+# rows, producing the "over-imputation" pattern we observed in CTCF.
+#
+# Mitigations exposed here:
+#   * `candidate_regions_bed` -- restrict the NMF input to bins overlapping a
+#     user-supplied BED (e.g. SCREEN cCREs). This is the recommended fix:
+#     bins not in the BED are dropped before scOpen sees them, so they never
+#     get a positive imputed value. Set to null to disable.
+#   * `candidate_invert` -- treat the BED as a *blacklist* instead of a
+#     whitelist (drop bins overlapping the BED). Default false.
+#   * `binarize_input` / `drop_zero_rows` -- as before; binarisation matches
+#     the scOpen training regime, drop-zero removes rows that contribute
+#     nothing to NMF.
+#
+# Recommended BED files for CTCF in HEK293T (already cached by
+# downstream/prepare_pos_neg_bins.R under <downstream-cache-dir>):
+#   * SCREEN-293T-cCRE-ENCFF529BOG.bed             # 293T cCRE universe (all classes)
+#   * SCREEN-293-cCRE-ENCFF439DDQ_ENCFF885SUR_ENCFF128UTY.bed
+#                                                  # 293 cCRE universe
+#   * union of the two -- broadest "potentially accessible" mask
 # -----------------------------------------------------------------------------
 filter:
-  binarize_input: true
+  binarize_input:        true
+  drop_zero_rows:        true
+  candidate_regions_bed: null
+  candidate_invert:      false
 
 # -----------------------------------------------------------------------------
 # scOpen NMF parameters
+#
+# To curb over-imputation in inactive bins (when candidate_regions_bed is not
+# enough), the most useful tuning knobs are:
+#   * `alpha` -- regularisation weight. Higher = more conservative
+#               reconstruction (less smoothing into low-signal rows). Paper
+#               default is 1.0; try 2.0-5.0 if W @ H spreads signal too widely.
+#   * `max_n_components` -- top of the rank grid. Smaller k = less expressive
+#               factorisation = less aggressive in-painting of zeros. Try 15
+#               or 20 instead of 30 if heterogeneity is low (e.g. one cell
+#               type, as in HEK293T).
+#   * `estimate_rank: false` + small `n_components` -- force a conservative
+#               fixed rank; useful when the kneedle picks a too-rich model.
 # -----------------------------------------------------------------------------
 scopen:
   # If true, scopen runs over a rank grid and picks the elbow (kneedle).
@@ -33,6 +68,7 @@ scopen:
   # Used only when estimate_rank: false.
   n_components: 30
   # Regularization weight. Paper recommends 1.0 for imputation accuracy.
+  # Bump to 2.0-5.0 to suppress over-imputation.
   alpha: 1.0
   # CCD iterations.
   max_iter: 500
