@@ -1,0 +1,113 @@
+{
+  "aligned_to": "raw",
+  "inputs": [
+    {
+      "label": "raw",
+      "kind": "mm",
+      "path": "/work/users/d/y/dyy12/XuLab/cisTopic/scripts/cistopic_ctcf/mm",
+      "n_cells_native": 10410,
+      "n_cells_evaluated": 10410,
+      "n_missing_in_anchor": 0,
+      "stats": {
+        "mean": 76.02170989433237,
+        "median": 37.0,
+        "std": 196.2057153039167,
+        "min": 19.0,
+        "max": 6479.0,
+        "p10": 22.0,
+        "p90": 120.0,
+        "p99": 781.7299999999996
+      }
+    },
+    {
+      "label": "cisTopic",
+      "kind": "factored",
+      "path": "/work/users/d/y/dyy12/XuLab/cisTopic/scripts/cistopic_ctcf/impute",
+      "n_cells_native": 10296,
+      "n_cells_evaluated": 10296,
+      "n_missing_in_anchor": 114,
+      "stats": {
+        "mean": 1000011.256985239,
+        "median": 1000011.2571644678,
+        "std": 0.01570425697682155,
+        "min": 1000011.2005493202,
+        "max": 1000011.3067327357,
+        "p10": 1000011.2366226912,
+        "p90": 1000011.2775023205,
+        "p99": 1000011.2919077394
+      }
+    },
+    {
+      "label": "FITS",
+      "kind": "dense",
+      "path": "/work/users/d/y/dyy12/XuLab/FITS/work/ctcf/impute",
+      "n_cells_native": 10410,
+      "n_cells_evaluated": 10410,
+      "n_missing_in_anchor": 0,
+      "stats": {
+        "mean": 1000001.2730178968,
+        "median": 635704.5231456757,
+        "std": 1443455.9832229798,
+        "min": 0.0,
+        "max": 23589525.393798828,
+        "p10": 0.0,
+        "p90": 2151762.8832298284,
+        "p99": 6050835.837320858
+      }
+    },
+    {
+      "label": "scOpen",
+      "kind": "factored",
+      "path": "/work/users/d/y/dyy12/XuLab/scOpen/work/ctcf/impute",
+      "n_cells_native": 10410,
+      "n_cells_evaluated": 10410,
+      "n_missing_in_anchor": 0,
+      "stats": {
+        "mean": 1000000.1252724702,
+        "median": 862104.6130987916,
+        "std": 624087.1101503985,
+        "min": 59753.72399523778,
+        "max": 10758409.70630402,
+        "p10": 461634.7665478555,
+        "p90": 1644046.1997936065,
+        "p99": 3498856.0306895636
+      }
+    },
+    {
+      "label": "MAGIC",
+      "kind": "dense",
+      "path": "/work/users/d/y/dyy12/XuLab/MAGIC/work/ctcf/impute",
+      "n_cells_native": 10410,
+      "n_cells_evaluated": 10410,
+      "n_missing_in_anchor": 0,
+      "stats": {
+        "mean": 1000909.1708074977,
+        "median": 783665.0686144859,
+        "std": 1338070.313713931,
+        "min": 7326.877930503774,
+        "max": 14422931.625417084,
+        "p10": 536134.6974727337,
+        "p90": 1174996.5960715604,
+        "p99": 9258814.67006494
+      }
+    },
+    {
+      "label": "PUscOpen",
+      "kind": "csr",
+      "path": "/work/users/d/y/dyy12/XuLab/PUscOpen/work/ctcf/impute",
+      "n_cells_native": 10410,
+      "n_cells_evaluated": 10410,
+      "n_missing_in_anchor": 0,
+      "stats": {
+        "mean": 999974.1190590103,
+        "median": 613754.34375,
+        "std": 1130195.4832685739,
+        "min": 0.0,
+        "max": 8275785.5,
+        "p10": 0.0,
+        "p90": 2650532.9000000013,
+        "p99": 5064080.8149999995
+      }
+    }
+  ]
+}

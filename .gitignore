@@ -19,9 +19,11 @@ downstream/pos_neg_all6
 downstream/sensitivity_specificity/
 downstream/bin_sensitivity_specificity/
 downstream/__pycache__/
+downstream/raw_vs_imputed_diff/
 .DS_Store
 *.pkl
 *.err
 *.out
 *.h5
 *.pdf
+*.png
