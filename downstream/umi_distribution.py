@@ -117,7 +117,13 @@ def percell_from_factored(impute_dir: Path) -> tuple[np.ndarray, list[str]]:
     with np.load(impute_dir / 'factors.npz') as z:
         W = np.asarray(z['W'], dtype=np.float64)
         H = np.asarray(z['H'], dtype=np.float64)
-        f = float(z['per_cell_factor']) if 'per_cell_factor' in z.files else 1.0
+        if 'per_cell_factor' in z.files:
+            pcf_raw = z['per_cell_factor']
+            # Scalar (0-d) -> scalar broadcast; vector (1-d) -> element-wise.
+            f: float | np.ndarray
+            f = float(pcf_raw) if pcf_raw.ndim == 0 else np.asarray(pcf_raw, dtype=np.float64).ravel()
+        else:
+            f = 1.0
     sums = (W.sum(axis=0) @ H) * f
     return np.asarray(sums, dtype=np.float64), bars
 

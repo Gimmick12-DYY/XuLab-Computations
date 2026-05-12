@@ -419,12 +419,93 @@ SLURM:
 sbatch downstream/slurm/raw_vs_imputed_diff.sbatch
 ```
 
+## Per-cell complexity gain (fragments-gained-per-cell)
+
+`complexity_gain.py` measures the imputation goal directly: **how many more
+accessible bins per cell do we recover by imputing?** For every cell:
+
+```
+raw_complexity[c]  =  #(raw[r, c] > 0)
+imp_complexity[c]  =  #(imp[r, c] > t)
+gain[c]            =  imp_complexity[c]  -  raw_complexity[c]
+```
+
+The threshold `t` is picked per pipeline because imputed scales differ across
+methods. Four modes are supported via `--threshold-mode`:
+
+| mode | meaning |
+|---|---|
+| `sparsity_match` (default) | Pick `t` per pipeline so `#(imp > t)` on the modeled rows equals `#(raw > 0)` on those same rows. Sum-of-gain across cells is then **0 by construction**; the per-cell distribution shows *where* signal is being redistributed. Best for "is imputation moving signal onto the right cells?" |
+| `sparsity_match:K` | Same but each pipeline is allowed K× as many calls as raw. `K = 2` gives sum-of-gain ≈ `1 × raw_nnz`; useful when you want absolute positive gain. |
+| `quantile:Q` | Top `(1 - Q)` fraction of imputed values genome-wide on the modeled rows (e.g. `quantile:0.99` keeps the top 1%). |
+| `fixed:T` | Numeric, same value across pipelines. Only meaningful when pipelines are on a shared scale. |
+
+The threshold for `sparsity_match` and `quantile` is estimated from a 4 M-coord
+random sample of imputed values within the modeled subspace (`--sample-size`).
+The per-cell counts above the chosen threshold are then computed in one
+streaming pass: chunks of `chunk_rows` (default 2000) materialise a small
+dense block per pipeline, threshold, and accumulate column sums.
+
+```bash
+python downstream/complexity_gain.py \
+  --mm-dir   /work/.../mm \
+  --out-dir  /work/.../downstream/complexity_gain \
+  --threshold-mode sparsity_match \
+  --input cisTopic=/work/.../cistopic_ctcf/impute \
+  --input FITS=/work/.../FITS/work/ctcf/impute \
+  --input scOpen=/work/.../scOpen/work/ctcf/impute \
+  --input MAGIC=/work/.../MAGIC/work/ctcf/impute \
+  --input PUscOpen=/work/.../PUscOpen/work/ctcf/impute
+```
+
+Outputs (under `--out-dir`):
+
+| file | contents |
+|---|---|
+| `complexity_gain.tsv` | per-cell long-form: `input, kind, barcode, threshold, raw_complexity, imp_complexity, gain` (one row per (pipeline, cell)) |
+| `complexity_gain_summary.json` | per-pipeline: chosen threshold + origin string, raw/imp/gain stats (mean / median / p10 / p90 / min / max / std), `total_gain` summed across cells |
+| `complexity_gain_gain_hist.png` | overlaid histograms of per-cell gain (dotted line at 0) |
+| `complexity_gain_scatter.png` | per-pipeline panel of `raw_complexity` vs `imp_complexity` per cell, log-log with `y = x` diagonal — shows whether low-raw cells gain disproportionately |
+| `complexity_gain_bars.png` | median per-cell gain bar chart |
+
+### Reading the output
+
+* `total_gain == 0` under `sparsity_match` is **expected**; the metric of
+  interest is the *shape* of the per-cell gain distribution. A method that
+  recovers dropouts in low-depth cells will show large positive gain there
+  and small negative gain in high-depth cells. A method that smooths
+  uniformly will show a tight distribution centred near 0.
+* `total_gain > 0` under `sparsity_match:K` (`K > 1`) measures absolute
+  uplift — `total_gain ≈ (K − 1) × raw_nnz_on_modeled`. Plotting it under
+  `K = 2` alongside `K = 1` lets you see "what does another `raw_nnz` worth
+  of calls do to the per-cell distribution?"
+* The **scatter plot** is the most informative diagnostic: a healthy
+  imputer's cloud sits *above* the diagonal for the low-x (low-raw) region
+  (those cells gain complexity) and tracks the diagonal for the high-x
+  region (high-raw cells already see what they should). A method that's
+  flatlining horizontally (similar `imp_complexity` for every raw level) is
+  collapsing per-cell variation.
+* Per-cell gain comparisons across pipelines are only fair when the
+  threshold mode is the same. `sparsity_match` keeps cross-pipeline totals
+  identical so the distribution shapes are directly comparable.
+
+SLURM:
+
+```bash
+sbatch downstream/slurm/complexity_gain.sbatch
+# defaults: sparsity_match across the five pipelines.
+# For 2x uplift:
+sbatch --export=ALL,THRESHOLD_MODE=sparsity_match:2 downstream/slurm/complexity_gain.sbatch
+# For top-1% calls per pipeline:
+sbatch --export=ALL,THRESHOLD_MODE=quantile:0.99 downstream/slurm/complexity_gain.sbatch
+```
+
 ## Conda env
 
-All six scripts (`prepare_pos_neg_bins.R`, `compare_pos_neg.py`,
+All seven scripts (`prepare_pos_neg_bins.R`, `compare_pos_neg.py`,
 `sensitivity_specificity.py`, `bin_sensitivity_specificity.py`,
-`umi_distribution.py`, `raw_vs_imputed_diff.py`) work in any of the pipeline
-conda envs:
+`umi_distribution.py`, `raw_vs_imputed_diff.py`, `complexity_gain.py`) work
+in any of the pipeline conda envs:
 
 * `cistopic` — already includes R + Bioconductor (`GenomicRanges`,
   `rtracklayer`) needed by `prepare_pos_neg_bins.R`, plus h5py / scipy for

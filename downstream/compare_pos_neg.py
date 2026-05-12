@@ -137,7 +137,15 @@ def _build_name_to_row(regions_path: Path) -> dict[str, int]:
 
 def per_bin_total_from_factored(impute_dir: Path, bin_names: list[str]
                                  ) -> tuple[np.ndarray, np.ndarray]:
-    """Per-bin total from a factored .npz: signal = (W[i] @ H.sum(axis=1)) * f."""
+    """Per-bin total from a factored .npz.
+
+    With a scalar per_cell_factor (legacy):
+        bin_total[r] = (W @ H.sum(axis=1))[r] * f
+    With a per-cell vector pcf (current cisTopic 05_impute):
+        bin_total[r] = sum_c (W @ H)[r, c] * pcf[c]
+                     = (W @ (H @ pcf))[r]
+    Both reduce to a single matrix-vector multiply.
+    """
     factors_path = impute_dir / 'factors.npz'
     regions_path = impute_dir / 'regions.tsv'
     log.info('  loading factored output: %s + %s', factors_path, regions_path)
@@ -145,13 +153,34 @@ def per_bin_total_from_factored(impute_dir: Path, bin_names: list[str]
     with np.load(factors_path) as z:
         W = np.asarray(z['W'], dtype=np.float64)
         H = np.asarray(z['H'], dtype=np.float64)
-        per_cell_factor = float(z['per_cell_factor']) if 'per_cell_factor' in z.files else 1.0
+        if 'per_cell_factor' in z.files:
+            pcf_raw = z['per_cell_factor']
+            pcf_is_array = pcf_raw.ndim > 0
+            pcf_arr = np.asarray(pcf_raw, dtype=np.float64).ravel() if pcf_is_array else None
+            pcf_scalar = float(pcf_raw) if not pcf_is_array else None
+        else:
+            pcf_is_array = False
+            pcf_arr = None
+            pcf_scalar = 1.0
     if W.shape[1] != H.shape[0]:
         raise SystemExit(f'Rank mismatch in {factors_path}: W{W.shape} vs H{H.shape}')
-    log.info('  W=%s  H=%s  per_cell_factor=%.4g', W.shape, H.shape, per_cell_factor)
 
-    H_sum = H.sum(axis=1)
-    bin_totals_modeled = (W @ H_sum) * per_cell_factor
+    if pcf_is_array:
+        assert pcf_arr is not None
+        if pcf_arr.shape[0] != H.shape[1]:
+            raise SystemExit(
+                f'per_cell_factor length {pcf_arr.shape[0]} != H.shape[1] {H.shape[1]} '
+                f'in {factors_path}'
+            )
+        log.info('  W=%s  H=%s  per_cell_factor=vector(mean=%.4g, std=%.4g)',
+                 W.shape, H.shape, float(pcf_arr.mean()), float(pcf_arr.std()))
+        H_weighted_sum = H @ pcf_arr           # shape (K,) = sum_c H[:, c] * pcf[c]
+        bin_totals_modeled = W @ H_weighted_sum
+    else:
+        log.info('  W=%s  H=%s  per_cell_factor=scalar(%.4g)',
+                 W.shape, H.shape, pcf_scalar)
+        H_sum = H.sum(axis=1)
+        bin_totals_modeled = (W @ H_sum) * pcf_scalar
 
     signal = np.zeros(len(bin_names), dtype=np.float64)
     modeled = np.zeros(len(bin_names), dtype=bool)

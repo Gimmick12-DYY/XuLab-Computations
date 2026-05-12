@@ -170,12 +170,29 @@ def imputed_at_coords(path: Path, kind: str,
         with np.load(path / 'factors.npz') as z:
             W = np.asarray(z['W'], dtype=np.float64)
             H = np.asarray(z['H'], dtype=np.float64)
-            f = float(z['per_cell_factor']) if 'per_cell_factor' in z.files else 1.0
+            if 'per_cell_factor' in z.files:
+                pcf_raw = z['per_cell_factor']
+                pcf_is_array = pcf_raw.ndim > 0
+                pcf_arr = (np.asarray(pcf_raw, dtype=np.float64).ravel()
+                           if pcf_is_array else None)
+                pcf_scalar = float(pcf_raw) if not pcf_is_array else None
+            else:
+                pcf_is_array = False
+                pcf_arr = None
+                pcf_scalar = 1.0
+        if pcf_is_array and pcf_arr.shape[0] != H.shape[1]:
+            raise SystemExit(
+                f'per_cell_factor length {pcf_arr.shape[0]} != H.shape[1] {H.shape[1]} '
+                f'in {path}')
         out = np.empty(rows.size, dtype=np.float64)
         for s in range(0, rows.size, chunk):
             e = min(s + chunk, rows.size)
-            out[s:e] = np.einsum('ik,ki->i',
-                                 W[rows[s:e]], H[:, cols[s:e]]) * f
+            base = np.einsum('ik,ki->i', W[rows[s:e]], H[:, cols[s:e]])
+            # Per-coord: imp[r,c] = (W[r] @ H[:, c]) * pcf[c]
+            if pcf_is_array:
+                out[s:e] = base * pcf_arr[cols[s:e]]
+            else:
+                out[s:e] = base * pcf_scalar
         return out
 
     if kind == 'dense':

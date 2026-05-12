@@ -140,11 +140,30 @@ def per_bin_total_from_factored(impute_dir: Path, bin_names: list[str]
     with np.load(factors_path) as z:
         W = np.asarray(z['W'], dtype=np.float64)
         H = np.asarray(z['H'], dtype=np.float64)
-        per_cell_factor = float(z['per_cell_factor']) if 'per_cell_factor' in z.files else 1.0
+        if 'per_cell_factor' in z.files:
+            pcf_raw = z['per_cell_factor']
+            pcf_is_array = pcf_raw.ndim > 0
+            pcf_arr = np.asarray(pcf_raw, dtype=np.float64).ravel() if pcf_is_array else None
+            pcf_scalar = float(pcf_raw) if not pcf_is_array else None
+        else:
+            pcf_is_array = False
+            pcf_arr = None
+            pcf_scalar = 1.0
     if W.shape[1] != H.shape[0]:
         raise SystemExit(f'Rank mismatch in {factors_path}: W{W.shape} vs H{H.shape}')
-    H_sum = H.sum(axis=1)
-    bin_totals_modeled = (W @ H_sum) * per_cell_factor
+
+    # bin_total[r] = sum_c (W @ H)[r, c] * pcf[c]  =  W @ (H @ pcf)   (array pcf)
+    #            or   W @ H.sum(axis=1) * pcf                          (scalar pcf)
+    if pcf_is_array:
+        assert pcf_arr is not None
+        if pcf_arr.shape[0] != H.shape[1]:
+            raise SystemExit(
+                f'per_cell_factor length {pcf_arr.shape[0]} != H.shape[1] {H.shape[1]} '
+                f'in {factors_path}'
+            )
+        bin_totals_modeled = W @ (H @ pcf_arr)
+    else:
+        bin_totals_modeled = (W @ H.sum(axis=1)) * pcf_scalar
 
     signal = np.zeros(len(bin_names), dtype=np.float64)
     modeled = np.zeros(len(bin_names), dtype=bool)
