@@ -50,20 +50,25 @@ filter:
 # -----------------------------------------------------------------------------
 # LDA (MALLET) parameters
 # -----------------------------------------------------------------------------
-# "Over-smoothing" in imputed tracks usually comes from diffuse phi/theta.
-# MALLET uses the same family of priors as textbook LDA; directionally:
-#   * LOWER alpha  -> sparser topic use per cell (less uniform theta).
-#   * LOWER eta    -> peakier topics over regions (less uniform phi). Too low
-#     can destabilize training on huge vocabularies — raise slightly if needed.
-#   * MORE topics (higher K) -> finer mixture; try a larger manual_k if metrics allow.
-# Paper-style symmetric document prior is often ~50/K (e.g. ~1.67 at K=30); we
-# default a bit below that for sharper mixtures than alpha=3 gave before.
+# We are explicitly optimising for *more imputed bins per cell* (i.e. higher
+# imp_complexity in downstream/complexity_gain.py). Directionally:
+#   * FEWER topics (smaller K) -> each topic covers more regions on average
+#     (sum_r phi[r,k] = 1, so smaller K = phi is spread across more regions per
+#     topic), which means more regions get a moderate P(r|c) per cell.
+#   * HIGHER alpha -> cells mix more topics, so the predictive distribution
+#     touches more regions per cell.
+#   * HIGHER eta -> topic-region distributions are flatter (each topic owns
+#     more regions instead of a handful of peaky ones).
+# These together push the LDA toward a "broad imputation" regime that recovers
+# many dropouts per cell. If you instead need sharper topic-specific
+# predictions, lower alpha + eta and raise K (see the old defaults above).
 lda:
-  n_topics: [10, 15, 20, 30, 40, 50]
+  n_topics: [3, 5, 8, 12, 15]
 
-  alpha: 1.5
+  alpha: 10        # symmetric document prior; with alpha_by_topic true the
+                   # effective per-topic alpha is alpha/K (= 2 at K=5).
   alpha_by_topic: true
-  eta: 0.005
+  eta: 0.1         # broader topics over regions; was 0.005.
   eta_by_topic: false
 
   iterations: 600
@@ -76,17 +81,55 @@ lda:
 # -----------------------------------------------------------------------------
 select:
   primary_metric: manual
-  # If imputation still looks too flat, try a larger K (must appear in lda.n_topics),
-  # e.g. 40 or 50, after re-running 03–05.
-  manual_k: 30
+  # Default to a small K so the imputed matrix is "broad" (more bins per cell).
+  # Raise this if metrics indicate underfitting.
+  manual_k: 5
 
 # -----------------------------------------------------------------------------
 # Imputation output (predictive distribution P(r|c) ~ phi @ theta)
 #
-# Step 05 writes <work>/impute/{factors.npz, regions.tsv, barcodes.tsv,
-# meta.json} (plus theta/phi as parquet + npy for backwards compatibility).
-# Downstream comparisons live under XuLab/downstream/ and consume those files
-# directly via the universal compare_pos_neg.py.
+# Step 05 thresholds the predictive distribution INSIDE the impute step and
+# writes a sparse, full-mm-aligned imputed matrix that is a true drop-in
+# replacement for the raw mm matrix (same shape, same row/col labels, sparse
+# CSR storage). This lets the bigwig / browser workflow treat the imputed
+# matrix exactly like the raw matrix.
+#
+# Outputs under <work>/impute/:
+#   matrix_csr.npz   sparse CSR (n_mm_bins, n_mm_cells), float32, nnz on
+#                    modeled rows where imp > threshold
+#   regions.tsv      full mm region order (same lines as mm/regions.tsv.gz)
+#   barcodes.tsv     full mm barcode order (same lines as mm/barcodes.tsv.gz)
+#   meta.json        threshold + origin + nnz + shape + rank_k + scale_factor
+#   factors.npz      legacy phi + theta + per_cell_factor (saved iff
+#                    drop_factors_npz is false; lets the downstream "factored"
+#                    loader still reconstruct the raw P(r|c) without padding)
 # -----------------------------------------------------------------------------
 impute:
   scale_factor: 1000000
+
+  # Per-pipeline threshold mode used INSIDE 05_impute.py. Same vocabulary as
+  # downstream/complexity_gain.py:
+  #   sparsity_match[:K]   Pick t so #(imp > t) on modeled rows equals
+  #                        K * #(raw > 0) on those rows. K = 1 reproduces the
+  #                        raw sparsity; K > 1 makes the imputed matrix denser
+  #                        than raw. Default K = 2 so cells gain complexity.
+  #   quantile:Q           Top (1 - Q) fraction of imputed values genome-wide.
+  #   fixed:T              Numeric.
+  threshold_mode: sparsity_match:2
+
+  # Random-sample size used to estimate the quantile threshold (4M is plenty).
+  threshold_sample_size: 4000000
+
+  # Pad the imputed matrix back to the full mm dimensions and align row/col
+  # labels to mm/regions.tsv.gz + mm/barcodes.tsv.gz. true is the recommended
+  # mode -- it makes the imputed CSR a drop-in for raw mm, browser tracks etc.
+  align_to_mm: true
+
+  # If true, store 1 instead of the raw imputed magnitude at every above-
+  # threshold entry. Useful when you only want the "called positives" view.
+  binarize_output: false
+
+  # Skip writing the legacy factors.npz (saves disk; downstream still works
+  # off matrix_csr.npz). Keep false unless you really don't want the soft
+  # predictive distribution.
+  drop_factors_npz: false
