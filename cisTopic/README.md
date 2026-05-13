@@ -38,7 +38,7 @@ cisTopic/
 ├── scripts/
 │   ├── 00_inspect_rds.R            read-only sanity check on the .rds
 │   ├── 01_export_rds_to_mm.R       .rds -> Matrix Market + region/cell TSVs
-│   ├── 02_build_cistopic_obj.py    filter & build CistopicObject (pickle)
+│   ├── 02_build_cistopic_obj.py    filter & build CistopicObject (pickle); optional ENCODE hg38 blacklist drop (same as downstream pos/neg prep)
 │   ├── 03_run_lda_mallet.py        MALLET LDA over a topic grid
 │   ├── 04_select_model.py          metrics + plots + pick K
 │   ├── 05_impute.py                save theta/phi (+ optional HDF5 P(r|c))
@@ -64,7 +64,8 @@ tar -xf Mallet-202108-bin.tar.gz
 #    - paths.work_dir    (scratch directory; lots of space needed)
 #    - paths.mallet_path
 #    - filter.* defaults are reasonable; raise/lower per your QC
-#    - lda.n_topics grid (the paper's grids were 15-50)
+#    - lda.n_topics grid; lda.alpha / lda.eta (see comments in default.yaml — lower
+#      both tends to reduce "over-smoothed" imputation vs higher priors)
 ```
 
 ## Running the whole pipeline
@@ -129,8 +130,10 @@ sbatch         --dependency=afterok:$JID5 cisTopic/slurm/06_downstream.sbatch
 ## Reality check: storage and time at 3M × 10K
 
 * The raw count matrix (nnz ≈ 1–5 × 10⁸, binary) fits comfortably in tens of GB.
-* After `filter.min_counts_per_region=30` typically only 5–30 % of the 3 M bins
-  survive (TF binding is very sparse across the genome).
+* After very loose region filters (`min_cells_per_region=1`, etc.) most of the
+  ~3 M bins can remain (minus blacklist); MALLET cost grows with retained nnz.
+* After aggressive filters (e.g. `min_counts_per_region=30`) typically only
+  5–30 % of the 3 M bins survive (TF binding is very sparse across the genome).
 * MALLET training scales roughly linearly in nnz × iterations × K. On
   16 cores with K=30 and 500 iterations, expect several hours to a day per K
   at this scale — use the array sbatch.

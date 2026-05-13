@@ -20,40 +20,53 @@ paths:
 # Region / cell pre-filtering
 # -----------------------------------------------------------------------------
 filter:
-  # 1-kb-bin CTCF scATAC is *extremely* sparse: 768k nonzeros over 3.03M
-  # regions x 10410 cells. Survivors at progressively stricter
-  # min_cells_per_region:
-  #   >=1: 597236   >=2: 119356   >=3: 29679   >=5: 4914   >=10: 322
-  # We sit at >=2 -- drops the ~478k singleton bins that contributed noise to
-  # the previous degenerate LDA run, keeps a 119k-region vocabulary with
-  # median 14 nonzero bins per cell. cisTopic's MALLET LDA is documented to
-  # need this filter for stability, so we keep it here even though FITS and
-  # scOpen do not.
-  min_counts_per_region: 2
+  # Goal: keep as many regions and cells as practical for MALLET training. Only
+  # blacklist bins are always removed when exclude_blacklist is true; the knobs
+  # below are minimal QC (drop empty rows/columns). Tighten min_cells_per_region
+  # (e.g. 2) if LDA becomes unstable on your hardware.
+  #
+  # Reference counts (pre-blacklist, same matrix as in older comments):
+  #   min_cells_per_region: 1 -> ~597k regions; 2 -> ~119k; 3 -> ~30k
+  min_counts_per_region: 0
+  # Regions must be non-zero in at least this many cells (nnz per row after
+  # blacklist, before binarize). 1 = maximal vocabulary.
+  min_cells_per_region: 1
 
-  # Drop regions present (>=1 count) in fewer than this many cells.
-  min_cells_per_region: 2
-
-  # Drop cells with fewer than this many non-zero regions after the region filter.
-  # After min_cells_per_region=2, 99% of cells still have >=5 nonzero bins.
-  min_regions_per_cell: 5
+  # After region filter + binarize, drop cells with fewer than this many open bins.
+  # 1 = keep every cell that still has any signal.
+  min_regions_per_cell: 1
 
   # If true, binarize the input matrix (any count -> 1) before LDA.
   # This is the standard cisTopic input; set false only if you have a good reason.
   binarize_input: true
 
+  # ENCODE hg38 blacklist (same file + overlap rule as downstream/prepare_pos_neg_bins.R
+  # and Bin_posVSneg.ipynb): drop any bin whose interval overlaps a blacklist region.
+  exclude_blacklist: true
+  # If null, use <XuLab>/downstream/cache/hg38-blacklist.v2.bed.gz (resolved from work_dir).
+  blacklist_bed_gz: null
+  blacklist_url: https://github.com/Boyle-Lab/Blacklist/raw/refs/heads/master/lists/hg38-blacklist.v2.bed.gz
+
 # -----------------------------------------------------------------------------
 # LDA (MALLET) parameters
 # -----------------------------------------------------------------------------
+# "Over-smoothing" in imputed tracks usually comes from diffuse phi/theta.
+# MALLET uses the same family of priors as textbook LDA; directionally:
+#   * LOWER alpha  -> sparser topic use per cell (less uniform theta).
+#   * LOWER eta    -> peakier topics over regions (less uniform phi). Too low
+#     can destabilize training on huge vocabularies — raise slightly if needed.
+#   * MORE topics (higher K) -> finer mixture; try a larger manual_k if metrics allow.
+# Paper-style symmetric document prior is often ~50/K (e.g. ~1.67 at K=30); we
+# default a bit below that for sharper mixtures than alpha=3 gave before.
 lda:
-  n_topics: [10, 15, 20, 30, 50]
+  n_topics: [10, 15, 20, 30, 40, 50]
 
-  alpha: 3
+  alpha: 1.5
   alpha_by_topic: true
-  eta: 0.01
+  eta: 0.005
   eta_by_topic: false
 
-  iterations: 500
+  iterations: 600
   threads: 16
   random_seed: 555
   memory: 200G
@@ -63,6 +76,8 @@ lda:
 # -----------------------------------------------------------------------------
 select:
   primary_metric: manual
+  # If imputation still looks too flat, try a larger K (must appear in lda.n_topics),
+  # e.g. 40 or 50, after re-running 03–05.
   manual_k: 30
 
 # -----------------------------------------------------------------------------

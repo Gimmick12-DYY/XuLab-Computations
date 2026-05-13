@@ -141,8 +141,9 @@ scopen:
   n_components:     50          # used when estimate_rank: false AND no rank_sweep
   # Bumping alpha is the cleanest tuning lever against over-imputation
   # *within* the refined mask. 1.0 is the scOpen paper default; try 2-3
-  # to be more conservative.
-  alpha:            1.0
+  # to be more conservative. Slightly >1 spreads NMF mass a bit (helps weak
+  # bins) while still controlling runaway peaks vs alpha=1.
+  alpha:            1.25
   max_iter:         500
   init:             nndsvd
   random_state:     42
@@ -163,7 +164,9 @@ scopen:
   row_weight_by_pu:     true
   row_weight_alpha:     1.0
   row_weight_floor:     0.05
-  row_weight_scale_max: 5
+  # Cap how aggressively high-PU rows are up-weighted during training; lower
+  # -> less "winner-take-all" factorisation (moderates extreme peaks).
+  row_weight_scale_max: 4
 
 # -----------------------------------------------------------------------------
 # Stage 4 -- neighborhood post-filter (step 05_postfilter.py)
@@ -174,7 +177,9 @@ postfilter:
   # the same chromosome also have imputed signal > neighbor_threshold (a
   # quantile of the per-bin imputed total; "auto" = median of pos-overlapping
   # bins).
-  neighborhood_bp:    10000
+  # Slightly wider window helps diffuse / low-coverage CTCF valleys borrow
+  # support from nearby enriched bins without changing min_neighbors.
+  neighborhood_bp:    12000
   min_neighbors:      1
   neighbor_threshold: auto
 
@@ -186,17 +191,22 @@ postfilter:
   #   soft_damp: false -> hard rule: keep at 1.0 if supported, otherwise
   #                       damp by damp_unsupported (legacy 0.25).
   soft_damp:             true
-  damp_floor:            0.5
+  # Higher floor retains more mass on bins with weak neighbourhood support
+  # (addresses "only tall peaks survive" in BigWig / complexity_gain).
+  damp_floor:            0.72
   damp_unsupported:      0.25
-  soft_neighbor_target:  2     # neighbour count at which support saturates
+  # Saturate neighbour support at 1 neighbour (was 2): modest bins reach full
+  # damp sooner when they sit near a peak cluster.
+  soft_neighbor_target:  1
 
   # Multiplicative PU prior on the final per-(bin, cell) signal.
   # Continuous form (item 3): damp *= clip(pu_score^pu_weight_alpha,
   # pu_weight_floor, 1). Set pu_weight_alpha=0 to disable; larger alpha
   # behaves more like a hard mask.
   multiply_by_pu:        true
-  pu_weight_alpha:       1.0
-  pu_weight_floor:       0.0
+  # <1 softens PU shrinkage on ambiguous bins; floor keeps a minimum weight.
+  pu_weight_alpha:       0.55
+  pu_weight_floor:       0.08
 
 # -----------------------------------------------------------------------------
 # Stage 5 -- persistence (step 06_impute.py)

@@ -435,7 +435,7 @@ methods. Four modes are supported via `--threshold-mode`:
 
 | mode | meaning |
 |---|---|
-| `sparsity_match` (default) | Pick `t` per pipeline so `#(imp > t)` on the modeled rows equals `#(raw > 0)` on those same rows. Sum-of-gain across cells is then **0 by construction**; the per-cell distribution shows *where* signal is being redistributed. Best for "is imputation moving signal onto the right cells?" |
+| `sparsity_match` (default) | Pick `t` per pipeline so `#(imp > t)` on the modeled rows equals `#(raw > 0)` on those same rows. Sum-of-gain across cells is then **≈0** when the threshold is exact; finite random sampling can shift it slightly. **PUscOpen `csr_full_mm`:** the matrix is full-mm shaped with **almost all entries structurally zero**; the matched quantile lands at a **very high** `t`, so `imp_complexity` mostly counts only the strongest calls and `total_gain` can look strongly negative even when peaks look good. Use `sparsity_match:2` or `quantile:0.995` for a kinder readout vs raw. |
 | `sparsity_match:K` | Same but each pipeline is allowed K× as many calls as raw. `K = 2` gives sum-of-gain ≈ `1 × raw_nnz`; useful when you want absolute positive gain. |
 | `quantile:Q` | Top `(1 - Q)` fraction of imputed values genome-wide on the modeled rows (e.g. `quantile:0.99` keeps the top 1%). |
 | `fixed:T` | Numeric, same value across pipelines. Only meaningful when pipelines are on a shared scale. |
@@ -470,11 +470,13 @@ Outputs (under `--out-dir`):
 
 ### Reading the output
 
-* `total_gain == 0` under `sparsity_match` is **expected**; the metric of
-  interest is the *shape* of the per-cell gain distribution. A method that
-  recovers dropouts in low-depth cells will show large positive gain there
-  and small negative gain in high-depth cells. A method that smooths
-  uniformly will show a tight distribution centred near 0.
+* `total_gain ≈ 0` under `sparsity_match` is **expected when the threshold is
+  exact**; sampling noise can move it slightly. **PUscOpen** full-mm CSR often
+  shows **large negative `total_gain`**: the chosen `t` sits near the top of the
+  imputed distribution, so mid-level imputed mass is under-counted vs raw
+  nonzeros (see table note). Use `sparsity_match:2` when benchmarking PUscOpen
+  on this script. The metric of interest is still the *shape* of the per-cell
+  gain distribution (dropout recovery vs smoothing).
 * `total_gain > 0` under `sparsity_match:K` (`K > 1`) measures absolute
   uplift — `total_gain ≈ (K − 1) × raw_nnz_on_modeled`. Plotting it under
   `K = 2` alongside `K = 1` lets you see "what does another `raw_nnz` worth

@@ -19,6 +19,11 @@
 #       signal *to* (negative gain in some cells -> positive gain in
 #       others, i.e. denoising redistributes mass).
 #
+#       PUscOpen csr_full_mm caveat: most matrix entries are structural zeros;
+#       the estimated t is extremely high, so imp_complexity and total_gain
+#       can look pessimistic — use sparsity_match:2 or quantile mode for a
+#       fairer PUscOpen-vs-raw comparison.
+#
 #   --threshold-mode sparsity_match:K
 #       Sparsity-match but with a multiplier on the target call count.
 #       K = 2 lets each pipeline make twice as many calls as raw, so

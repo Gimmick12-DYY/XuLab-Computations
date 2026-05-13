@@ -27,3 +27,4 @@ downstream/raw_vs_imputed_diff/
 *.h5
 *.pdf
 *.png
+*.bw
