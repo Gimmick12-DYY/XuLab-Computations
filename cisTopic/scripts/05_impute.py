@@ -9,14 +9,13 @@
 #               = 0                                    otherwise
 #
 # The output is a scipy CSR at the FULL mm dimensions (n_mm_bins, n_mm_cells)
-# so a downstream bigWig / browser workflow can treat it exactly like the raw
-# matrix (same row/col labels, same shape). The threshold is picked INSIDE
-# this step from the configured impute.threshold_mode (default
-# `sparsity_match:2`, i.e. each pipeline calls 2x as many entries as raw saw).
+# so a downstream bigWig / browser workflow can use the same row/col labels and
+# shape as the raw mm. The threshold is picked INSIDE this step from
+# impute.threshold_mode (default `sparsity_match:3`: #(imp > t) ≈ K · raw_nnz on
+# the modeled subspace).
 #
 # Outputs (under <work>/impute/):
-#   matrix_csr.npz   scipy CSR float32 (n_mm_bins, n_mm_cells), nnz only on
-#                    modeled rows where imp > threshold
+#   matrix_csr.npz   thresholded imputed values only (no max with raw)
 #   regions.tsv      full mm region order
 #   barcodes.tsv     full mm barcode order
 #   meta.json        threshold + origin + nnz + shape + rank_k + scale_factor
@@ -105,10 +104,14 @@ def _sample_imp_values(phi: np.ndarray, theta: np.ndarray, scale: float,
 
 def _pick_threshold(phi: np.ndarray, theta: np.ndarray,
                     per_cell_factor: float, mode: str, param: float,
-                    target_nnz_modeled: int,
+                    sparsity_match_target: int,
                     sample_size: int,
                     rng: np.random.Generator) -> tuple[float, str]:
-    """Resolve the impute.threshold_mode to a numeric cutoff."""
+    """Resolve the impute.threshold_mode to a numeric cutoff.
+
+    For sparsity_match, ``sparsity_match_target`` is the desired number of
+    (modeled row, cell) pairs with imp > t (replacement: K · raw_nnz on subspace).
+    """
     if mode == "fixed":
         return float(param), f"fixed:{float(param):.6g}"
 
@@ -121,7 +124,13 @@ def _pick_threshold(phi: np.ndarray, theta: np.ndarray,
 
     if mode == "sparsity_match":
         K = float(param)
-        target = int(round(target_nnz_modeled * K))
+        target = int(sparsity_match_target)
+        if target <= 0:
+            t_hi = float(np.max(sample)) * (1.0 + 1e-9)
+            return t_hi, (
+                f"sparsity_match:{K} target_calls=0 "
+                f"(t above sampled imp; sample={sample.size})"
+            )
         target = max(1, min(target, total_entries))
         target_fraction = target / total_entries
         q = max(0.0, min(1.0, 1.0 - target_fraction))
@@ -202,7 +211,7 @@ def main() -> int:
     phi   = np.asarray(cistopic_obj.selected_model.topic_region, dtype=np.float32) # R x K
     modeled_cells   = list(cistopic_obj.cell_names)
     modeled_regions = list(cistopic_obj.region_names)
-    K = theta.shape[0]
+    n_topics = int(theta.shape[0])
     log.info("theta: %s (K x C), phi: %s (R x K)", theta.shape, phi.shape)
 
     out_dir = Path(cfg["paths"]["impute"])
@@ -264,31 +273,31 @@ def main() -> int:
         n_full_rows, n_full_cols = len(full_regions), len(full_barcodes)
 
     # ------------------------------------------------------------------
-    # Target call count for sparsity_match: raw nonzeros on the modeled rows
-    # x modeled cells subspace. We read the raw mm to count.
+    # Target call count for sparsity_match (raw nnz on modeled subspace).
     # ------------------------------------------------------------------
     target_nnz_modeled = 0
+    mm_mtx = mm_dir / "matrix.mtx.gz"
     if mode == "sparsity_match":
-        mm_mtx = mm_dir / "matrix.mtx.gz"
         if not mm_mtx.exists():
-            log.error("threshold_mode=sparsity_match requires %s.", mm_mtx)
+            log.error("Need %s for sparsity_match.", mm_mtx)
             return 1
         log.info("Reading raw mm matrix for sparsity-match target count.")
-        raw = sio.mmread(str(mm_mtx)).tocsr()
-        raw = (raw > 0).astype(np.int8)
-        if not align_to_mm:
-            # If we didn't align names already, we still need them now.
-            full_regions  = _read_lines_gz(mm_reg_path)
-            full_barcodes = _read_lines_gz(mm_bar_path)
-            name_to_full_row = {r: i for i, r in enumerate(full_regions)}
-            bar_to_full_col  = {b: i for i, b in enumerate(full_barcodes)}
-            modeled_to_full_row = np.array(
-                [name_to_full_row[r] for r in modeled_regions], dtype=np.int64)
-            modeled_to_full_col = np.array(
-                [bar_to_full_col[b] for b in modeled_cells], dtype=np.int64)
-        sub = raw[modeled_to_full_row][:, modeled_to_full_col]
+        raw_cnt = sio.mmread(str(mm_mtx)).tocsr()
+        raw_bin = (raw_cnt > 0).astype(np.int8)
+        sub = raw_bin[modeled_to_full_row][:, modeled_to_full_col]
         target_nnz_modeled = int(sub.nnz)
         log.info("Raw nonzeros on modeled subspace: %d", target_nnz_modeled)
+        del raw_bin, sub, raw_cnt
+
+    if mode == "sparsity_match":
+        match_k = float(mode_param)
+        sparsity_match_target = max(1, int(round(match_k * target_nnz_modeled)))
+        log.info(
+            "sparsity_match: target #(imp>t) = %d (K*raw_nnz, K=%.6g)",
+            sparsity_match_target, match_k,
+        )
+    else:
+        sparsity_match_target = 0  # unused for non-sparsity_match modes
 
     # ------------------------------------------------------------------
     # Pick threshold
@@ -296,7 +305,7 @@ def main() -> int:
     threshold, threshold_origin = _pick_threshold(
         phi, theta, per_cell_factor,
         mode, mode_param,
-        target_nnz_modeled,
+        sparsity_match_target,
         sample_size, rng,
     )
     log.info("Threshold = %.6g  (%s)", threshold, threshold_origin)
@@ -349,6 +358,11 @@ def main() -> int:
         shape=(n_full_rows, n_full_cols), dtype=np.float32,
     ).tocsr()
     csr.sum_duplicates()
+    nnz_thr = int(csr.nnz)
+
+    imp_only_path = out_dir / "matrix_csr_imputed_only.npz"
+    if imp_only_path.exists():
+        imp_only_path.unlink(missing_ok=True)
 
     # ------------------------------------------------------------------
     # Persist
@@ -381,10 +395,10 @@ def main() -> int:
 
     # Legacy parquet/npy artefacts (unchanged).
     pd.DataFrame(theta, columns=modeled_cells,
-                 index=[f"Topic{i+1}" for i in range(K)]).to_parquet(
+                 index=[f"Topic{i+1}" for i in range(n_topics)]).to_parquet(
                      out_dir / "cell_topic_theta.parquet")
     pd.DataFrame(phi, index=modeled_regions,
-                 columns=[f"Topic{i+1}" for i in range(K)]).to_parquet(
+                 columns=[f"Topic{i+1}" for i in range(n_topics)]).to_parquet(
                      out_dir / "region_topic_phi.parquet")
     np.save(out_dir / "cell_topic_theta.npy", theta)
     np.save(out_dir / "region_topic_phi.npy", phi)
@@ -398,7 +412,7 @@ def main() -> int:
         "shape":             [int(n_full_rows), int(n_full_cols)],
         "n_modeled":         int(Rm),
         "n_cells":           int(theta.shape[1]),
-        "rank_k":            int(K),
+        "rank_k":            n_topics,
         "scale_factor":      desired_scale,
         "per_cell_factor":   float(per_cell_factor),
         "rescaled":          bool(rescaled),
@@ -406,6 +420,8 @@ def main() -> int:
         "threshold_mode":    threshold_mode_str,
         "threshold_origin":  threshold_origin,
         "target_nnz_modeled_subspace": int(target_nnz_modeled),
+        "sparsity_match_target_imp_gt_t": int(sparsity_match_target),
+        "nnz_imp_gt_threshold_only": int(nnz_thr),
         "nnz":               int(csr.nnz),
         "density":           float(csr.nnz / max(int(n_full_rows) * int(n_full_cols), 1)),
         "align_to_mm":       bool(align_to_mm),

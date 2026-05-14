@@ -20,6 +20,13 @@
 #
 # No ROC / AUPR / F1 -- just coverage at a comparable signal level.
 #
+# Union note: if --input points at a directory whose matrix_csr.npz is
+# max(raw, imputed), per-bin totals track raw and top-K coverage under
+# --match-to raw can look identical across pipelines. For imputer-specific
+# bin rankings, point at imputed-only outputs (native pipeline impute/ or
+# thresholded CSR without union), not impute_union_mm/, unless that is the
+# hypothesis you are testing.
+#
 # Each --input PATH is one of:
 #   * directory with matrix.mtx.gz                (raw counts; e.g. <work>/mm)
 #   * directory with factors.npz + regions.tsv    (cisTopic / scOpen)

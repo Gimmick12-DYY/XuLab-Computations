@@ -13,8 +13,12 @@
 # (factors.npz / matrix.npy + regions.tsv + barcodes.tsv + meta.json),
 # so we point compare_pos_neg.py at those directories directly.
 #
+# Imputed inputs default to downstream/impute_union_mm/<label>/ (same layout as
+# downstream/slurm/union_with_raw.sbatch). Override IMPUTE_UNION_ROOT or each
+# *_DIR to use pipeline-native impute/ dirs instead (e.g. in-place cisTopic 05 only).
+#
 # Optional overrides:
-#   ROOT_DIR, CONDA_ENV, MM_DIR, BINS_TSV, BINS_OUT_DIR, CACHE_DIR,
+#   ROOT_DIR, IMPUTE_UNION_ROOT, CONDA_ENV, MM_DIR, BINS_TSV, BINS_OUT_DIR, CACHE_DIR,
 #   POSNEG_OUT_DIR, CISTOPIC_DIR, FITS_DIR, SCOPEN_DIR, MAGIC_DIR, PUSCOPEN_DIR,
 #   OUT_NAME, N_TOP, SEED
 
@@ -31,12 +35,12 @@ CACHE_DIR="${CACHE_DIR:-${ROOT_DIR}/downstream/cache}"
 POSNEG_OUT_DIR="${POSNEG_OUT_DIR:-${ROOT_DIR}/downstream/pos_neg_all6}"
 OUT_NAME="${OUT_NAME:-compare_pos_neg_all6}"
 
-# New compact-output directories produced by each pipeline's 05_impute step.
-CISTOPIC_DIR="${CISTOPIC_DIR:-${ROOT_DIR}/cisTopic/scripts/cistopic_ctcf/impute}"
-FITS_DIR="${FITS_DIR:-${ROOT_DIR}/FITS/work/ctcf/impute}"
-SCOPEN_DIR="${SCOPEN_DIR:-${ROOT_DIR}/scOpen/work/ctcf/impute}"
-MAGIC_DIR="${MAGIC_DIR:-${ROOT_DIR}/MAGIC/work/ctcf/impute}"
-PUSCOPEN_DIR="${PUSCOPEN_DIR:-${ROOT_DIR}/PUscOpen/work/ctcf/impute}"
+IMPUTE_UNION_ROOT="${IMPUTE_UNION_ROOT:-${ROOT_DIR}/downstream/impute_union_mm}"
+CISTOPIC_DIR="${CISTOPIC_DIR:-${IMPUTE_UNION_ROOT}/cisTopic}"
+FITS_DIR="${FITS_DIR:-${IMPUTE_UNION_ROOT}/FITS}"
+SCOPEN_DIR="${SCOPEN_DIR:-${IMPUTE_UNION_ROOT}/scOpen}"
+MAGIC_DIR="${MAGIC_DIR:-${IMPUTE_UNION_ROOT}/MAGIC}"
+PUSCOPEN_DIR="${PUSCOPEN_DIR:-${IMPUTE_UNION_ROOT}/PUscOpen}"
 
 N_TOP="${N_TOP:-10000}"
 SEED="${SEED:-2026}"

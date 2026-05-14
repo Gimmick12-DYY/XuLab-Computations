@@ -30,7 +30,7 @@ filter:
   min_counts_per_region: 0
   # Regions must be non-zero in at least this many cells (nnz per row after
   # blacklist, before binarize). 1 = maximal vocabulary.
-  min_cells_per_region: 1
+  min_cells_per_region: 0
 
   # After region filter + binarize, drop cells with fewer than this many open bins.
   # 1 = keep every cell that still has any signal.
@@ -43,6 +43,12 @@ filter:
   # ENCODE hg38 blacklist (same file + overlap rule as downstream/prepare_pos_neg_bins.R
   # and Bin_posVSneg.ipynb): drop any bin whose interval overlaps a blacklist region.
   exclude_blacklist: true
+
+  # pycisTopic.create_cistopic_object() always drops rows with zero signal in every
+  # cell (non_zero_rows). If true, step 02 instead builds the object without that
+  # drop so LDA vocabulary = all matrix rows after blacklist/QC (e.g. ~2.8M bins).
+  # MALLET time and RAM scale with vocabulary size — use only when you need it.
+  keep_zero_bins: false
   # If null, use <XuLab>/downstream/cache/hg38-blacklist.v2.bed.gz (resolved from work_dir).
   blacklist_bed_gz: null
   blacklist_url: https://github.com/Boyle-Lab/Blacklist/raw/refs/heads/master/lists/hg38-blacklist.v2.bed.gz
@@ -63,12 +69,13 @@ filter:
 # many dropouts per cell. If you instead need sharper topic-specific
 # predictions, lower alpha + eta and raise K (see the old defaults above).
 lda:
-  n_topics: [3, 5, 8, 12, 15]
+  # Include small K so selection can pick a broad model (more regions touched
+  # per cell at moderate P(r|c)); large K retained for sharper fits.
+  n_topics: [3, 5, 8, 12, 15, 20, 25, 30, 50, 100, 125, 150]
 
-  alpha: 10        # symmetric document prior; with alpha_by_topic true the
-                   # effective per-topic alpha is alpha/K (= 2 at K=5).
+  alpha: 12        # slightly higher cell–topic mixing (was 10).
   alpha_by_topic: true
-  eta: 0.1         # broader topics over regions; was 0.005.
+  eta: 0.15        # flatter topics over regions (was 0.1).
   eta_by_topic: false
 
   iterations: 600
@@ -80,7 +87,8 @@ lda:
 # Model selection
 # -----------------------------------------------------------------------------
 select:
-  primary_metric: manual
+  # Must match 04_select_model.py / pycisTopic: loglikelihood | arun_2010 | cao_juan_2009 | mimno_2011 | manual
+  primary_metric: loglikelihood
   # Default to a small K so the imputed matrix is "broad" (more bins per cell).
   # Raise this if metrics indicate underfitting.
   manual_k: 5
@@ -95,8 +103,7 @@ select:
 # matrix exactly like the raw matrix.
 #
 # Outputs under <work>/impute/:
-#   matrix_csr.npz   sparse CSR (n_mm_bins, n_mm_cells), float32, nnz on
-#                    modeled rows where imp > threshold
+#   matrix_csr.npz   thresholded imputed values only (same shape as raw mm)
 #   regions.tsv      full mm region order (same lines as mm/regions.tsv.gz)
 #   barcodes.tsv     full mm barcode order (same lines as mm/barcodes.tsv.gz)
 #   meta.json        threshold + origin + nnz + shape + rank_k + scale_factor
@@ -109,13 +116,12 @@ impute:
 
   # Per-pipeline threshold mode used INSIDE 05_impute.py. Same vocabulary as
   # downstream/complexity_gain.py:
-  #   sparsity_match[:K]   Pick t so #(imp > t) on modeled rows equals
-  #                        K * #(raw > 0) on those rows. K = 1 reproduces the
-  #                        raw sparsity; K > 1 makes the imputed matrix denser
-  #                        than raw. Default K = 2 so cells gain complexity.
+  #   sparsity_match[:K]   Pick t so #(imp > t) ≈ K * raw_nnz on modeled rows.
   #   quantile:Q           Top (1 - Q) fraction of imputed values genome-wide.
+  #                        Easier global cutoff (e.g. quantile:0.99): override on
+  #                        CLI --threshold-mode quantile:0.99 for exploratory runs.
   #   fixed:T              Numeric.
-  threshold_mode: sparsity_match:2
+  threshold_mode: sparsity_match:3
 
   # Random-sample size used to estimate the quantile threshold (4M is plenty).
   threshold_sample_size: 4000000

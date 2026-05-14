@@ -11,8 +11,10 @@
 # counts at multiple thresholds, per-cell + per-bin loss counts, and a
 # context view of imputed values at sampled raw-zero coordinates.
 #
-# Defaults match compare_pos_neg_all4.sbatch (this XuLab tree). Override any
-# path by exporting the variable before sbatch.
+# Defaults use each pipeline's native <work>/impute/ (not impute_union_mm/).
+# Union CSRs make "imputed" ≈ max(raw,·); point INPUTS at downstream/impute_union_mm/
+# only when you intend that. Slurm still passes --union-with-raw by default
+# (UNION_WITH_RAW=1); set UNION_WITH_RAW=0 for strict imputed-vs-raw deltas only.
 #
 # Optional env vars (defaults shown):
 #   ROOT_DIR       repo root (default: auto from submit dir)
@@ -28,6 +30,9 @@
 #   N_ZERO_SAMPLE  number of raw=0 coordinates to sample (default: 200000;
 #                  pass 0 to disable the imp@raw=0 plot)
 #   SEED           RNG seed for the zero sampler (default: 42)
+#   UNION_WITH_RAW if 1/true (default), pass --union-with-raw (max(raw, imputed)
+#                  at raw-positive sites; writes added-per-cell tables). Set
+#                  0/false/no/off for legacy diff-only semantics.
 
 set -euo pipefail
 
@@ -65,6 +70,7 @@ OUT_NAME="${OUT_NAME:-raw_vs_imputed_diff}"
 THRESHOLDS="${THRESHOLDS:-0,0.001,0.01,0.05,0.1,0.5,1.0}"
 N_ZERO_SAMPLE="${N_ZERO_SAMPLE:-200000}"
 SEED="${SEED:-42}"
+UNION_WITH_RAW="${UNION_WITH_RAW:-1}"
 
 source "$(conda info --base)/etc/profile.d/conda.sh"
 conda activate "${CONDA_ENV}"
@@ -78,6 +84,10 @@ CMD=(
   --n-zero-sample "${N_ZERO_SAMPLE}"
   --seed          "${SEED}"
 )
+case "${UNION_WITH_RAW}" in
+  0|false|FALSE|no|No|NO|off|OFF) ;;
+  *) CMD+=(--union-with-raw) ;;
+esac
 for pair in ${INPUTS}; do
   CMD+=(--input "${pair}")
 done

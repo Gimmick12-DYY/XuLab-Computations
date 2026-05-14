@@ -9,28 +9,31 @@
 # Per-cell complexity gain: for each pipeline, count bins above a per-pipeline
 # threshold per cell; compare to raw nonzero count per cell.
 #
-# Threshold mode default: sparsity_match -- each pipeline picks t so that
-# #(imp > t) on its modeled rows equals #(raw > 0) on those same rows.
-# Total gain summed across cells is then 0 by construction; the per-cell
-# DISTRIBUTION shows which cells "gain" complexity and which "lose" it.
-# Pass THRESHOLD_MODE=sparsity_match:2 to allow twice as many calls,
-# or quantile:0.99 / fixed:0.1 for other operating points.
+# Threshold mode default: sparsity_match:2 (matches cisTopic impute when using
+# K=2). With UNION_WITH_RAW=1 (default), complexity_gain passes --union-with-raw:
+# #(imp>t) targets (K−1)·raw_nnz and imp_complexity is union nnz (nonnegative gain).
+# Set UNION_WITH_RAW=0 for legacy replacement semantics without union counting.
+# Use quantile:0.99 / fixed:0.1 for other operating points.
 #
 # Defaults match compare_pos_neg_all4.sbatch (this XuLab tree). Override any
 # path by exporting the variable before sbatch.
 #
 # Optional env vars (defaults shown):
-#   ROOT_DIR        repo root (default: auto from submit dir)
-#   MM_DIR          raw matrix dir
-#                   (default: ${ROOT_DIR}/cisTopic/scripts/cistopic_ctcf/mm)
-#   OUT_DIR         output directory
-#                   (default: ${ROOT_DIR}/downstream/complexity_gain)
-#   INPUTS          space-separated LABEL=PATH pairs; if unset, built below.
+#   ROOT_DIR             repo root (default: auto from submit dir)
+#   IMPUTE_UNION_ROOT    parent of per-pipeline union dirs (default: .../impute_union_mm)
+#   MM_DIR               raw matrix dir
+#                        (default: ${ROOT_DIR}/cisTopic/scripts/cistopic_ctcf/mm)
+#   OUT_DIR              output directory
+#                        (default: ${ROOT_DIR}/downstream/complexity_gain)
+#   INPUTS               space-separated LABEL=PATH pairs; if unset, built below.
 #   CISTOPIC_DIR / FITS_DIR / SCOPEN_DIR / MAGIC_DIR / PUSCOPEN_DIR
 #   CONDA_ENV       conda env (default: cistopic)
 #   OUT_NAME        basename for output files (default: complexity_gain)
 #   THRESHOLD_MODE  sparsity_match[:K] | quantile:Q | fixed:T
-#                   (default: sparsity_match)
+#                   (default: sparsity_match:2 — matches cisTopic/configs/default.yaml)
+#   UNION_WITH_RAW  if 1/true (default), pass --union-with-raw (threshold uses
+#                   (K−1)·raw_nnz for sparsity_match:K; imp_complexity = union nnz).
+#                   Set to 0/false/no/off for legacy replacement-only semantics.
 #   CHUNK_ROWS      streaming chunk size (default 2000)
 #   SAMPLE_SIZE     random sample size for threshold quantile estimation
 #                   (default 4000000)
@@ -57,11 +60,12 @@ cd "${ROOT_DIR}"
 MM_DIR="${MM_DIR:-${ROOT_DIR}/cisTopic/scripts/cistopic_ctcf/mm}"
 OUT_DIR="${OUT_DIR:-${ROOT_DIR}/downstream/complexity_gain}"
 
-CISTOPIC_DIR="${CISTOPIC_DIR:-${ROOT_DIR}/cisTopic/scripts/cistopic_ctcf/impute}"
-FITS_DIR="${FITS_DIR:-${ROOT_DIR}/FITS/work/ctcf/impute}"
-SCOPEN_DIR="${SCOPEN_DIR:-${ROOT_DIR}/scOpen/work/ctcf/impute}"
-MAGIC_DIR="${MAGIC_DIR:-${ROOT_DIR}/MAGIC/work/ctcf/impute}"
-PUSCOPEN_DIR="${PUSCOPEN_DIR:-${ROOT_DIR}/PUscOpen/work/ctcf/impute}"
+IMPUTE_UNION_ROOT="${IMPUTE_UNION_ROOT:-${ROOT_DIR}/downstream/impute_union_mm}"
+CISTOPIC_DIR="${CISTOPIC_DIR:-${IMPUTE_UNION_ROOT}/cisTopic}"
+FITS_DIR="${FITS_DIR:-${IMPUTE_UNION_ROOT}/FITS}"
+SCOPEN_DIR="${SCOPEN_DIR:-${IMPUTE_UNION_ROOT}/scOpen}"
+MAGIC_DIR="${MAGIC_DIR:-${IMPUTE_UNION_ROOT}/MAGIC}"
+PUSCOPEN_DIR="${PUSCOPEN_DIR:-${IMPUTE_UNION_ROOT}/PUscOpen}"
 
 if [[ -z "${INPUTS:-}" ]]; then
   INPUTS="cisTopic=${CISTOPIC_DIR} FITS=${FITS_DIR} scOpen=${SCOPEN_DIR} MAGIC=${MAGIC_DIR} PUscOpen=${PUSCOPEN_DIR}"
@@ -69,7 +73,8 @@ fi
 
 CONDA_ENV="${CONDA_ENV:-cistopic}"
 OUT_NAME="${OUT_NAME:-complexity_gain}"
-THRESHOLD_MODE="${THRESHOLD_MODE:-sparsity_match}"
+THRESHOLD_MODE="${THRESHOLD_MODE:-sparsity_match:2}"
+UNION_WITH_RAW="${UNION_WITH_RAW:-1}"
 CHUNK_ROWS="${CHUNK_ROWS:-2000}"
 SAMPLE_SIZE="${SAMPLE_SIZE:-4000000}"
 SEED="${SEED:-42}"
@@ -87,6 +92,10 @@ CMD=(
   --sample-size    "${SAMPLE_SIZE}"
   --seed           "${SEED}"
 )
+case "${UNION_WITH_RAW}" in
+  0|false|FALSE|no|No|NO|off|OFF) ;;
+  *) CMD+=(--union-with-raw) ;;
+esac
 for pair in ${INPUTS}; do
   CMD+=(--input "${pair}")
 done

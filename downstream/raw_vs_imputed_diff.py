@@ -18,8 +18,9 @@
 #     is "lost" if its imputed value is <= t.
 #   * Per-cell and per-bin lost-positive counts (catch pipelines that lose
 #     signal in specific cells / regions).
-#   * For context, the imputed-value distribution at a random sample of
-#     raw-zero coordinates ("synthetic positives" the imputer added).
+#   * With --union-with-raw: effective score max(raw, imputed) at raw=1 sites;
+#     lost-positive rate becomes ~0 for t < min(raw); plus per-cell counts of
+#     new positives (raw==0 & imputed>t) on the modeled subspace.
 #
 # Alignment is by NAME, not row index: region names (chr:start-end) and cell
 # barcodes are matched across the raw mm matrix and each imputed input. Raw
@@ -33,6 +34,11 @@
 #   * directory with matrix_csr.npz + regions.tsv + barcodes.tsv (PUscOpen full-mm)
 #   * legacy HDF5 file with /Prc + /regions + /barcodes
 #
+# Path note: if --input is a directory whose matrix_csr.npz is already
+# max(raw, imputed) (e.g. impute_union_mm/ from downstream/union_with_raw.py),
+# reported "imputed" values include the raw floor; use native imputed-only
+# artifacts when you want strict dropout recovery / loss semantics.
+#
 # Outputs (under --out-dir):
 #   raw_vs_imputed_diff.tsv          per-pipeline per-threshold lost-positive table
 #   raw_vs_imputed_diff_per_cell.tsv per-cell lost-positive counts at default threshold
@@ -40,7 +46,7 @@
 #   raw_vs_imputed_diff_imp_at_raw_pos.png   imputed-value hist at raw=1 coords
 #   raw_vs_imputed_diff_delta.png            delta = imputed - raw histogram
 #   raw_vs_imputed_diff_per_cell_lost.png    boxplot of per-cell lost counts
-#   raw_vs_imputed_diff_imp_at_raw_zero.png  imputed-value hist at sampled raw=0 coords
+#   raw_vs_imputed_diff_added_per_cell.tsv   (with --union-with-raw only)
 # -----------------------------------------------------------------------------
 from __future__ import annotations
 
@@ -50,6 +56,10 @@ import json
 import logging
 import sys
 from pathlib import Path
+
+_DS = Path(__file__).resolve().parent
+if str(_DS) not in sys.path:
+    sys.path.insert(0, str(_DS))
 
 import h5py
 import matplotlib
@@ -239,12 +249,15 @@ def imputed_at_coords(path: Path, kind: str,
 # Per-input evaluation
 # -----------------------------------------------------------------------------
 def evaluate_input(label: str, path: Path,
+                    raw: sparse.csr_matrix,
                     raw_rows: np.ndarray, raw_cols: np.ndarray,
                     raw_vals: np.ndarray,
                     raw_regs: list[str], raw_bars: list[str],
                     zero_sample_rows: np.ndarray,
                     zero_sample_cols: np.ndarray,
-                    thresholds: list[float]) -> dict:
+                    thresholds: list[float],
+                    union_with_raw: bool = False,
+                    chunk_rows: int = 2000) -> dict:
     kind = detect_input_kind(path)
     log.info('Input %r (%s) -> %s', label, kind, path)
     imp_regs, imp_bars = load_impute_regions_barcodes(path, kind)
@@ -283,17 +296,23 @@ def evaluate_input(label: str, path: Path,
             imp_rows[in_imp].astype(np.int64),
             imp_cols[in_imp].astype(np.int64),
         )
-    delta = imp_vals - raw_vals.astype(np.float64)
+    default_t = thresholds[0] if thresholds else 0.0
+    if union_with_raw:
+        imp_eff = np.maximum(raw_vals.astype(np.float64), imp_vals)
+        log.info('  union_with_raw: eff = max(raw, imputed) at raw-positive coords')
+    else:
+        imp_eff = imp_vals
+    delta = imp_eff - raw_vals.astype(np.float64)
     log.info('  imp@raw1: mean=%.4g median=%.4g min=%.4g max=%.4g  '
              'delta(mean)=%+.4g',
-             float(imp_vals.mean()), float(np.median(imp_vals)),
-             float(imp_vals.min()), float(imp_vals.max()),
+             float(imp_eff.mean()), float(np.median(imp_eff)),
+             float(imp_eff.min()), float(imp_eff.max()),
              float(delta.mean()))
 
     # ---- Lost positive counts at thresholds ---------------------------------
     rows_out: list[dict] = []
     for t in thresholds:
-        lost_mask = imp_vals <= t
+        lost_mask = imp_eff <= t
         lost = int(lost_mask.sum())
         recovered = n_total - lost
         rows_out.append({
@@ -308,8 +327,7 @@ def evaluate_input(label: str, path: Path,
         })
 
     # ---- Per-cell and per-bin lost counts at the default threshold ----------
-    default_t = thresholds[0] if thresholds else 0.0
-    lost_mask_default = imp_vals <= default_t
+    lost_mask_default = imp_eff <= default_t
     per_cell_lost = np.bincount(raw_cols[lost_mask_default],
                                 minlength=len(raw_bars)).astype(np.int64)
     per_bin_lost = np.bincount(raw_rows[lost_mask_default],
@@ -337,6 +355,35 @@ def evaluate_input(label: str, path: Path,
     else:
         zero_imp_vals = np.zeros(0, dtype=np.float64)
 
+    added_per_cell_raw = np.zeros(len(raw_bars), dtype=np.int64)
+    total_added = 0
+    if union_with_raw:
+        import complexity_gain as _cg
+
+        name_to_raw_row = {nm: i for i, nm in enumerate(raw_regs)}
+        modeled_raw_rows = np.fromiter(
+            (name_to_raw_row.get(nm, -1) for nm in imp_regs),
+            dtype=np.int64, count=len(imp_regs),
+        )
+        raw_cols_for_imp = np.full(len(imp_bars), -1, dtype=np.int64)
+        for rc in range(len(raw_bars)):
+            ic = int(raw_col_to_imp[rc])
+            if 0 <= ic < len(imp_bars):
+                raw_cols_for_imp[ic] = rc
+        imp_above = _cg.per_cell_count_above(path, kind, float(default_t), chunk_rows)
+        overlap = _cg.per_cell_overlap_imp_gt_raw_pos(
+            raw, modeled_raw_rows, raw_cols_for_imp,
+            path, kind, float(default_t), chunk_rows,
+        )
+        added_imp = imp_above.astype(np.int64) - overlap.astype(np.int64)
+        total_added = int(added_imp.sum())
+        for j in range(len(imp_bars)):
+            rc = int(raw_cols_for_imp[j])
+            if rc >= 0:
+                added_per_cell_raw[rc] = int(added_imp[j])
+        log.info('  union: total added positives (raw==0 & imp>t) = %d',
+                 total_added)
+
     return {
         'label':           label,
         'path':            str(path),
@@ -344,13 +391,17 @@ def evaluate_input(label: str, path: Path,
         'n_raw_positive':  int(n_total),
         'n_modeled':       n_modeled,
         'n_unmodeled':     n_unmodeled,
-        'imp_vals':        imp_vals,
+        'imp_vals':        imp_eff,
         'delta':           delta,
         'per_threshold':   rows_out,
         'per_cell_lost':   per_cell_lost,
         'per_bin_lost':    per_bin_lost,
         'zero_imp_vals':   zero_imp_vals,
         'default_threshold': default_t,
+        'union_with_raw':  bool(union_with_raw),
+        'imp_vals_soft':   imp_vals,
+        'added_per_cell_raw': added_per_cell_raw,
+        'total_added_positives': total_added,
     }
 
 
@@ -453,6 +504,10 @@ def main() -> int:
                     help='Number of raw-zero coordinates to sample for the '
                          '"imputed at raw=0" view (0 disables).')
     ap.add_argument('--seed', type=int, default=42)
+    ap.add_argument('--union-with-raw', action='store_true',
+                    help='Use max(raw, imputed) at raw-positive coords; report '
+                         'per-cell added positives (raw==0 & imputed>t) at '
+                         'default threshold.')
     args = ap.parse_args()
 
     args.out_dir.mkdir(parents=True, exist_ok=True)
@@ -496,10 +551,13 @@ def main() -> int:
 
     per_input: list[dict] = []
     for label, path in args.inputs:
-        info = evaluate_input(label, path,
-                              raw_rows, raw_cols, raw_vals,
-                              raw_regs, raw_bars,
-                              zero_rows, zero_cols, thresholds)
+        info = evaluate_input(
+            label, path, raw,
+            raw_rows, raw_cols, raw_vals,
+            raw_regs, raw_bars,
+            zero_rows, zero_cols, thresholds,
+            union_with_raw=args.union_with_raw,
+        )
         per_input.append(info)
 
     # ---- TSV: per-threshold table -------------------------------------------
@@ -529,9 +587,22 @@ def main() -> int:
                 fh.write(f'{d["label"]}\t{d["default_threshold"]:.6g}\t{bc}\t'
                          f'{int(d["per_cell_lost"][c])}\n')
 
+    if args.union_with_raw:
+        add_path = args.out_dir / f'{args.out_name}_added_per_cell.tsv'
+        log.info('Writing %s', add_path)
+        with open(add_path, 'w') as fh:
+            fh.write('input\tthreshold\tbarcode\tn_added_raw0_imp_gt_t\n')
+            for d in per_input:
+                for c, bc in enumerate(raw_bars):
+                    n = int(d['added_per_cell_raw'][c])
+                    if n == 0:
+                        continue
+                    fh.write(f'{d["label"]}\t{d["default_threshold"]:.6g}\t{bc}\t{n}\n')
+
     # ---- JSON summary -------------------------------------------------------
     summary: dict = {
         'mm_dir':           str(args.mm_dir),
+        'union_with_raw':   bool(args.union_with_raw),
         'n_raw_positive':   int(raw_rows.size),
         'thresholds':       thresholds,
         'n_zero_sample':    int(zero_rows.size),
@@ -581,6 +652,9 @@ def main() -> int:
                     'median': float(np.median(d['per_bin_lost'])),
                     'max':    int(d['per_bin_lost'].max()),
                 },
+                'union_with_raw':       bool(d.get('union_with_raw', False)),
+                'total_added_positives': int(d.get('total_added_positives', 0)),
+                'added_per_cell_nonzero': int((d['added_per_cell_raw'] > 0).sum()),
             }
             for d in per_input
         ],

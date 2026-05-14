@@ -78,6 +78,12 @@ def main() -> int:
                 "cao_juan_2009": "Cao_Juan_2009",
                 "mimno_2011":    "Mimno_2011",
             }
+            if metric not in name_map:
+                log.error(
+                    "Unknown primary_metric %r. Use one of: loglikelihood, arun_2010, cao_juan_2009, mimno_2011, manual.",
+                    metric,
+                )
+                return 1
             target = name_map[metric]
             # lower-is-better for Arun + Cao; higher-is-better for Mimno
             vals = np.array([getattr(m.metrics, target, np.nan) for m in models], dtype=float)

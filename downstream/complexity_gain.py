@@ -9,6 +9,10 @@
 #   imp_complexity[c]  = number of bins where imputed[r, c] > t
 #   gain[c]            = imp_complexity[c] - raw_complexity[c]
 #
+# With --union-with-raw, the threshold uses (K−1)·raw_nnz for sparsity_match:K,
+# then imp_complexity is |raw ∨ (imp>t)| per cell and gain counts only new
+# positives (≥ 0).
+#
 # A threshold `t` has to be picked per pipeline (imputed scales differ). We
 # offer three modes:
 #
@@ -29,6 +33,12 @@
 #       K = 2 lets each pipeline make twice as many calls as raw, so
 #       sum-of-gain is positive and we measure the *complexity uplift*
 #       at a per-cell level.
+#
+#   --union-with-raw
+#       Addition semantics: pick t so #(imp > t) ≈ (K−1)·raw_nnz when using
+#       sparsity_match:K, then report per-cell union complexity
+#       raw ∨ (imp>t) and gain = (union − raw) = added positives only (≥ 0).
+#       (Optional analysis mode; cisTopic 05 no longer applies max(raw,·) in-repo.)
 #
 #   --threshold-mode quantile:Q
 #       Top (1 - Q) fraction of imputed values genome-wide on the modeled
@@ -322,7 +332,8 @@ def estimate_threshold(label: str, path: Path, kind: str,
                         target_nnz_in_modeled: int,
                         mode: str, param: float,
                         rng: np.random.Generator,
-                        sample_size: int = 4_000_000
+                        sample_size: int = 4_000_000,
+                        union_with_raw: bool = False,
                         ) -> tuple[float, str]:
     """Return (threshold, origin_string) per the threshold mode."""
     if mode == 'fixed':
@@ -335,14 +346,25 @@ def estimate_threshold(label: str, path: Path, kind: str,
 
     if mode == 'sparsity_match':
         total_entries = int(n_modeled_rows) * int(n_cells)
-        target = int(round(target_nnz_in_modeled * float(param)))
+        K = float(param)
+        if union_with_raw:
+            target = max(0, int(round((K - 1.0) * target_nnz_in_modeled)))
+        else:
+            target = int(round(target_nnz_in_modeled * K))
+        if target <= 0:
+            t_hi = float(np.max(sample) * (1.0 + 1e-9))
+            return t_hi, (
+                f'sparsity_match:{K} union addition target_calls=0 '
+                f'(sample={sample.size})'
+            )
         target = max(1, min(target, total_entries))
         # Fraction of entries that should exceed t = target / total
         target_fraction = target / total_entries
         # We want quantile q = 1 - target_fraction
         q = max(0.0, min(1.0, 1.0 - target_fraction))
         t = float(np.quantile(sample, q))
-        return t, (f'sparsity_match:{param} (target_calls={target}, '
+        uflag = ' union_addition' if union_with_raw else ''
+        return t, (f'sparsity_match:{param}{uflag} (target_calls={target}, '
                    f'q={q:.4g} of {sample.size} samples -> t={t:.4g})')
 
     if mode == 'quantile':
@@ -386,6 +408,33 @@ def raw_count_per_cell_on_modeled(raw: sparse.csr_matrix,
     return np.asarray((sub != 0).sum(axis=0)).ravel().astype(np.int64)
 
 
+def per_cell_overlap_imp_gt_raw_pos(raw: sparse.csr_matrix,
+                                    modeled_raw_rows: np.ndarray,
+                                    raw_cols_for_imp: np.ndarray,
+                                    path: Path, kind: str, threshold: float,
+                                    chunk_rows: int) -> np.ndarray:
+    """Per imputed column j: count of rows where (imp>t) AND (raw>0)."""
+    n_imp = len(raw_cols_for_imp)
+    overlap = np.zeros(n_imp, dtype=np.int64)
+    valid = np.flatnonzero(raw_cols_for_imp >= 0)
+    if valid.size == 0:
+        return overlap
+    col_take = raw_cols_for_imp[valid]
+    for s, e, block in iter_blocks(path, kind, chunk_rows):
+        rr = modeled_raw_rows[s:e]
+        m = rr >= 0
+        if not m.any():
+            continue
+        rr_g = rr[m]
+        chunk_b = block[m]
+        bi = chunk_b > threshold
+        bi_sub = bi[:, valid]
+        sub = raw[rr_g][:, col_take].toarray()
+        rw = sub > 0
+        overlap[valid] += (rw & bi_sub).sum(axis=0).astype(np.int64)
+    return overlap
+
+
 # -----------------------------------------------------------------------------
 # Per-input evaluation
 # -----------------------------------------------------------------------------
@@ -394,7 +443,8 @@ def evaluate_input(label: str, path: Path,
                     raw_bars: list[str], raw_bar_to_idx: dict[str, int],
                     mode: str, mode_param: float,
                     chunk_rows: int, rng: np.random.Generator,
-                    sample_size: int) -> dict:
+                    sample_size: int,
+                    union_with_raw: bool = False) -> dict:
     kind = detect_input_kind(path)
     log.info('Input %r (%s) -> %s', label, kind, path)
     imp_regs, imp_bars = load_impute_regions_barcodes(path, kind)
@@ -443,7 +493,8 @@ def evaluate_input(label: str, path: Path,
     t, t_origin = estimate_threshold(label, path, kind,
                                      n_modeled_rows, n_imp_cells,
                                      target_nnz, mode, mode_param,
-                                     rng, sample_size)
+                                     rng, sample_size,
+                                     union_with_raw=union_with_raw)
     log.info('  threshold: %.6g  (%s)', t, t_origin)
 
     # ---- Per-cell count above threshold ----------------------------------
@@ -454,12 +505,26 @@ def evaluate_input(label: str, path: Path,
                     imp_per_imp_cell.size, n_imp_cells)
         imp_per_imp_cell = np.resize(imp_per_imp_cell, n_imp_cells)
 
-    gain_per_imp_cell = imp_per_imp_cell.astype(np.int64) - raw_per_imp_cell.astype(np.int64)
+    if union_with_raw:
+        log.info('  union_with_raw: counting overlap (imp>t & raw>0) ...')
+        overlap = per_cell_overlap_imp_gt_raw_pos(
+            raw, modeled_raw_rows, raw_cols_for_imp,
+            path, kind, t, chunk_rows,
+        )
+        union_per_cell = (raw_per_imp_cell.astype(np.int64)
+                          + imp_per_imp_cell.astype(np.int64)
+                          - overlap.astype(np.int64))
+        gain_per_imp_cell = union_per_cell - raw_per_imp_cell.astype(np.int64)
+        imp_report = union_per_cell
+    else:
+        gain_per_imp_cell = (imp_per_imp_cell.astype(np.int64)
+                             - raw_per_imp_cell.astype(np.int64))
+        imp_report = imp_per_imp_cell.astype(np.int64)
 
     log.info('  median raw=%.0f, median imp=%.0f, median gain=%+.0f, '
              'total gain=%+d',
              float(np.median(raw_per_imp_cell)),
-             float(np.median(imp_per_imp_cell)),
+             float(np.median(imp_report)),
              float(np.median(gain_per_imp_cell)),
              int(gain_per_imp_cell.sum()))
 
@@ -471,7 +536,7 @@ def evaluate_input(label: str, path: Path,
         if raw_c < 0:
             continue
         raw_aligned[raw_c] = float(raw_per_imp_cell[j])
-        imp_aligned[raw_c] = float(imp_per_imp_cell[j])
+        imp_aligned[raw_c] = float(imp_report[j])
         gain_aligned[raw_c] = float(gain_per_imp_cell[j])
 
     return {
@@ -487,6 +552,7 @@ def evaluate_input(label: str, path: Path,
         'raw_aligned':  raw_aligned,
         'imp_aligned':  imp_aligned,
         'gain_aligned': gain_aligned,
+        'union_with_raw': bool(union_with_raw),
     }
 
 
@@ -498,7 +564,8 @@ def _color_cycle(n: int) -> list[str]:
     return [cmap(i % cmap.N) for i in range(n)]
 
 
-def plot_gain_hist(per_input: list[dict], out_path: Path) -> None:
+def plot_gain_hist(per_input: list[dict], out_path: Path,
+                   union_with_raw: bool = False) -> None:
     fig, ax = plt.subplots(figsize=(7.5, 5))
     colors = _color_cycle(len(per_input))
     for d, c in zip(per_input, colors):
@@ -508,14 +575,19 @@ def plot_gain_hist(per_input: list[dict], out_path: Path) -> None:
             continue
         ax.hist(v, bins=80, alpha=0.45, label=d['label'], color=c)
     ax.axvline(0.0, color='k', lw=0.6, ls=':')
-    ax.set_xlabel('per-cell complexity gain (imp_count − raw_count)')
+    if union_with_raw:
+        ax.set_xlabel('per-cell added positives (union − raw)')
+        ax.set_title('Per-cell added positives (raw ∨ (imp>t)) across pipelines')
+    else:
+        ax.set_xlabel('per-cell complexity gain (imp_count − raw_count)')
+        ax.set_title('Per-cell complexity gain across pipelines')
     ax.set_ylabel('# cells')
-    ax.set_title('Per-cell complexity gain across pipelines')
     ax.legend(frameon=False, fontsize=9)
     fig.tight_layout(); fig.savefig(out_path, dpi=150); plt.close(fig)
 
 
-def plot_scatter(per_input: list[dict], out_path: Path) -> None:
+def plot_scatter(per_input: list[dict], out_path: Path,
+                 union_with_raw: bool = False) -> None:
     n = len(per_input)
     cols = min(n, 3)
     rows = (n + cols - 1) // cols
@@ -536,18 +608,24 @@ def plot_scatter(per_input: list[dict], out_path: Path) -> None:
         ax.plot([lo, hi], [lo, hi], color='k', lw=0.6, ls=':')
         ax.set_xscale('log'); ax.set_yscale('log')
         ax.set_xlabel('raw_complexity_per_cell (+1)')
-        ax.set_ylabel('imp_complexity_per_cell (+1)')
+        y_lbl = ('union_complexity (+1)' if union_with_raw
+                 else 'imp_complexity_per_cell (+1)')
+        ax.set_ylabel(y_lbl)
         gain = (imp_v[ok] - raw_v[ok])
         ax.set_title(f'{d["label"]}  t={d["threshold"]:.3g}\n'
-                     f'median gain = {float(np.median(gain)):+.0f}',
+                     f'median {"added" if union_with_raw else "gain"} = '
+                     f'{float(np.median(gain)):+.0f}',
                      fontsize=10)
     for k in range(len(per_input), len(flat)):
         flat[k].axis('off')
-    fig.suptitle('Per-cell complexity: raw vs imputed (diagonal = no gain)')
+    fig.suptitle('Per-cell complexity: raw vs union (diagonal = no added bins)'
+                 if union_with_raw else
+                 'Per-cell complexity: raw vs imputed (diagonal = no gain)')
     fig.tight_layout(); fig.savefig(out_path, dpi=150); plt.close(fig)
 
 
-def plot_bars(per_input: list[dict], out_path: Path) -> None:
+def plot_bars(per_input: list[dict], out_path: Path,
+              union_with_raw: bool = False) -> None:
     fig, ax = plt.subplots(figsize=(max(5, 0.9 * len(per_input) + 2), 4.5))
     labels = [d['label'] for d in per_input]
     medians = []
@@ -564,8 +642,10 @@ def plot_bars(per_input: list[dict], out_path: Path) -> None:
                     va='bottom' if val >= 0 else 'top', fontsize=9)
     ax.axhline(0.0, color='k', lw=0.5, ls=':')
     ax.set_xticks(x); ax.set_xticklabels(labels, rotation=30, ha='right')
-    ax.set_ylabel('median per-cell complexity gain')
-    ax.set_title('Median per-cell complexity gain across pipelines')
+    ax.set_ylabel('median per-cell added positives' if union_with_raw else
+                  'median per-cell complexity gain')
+    ax.set_title('Median per-cell added positives' if union_with_raw else
+                 'Median per-cell complexity gain across pipelines')
     fig.tight_layout(); fig.savefig(out_path, dpi=150); plt.close(fig)
 
 
@@ -625,8 +705,12 @@ def build_summary(per_input: list[dict]) -> dict:
             'imp_complexity_stats': _stats(imp_v),
             'gain_stats':            _stats(gain),
             'total_gain':            float(np.nansum(gain)),
+            'union_with_raw':        bool(d.get('union_with_raw', False)),
         })
-    return {'inputs': out}
+    return {
+        'inputs': out,
+        'union_with_raw': any(i.get('union_with_raw') for i in out),
+    }
 
 
 # -----------------------------------------------------------------------------
@@ -649,8 +733,10 @@ def main() -> int:
     ap.add_argument('--sample-size', type=int, default=4_000_000,
                     help='Random sample size for threshold quantile estimation.')
     ap.add_argument('--seed', type=int, default=42)
-    ap.add_argument('--out-name', type=str, default='complexity_gain')
-    args = ap.parse_args()
+    ap.add_argument('--union-with-raw', action='store_true',
+                    help='Addition semantics for sparsity_match:K (same threshold '
+                         'recipe as downstream/union_with_raw.py); report union '
+                         'complexity and nonnegative per-cell gain.')
 
     args.out_dir.mkdir(parents=True, exist_ok=True)
     rng = np.random.default_rng(int(args.seed))
@@ -661,11 +747,16 @@ def main() -> int:
     raw, raw_regs, raw_bars = load_raw(args.mm_dir)
     raw_bar_to_idx = {b: i for i, b in enumerate(raw_bars)}
 
+    if args.union_with_raw:
+        log.info('--union-with-raw: thresholding uses (K−1)·raw_nnz for '
+                 'sparsity_match:K; imp_complexity column is union size.')
+
     per_input: list[dict] = []
     for label, path in args.inputs:
         info = evaluate_input(label, path, raw, raw_regs, raw_bars,
                               raw_bar_to_idx, mode, mode_param,
-                              args.chunk_rows, rng, args.sample_size)
+                              args.chunk_rows, rng, args.sample_size,
+                              union_with_raw=args.union_with_raw)
         per_input.append(info)
 
     tsv_path = args.out_dir / f'{args.out_name}.tsv'
@@ -685,9 +776,12 @@ def main() -> int:
                  r['imp_complexity_stats']['median'],
                  g['median'], g['p10'], g['p90'])
 
-    plot_gain_hist(per_input, args.out_dir / f'{args.out_name}_gain_hist.png')
-    plot_scatter (per_input, args.out_dir / f'{args.out_name}_scatter.png')
-    plot_bars    (per_input, args.out_dir / f'{args.out_name}_bars.png')
+    plot_gain_hist(per_input, args.out_dir / f'{args.out_name}_gain_hist.png',
+                   union_with_raw=args.union_with_raw)
+    plot_scatter (per_input, args.out_dir / f'{args.out_name}_scatter.png',
+                  union_with_raw=args.union_with_raw)
+    plot_bars    (per_input, args.out_dir / f'{args.out_name}_bars.png',
+                  union_with_raw=args.union_with_raw)
     log.info('Wrote gain_hist / scatter / bars figures.')
     return 0
 

@@ -12,8 +12,11 @@
 # number of "calls" (covered pos+neg bins) equals the reference's. Set
 # MATCH_TO="" to apply THRESHOLD uniformly instead.
 #
-# Defaults match compare_pos_neg_all4.sbatch (this XuLab tree). Override any path
-# by exporting the variable before sbatch.
+# Imputed pipelines default to each pipeline's native <work>/impute/ (CSR,
+# factors, or dense per bin_sensitivity_specificity.py). That keeps top-K
+# bin coverage sensitive to imputer-specific rankings. Union CSRs from
+# downstream/impute_union_mm/ collapse rankings toward raw under --match-to raw;
+# to analyze those, set INPUTS or *_DIR explicitly to ${ROOT_DIR}/downstream/impute_union_mm/<label>.
 #
 # Optional env vars (defaults shown):
 #   ROOT_DIR      repo root (default: auto from submit dir, else /work/users/d/y/dyy12/XuLab)
@@ -25,7 +28,7 @@
 #   MM_DIR        raw matrix dir for the "raw" input
 #                 (default: ${ROOT_DIR}/cisTopic/scripts/cistopic_ctcf/mm)
 #   CISTOPIC_DIR  (default: ${ROOT_DIR}/cisTopic/scripts/cistopic_ctcf/impute)
-#   FITS_DIR      (default: ${ROOT_DIR}/FITS/work/ctcf/impute) — disabled below during full FITS rerun
+#   FITS_DIR      (default: ${ROOT_DIR}/FITS/work/ctcf/impute)
 #   SCOPEN_DIR    (default: ${ROOT_DIR}/scOpen/work/ctcf/impute)
 #   MAGIC_DIR     (default: ${ROOT_DIR}/MAGIC/work/ctcf/impute)
 #   PUSCOPEN_DIR  (default: ${ROOT_DIR}/PUscOpen/work/ctcf/impute)
@@ -34,7 +37,9 @@
 #   THRESHOLD     reference signal threshold (default 0; "any nonzero signal")
 #   MATCH_TO      reference input label for sparsity matching (default "raw";
 #                 empty string disables matching)
-#   MATCH_MULT    multiplier on the reference K (default 1.0; e.g. 2 for 2×K)
+#   MATCH_MULT    multiplier on raw's base_K when MATCH_TO is set (default 1.35
+#                 → K ≈ 1.35× #(bins with ref signal>t), capped at #bins).
+#                 Set to 1.0 for the old ~9k K; raise further or set TOP_K to fix K.
 #   TOP_K         explicit K for every pipeline; overrides MATCH_TO / MATCH_MULT
 
 set -euo pipefail
@@ -60,14 +65,13 @@ OUT_DIR="${OUT_DIR:-${ROOT_DIR}/downstream/bin_sensitivity_specificity}"
 
 MM_DIR="${MM_DIR:-${ROOT_DIR}/cisTopic/scripts/cistopic_ctcf/mm}"
 CISTOPIC_DIR="${CISTOPIC_DIR:-${ROOT_DIR}/cisTopic/scripts/cistopic_ctcf/impute}"
-# FITS_DIR="${FITS_DIR:-${ROOT_DIR}/FITS/work/ctcf/impute}"  # re-enable after FITS 05_impute export exists
+FITS_DIR="${FITS_DIR:-${ROOT_DIR}/FITS/work/ctcf/impute}"
 SCOPEN_DIR="${SCOPEN_DIR:-${ROOT_DIR}/scOpen/work/ctcf/impute}"
 MAGIC_DIR="${MAGIC_DIR:-${ROOT_DIR}/MAGIC/work/ctcf/impute}"
 PUSCOPEN_DIR="${PUSCOPEN_DIR:-${ROOT_DIR}/PUscOpen/work/ctcf/impute}"
 
 if [[ -z "${INPUTS:-}" ]]; then
-  # FITS temporarily omitted (full FITS rerun / empty impute/). Restore:
-  # INPUTS="raw=${MM_DIR} cisTopic=${CISTOPIC_DIR} FITS=${FITS_DIR} scOpen=${SCOPEN_DIR} MAGIC=${MAGIC_DIR} PUscOpen=${PUSCOPEN_DIR}"
+  # FITS omitted if impute dir empty; add: INPUTS="raw=${MM_DIR} ... FITS=${FITS_DIR} ..."
   INPUTS="raw=${MM_DIR} cisTopic=${CISTOPIC_DIR} scOpen=${SCOPEN_DIR} MAGIC=${MAGIC_DIR} PUscOpen=${PUSCOPEN_DIR}"
 fi
 
@@ -77,7 +81,7 @@ if [[ -z "${BINS_TSV:-}" || -z "${OUT_DIR:-}" || -z "${INPUTS:-}" ]]; then
 fi
 CONDA_ENV="${CONDA_ENV:-cistopic}"
 OUT_NAME="${OUT_NAME:-bin_coverage}"
-THRESHOLD="${THRESHOLD:-0}"
+THRESHOLD="${THRESHOLD:-0.01}"
 MATCH_TO="${MATCH_TO-raw}"
 MATCH_MULT="${MATCH_MULT:-1.0}"
 TOP_K="${TOP_K:-}"
