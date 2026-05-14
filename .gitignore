@@ -20,6 +20,7 @@ downstream/sensitivity_specificity/
 downstream/bin_sensitivity_specificity/
 downstream/__pycache__/
 downstream/raw_vs_imputed_diff/
+downstream/impute_union_mm/
 .DS_Store
 *.pkl
 *.err
