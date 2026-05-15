@@ -1,0 +1,34 @@
+name: cicero
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - python=3.10
+  - pip
+  - numpy
+  - scipy
+  - pandas
+  - pyarrow
+  - pyyaml
+  - matplotlib
+  - tqdm
+  # R + Bioconductor base
+  - r-base>=4.3
+  - r-matrix
+  - r-optparse
+  - r-yaml
+  - r-remotes
+  - r-biocmanager
+  - bioconductor-singlecellexperiment
+  - bioconductor-summarizedexperiment
+  - bioconductor-delayedarray
+  - bioconductor-delayedmatrixstats
+  - bioconductor-rtracklayer
+  - bioconductor-genomicranges
+  - r-seurat            # only used if .rds is a Seurat object (mirrors cisTopic)
+  # Monocle3 + Cicero (cole-trapnell-lab branches) are NOT on Bioconductor in
+  # the versions that match Monocle3. After `conda env create -f environment.yml`
+  # run once:
+  #   conda activate cicero && Rscript scripts/setup_r.R
+  # to pull both from GitHub.

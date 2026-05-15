@@ -1,0 +1,84 @@
+# -----------------------------------------------------------------------------
+# Default configuration for the Cicero co-accessibility imputation pipeline.
+#
+# Pipeline shape (mirrors cisTopic / FITS / scOpen / MAGIC / PUscOpen):
+#   00_inspect_rds.R      sanity-check the input
+#   01_export_rds_to_mm.R RDS -> mm/{matrix.mtx.gz, regions.tsv.gz, barcodes.tsv.gz}
+#   02_build_cds.R        mm -> Monocle3 cell_data_set + LSI + UMAP -> cds/cds.rds
+#   03_run_cicero.R       cds -> peak1 x peak2 co-accessibility table
+#   05_impute.py          raw + co-access table -> sparse mm-aligned imputed CSR
+#
+# Outputs land under <work>/impute/ in the same shape as every other pipeline:
+#   matrix_csr.npz, regions.tsv, barcodes.tsv, meta.json
+# -----------------------------------------------------------------------------
+
+paths:
+  # Same RDS that the cisTopic / FITS / scOpen pipelines all consume.
+  input_rds:   /work/users/d/y/dyy12/XuLab/data/CTCF_bin1000_mtx.rds
+  work_dir:    /work/users/d/y/dyy12/XuLab/Cicero/work/ctcf
+
+# -----------------------------------------------------------------------------
+# Step 02 / 03: Monocle3 CDS + Cicero
+# -----------------------------------------------------------------------------
+cicero:
+  # Cicero only models peaks observed in >= min_cells_per_peak cells. A handful
+  # of singleton bins makes the graphical-Lasso fit unstable, so we recommend
+  # >= 2. Set 0 to keep all rows that have any signal.
+  min_cells_per_peak: 2
+
+  # LSI dimensions for Monocle3 preprocess_cds(method = "LSI") and the
+  # downstream UMAP used to aggregate cells into Cicero "metacells".
+  num_dim: 50
+
+  # k-NN size for make_cicero_cds: each metacell is the average of k cells
+  # nearest in UMAP. 50 is the Cicero default.
+  k_metacell: 50
+
+  # Maximum genomic distance (bp) at which Cicero will consider linking two
+  # peaks. 500 kb matches the Pliner et al. (2018) default.
+  window_bp: 500000
+
+  # Number of metacell samples to draw per genomic window when fitting the
+  # graphical Lasso. Higher = more stable links, slower run.
+  sample_num: 100
+
+  # 0 = use all cells. Set a small number (e.g. 2000) for a fast smoke test.
+  max_cells: 0
+
+  random_seed: 555
+
+# -----------------------------------------------------------------------------
+# Step 05: propagation
+#
+# For each cell c, for each raw[r1, c] > 0, we look up bins r2 with
+# coaccess(r1, r2) >= coaccess_threshold and add the link's score to a running
+# tally at (r2, c). Vectorised:
+#   prop_sum   = C   @ raw_bool      where C[r1,r2]   = coaccess if >= thr else 0
+#   prop_count = C_i @ raw_bool      where C_i[r1,r2] = 1 if linked else 0
+#   value      = weight * prop_sum / prop_count   for entries with count >= min_links
+#
+# This replaces the fixed +/- window_bp neighbour rule (see cisTopic 05_impute.py
+# and PUscOpen 06_impute.py) with a learned, biologically meaningful adjacency.
+# Limitation: Cicero only links bins observed in >= 1 cell — so the *target*
+# bin must already exist in the raw matrix somewhere; this fills (r, c)
+# entries the cell didn't observe but a co-accessible bin did.
+# -----------------------------------------------------------------------------
+impute:
+  # Pliner et al. recommend 0.05 for moderately strict links; raise to ~0.25
+  # for stricter, fewer propagations.
+  coaccess_threshold: 0.05
+
+  # Require at least this many co-accessible "source" bins (raw>0 in the cell)
+  # before propagating to a target. 1 = propagate from any single link.
+  min_links: 1
+
+  # Multiplier on the propagated value. < 1 marks propagated entries as
+  # softer evidence than raw 1.0.
+  weight: 1.0
+
+  # If true (default), only fill bins where raw[r, c] == 0 — keeps raw entries
+  # untouched and ensures we are *adding* calls, not overwriting.
+  only_zero_targets: true
+
+  # Union the propagated matrix with the raw matrix in the output.
+  keep_raw: true
