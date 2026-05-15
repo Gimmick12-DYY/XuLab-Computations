@@ -30,6 +30,7 @@ import gzip
 import json
 import logging
 import pickle
+import re
 import sys
 from pathlib import Path
 
@@ -42,6 +43,8 @@ from _cfg import base_parser, load_config, resolve_paths
 
 log = logging.getLogger("05_impute")
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
+
+_REGION_RE = re.compile(r"^([^:]+):(\d+)-(\d+)$")
 
 
 # -----------------------------------------------------------------------------
@@ -100,6 +103,263 @@ def _sample_imp_values(phi: np.ndarray, theta: np.ndarray, scale: float,
     return np.einsum("ik,ki->i",
                      phi[rows].astype(np.float64),
                      theta[:, cols].astype(np.float64)) * float(scale)
+
+
+def _parse_regions(regions: list[str]) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+    """Parse 'chr:start-end' into chrom-string array, start (int), end (int)."""
+    n = len(regions)
+    chroms = np.empty(n, dtype=object)
+    starts = np.empty(n, dtype=np.int64)
+    ends   = np.empty(n, dtype=np.int64)
+    for i, r in enumerate(regions):
+        m = _REGION_RE.match(r)
+        if m is None:
+            raise SystemExit(f"Cannot parse region {r!r} as chr:start-end")
+        chroms[i] = m.group(1)
+        starts[i] = int(m.group(2))
+        ends[i]   = int(m.group(3))
+    return chroms, starts, ends
+
+
+def _load_target_bed_mask(bed_path: Path | str | None,
+                          chroms: np.ndarray,
+                          starts: np.ndarray,
+                          ends: np.ndarray) -> np.ndarray | None:
+    """Boolean mask over regions of bins overlapping any interval in the BED.
+
+    Returns None when bed_path is falsy (caller treats None as "no restriction").
+    """
+    if not bed_path:
+        return None
+    p = Path(bed_path)
+    if not p.exists():
+        log.warning("propagate.target_bed not found: %s; ignoring restriction.", p)
+        return None
+    log.info("Loading propagate.target_bed from %s", p)
+    bed_by_chrom: dict[str, list[tuple[int, int]]] = {}
+    opener = gzip.open if str(p).endswith(".gz") else open
+    with opener(str(p), "rt") as fh:  # type: ignore[arg-type]
+        for ln in fh:
+            ln = ln.strip()
+            if not ln or ln.startswith(("#", "track", "browser")):
+                continue
+            parts = ln.split("\t")
+            if len(parts) < 3:
+                continue
+            try:
+                bed_by_chrom.setdefault(parts[0], []).append(
+                    (int(parts[1]), int(parts[2]))
+                )
+            except ValueError:
+                continue
+
+    mask = np.zeros(len(chroms), dtype=bool)
+    unique_chroms = np.unique(chroms)
+    for chrom in unique_chroms:
+        ivs = bed_by_chrom.get(str(chrom))
+        if not ivs:
+            continue
+        ivs.sort()
+        starts_iv = np.fromiter((iv[0] for iv in ivs), dtype=np.int64, count=len(ivs))
+        ends_iv   = np.fromiter((iv[1] for iv in ivs), dtype=np.int64, count=len(ivs))
+        bin_idx   = np.where(chroms == chrom)[0]
+        bs        = starts[bin_idx]
+        be        = ends[bin_idx]
+        # For each bin [bs, be), find intervals with start < be (could overlap),
+        # then check ends > bs among them. Vectorise per bin via searchsorted.
+        hi_arr = np.searchsorted(starts_iv, be, side="left")
+        # Walk the bins; keep simple loop -- typical genome has <1M bins per chrom.
+        for k, (b_s, b_e, hi) in enumerate(zip(bs, be, hi_arr)):
+            if hi == 0:
+                continue
+            if (ends_iv[:hi] > b_s).any():
+                mask[bin_idx[k]] = True
+    return mask
+
+
+def _propagate_to_zero_bins(csr_in: sparse.csr_matrix,
+                            regions: list[str],
+                            propagate_cfg: dict,
+                            ) -> tuple[sparse.csr_matrix, dict]:
+    """Add (target_row, cell) entries to ``csr_in`` at currently-zero rows that
+    have at least ``min_neighbors`` imp-positive sources within ``window_bp``
+    on the same chromosome (per cell). Propagated value is
+    ``weight · mean(neighbour values in cell c)``.
+
+    The point: LDA / NMF cannot create signal at never-observed bins because
+    they were never in the training vocabulary. This step fills those bins
+    using the genomic structure of CTCF binding.
+    """
+    if not propagate_cfg.get("enabled", False):
+        return csr_in, {"enabled": False, "n_propagated_bins": 0,
+                         "n_new_entries": 0}
+
+    window_bp     = int(propagate_cfg.get("window_bp", 5000))
+    min_neighbors = int(propagate_cfg.get("min_neighbors", 2))
+    weight        = float(propagate_cfg.get("weight", 0.5))
+    chunk_targets = int(propagate_cfg.get("chunk_targets", 5000))
+    target_bed    = propagate_cfg.get("target_bed", None)
+
+    log.info(
+        "Neighbour propagation: window_bp=%d, min_neighbors=%d, weight=%.4g, "
+        "target_bed=%s, chunk_targets=%d",
+        window_bp, min_neighbors, weight, target_bed, chunk_targets,
+    )
+
+    chroms, starts, ends = _parse_regions(regions)
+    n_total_rows = int(csr_in.shape[0])
+
+    has_signal       = np.diff(csr_in.indptr) > 0
+    target_eligible  = ~has_signal
+
+    if target_bed:
+        bed_mask = _load_target_bed_mask(target_bed, chroms, starts, ends)
+        if bed_mask is not None:
+            n_pre = int(target_eligible.sum())
+            target_eligible &= bed_mask
+            log.info(
+                "Target candidates restricted by BED: %d zero-imp -> %d eligible",
+                n_pre, int(target_eligible.sum()),
+            )
+
+    n_target_total = int(target_eligible.sum())
+    n_source_total = int(has_signal.sum())
+    log.info(
+        "Propagation candidates: %d eligible target rows, %d source rows",
+        n_target_total, n_source_total,
+    )
+    if n_target_total == 0 or n_source_total < min_neighbors:
+        log.info("Nothing to propagate (no eligible targets or too few sources).")
+        return csr_in, {
+            "enabled": True, "n_propagated_bins": 0, "n_new_entries": 0,
+            "n_target_total": n_target_total, "n_source_total": n_source_total,
+            "window_bp": window_bp, "min_neighbors": min_neighbors,
+            "weight": weight,
+            "target_bed": str(target_bed) if target_bed else None,
+        }
+
+    new_rows: list[np.ndarray] = []
+    new_cols: list[np.ndarray] = []
+    new_vals: list[np.ndarray] = []
+    n_propagated_bins = 0
+
+    for chrom in np.unique(chroms):
+        in_chrom       = (chroms == chrom)
+        chrom_targets  = np.where(in_chrom & target_eligible)[0]
+        chrom_sources  = np.where(in_chrom & has_signal)[0]
+        if chrom_targets.size == 0 or chrom_sources.size < min_neighbors:
+            continue
+
+        src_starts = starts[chrom_sources]
+        src_order  = np.argsort(src_starts, kind="stable")
+        src_starts_sorted = src_starts[src_order]
+        sources_sorted    = chrom_sources[src_order]
+
+        # cisTopic's csr_in is already thresholded -> every nonzero IS an
+        # imp-positive source. Densify the chromosome's source rows once.
+        src_vals_dense  = csr_in[sources_sorted].toarray().astype(np.float32, copy=False)
+        src_indicator   = (src_vals_dense > 0).astype(np.float32, copy=False)
+
+        for ts in range(0, chrom_targets.size, chunk_targets):
+            te = min(ts + chunk_targets, chrom_targets.size)
+            chunk_target_rows   = chrom_targets[ts:te]
+            chunk_target_starts = starts[chunk_target_rows]
+            n_chunk = te - ts
+
+            edge_t: list[int] = []
+            edge_s: list[int] = []
+            for i, t_start in enumerate(chunk_target_starts):
+                lo = int(np.searchsorted(src_starts_sorted,
+                                          int(t_start) - window_bp, side="left"))
+                hi = int(np.searchsorted(src_starts_sorted,
+                                          int(t_start) + window_bp, side="right"))
+                n_n = hi - lo
+                if n_n < min_neighbors:
+                    continue
+                edge_t.extend([i] * n_n)
+                edge_s.extend(range(lo, hi))
+
+            if not edge_t:
+                continue
+
+            edge_t_arr = np.asarray(edge_t, dtype=np.int64)
+            edge_s_arr = np.asarray(edge_s, dtype=np.int64)
+            ones_arr   = np.ones(len(edge_t), dtype=np.float32)
+
+            # Indicator-only matrix: P_i[i, k] = 1 if source k is in target i's window.
+            P_i = sparse.coo_matrix(
+                (ones_arr, (edge_t_arr, edge_s_arr)),
+                shape=(n_chunk, sources_sorted.size), dtype=np.float32,
+            ).tocsr()
+
+            # Per (target, cell): sum of imp-positive source values, count of
+            # imp-positive sources actually contributing. mean = sum / count.
+            prop_sum   = (P_i @ src_vals_dense).astype(np.float32, copy=False)
+            prop_count = (P_i @ src_indicator).astype(np.float32, copy=False)
+            keep = prop_count >= float(min_neighbors)
+
+            with np.errstate(divide="ignore", invalid="ignore"):
+                prop_mean = np.where(
+                    keep,
+                    prop_sum / np.maximum(prop_count, 1.0),
+                    0.0,
+                )
+            propagated = (prop_mean.astype(np.float32, copy=False)
+                          * np.float32(weight))
+
+            for ti in range(n_chunk):
+                vals = propagated[ti]
+                nz = np.where(vals > 0.0)[0]
+                if nz.size == 0:
+                    continue
+                target_row_full = int(chunk_target_rows[ti])
+                new_rows.append(np.full(nz.size, target_row_full, dtype=np.int64))
+                new_cols.append(nz.astype(np.int64))
+                new_vals.append(vals[nz].astype(np.float32, copy=False))
+                n_propagated_bins += 1
+
+        del src_vals_dense, src_indicator
+
+    if not new_rows:
+        log.info("Propagation produced 0 new entries.")
+        return csr_in, {
+            "enabled": True, "n_propagated_bins": 0, "n_new_entries": 0,
+            "n_target_total": n_target_total, "n_source_total": n_source_total,
+            "window_bp": window_bp, "min_neighbors": min_neighbors,
+            "weight": weight,
+            "target_bed": str(target_bed) if target_bed else None,
+        }
+
+    new_rows_arr = np.concatenate(new_rows)
+    new_cols_arr = np.concatenate(new_cols)
+    new_vals_arr = np.concatenate(new_vals)
+    log.info(
+        "Propagation: added %d new (region, cell) entries across %d new bins",
+        int(new_vals_arr.size), n_propagated_bins,
+    )
+
+    orig_coo = csr_in.tocoo()
+    all_rows = np.concatenate([orig_coo.row, new_rows_arr])
+    all_cols = np.concatenate([orig_coo.col, new_cols_arr])
+    all_vals = np.concatenate([orig_coo.data, new_vals_arr])
+    csr_out = sparse.coo_matrix(
+        (all_vals, (all_rows, all_cols)),
+        shape=csr_in.shape, dtype=np.float32,
+    ).tocsr()
+    csr_out.sum_duplicates()
+
+    return csr_out, {
+        "enabled": True,
+        "n_propagated_bins": n_propagated_bins,
+        "n_new_entries": int(new_vals_arr.size),
+        "n_target_total": n_target_total,
+        "n_source_total": n_source_total,
+        "mean_new_entries_per_propagated_bin":
+            float(new_vals_arr.size / max(n_propagated_bins, 1)),
+        "window_bp": window_bp, "min_neighbors": min_neighbors,
+        "weight": weight,
+        "target_bed": str(target_bed) if target_bed else None,
+    }
 
 
 def _pick_threshold(phi: np.ndarray, theta: np.ndarray,
@@ -353,26 +613,52 @@ def main() -> int:
              n_kept, n_kept / max(int(n_full_rows) * int(n_full_cols), 1),
              threshold)
 
-    csr = sparse.coo_matrix(
+    csr_imp_only = sparse.coo_matrix(
         (data, (rows_full, cols_full)),
         shape=(n_full_rows, n_full_cols), dtype=np.float32,
     ).tocsr()
-    csr.sum_duplicates()
-    nnz_thr = int(csr.nnz)
+    csr_imp_only.sum_duplicates()
+    nnz_thr = int(csr_imp_only.nnz)
 
-    imp_only_path = out_dir / "matrix_csr_imputed_only.npz"
-    if imp_only_path.exists():
-        imp_only_path.unlink(missing_ok=True)
+    # ------------------------------------------------------------------
+    # Neighbour propagation: introduce signal at currently-zero rows
+    # (LDA / NMF can never reach them on their own).
+    #
+    # If propagate.target_bed is null, auto-detect a CTCF motif BED at
+    # <repo-root>/downstream/cache/CTCF_motif_hg38.bed (run
+    # downstream/fetch_ctcf_motif_bed.sh once to populate it). With the
+    # motif BED present, propagation is restricted to bins where biology
+    # says CTCF could plausibly bind, regardless of whether LDA saw signal
+    # there.
+    # ------------------------------------------------------------------
+    propagate_cfg = dict(imp.get("propagate", {}) or {})
+    if propagate_cfg.get("target_bed", None) is None:
+        wd_path = Path(cfg["paths"]["work_dir"]).resolve()
+        for anc in [wd_path, *wd_path.parents]:
+            cand = anc / "downstream" / "cache" / "CTCF_motif_hg38.bed"
+            if cand.is_file():
+                propagate_cfg["target_bed"] = str(cand)
+                log.info("propagate.target_bed auto-detected -> %s", cand)
+                break
+    csr, propagation_stats = _propagate_to_zero_bins(
+        csr_imp_only, full_regions, propagate_cfg,
+    )
 
     # ------------------------------------------------------------------
     # Persist
     # ------------------------------------------------------------------
-    csr_path     = out_dir / "matrix_csr.npz"
-    regions_out  = out_dir / "regions.tsv"
-    barcodes_out = out_dir / "barcodes.tsv"
-    meta_out     = out_dir / "meta.json"
+    csr_path        = out_dir / "matrix_csr.npz"
+    csr_imp_only_path = out_dir / "matrix_csr_imputed_only.npz"
+    regions_out     = out_dir / "regions.tsv"
+    barcodes_out    = out_dir / "barcodes.tsv"
+    meta_out        = out_dir / "meta.json"
 
-    log.info("Writing %s (shape=%s, nnz=%d)", csr_path, csr.shape, csr.nnz)
+    log.info("Writing %s (shape=%s, nnz=%d) -- imp only, pre-propagation",
+             csr_imp_only_path, csr_imp_only.shape, csr_imp_only.nnz)
+    sparse.save_npz(csr_imp_only_path, csr_imp_only)
+
+    log.info("Writing %s (shape=%s, nnz=%d) -- after propagation",
+             csr_path, csr.shape, csr.nnz)
     sparse.save_npz(csr_path, csr)
     regions_out.write_text("\n".join(full_regions) + "\n")
     barcodes_out.write_text("\n".join(full_barcodes) + "\n")
@@ -407,6 +693,7 @@ def main() -> int:
         "pipeline":          "cisTopic",
         "format":            "csr_full_mm" if align_to_mm else "csr_modeled",
         "matrix_path":       str(csr_path),
+        "matrix_imputed_only_path": str(csr_imp_only_path),
         "regions_path":      str(regions_out),
         "barcodes_path":     str(barcodes_out),
         "shape":             [int(n_full_rows), int(n_full_cols)],
@@ -429,6 +716,7 @@ def main() -> int:
         "drop_factors_npz":  bool(drop_factors_npz),
         "factors_path":      None if drop_factors_npz else str(factors_path),
         "source_obj":        str(obj_path),
+        "propagation":       propagation_stats,
     }
     meta_out.write_text(json.dumps(summary, indent=2) + "\n")
     log.info("Done: %s", summary)

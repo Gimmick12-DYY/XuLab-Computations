@@ -139,3 +139,34 @@ impute:
   # off matrix_csr.npz). Keep false unless you really don't want the soft
   # predictive distribution.
   drop_factors_npz: false
+
+  # ---------------------------------------------------------------------
+  # Neighbourhood propagation: fill in NEW (region, cell) entries at bins
+  # that the LDA never modelled (because pycisTopic.create_cistopic_object
+  # always strips all-zero rows -- LDA can't update phi for an unobserved
+  # bin anyway). For each cell c we look at every bin r' that's still zero
+  # in the imputed matrix; if at least min_neighbors imp-positive bins lie
+  # within +/- window_bp on the same chromosome in cell c, we set
+  #     imp[r', c] = weight * mean( imp[neighbour, c] )
+  # This is the only mechanism that introduces *new* nonzero bins; without
+  # it, "imputation" is just amplification of already-observed bins.
+  #
+  # window_bp     half-window for neighbour search (bp on each side).
+  # min_neighbors per-cell minimum count of imp-positive neighbours required
+  #               to propagate (raise -> more conservative).
+  # weight        multiplier on the propagated value. < 1 marks the
+  #               propagated entries as "softer evidence" than original
+  #               imputed calls (which had weight 1).
+  # target_bed    optional BED restricting propagation TARGETS to bins
+  #               overlapping the BED (e.g. SCREEN cCREs). null = propagate
+  #               to any bin within window of an imp-positive neighbour
+  #               (broader; risks heterochromatin filling).
+  # chunk_targets memory knob for the per-chromosome chunked solve.
+  # ---------------------------------------------------------------------
+  propagate:
+    enabled:       true
+    window_bp:     5000
+    min_neighbors: 2
+    weight:        0.5
+    target_bed:    null
+    chunk_targets: 5000

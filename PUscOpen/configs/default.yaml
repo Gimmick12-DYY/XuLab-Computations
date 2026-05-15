@@ -218,3 +218,39 @@ impute:
   # only on refined rows (fair to downstream compare_pos_neg / sensitivity).
   # When false: legacy compact matrix.npy + regions.tsv (refined rows only).
   align_to_mm: true
+
+  # ---------------------------------------------------------------------
+  # Neighbourhood propagation: introduce signal at NEW (region, cell)
+  # entries that scOpen could never reach because:
+  #   (a) 04_run_scopen.py drops zero-raw rows from the refined mask
+  #       before scOpen sees them (TF-IDF blows up otherwise), AND
+  #   (b) even if we kept them, NMF reconstructs W[r, :] ~ 0 for any
+  #       row that has no nonzero observations.
+  # The propagation step looks at every bin r' that the imputed CSR is
+  # still zero at, and -- on a per-cell basis -- pulls in a fraction of
+  # the mean imputed value of imp-positive neighbours within +/- window_bp
+  # on the same chromosome. Without this, the imputed matrix is just a
+  # smoothed version of the bins already present in raw.
+  #
+  # Defaults: target_bed defaults to <work>/mask/mask.bed (the geometric
+  # candidate mask from step 02), so propagation only fills in bins that
+  # were already considered "plausible" by the cCRE / motif rule. Pass
+  # target_bed: null on the CLI to disable that restriction.
+  # ---------------------------------------------------------------------
+  propagate:
+    enabled:       true
+    window_bp:     5000
+    min_neighbors: 2
+    weight:        0.5
+    target_bed:    null   # null -> default to <work>/mask/mask.bed
+    chunk_targets: 5000
+
+    # PUscOpen specific: the modeled rows in matrix_csr.npz are densely
+    # populated (every modeled (region, cell) carries a damp * W·H value), so
+    # we need a threshold to decide which entries count as imp-POSITIVE sources
+    # for propagation. Same vocabulary as cisTopic.impute.threshold_mode:
+    #   sparsity_match[:K]  -> pick t s.t. #(imp > t) on modeled rows = K * raw_nnz
+    #   quantile:Q          -> top (1 - Q) fraction of imputed values
+    #   fixed:T             -> numeric
+    source_threshold_mode: sparsity_match:1
+    source_threshold_sample_size: 4000000

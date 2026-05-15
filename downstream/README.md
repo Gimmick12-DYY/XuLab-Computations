@@ -502,12 +502,129 @@ sbatch --export=ALL,THRESHOLD_MODE=sparsity_match:2 downstream/slurm/complexity_
 sbatch --export=ALL,THRESHOLD_MODE=quantile:0.99 downstream/slurm/complexity_gain.sbatch
 ```
 
+## Motif-aware propagation (CTCF motif BED)
+
+The bin-axis propagation step inside `cisTopic/scripts/05_impute.py` and
+`PUscOpen/scripts/06_impute.py` accepts an optional `target_bed` knob that
+restricts new-bin discovery to bins overlapping the supplied BED. Pointing
+this at a CTCF motif BED makes propagation **motif-aware**: only bins where
+biology says CTCF could plausibly bind get filled in.
+
+`fetch_ctcf_motif_bed.sh` downloads JASPAR's MA0139.1 (CTCF) predicted-binding-
+sites BED for hg38 and caches it at `downstream/cache/CTCF_motif_hg38.bed`.
+
+```bash
+bash downstream/fetch_ctcf_motif_bed.sh
+# -> downstream/cache/CTCF_motif_hg38.bed
+```
+
+Both `cisTopic/scripts/05_impute.py` and `PUscOpen/scripts/06_impute.py`
+**auto-detect this file when `impute.propagate.target_bed` is null** (which
+is the default). The next 05 / 06 run will use it transparently. To disable,
+explicitly set `impute.propagate.target_bed: false` (or any string that
+isn't a valid path) in the config.
+
+If the JASPAR API and the UCSC bigBed mirror both fail, the script prints
+manual fallback instructions (FIMO scan of hg38.fa, HOMER's
+`scanMotifGenomeWide.pl`, or browsing JASPAR's per-TF download page). Save
+the resulting 3-column BED at the same cache path and re-run the impute step.
+
+Settings to tune in conjunction:
+
+* `impute.propagate.weight: 0.7` — bump up if you trust the motif evidence
+  enough to give propagated entries near-parity with original imputed calls.
+* `impute.propagate.window_bp: 5000` — the window inside which neighbours
+  are searched. Motif-aware mode pairs well with a slightly tighter window
+  (e.g. 3000) so signal stays close to its source.
+* `impute.propagate.min_neighbors: 1` — most permissive; with the motif
+  restriction it's safer to be permissive on neighbours (the motif BED is
+  already a strong filter).
+
+## Cell-graph kNN propagation (orthogonal axis)
+
+`cell_graph_kneighbour.py` is the **cell-axis** complement to the bin-axis
+propagation that lives inside the pipelines. For each cell `c` we compute its
+`k` nearest neighbours in some embedding space (typically the topic / NMF
+latent of one of the imputers), then propagate raw signal at every
+`(region, cell)` coordinate from those neighbours:
+
+```
+count[r, c] = #{c' ∈ NN_k(c) : raw[r, c'] > 0}
+keep entries with count >= min_neighbours
+propagated[r, c] = weight · count / k
+```
+
+with `--only-zero-targets` (default), only bins where `c` is currently zero
+in raw receive propagated signal. With `--keep-raw` (default), the output is
+`raw + propagated`, i.e. a true augmented matrix.
+
+This is the MAGIC trick applied at the **raw level**, so unlike LDA / NMF
+factor reconstructions it can introduce **new (region, cell) entries** —
+bins that cell `c` never observed but enough of its neighbours did.
+
+```bash
+python downstream/cell_graph_kneighbour.py \
+  --mm-dir     /work/.../mm \
+  --embeddings /work/.../scOpen/work/ctcf/impute     # auto-loads H from factors.npz \
+  --out-dir    /work/.../downstream/cell_kgraph \
+  --k 20 --min-neighbours 3 --weight 1.0 --metric cosine
+```
+
+`--embeddings` accepts:
+
+* a directory containing `factors.npz` (cisTopic / scOpen) — extracts `H.T`
+  as the cells × topics embedding, reads `barcodes.tsv` next to it for
+  alignment.
+* a `.npz` file with key `H` (K, C) or `embeddings`/`cell_features`/`X` (C, F)
+* a `.npy` file shaped (n_cells, n_features)
+
+Pass `--embeddings-barcodes` if the embeddings come from a different barcode
+order than `mm/barcodes.tsv.gz`; otherwise the script aligns by name when the
+barcodes file is found, or assumes 1:1 row order otherwise.
+
+Outputs (under `--out-dir`):
+
+| file | contents |
+|---|---|
+| `matrix_csr.npz` | full mm-aligned CSR (raw + propagated; drop-in for any downstream consumer) |
+| `regions.tsv` | full mm region order (drop-in for `mm/regions.tsv.gz`) |
+| `barcodes.tsv` | full mm barcode order |
+| `cell_kgraph_meta.json` | parameters + `raw_nnz` / `propagated_nnz` / `output_nnz` / `gain_vs_raw` |
+
+SLURM:
+
+```bash
+sbatch downstream/slurm/cell_graph_kneighbour.sbatch
+# default: scOpen H matrix as embedding, k=20, min_neighbours=3
+# To use cisTopic's H instead:
+sbatch --export=ALL,EMBEDDINGS=/work/.../cistopic_ctcf/impute \
+  downstream/slurm/cell_graph_kneighbour.sbatch
+```
+
+### Reading the output
+
+* `gain_vs_raw` in the meta JSON is the count of new `(region, cell)`
+  entries the propagation introduced. With the default `k=20`,
+  `min_neighbours=3`, and a typical scATAC dataset this is usually a 3–10×
+  multiplier on raw — much more aggressive than what the pipeline-internal
+  bin-axis propagation produces.
+* The `matrix_csr.npz` is in the same schema as cisTopic's / PUscOpen's
+  output, so the existing comparators (`compare_pos_neg.py`,
+  `complexity_gain.py`, `bin_sensitivity_specificity.py`,
+  `raw_vs_imputed_diff.py`) accept it directly via
+  `--input cell_kgraph=<out-dir>`.
+* The two propagation axes are complementary, not redundant: the bin-axis
+  step (inside the pipelines) fills bins from genomically nearby imputed
+  signal; this cell-axis step fills bins from biologically similar cells'
+  raw observations. Run both and union the results for maximum recovery.
+
 ## Conda env
 
-All seven scripts (`prepare_pos_neg_bins.R`, `compare_pos_neg.py`,
+All nine scripts (`prepare_pos_neg_bins.R`, `compare_pos_neg.py`,
 `sensitivity_specificity.py`, `bin_sensitivity_specificity.py`,
-`umi_distribution.py`, `raw_vs_imputed_diff.py`, `complexity_gain.py`) work
-in any of the pipeline conda envs:
+`umi_distribution.py`, `raw_vs_imputed_diff.py`, `complexity_gain.py`,
+`cell_graph_kneighbour.py`, plus the `fetch_ctcf_motif_bed.sh` shell
+helper) work in any of the pipeline conda envs:
 
 * `cistopic` — already includes R + Bioconductor (`GenomicRanges`,
   `rtracklayer`) needed by `prepare_pos_neg_bins.R`, plus h5py / scipy for
