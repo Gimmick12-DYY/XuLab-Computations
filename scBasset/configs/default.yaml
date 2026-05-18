@@ -22,9 +22,9 @@ paths:
   input_rds:   /work/users/d/y/dyy12/XuLab/data/CTCF_bin1000_mtx.rds
   work_dir:    /work/users/d/y/dyy12/XuLab/scBasset/work/ctcf
 
-  # hg38 FASTA. Must have a samtools .fai sidecar next to it. If you don't have
-  # one, run: samtools faidx /path/to/hg38.fa
-  genome_fa:   /work/users/d/y/dyy12/XuLab/data/hg38.fa
+  # hg38 FASTA + .fai (required for step 02). Fetch once:
+  #   bash scripts/fetch_hg38_fasta.sh   # -> downstream/cache/hg38.fa
+  genome_fa:   /work/users/d/y/dyy12/XuLab/downstream/cache/hg38.fa
 
 # -----------------------------------------------------------------------------
 # Step 02: sequence extraction

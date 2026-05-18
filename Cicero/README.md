@@ -46,21 +46,34 @@ meta.json}` — the standard cross-pipeline schema.
 ## Setup
 
 ```bash
-# 1) conda env
-conda env create -f environment.yml
+# One-shot (recommended): conda binaries + GitHub cicero only
+module unload r    # important on Longleaf — see below
+bash scripts/setup_conda.sh
+
+# Or step-by-step:
+conda env create -f environment.yml   # or: conda env update -f environment.yml --prune
 conda activate cicero
-
-# 2) Install monocle3 + cicero from GitHub (not on Bioconductor in their
-#    Monocle3-compatible flavour). Run once per env:
+module unload r
 Rscript scripts/setup_r.R
-
-# 3) Verify (fails fast with install instructions if step 2 was skipped)
 Rscript scripts/check_env.R
 ```
 
-**Common failure:** submitting Slurm jobs before step 2 yields
-`there is no package called 'monocle3'`. The full pipeline and steps 02/03
-call `check_env.R` first so this fails in seconds instead of after export.
+**Why not `install_github(monocle3)` alone?** Monocle3 pulls dozens of source
+packages (`sf`, `VariantAnnotation`, `BPCells`, …). On Longleaf those often fail
+to compile (`cannot find -llzma`, GDAL errors). `environment.yml` installs them
+as **conda binaries**; `setup_r.R` only builds **cicero** from GitHub.
+
+**Common failures:**
+
+| Symptom | Fix |
+|--------|-----|
+| `lib = .../rhel9/apps/r/... is not writable` | `module unload r`, then `conda activate cicero` |
+| `cannot find -llzma` / `VariantAnnotation` failed | `conda env update -f environment.yml --prune` then re-run setup |
+| `sub-architecture 'R' is not installed` (GenomeInfoDbData) | R/Bioc version skew — env pins `r-base=4.4.*`; run `RECREATE=1 bash scripts/setup_conda.sh` |
+| `no package called 'monocle3'` | Conda step did not finish; run `bash scripts/setup_conda.sh` |
+
+The full pipeline and steps 02/03 call `check_env.R` first so missing packages
+fail in seconds instead of after export.
 
 ## Run
 

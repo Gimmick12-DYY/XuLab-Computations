@@ -1,7 +1,8 @@
 name: cicero
+# bioconda first so R 4.4 + r44 Bioconductor builds stay aligned.
 channels:
-  - conda-forge
   - bioconda
+  - conda-forge
   - defaults
 dependencies:
   - python=3.10
@@ -13,22 +14,33 @@ dependencies:
   - pyyaml
   - matplotlib
   - tqdm
-  # R + Bioconductor base
-  - r-base>=4.3
+
+  # Native libs for sf / htslib-linked R packages
+  - xz
+  - zlib
+  - bzip2
+  - curl
+  - geos
+  - gdal
+  - proj
+
+  # Pin R 4.4 — bioconda *r44* builds fail post-link on R 4.5 with:
+  #   "sub-architecture 'R' is not installed" (GenomeInfoDbData)
+  - r-base=4.4.*
   - r-matrix
   - r-optparse
   - r-yaml
   - r-remotes
   - r-biocmanager
-  - bioconductor-singlecellexperiment
-  - bioconductor-summarizedexperiment
-  - bioconductor-delayedarray
-  - bioconductor-delayedmatrixstats
-  - bioconductor-rtracklayer
-  - bioconductor-genomicranges
-  - r-seurat            # only used if .rds is a Seurat object (mirrors cisTopic)
-  # Monocle3 + Cicero (cole-trapnell-lab branches) are NOT on Bioconductor in
-  # the versions that match Monocle3. After `conda env create -f environment.yml`
-  # run once:
-  #   conda activate cicero && Rscript scripts/setup_r.R
-  # to pull both from GitHub.
+
+  # Core stack (pulls most monocle3 deps as matched binaries)
+  - r-monocle3
+  - bioconductor-gviz
+  - r-seurat
+
+  # Required by cicero (not pulled by monocle3/gviz); install here so
+  # remotes::install_github(..., dependencies=FALSE) succeeds.
+  - r-glasso
+  - r-vgam
+
+  # cicero@monocle3 from GitHub: scripts/setup_r.R (after this env exists)

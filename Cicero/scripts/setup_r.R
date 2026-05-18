@@ -1,22 +1,13 @@
 #!/usr/bin/env Rscript
 # -----------------------------------------------------------------------------
-# setup_r.R
+# setup_r.R — install cicero@monocle3 after conda env (environment.yml).
 #
-# One-shot bootstrap: install monocle3 + cicero (cole-trapnell-lab GitHub
-# branches) on top of the conda env defined in ../environment.yml. Both
-# packages are NOT on Bioconductor in their Monocle3-compatible flavour, so
-# we have to pull them from GitHub once per environment.
-#
-# Run after creating the conda env:
-#   conda env create -f environment.yml
+#   module unload r
 #   conda activate cicero
-#   module unload r    # if you previously `module load r` on Longleaf
+#   conda env update -f environment.yml --prune
 #   Rscript scripts/setup_r.R
 # -----------------------------------------------------------------------------
 
-# Longleaf users often `module load r`, which prepends a read-only system
-# library to .libPaths() *before* the conda env. BiocManager then tries to
-# install into /nas/longleaf/rhel9/apps/r/... and fails even in (cicero).
 use_conda_r_lib <- function() {
   prefix <- Sys.getenv("CONDA_PREFIX", unset = "")
   if (!nzchar(prefix)) {
@@ -39,7 +30,7 @@ assert_lib_writable <- function() {
   if (!dir.exists(lib) || file.access(lib, 2L) != 0L) {
     stop(
       "R library is not writable: ", lib, "\n",
-      "This usually means the cluster R module is shadowing conda. Fix:\n",
+      "Usually `module load r` is shadowing conda. Fix:\n",
       "  module unload r\n",
       "  conda deactivate && conda activate cicero\n",
       "  Rscript scripts/setup_r.R"
@@ -47,27 +38,48 @@ assert_lib_writable <- function() {
   }
 }
 
+ensure_pkg <- function(pkg) {
+  if (requireNamespace(pkg, quietly = TRUE)) {
+    return(invisible(TRUE))
+  }
+  message("[setup_r] Installing missing dependency: ", pkg)
+  install.packages(pkg, repos = "https://cloud.r-project.org", quiet = TRUE)
+  if (!requireNamespace(pkg, quietly = TRUE)) {
+    stop(
+      "Still missing package: ", pkg, "\n",
+      "Run: conda activate cicero && conda install -c conda-forge r-",
+      tolower(pkg), "\n",
+      "Then: Rscript scripts/setup_r.R"
+    )
+  }
+  invisible(TRUE)
+}
+
 use_conda_r_lib()
 assert_lib_writable()
 message("[setup_r] Using R library: ", .libPaths()[1L])
 
-if (!requireNamespace("remotes", quietly = TRUE))
-  install.packages("remotes", repos = "https://cloud.r-project.org")
-if (!requireNamespace("BiocManager", quietly = TRUE))
-  install.packages("BiocManager", repos = "https://cloud.r-project.org")
+# Everything cicero needs besides monocle3 (installed via conda + GitHub).
+for (pkg in c(
+  "monocle3", "Gviz", "glasso", "VGAM",
+  "VariantAnnotation", "biovizBase", "sf", "BPCells", "batchelor", "terra"
+)) {
+  ensure_pkg(pkg)
+}
+message("[setup_r] All cicero dependencies present.")
 
-# Bioconductor deps that may be missing depending on the resolver.
-BiocManager::install(
-  c("BiocGenerics", "S4Vectors", "IRanges", "GenomicRanges",
-    "DelayedArray", "DelayedMatrixStats", "limma",
-    "Biobase", "lme4", "batchelor", "HDF5Array",
-    "terra", "ggrastr"),
-  update = FALSE, ask = FALSE
+if (!requireNamespace("remotes", quietly = TRUE)) {
+  install.packages("remotes", repos = "https://cloud.r-project.org", quiet = TRUE)
+}
+
+message("[setup_r] Installing cicero from GitHub (dependencies=FALSE) ...")
+remotes::install_github(
+  "cole-trapnell-lab/cicero-release",
+  ref = "monocle3",
+  upgrade = "never",
+  dependencies = FALSE,
+  force = TRUE
 )
-
-remotes::install_github("cole-trapnell-lab/monocle3", upgrade = "never")
-remotes::install_github("cole-trapnell-lab/cicero-release",
-                        ref = "monocle3", upgrade = "never")
 
 suppressPackageStartupMessages({
   library(monocle3)

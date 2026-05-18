@@ -3,10 +3,11 @@
 #SBATCH --output=%x-%j.out
 #SBATCH --error=%x-%j.err
 #SBATCH --cpus-per-task=8
-#SBATCH --mem=128G
+#SBATCH --mem=32G
 #SBATCH --time=48:00:00
-#SBATCH --gres=gpu:1
 #SBATCH --partition=gpu
+#SBATCH --qos=gpu_access
+#SBATCH --gres=gpu:1
 
 # End-to-end scBasset:
 #   01_export -> 02_prepare_seqs -> 03_train (GPU) -> 04_predict (GPU) -> 05_impute
@@ -38,6 +39,7 @@ conda activate "${CONDA_ENV}"
 if [[ -f /etc/profile.d/modules.sh ]]; then
   # shellcheck source=/dev/null
   source /etc/profile.d/modules.sh
+  module unload r 2>/dev/null || true   # don't shadow conda R in step 01
   module load cuda || true
   module load cudnn || true
 fi
