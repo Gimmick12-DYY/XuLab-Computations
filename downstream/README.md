@@ -510,8 +510,9 @@ restricts new-bin discovery to bins overlapping the supplied BED. Pointing
 this at a CTCF motif BED makes propagation **motif-aware**: only bins where
 biology says CTCF could plausibly bind get filled in.
 
-`fetch_ctcf_motif_bed.sh` downloads JASPAR's MA0139.1 (CTCF) predicted-binding-
-sites BED for hg38 and caches it at `downstream/cache/CTCF_motif_hg38.bed`.
+`fetch_ctcf_motif_bed.sh` downloads JASPAR's MA0139.2 (CTCF) predicted-binding-
+sites for hg38 from the [JASPAR TFBS mirror](https://mencius.uio.no/JASPAR/JASPAR_TFBSs/)
+and caches a 3-column BED at `downstream/cache/CTCF_motif_hg38.bed`.
 
 ```bash
 bash downstream/fetch_ctcf_motif_bed.sh
@@ -524,10 +525,11 @@ is the default). The next 05 / 06 run will use it transparently. To disable,
 explicitly set `impute.propagate.target_bed: false` (or any string that
 isn't a valid path) in the config.
 
-If the JASPAR API and the UCSC bigBed mirror both fail, the script prints
-manual fallback instructions (FIMO scan of hg38.fa, HOMER's
-`scanMotifGenomeWide.pl`, or browsing JASPAR's per-TF download page). Save
-the resulting 3-column BED at the same cache path and re-run the impute step.
+If the mirror, JASPAR API, and UCSC bigBed fallback all fail, the script prints
+manual alternatives (direct `SOURCE_URL=...tsv.gz`, FIMO on hg38.fa, HOMER, or
+the JASPAR web UI). On Longleaf, `module load ucsctools/320` is only needed for
+the bigBed fallback path. Save the 3-column BED at the same cache path and
+re-run the impute step.
 
 Settings to tune in conjunction:
 
