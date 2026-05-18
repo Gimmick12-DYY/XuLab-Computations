@@ -30,6 +30,16 @@ suppressPackageStartupMessages({
 
 `%||%` <- function(x, y) if (is.null(x)) y else x
 
+read_mm_gz <- function(path) {
+  # Matrix::readMM does not reliably accept .gz paths on all R builds.
+  if (grepl("\\.gz$", path, ignore.case = TRUE)) {
+    con <- gzfile(path, "rt")
+    on.exit(close(con), add = TRUE)
+    return(as(Matrix::readMM(con), "CsparseMatrix"))
+  }
+  as(Matrix::readMM(path), "CsparseMatrix")
+}
+
 option_list <- list(
   make_option("--config",   type = "character", help = "Path to YAML config"),
   make_option("--work-dir", type = "character", default = NULL,
@@ -55,7 +65,7 @@ for (p in c(mtx_path, reg_path, bar_path)) {
 }
 
 message(sprintf("[02] Reading %s", mtx_path))
-mat <- as(Matrix::readMM(mtx_path), "CsparseMatrix")
+mat <- read_mm_gz(mtx_path)
 
 regions  <- readLines(gzfile(reg_path))
 barcodes <- readLines(gzfile(bar_path))

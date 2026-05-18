@@ -44,6 +44,9 @@ echo "INSPECT=${RUN_INSPECT}"
 source "$(conda info --base)/etc/profile.d/conda.sh"
 conda activate "${CONDA_ENV}"
 
+echo "[$(date)] Checking R deps (monocle3 + cicero)"
+Rscript scripts/check_env.R
+
 read_yaml() {
   python - <<PY
 import yaml

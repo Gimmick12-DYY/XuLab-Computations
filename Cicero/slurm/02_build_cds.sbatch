@@ -30,4 +30,5 @@ CONDA_ENV="${CONDA_ENV:-cicero}"
 source "$(conda info --base)/etc/profile.d/conda.sh"
 conda activate "${CONDA_ENV}"
 
+Rscript scripts/check_env.R
 Rscript scripts/02_build_cds.R --config "${CFG}"

@@ -27,6 +27,7 @@ from __future__ import annotations
 import gzip
 import json
 import logging
+import re
 import sys
 from pathlib import Path
 
@@ -47,9 +48,15 @@ def read_lines_gz(p: Path) -> list[str]:
         return [ln.rstrip("\n") for ln in fh]
 
 
+_REGION_US_RE = re.compile(r"^([^:_]+)[_:]?(\d+)[-_](\d+)$")
+
+
 def to_underscore(name: str) -> str:
-    """chr1:100-200 -> chr1_100_200 (Cicero's parser-friendly form)."""
-    return name.replace(":", "_").replace("-", "_")
+    """chr1:100-200 -> chr1_100_200 (must match 02_build_cds.R to_underscore)."""
+    m = _REGION_US_RE.match(name)
+    if m:
+        return f"{m.group(1)}_{m.group(2)}_{m.group(3)}"
+    return name
 
 
 def main() -> int:

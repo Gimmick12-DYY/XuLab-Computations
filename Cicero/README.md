@@ -53,7 +53,14 @@ conda activate cicero
 # 2) Install monocle3 + cicero from GitHub (not on Bioconductor in their
 #    Monocle3-compatible flavour). Run once per env:
 Rscript scripts/setup_r.R
+
+# 3) Verify (fails fast with install instructions if step 2 was skipped)
+Rscript scripts/check_env.R
 ```
+
+**Common failure:** submitting Slurm jobs before step 2 yields
+`there is no package called 'monocle3'`. The full pipeline and steps 02/03
+call `check_env.R` first so this fails in seconds instead of after export.
 
 ## Run
 
