@@ -330,6 +330,33 @@ def main() -> int:
     if df.empty:
         raise SystemExit('No intervals left after chrom.sizes filter.')
 
+    # NaN scores crash pyBigWig.addEntries; drop them before any normalisation.
+    nan_mask = df['score'].isna()
+    if nan_mask.any():
+        log.warning('Dropping %d intervals with NaN score', int(nan_mask.sum()))
+        df = df.loc[~nan_mask].copy()
+        if df.empty:
+            raise SystemExit('No intervals left after NaN filter.')
+
+    # Clip / drop intervals that run off the end of the chromosome. With 1 kb
+    # tiling the last bin on each chromosome can extend a few hundred bp past
+    # chrom_size, and pyBigWig.addEntries refuses entries with end > chrom_size.
+    chrom_size_col = df['chrom'].map(size_map).astype(np.int64)
+    over_start = df['start'] >= chrom_size_col
+    n_over_start = int(over_start.sum())
+    if n_over_start:
+        log.warning('Dropping %d intervals whose start is past the chromosome end',
+                    n_over_start)
+        df = df.loc[~over_start].copy()
+        chrom_size_col = df['chrom'].map(size_map).astype(np.int64)
+    needs_clip = df['end'] > chrom_size_col
+    n_clip = int(needs_clip.sum())
+    if n_clip:
+        log.warning('Clipping %d intervals whose end exceeds chrom_size', n_clip)
+        df.loc[needs_clip, 'end'] = chrom_size_col[needs_clip]
+    if df.empty:
+        raise SystemExit('No intervals left after chrom-end filter.')
+
     if args.center != 'none':
         s = df['score'].to_numpy(dtype=np.float64, copy=False)
         ref = float(np.median(s)) if args.center == 'median' else float(np.percentile(s, 25.0))
@@ -372,6 +399,19 @@ def main() -> int:
     chrom_order = [c for c, _ in sizes]
     df['chrom'] = pd.Categorical(df['chrom'], categories=chrom_order, ordered=True)
     df.sort_values(['chrom', 'start', 'end'], inplace=True)
+
+    # Drop zero-valued entries after all stats have been computed. BigWig
+    # readers (IGV, UCSC) treat regions without entries as zero, so writing
+    # explicit zeros only bloats the file -- for a 3M-bin sparse imputed
+    # matrix this is the difference between a 30 MB and a 300+ MB .bw.
+    nonzero = df['score'].to_numpy(dtype=np.float64, copy=False) != 0.0
+    n_zero = int((~nonzero).sum())
+    if n_zero:
+        log.info('Skipping %d zero-valued intervals (BW readers treat absence as 0)',
+                 n_zero)
+        df = df.loc[nonzero].copy()
+    if df.empty:
+        raise SystemExit('No nonzero intervals to write.')
 
     args.output.parent.mkdir(parents=True, exist_ok=True)
     if args.output.exists():

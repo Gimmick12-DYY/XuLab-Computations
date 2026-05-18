@@ -69,26 +69,18 @@ def _parse_region(name: str) -> tuple[str, int, int]:
     return m.group(1), int(m.group(2)), int(m.group(3))
 
 
-def _chrom_sort_key(chrom: str) -> tuple[int, str]:
-    """Sort chromosomes so that chr1..chr22 come first numerically, then chrX,
-    chrY, chrM, then everything else alphabetically. Same convention as UCSC."""
-    base = chrom[3:] if chrom.startswith("chr") else chrom
-    if base.isdigit():
-        return (0, int(base))   # type: ignore[return-value]
-    order = {"X": 100, "Y": 101, "M": 102, "MT": 102}
-    if base.upper() in order:
-        return (1, order[base.upper()])   # type: ignore[return-value]
-    return (2, base)              # type: ignore[return-value]
-
-
 def _coord_sort_indices(parsed: list[tuple[str, int, int]]) -> np.ndarray:
-    """Return the permutation that sorts regions by (chrom_order, start, end)."""
-    keys = [
-        (_chrom_sort_key(c), s, e) for (c, s, e) in parsed
-    ]
-    # numpy can't sort tuples-of-tuples; do it via sorted(range(n), key=...).
-    n = len(keys)
-    order = sorted(range(n), key=lambda i: keys[i])
+    """Return the permutation that sorts regions by (chrom_lex, start, end).
+
+    Lexicographic chromosome order is what `bedGraphToBigWig` requires --
+    UCSC `hg38.chrom.sizes` is in lex order (chr1, chr10, chr11, ..., chr2,
+    chr20, ...). Sorting numerically (chr1, chr2, ..., chr22, chrX) writes a
+    bedGraph that bedGraphToBigWig rejects with:
+        Error: ... chromosome chr10 found before chrom chr2 in chrom.sizes
+    so we match `sort -k1,1 -k2,2n` here instead.
+    """
+    keys = [(c, s, e) for (c, s, e) in parsed]
+    order = sorted(range(len(keys)), key=lambda i: keys[i])
     return np.asarray(order, dtype=np.int64)
 
 
