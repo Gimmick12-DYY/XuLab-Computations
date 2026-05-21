@@ -88,6 +88,29 @@ python downstream/compare_pos_neg.py \
   ...
 ```
 
+Or batch all pipelines:
+
+```bash
+cd /work/users/d/y/dyy12/XuLab
+sbatch downstream/slurm/compare_pos_neg_all4.sbatch
+sbatch downstream/slurm/sensitivity_specificity.sbatch
+```
+
+Label `scbasset_puscopen` is registered in `downstream/slurm/_pipeline_paths.sh`.
+
+## IGV / BigWig
+
+```bash
+cd /work/users/d/y/dyy12/XuLab
+sbatch downstream/slurm/igv_ctcf_scbasset_tracks.sbatch   # all three scBasset tracks
+
+# this cascade only (very dense CSR — use CHUNK_ROWS=5000, mem≥256G):
+INPUT_DIR=scBasset_PUscOpen/work/ctcf/impute \
+OUTPUT_BW=downstream/tracks/igv_ctcf/ctcf_scbasset_puscopen_mean.bw \
+AGGREGATE=mean NORMALIZE=p99 CHUNK_ROWS=5000 \
+sbatch downstream/slurm/imputed_to_bigwig.sbatch
+```
+
 ## Ingest preserves count structure (pseudocount mode)
 
 PUscOpen's PU classifier uses count-derived features (`log10_total_count`,

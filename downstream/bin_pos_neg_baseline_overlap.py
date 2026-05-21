@@ -21,6 +21,8 @@
 #     --input PUscOpen=/work/.../PUscOpen/.../impute \
 #     --input cicero=/work/.../Cicero/work/ctcf/impute \
 #     --input scbasset=/work/.../scBasset/work/ctcf/impute \
+#     --input scbasset_puscopen=/work/.../scBasset_PUscOpen/work/ctcf/impute \
+#     --input scbasset_cistopic=/work/.../scBasset_cisTopic/work/ctcf/impute \
 #     --out-json /work/.../downstream/bins/baseline_pos_neg_overlap.json
 # -----------------------------------------------------------------------------
 from __future__ import annotations

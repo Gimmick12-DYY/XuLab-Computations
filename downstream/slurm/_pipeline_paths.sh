@@ -10,18 +10,31 @@ pipeline_paths_native() {
   PUSCOPEN_DIR="${PUSCOPEN_DIR:-${ROOT_DIR}/PUscOpen/work/ctcf/impute}"
   CICERO_DIR="${CICERO_DIR:-${ROOT_DIR}/Cicero/work/ctcf/impute}"
   SCBASSET_DIR="${SCBASSET_DIR:-${ROOT_DIR}/scBasset/work/ctcf/impute}"
+  SCBASSET_PUSCOPEN_DIR="${SCBASSET_PUSCOPEN_DIR:-${ROOT_DIR}/scBasset_PUscOpen/work/ctcf/impute}"
+  SCBASSET_CISTOPIC_DIR="${SCBASSET_CISTOPIC_DIR:-${ROOT_DIR}/scBasset_cisTopic/work/ctcf/impute}"
 }
 
-# Set INPUTS if unset. MODE: all (raw + imputed) | imputed (seven pipelines)
+# Set INPUTS if unset. MODE: all (raw + imputed) | imputed (nine pipelines)
 default_inputs() {
   local mode="${1:-imputed}"
   pipeline_paths_native
+  local imputed_common=(
+    "cisTopic=${CISTOPIC_DIR}"
+    "FITS=${FITS_DIR}"
+    "scOpen=${SCOPEN_DIR}"
+    "MAGIC=${MAGIC_DIR}"
+    "PUscOpen=${PUSCOPEN_DIR}"
+    "cicero=${CICERO_DIR}"
+    "scbasset=${SCBASSET_DIR}"
+    "scbasset_puscopen=${SCBASSET_PUSCOPEN_DIR}"
+    "scbasset_cistopic=${SCBASSET_CISTOPIC_DIR}"
+  )
   case "${mode}" in
     all)
-      INPUTS="raw=${MM_DIR} cisTopic=${CISTOPIC_DIR} FITS=${FITS_DIR} scOpen=${SCOPEN_DIR} MAGIC=${MAGIC_DIR} PUscOpen=${PUSCOPEN_DIR} cicero=${CICERO_DIR} scbasset=${SCBASSET_DIR}"
+      INPUTS="raw=${MM_DIR} ${imputed_common[*]}"
       ;;
     imputed)
-      INPUTS="cisTopic=${CISTOPIC_DIR} FITS=${FITS_DIR} scOpen=${SCOPEN_DIR} MAGIC=${MAGIC_DIR} PUscOpen=${PUSCOPEN_DIR} cicero=${CICERO_DIR} scbasset=${SCBASSET_DIR}"
+      INPUTS="${imputed_common[*]}"
       ;;
     *)
       echo "default_inputs: unknown mode ${mode} (use: all | imputed)" >&2

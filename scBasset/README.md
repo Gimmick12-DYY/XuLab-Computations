@@ -79,6 +79,10 @@ Or run `downstream/imputed_matrix_to_bigwig.py` directly with `--input` / `--out
 
 Load in IGV: genome **hg38**, then **File → Load from File** → the `.bw` path.
 
+Cascade outputs (`scBasset_PUscOpen`, `scBasset_cisTopic`) use the same converter;
+see `downstream/slurm/igv_ctcf_scbasset_tracks.sbatch` for all three tracks, or
+labels `scbasset_puscopen` / `scbasset_cistopic` in `compare_pos_neg_all4.sbatch`.
+
 For a smoke test:
 - `seqs.bin_bed: <path>` restricts to a small candidate BED (e.g. a single
   chromosome), shrinking 02/03/04 by 10-100x.

@@ -1,13 +1,14 @@
 #!/bin/bash
-#SBATCH --job-name=ds_posneg_all8
+#SBATCH --job-name=ds_posneg_all10
 #SBATCH --output=%x-%j.out
 #SBATCH --error=%x-%j.err
 #SBATCH --cpus-per-task=4
 #SBATCH --mem=96G
 #SBATCH --time=06:00:00
 
-# Build bins (if missing) and compare 8 matrices:
+# Build bins (if missing) and compare 10 matrices:
 #   raw + cisTopic + FITS + scOpen + MAGIC + PUscOpen + cicero + scbasset
+#   + scbasset_puscopen + scbasset_cistopic
 #
 # Imputed inputs default to each pipeline's native <work>/ctcf/impute/.
 # Override *_DIR or INPUTS to point elsewhere.
@@ -15,7 +16,8 @@
 # Optional overrides:
 #   ROOT_DIR, CONDA_ENV, MM_DIR, BINS_TSV, BINS_OUT_DIR,
 #   CACHE_DIR, POSNEG_OUT_DIR, CISTOPIC_DIR, FITS_DIR, SCOPEN_DIR, MAGIC_DIR,
-#   PUSCOPEN_DIR, CICERO_DIR, SCBASSET_DIR, OUT_NAME, N_TOP, SEED, INPUTS
+#   PUSCOPEN_DIR, CICERO_DIR, SCBASSET_DIR, SCBASSET_PUSCOPEN_DIR, SCBASSET_CISTOPIC_DIR,
+#   OUT_NAME, N_TOP, SEED, INPUTS
 
 set -euo pipefail
 
@@ -36,8 +38,8 @@ BINS_OUT_DIR="${BINS_OUT_DIR:-${ROOT_DIR}/downstream/bins}"
 BINS_TSV="${BINS_TSV:-${BINS_OUT_DIR}/pos_neg_bins.tsv}"
 CACHE_DIR="${CACHE_DIR:-${ROOT_DIR}/downstream/cache}"
 
-POSNEG_OUT_DIR="${POSNEG_OUT_DIR:-${ROOT_DIR}/downstream/pos_neg_all8}"
-OUT_NAME="${OUT_NAME:-compare_pos_neg_all8}"
+POSNEG_OUT_DIR="${POSNEG_OUT_DIR:-${ROOT_DIR}/downstream/pos_neg_all10}"
+OUT_NAME="${OUT_NAME:-compare_pos_neg_all10}"
 
 N_TOP="${N_TOP:-10000}"
 SEED="${SEED:-2026}"
@@ -62,7 +64,7 @@ if [[ ! -f "${BINS_TSV}" ]]; then
     --seed "${SEED}"
 fi
 
-echo "[$(date)] Running 8-way pos/neg comparison"
+echo "[$(date)] Running 10-way pos/neg comparison"
 echo "INPUTS=${INPUTS}"
 CMD=(
   python "${DOWN_DIR}/compare_pos_neg.py"

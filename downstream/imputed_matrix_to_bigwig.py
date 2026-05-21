@@ -59,8 +59,13 @@
 # SLURM:
 #   sbatch downstream/slurm/imputed_to_bigwig.sbatch
 #     single input → one .bw (sets conda env, pyBigWig, chrom.sizes).
-#     scBasset: INPUT_DIR=.../scBasset/work/ctcf/impute OUTPUT_BW=.../scbasset_ctcf_mean.bw
-#              AGGREGATE=mean NORMALIZE=p99 sbatch downstream/slurm/imputed_to_bigwig.sbatch
+#     scBasset family (CSR impute dirs):
+#       sbatch downstream/slurm/igv_ctcf_scbasset_tracks.sbatch
+#     or single track:
+#       INPUT_DIR=.../scBasset/work/ctcf/impute OUTPUT_BW=.../scbasset_ctcf_mean.bw
+#       INPUT_DIR=.../scBasset_PUscOpen/work/ctcf/impute  (very dense; use CHUNK_ROWS=5000, mem≥256G)
+#       INPUT_DIR=.../scBasset_cisTopic/work/ctcf/impute
+#       AGGREGATE=mean NORMALIZE=p99 sbatch downstream/slurm/imputed_to_bigwig.sbatch
 #   sbatch downstream/slurm/igv_ctcf_cistopic_puscopen_raw.sbatch
 #     three .bw with defaults: per-track --normalize p99 (comparable IGV scale),
 #     cisTopic --transform log1p; override with NORMALIZE_* / TRANSFORM_* env.

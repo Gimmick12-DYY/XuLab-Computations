@@ -18,14 +18,19 @@ points at each pipeline's native impute output (`<pipeline>/work/ctcf/impute/`):
 | PUscOpen | `PUscOpen/work/ctcf/impute` |
 | cicero | `Cicero/work/ctcf/impute` |
 | scbasset | `scBasset/work/ctcf/impute` |
+| scbasset_puscopen | `scBasset_PUscOpen/work/ctcf/impute` |
+| scbasset_cistopic | `scBasset_cisTopic/work/ctcf/impute` |
 
-Cicero and scBasset write full-mm `matrix_csr.npz` + `regions.tsv` (same
-schema as PUscOpen), so they plug into every comparator that accepts CSR dirs.
+Cicero, scBasset, and the two scBasset cascades write full-mm `matrix_csr.npz`
++ `regions.tsv` (same schema as PUscOpen), so they plug into every comparator
+that accepts CSR dirs. `scbasset_cistopic` also ships `factors.npz` if you
+prefer the factored loader.
 
 **Recommended order** after all pipelines finish imputation:
 
 ```bash
-sbatch downstream/slurm/compare_pos_neg_all4.sbatch      # raw + 7 imputed
+sbatch downstream/slurm/compare_pos_neg_all4.sbatch      # raw + 9 imputed
+sbatch downstream/slurm/igv_ctcf_scbasset_tracks.sbatch  # scbasset + cascade .bw tracks
 sbatch downstream/slurm/sensitivity_specificity.sbatch
 sbatch downstream/slurm/complexity_gain.sbatch
 sbatch downstream/slurm/umi_distribution.sbatch
@@ -35,6 +40,21 @@ sbatch downstream/slurm/raw_vs_imputed_diff.sbatch
 
 Override any path with `INPUTS="label=/path/..."` or per-pipeline `*_DIR` env
 vars before `sbatch`.
+
+### IGV / BigWig tracks
+
+`downstream/imputed_matrix_to_bigwig.py` collapses any impute dir (CSR, dense,
+factored, or raw mm) to a single pseudobulk `.bw` for IGV (genome **hg38**).
+
+| job | tracks |
+|---|---|
+| `sbatch downstream/slurm/imputed_to_bigwig.sbatch` | one track (`INPUT_DIR` / `OUTPUT_BW`) |
+| `sbatch downstream/slurm/igv_ctcf_cistopic_puscopen_raw.sbatch` | raw + cisTopic + PUscOpen |
+| `sbatch downstream/slurm/igv_ctcf_scbasset_tracks.sbatch` | scbasset + scbasset_puscopen + scbasset_cistopic |
+
+Defaults for CSR imputes: `AGGREGATE=mean`, `NORMALIZE=p99`. The
+`scbasset_puscopen` matrix is very dense (~400M stored entries); use
+`igv_ctcf_scbasset_tracks.sbatch` (256 GB, 12 h) or lower `CHUNK_ROWS` if OOM.
 
 `downstream/union_with_raw.py` and `slurm/union_with_raw.sbatch` remain for
 optional `max(raw, imputed)` CSR materialization but are **not** part of the
@@ -96,7 +116,7 @@ CACHE_DIR=/work/.../downstream/cache \
 * a directory containing `matrix.mtx.gz` (raw counts),
 * a directory containing `factors.npz` + `regions.tsv` (factored imputed output),
 * a directory containing `matrix.npy` + `regions.tsv` (dense imputed output),
-* a directory containing `matrix_csr.npz` + `regions.tsv` (full-mm CSR: PUscOpen, Cicero, scBasset),
+* a directory containing `matrix_csr.npz` + `regions.tsv` (full-mm CSR: PUscOpen, Cicero, scBasset, scBasset cascades),
 * or a legacy HDF5 file with a `Prc` dataset.
 
 It computes the per-bin total signal at the positive and negative bins,
@@ -113,10 +133,12 @@ python downstream/compare_pos_neg.py \
   --input MAGIC=/work/.../MAGIC/work/ctcf/impute \
   --input PUscOpen=/work/.../PUscOpen/work/ctcf/impute \
   --input cicero=/work/.../Cicero/work/ctcf/impute \
-  --input scbasset=/work/.../scBasset/work/ctcf/impute
+  --input scbasset=/work/.../scBasset/work/ctcf/impute \
+  --input scbasset_puscopen=/work/.../scBasset_PUscOpen/work/ctcf/impute \
+  --input scbasset_cistopic=/work/.../scBasset_cisTopic/work/ctcf/impute
 ```
 
-Eight-pipeline SLURM:
+Ten-pipeline SLURM (outputs under `downstream/pos_neg_all10/`):
 
 ```bash
 sbatch downstream/slurm/compare_pos_neg_all4.sbatch
@@ -137,7 +159,7 @@ SLURM:
 sbatch --export=ALL,\
 BINS_TSV=/work/.../downstream/bins/pos_neg_bins.tsv,\
 OUT_DIR=/work/.../downstream/pos_neg,\
-INPUTS="raw=/work/.../cistopic_ctcf/mm cisTopic=/work/.../cistopic_ctcf/impute FITS=/work/.../FITS/work/ctcf/impute scOpen=/work/.../scOpen/work/ctcf/impute MAGIC=/work/.../MAGIC/work/ctcf/impute PUscOpen=/work/.../PUscOpen/work/ctcf/impute cicero=/work/.../Cicero/work/ctcf/impute scbasset=/work/.../scBasset/work/ctcf/impute" \
+INPUTS="raw=/work/.../cistopic_ctcf/mm cisTopic=/work/.../cistopic_ctcf/impute FITS=/work/.../FITS/work/ctcf/impute scOpen=/work/.../scOpen/work/ctcf/impute MAGIC=/work/.../MAGIC/work/ctcf/impute PUscOpen=/work/.../PUscOpen/work/ctcf/impute cicero=/work/.../Cicero/work/ctcf/impute scbasset=/work/.../scBasset/work/ctcf/impute scbasset_puscopen=/work/.../scBasset_PUscOpen/work/ctcf/impute scbasset_cistopic=/work/.../scBasset_cisTopic/work/ctcf/impute" \
   downstream/slurm/compare_pos_neg.sbatch
 ```
 
@@ -222,7 +244,7 @@ SLURM:
 sbatch --export=ALL,\
 MM_DIR=/work/.../cistopic_ctcf/mm,\
 OUT_DIR=/work/.../downstream/sensitivity_specificity,\
-INPUTS="cisTopic=/work/.../cistopic_ctcf/impute FITS=/work/.../FITS/work/ctcf/impute scOpen=/work/.../scOpen/work/ctcf/impute MAGIC=/work/.../MAGIC/work/ctcf/impute PUscOpen=/work/.../PUscOpen/work/ctcf/impute cicero=/work/.../Cicero/work/ctcf/impute scbasset=/work/.../scBasset/work/ctcf/impute" \
+INPUTS="cisTopic=/work/.../cistopic_ctcf/impute FITS=/work/.../FITS/work/ctcf/impute scOpen=/work/.../scOpen/work/ctcf/impute MAGIC=/work/.../MAGIC/work/ctcf/impute PUscOpen=/work/.../PUscOpen/work/ctcf/impute cicero=/work/.../Cicero/work/ctcf/impute scbasset=/work/.../scBasset/work/ctcf/impute scbasset_puscopen=/work/.../scBasset_PUscOpen/work/ctcf/impute scbasset_cistopic=/work/.../scBasset_cisTopic/work/ctcf/impute" \
   downstream/slurm/sensitivity_specificity.sbatch
 ```
 
@@ -310,8 +332,9 @@ SLURM:
 sbatch downstream/slurm/bin_sensitivity_specificity.sbatch
 ```
 
-(uses `downstream/slurm/_pipeline_paths.sh` defaults — eight pipelines including
-cicero and scbasset; override `MM_DIR`, `*_DIR`, or `INPUTS` to point elsewhere)
+(uses `downstream/slurm/_pipeline_paths.sh` defaults — nine imputed pipelines
+including cicero, scbasset, and the scBasset cascades; override `MM_DIR`, `*_DIR`,
+or `INPUTS` to point elsewhere)
 
 ### Reading the output
 

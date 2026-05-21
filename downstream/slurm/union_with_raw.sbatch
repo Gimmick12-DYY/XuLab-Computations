@@ -16,7 +16,7 @@
 #   MM_DIR           raw mm (default: ${ROOT_DIR}/cisTopic/scripts/cistopic_ctcf/mm)
 #   OUT_ROOT         parent directory for per-label outputs (= IMPUTE_UNION_ROOT
 #                    for downstream defaults; default ${ROOT_DIR}/downstream/impute_union_mm)
-#   INPUTS           space-separated LABEL=PATH impute dirs (default: 7 imputed pipelines)
+#   INPUTS           space-separated LABEL=PATH impute dirs (default: 9 imputed pipelines)
 #   THRESHOLD_MODE   (default: sparsity_match:2)
 #   FROM_META        if 1, pass --from-meta (use impute meta.json threshold)
 #   CHUNK_ROWS, SAMPLE_SIZE, SEED

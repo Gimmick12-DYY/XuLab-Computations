@@ -86,8 +86,30 @@ python downstream/compare_pos_neg.py \
   ...
 ```
 
+Or batch all pipelines from the XuLab root:
+
+```bash
+sbatch downstream/slurm/compare_pos_neg_all4.sbatch
+sbatch downstream/slurm/sensitivity_specificity.sbatch
+```
+
 The expected pattern in `frac_neg_panel_covered`: scbasset >>
 scbasset_cistopic ≈ scbasset_puscopen > cistopic.
+
+Label `scbasset_cistopic` is registered in `downstream/slurm/_pipeline_paths.sh`.
+
+## IGV / BigWig
+
+```bash
+cd /work/users/d/y/dyy12/XuLab
+sbatch downstream/slurm/igv_ctcf_scbasset_tracks.sbatch
+
+# or this cascade only:
+INPUT_DIR=scBasset_cisTopic/work/ctcf/impute \
+OUTPUT_BW=downstream/tracks/igv_ctcf/ctcf_scbasset_cistopic_mean.bw \
+AGGREGATE=mean NORMALIZE=p99 \
+sbatch downstream/slurm/imputed_to_bigwig.sbatch
+```
 
 ## Tuning knobs
 
