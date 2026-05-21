@@ -126,6 +126,51 @@ detect the all-binary input and fall back to `binary` mode with a warning.
 Either re-run scBasset, or set `cascade.output_mode: binary` here and drop
 `log10_max_count` from `pu.features` (it's identically 0 in binary mode).
 
+## Why the cCRE/CTCF mask is OFF in this cascade
+
+Standalone PUscOpen turns on `mask.use_cCRE_*` to restrict computation to
+~50k annotated bins. That same prior is what the evaluation panel uses to
+draw negatives (random non-cCRE bins), so leaving the mask on **trivially**
+filters every panel negative out of the output:
+
+| Run                         | n_bins_any_signal | frac_pos_panel | frac_neg_panel |
+|-----------------------------|-------------------|----------------|----------------|
+| scBasset alone              | 1,326,659         | 0.798          | 0.439          |
+| scBasset → PUscOpen, mask ON | 38,713           | 0.798          | 0.002          |
+
+`frac_neg_panel_covered = 0.002` is **definitionally low**, not earned by
+denoising. The cascade's PU classifier + scOpen + postfilter have done very
+little work — the cCRE mask alone produced almost the whole reduction. To
+measure whether the matrix-level denoising is actually pulling weight, we
+turn the cCRE flags off:
+
+```yaml
+mask:
+  use_cCRE_293T:    false
+  use_cCRE_293T_CA: false
+  use_cCRE_CTCF:    false
+  exclude_blacklist: true   # kept (blacklist is QC, not a prior on CTCF)
+```
+
+The PU classifier still uses annotation **features** internally
+(`in_cCRE_*`, `dist_log_*`, etc.) to learn its scoring function, but the
+*mask* is no longer the same set used to draw negatives. If after this
+config change `frac_pos_panel_covered` stays high while
+`frac_neg_panel_covered` stays meaningfully below scBasset's 0.439, the
+denoising is real. If `frac_neg_panel_covered` jumps back near 0.4, the
+mask was doing all the work.
+
+### Heads up: memory
+
+scOpen NMF now sees ~1M+ rows (everything nonzero in the cascade input)
+instead of ~50k. Bump the slurm script's memory if `04_run_scopen.py` OOMs.
+If still too heavy, two non-circular ways to reduce the universe:
+
+- Set `mask.use_motif: true` + `mask.motif_bed: <path>` — uses the JASPAR
+  CTCF motif BED (a sequence prior, not the panel's annotation prior).
+- Pre-filter rows in `scripts/01_ingest_scbasset.py` against any candidate
+  BED that isn't `cCRE * HEK293T`.
+
 ## Tuning differences from standalone PUscOpen
 
 The cascade config tightens a few knobs because scBasset's output is already
@@ -133,6 +178,7 @@ broad — we want PUscOpen here to denoise, not amplify:
 
 | Knob                          | Standalone | Cascade | Why                                                |
 | ----------------------------- | ---------- | ------- | -------------------------------------------------- |
+| `mask.use_cCRE_*`             | true       | **false** | Stops the circular evaluation (see above).      |
 | `scopen.alpha`                | 1.25       | 1.50    | More conservative NMF; less amplification.         |
 | `postfilter.min_neighbors`    | 1          | 2       | Demand more local support; cleans up scBasset's diffuse hits. |
 | `postfilter.damp_floor`       | 0.72       | 0.50    | Push harder on unsupported bins.                   |
