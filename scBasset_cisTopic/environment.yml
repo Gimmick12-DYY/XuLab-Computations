@@ -1,0 +1,7 @@
+# Cascade pipeline -- reuses the cistopic conda env.
+# Activate before submitting any of this directory's slurm scripts:
+#   conda activate cistopic
+#
+# All dependencies (numpy / scipy / pyaml / pycisTopic / MALLET) come from
+# ../cisTopic/environment.yml. This file is here only for discoverability.
+name: cistopic

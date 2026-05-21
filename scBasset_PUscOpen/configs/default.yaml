@@ -1,0 +1,165 @@
+# -----------------------------------------------------------------------------
+# Cascade config: scBasset -> PUscOpen
+#
+# The standard PUscOpen scripts (02_build_mask.R through 06_impute.py) read
+# this YAML unchanged -- it has the full `paths / mask / pu / scopen /
+# postfilter / impute` schema they expect. The only addition is the top-level
+# `cascade:` block, which step 01 (this directory's 01_ingest_scbasset.py)
+# uses to find scBasset's output and write a fresh mm/ for PUscOpen to consume.
+# -----------------------------------------------------------------------------
+
+cascade:
+  source_impute_dir: /work/users/d/y/dyy12/XuLab/scBasset/work/ctcf/impute
+
+  # How to convert scBasset's CSR into the mm/ that PUscOpen 02_build_mask.R
+  # will read. PUscOpen's PU classifier uses count-derived features
+  # (log10_total_count, log10_max_count, ...) that go degenerate on a flat
+  # binary matrix, so we want a richer representation.
+  #
+  #   binary               -> all nonzeros become 1 (matches cisTopic cascade
+  #                            default; loses count signal -- not recommended here)
+  #   float                -> pass scBasset's sigmoid floats through unchanged
+  #   pseudocount[:K]      -> RECOMMENDED. Values in (0, 1) are scBasset's
+  #                            imputed sigmoid probabilities -> rescale to
+  #                            integer pseudocounts [1, K] (clipped); values
+  #                            >= 1 are original raw counts preserved by
+  #                            scBasset's keep_raw union -> kept as-is. The
+  #                            output mm has the same dtype + value range as
+  #                            the original raw CTCF matrix.
+  #
+  # REQUIREMENT for `pseudocount` / `float`: scBasset must have been run with
+  # impute.binarize_output: false. Otherwise scBasset's CSR is already all 1s
+  # and there's nothing for the pseudocount rule to act on. The ingest step
+  # auto-detects this and falls back to `binary` with a warning.
+  output_mode: pseudocount
+  scale_factor: 10
+
+paths:
+  input_rds:      /work/users/d/y/dyy12/XuLab/data/CTCF_bin1000_mtx.rds
+  work_dir:       /work/users/d/y/dyy12/XuLab/scBasset_PUscOpen/work/ctcf
+  annotation_dir: /work/users/d/y/dyy12/XuLab/downstream/cache
+  benchmark_bins_tsv: null
+
+# -----------------------------------------------------------------------------
+# Geometric candidate mask. Same defaults as PUscOpen's own config (cCRE +
+# CTCF + blacklist) -- they're independent of the matrix content so the
+# cascade behaviour matches the standalone PUscOpen run on annotation grounds.
+# -----------------------------------------------------------------------------
+mask:
+  use_cCRE_293T:    true
+  use_cCRE_293T_CA: true
+  use_cCRE_CTCF:    true
+  use_motif:        false
+  motif_bed:        null
+  exclude_blacklist: true
+  exclude_mappability_bed: null
+
+  gc_bsgenome:        null
+  gc_fasta_path:      null
+  mappability_bigwig: null
+
+  union_benchmark_labels: []
+
+  positive_seed:
+    n_top:        10000
+    require_293T_CA: true
+
+# -----------------------------------------------------------------------------
+# PU classifier.
+#
+# With cascade.output_mode = pseudocount (the default), the matrix-derived
+# features below stay informative: total_count / max_count / n_cells_observed
+# now vary with scBasset's per-(bin, cell) confidence instead of being flat 1s.
+# If you switch output_mode back to `binary` you'll want to drop log10_max_count
+# (becomes identically 0) and treat log10_total_count + log10_n_cells_observed
+# as duplicates.
+# -----------------------------------------------------------------------------
+pu:
+  features:
+    - in_cCRE_293T
+    - in_cCRE_293T_CA
+    - in_cCRE_CTCF
+    - motif_hit_count
+    - ctcf_zscore_max
+    - log10_total_count
+    - log10_n_cells_observed
+    - log10_max_count
+    - fraction_cells_observed
+    - dist_log_top_CTCF
+    - dist_log_cCRE_293T_CA
+    - dist_log_cCRE_CTCF
+    - n_top_CTCF_within_50kb
+    - n_cCRE_293T_within_5kb
+    - n_cCRE_CTCF_within_50kb
+    - is_chrX
+    - is_chrY
+
+  classifier:        logistic
+  random_state:      42
+  cv_folds:          5
+  hold_out_fraction: 0.20
+
+  refined_mask_threshold: "top_k:50000"
+  force_include_benchmark_negatives: false
+
+# -----------------------------------------------------------------------------
+# scOpen on refined mask. scBasset's output is already well-spread, so the
+# rank sweep matters less; we keep the same defaults but recommend tightening
+# the alpha (more conservative NMF) to denoise rather than amplify.
+# -----------------------------------------------------------------------------
+scopen:
+  estimate_rank:    false
+  min_n_components: 5
+  max_n_components: 30
+  step_n_components: 5
+  n_components:     50
+  alpha:            1.50   # higher than standalone (1.25) -> more conservative
+  max_iter:         500
+  init:             nndsvd
+  random_state:     42
+  nc:               6
+  verbose:          0
+
+  rank_sweep: [30, 50, 80, 120]
+
+  row_weight_by_pu:     true
+  row_weight_alpha:     1.0
+  row_weight_floor:     0.05
+  row_weight_scale_max: 4
+
+# -----------------------------------------------------------------------------
+# Postfilter: stricter neighbourhood than standalone, since scBasset can
+# distribute weak hits across the genome that we want to clean up.
+# -----------------------------------------------------------------------------
+postfilter:
+  neighborhood_bp:    12000
+  min_neighbors:      2     # was 1 in standalone; raise to demand more support
+  neighbor_threshold: auto
+
+  soft_damp:             true
+  damp_floor:            0.50   # lower floor than standalone (0.72) -> denoise harder
+  damp_unsupported:      0.25
+  soft_neighbor_target:  1
+
+  multiply_by_pu:        true
+  pu_weight_alpha:       0.55
+  pu_weight_floor:       0.08
+
+# -----------------------------------------------------------------------------
+# Impute. Disable propagation (same reasoning as the cisTopic cascade -- we
+# don't want to compound scBasset's false positives via neighbour fills).
+# -----------------------------------------------------------------------------
+impute:
+  scale_factor: 1000000
+  align_to_mm: true
+
+  propagate:
+    enabled:       false
+    window_bp:     5000
+    min_neighbors: 2
+    weight:        0.5
+    target_bed:    null
+    chunk_targets: 5000
+
+    source_threshold_mode: sparsity_match:1
+    source_threshold_sample_size: 4000000

@@ -1,0 +1,7 @@
+# Cascade pipeline -- reuses the puscopen conda env.
+# Activate before submitting any of this directory's slurm scripts:
+#   conda activate puscopen
+#
+# All dependencies (numpy / scipy / scopen / R-side mask builder) come from
+# ../PUscOpen/environment.yml. This file is here only for discoverability.
+name: puscopen
