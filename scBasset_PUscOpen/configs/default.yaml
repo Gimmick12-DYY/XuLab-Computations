@@ -41,17 +41,38 @@ paths:
   benchmark_bins_tsv: null
 
 # -----------------------------------------------------------------------------
-# Geometric candidate mask. Same defaults as PUscOpen's own config (cCRE +
-# CTCF + blacklist) -- they're independent of the matrix content so the
-# cascade behaviour matches the standalone PUscOpen run on annotation grounds.
+# Geometric candidate mask -- DISABLED for this cascade.
+#
+# Standalone PUscOpen turns on `use_cCRE_*` to restrict the universe of
+# candidate bins to annotated regions. That is exactly the same prior used to
+# construct the evaluation panel's NEGATIVE bins (which are random
+# non-cCRE bins). Leaving the cCRE mask on therefore TRIVIALLY filters out
+# almost every panel negative -- giving frac_neg_panel_covered ~ 0.002 even
+# though the matrix-level denoiser has done little work. That's a circular
+# evaluation: the prior used by PUscOpen and the prior used to draw negatives
+# are the same.
+#
+# To get an honest read on whether scOpen + the PU classifier + the
+# postfilter are *actually* reducing scBasset's false positives, we disable
+# the cCRE / CTCF mask flags here. The mask becomes "full genome minus
+# blacklist", scOpen runs across every nonzero row of the cascaded matrix,
+# and the PU classifier discriminates without the annotation handcuff.
+#
+# WARNING: this is heavy. scOpen NMF on ~1M+ bins x 10k cells will need more
+# memory than the standalone PUscOpen run (which masks down to ~50k bins).
+# If 04_run_scopen OOMs, tighten the input via either:
+#   * setting `mask.use_motif: true` + `motif_bed: <path>` (uses motif as
+#     a non-cCRE prior, so negatives aren't trivially filtered), or
+#   * pre-filtering rows in 01_ingest_scbasset.py to a candidate BED that is
+#     independent of the panel construction.
 # -----------------------------------------------------------------------------
 mask:
-  use_cCRE_293T:    true
-  use_cCRE_293T_CA: true
-  use_cCRE_CTCF:    true
-  use_motif:        false
+  use_cCRE_293T:    false   # OFF: was the circular prior
+  use_cCRE_293T_CA: false   # OFF: subset of above; same issue
+  use_cCRE_CTCF:    false   # OFF: same prior again
+  use_motif:        false   # leave false unless you wire motif_bed below
   motif_bed:        null
-  exclude_blacklist: true
+  exclude_blacklist: true   # keep: blacklist is QC, not a CTCF prior
   exclude_mappability_bed: null
 
   gc_bsgenome:        null
@@ -62,7 +83,7 @@ mask:
 
   positive_seed:
     n_top:        10000
-    require_293T_CA: true
+    require_293T_CA: true   # OK: only used to seed the PU classifier, not the mask
 
 # -----------------------------------------------------------------------------
 # PU classifier.

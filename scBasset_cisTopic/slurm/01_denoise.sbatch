@@ -1,12 +1,17 @@
 #!/bin/bash
-#SBATCH --job-name=scb_cis_01_ingest
+#SBATCH --job-name=scb_cis_denoise
 #SBATCH --output=%x-%j.out
 #SBATCH --error=%x-%j.err
-#SBATCH --cpus-per-task=4
-#SBATCH --mem=64G
-#SBATCH --time=01:00:00
+#SBATCH --cpus-per-task=8
+#SBATCH --mem=96G
+#SBATCH --time=02:00:00
+
+# LDA-validated denoising of scBasset using cisTopic's RAW-trained topics,
+# then optional union with cisTopic's standalone imputed matrix.
+# Both source pipelines must have finished and written <work>/impute/.
 
 set -euo pipefail
+
 SUBMIT_DIR="${SLURM_SUBMIT_DIR:-$(pwd)}"
 if [[ -d "${SUBMIT_DIR}/scripts" && -d "${SUBMIT_DIR}/configs" ]]; then
   ROOT_DIR="${SUBMIT_DIR}"
@@ -24,4 +29,4 @@ CONDA_ENV="${CONDA_ENV:-cistopic}"
 source "$(conda info --base)/etc/profile.d/conda.sh"
 conda activate "${CONDA_ENV}"
 
-python scripts/01_ingest_scbasset.py --config "${CFG}"
+python scripts/01_denoise.py --config "${CFG}"

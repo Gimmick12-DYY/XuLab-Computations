@@ -1,88 +1,70 @@
 # -----------------------------------------------------------------------------
-# Cascade config: scBasset -> cisTopic
+# scBasset + cisTopic (LDA-denoise + union)
 #
-# The standard cisTopic scripts (02_build, 03_lda, 04_select, 05_impute) read
-# this YAML unchanged -- it has the full `paths / filter / lda / select / impute`
-# schema they expect. The only addition is the top-level `cascade:` block,
-# which step 01 (this directory's 01_ingest_scbasset.py) uses to find scBasset's
-# output and write a fresh mm/ for cisTopic to consume.
+# Pipeline:
+#   1. cisTopic standalone runs on the RAW matrix and learns LDA topics that
+#      reflect real biological co-accessibility (NOT scBasset's structure).
+#      It produces W=phi (modeled_regions, K), H=theta (K, cells), and a
+#      thresholded mm-aligned imputed matrix.
+#   2. For each (r, c) in scBasset's output where r is in cisTopic's modeled
+#      vocabulary, we compute the LDA-predicted probability
+#          P(r | c)  =  phi[r, :] @ theta[:, c]
+#      and KEEP the scBasset entry only if P(r|c) is in the top (1 - Q)
+#      fraction of LDA scores for cell c (per-cell quantile threshold).
+#   3. Bins in scBasset but NOT in cisTopic's vocabulary ("truly-new" bins,
+#      zero in the raw matrix) are kept unchanged — LDA can't validate them
+#      since it never saw them.
+#   4. The filtered scBasset is unioned (element-wise max) with cisTopic's
+#      standalone imputed matrix, so:
+#        * cisTopic's denoised contributions are always included (additive)
+#        * scBasset's predictions are only included if LDA validates them
+#        * scBasset's truly-new bins are always included
 # -----------------------------------------------------------------------------
 
-cascade:
-  # Where scBasset wrote its final imputed matrix (its <work>/impute/).
-  source_impute_dir: /work/users/d/y/dyy12/XuLab/scBasset/work/ctcf/impute
+sources:
+  scbasset_impute_dir: /work/users/d/y/dyy12/XuLab/scBasset/work/ctcf/impute
 
-  # How to convert scBasset's CSR into the mm/ that cisTopic 02_build_cistopic_obj.py
-  # will read. cisTopic binarises internally (filter.binarize_input: true) so
-  # `binary` is fine here -- LDA wouldn't use count magnitudes anyway. The
-  # full vocabulary (binary | float | pseudocount[:K]) is supported in case
-  # you want to keep parity with the PUscOpen cascade for inspection.
-  output_mode: binary
-  scale_factor: 10
+  # Standalone cisTopic run (LDA on raw matrix). Must contain:
+  #   factors.npz                W=phi, H=theta, per_cell_factor
+  #   region_topic_phi.parquet   modeled bin names in the index
+  #   cell_topic_theta.parquet   modeled cell barcodes in the columns
+  #   matrix_csr.npz             mm-aligned imputed matrix (for the union step)
+  #   regions.tsv / barcodes.tsv full mm region + barcode order
+  cistopic_impute_dir: /work/users/d/y/dyy12/XuLab/cisTopic/scripts/cistopic_ctcf/impute
+
+denoise:
+  # LDA-based validation of scBasset's entries.
+  #   off                  -> no filtering (pure union with cistopic, old behaviour)
+  #   quantile:Q           -> per-cell threshold = Q-th percentile of LDA scores
+  #                            over modeled bins for that cell. Keep entries with
+  #                            P(r|c) >= T_c. Q in [0,1]: higher Q = stricter.
+  #   global_quantile:Q    -> single global threshold from a Q-th percentile of
+  #                            all validatable scores
+  #   fixed:T              -> keep entries with P(r|c) >= T (numeric)
+  #
+  # quantile:0.5 means "keep scBasset entries that LDA also ranks in the top
+  # 50% for that cell". Bump to 0.75 / 0.90 to denoise harder.
+  mode: "quantile:0.5"
+
+  # Per-cell quantile is estimated from a sample of LDA-modeled bins
+  # (vs computing every score). 5000 is plenty for 100k+ modeled bins.
+  threshold_sample_size: 5000
+
+  # Truly-new bins (in scBasset, NOT in cisTopic's LDA vocabulary) cannot be
+  # scored by LDA, so by default we keep them as-is. Set false to drop them.
+  keep_truly_new_bins: true
+
+combine:
+  # After filtering, union with cisTopic's standalone imputed matrix
+  # (element-wise max). When true the output is:
+  #   LDA-filtered_scBasset  ∪  cisTopic_standalone
+  # which is both "additive" (cisTopic's calls always survive) and "denoised"
+  # (scBasset's calls only survive if LDA validates them).
+  union_with_cistopic: true
+
+  # Store 1.0 at every nonzero. scBasset and cisTopic use different value
+  # scales so the union magnitudes are not meaningful anyway.
+  binarize_output: true
 
 paths:
-  # input_rds is not used by this cascade (we don't go through 01_export);
-  # left here only because cisTopic's `_cfg.py` and the SLURM scripts read it
-  # for logging. Point at the same RDS the other pipelines use so any printout
-  # is meaningful.
-  input_rds:   /work/users/d/y/dyy12/XuLab/data/CTCF_bin1000_mtx.rds
-  work_dir:    /work/users/d/y/dyy12/XuLab/scBasset_cisTopic/work/ctcf
-
-  # MALLET (same binary every cisTopic run uses).
-  mallet_path: /work/users/d/y/dyy12/XuLab/Mallet-202108/bin/mallet
-
-# -----------------------------------------------------------------------------
-# Region / cell pre-filtering (applied to the *cascaded* input — scBasset's CSR
-# is already blacklist-filtered and chrom-whitelisted, so most QC here is no-op).
-# -----------------------------------------------------------------------------
-filter:
-  min_counts_per_region: 0
-  min_cells_per_region:  0    # scBasset already filled many bins; leave open
-  min_regions_per_cell:  1
-  binarize_input:        true
-  exclude_blacklist:     true   # idempotent; blacklist was already applied
-  keep_zero_bins:        false
-  blacklist_bed_gz:      null
-  blacklist_url: https://github.com/Boyle-Lab/Blacklist/raw/refs/heads/master/lists/hg38-blacklist.v2.bed.gz
-
-# -----------------------------------------------------------------------------
-# LDA -- smaller K than the raw-input cisTopic config: scBasset already
-# spread accessibility broadly, so the model needs fewer topics to capture
-# the structure. The goal of LDA here is *denoising*, not breadth.
-# -----------------------------------------------------------------------------
-lda:
-  n_topics: [5, 8, 12, 15, 20, 25, 30]
-  alpha:    12
-  alpha_by_topic: true
-  eta:      0.15
-  eta_by_topic:   false
-  iterations:  600
-  threads:     16
-  random_seed: 555
-  memory:      200G
-
-select:
-  primary_metric: loglikelihood
-  manual_k:       8     # mid-range; raise if topic coherence metrics suggest underfit
-
-# -----------------------------------------------------------------------------
-# Imputation. Two changes from the raw-input cisTopic config:
-#   threshold_mode: sparsity_match:1  -> match scBasset's nnz, not 3x it
-#   propagate.enabled: false          -> don't compound scBasset's false
-#                                         positives via neighbourhood propagation
-# -----------------------------------------------------------------------------
-impute:
-  scale_factor:    1000000
-  threshold_mode:  sparsity_match:1
-  threshold_sample_size: 4000000
-  align_to_mm:     true
-  binarize_output: false
-  drop_factors_npz: false
-
-  propagate:
-    enabled:       false
-    window_bp:     5000
-    min_neighbors: 2
-    weight:        0.5
-    target_bed:    null
-    chunk_targets: 5000
+  work_dir: /work/users/d/y/dyy12/XuLab/scBasset_cisTopic/work/ctcf
