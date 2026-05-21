@@ -62,6 +62,23 @@ sbatch slurm/04_predict.sbatch      # GPU, 128 GB, ~2-12 h
 sbatch slurm/05_impute.sbatch       # CPU,  64 GB, <1 h
 ```
 
+## IGV / BigWig
+
+Use the shared converter under `downstream/` (same script as PUscOpen / Cicero CSR imputes):
+
+```bash
+cd /work/users/d/y/dyy12/XuLab
+INPUT_DIR=scBasset/work/ctcf/impute \
+OUTPUT_BW=scBasset/work/ctcf/bigwig/scbasset_ctcf_mean.bw \
+AGGREGATE=mean NORMALIZE=p99 \
+sbatch downstream/slurm/imputed_to_bigwig.sbatch
+```
+
+Or run `downstream/imputed_matrix_to_bigwig.py` directly with `--input` / `--output` /
+`--chrom-sizes`. Input must be `<work>/impute/` with `matrix_csr.npz` + `regions.tsv`.
+
+Load in IGV: genome **hg38**, then **File → Load from File** → the `.bw` path.
+
 For a smoke test:
 - `seqs.bin_bed: <path>` restricts to a small candidate BED (e.g. a single
   chromosome), shrinking 02/03/04 by 10-100x.

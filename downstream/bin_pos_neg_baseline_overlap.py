@@ -17,8 +17,10 @@
 #   python downstream/bin_pos_neg_baseline_overlap.py \
 #     --mm-dir /work/.../cistopic_ctcf/mm \
 #     --bins-tsv /work/.../downstream/bins/pos_neg_bins.tsv \
-#     --cis-topic-impute /work/.../cisTopic/.../impute \
-#     --puscopen-impute /work/.../PUscOpen/.../impute \
+#     --input cisTopic=/work/.../cisTopic/.../impute \
+#     --input PUscOpen=/work/.../PUscOpen/.../impute \
+#     --input cicero=/work/.../Cicero/work/ctcf/impute \
+#     --input scbasset=/work/.../scBasset/work/ctcf/impute \
 #     --out-json /work/.../downstream/bins/baseline_pos_neg_overlap.json
 # -----------------------------------------------------------------------------
 from __future__ import annotations
@@ -27,6 +29,7 @@ import argparse
 import json
 import logging
 import sys
+from itertools import combinations
 from pathlib import Path
 
 import numpy as np
@@ -35,6 +38,16 @@ from scipy import sparse
 
 log = logging.getLogger("bin_pos_neg_baseline")
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
+
+
+def parse_input_pair(s: str) -> tuple[str, Path]:
+    if "=" not in s:
+        raise argparse.ArgumentTypeError(f"Expected LABEL=PATH, got: {s!r}")
+    label, path = s.split("=", 1)
+    label = label.strip()
+    if not label:
+        raise argparse.ArgumentTypeError(f"Empty label in: {s!r}")
+    return label, Path(path)
 
 
 def load_bins_pos_neg(path: Path) -> tuple[np.ndarray, np.ndarray]:
@@ -94,13 +107,17 @@ def summarize(
     mask: np.ndarray,
     pos_idx: np.ndarray,
     neg_idx: np.ndarray,
+    *,
+    total_stored_nnz: int | None = None,
+    csr_path: str | None = None,
+    impute_dir: str | None = None,
 ) -> dict:
     n_nnz = int(mask.sum())
     n_pos_hit = int(mask[pos_idx].sum())
     n_neg_hit = int(mask[neg_idx].sum())
     n_pos = int(pos_idx.size)
     n_neg = int(neg_idx.size)
-    return {
+    out = {
         "source": name,
         "n_bins_any_signal": n_nnz,
         "n_pos_bins_in_panel": n_pos,
@@ -112,6 +129,13 @@ def summarize(
         "frac_nnz_that_are_pos_hits": (n_pos_hit / n_nnz) if n_nnz else None,
         "frac_nnz_that_are_neg_hits": (n_neg_hit / n_nnz) if n_nnz else None,
     }
+    if total_stored_nnz is not None:
+        out["total_stored_nnz"] = total_stored_nnz
+    if csr_path is not None:
+        out["csr_path"] = csr_path
+    if impute_dir is not None:
+        out["impute_dir"] = impute_dir
+    return out
 
 
 def summarize_added_bin_rows(
@@ -140,20 +164,51 @@ def summarize_added_bin_rows(
     }
 
 
+def pairwise_row_intersections(
+    labels: list[str],
+    row_sets: dict[str, np.ndarray],
+) -> dict[str, int]:
+    out: dict[str, int] = {}
+    for a, b in combinations(labels, 2):
+        key = f"{a}_{b}"
+        out[key] = int(
+            np.intersect1d(row_sets[a], row_sets[b], assume_unique=True).size
+        )
+    if len(labels) >= 3:
+        inter = row_sets[labels[0]]
+        for lab in labels[1:]:
+            inter = np.intersect1d(inter, row_sets[lab], assume_unique=True)
+        out["all_imputed"] = int(inter.size)
+    return out
+
+
 def main() -> int:
-    ap = argparse.ArgumentParser(description=__doc__,
-                                 formatter_class=argparse.RawDescriptionHelpFormatter)
+    ap = argparse.ArgumentParser(
+        description=__doc__,
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+    )
     ap.add_argument("--mm-dir", type=Path, required=True,
                     help="Raw MatrixMarket dir (matrix.mtx.gz + regions.tsv.gz)")
     ap.add_argument("--bins-tsv", type=Path, required=True,
                     help="pos_neg_bins.tsv from prepare_pos_neg_bins.R")
-    ap.add_argument("--cis-topic-impute", type=Path, required=True,
-                    help="cisTopic impute/ with matrix_csr.npz")
-    ap.add_argument("--puscopen-impute", type=Path, required=True,
-                    help="PUscOpen impute/ with matrix_csr.npz")
+    ap.add_argument("--input", type=parse_input_pair, action="append", default=[],
+                    metavar="LABEL=PATH",
+                    help="Impute dir with matrix_csr.npz + regions.tsv (repeatable)")
+    ap.add_argument("--cis-topic-impute", type=Path, default=None,
+                    help="(deprecated) alias for --input cisTopic=PATH")
+    ap.add_argument("--puscopen-impute", type=Path, default=None,
+                    help="(deprecated) alias for --input PUscOpen=PATH")
     ap.add_argument("--out-json", type=Path, default=None,
-                    help="Write machine-readable summary (default: <bins-dir>/baseline_pos_neg_overlap.json)")
+                    help="Write summary JSON (default: <bins-dir>/baseline_pos_neg_overlap.json)")
     args = ap.parse_args()
+
+    inputs: list[tuple[str, Path]] = list(args.input)
+    if args.cis_topic_impute is not None:
+        inputs.append(("cisTopic", args.cis_topic_impute))
+    if args.puscopen_impute is not None:
+        inputs.append(("PUscOpen", args.puscopen_impute))
+    if not inputs:
+        ap.error("Provide at least one --input LABEL=PATH (or legacy --cis-topic-impute / --puscopen-impute)")
 
     pos_idx, neg_idx = load_bins_pos_neg(args.bins_tsv)
     log.info("Loaded %d pos + %d neg bins from %s",
@@ -165,61 +220,53 @@ def main() -> int:
     if neg_idx.size and int(neg_idx.max()) >= n_rows:
         raise SystemExit(f"neg bin_idx max {neg_idx.max()} >= n_rows {n_rows}")
 
-    mask_ct, nnz_ct, path_ct = row_has_nnz_impute_csr(args.cis_topic_impute, n_rows)
-    mask_pu, nnz_pu, path_pu = row_has_nnz_impute_csr(args.puscopen_impute, n_rows)
-
     rows = [
-        summarize("raw", mask_raw, pos_idx, neg_idx),
-        summarize("cisTopic", mask_ct, pos_idx, neg_idx),
-        summarize("PUscOpen", mask_pu, pos_idx, neg_idx),
+        summarize("raw", mask_raw, pos_idx, neg_idx, total_stored_nnz=nnz_raw),
     ]
-    rows[0]["total_stored_nnz"] = nnz_raw
-    rows[1]["total_stored_nnz"] = nnz_ct
-    rows[2]["total_stored_nnz"] = nnz_pu
+    imputed_vs_raw: dict[str, dict] = {}
+    row_sets: dict[str, np.ndarray] = {"raw": np.flatnonzero(mask_raw)}
+    impute_meta: dict[str, dict] = {}
 
-    # Pairwise intersections of bin sets (still mm row indices)
-    s_raw = np.flatnonzero(mask_raw)
-    s_ct = np.flatnonzero(mask_ct)
-    s_pu = np.flatnonzero(mask_pu)
-    # Use numpy intersect1d on sorted unique (already unique from flatnonzero)
-    n_raw_ct = int(np.intersect1d(s_raw, s_ct, assume_unique=True).size)
-    n_raw_pu = int(np.intersect1d(s_raw, s_pu, assume_unique=True).size)
-    n_ct_pu = int(np.intersect1d(s_ct, s_pu, assume_unique=True).size)
-    n_all_three = int(
-        np.intersect1d(
-            np.intersect1d(s_raw, s_ct, assume_unique=True),
-            s_pu,
-            assume_unique=True,
-        ).size
-    )
+    for label, imp_dir in inputs:
+        mask_imp, nnz_imp, path_imp = row_has_nnz_impute_csr(imp_dir, n_rows)
+        rows.append(
+            summarize(
+                label, mask_imp, pos_idx, neg_idx,
+                total_stored_nnz=nnz_imp,
+                csr_path=path_imp,
+                impute_dir=str(imp_dir.resolve()),
+            )
+        )
+        imputed_vs_raw[label] = summarize_added_bin_rows(
+            label, mask_raw, mask_imp, pos_idx, neg_idx,
+        )
+        row_sets[label] = np.flatnonzero(mask_imp)
+        impute_meta[label] = {
+            "impute_dir": str(imp_dir.resolve()),
+            "csr_path": path_imp,
+        }
+
+    imp_labels = [lab for lab, _ in inputs]
+    pairwise_raw: dict[str, int] = {}
+    for lab in imp_labels:
+        pairwise_raw[f"raw_{lab}"] = int(
+            np.intersect1d(row_sets["raw"], row_sets[lab], assume_unique=True).size
+        )
+    pairwise_imp = pairwise_row_intersections(imp_labels, row_sets)
 
     out = {
         "mm_dir": str(args.mm_dir.resolve()),
         "bins_tsv": str(args.bins_tsv.resolve()),
-        "cis_topic_impute": str(args.cis_topic_impute.resolve()),
-        "cis_topic_csr_path": path_ct,
-        "puscopen_impute": str(args.puscopen_impute.resolve()),
-        "puscopen_csr_path": path_pu,
+        "inputs": {lab: str(p.resolve()) for lab, p in inputs},
+        "impute_meta": impute_meta,
         "n_mm_rows": n_rows,
         "interpretation": (
             "imputed_vs_raw counts bin-rows with no raw fragment in any cell "
             "but at least one imputed CSR nonzero in that row. "
             "total_stored_nnz is global stored entries in each CSR."
         ),
-        "pairwise_nnz_row_intersections": {
-            "raw_cisTopic": n_raw_ct,
-            "raw_PUscOpen": n_raw_pu,
-            "cisTopic_PUscOpen": n_ct_pu,
-            "all_three": n_all_three,
-        },
-        "imputed_vs_raw": {
-            "cisTopic": summarize_added_bin_rows(
-                "cisTopic", mask_raw, mask_ct, pos_idx, neg_idx,
-            ),
-            "PUscOpen": summarize_added_bin_rows(
-                "PUscOpen", mask_raw, mask_pu, pos_idx, neg_idx,
-            ),
-        },
+        "pairwise_nnz_row_intersections": {**pairwise_raw, **pairwise_imp},
+        "imputed_vs_raw": imputed_vs_raw,
         "per_source": rows,
     }
 
@@ -242,21 +289,17 @@ def main() -> int:
             r["n_intersection_neg"],
             100.0 * (r["frac_neg_panel_covered"] or 0.0),
         )
-    for key in ("cisTopic", "PUscOpen"):
-        d = out["imputed_vs_raw"][key]
+    for label in imp_labels:
+        d = out["imputed_vs_raw"][label]
         log.info(
             "%s vs raw — bin-rows raw-silent but imputed on: %d  "
             "(∩ pos panel=%d, ∩ neg panel=%d)",
-            key,
+            label,
             d["n_bin_rows_raw_silent_imputed_on"],
             d["n_intersection_pos_panel"],
             d["n_intersection_neg_panel"],
         )
-    log.info(
-        "Pairwise nnz-row intersections: raw∩cisTopic=%d raw∩PUscOpen=%d "
-        "cisTopic∩PUscOpen=%d all_three=%d",
-        n_raw_ct, n_raw_pu, n_ct_pu, n_all_three,
-    )
+    log.info("Pairwise nnz-row intersections: %s", out["pairwise_nnz_row_intersections"])
     return 0
 
 

@@ -27,6 +27,7 @@ dependencies:
     - tensorflow[and-cuda]>=2.15,<2.17
     - keras>=3.0
     - einops
+    - pyBigWig              # downstream/imputed_matrix_to_bigwig.py (IGV tracks)
 # Notes:
 #   - tensorflow[and-cuda] pulls in CUDA libs as wheels; if your cluster has
 #     its own CUDA + cuDNN module, drop the [and-cuda] extra and `module load`

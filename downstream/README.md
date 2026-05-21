@@ -4,6 +4,42 @@ Scripts that consume compact imputation outputs written by each pipeline
 (`factors.npz` or `matrix.npy` + `regions.tsv` + `barcodes.tsv`) plus the raw
 `mm/` matrix, and produce comparisons.
 
+### Pipelines and default paths
+
+Downstream SLURM wrappers source `downstream/slurm/_pipeline_paths.sh`, which
+points at each pipeline's native impute output (`<pipeline>/work/ctcf/impute/`):
+
+| label | default impute dir |
+|---|---|
+| cisTopic | `cisTopic/scripts/cistopic_ctcf/impute` |
+| FITS | `FITS/work/ctcf/impute` |
+| scOpen | `scOpen/work/ctcf/impute` |
+| MAGIC | `MAGIC/work/ctcf/impute` |
+| PUscOpen | `PUscOpen/work/ctcf/impute` |
+| cicero | `Cicero/work/ctcf/impute` |
+| scbasset | `scBasset/work/ctcf/impute` |
+
+Cicero and scBasset write full-mm `matrix_csr.npz` + `regions.tsv` (same
+schema as PUscOpen), so they plug into every comparator that accepts CSR dirs.
+
+**Recommended order** after all pipelines finish imputation:
+
+```bash
+sbatch downstream/slurm/compare_pos_neg_all4.sbatch      # raw + 7 imputed
+sbatch downstream/slurm/sensitivity_specificity.sbatch
+sbatch downstream/slurm/complexity_gain.sbatch
+sbatch downstream/slurm/umi_distribution.sbatch
+sbatch downstream/slurm/bin_sensitivity_specificity.sbatch
+sbatch downstream/slurm/raw_vs_imputed_diff.sbatch
+```
+
+Override any path with `INPUTS="label=/path/..."` or per-pipeline `*_DIR` env
+vars before `sbatch`.
+
+`downstream/union_with_raw.py` and `slurm/union_with_raw.sbatch` remain for
+optional `max(raw, imputed)` CSR materialization but are **not** part of the
+default workflow.
+
 ## Bin-level positive vs negative CTCF signal
 
 `Bin_posVSneg.ipynb` is the source-of-truth notebook for the analysis. The two
@@ -60,6 +96,7 @@ CACHE_DIR=/work/.../downstream/cache \
 * a directory containing `matrix.mtx.gz` (raw counts),
 * a directory containing `factors.npz` + `regions.tsv` (factored imputed output),
 * a directory containing `matrix.npy` + `regions.tsv` (dense imputed output),
+* a directory containing `matrix_csr.npz` + `regions.tsv` (full-mm CSR: PUscOpen, Cicero, scBasset),
 * or a legacy HDF5 file with a `Prc` dataset.
 
 It computes the per-bin total signal at the positive and negative bins,
@@ -73,7 +110,16 @@ python downstream/compare_pos_neg.py \
   --input cisTopic=/work/.../cistopic_ctcf/impute \
   --input FITS=/work/.../FITS/work/ctcf/impute \
   --input scOpen=/work/.../scOpen/work/ctcf/impute \
-  --input MAGIC=/work/.../MAGIC/work/ctcf/impute
+  --input MAGIC=/work/.../MAGIC/work/ctcf/impute \
+  --input PUscOpen=/work/.../PUscOpen/work/ctcf/impute \
+  --input cicero=/work/.../Cicero/work/ctcf/impute \
+  --input scbasset=/work/.../scBasset/work/ctcf/impute
+```
+
+Eight-pipeline SLURM:
+
+```bash
+sbatch downstream/slurm/compare_pos_neg_all4.sbatch
 ```
 
 Outputs (under `--out-dir`):
@@ -91,7 +137,7 @@ SLURM:
 sbatch --export=ALL,\
 BINS_TSV=/work/.../downstream/bins/pos_neg_bins.tsv,\
 OUT_DIR=/work/.../downstream/pos_neg,\
-INPUTS="raw=/work/.../cistopic_ctcf/mm cisTopic=/work/.../cistopic_ctcf/impute FITS=/work/.../FITS/work/ctcf/impute scOpen=/work/.../scOpen/work/ctcf/impute MAGIC=/work/.../MAGIC/work/ctcf/impute" \
+INPUTS="raw=/work/.../cistopic_ctcf/mm cisTopic=/work/.../cistopic_ctcf/impute FITS=/work/.../FITS/work/ctcf/impute scOpen=/work/.../scOpen/work/ctcf/impute MAGIC=/work/.../MAGIC/work/ctcf/impute PUscOpen=/work/.../PUscOpen/work/ctcf/impute cicero=/work/.../Cicero/work/ctcf/impute scbasset=/work/.../scBasset/work/ctcf/impute" \
   downstream/slurm/compare_pos_neg.sbatch
 ```
 
@@ -176,7 +222,7 @@ SLURM:
 sbatch --export=ALL,\
 MM_DIR=/work/.../cistopic_ctcf/mm,\
 OUT_DIR=/work/.../downstream/sensitivity_specificity,\
-INPUTS="cisTopic=/work/.../cistopic_ctcf/impute FITS=/work/.../FITS/work/ctcf/impute scOpen=/work/.../scOpen/work/ctcf/impute MAGIC=/work/.../MAGIC/work/ctcf/impute" \
+INPUTS="cisTopic=/work/.../cistopic_ctcf/impute FITS=/work/.../FITS/work/ctcf/impute scOpen=/work/.../scOpen/work/ctcf/impute MAGIC=/work/.../MAGIC/work/ctcf/impute PUscOpen=/work/.../PUscOpen/work/ctcf/impute cicero=/work/.../Cicero/work/ctcf/impute scbasset=/work/.../scBasset/work/ctcf/impute" \
   downstream/slurm/sensitivity_specificity.sbatch
 ```
 
@@ -264,9 +310,8 @@ SLURM:
 sbatch downstream/slurm/bin_sensitivity_specificity.sbatch
 ```
 
-(uses the same default paths as `compare_pos_neg_all4.sbatch`; override
-`MM_DIR`, `CISTOPIC_DIR`, `FITS_DIR`, `SCOPEN_DIR`, `MAGIC_DIR`, or `INPUTS`
-to point elsewhere)
+(uses `downstream/slurm/_pipeline_paths.sh` defaults — eight pipelines including
+cicero and scbasset; override `MM_DIR`, `*_DIR`, or `INPUTS` to point elsewhere)
 
 ### Reading the output
 
@@ -300,7 +345,7 @@ Per-cell sums are computed without materialising the dense matrix:
 | `mm/matrix.mtx.gz` | scipy `mat.sum(axis=0)` on the loaded sparse CSR |
 | `factors.npz` (cisTopic / scOpen) | `(W.sum(axis=0) @ H) * per_cell_factor` |
 | `matrix.npy` (FITS / MAGIC) | chunked `arr[s:e].sum(axis=0)` over an mmap |
-| `matrix_csr.npz` (PUscOpen) | scipy `mat.sum(axis=0)` |
+| `matrix_csr.npz` (PUscOpen / Cicero / scBasset) | scipy `mat.sum(axis=0)` |
 | legacy HDF5 `/Prc` | chunked `ds[s:e, :].sum(axis=0)` |
 
 `--align-to LABEL` picks the barcode-order anchor (default: the first

@@ -31,6 +31,9 @@
 #   INPUT_DIR=/path/to/impute OUTPUT_BW=/path/to/out.bw sbatch downstream/slurm/imputed_to_bigwig.sbatch
 #   sbatch --export=ALL,INPUT_DIR=${HOME}/XuLab/MAGIC/work/ctcf/impute,OUTPUT_BW=${HOME}/tracks/magic.bw \\
 #          downstream/slurm/imputed_to_bigwig.sbatch
+#   sbatch --export=ALL,INPUT_DIR=${HOME}/XuLab/scBasset/work/ctcf/impute, \\
+#          OUTPUT_BW=${HOME}/XuLab/scBasset/work/ctcf/bigwig/scbasset_ctcf_mean.bw, \\
+#          AGGREGATE=mean,NORMALIZE=p99 downstream/slurm/imputed_to_bigwig.sbatch
 
 set -euo pipefail
 

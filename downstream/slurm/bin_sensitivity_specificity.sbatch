@@ -15,8 +15,7 @@
 # Imputed pipelines default to each pipeline's native <work>/impute/ (CSR,
 # factors, or dense per bin_sensitivity_specificity.py). That keeps top-K
 # bin coverage sensitive to imputer-specific rankings. Union CSRs from
-# downstream/impute_union_mm/ collapse rankings toward raw under --match-to raw;
-# to analyze those, set INPUTS or *_DIR explicitly to ${ROOT_DIR}/downstream/impute_union_mm/<label>.
+# Override INPUTS or *_DIR to point at alternate impute locations if needed.
 #
 # Optional env vars (defaults shown):
 #   ROOT_DIR      repo root (default: auto from submit dir, else /work/users/d/y/dyy12/XuLab)
@@ -32,6 +31,8 @@
 #   SCOPEN_DIR    (default: ${ROOT_DIR}/scOpen/work/ctcf/impute)
 #   MAGIC_DIR     (default: ${ROOT_DIR}/MAGIC/work/ctcf/impute)
 #   PUSCOPEN_DIR  (default: ${ROOT_DIR}/PUscOpen/work/ctcf/impute)
+#   CICERO_DIR    (default: ${ROOT_DIR}/Cicero/work/ctcf/impute)
+#   SCBASSET_DIR  (default: ${ROOT_DIR}/scBasset/work/ctcf/impute)
 #   CONDA_ENV     conda env (default: cistopic; FITS/scopen/magic envs work too)
 #   OUT_NAME      basename for output files (default: bin_coverage)
 #   THRESHOLD     reference signal threshold (default 0; "any nonzero signal")
@@ -63,17 +64,13 @@ cd "${ROOT_DIR}"
 BINS_TSV="${BINS_TSV:-${ROOT_DIR}/downstream/bins/pos_neg_bins.tsv}"
 OUT_DIR="${OUT_DIR:-${ROOT_DIR}/downstream/bin_sensitivity_specificity}"
 
-MM_DIR="${MM_DIR:-${ROOT_DIR}/cisTopic/scripts/cistopic_ctcf/mm}"
-CISTOPIC_DIR="${CISTOPIC_DIR:-${ROOT_DIR}/cisTopic/scripts/cistopic_ctcf/impute}"
-FITS_DIR="${FITS_DIR:-${ROOT_DIR}/FITS/work/ctcf/impute}"
-SCOPEN_DIR="${SCOPEN_DIR:-${ROOT_DIR}/scOpen/work/ctcf/impute}"
-MAGIC_DIR="${MAGIC_DIR:-${ROOT_DIR}/MAGIC/work/ctcf/impute}"
-PUSCOPEN_DIR="${PUSCOPEN_DIR:-${ROOT_DIR}/PUscOpen/work/ctcf/impute}"
-
+DOWN_DIR="${ROOT_DIR}/downstream"
+# shellcheck source=_pipeline_paths.sh
+source "${DOWN_DIR}/slurm/_pipeline_paths.sh"
 if [[ -z "${INPUTS:-}" ]]; then
-  # FITS omitted if impute dir empty; add: INPUTS="raw=${MM_DIR} ... FITS=${FITS_DIR} ..."
-  INPUTS="raw=${MM_DIR} cisTopic=${CISTOPIC_DIR} scOpen=${SCOPEN_DIR} MAGIC=${MAGIC_DIR} PUscOpen=${PUSCOPEN_DIR}"
+  default_inputs all
 fi
+pipeline_paths_native
 
 if [[ -z "${BINS_TSV:-}" || -z "${OUT_DIR:-}" || -z "${INPUTS:-}" ]]; then
   echo "Required: BINS_TSV=<tsv>, OUT_DIR=<dir>, INPUTS=\"label1=path1 ...\" (or rely on defaults under ROOT_DIR)" >&2

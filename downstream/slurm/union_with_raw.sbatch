@@ -6,20 +6,17 @@
 #SBATCH --mem=128G
 #SBATCH --time=04:00:00
 
-# Materialize max(raw, imputed) CSRs for one or more impute directories (same
-# semantics as downstream/union_with_raw.py + sparsity_match:K addition mode).
-# Writes
-#   <OUT_ROOT>/<label>/matrix_csr.npz, regions.tsv, barcodes.tsv, meta.json
-# for each LABEL=IMPUTE_DIR pair. Downstream sbatch scripts default
-# IMPUTE_UNION_ROOT to this same path so compare_pos_neg / complexity_gain / …
-# read ${IMPUTE_UNION_ROOT}/cisTopic, /FITS, /scOpen, etc. by default.
+# OPTIONAL / legacy: materialize max(raw, imputed) CSRs (downstream/union_with_raw.py).
+# Not used by default downstream workflow — comparators read native impute/ dirs.
+# Writes <OUT_ROOT>/<label>/matrix_csr.npz, regions.tsv, barcodes.tsv, meta.json
+# for each LABEL=IMPUTE_DIR pair.
 #
 # Optional env vars:
 #   ROOT_DIR         repo root (default: auto from submit dir)
 #   MM_DIR           raw mm (default: ${ROOT_DIR}/cisTopic/scripts/cistopic_ctcf/mm)
 #   OUT_ROOT         parent directory for per-label outputs (= IMPUTE_UNION_ROOT
 #                    for downstream defaults; default ${ROOT_DIR}/downstream/impute_union_mm)
-#   INPUTS           space-separated LABEL=PATH impute dirs (default: 5 pipelines)
+#   INPUTS           space-separated LABEL=PATH impute dirs (default: 7 imputed pipelines)
 #   THRESHOLD_MODE   (default: sparsity_match:2)
 #   FROM_META        if 1, pass --from-meta (use impute meta.json threshold)
 #   CHUNK_ROWS, SAMPLE_SIZE, SEED
@@ -45,18 +42,14 @@ ROOT_DIR="${ROOT_DIR:-/work/users/d/y/dyy12/XuLab}"
 DOWN_DIR="${ROOT_DIR}/downstream"
 cd "${ROOT_DIR}"
 
-MM_DIR="${MM_DIR:-${ROOT_DIR}/cisTopic/scripts/cistopic_ctcf/mm}"
 OUT_ROOT="${OUT_ROOT:-${ROOT_DIR}/downstream/impute_union_mm}"
-
-CISTOPIC_DIR="${CISTOPIC_DIR:-${ROOT_DIR}/cisTopic/scripts/cistopic_ctcf/impute}"
-FITS_DIR="${FITS_DIR:-${ROOT_DIR}/FITS/work/ctcf/impute}"
-SCOPEN_DIR="${SCOPEN_DIR:-${ROOT_DIR}/scOpen/work/ctcf/impute}"
-MAGIC_DIR="${MAGIC_DIR:-${ROOT_DIR}/MAGIC/work/ctcf/impute}"
-PUSCOPEN_DIR="${PUSCOPEN_DIR:-${ROOT_DIR}/PUscOpen/work/ctcf/impute}"
-
+DOWN_DIR="${ROOT_DIR}/downstream"
+# shellcheck source=_pipeline_paths.sh
+source "${DOWN_DIR}/slurm/_pipeline_paths.sh"
 if [[ -z "${INPUTS:-}" ]]; then
-  INPUTS="cisTopic=${CISTOPIC_DIR} FITS=${FITS_DIR} scOpen=${SCOPEN_DIR} MAGIC=${MAGIC_DIR} PUscOpen=${PUSCOPEN_DIR}"
+  default_inputs imputed
 fi
+pipeline_paths_native
 
 CONDA_ENV="${CONDA_ENV:-cistopic}"
 THRESHOLD_MODE="${THRESHOLD_MODE:-sparsity_match:2}"

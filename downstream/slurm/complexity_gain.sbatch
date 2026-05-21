@@ -10,9 +10,8 @@
 # threshold per cell; compare to raw nonzero count per cell.
 #
 # Threshold mode default: sparsity_match:2 (matches cisTopic impute when using
-# K=2). With UNION_WITH_RAW=1 (default), complexity_gain passes --union-with-raw:
-# #(imp>t) targets (K−1)·raw_nnz and imp_complexity is union nnz (nonnegative gain).
-# Set UNION_WITH_RAW=0 for legacy replacement semantics without union counting.
+# K=2). Reads native impute outputs (not pre-merged union CSRs).
+# Set UNION_WITH_RAW=1 to pass --union-with-raw (max(raw, imputed) counting).
 # Use quantile:0.99 / fixed:0.1 for other operating points.
 #
 # Defaults match compare_pos_neg_all4.sbatch (this XuLab tree). Override any
@@ -20,7 +19,6 @@
 #
 # Optional env vars (defaults shown):
 #   ROOT_DIR             repo root (default: auto from submit dir)
-#   IMPUTE_UNION_ROOT    parent of per-pipeline union dirs (default: .../impute_union_mm)
 #   MM_DIR               raw matrix dir
 #                        (default: ${ROOT_DIR}/cisTopic/scripts/cistopic_ctcf/mm)
 #   OUT_DIR              output directory
@@ -31,9 +29,7 @@
 #   OUT_NAME        basename for output files (default: complexity_gain)
 #   THRESHOLD_MODE  sparsity_match[:K] | quantile:Q | fixed:T
 #                   (default: sparsity_match:2 — matches cisTopic/configs/default.yaml)
-#   UNION_WITH_RAW  if 1/true (default), pass --union-with-raw (threshold uses
-#                   (K−1)·raw_nnz for sparsity_match:K; imp_complexity = union nnz).
-#                   Set to 0/false/no/off for legacy replacement-only semantics.
+#   UNION_WITH_RAW  if 1/true, pass --union-with-raw (default 0: native imputed only).
 #   CHUNK_ROWS      streaming chunk size (default 2000)
 #   SAMPLE_SIZE     random sample size for threshold quantile estimation
 #                   (default 4000000)
@@ -57,24 +53,19 @@ ROOT_DIR="${ROOT_DIR:-/work/users/d/y/dyy12/XuLab}"
 DOWN_DIR="${ROOT_DIR}/downstream"
 cd "${ROOT_DIR}"
 
-MM_DIR="${MM_DIR:-${ROOT_DIR}/cisTopic/scripts/cistopic_ctcf/mm}"
 OUT_DIR="${OUT_DIR:-${ROOT_DIR}/downstream/complexity_gain}"
-
-IMPUTE_UNION_ROOT="${IMPUTE_UNION_ROOT:-${ROOT_DIR}/downstream/impute_union_mm}"
-CISTOPIC_DIR="${CISTOPIC_DIR:-${IMPUTE_UNION_ROOT}/cisTopic}"
-FITS_DIR="${FITS_DIR:-${IMPUTE_UNION_ROOT}/FITS}"
-SCOPEN_DIR="${SCOPEN_DIR:-${IMPUTE_UNION_ROOT}/scOpen}"
-MAGIC_DIR="${MAGIC_DIR:-${IMPUTE_UNION_ROOT}/MAGIC}"
-PUSCOPEN_DIR="${PUSCOPEN_DIR:-${IMPUTE_UNION_ROOT}/PUscOpen}"
-
+DOWN_DIR="${ROOT_DIR}/downstream"
+# shellcheck source=_pipeline_paths.sh
+source "${DOWN_DIR}/slurm/_pipeline_paths.sh"
 if [[ -z "${INPUTS:-}" ]]; then
-  INPUTS="cisTopic=${CISTOPIC_DIR} FITS=${FITS_DIR} scOpen=${SCOPEN_DIR} MAGIC=${MAGIC_DIR} PUscOpen=${PUSCOPEN_DIR}"
+  default_inputs imputed
 fi
+pipeline_paths_native
 
 CONDA_ENV="${CONDA_ENV:-cistopic}"
 OUT_NAME="${OUT_NAME:-complexity_gain}"
 THRESHOLD_MODE="${THRESHOLD_MODE:-sparsity_match:2}"
-UNION_WITH_RAW="${UNION_WITH_RAW:-1}"
+UNION_WITH_RAW="${UNION_WITH_RAW:-0}"
 CHUNK_ROWS="${CHUNK_ROWS:-2000}"
 SAMPLE_SIZE="${SAMPLE_SIZE:-4000000}"
 SEED="${SEED:-42}"

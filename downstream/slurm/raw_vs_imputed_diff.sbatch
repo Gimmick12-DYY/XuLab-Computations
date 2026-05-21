@@ -11,10 +11,8 @@
 # counts at multiple thresholds, per-cell + per-bin loss counts, and a
 # context view of imputed values at sampled raw-zero coordinates.
 #
-# Defaults use each pipeline's native <work>/impute/ (not impute_union_mm/).
-# Union CSRs make "imputed" ≈ max(raw,·); point INPUTS at downstream/impute_union_mm/
-# only when you intend that. Slurm still passes --union-with-raw by default
-# (UNION_WITH_RAW=1); set UNION_WITH_RAW=0 for strict imputed-vs-raw deltas only.
+# Defaults: each pipeline's native <work>/impute/. UNION_WITH_RAW=0 (strict
+# imputed-vs-raw deltas). Set UNION_WITH_RAW=1 to score max(raw, imputed) at raw-positive sites.
 #
 # Optional env vars (defaults shown):
 #   ROOT_DIR       repo root (default: auto from submit dir)
@@ -52,25 +50,21 @@ ROOT_DIR="${ROOT_DIR:-/work/users/d/y/dyy12/XuLab}"
 DOWN_DIR="${ROOT_DIR}/downstream"
 cd "${ROOT_DIR}"
 
-MM_DIR="${MM_DIR:-${ROOT_DIR}/cisTopic/scripts/cistopic_ctcf/mm}"
 OUT_DIR="${OUT_DIR:-${ROOT_DIR}/downstream/raw_vs_imputed_diff}"
-
-CISTOPIC_DIR="${CISTOPIC_DIR:-${ROOT_DIR}/cisTopic/scripts/cistopic_ctcf/impute}"
-FITS_DIR="${FITS_DIR:-${ROOT_DIR}/FITS/work/ctcf/impute}"
-SCOPEN_DIR="${SCOPEN_DIR:-${ROOT_DIR}/scOpen/work/ctcf/impute}"
-MAGIC_DIR="${MAGIC_DIR:-${ROOT_DIR}/MAGIC/work/ctcf/impute}"
-PUSCOPEN_DIR="${PUSCOPEN_DIR:-${ROOT_DIR}/PUscOpen/work/ctcf/impute}"
-
+DOWN_DIR="${ROOT_DIR}/downstream"
+# shellcheck source=_pipeline_paths.sh
+source "${DOWN_DIR}/slurm/_pipeline_paths.sh"
 if [[ -z "${INPUTS:-}" ]]; then
-  INPUTS="cisTopic=${CISTOPIC_DIR} FITS=${FITS_DIR} scOpen=${SCOPEN_DIR} MAGIC=${MAGIC_DIR} PUscOpen=${PUSCOPEN_DIR}"
+  default_inputs imputed
 fi
+pipeline_paths_native
 
 CONDA_ENV="${CONDA_ENV:-cistopic}"
 OUT_NAME="${OUT_NAME:-raw_vs_imputed_diff}"
 THRESHOLDS="${THRESHOLDS:-0,0.001,0.01,0.05,0.1,0.5,1.0}"
 N_ZERO_SAMPLE="${N_ZERO_SAMPLE:-200000}"
 SEED="${SEED:-42}"
-UNION_WITH_RAW="${UNION_WITH_RAW:-1}"
+UNION_WITH_RAW="${UNION_WITH_RAW:-0}"
 
 source "$(conda info --base)/etc/profile.d/conda.sh"
 conda activate "${CONDA_ENV}"

@@ -22,91 +22,127 @@
     {
       "label": "cisTopic",
       "kind": "csr",
-      "path": "/work/users/d/y/dyy12/XuLab/downstream/impute_union_mm/cisTopic",
+      "path": "/work/users/d/y/dyy12/XuLab/cisTopic/scripts/cistopic_ctcf/impute",
       "n_cells_native": 10410,
       "n_cells_evaluated": 10410,
       "n_missing_in_anchor": 0,
       "stats": {
-        "mean": 4698.770239490872,
-        "median": 1297.0182495117188,
-        "std": 38555.826235267865,
-        "min": 20.0,
-        "max": 916320.5,
-        "p10": 384.42637634277344,
-        "p90": 4980.770947265625,
-        "p99": 34960.10160156248
+        "mean": 9503.720676582623,
+        "median": 2498.666259765625,
+        "std": 60648.949837293076,
+        "min": 279.7430419921875,
+        "max": 1010675.0625,
+        "p10": 1001.1251525878907,
+        "p90": 10964.618359375,
+        "p99": 50548.74624999979
       }
     },
     {
       "label": "FITS",
-      "kind": "csr",
-      "path": "/work/users/d/y/dyy12/XuLab/downstream/impute_union_mm/FITS",
+      "kind": "dense",
+      "path": "/work/users/d/y/dyy12/XuLab/FITS/work/ctcf/impute",
       "n_cells_native": 10410,
       "n_cells_evaluated": 10410,
       "n_missing_in_anchor": 0,
       "stats": {
-        "mean": 71601.34386006263,
-        "median": 38.0,
-        "std": 628865.3801826506,
-        "min": 19.0,
-        "max": 14506883.0,
-        "p10": 22.0,
-        "p90": 651.1000000000004,
-        "p99": 1795730.4349999991
+        "mean": 1000001.2730178968,
+        "median": 635704.5231456757,
+        "std": 1443455.9832229798,
+        "min": 0.0,
+        "max": 23589525.393798828,
+        "p10": 0.0,
+        "p90": 2151762.8832298284,
+        "p99": 6050835.837320858
       }
     },
     {
       "label": "scOpen",
-      "kind": "csr",
-      "path": "/work/users/d/y/dyy12/XuLab/downstream/impute_union_mm/scOpen",
+      "kind": "factored",
+      "path": "/work/users/d/y/dyy12/XuLab/scOpen/work/ctcf/impute",
       "n_cells_native": 10410,
       "n_cells_evaluated": 10410,
       "n_missing_in_anchor": 0,
       "stats": {
-        "mean": 19878.677639459762,
-        "median": 402.5771179199219,
-        "std": 102624.68004449637,
-        "min": 19.0,
-        "max": 3114505.5,
-        "p10": 26.0,
-        "p90": 17439.305859375014,
-        "p99": 484143.1112499997
+        "mean": 1000000.1252724702,
+        "median": 862104.6130987916,
+        "std": 624087.1101503985,
+        "min": 59753.72399523778,
+        "max": 10758409.70630402,
+        "p10": 461634.7665478555,
+        "p90": 1644046.1997936065,
+        "p99": 3498856.0306895636
       }
     },
     {
       "label": "MAGIC",
-      "kind": "csr",
-      "path": "/work/users/d/y/dyy12/XuLab/downstream/impute_union_mm/MAGIC",
+      "kind": "dense",
+      "path": "/work/users/d/y/dyy12/XuLab/MAGIC/work/ctcf/impute",
       "n_cells_native": 10410,
       "n_cells_evaluated": 10410,
       "n_missing_in_anchor": 0,
       "stats": {
-        "mean": 16552.657969318137,
-        "median": 37.0,
-        "std": 164800.31541982447,
-        "min": 19.0,
-        "max": 3718082.5,
-        "p10": 22.0,
-        "p90": 131.0,
-        "p99": 514825.5421874996
+        "mean": 1000909.1708074977,
+        "median": 783665.0686144859,
+        "std": 1338070.313713931,
+        "min": 7326.877930503774,
+        "max": 14422931.625417084,
+        "p10": 536134.6974727337,
+        "p90": 1174996.5960715604,
+        "p99": 9258814.67006494
       }
     },
     {
       "label": "PUscOpen",
       "kind": "csr",
-      "path": "/work/users/d/y/dyy12/XuLab/downstream/impute_union_mm/PUscOpen",
+      "path": "/work/users/d/y/dyy12/XuLab/PUscOpen/work/ctcf/impute",
       "n_cells_native": 10410,
       "n_cells_evaluated": 10410,
       "n_missing_in_anchor": 0,
       "stats": {
-        "mean": 1000067.179928498,
-        "median": 639107.21875,
-        "std": 1074676.3975908076,
+        "mean": 1000614.8424810317,
+        "median": 639087.1875,
+        "std": 1076173.5816254527,
+        "min": 0.0,
+        "max": 7719399.5,
+        "p10": 0.0,
+        "p90": 2604124.825,
+        "p99": 4670830.34
+      }
+    },
+    {
+      "label": "cicero",
+      "kind": "csr",
+      "path": "/work/users/d/y/dyy12/XuLab/Cicero/work/ctcf/impute",
+      "n_cells_native": 10410,
+      "n_cells_evaluated": 10410,
+      "n_missing_in_anchor": 0,
+      "stats": {
+        "mean": 88.06406348647118,
+        "median": 44.01936149597168,
+        "std": 217.89134054613498,
+        "min": 19.057201385498047,
+        "max": 7272.3193359375,
+        "p10": 25.5525915145874,
+        "p90": 140.2714385986328,
+        "p99": 884.7495654296857
+      }
+    },
+    {
+      "label": "scbasset",
+      "kind": "csr",
+      "path": "/work/users/d/y/dyy12/XuLab/scBasset/work/ctcf/impute",
+      "n_cells_native": 10410,
+      "n_cells_evaluated": 10410,
+      "n_missing_in_anchor": 0,
+      "stats": {
+        "mean": 167.64553314121036,
+        "median": 37.0,
+        "std": 9410.648578070697,
         "min": 19.0,
-        "max": 7725393.5,
-        "p10": 38.0,
-        "p90": 2599788.825000001,
-        "p99": 4670589.599999999
+        "max": 960096.0,
+        "p10": 22.0,
+        "p90": 120.0,
+        "p99": 781.7299999999996
       }
     }
   ]
