@@ -1,0 +1,31 @@
+# -----------------------------------------------------------------------------
+# scBasset+cisTopic ∪ scBasset+PUscOpen   (additive union)
+#
+# Element-wise max of the two downstream-combined matrices:
+#   * scBasset_cisTopic/work/ctcf/impute    LDA-denoised + cisTopic union
+#   * scBasset_PUscOpen/work/ctcf/impute    scOpen NMF + neighborhood postfilter
+#
+# Both already contain scBasset's truly-new bins as their backbone, so the
+# union preserves every call from either method:
+#
+#     out[r, c] = max(scbasset_cistopic[r, c], scbasset_puscopen[r, c])
+#
+# This is purely additive -- a (r, c) called by EITHER pipeline survives. No
+# entries are dropped. Run both upstream pipelines first.
+# -----------------------------------------------------------------------------
+
+sources:
+  scbasset_cistopic_impute_dir: /work/users/d/y/dyy12/XuLab/scBasset_cisTopic/work/ctcf/impute
+  scbasset_puscopen_impute_dir: /work/users/d/y/dyy12/XuLab/scBasset_PUscOpen/work/ctcf/impute
+
+combine:
+  # Only `max` implemented. scbasset_cistopic / scbasset_puscopen use different
+  # value scales (binary vs scOpen-scaled floats), so `max` is the scale-robust
+  # combiner; everything else (sum, mean) would need a re-normalisation step.
+  method: max
+  # Store 1.0 at every nonzero. The two sources use incompatible value scales
+  # so a binary "called or not" is the only honest cross-source summary.
+  binarize_output: true
+
+paths:
+  work_dir: /work/users/d/y/dyy12/XuLab/scBasset_cisTopic_PUscOpen/work/ctcf

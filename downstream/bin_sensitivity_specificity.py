@@ -383,11 +383,13 @@ def called_mask_top_k(signal: np.ndarray, k: int,
     info['n_tied_picked']    = int(need)
     mask = above.copy()
     if need > 0 and tied_idx.size:
+        # Always sample from a Generator. `tied_idx[:need]` would pick bins in
+        # ascending index order, which systematically favors pos bins because
+        # the input array is concatenate([pos_bins, neg_bins]).
         if rng is None:
-            picked = tied_idx[:need]  # deterministic fallback
-        else:
-            picked = rng.choice(tied_idx, size=min(need, tied_idx.size),
-                                 replace=False)
+            rng = np.random.default_rng()
+        picked = rng.choice(tied_idx, size=min(need, tied_idx.size),
+                             replace=False)
         mask[picked] = True
     return mask, cutoff, info
 
@@ -491,10 +493,18 @@ def plot_intensity_lift_bars(per_input: list[dict], out_path: Path) -> None:
 def write_tsv(per_input: list[dict], out_path: Path) -> None:
     cols = ['input', 'kind', 'group', 'mode', 'threshold',
             'n', 'n_modeled', 'n_covered', 'n_covered_modeled',
-            'coverage_pct', 'coverage_modeled_pct']
+            'coverage_pct', 'coverage_modeled_pct',
+            # Tie diagnostics from top-K (0s in fixed-threshold mode). When
+            # n_tied_picked is a large fraction of n_called, the top-K is
+            # largely random-tie-padded and the coverage stats are diluted
+            # toward the panel's pos/neg balance.
+            'n_called', 'n_above_cutoff', 'n_tied_at_cutoff', 'n_tied_picked']
     with open(out_path, 'w') as fh:
         fh.write('\t'.join(cols) + '\n')
         for info in per_input:
+            ti = info.get('tie_info') or {'n_above_cutoff': 0,
+                                          'n_tied_at_cutoff': 0,
+                                          'n_tied_picked': 0}
             for group in ('pos', 'neg'):
                 s = info[group]
                 fh.write('\t'.join([
@@ -504,6 +514,10 @@ def write_tsv(per_input: list[dict], out_path: Path) -> None:
                     str(s['n_covered']), str(s['n_covered_modeled']),
                     f"{s['coverage_pct']:.4f}",
                     f"{s['coverage_modeled_pct']:.4f}",
+                    str(int(info.get('n_called', 0))),
+                    str(int(ti['n_above_cutoff'])),
+                    str(int(ti['n_tied_at_cutoff'])),
+                    str(int(ti['n_tied_picked'])),
                 ]) + '\n')
 
 
@@ -520,6 +534,7 @@ def build_summary(per_input: list[dict], bins_tsv: str,
             'mode':      info['mode'],
             'threshold': info['threshold'],
             'n_called':  info['n_called'],
+            'tie_info':  info.get('tie_info'),
             'intensity_called': info['intensity_called'],
             'pos':       info['pos'],
             'neg':       info['neg'],
@@ -644,6 +659,8 @@ def main() -> int:
             mask = called_mask_threshold(signal, args.threshold)
             thr = float(args.threshold)
             mode = 'fixed'
+            tie_info = {'n_above_cutoff': int(mask.sum()),
+                         'n_tied_at_cutoff': 0, 'n_tied_picked': 0}
 
         pos_mask = mask[:n_pos];   neg_mask = mask[n_pos:]
         pos_stats = coverage_for_group(signal[:n_pos], modeled[:n_pos], pos_mask)
@@ -672,6 +689,7 @@ def main() -> int:
             'label': label, 'path': rec['path'], 'kind': kind,
             'mode': mode, 'threshold': thr,
             'n_called': int(mask.sum()),
+            'tie_info': tie_info,
             'intensity_called': lift_stats,
             'pos': pos_stats, 'neg': neg_stats,
         })

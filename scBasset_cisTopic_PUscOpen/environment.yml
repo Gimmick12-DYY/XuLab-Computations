@@ -1,0 +1,4 @@
+# Combine pipeline -- reuses the cistopic conda env (numpy + scipy + pyyaml).
+# Activate before submitting:
+#   conda activate cistopic
+name: cistopic
