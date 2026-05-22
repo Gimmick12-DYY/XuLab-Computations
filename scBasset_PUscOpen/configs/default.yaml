@@ -88,32 +88,40 @@ mask:
 # -----------------------------------------------------------------------------
 # PU classifier.
 #
+# CIRCULAR cCRE FEATURES REMOVED (same fix as ../PUscOpen/configs/default.yaml):
+# the evaluation panel draws negatives as random non-cCRE bins, so any feature
+# derived from cCRE annotations is the same prior the panel uses to define
+# negatives. Training on those features bakes the panel split into pu_score
+# and -- via postfilter.multiply_by_pu -- into the final output. The kept
+# features are non-cCRE: motif_hit_count, ctcf_zscore_max, CTCF distance,
+# matrix counts, sequence properties.
+#
 # With cascade.output_mode = pseudocount (the default), the matrix-derived
-# features below stay informative: total_count / max_count / n_cells_observed
-# now vary with scBasset's per-(bin, cell) confidence instead of being flat 1s.
-# If you switch output_mode back to `binary` you'll want to drop log10_max_count
-# (becomes identically 0) and treat log10_total_count + log10_n_cells_observed
-# as duplicates.
+# features stay informative: total_count / max_count / n_cells_observed now
+# vary with scBasset's per-(bin, cell) confidence instead of being flat 1s.
 # -----------------------------------------------------------------------------
 pu:
   features:
-    - in_cCRE_293T
-    - in_cCRE_293T_CA
-    - in_cCRE_CTCF
+    # KEEP: non-cCRE priors
     - motif_hit_count
     - ctcf_zscore_max
+    - dist_log_top_CTCF
+    - n_top_CTCF_within_50kb
+    # KEEP: matrix-derived counts (what we want to measure)
     - log10_total_count
     - log10_n_cells_observed
     - log10_max_count
     - fraction_cells_observed
-    - dist_log_top_CTCF
-    - dist_log_cCRE_293T_CA
-    - dist_log_cCRE_CTCF
-    - n_top_CTCF_within_50kb
-    - n_cCRE_293T_within_5kb
-    - n_cCRE_CTCF_within_50kb
     - is_chrX
     - is_chrY
+    # REMOVED (circular with evaluation panel negatives):
+    # - in_cCRE_293T
+    # - in_cCRE_293T_CA
+    # - in_cCRE_CTCF
+    # - dist_log_cCRE_293T_CA
+    # - dist_log_cCRE_CTCF
+    # - n_cCRE_293T_within_5kb
+    # - n_cCRE_CTCF_within_50kb
 
   classifier:        logistic
   random_state:      42
@@ -162,7 +170,12 @@ postfilter:
   damp_unsupported:      0.25
   soft_neighbor_target:  1
 
-  multiply_by_pu:        true
+  # DISABLED. Multiplying the final per-(bin, cell) signal by pu_score makes
+  # the output proportional to whatever the PU classifier scored highest,
+  # bypassing the matrix-level denoising. With multiply_by_pu=false, scOpen
+  # NMF + the soft_damp neighborhood rule are the only denoisers and the
+  # metric measures their work without the PU score reweighting it.
+  multiply_by_pu:        false
   pu_weight_alpha:       0.55
   pu_weight_floor:       0.08
 

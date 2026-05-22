@@ -183,6 +183,48 @@ config change `frac_pos_panel_covered` stays high while
 denoising is real. If `frac_neg_panel_covered` jumps back near 0.4, the
 mask was doing all the work.
 
+### Second-pass fix: cCRE features in the PU classifier were leaking too
+
+Turning the mask off wasn't enough. The cascade's per-cell signal
+distribution still looked identical to standalone PUscOpen's — wide tails
+with cells ranging from ~0 to ~10⁶ — because the PU classifier was *still*
+trained on `in_cCRE_*`, `dist_log_cCRE_*`, `n_cCRE_*_within_*`, which are
+the same annotations the panel uses to draw negatives. `pu_score` therefore
+inherited the cCRE prior, and `postfilter.multiply_by_pu: true` multiplied
+the final per-(bin, cell) signal by that score — quietly re-applying the
+mask as a continuous reweighting.
+
+Fix in `configs/default.yaml`:
+
+```yaml
+pu:
+  features:
+    # REMOVED:
+    #   in_cCRE_293T, in_cCRE_293T_CA, in_cCRE_CTCF
+    #   dist_log_cCRE_293T_CA, dist_log_cCRE_CTCF
+    #   n_cCRE_293T_within_5kb, n_cCRE_CTCF_within_50kb
+    # KEPT (non-cCRE):
+    - motif_hit_count
+    - ctcf_zscore_max
+    - dist_log_top_CTCF
+    - n_top_CTCF_within_50kb
+    - log10_total_count / log10_max_count / log10_n_cells_observed / fraction_cells_observed
+    - is_chrX, is_chrY
+
+postfilter:
+  multiply_by_pu: false       # don't reweight output by pu_score
+```
+
+After this change scOpen NMF + the `soft_damp` neighbourhood rule are the
+only denoisers. Expected: `frac_neg_panel_covered` will rise above the
+artificially-low 0.002 / 0.04 numbers — that's the metric becoming honest.
+If `frac_pos_panel_covered` still stays meaningfully higher than
+`frac_neg_panel_covered` (say >2x), the matrix-level denoising is genuinely
+working. If they converge, the metric was almost entirely the cCRE prior.
+
+The same patch is applied to `../PUscOpen/configs/default.yaml` for the
+standalone PUscOpen run — the standalone numbers had the same problem.
+
 ### Heads up: memory
 
 scOpen NMF now sees ~1M+ rows (everything nonzero in the cascade input)

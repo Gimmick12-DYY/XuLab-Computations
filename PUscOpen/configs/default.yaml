@@ -75,30 +75,41 @@ pu:
   # Features fed to the classifier. Every name must exist as a column in
   # bin_features.tsv (written by step 02). Numeric columns are used as-is;
   # boolean columns become 0/1. Unknown columns raise; missing values become 0.
+  #
+  # CIRCULAR FEATURES REMOVED. The evaluation panel (downstream/prepare_pos_neg_bins.R)
+  # draws negatives as random non-cCRE bins. Training the PU classifier on
+  # in_cCRE_* / dist_log_cCRE_* / n_cCRE_*_within_* features therefore teaches
+  # it to predict "is this bin in or near a cCRE?" -- which is exactly the
+  # population split the panel measures. That made frac_neg_panel_covered
+  # definitionally low (~0.002 in the cascade) even when matrix-level
+  # denoising was doing nothing. The list below keeps only features that are
+  # *not* derived from cCRE annotations, so the metric reflects real
+  # denoising rather than the cCRE prior used to construct negatives.
   features:
-    - in_cCRE_293T
-    - in_cCRE_293T_CA
-    - in_cCRE_CTCF
-    - motif_hit_count
-    - ctcf_zscore_max         # NaN -> filled with 0
+    # KEEP: sequence priors that don't define the panel
+    - motif_hit_count            # JASPAR CTCF motif count per bin
+    - ctcf_zscore_max            # external ChIP signal; not panel-derived
+    # KEEP: CTCF-specific (the panel's POSITIVE side; not how negatives are drawn)
+    - dist_log_top_CTCF
+    - n_top_CTCF_within_50kb
+    # KEEP: matrix-derived count features (what we actually want to measure)
     - log10_total_count
     - log10_n_cells_observed
-    # Richer signal/context features (added in step 02; gracefully NaN
-    # if upstream data is missing).
     - log10_max_count
     - fraction_cells_observed
-    - dist_log_top_CTCF
-    - dist_log_cCRE_293T_CA
-    - dist_log_cCRE_CTCF
-    - n_top_CTCF_within_50kb
-    - n_cCRE_293T_within_5kb
-    - n_cCRE_CTCF_within_50kb
-    # Optional features -- columns are written by step 02 but values may be
-    # NaN if the source (FASTA / BSgenome / mappability bigWig) is unset.
+    # KEEP: optional sequence/mappability features
     - gc_content
     - mappability_mean
     - is_chrX
     - is_chrY
+    # REMOVED (circular with evaluation panel negatives):
+    # - in_cCRE_293T
+    # - in_cCRE_293T_CA
+    # - in_cCRE_CTCF
+    # - dist_log_cCRE_293T_CA
+    # - dist_log_cCRE_CTCF
+    # - n_cCRE_293T_within_5kb
+    # - n_cCRE_CTCF_within_50kb
 
   # Classifier choice. "logistic" is fast and well-calibrated; "rf" is more
   # expressive but slower and less calibrated.
@@ -203,7 +214,14 @@ postfilter:
   # Continuous form (item 3): damp *= clip(pu_score^pu_weight_alpha,
   # pu_weight_floor, 1). Set pu_weight_alpha=0 to disable; larger alpha
   # behaves more like a hard mask.
-  multiply_by_pu:        true
+  #
+  # DEFAULT FALSE. Even after dropping cCRE features from pu.features above,
+  # leaving multiply_by_pu=true makes the imputed signal proportional to
+  # pu_score everywhere -- a single number that the classifier's remaining
+  # features (motif, CTCF distance, count stats) push toward cCRE-like
+  # regions. With multiply_by_pu=false, scOpen + the neighborhood postfilter
+  # are the only denoisers and the metric measures their work alone.
+  multiply_by_pu:        false
   # <1 softens PU shrinkage on ambiguous bins; floor keeps a minimum weight.
   pu_weight_alpha:       0.55
   pu_weight_floor:       0.08
