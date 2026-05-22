@@ -27,6 +27,8 @@
 #   SCBASSET_DIR  (default: ${ROOT_DIR}/scBasset/work/ctcf/impute)
 #   SCBASSET_PUSCOPEN_DIR  (default: ${ROOT_DIR}/scBasset_PUscOpen/work/ctcf/impute)
 #   SCBASSET_CISTOPIC_DIR  (default: ${ROOT_DIR}/scBasset_cisTopic/work/ctcf/impute)
+#   SCBASSET_CISTOPIC_PUSCOPEN_DIR
+#                          (default: ${ROOT_DIR}/scBasset_cisTopic_PUscOpen/work/ctcf/impute)
 #   CONDA_ENV     conda env (default: cistopic; FITS/scopen/magic envs work too)
 #   OUT_NAME      basename for output files (default: sensitivity_specificity)
 #   THRESHOLDS    comma-separated absolute thresholds (default: auto per-pipeline)

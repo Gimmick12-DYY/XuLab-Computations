@@ -25,6 +25,8 @@
 #   SCBASSET_DIR  (default: ${ROOT_DIR}/scBasset/work/ctcf/impute)
 #   SCBASSET_PUSCOPEN_DIR  (default: ${ROOT_DIR}/scBasset_PUscOpen/work/ctcf/impute)
 #   SCBASSET_CISTOPIC_DIR  (default: ${ROOT_DIR}/scBasset_cisTopic/work/ctcf/impute)
+#   SCBASSET_CISTOPIC_PUSCOPEN_DIR
+#                          (default: ${ROOT_DIR}/scBasset_cisTopic_PUscOpen/work/ctcf/impute)
 #   ALIGN_TO      input label whose barcode order anchors the comparison
 #                 (default: raw). Pass "none" to skip alignment entirely.
 #   CONDA_ENV     conda env (default: cistopic; FITS/scopen/magic envs work too)

@@ -10,7 +10,8 @@
 # imputed CSR has signal but raw row was all-zero (see JSON imputed_vs_raw).
 # Runs downstream/bin_pos_neg_baseline_overlap.py.
 #
-# Default INPUTS: cisTopic, PUscOpen, cicero, scbasset, scbasset_puscopen, scbasset_cistopic.
+# Default INPUTS: cisTopic, PUscOpen, cicero, scbasset, scbasset_puscopen,
+#                 scbasset_cistopic, scbasset_cistopic_puscopen.
 # Override INPUTS or individual *_DIR before sbatch.
 #
 # Optional env vars:
@@ -42,7 +43,7 @@ CONDA_ENV="${CONDA_ENV:-cistopic}"
 source "${DOWN_DIR}/slurm/_pipeline_paths.sh"
 if [[ -z "${INPUTS:-}" ]]; then
   pipeline_paths_native
-  INPUTS="cisTopic=${CISTOPIC_DIR} PUscOpen=${PUSCOPEN_DIR} cicero=${CICERO_DIR} scbasset=${SCBASSET_DIR} scbasset_puscopen=${SCBASSET_PUSCOPEN_DIR} scbasset_cistopic=${SCBASSET_CISTOPIC_DIR}"
+  INPUTS="cisTopic=${CISTOPIC_DIR} PUscOpen=${PUSCOPEN_DIR} cicero=${CICERO_DIR} scbasset=${SCBASSET_DIR} scbasset_puscopen=${SCBASSET_PUSCOPEN_DIR} scbasset_cistopic=${SCBASSET_CISTOPIC_DIR} scbasset_cistopic_puscopen=${SCBASSET_CISTOPIC_PUSCOPEN_DIR}"
 fi
 
 source "$(conda info --base)/etc/profile.d/conda.sh"

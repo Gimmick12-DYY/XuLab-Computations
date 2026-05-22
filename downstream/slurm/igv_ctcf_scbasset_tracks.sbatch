@@ -7,15 +7,17 @@
 #SBATCH --time=12:00:00
 
 # BigWig tracks for the scBasset family (IGV / UCSC):
-#   scbasset          sequence-only impute
-#   scbasset_puscopen scBasset → PUscOpen cascade (very dense CSR; needs high mem)
-#   scbasset_cistopic scBasset → cisTopic cascade
+#   scbasset                    sequence-only impute
+#   scbasset_puscopen           scBasset → PUscOpen cascade (very dense CSR; needs high mem)
+#   scbasset_cistopic           scBasset → cisTopic (LDA-denoise + union)
+#   scbasset_cistopic_puscopen  union of the two above (additive)
 #
 # Uses downstream/imputed_matrix_to_bigwig.py (same as imputed_to_bigwig.sbatch).
 #
 # Optional env:
 #   ROOT_DIR, CONDA_ENV (default: cistopic)
-#   SCBASSET_DIR, SCBASSET_PUSCOPEN_DIR, SCBASSET_CISTOPIC_DIR  (from _pipeline_paths.sh)
+#   SCBASSET_DIR, SCBASSET_PUSCOPEN_DIR, SCBASSET_CISTOPIC_DIR,
+#   SCBASSET_CISTOPIC_PUSCOPEN_DIR                          (from _pipeline_paths.sh)
 #   TRACKS_DIR      default: ${ROOT_DIR}/downstream/tracks/igv_ctcf
 #   CHROM_SIZES, CHUNK_ROWS (default 10000; scbasset_pu may need 5000 if OOM)
 #   AGGREGATE       default: mean  (fraction of cells per bin for binary CSR)
@@ -67,6 +69,7 @@ SUF=""
 OUT_SCB="${TRACKS_DIR}/ctcf_scbasset_${AGGREGATE}${SUF}.bw"
 OUT_SCB_PU="${TRACKS_DIR}/ctcf_scbasset_puscopen_${AGGREGATE}${SUF}.bw"
 OUT_SCB_CIS="${TRACKS_DIR}/ctcf_scbasset_cistopic_${AGGREGATE}${SUF}.bw"
+OUT_SCB_CIS_PU="${TRACKS_DIR}/ctcf_scbasset_cistopic_puscopen_${AGGREGATE}${SUF}.bw"
 
 mkdir -p "${TRACKS_DIR}" "${CACHE_DIR}"
 
@@ -121,8 +124,10 @@ run_bw() {
 run_bw "${SCBASSET_DIR}" "${OUT_SCB}" "scbasset"
 run_bw "${SCBASSET_PUSCOPEN_DIR}" "${OUT_SCB_PU}" "scbasset_puscopen"
 run_bw "${SCBASSET_CISTOPIC_DIR}" "${OUT_SCB_CIS}" "scbasset_cistopic"
+run_bw "${SCBASSET_CISTOPIC_PUSCOPEN_DIR}" "${OUT_SCB_CIS_PU}" "scbasset_cistopic_puscopen"
 
 echo "[$(date)] Done. Load in IGV (hg38):"
 echo "  ${OUT_SCB}"
 echo "  ${OUT_SCB_PU}"
 echo "  ${OUT_SCB_CIS}"
+echo "  ${OUT_SCB_CIS_PU}"

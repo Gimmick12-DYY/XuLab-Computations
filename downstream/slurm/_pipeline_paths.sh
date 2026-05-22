@@ -12,9 +12,10 @@ pipeline_paths_native() {
   SCBASSET_DIR="${SCBASSET_DIR:-${ROOT_DIR}/scBasset/work/ctcf/impute}"
   SCBASSET_PUSCOPEN_DIR="${SCBASSET_PUSCOPEN_DIR:-${ROOT_DIR}/scBasset_PUscOpen/work/ctcf/impute}"
   SCBASSET_CISTOPIC_DIR="${SCBASSET_CISTOPIC_DIR:-${ROOT_DIR}/scBasset_cisTopic/work/ctcf/impute}"
+  SCBASSET_CISTOPIC_PUSCOPEN_DIR="${SCBASSET_CISTOPIC_PUSCOPEN_DIR:-${ROOT_DIR}/scBasset_cisTopic_PUscOpen/work/ctcf/impute}"
 }
 
-# Set INPUTS if unset. MODE: all (raw + imputed) | imputed (nine pipelines)
+# Set INPUTS if unset. MODE: all (raw + imputed) | imputed (ten pipelines)
 default_inputs() {
   local mode="${1:-imputed}"
   pipeline_paths_native
@@ -28,6 +29,7 @@ default_inputs() {
     "scbasset=${SCBASSET_DIR}"
     "scbasset_puscopen=${SCBASSET_PUSCOPEN_DIR}"
     "scbasset_cistopic=${SCBASSET_CISTOPIC_DIR}"
+    "scbasset_cistopic_puscopen=${SCBASSET_CISTOPIC_PUSCOPEN_DIR}"
   )
   case "${mode}" in
     all)

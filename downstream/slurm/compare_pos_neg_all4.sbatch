@@ -6,9 +6,9 @@
 #SBATCH --mem=96G
 #SBATCH --time=06:00:00
 
-# Build bins (if missing) and compare 10 matrices:
+# Build bins (if missing) and compare 11 matrices:
 #   raw + cisTopic + FITS + scOpen + MAGIC + PUscOpen + cicero + scbasset
-#   + scbasset_puscopen + scbasset_cistopic
+#   + scbasset_puscopen + scbasset_cistopic + scbasset_cistopic_puscopen
 #
 # Imputed inputs default to each pipeline's native <work>/ctcf/impute/.
 # Override *_DIR or INPUTS to point elsewhere.
@@ -16,7 +16,8 @@
 # Optional overrides:
 #   ROOT_DIR, CONDA_ENV, MM_DIR, BINS_TSV, BINS_OUT_DIR,
 #   CACHE_DIR, POSNEG_OUT_DIR, CISTOPIC_DIR, FITS_DIR, SCOPEN_DIR, MAGIC_DIR,
-#   PUSCOPEN_DIR, CICERO_DIR, SCBASSET_DIR, SCBASSET_PUSCOPEN_DIR, SCBASSET_CISTOPIC_DIR,
+#   PUSCOPEN_DIR, CICERO_DIR, SCBASSET_DIR, SCBASSET_PUSCOPEN_DIR,
+#   SCBASSET_CISTOPIC_DIR, SCBASSET_CISTOPIC_PUSCOPEN_DIR,
 #   OUT_NAME, N_TOP, SEED, INPUTS
 
 set -euo pipefail
