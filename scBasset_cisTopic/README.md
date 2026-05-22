@@ -30,9 +30,10 @@ RAW matrix
                                    <work>/impute/matrix_csr.npz
 ```
 
-Where `T_c` is the per-cell quantile threshold (default: 50th percentile of
+Where `T_c` is the per-cell quantile threshold (default: 10th percentile of
 LDA scores over modeled bins for cell c) — keep scBasset entries that LDA
-also ranks in the top 50% for that cell.
+also ranks in the top 90% for that cell. Earlier default was 50% which
+visibly erased scBasset peaks in IGV; 10% is the gentler floor.
 
 The union with cisTopic's standalone output guarantees every entry cisTopic
 itself called survives (additive property), while scBasset's contributions
@@ -131,7 +132,7 @@ denoise:
   # quantile:Q          -> per-cell threshold, keep score >= Q-th percentile
   # global_quantile:Q   -> single threshold from a global Q-th percentile
   # fixed:T             -> numeric threshold on phi[r,:] @ theta[:,c]
-  mode: "quantile:0.5"      # default: drop the bottom 50% per cell
+  mode: "quantile:0.10"     # default: drop the bottom 10% per cell (gentle)
 
   threshold_sample_size: 5000     # bins sampled to estimate per-cell quantiles
   keep_truly_new_bins:   true     # bins not in LDA's vocabulary are kept as-is
@@ -142,10 +143,13 @@ combine:
 ```
 
 **Direction of travel:**
-- Higher `quantile:Q` (e.g. 0.75, 0.90) = stricter denoising, fewer scBasset
-  entries kept on modeled bins.
-- `mode: off` = pure union (no filtering); equivalent to the old "max-only"
-  pipeline.
+- `mode: off` = pure union (no filtering); the most permissive choice.
+  Use this if scBasset peaks still go missing at `quantile:0.10`.
+- `quantile:0.10` (current default) = drop the bottom 10% per cell.
+  Removes bins LDA strongly disagrees with; keeps the rest of scBasset.
+- Higher `quantile:Q` (e.g. 0.25, 0.50, 0.75, 0.90) = progressively
+  stricter denoising, **drops more scBasset entries**. 0.5 (previous
+  default) was too aggressive and visibly erased peaks in IGV.
 - `keep_truly_new_bins: false` = drop scBasset's truly-new bins (the ones
   LDA can't validate). Defeats scBasset's main contribution; rarely useful.
 

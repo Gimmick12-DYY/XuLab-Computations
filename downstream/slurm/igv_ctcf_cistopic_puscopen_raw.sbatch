@@ -32,11 +32,10 @@
 #   CENTER_PUSCOPEN   none | median | p25 (default: none)
 #   AGGREGATE_RAW / AGGREGATE_CISTOPIC / AGGREGATE_PUSCOPEN — default: inherit AGGREGATE (sum).
 #                        Set AGGREGATE_CISTOPIC=max for peakier factored tracks (cisTopic only).
-#   NORMALIZE_RAW     none | max | p99 (default: p99) — display-only; divides scores
-#                        so tracks are comparable in IGV (each file scaled to itself).
-#   NORMALIZE_CISTOPIC none | max | p99 (default: p99)
-#   NORMALIZE_PUSCOPEN none | max | p99 (default: p99)
-#   Set any to **none** to write raw pseudobulk/count units (e.g. match compare_pos_neg).
+#   NORMALIZE_RAW     none | max | p99 (default: none) — raw per-bin units.
+#                        Set p99/max to force per-track relative scaling.
+#   NORMALIZE_CISTOPIC none | max | p99 (default: none)
+#   NORMALIZE_PUSCOPEN none | max | p99 (default: none)
 #
 # Example:
 #   cd /work/users/d/y/dyy12/XuLab && sbatch downstream/slurm/igv_ctcf_cistopic_puscopen_raw.sbatch
@@ -81,9 +80,9 @@ CENTER_RAW="${CENTER_RAW:-none}"
 CENTER_CISTOPIC="${CENTER_CISTOPIC:-median}"
 CENTER_PUSCOPEN="${CENTER_PUSCOPEN:-none}"
 
-NORMALIZE_RAW="${NORMALIZE_RAW:-p99}"
-NORMALIZE_CISTOPIC="${NORMALIZE_CISTOPIC:-p99}"
-NORMALIZE_PUSCOPEN="${NORMALIZE_PUSCOPEN:-p99}"
+NORMALIZE_RAW="${NORMALIZE_RAW:-none}"
+NORMALIZE_CISTOPIC="${NORMALIZE_CISTOPIC:-none}"
+NORMALIZE_PUSCOPEN="${NORMALIZE_PUSCOPEN:-none}"
 
 AGGREGATE_RAW="${AGGREGATE_RAW:-${AGGREGATE}}"
 AGGREGATE_CISTOPIC="${AGGREGATE_CISTOPIC:-${AGGREGATE}}"

@@ -34,17 +34,24 @@ sources:
 
 denoise:
   # LDA-based validation of scBasset's entries.
-  #   off                  -> no filtering (pure union with cistopic, old behaviour)
-  #   quantile:Q           -> per-cell threshold = Q-th percentile of LDA scores
-  #                            over modeled bins for that cell. Keep entries with
-  #                            P(r|c) >= T_c. Q in [0,1]: higher Q = stricter.
-  #   global_quantile:Q    -> single global threshold from a Q-th percentile of
-  #                            all validatable scores
+  #   off                  -> no filtering (pure union with cistopic; the
+  #                            mildest possible choice — preserves every
+  #                            scBasset peak)
+  #   quantile:Q           -> per-cell threshold = Q-th percentile of LDA
+  #                            scores over modeled bins for that cell. Keep
+  #                            entries with P(r|c) >= T_c. Q in [0,1]:
+  #                            higher Q = drops more scBasset entries.
+  #   global_quantile:Q    -> single global threshold from a Q-th percentile
+  #                            of all validatable scores
   #   fixed:T              -> keep entries with P(r|c) >= T (numeric)
   #
-  # quantile:0.5 means "keep scBasset entries that LDA also ranks in the top
-  # 50% for that cell". Bump to 0.75 / 0.90 to denoise harder.
-  mode: "quantile:0.5"
+  # quantile:0.10 drops only the bottom 10% of scBasset entries per cell —
+  # i.e. bins where LDA assigns extremely low probability. This keeps ~90%
+  # of scBasset's LDA-vocabulary entries (and 100% of its truly-new bins).
+  # If you still see too many scBasset peaks disappear, use mode: off.
+  # Earlier default (quantile:0.5) dropped half the entries and visibly
+  # erased scBasset peaks in IGV; quantile:0.10 is the gentler floor.
+  mode: "quantile:0.10"
 
   # Per-cell quantile is estimated from a sample of LDA-modeled bins
   # (vs computing every score). 5000 is plenty for 100k+ modeled bins.

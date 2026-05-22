@@ -21,7 +21,8 @@
 #   TRACKS_DIR      default: ${ROOT_DIR}/downstream/tracks/igv_ctcf
 #   CHROM_SIZES, CHUNK_ROWS (default 10000; scbasset_pu may need 5000 if OOM)
 #   AGGREGATE       default: mean  (fraction of cells per bin for binary CSR)
-#   NORMALIZE       default: p99   (display-only; set none for raw pseudobulk units)
+#   NORMALIZE       default: none  (raw per-bin units; set p99 or max to
+#                                   force a per-track relative scaling)
 #   TRANSFORM       default: none
 #   CENTER          default: none
 #   PIP_EXTRAS      default: 1
@@ -55,7 +56,7 @@ CACHE_DIR="${CACHE_DIR:-${DOWN_DIR}/cache}"
 CHROM_SIZES="${CHROM_SIZES:-${CACHE_DIR}/hg38.chrom.sizes}"
 TRACKS_DIR="${TRACKS_DIR:-${DOWN_DIR}/tracks/igv_ctcf}"
 AGGREGATE="${AGGREGATE:-mean}"
-NORMALIZE="${NORMALIZE:-p99}"
+NORMALIZE="${NORMALIZE:-none}"
 TRANSFORM="${TRANSFORM:-none}"
 CENTER="${CENTER:-none}"
 CHUNK_ROWS="${CHUNK_ROWS:-10000}"
