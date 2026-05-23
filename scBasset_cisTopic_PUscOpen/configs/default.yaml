@@ -19,13 +19,24 @@ sources:
   scbasset_puscopen_impute_dir: /work/users/d/y/dyy12/XuLab/scBasset_PUscOpen/work/ctcf/impute
 
 combine:
-  # Only `max` implemented. scbasset_cistopic / scbasset_puscopen use different
-  # value scales (binary vs scOpen-scaled floats), so `max` is the scale-robust
-  # combiner; everything else (sum, mean) would need a re-normalisation step.
+  # Only `max` implemented.
   method: max
-  # Store 1.0 at every nonzero. The two sources use incompatible value scales
-  # so a binary "called or not" is the only honest cross-source summary.
-  binarize_output: true
+
+  # Rescale each input to unit mean-of-nonzeros BEFORE taking max. Without
+  # this, scbasset_cistopic (binary, values=1.0) loses to scbasset_puscopen
+  # (scOpen NMF floats, can reach ~10^6) at every overlap -- the union
+  # becomes "puscopen wherever it fired". With normalize_inputs=true, each
+  # input's typical nonzero is rescaled to 1.0, so peaks above each input's
+  # own mean translate proportionally into the union and BigWig per-bin
+  # sums show variable peak heights instead of a uniform picket fence.
+  normalize_inputs: true
+
+  # Default false. Setting true erases per-(bin, cell) magnitude information
+  # so every nonzero looks identical in the IGV browser -- peaks all the
+  # same height regardless of how many cells observed them or how confident
+  # either source was. Leave false unless a strictly binary cross-source
+  # call set is what you need.
+  binarize_output: false
 
 paths:
   work_dir: /work/users/d/y/dyy12/XuLab/scBasset_cisTopic_PUscOpen/work/ctcf

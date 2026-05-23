@@ -42,8 +42,10 @@ def main() -> int:
     ap = base_parser(__doc__ or "")
     ap.add_argument("--scbasset-cistopic-impute-dir", type=str, default=None)
     ap.add_argument("--scbasset-puscopen-impute-dir", type=str, default=None)
-    ap.add_argument("--no-binarize", action="store_true",
-                    help="Keep the element-wise-max float values instead of binarising.")
+    ap.add_argument("--binarize", action="store_true",
+                    help="Threshold the union at 0 and store 1.0 at every nonzero entry.")
+    ap.add_argument("--no-normalize-inputs", action="store_true",
+                    help="Skip the per-input mean-nonzero rescale before max.")
     args = ap.parse_args()
 
     cfg = resolve_paths(load_config(args.config), args.work_dir)
@@ -53,13 +55,16 @@ def main() -> int:
         src["scbasset_cistopic_impute_dir"] = args.scbasset_cistopic_impute_dir
     if args.scbasset_puscopen_impute_dir is not None:
         src["scbasset_puscopen_impute_dir"] = args.scbasset_puscopen_impute_dir
-    if args.no_binarize:
-        cmb["binarize_output"] = False
+    if args.binarize:
+        cmb["binarize_output"] = True
+    if args.no_normalize_inputs:
+        cmb["normalize_inputs"] = False
 
     cis_dir = Path(src.get("scbasset_cistopic_impute_dir", "")).expanduser().resolve()
     pus_dir = Path(src.get("scbasset_puscopen_impute_dir", "")).expanduser().resolve()
     method  = str(cmb.get("method", "max")).lower()
-    binarise = bool(cmb.get("binarize_output", True))
+    binarise = bool(cmb.get("binarize_output", False))
+    normalize_inputs = bool(cmb.get("normalize_inputs", True))
     if method != "max":
         log.error("Unsupported combine.method=%r (only 'max' is implemented).", method)
         return 1
@@ -92,14 +97,49 @@ def main() -> int:
         return 2
     n_reg, n_cells = cis.shape
     log.info("Both inputs aligned: %d regions x %d cells", n_reg, n_cells)
-    log.info("  scbasset_cistopic nnz=%d", cis.nnz)
-    log.info("  scbasset_puscopen nnz=%d", pus.nnz)
+    log.info("  scbasset_cistopic nnz=%d  data[min=%.4g, mean=%.4g, max=%.4g]",
+             cis.nnz, float(cis.data.min()) if cis.nnz else 0.0,
+             float(cis.data.mean()) if cis.nnz else 0.0,
+             float(cis.data.max()) if cis.nnz else 0.0)
+    log.info("  scbasset_puscopen nnz=%d  data[min=%.4g, mean=%.4g, max=%.4g]",
+             pus.nnz, float(pus.data.min()) if pus.nnz else 0.0,
+             float(pus.data.mean()) if pus.nnz else 0.0,
+             float(pus.data.max()) if pus.nnz else 0.0)
+
+    # Per-input rescale to unit mean-of-nonzeros so the two value scales are
+    # comparable before max. Without this step the binary scbasset_cistopic
+    # entries (=1.0) lose every contest against scbasset_puscopen's scOpen-
+    # NMF floats (can be >> 1.0) -- the union becomes "puscopen wherever
+    # puscopen fired, cistopic only where puscopen didn't". With the rescale,
+    # each input's *typical* nonzero entry has the same magnitude (1.0), and
+    # peaks (entries above each input's mean) translate proportionally into
+    # the union -- so BigWig per-bin sums vary by both #cells and per-cell
+    # confidence instead of being uniform.
+    cis_scale = pus_scale = 1.0
+    if normalize_inputs:
+        if cis.nnz > 0:
+            cis_scale = float(cis.data.mean())
+            if cis_scale > 0:
+                cis = cis.multiply(1.0 / cis_scale).tocsr()
+                log.info("Normalised scbasset_cistopic by mean(nnz)=%.6g", cis_scale)
+        if pus.nnz > 0:
+            pus_scale = float(pus.data.mean())
+            if pus_scale > 0:
+                pus = pus.multiply(1.0 / pus_scale).tocsr()
+                log.info("Normalised scbasset_puscopen by mean(nnz)=%.6g", pus_scale)
+    else:
+        log.info("normalize_inputs=false: union will be dominated by whichever "
+                 "input has larger raw magnitudes.")
 
     log.info("Computing element-wise max ...")
     out = cis.maximum(pus).tocsr()
     out.eliminate_zeros()
     log.info("Union nnz=%d  (gain vs scbasset_cistopic: %+d; gain vs scbasset_puscopen: %+d)",
              out.nnz, out.nnz - cis.nnz, out.nnz - pus.nnz)
+    log.info("Union data[min=%.4g, mean=%.4g, max=%.4g]",
+             float(out.data.min()) if out.nnz else 0.0,
+             float(out.data.mean()) if out.nnz else 0.0,
+             float(out.data.max()) if out.nnz else 0.0)
 
     if binarise:
         out = (out > 0).astype(np.float32).tocsr()
@@ -115,6 +155,9 @@ def main() -> int:
     meta = {
         "pipeline":                       "scbasset_cistopic ∪ scbasset_puscopen",
         "method":                          "max",
+        "normalize_inputs":                bool(normalize_inputs),
+        "scbasset_cistopic_input_mean_nnz": float(cis_scale),
+        "scbasset_puscopen_input_mean_nnz": float(pus_scale),
         "binarize_output":                 binarise,
         "shape":                           [int(n_reg), int(n_cells)],
         "scbasset_cistopic_impute_dir":    str(cis_dir),

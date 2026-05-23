@@ -52,8 +52,18 @@ sources:
 
 combine:
   method: max                # only `max` supported
-  binarize_output: true      # store 1.0 at every nonzero
+  normalize_inputs: true     # rescale each input to mean(nnz)=1 before max,
+                             # so binary cisTopic and scOpen-scaled PUscOpen
+                             # contribute proportionally instead of PUscOpen
+                             # dominating every overlap
+  binarize_output: false     # keep peak-strength magnitudes; set true only
+                             # if you need a strict 0/1 union for downstream
+                             # set logic
 ```
+
+If you want the legacy "binary union" behaviour back, set both
+`normalize_inputs: false` and `binarize_output: true`. But that's exactly
+what produced the flat picket-fence IGV view, so it's almost never useful.
 
 ## Expectations vs each source
 
