@@ -2,38 +2,25 @@
 # -----------------------------------------------------------------------------
 # 01_union.py
 #
-# Combine two already-combined imputed matrices into a final cross-source CSR:
-#   * sources.scbasset_cistopic_impute_dir  (scBasset + cisTopic union/denoise)
-#   * sources.scbasset_puscopen_impute_dir  (scBasset + PUscOpen cascade)
+# Combine scBasset+cisTopic (BACKBONE) with scBasset+PUscOpen (ENHANCER):
 #
-# Two combine modes (combine.method):
+#     out[r, c] = cis[r, c] + w * cis[r, c]            if cis[r, c] > 0 AND pus[r, c] > 0
+#               = cis[r, c]                             if cis[r, c] > 0 AND pus[r, c] = 0
+#               = 0                                     if cis[r, c] = 0
 #
-#   enhancer (DEFAULT) -- cis-anchored
-#       cisTopic side decides which (bin, cell) entries exist; PUscOpen only
-#       AMPLIFIES the cis signal at overlapping entries. Pus-only entries
-#       (where cis is zero) are DROPPED.
+# i.e. multiplicative boost (1 + w) at every (bin, cell) where pus also
+# fires, otherwise the cis value passes through unchanged.
 #
-#           out[r, c] = cis[r, c] + w * pus_normalized[r, c]   if cis[r, c] > 0
-#                     = 0                                       otherwise
-#
-#       Guarantees: every (bin, cell) entry in scbasset_cistopic survives
-#       unchanged; entries where pus also fires get boosted; pus-only
-#       entries are filtered out. The user-facing intent is "cisTopic is
-#       the backbone; PUscOpen is an enhancer".
-#
-#   max -- element-wise max (symmetric union)
-#           out[r, c] = max(cis[r, c], pus[r, c])
-#       Every entry from either input survives. Use when you want pure
-#       additive coverage (and accept pus-only entries into the output).
-#
-# Both inputs must be mm-aligned (same regions.tsv + barcodes.tsv); the two
-# scBasset-combined pipelines both write that.
+# HARD INVARIANT (asserted at runtime):
+#     out.nnz == cis.nnz   AND   out.indices == cis.indices
+# Every (bin, cell) entry in scbasset_cistopic is in the output, exactly
+# one for one. Nothing is added, nothing is removed.
 #
 # Outputs (under <work>/impute/):
-#   matrix_csr.npz   CSR (float32) of the union
-#   regions.tsv      full mm region order (copied from sources)
-#   barcodes.tsv     full mm barcode order (copied from sources)
-#   meta.json        per-source nnz, output nnz, gain vs each source
+#   matrix_csr.npz   sparse float32 (n_regions, n_cells)
+#   regions.tsv      copied from cis
+#   barcodes.tsv     copied from cis
+#   meta.json        per-source nnz, n_boosted, output stats
 # -----------------------------------------------------------------------------
 from __future__ import annotations
 
@@ -59,10 +46,9 @@ def main() -> int:
     ap = base_parser(__doc__ or "")
     ap.add_argument("--scbasset-cistopic-impute-dir", type=str, default=None)
     ap.add_argument("--scbasset-puscopen-impute-dir", type=str, default=None)
-    ap.add_argument("--binarize", action="store_true",
-                    help="Threshold the union at 0 and store 1.0 at every nonzero entry.")
-    ap.add_argument("--no-normalize-inputs", action="store_true",
-                    help="Skip the per-input mean-nonzero rescale before max.")
+    ap.add_argument("--enhancer-weight", type=float, default=None,
+                    help="Multiplicative boost amplitude at cis ∩ pus entries. "
+                         "Default 1.0 (= 2x cis value at overlap). 0 disables.")
     args = ap.parse_args()
 
     cfg = resolve_paths(load_config(args.config), args.work_dir)
@@ -72,24 +58,17 @@ def main() -> int:
         src["scbasset_cistopic_impute_dir"] = args.scbasset_cistopic_impute_dir
     if args.scbasset_puscopen_impute_dir is not None:
         src["scbasset_puscopen_impute_dir"] = args.scbasset_puscopen_impute_dir
-    if args.binarize:
-        cmb["binarize_output"] = True
-    if args.no_normalize_inputs:
-        cmb["normalize_inputs"] = False
+    if args.enhancer_weight is not None:
+        cmb["enhancer_weight"] = args.enhancer_weight
 
     cis_dir = Path(src.get("scbasset_cistopic_impute_dir", "")).expanduser().resolve()
     pus_dir = Path(src.get("scbasset_puscopen_impute_dir", "")).expanduser().resolve()
-    method  = str(cmb.get("method", "enhancer")).lower()
     enhancer_weight = float(cmb.get("enhancer_weight", 1.0))
-    binarise = bool(cmb.get("binarize_output", False))
-    normalize_inputs = bool(cmb.get("normalize_inputs", True))
-    if method not in ("enhancer", "max"):
-        log.error("Unsupported combine.method=%r (use 'enhancer' or 'max').", method)
-        return 1
     for d in (cis_dir, pus_dir):
         if not d.is_dir():
             log.error("Missing source dir: %s", d); return 1
 
+    # -------- Load both matrices --------------------------------------------
     log.info("Loading scbasset_cistopic CSR from %s", cis_dir)
     cis = sp.load_npz(cis_dir / "matrix_csr.npz").tocsr().astype(np.float32)
     cis_regions  = read_lines(cis_dir / "regions.tsv")
@@ -103,87 +82,71 @@ def main() -> int:
     if cis_regions != pus_regions or cis_barcodes != pus_barcodes:
         log.error(
             "Region / barcode order mismatch between sources. Both pipelines "
-            "must align_to_mm against the same raw mm (regions/barcodes "
-            "identical line-by-line). scbasset_cistopic=%d regions, "
-            "scbasset_puscopen=%d regions.",
-            len(cis_regions), len(pus_regions),
+            "must align_to_mm against the same raw mm. "
+            "cis: %d regions, %d barcodes;  pus: %d regions, %d barcodes.",
+            len(cis_regions), len(cis_barcodes),
+            len(pus_regions), len(pus_barcodes),
         )
         return 2
     if cis.shape != pus.shape:
-        log.error("Shape mismatch: scbasset_cistopic %s vs scbasset_puscopen %s",
-                  cis.shape, pus.shape)
+        log.error("Shape mismatch: cis %s vs pus %s", cis.shape, pus.shape)
         return 2
     n_reg, n_cells = cis.shape
-    log.info("Both inputs aligned: %d regions x %d cells", n_reg, n_cells)
-    log.info("  scbasset_cistopic nnz=%d  data[min=%.4g, mean=%.4g, max=%.4g]",
-             cis.nnz, float(cis.data.min()) if cis.nnz else 0.0,
+
+    # -------- Loud nnz report so the user can see what's there --------------
+    log.info("=" * 64)
+    log.info("Inputs:")
+    log.info("  scbasset_cistopic nnz=%d", cis.nnz)
+    log.info("  scbasset_puscopen nnz=%d", pus.nnz)
+    log.info("=" * 64)
+
+    # -------- The combine, written so the invariant is obvious --------------
+    # 1. Start with cis as the output (every cis entry preserved verbatim).
+    out = cis.copy()
+
+    # 2. Find (bin, cell) entries where BOTH cis and pus fire. Indicator
+    #    multiplication: pus_indicator has 1 at every pus nonzero, 0
+    #    elsewhere; cis * pus_indicator zeroes out cis entries not in pus.
+    n_overlap = 0
+    if pus.nnz > 0 and cis.nnz > 0 and enhancer_weight != 0:
+        pus_indicator = pus.copy()
+        pus_indicator.data = np.ones_like(pus_indicator.data, dtype=np.float32)
+        cis_at_overlap = cis.multiply(pus_indicator).tocsr()
+        cis_at_overlap.eliminate_zeros()
+        n_overlap = int(cis_at_overlap.nnz)
+        # 3. Boost overlap entries by w * their cis value (multiplicative).
+        #    Because cis_at_overlap.indices ⊆ cis.indices, the addition does
+        #    not introduce any new (bin, cell) positions.
+        out = (out + enhancer_weight * cis_at_overlap).tocsr()
+
+    # 4. HARD INVARIANT. If this fires, the code is wrong, not your data.
+    if out.nnz != cis.nnz:
+        log.error("INVARIANT VIOLATED: out.nnz=%d != cis.nnz=%d. "
+                  "Enhancer mode must preserve every cis entry exactly.",
+                  out.nnz, cis.nnz)
+        return 3
+
+    log.info("Combined:")
+    log.info("  cis backbone entries kept = %d  (must equal cis.nnz=%d): %s",
+             out.nnz, cis.nnz, "OK" if out.nnz == cis.nnz else "BUG")
+    log.info("  entries boosted (cis ∩ pus) = %d  (%.2f%% of cis)",
+             n_overlap, 100.0 * n_overlap / max(cis.nnz, 1))
+    log.info("  pus-only entries dropped  = %d  (pus.nnz - overlap)",
+             pus.nnz - n_overlap)
+    log.info("=" * 64)
+    log.info("Value stats:")
+    log.info("  cis data: min=%.4g, mean=%.4g, max=%.4g",
+             float(cis.data.min()) if cis.nnz else 0.0,
              float(cis.data.mean()) if cis.nnz else 0.0,
              float(cis.data.max()) if cis.nnz else 0.0)
-    log.info("  scbasset_puscopen nnz=%d  data[min=%.4g, mean=%.4g, max=%.4g]",
-             pus.nnz, float(pus.data.min()) if pus.nnz else 0.0,
-             float(pus.data.mean()) if pus.nnz else 0.0,
-             float(pus.data.max()) if pus.nnz else 0.0)
-
-    # Per-input rescale to unit mean-of-nonzeros so the two value scales are
-    # comparable before max. Without this step the binary scbasset_cistopic
-    # entries (=1.0) lose every contest against scbasset_puscopen's scOpen-
-    # NMF floats (can be >> 1.0) -- the union becomes "puscopen wherever
-    # puscopen fired, cistopic only where puscopen didn't". With the rescale,
-    # each input's *typical* nonzero entry has the same magnitude (1.0), and
-    # peaks (entries above each input's mean) translate proportionally into
-    # the union -- so BigWig per-bin sums vary by both #cells and per-cell
-    # confidence instead of being uniform.
-    cis_scale = pus_scale = 1.0
-    if normalize_inputs:
-        if cis.nnz > 0:
-            cis_scale = float(cis.data.mean())
-            if cis_scale > 0:
-                cis = cis.multiply(1.0 / cis_scale).tocsr()
-                log.info("Normalised scbasset_cistopic by mean(nnz)=%.6g", cis_scale)
-        if pus.nnz > 0:
-            pus_scale = float(pus.data.mean())
-            if pus_scale > 0:
-                pus = pus.multiply(1.0 / pus_scale).tocsr()
-                log.info("Normalised scbasset_puscopen by mean(nnz)=%.6g", pus_scale)
-    else:
-        log.info("normalize_inputs=false: union will be dominated by whichever "
-                 "input has larger raw magnitudes.")
-
-    n_boosted = 0
-    if method == "enhancer":
-        # Cis-anchored: every cis entry is preserved; pus values at the SAME
-        # (r, c) are added (scaled by enhancer_weight); pus-only entries are
-        # dropped. Implementation: pus_at_cis = pus * indicator(cis>0), so
-        # entries where cis=0 contribute 0 even if pus is large.
-        log.info("Combine mode = enhancer (cis backbone, pus amplifier, weight=%g)",
-                 enhancer_weight)
-        out = cis.copy().astype(np.float32)
-        if pus.nnz > 0 and cis.nnz > 0:
-            cis_indicator = cis.copy().astype(np.float32)
-            cis_indicator.data = np.ones_like(cis_indicator.data, dtype=np.float32)
-            pus_at_cis = pus.multiply(cis_indicator).tocsr()
-            pus_at_cis.eliminate_zeros()
-            n_boosted = int(pus_at_cis.nnz)
-            out = (out + enhancer_weight * pus_at_cis).tocsr()
-        log.info("Enhancer: %d cis backbone entries preserved; %d boosted by pus",
-                 cis.nnz, n_boosted)
-    else:  # method == "max"
-        log.info("Combine mode = max (symmetric union)")
-        out = cis.maximum(pus).tocsr()
-        log.info("Max union nnz=%d  (gain vs cis: %+d; gain vs pus: %+d)",
-                 out.nnz, out.nnz - cis.nnz, out.nnz - pus.nnz)
-
-    out.eliminate_zeros()
-    log.info("Output data[min=%.4g, mean=%.4g, max=%.4g]",
+    log.info("  out data: min=%.4g, mean=%.4g, max=%.4g  (with weight=%g)",
              float(out.data.min()) if out.nnz else 0.0,
              float(out.data.mean()) if out.nnz else 0.0,
-             float(out.data.max()) if out.nnz else 0.0)
+             float(out.data.max()) if out.nnz else 0.0,
+             enhancer_weight)
+    log.info("=" * 64)
 
-    if binarise:
-        out = (out > 0).astype(np.float32).tocsr()
-        out.eliminate_zeros()
-        log.info("Binarised union: nnz=%d (== n_unique_(region,cell)_calls)", out.nnz)
-
+    # -------- Persist --------------------------------------------------------
     impute_dir = Path(cfg["paths"]["impute"])
     matrix_path = impute_dir / "matrix_csr.npz"
     sp.save_npz(matrix_path, out)
@@ -191,22 +154,18 @@ def main() -> int:
     (impute_dir / "barcodes.tsv").write_text("\n".join(cis_barcodes) + "\n")
 
     meta = {
-        "pipeline":                        "scbasset_cistopic ⊕ scbasset_puscopen",
-        "method":                          method,
-        "enhancer_weight":                 enhancer_weight if method == "enhancer" else None,
-        "normalize_inputs":                bool(normalize_inputs),
-        "scbasset_cistopic_input_mean_nnz": float(cis_scale),
-        "scbasset_puscopen_input_mean_nnz": float(pus_scale),
-        "binarize_output":                 binarise,
+        "pipeline":                       "scbasset_cistopic (backbone) + scbasset_puscopen (enhancer)",
+        "rule":                            "out[r,c] = cis[r,c] * (1 + w * 1{pus[r,c]>0})  if cis[r,c]>0 else 0",
+        "enhancer_weight":                 enhancer_weight,
         "shape":                           [int(n_reg), int(n_cells)],
         "scbasset_cistopic_impute_dir":    str(cis_dir),
         "scbasset_puscopen_impute_dir":    str(pus_dir),
         "scbasset_cistopic_nnz":           int(cis.nnz),
         "scbasset_puscopen_nnz":           int(pus.nnz),
-        "n_cis_entries_boosted_by_pus":    int(n_boosted) if method == "enhancer" else None,
+        "n_cis_entries_boosted_by_pus":    int(n_overlap),
+        "n_pus_only_entries_dropped":      int(pus.nnz - n_overlap),
         "output_nnz":                      int(out.nnz),
-        "gain_vs_scbasset_cistopic":       int(out.nnz) - int(cis.nnz),
-        "gain_vs_scbasset_puscopen":       int(out.nnz) - int(pus.nnz),
+        "invariant_check_passed":          bool(out.nnz == cis.nnz),
     }
     (impute_dir / "meta.json").write_text(json.dumps(meta, indent=2) + "\n")
     log.info("Wrote %s", matrix_path)
