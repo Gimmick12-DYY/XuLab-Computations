@@ -1,13 +1,24 @@
-# scBasset+cisTopic ∪ scBasset+PUscOpen (additive union)
+# scBasset+cisTopic ⊕ scBasset+PUscOpen (cis-anchored, pus enhances)
 
 ```
-out[r, c] = max(scbasset_cistopic[r, c], scbasset_puscopen[r, c])
+out[r, c] = cis[r, c] + w · pus_normalized[r, c]    if cis[r, c] > 0
+          = 0                                        otherwise
 ```
 
-Purely additive: every (bin, cell) called by either upstream pipeline
-survives. No filtering. The two upstream pipelines already each contain
-scBasset's truly-new bins; this combines their LDA-denoised and
-NMF-denoised contributions.
+**cisTopic side is the backbone** — every `(bin, cell)` entry in
+`scbasset_cistopic` is preserved exactly in the output.
+**PUscOpen side is the enhancer** — its values amplify cis entries where
+they overlap; **pus-only entries are dropped** (entries where cis is 0
+do not enter the output, no matter how confident pus was).
+
+This was renamed from "union" to "enhancer" after the legacy max union
+let PUscOpen's huge scOpen-scaled values wash out the cis backbone in
+IGV (uniform picket-fence peaks). The enhancer mode guarantees the cis
+call set is preserved and pus only differentiates strong vs weak entries
+within that call set.
+
+The legacy symmetric `max` mode is still available — set
+`combine.method: max` — but is no longer the default.
 
 ## Pipeline shape
 
@@ -51,29 +62,42 @@ sources:
   scbasset_puscopen_impute_dir: <path>
 
 combine:
-  method: max                # only `max` supported
-  normalize_inputs: true     # rescale each input to mean(nnz)=1 before max,
-                             # so binary cisTopic and scOpen-scaled PUscOpen
-                             # contribute proportionally instead of PUscOpen
-                             # dominating every overlap
-  binarize_output: false     # keep peak-strength magnitudes; set true only
-                             # if you need a strict 0/1 union for downstream
-                             # set logic
-```
+  # enhancer (default) -- cis-anchored. Every cis entry survives; pus boosts
+  #                       cis values at overlap; pus-only entries dropped.
+  # max                -- legacy symmetric union. Element-wise max of both.
+  method: enhancer
 
-If you want the legacy "binary union" behaviour back, set both
-`normalize_inputs: false` and `binarize_output: true`. But that's exactly
-what produced the flat picket-fence IGV view, so it's almost never useful.
+  # Amplitude of pus boost at overlap entries (only used in enhancer mode).
+  # 1.0 -> overlap peak ~= 1 + pus_normalized (~2x cis-only height).
+  # Bump to 2-5 for stronger contrast; 0 reduces to raw scbasset_cistopic.
+  enhancer_weight: 1.0
+
+  # Rescale each input to mean(nnz)=1 before combining. Without this,
+  # scbasset_cistopic (binary) is dwarfed by scbasset_puscopen (scOpen
+  # floats, can reach ~1e6). Keep true unless you have a specific reason.
+  normalize_inputs: true
+
+  # Keep false. Setting true erases per-(bin, cell) magnitudes -- exactly
+  # the information the enhancer is trying to express.
+  binarize_output: false
+```
 
 ## Expectations vs each source
 
-- `frac_pos_panel_covered`: ≥ max(both sources). Adds positive bins one
-  caught but the other didn't.
-- `frac_neg_panel_covered`: ≥ max(both sources). Same logic for negatives.
-- `total_stored_nnz`: roughly `scbasset_cistopic_nnz + scbasset_puscopen_nnz`
-  minus overlap.
+In `enhancer` (default) mode:
 
-The union strictly cannot reduce false positives — both sources' false
-positives are kept. Use this when sensitivity is the priority and a
-downstream filter (e.g. motif overlap, neighborhood consistency) will
-handle precision separately.
+- `frac_pos_panel_covered`: equals `scbasset_cistopic`'s value exactly
+  (same (bin, cell) entries, only amplitudes differ).
+- `frac_neg_panel_covered`: equals `scbasset_cistopic`'s value exactly.
+- `total_stored_nnz`: equals `scbasset_cistopic_nnz` exactly.
+- `n_cis_entries_boosted_by_pus`: how many cis entries were amplified by
+  pus at the same (bin, cell). The remaining cis entries pass through
+  with their original cis value.
+
+What changes vs raw `scbasset_cistopic`: **the per-(bin, cell) magnitudes**
+are now larger at agreement entries. In IGV (BigWig per-bin mean), bins
+where many cells have cis+pus agreement are visibly taller than bins
+where cis fires alone.
+
+In `max` mode the old additive coverage semantics apply (output ⊇ both
+inputs, pos/neg covered ≥ max(both)).

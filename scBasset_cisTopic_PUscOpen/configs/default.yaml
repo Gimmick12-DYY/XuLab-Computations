@@ -1,17 +1,21 @@
 # -----------------------------------------------------------------------------
-# scBasset+cisTopic ∪ scBasset+PUscOpen   (additive union)
+# scBasset+cisTopic ⊕ scBasset+PUscOpen   (cis-anchored, pus enhances)
 #
-# Element-wise max of the two downstream-combined matrices:
+# Combine two downstream pipelines into a final imputed CSR:
 #   * scBasset_cisTopic/work/ctcf/impute    LDA-denoised + cisTopic union
+#                                            -> the BACKBONE: every (bin, cell)
+#                                               entry here is preserved
 #   * scBasset_PUscOpen/work/ctcf/impute    scOpen NMF + neighborhood postfilter
+#                                            -> the ENHANCER: boosts cis values
+#                                               at overlapping entries; pus-only
+#                                               entries are dropped
 #
-# Both already contain scBasset's truly-new bins as their backbone, so the
-# union preserves every call from either method:
+#     out[r, c] = cis[r, c] + w * pus_normalized[r, c]   if cis[r, c] > 0
+#               = 0                                       otherwise
 #
-#     out[r, c] = max(scbasset_cistopic[r, c], scbasset_puscopen[r, c])
-#
-# This is purely additive -- a (r, c) called by EITHER pipeline survives. No
-# entries are dropped. Run both upstream pipelines first.
+# This guarantees output ⊇ scbasset_cistopic at the (bin, cell) level --
+# nothing the cisTopic side called is ever lost -- while pus signal
+# differentiates strong (cis+pus) from weak (cis-only) entries.
 # -----------------------------------------------------------------------------
 
 sources:
@@ -19,23 +23,30 @@ sources:
   scbasset_puscopen_impute_dir: /work/users/d/y/dyy12/XuLab/scBasset_PUscOpen/work/ctcf/impute
 
 combine:
-  # Only `max` implemented.
-  method: max
+  # enhancer (default) -- cis-anchored. Every cis entry survives; pus boosts
+  #                       cis values at overlapping entries; pus-only entries
+  #                       are dropped.
+  # max                -- legacy symmetric union. Element-wise max of both
+  #                       sources; keeps pus-only entries too.
+  method: enhancer
 
-  # Rescale each input to unit mean-of-nonzeros BEFORE taking max. Without
-  # this, scbasset_cistopic (binary, values=1.0) loses to scbasset_puscopen
-  # (scOpen NMF floats, can reach ~10^6) at every overlap -- the union
-  # becomes "puscopen wherever it fired". With normalize_inputs=true, each
-  # input's typical nonzero is rescaled to 1.0, so peaks above each input's
-  # own mean translate proportionally into the union and BigWig per-bin
-  # sums show variable peak heights instead of a uniform picket fence.
+  # How strongly pus amplifies cis at overlapping entries (only used when
+  # method == enhancer). 1.0 means an overlap entry has 1 + pus_normalized
+  # (≈ 2 for typical pus_normalized ≈ 1) -- roughly 2x the cis-only height.
+  # Bump to 2.0-5.0 for stronger contrast between cis-only and cis+pus
+  # bins, drop to 0 to recover the raw scbasset_cistopic output.
+  enhancer_weight: 1.0
+
+  # Rescale each input's nonzeros to unit mean BEFORE combining. Without
+  # this, scbasset_cistopic (binary, values=1) is dwarfed by scbasset_puscopen
+  # (scOpen NMF floats, ~10^6 range) at every overlap. With normalize_inputs
+  # true the enhancer's boost is in cis-comparable units, so peak heights
+  # vary by both #cells observing the bin and the magnitude of the boost.
   normalize_inputs: true
 
-  # Default false. Setting true erases per-(bin, cell) magnitude information
-  # so every nonzero looks identical in the IGV browser -- peaks all the
-  # same height regardless of how many cells observed them or how confident
-  # either source was. Leave false unless a strictly binary cross-source
-  # call set is what you need.
+  # Setting true erases per-(bin, cell) magnitude info -- the very thing the
+  # enhancer mode is trying to preserve. Leave false unless you need a
+  # strict 0/1 output for set logic.
   binarize_output: false
 
 paths:

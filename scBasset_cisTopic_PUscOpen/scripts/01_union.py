@@ -2,15 +2,32 @@
 # -----------------------------------------------------------------------------
 # 01_union.py
 #
-# Element-wise max of two already-combined imputed matrices:
+# Combine two already-combined imputed matrices into a final cross-source CSR:
 #   * sources.scbasset_cistopic_impute_dir  (scBasset + cisTopic union/denoise)
 #   * sources.scbasset_puscopen_impute_dir  (scBasset + PUscOpen cascade)
 #
-#     out[r, c] = max(scbasset_cistopic[r, c], scbasset_puscopen[r, c])
+# Two combine modes (combine.method):
 #
-# Purely additive: every entry called by either input survives. Both inputs
-# must be mm-aligned (same regions.tsv + barcodes.tsv); the two scBasset-
-# combined pipelines both write that.
+#   enhancer (DEFAULT) -- cis-anchored
+#       cisTopic side decides which (bin, cell) entries exist; PUscOpen only
+#       AMPLIFIES the cis signal at overlapping entries. Pus-only entries
+#       (where cis is zero) are DROPPED.
+#
+#           out[r, c] = cis[r, c] + w * pus_normalized[r, c]   if cis[r, c] > 0
+#                     = 0                                       otherwise
+#
+#       Guarantees: every (bin, cell) entry in scbasset_cistopic survives
+#       unchanged; entries where pus also fires get boosted; pus-only
+#       entries are filtered out. The user-facing intent is "cisTopic is
+#       the backbone; PUscOpen is an enhancer".
+#
+#   max -- element-wise max (symmetric union)
+#           out[r, c] = max(cis[r, c], pus[r, c])
+#       Every entry from either input survives. Use when you want pure
+#       additive coverage (and accept pus-only entries into the output).
+#
+# Both inputs must be mm-aligned (same regions.tsv + barcodes.tsv); the two
+# scBasset-combined pipelines both write that.
 #
 # Outputs (under <work>/impute/):
 #   matrix_csr.npz   CSR (float32) of the union
@@ -62,11 +79,12 @@ def main() -> int:
 
     cis_dir = Path(src.get("scbasset_cistopic_impute_dir", "")).expanduser().resolve()
     pus_dir = Path(src.get("scbasset_puscopen_impute_dir", "")).expanduser().resolve()
-    method  = str(cmb.get("method", "max")).lower()
+    method  = str(cmb.get("method", "enhancer")).lower()
+    enhancer_weight = float(cmb.get("enhancer_weight", 1.0))
     binarise = bool(cmb.get("binarize_output", False))
     normalize_inputs = bool(cmb.get("normalize_inputs", True))
-    if method != "max":
-        log.error("Unsupported combine.method=%r (only 'max' is implemented).", method)
+    if method not in ("enhancer", "max"):
+        log.error("Unsupported combine.method=%r (use 'enhancer' or 'max').", method)
         return 1
     for d in (cis_dir, pus_dir):
         if not d.is_dir():
@@ -131,12 +149,32 @@ def main() -> int:
         log.info("normalize_inputs=false: union will be dominated by whichever "
                  "input has larger raw magnitudes.")
 
-    log.info("Computing element-wise max ...")
-    out = cis.maximum(pus).tocsr()
+    n_boosted = 0
+    if method == "enhancer":
+        # Cis-anchored: every cis entry is preserved; pus values at the SAME
+        # (r, c) are added (scaled by enhancer_weight); pus-only entries are
+        # dropped. Implementation: pus_at_cis = pus * indicator(cis>0), so
+        # entries where cis=0 contribute 0 even if pus is large.
+        log.info("Combine mode = enhancer (cis backbone, pus amplifier, weight=%g)",
+                 enhancer_weight)
+        out = cis.copy().astype(np.float32)
+        if pus.nnz > 0 and cis.nnz > 0:
+            cis_indicator = cis.copy().astype(np.float32)
+            cis_indicator.data = np.ones_like(cis_indicator.data, dtype=np.float32)
+            pus_at_cis = pus.multiply(cis_indicator).tocsr()
+            pus_at_cis.eliminate_zeros()
+            n_boosted = int(pus_at_cis.nnz)
+            out = (out + enhancer_weight * pus_at_cis).tocsr()
+        log.info("Enhancer: %d cis backbone entries preserved; %d boosted by pus",
+                 cis.nnz, n_boosted)
+    else:  # method == "max"
+        log.info("Combine mode = max (symmetric union)")
+        out = cis.maximum(pus).tocsr()
+        log.info("Max union nnz=%d  (gain vs cis: %+d; gain vs pus: %+d)",
+                 out.nnz, out.nnz - cis.nnz, out.nnz - pus.nnz)
+
     out.eliminate_zeros()
-    log.info("Union nnz=%d  (gain vs scbasset_cistopic: %+d; gain vs scbasset_puscopen: %+d)",
-             out.nnz, out.nnz - cis.nnz, out.nnz - pus.nnz)
-    log.info("Union data[min=%.4g, mean=%.4g, max=%.4g]",
+    log.info("Output data[min=%.4g, mean=%.4g, max=%.4g]",
              float(out.data.min()) if out.nnz else 0.0,
              float(out.data.mean()) if out.nnz else 0.0,
              float(out.data.max()) if out.nnz else 0.0)
@@ -153,8 +191,9 @@ def main() -> int:
     (impute_dir / "barcodes.tsv").write_text("\n".join(cis_barcodes) + "\n")
 
     meta = {
-        "pipeline":                       "scbasset_cistopic ∪ scbasset_puscopen",
-        "method":                          "max",
+        "pipeline":                        "scbasset_cistopic ⊕ scbasset_puscopen",
+        "method":                          method,
+        "enhancer_weight":                 enhancer_weight if method == "enhancer" else None,
         "normalize_inputs":                bool(normalize_inputs),
         "scbasset_cistopic_input_mean_nnz": float(cis_scale),
         "scbasset_puscopen_input_mean_nnz": float(pus_scale),
@@ -164,6 +203,7 @@ def main() -> int:
         "scbasset_puscopen_impute_dir":    str(pus_dir),
         "scbasset_cistopic_nnz":           int(cis.nnz),
         "scbasset_puscopen_nnz":           int(pus.nnz),
+        "n_cis_entries_boosted_by_pus":    int(n_boosted) if method == "enhancer" else None,
         "output_nnz":                      int(out.nnz),
         "gain_vs_scbasset_cistopic":       int(out.nnz) - int(cis.nnz),
         "gain_vs_scbasset_puscopen":       int(out.nnz) - int(pus.nnz),
