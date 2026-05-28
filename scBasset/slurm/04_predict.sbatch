@@ -5,11 +5,13 @@
 #SBATCH --cpus-per-task=8
 #SBATCH --mem=128G
 #SBATCH --time=12:00:00
+#SBATCH --partition=volta-gpu
+#SBATCH --qos=gpu_access
 #SBATCH --gres=gpu:1
-#SBATCH --partition=gpu
 
-# Genome-wide prediction with the trained scBasset. GPU strongly recommended;
-# CPU fallback works but is ~30x slower on 3M bins x 10k cells.
+# Genome-wide prediction with the trained scBasset on Longleaf's volta-gpu
+# partition (Tesla V100 16 GB). GPU strongly recommended; CPU fallback works
+# but is ~30x slower on 3M bins x 10k cells.
 
 set -euo pipefail
 SUBMIT_DIR="${SLURM_SUBMIT_DIR:-$(pwd)}"

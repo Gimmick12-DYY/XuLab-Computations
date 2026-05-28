@@ -1,0 +1,21 @@
+name: borzoi
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - python=3.11
+  - pip
+  - numpy
+  - scipy
+  - h5py
+  - pyyaml
+  - pyfaidx
+  - samtools
+  - r-base
+  - r-matrix
+  - r-optparse
+  - pip:
+      - torch>=2.2
+      - borzoi-pytorch>=0.4
+      - einops
+      - tqdm

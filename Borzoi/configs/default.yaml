@@ -1,0 +1,122 @@
+# -----------------------------------------------------------------------------
+# Default configuration for the Borzoi sequence-prior imputation pipeline.
+#
+# Borzoi (Linder, Srivastava, Kelley et al., 2023) is a 524 kb context CNN +
+# transformer trained on thousands of bulk tracks (RNA-seq, ATAC, ChIP). This
+# pipeline runs frozen inference -- nothing is trained here. The output is a
+# per-bin scalar prior for the TF of interest, distributed across cells via
+# the data-derived cell graph.
+#
+# Pipeline shape (mirrors scBasset/):
+#   00_inspect_rds.R       sanity-check
+#   01_export_rds_to_mm.R  RDS -> mm/{matrix.mtx.gz, regions.tsv.gz, barcodes.tsv.gz}
+#   02_prepare_windows.py  compute 524kb windows per bin; chrom + blacklist + bounds filter
+#   03_borzoi_predict.py   GPU. sliding-window Borzoi inference; (bin, track) scalars
+#   04_select_tracks.py    aggregate selected tracks -> per-bin prior
+#   05_distribute_to_cells.py  mode B: cell-graph posterior + Borzoi prior at zero bins
+#   06_impute.py           union with raw, standard CSR schema
+# -----------------------------------------------------------------------------
+
+paths:
+  # Same RDS that every other pipeline consumes.
+  input_rds:        /work/users/d/y/dyy12/XuLab/data/CTCF_bin1000_mtx.rds
+  work_dir:         /work/users/d/y/dyy12/XuLab/Borzoi/work/ctcf
+
+  # hg38 FASTA + .fai (required for step 02). Reuse the one fetched for scBasset.
+  genome_fa:        /work/users/d/y/dyy12/XuLab/downstream/cache/hg38.fa
+
+  # Borzoi weight directory. fetch_borzoi_weights.sh populates this.
+  borzoi_weights:   /work/users/d/y/dyy12/XuLab/downstream/cache/borzoi
+
+  # Cell-graph propagated CSR (output of downstream/cell_graph_kneighbour.py).
+  # Required for distribute.mode = B. Run cell_graph_kneighbour.py once per
+  # dataset, then point this at <cell_graph_out>/matrix_csr.npz.
+  cell_graph_csr:   /work/users/d/y/dyy12/XuLab/downstream/cell_graph/ctcf/matrix_csr.npz
+
+# -----------------------------------------------------------------------------
+# Step 02: window prep
+# -----------------------------------------------------------------------------
+windows:
+  # Borzoi-specific lengths -- DO NOT CHANGE unless the model changes.
+  input_length:        524288   # bp fed to Borzoi
+  central_output_bp:   196608   # central output span; also the sliding stride
+  output_bin_bp:       32       # 32 bp per Borzoi output position
+
+  chrom_whitelist: [chr1, chr2, chr3, chr4, chr5, chr6, chr7, chr8, chr9, chr10,
+                    chr11, chr12, chr13, chr14, chr15, chr16, chr17, chr18,
+                    chr19, chr20, chr21, chr22, chrX, chrY]
+
+  exclude_blacklist: true
+  blacklist_bed_gz:  null    # null -> auto-detect downstream/cache/hg38-blacklist.v2.bed.gz
+
+  # If the centered 524kb window runs off the chromosome, N-pad the missing
+  # flanks. Disable to drop edge bins instead.
+  npad_edges:        true
+
+# -----------------------------------------------------------------------------
+# Step 03: Borzoi inference
+# -----------------------------------------------------------------------------
+borzoi:
+  # Borzoi was released as 4 cross-validation folds. fold = 0..3 picks one;
+  # a list ensembles (mean across folds). Default = single fold for speed.
+  fold:              0
+
+  # Borzoi-pytorch returns predictions in shape (B, n_tracks, n_pos).
+  # We slice the central output span and average over the bin's overlap.
+  batch_size:        2
+  precision:         fp16        # fp16 / bf16 / fp32
+
+  # Track selection happens in step 04, but step 03 can pre-filter to save
+  # disk. Pattern is applied to Borzoi's targets_human.txt rows. null = keep
+  # all tracks (heavy; ~7000 tracks x 3M bins x f16 = ~40 GB).
+  track_prefilter:   "^(CTCF|FOXA|GATA|JUN|FOS|MYC|TBP|POL|H3K|ATAC|DNASE)"
+
+  # Save partial progress per chromosome so 03 is restartable.
+  checkpoint_per_chrom: true
+
+# -----------------------------------------------------------------------------
+# Step 04: track selection + aggregation
+# -----------------------------------------------------------------------------
+tracks:
+  # Regex applied to the prefiltered track names from step 03. Should match
+  # the TF this run is about. Examples:
+  #   "^CTCF($|_|/)"   --> CTCF tracks only
+  #   "^FOXA1($|_)"    --> FOXA1 tracks only
+  pattern:           "^CTCF($|_|/)"
+
+  # Reduction across the selected tracks.
+  aggregate:         mean        # mean / max / sum
+
+  # Squash to [0, 1] before per-cell distribution.
+  apply_sigmoid:     true
+
+# -----------------------------------------------------------------------------
+# Step 05: distribute the per-bin prior across cells
+# -----------------------------------------------------------------------------
+distribute:
+  # Mode B (default): cell-graph posterior where bins observed; Borzoi prior
+  # where bins unobserved.
+  # Future modes:
+  #   A = multiplicative (no graph; uniform per-bin pattern)
+  #   C = per-cell fit (alpha_c learned from observed)
+  mode:              B
+
+  # A bin is "observed" if raw_csr[b].nnz >= observed_k. Below this, the
+  # Borzoi prior path is taken; at or above, the cell-graph posterior path.
+  observed_k:        1
+
+  # Per-cell scaling factor for the prior path. cell_factor[c] = clip(
+  #   raw_nnz_per_cell[c] / median(raw_nnz_per_cell), 0.1, 10.0 )
+  cell_factor_clip:  [0.1, 10.0]
+
+  # Same threshold vocab as cisTopic / PUscOpen / scBasset.
+  threshold_mode:    sparsity_match:3
+  threshold_sample_size: 4000000
+
+# -----------------------------------------------------------------------------
+# Step 06: persistence
+# -----------------------------------------------------------------------------
+impute:
+  binarize_output:   true
+  keep_raw:          true
+  weight:            1.0

@@ -1,17 +1,18 @@
 #!/bin/bash
-#SBATCH --job-name=scb_03_train
+#SBATCH --job-name=brz_03_predict
 #SBATCH --output=%x-%j.out
 #SBATCH --error=%x-%j.err
 #SBATCH --cpus-per-task=8
-#SBATCH --mem=128G
+#SBATCH --mem=64G
 #SBATCH --time=24:00:00
 #SBATCH --partition=volta-gpu
 #SBATCH --qos=gpu_access
 #SBATCH --gres=gpu:1
 
-# scBasset training on Longleaf's volta-gpu partition (Tesla V100 16 GB).
+# Borzoi inference on Longleaf's volta-gpu partition (Tesla V100 16 GB).
+# Use fp16 (default in configs/default.yaml) to fit Borzoi on a 16 GB V100.
 # Common overrides:
-#   sbatch --time=48:00:00 --mem=256G --export=ALL,CFG=/path/to/big.yaml slurm/03_train.sbatch
+#   sbatch --time=48:00:00 --export=ALL,CFG=/path/to/big.yaml slurm/03_borzoi.sbatch
 
 set -euo pipefail
 SUBMIT_DIR="${SLURM_SUBMIT_DIR:-$(pwd)}"
@@ -26,12 +27,11 @@ fi
 cd "${ROOT_DIR}"
 
 CFG="${CFG:-${ROOT_DIR}/configs/default.yaml}"
-CONDA_ENV="${CONDA_ENV:-scbasset}"
+CONDA_ENV="${CONDA_ENV:-borzoi}"
 
 source "$(conda info --base)/etc/profile.d/conda.sh"
 conda activate "${CONDA_ENV}"
 
-# Cluster-level CUDA, if present, takes precedence over pip wheels.
 if [[ -f /etc/profile.d/modules.sh ]]; then
   # shellcheck source=/dev/null
   source /etc/profile.d/modules.sh
@@ -39,6 +39,6 @@ if [[ -f /etc/profile.d/modules.sh ]]; then
   module load cudnn || true
 fi
 
-python -c "import tensorflow as tf; print('TF', tf.__version__, 'GPUs:', tf.config.list_physical_devices('GPU'))"
+python -c "import torch; print('Torch', torch.__version__, 'CUDA', torch.cuda.is_available(), 'devices', torch.cuda.device_count())"
 
-python scripts/03_train.py --config "${CFG}"
+python scripts/03_borzoi_predict.py --config "${CFG}"
