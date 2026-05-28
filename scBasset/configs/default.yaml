@@ -58,16 +58,20 @@ seqs:
   # Set this to a cCRE / motif BED to focus computation.
   bin_bed: null
 
-  # Optional BED applied at PREDICTION time only (in 04_predict.py). Lets us
-  # train on the full eligible bin set (so the model learns good general
-  # sequence rules) but restrict new-bin discovery to motif-containing sites
-  # where scBasset's sequence-driven predictions are most trustworthy.
-  #   null = auto-detect <repo>/downstream/cache/CTCF_motif_hg38.bed, else
-  #          predict on every bin in seqs.h5 if no BED is found.
-  #   "off" (string) = explicitly disable the motif filter even if the cached
-  #                    BED exists.
-  #   "<path>"       = explicit BED path; overrides auto-detect.
-  predict_bed: null
+  # Optional BED applied at PREDICTION time only (in 04_predict.py).
+  #
+  # IMPORTANT: motif BEDs are derived from BULK sources (JASPAR / HOCOMOCO /
+  # bulk ChIP). Applying one here injects a bulk prior into a pipeline whose
+  # whole point is to be data-only and TF-agnostic. Default is "off" so the
+  # pipeline stays honest with that framing.
+  #
+  #   "off" (default) = no motif filter; predict on every bin in seqs.h5.
+  #                     Use this for cross-pipeline imputation comparisons.
+  #   null            = legacy auto-detect of
+  #                     <repo>/downstream/cache/CTCF_motif_hg38.bed.
+  #                     Opt-in only; introduces a bulk prior.
+  #   "<path>"        = explicit BED path. Same caveat.
+  predict_bed: "off"
 
 # -----------------------------------------------------------------------------
 # Step 03: model + training

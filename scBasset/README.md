@@ -19,6 +19,27 @@ sequence and a cell's 32-d embedding and outputs `sigmoid(W_c · embed(seq))`
 training matrix never observed.** This is the only pipeline in our stack
 that fills truly-new bins.
 
+## What this pipeline is (and isn't)
+
+- **Data-driven, single-cell, sequence-based.** The only inputs are the
+  user's `.rds` count matrix and the hg38 FASTA. No motif PWMs, no ChIP-seq
+  priors, no pretrained weights. The model is trained from scratch per run.
+- **TF-specificity comes from the input, not the model.** scBasset's loss
+  is binary-cross-entropy against the user's binarized accessibility matrix.
+  The conv tower learns sequence rules that explain the per-cell signal in
+  *that* matrix. If the input is per-TF binding (scCUT&Tag, scChIP), the
+  trained model is TF-aware. If the input is generic scATAC, the model is
+  an accessibility imputer regardless of the file's project label.
+- **Generalizes by swapping the RDS.** The same pipeline runs on any TF
+  input without any per-TF configuration. There is no motif annotation or
+  bulk-track lookup in the default path.
+- **`predict_bed` is "off" by default.** Earlier versions auto-detected a
+  cached CTCF motif BED and applied it as a prediction-time filter; that
+  was a bulk-prior leak and is now opt-in only.
+- **Not** a TF activity scorer. In-silico motif perturbation requires a
+  bulk-derived PWM and yields a per-cell readout that is structurally a
+  linear projection of the cell embedding; it is not used here.
+
 ## Pipeline shape
 
 ```
@@ -110,7 +131,7 @@ python downstream/compare_pos_neg.py \
 | `seqs.seq_length: 1344`         | scBasset paper default. 1kb bin + 172 bp flanks each side.                            |
 | `seqs.min_cells_per_peak_train: 2` | Bins with fewer observed cells are still predicted but not in the training loss.   |
 | `seqs.bin_bed: null`            | null = predict on all kept bins. Restrict to a cCRE/motif BED for fast smoke tests.   |
-| `seqs.predict_bed: null`        | Predict-time motif filter. null = auto-detect `downstream/cache/CTCF_motif_hg38.bed`; "off" disables; or set an explicit BED path. Training is unaffected. |
+| `seqs.predict_bed: "off"`       | Predict-time motif filter. **Default is "off"** — motif BEDs are bulk-derived (JASPAR/HOCOMOCO) and inject a bulk prior. Set to `null` to opt into the legacy auto-detect of `downstream/cache/CTCF_motif_hg38.bed`, or to an explicit BED path. Training is unaffected. |
 | `model.latent_dim: 32`          | Sequence embedding + per-cell embedding dimension. scBasset paper default.            |
 | `model.tower_channels`          | Conv tower widths after the stem (288 -> 512 geometric).                              |
 | `train.epochs: 500` + `patience: 10` | Train with early stopping on val_loss.                                           |

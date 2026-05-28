@@ -208,13 +208,17 @@ def main() -> int:
 
     # ---- predict_bed: restrict prediction to motif-containing bins ----------
     seqs_cfg = cfg.setdefault("seqs", {})
+    predict_bed_cfg_raw = seqs_cfg.get("predict_bed", "off")
     predict_bed_path = resolve_predict_bed(
-        seqs_cfg.get("predict_bed", None),
+        predict_bed_cfg_raw,
         Path(cfg["paths"]["work_dir"]),
     )
     motif_filter_applied = False
     if predict_bed_path is None:
-        log.info("predict_bed: no BED applied (auto-detect found nothing, or set to 'off')")
+        if isinstance(predict_bed_cfg_raw, str) and predict_bed_cfg_raw.strip().lower() == "off":
+            log.info("predict_bed: 'off' -- data-only prediction, no motif filter (default)")
+        else:
+            log.info("predict_bed: null and no cached motif BED found -- no filter applied")
     else:
         log.info("predict_bed: restricting prediction to bins overlapping %s",
                  predict_bed_path)
