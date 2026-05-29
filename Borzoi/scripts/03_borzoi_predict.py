@@ -109,12 +109,10 @@ def _borzoi_load(weights_dir: Path, fold: int, precision: str, device):
         log.info("Loading Borzoi fold %d from HF Hub: %s", fold, repo_id)
         model = Borzoi.from_pretrained(repo_id)
 
-    model = model.eval().to(device)
-    if precision == "fp16":
-        model = model.half()
-    elif precision == "bf16":
-        model = model.to_bf16() if hasattr(model, "to_bf16") else model.bfloat16()
-    return model
+    # Keep weights in fp32: borzoi_pytorch runs the final head with autocast
+    # disabled and x.float(), so model.half() causes Input type (float) vs
+    # bias type (Half) errors in human_head.
+    return model.eval().to(device)
 
 
 def _borzoi_targets(weights_dir: Path) -> list[str]:
@@ -152,14 +150,16 @@ def _borzoi_targets(weights_dir: Path) -> list[str]:
 def _borzoi_forward(model, x_onehot_4xL, device, precision: str):
     """Run one forward pass. Returns numpy (n_tracks, n_pos) float32."""
     import torch
-    if precision == "fp16":
-        x = torch.from_numpy(x_onehot_4xL).half().unsqueeze(0).to(device)
-    elif precision == "bf16":
-        x = torch.from_numpy(x_onehot_4xL).bfloat16().unsqueeze(0).to(device)
-    else:
-        x = torch.from_numpy(x_onehot_4xL).float().unsqueeze(0).to(device)
+    x = torch.from_numpy(x_onehot_4xL).float().unsqueeze(0).to(device)
     with torch.no_grad():
-        y = model(x)
+        if precision == "fp16":
+            with torch.amp.autocast(device.type, dtype=torch.float16):
+                y = model(x)
+        elif precision == "bf16":
+            with torch.amp.autocast(device.type, dtype=torch.bfloat16):
+                y = model(x)
+        else:
+            y = model(x)
     # lucidrains' Borzoi returns (B, n_tracks, n_pos). Coerce to that shape.
     if y.ndim == 3 and y.shape[0] == 1:
         y = y[0]

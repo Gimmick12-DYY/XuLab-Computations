@@ -58,6 +58,8 @@ meta.json}` — the cross-pipeline schema.
 # 1) conda env (PyTorch + borzoi-pytorch + pyfaidx + h5py)
 conda env create -f environment.yml
 conda activate borzoi
+# Step 03 targets Longleaf a100-gpu / l40-gpu (default pip torch cu130).
+# Do not use volta-gpu (V100): current PyTorch wheels lack SM 7.0 kernels.
 
 # 2) hg38 FASTA (~3 GB) -- reuse the one fetched for scBasset
 ls /work/.../downstream/cache/hg38.fa.fai     # confirm it exists
@@ -82,7 +84,7 @@ sbatch slurm/99_full_pipeline.sbatch
 # or step-by-step
 sbatch slurm/01_export.sbatch
 sbatch slurm/02_windows.sbatch       # CPU, 16 GB,  <1 h
-sbatch slurm/03_borzoi.sbatch        # GPU, 32 GB, ~6-24 h
+sbatch slurm/03_borzoi.sbatch        # A100 or L40 GPU, 64 GB, ~6-24 h
 sbatch slurm/04_tracks.sbatch        # CPU, 16 GB,  <10 min
 sbatch slurm/05_distribute.sbatch    # CPU, 64 GB, <1 h
 sbatch slurm/06_impute.sbatch        # CPU, 32 GB, <30 min

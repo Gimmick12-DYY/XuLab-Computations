@@ -5,12 +5,12 @@
 #SBATCH --cpus-per-task=8
 #SBATCH --mem=64G
 #SBATCH --time=24:00:00
-#SBATCH --partition=volta-gpu
+#SBATCH --partition=a100-gpu,l40-gpu
 #SBATCH --qos=gpu_access
 #SBATCH --gres=gpu:1
 
-# Borzoi inference on Longleaf's volta-gpu partition (Tesla V100 16 GB).
-# Use fp16 (default in configs/default.yaml) to fit Borzoi on a 16 GB V100.
+# Borzoi inference on Longleaf A100 (40 GB) or L40/L40S (48 GB).
+# Default PyTorch cu130 wheels support these GPUs; fp16 in default.yaml fits either.
 # Common overrides:
 #   sbatch --time=48:00:00 --export=ALL,CFG=/path/to/big.yaml slurm/03_borzoi.sbatch
 
