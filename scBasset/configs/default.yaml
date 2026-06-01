@@ -18,13 +18,22 @@
 # -----------------------------------------------------------------------------
 
 paths:
-  # Same RDS that every other pipeline consumes.
-  input_rds:   /work/users/d/y/dyy12/XuLab/data/CTCF_bin1000_mtx.rds
-  work_dir:    /work/users/d/y/dyy12/XuLab/scBasset/work/ctcf
+  # AllTF input. Two parallel RDS files share the same metadata; pick one
+  # per run via this knob. The pair forms two comparison rows:
+  #   bin matrix:  /work/.../data/TF1000cells_bin1000_mtx.rds
+  #   peak matrix: /work/.../data/TF1000cells_peaks_mtx.rds
+  input_rds:   /work/users/d/y/dyy12/XuLab/data/TF1000cells_bin1000_mtx.rds
+  work_dir:    /work/users/d/y/dyy12/XuLab/scBasset/work/alltf_bin
 
   # hg38 FASTA + .fai (required for step 02). Fetch once:
   #   bash scripts/fetch_hg38_fasta.sh   # -> downstream/cache/hg38.fa
   genome_fa:   /work/users/d/y/dyy12/XuLab/downstream/cache/hg38.fa
+
+  # Per-cell metadata. TSV with columns DNA_id, cell, TF, barcode, subset.
+  # `barcode` (= "<DNA_id>:<cell>") must align with mm/barcodes.tsv.gz. The
+  # model never reads this file; it is carried through to downstream eval so
+  # numbers can be stratified by TF.
+  cell_metadata: /work/users/d/y/dyy12/XuLab/data/TF1000cells.meta.tsv
 
 # -----------------------------------------------------------------------------
 # Step 02: sequence extraction

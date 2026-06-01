@@ -25,19 +25,21 @@
 # -----------------------------------------------------------------------------
 
 paths:
-  # Single RDS per run. Either a peak matrix (variable-width regions) or a bin
-  # matrix (fixed 1 kb tiles). Rownames must parse as "chr:start-end" either way.
-  input_rds:   /work/users/d/y/dyy12/XuLab/data/CTCF_peaks_mtx.rds
-  work_dir:    /work/users/d/y/dyy12/XuLab/scBasset_TF/work/ctcf_peak
+  # AllTF input. Two parallel RDS files share the same metadata. Pick one
+  # per run via this knob; standard pair forms two comparison rows:
+  #   bin matrix:  /work/.../data/TF1000cells_bin1000_mtx.rds
+  #   peak matrix: /work/.../data/TF1000cells_peaks_mtx.rds
+  input_rds:   /work/users/d/y/dyy12/XuLab/data/TF1000cells_peaks_mtx.rds
+  work_dir:    /work/users/d/y/dyy12/XuLab/scBasset_TF/work/alltf_peak
 
   # hg38 FASTA + .fai (required for step 02). Reuse scBasset's fetched copy.
   genome_fa:   /work/users/d/y/dyy12/XuLab/downstream/cache/hg38.fa
 
-  # Per-cell metadata. Tab-separated; first column = barcode (must match
-  # mm/barcodes.tsv.gz). Remaining columns are free-form (cell_type, batch,
-  # donor, ...). Eval-only for now -- the model never reads this file.
-  # null = skip metadata loading / validation.
-  cell_metadata: null
+  # Per-cell metadata TSV. Expected columns: DNA_id, cell, TF, barcode, subset.
+  # `barcode` must match mm/barcodes.tsv.gz. Carried through to <work>/seqs/
+  # but never enters the model loss; downstream eval uses the TF column to
+  # stratify metrics per TF.
+  cell_metadata: /work/users/d/y/dyy12/XuLab/data/TF1000cells.meta.tsv
 
 # -----------------------------------------------------------------------------
 # Run-level tags
