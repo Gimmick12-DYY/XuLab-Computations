@@ -10,8 +10,10 @@
 #      around it, regardless of the region's own width.
 #
 # Per-cell metadata (paths.cell_metadata) is validated against the mm
-# barcodes if provided, but is not consumed by the model. It is copied into
-# <work>/seqs/cell_metadata.tsv for downstream evaluation only.
+# barcodes if provided, but is not consumed by the model. The input may be a
+# CSV or TSV (delimiter is sniffed) and the `barcode` key column is located by
+# name. It is normalised into <work>/seqs/cell_metadata.tsv for downstream
+# evaluation only.
 #
 # Outputs (under <work>/seqs/):
 #   seqs.h5
@@ -154,24 +156,39 @@ def one_hot_chunk(seq_bytes: np.ndarray) -> np.ndarray:
 def load_and_align_metadata(
     meta_path: Path, barcodes: np.ndarray
 ) -> tuple[list[str], list[list[str]]] | None:
-    """Read TSV at meta_path. First column = barcode. Reindex to barcode order.
-    Return (column_names_excluding_barcode, rows_in_barcode_order) or None."""
+    """Read the per-cell metadata table and reindex it to the trained matrix's
+    barcode order.
+
+    The delimiter is sniffed from the header (tab or comma), so both a
+    barcode-first TSV and the AllTF `*.meta.csv` (columns
+    DNA_id,cell,TF,barcode,subset) are accepted. The key column is whichever
+    column is literally named "barcode"; if none exists, the first column is
+    used. Every remaining column is carried through as a value column, so the
+    barcode does not have to be first.
+
+    Return (value_column_names, rows_in_barcode_order) or None."""
     with open(meta_path) as fh:
-        first = fh.readline().rstrip("\n")
+        first = fh.readline().rstrip("\r\n")
         if not first:
             log.warning("cell_metadata empty: %s", meta_path)
             return None
-        cols = first.split("\t")
-        if len(cols) < 2:
-            raise SystemExit(f"cell_metadata must have >= 2 columns (barcode + ...). got {first!r}")
-        bc_col, *rest_cols = cols
-        log.info("cell_metadata barcode col = %r, value cols = %r", bc_col, rest_cols)
+        sep = "\t" if "\t" in first else ("," if "," in first else "\t")
+        header = first.split(sep)
+        if len(header) < 2:
+            raise SystemExit(
+                f"cell_metadata must have >= 2 columns (barcode + ...). got {first!r}")
+        bc_idx = header.index("barcode") if "barcode" in header else 0
+        rest_cols = [c for i, c in enumerate(header) if i != bc_idx]
+        log.info("cell_metadata sep=%r, barcode col=%r (idx %d), value cols=%r",
+                 sep, header[bc_idx], bc_idx, rest_cols)
         rows: dict[str, list[str]] = {}
         for ln in fh:
-            parts = ln.rstrip("\n").split("\t")
-            if len(parts) < 2:
+            parts = ln.rstrip("\r\n").split(sep)
+            if len(parts) <= bc_idx or not parts[bc_idx]:
                 continue
-            rows[parts[0]] = parts[1:1 + len(rest_cols)]
+            rows[parts[bc_idx]] = [
+                parts[i] if i < len(parts) else "" for i in range(len(header)) if i != bc_idx
+            ]
     aligned: list[list[str]] = []
     missing = 0
     for bc in barcodes.tolist():

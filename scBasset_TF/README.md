@@ -28,9 +28,12 @@ no bulk priors anywhere in the pipeline.
 - **Peak and bin inputs ship as separate runs.** Combinatorial training
   (multi-task / late fusion / sequential) is planned but deferred. For now:
   run once with the peak RDS, once with the bin RDS, compare downstream.
-- **Per-cell metadata is eval-only.** The TSV at `paths.cell_metadata` is
-  validated against barcodes but never enters the loss. Hooks for
-  batch-correction or metadata-conditioned `W_c` can be added later.
+- **Per-cell metadata is eval-only.** The CSV/TSV at `paths.cell_metadata`
+  (e.g. `data/TF1000cells.meta.csv`, columns `DNA_id,cell,TF,barcode,subset`)
+  is validated against barcodes but never enters the loss. The delimiter is
+  sniffed and the `barcode` key column is found by name, so column order is
+  irrelevant. Hooks for batch-correction or metadata-conditioned `W_c` can be
+  added later.
 
 ## Pipeline shape
 
@@ -55,11 +58,14 @@ conda activate scbasset_tf
 
 ## Run a peak-input experiment
 
+This is what `configs/default.yaml` ships with:
+
 ```yaml
 # configs/default.yaml
 paths:
-  input_rds:  /path/to/CTCF_peaks_mtx.rds
-  work_dir:   /path/to/work/ctcf_peak
+  input_rds:     /work/users/d/y/dyy12/XuLab/data/TF1000cells.pmat.mtx.rds
+  work_dir:      /work/users/d/y/dyy12/XuLab/scBasset_TF/work/alltf_peak
+  cell_metadata: /work/users/d/y/dyy12/XuLab/data/TF1000cells.meta.csv
 run:
   input_kind: peak
 seqs:
@@ -72,12 +78,13 @@ sbatch slurm/99_full_pipeline.sbatch
 
 ## Run a bin-input experiment
 
-Same pipeline; just swap the RDS and the work_dir:
+Same pipeline; just swap the RDS and the work_dir (metadata is shared):
 
 ```yaml
 paths:
-  input_rds:  /path/to/CTCF_bin1000_mtx.rds
-  work_dir:   /path/to/work/ctcf_bin
+  input_rds:     /work/users/d/y/dyy12/XuLab/data/TF1000cells.bin1000.mtx.rds
+  work_dir:      /work/users/d/y/dyy12/XuLab/scBasset_TF/work/alltf_bin
+  cell_metadata: /work/users/d/y/dyy12/XuLab/data/TF1000cells.meta.csv
 run:
   input_kind: bin
 ```
@@ -117,7 +124,7 @@ no longer scales with `seq_length`.
 | `model.stem_pool: 3`              | Single fixed downsample after the stem. Set 1 to disable.                             |
 | `model.tower_dilations`           | Per-block dilation rates; control receptive field growth.                             |
 | `model.pool: global_avg`          | `global_avg` (default) or `global_max` at the head.                                   |
-| `paths.cell_metadata: null`       | Optional per-cell TSV. Validated against barcodes; eval-only.                         |
+| `paths.cell_metadata: null`       | Optional per-cell CSV/TSV. Delimiter sniffed, `barcode` column found by name. Validated against barcodes; eval-only. |
 | `predict.threshold_mode: sparsity_match:3` | Same vocabulary as scBasset / cisTopic / PUscOpen.                           |
 | `impute.binarize_output: true`    | Store 1 at above-threshold entries.                                                   |
 | `impute.keep_raw: true`           | Union with raw via element-wise max.                                                  |

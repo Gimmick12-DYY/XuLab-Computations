@@ -26,7 +26,7 @@
 #     --input scbasset_peak=/work/.../scBasset/work/alltf_peak/impute \
 #     --input scbasset_tf_bin=/work/.../scBasset_TF/work/alltf_bin/impute \
 #     --input scbasset_tf_peak=/work/.../scBasset_TF/work/alltf_peak/impute \
-#     --metadata /work/.../data/TF1000cells.meta.tsv \
+#     --metadata /work/.../data/TF1000cells.meta.csv \
 #     --out-dir /work/.../comparison/alltf
 # -----------------------------------------------------------------------------
 from __future__ import annotations
@@ -57,8 +57,11 @@ def load_metadata(path: Path) -> tuple[dict[str, str], dict[str, str]]:
     columns by name. Falls back to constructing barcode from DNA_id + cell
     if a `barcode` column is absent."""
     with open(path) as fh:
-        header = fh.readline().rstrip("\n").split("\t")
-        rows = [ln.rstrip("\n").split("\t") for ln in fh if ln.strip()]
+        first = fh.readline().rstrip("\r\n")
+        # Sniff the delimiter so both .meta.tsv and .meta.csv work unchanged.
+        sep = "\t" if "\t" in first else ("," if "," in first else "\t")
+        header = first.split(sep)
+        rows = [ln.rstrip("\r\n").split(sep) for ln in fh if ln.strip()]
 
     def col(name: str) -> int | None:
         return header.index(name) if name in header else None
@@ -239,7 +242,7 @@ def main() -> int:
                     metavar="LABEL=PATH",
                     help="Repeatable: label=/path/to/impute_dir")
     ap.add_argument("--metadata", required=True,
-                    help="TSV with columns including barcode + TF")
+                    help="CSV or TSV with columns including barcode + TF")
     ap.add_argument("--out-dir", required=True,
                     help="Destination for summary.tsv and per_tf.tsv")
     args = ap.parse_args()

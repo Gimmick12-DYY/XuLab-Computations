@@ -101,7 +101,7 @@ sbatch slurm/06_impute.sbatch        # CPU, 32 GB, <30 min
 | `windows.exclude_blacklist: true`   | Drop bins overlapping ENCODE hg38 blacklist (same file scBasset uses).                        |
 | `borzoi.fold: 0`                    | Borzoi was released as 4 cross-validated folds. Use fold 0 by default; ensemble via `[0,1,2,3]`. |
 | `borzoi.batch_size: 2`              | Inference batch size (windows per forward). 2 fits a 40 GB A100; raise for bigger GPUs.        |
-| `tracks.pattern: "^CTCF($|_)"`      | Regex on Borzoi `targets_human.txt`. Picks the TF tracks for this run.                        |
+| `tracks.pattern: "CHIP:CTCF"`       | Regex on Borzoi descriptions (`ASSAY:TARGET:cell`). Picks TF tracks for this run.             |
 | `tracks.aggregate: mean`            | How to collapse `(n_bins, n_tracks)` -> `(n_bins,)`. `mean` / `max` / `sum`.                 |
 | `tracks.apply_sigmoid: true`        | Map raw Borzoi output to [0,1] before per-cell distribution.                                  |
 | `distribute.mode: B`                | Cell-axis distribution strategy. Mode B = cell-graph posterior + Borzoi prior at zero bins.   |
