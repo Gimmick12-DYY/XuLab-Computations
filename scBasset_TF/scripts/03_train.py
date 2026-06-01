@@ -47,6 +47,82 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(mess
 
 
 # ----------------------------------------------------------------------------
+# Loss functions for sparse single-cell TF data
+#
+# At single-cell, single-region resolution, ~99% of Y entries are zero. Plain
+# BCE is dominated by easy negatives -- the gradient at the rare 1s is washed
+# out. The two losses below target this directly:
+#
+#   bce_weighted  : pos_weight scales the positive-class log term so the rare
+#                   1s contribute proportionally more to the loss.
+#                   loss(y, p) = -[ w * y * log(p) + (1 - y) * log(1 - p) ]
+#
+#   focal         : Lin et al. 2017. (1 - p_t)^gamma down-weights confident
+#                   predictions (the easy negatives), focusing gradient on
+#                   hard examples. alpha is the positive-class re-weighting.
+#                   loss(y, p) = -alpha_t * (1 - p_t)^gamma * log(p_t)
+#                   where p_t = p if y==1 else (1-p)
+#                   and alpha_t = alpha if y==1 else (1 - alpha)
+# ----------------------------------------------------------------------------
+
+def _make_weighted_bce(pos_weight: float):
+    import tensorflow as tf
+
+    pw = tf.constant(float(pos_weight), dtype=tf.float32)
+    eps = 1e-7
+
+    def weighted_bce(y_true, y_pred):
+        y_pred = tf.clip_by_value(y_pred, eps, 1.0 - eps)
+        loss = -(pw * y_true * tf.math.log(y_pred)
+                 + (1.0 - y_true) * tf.math.log(1.0 - y_pred))
+        return tf.reduce_mean(loss)
+    weighted_bce.__name__ = f"weighted_bce_pw{pos_weight:g}"
+    return weighted_bce
+
+
+def _make_focal(gamma: float, alpha: float):
+    import tensorflow as tf
+
+    g = tf.constant(float(gamma), dtype=tf.float32)
+    a = tf.constant(float(alpha), dtype=tf.float32)
+    eps = 1e-7
+
+    def focal(y_true, y_pred):
+        y_pred = tf.clip_by_value(y_pred, eps, 1.0 - eps)
+        p_t = tf.where(tf.equal(y_true, 1.0), y_pred, 1.0 - y_pred)
+        a_t = tf.where(tf.equal(y_true, 1.0), a, 1.0 - a)
+        loss = -a_t * tf.pow(1.0 - p_t, g) * tf.math.log(p_t)
+        return tf.reduce_mean(loss)
+    focal.__name__ = f"focal_g{gamma:g}_a{alpha:g}"
+    return focal
+
+
+def _resolve_loss(loss_name: str, t_cfg: dict, pos_weight_auto: float | None):
+    """Returns (loss_fn_or_name, resolved_pos_weight, focal_gamma, focal_alpha)."""
+    loss_name = (loss_name or "bce").lower()
+    if loss_name == "bce":
+        return "binary_crossentropy", None, None, None
+    if loss_name == "bce_weighted":
+        pw = t_cfg.get("pos_weight", "auto")
+        if isinstance(pw, str) and pw.lower() == "auto":
+            if pos_weight_auto is None:
+                raise SystemExit(
+                    "train.pos_weight=auto but seqs/meta.json has no pos_weight_auto; "
+                    "re-run 02_prepare_seqs.py to compute it."
+                )
+            pw = pos_weight_auto
+        pw = float(pw)
+        log.info("Using bce_weighted with pos_weight=%.3f", pw)
+        return _make_weighted_bce(pw), pw, None, None
+    if loss_name == "focal":
+        gamma = float(t_cfg.get("focal_gamma", 2.0))
+        alpha = float(t_cfg.get("focal_alpha", 0.25))
+        log.info("Using focal loss with gamma=%.2f alpha=%.2f", gamma, alpha)
+        return _make_focal(gamma, alpha), None, gamma, alpha
+    raise SystemExit(f"Unknown train.loss: {loss_name!r}")
+
+
+# ----------------------------------------------------------------------------
 # Model
 # ----------------------------------------------------------------------------
 
@@ -210,6 +286,25 @@ def main() -> int:
     log.info("Train: %d regions x %d cells  (h5 %d total, seq_length=%d, input_kind=%s)",
              Y.shape[0], n_cells, n_bins_h5, seq_length, input_kind)
 
+    # Pull pos_freq / pos_weight_auto from seqs/meta.json if present (computed
+    # by 02_prepare_seqs.py). Used by `train.loss: bce_weighted` with auto pw.
+    pos_weight_auto = None
+    seqs_meta_path = seqs_dir / "meta.json"
+    if seqs_meta_path.is_file():
+        try:
+            sm = json.loads(seqs_meta_path.read_text())
+            if sm.get("pos_freq") is not None:
+                log.info("Training positives: pos_freq=%.5f  pos_weight_auto=%.2f",
+                         sm["pos_freq"], sm.get("pos_weight_auto", 0.0))
+            pos_weight_auto = sm.get("pos_weight_auto")
+        except Exception as e:
+            log.warning("Could not parse %s: %s", seqs_meta_path, e)
+
+    loss_name = str(t_cfg.get("loss", "bce"))
+    loss_fn, resolved_pw, focal_g, focal_a = _resolve_loss(
+        loss_name, t_cfg, pos_weight_auto
+    )
+
     rng = np.random.default_rng(seed)
     n_train_bins = Y.shape[0]
     perm = rng.permutation(n_train_bins)
@@ -243,7 +338,7 @@ def main() -> int:
     )
     model.compile(
         optimizer=keras.optimizers.Adam(learning_rate=lr),
-        loss="binary_crossentropy",
+        loss=loss_fn,
         metrics=[keras.metrics.AUC(name="auroc", from_logits=False)],
     )
     model.summary(print_fn=log.info)
@@ -289,6 +384,10 @@ def main() -> int:
         "tower_channels":    tower_channels,
         "tower_dilations":   tower_dils,
         "pool":              pool,
+        "loss":              loss_name,
+        "pos_weight":        resolved_pw,
+        "focal_gamma":       focal_g,
+        "focal_alpha":       focal_a,
         "epochs_run":        int(len(hist.history.get("loss", []))),
         "best_val_loss":     float(min(hist.history.get("val_loss", [np.inf]))),
         "best_val_auroc":    float(max(hist.history.get("val_auroc", [0.0]))),

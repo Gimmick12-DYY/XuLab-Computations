@@ -53,11 +53,18 @@ run:
 # Step 02: sequence extraction
 # -----------------------------------------------------------------------------
 seqs:
-  # Window length, in bp. Reduced from scBasset's 1344. TF binding context
-  # rarely needs >800 bp; smaller windows = faster training + sharper focus.
-  # The architecture supports any value via GlobalAvgPool; nothing in the
-  # layer math depends on this number.
-  seq_length: 768
+  # Window length, in bp. Defaults differ by input_kind because of bin-center
+  # ambiguity: peaks come centered on a summit (narrow window is fine);
+  # bins are arbitrary 1 kb tiles where the real TF binding event may be
+  # anywhere inside or just outside the tile (wider window is safer).
+  #
+  #   input_kind = peak  ->  384  bp recommended (summit-centric)
+  #   input_kind = bin   ->  1024 bp recommended (over-cover to defeat
+  #                           bin-center misalignment)
+  #
+  # The architecture (GlobalAvgPool head) supports any value; nothing in the
+  # layer math depends on this number. Tune per run.
+  seq_length: 384
 
   # Drop regions whose centered window contains > max_n_frac uppercase Ns.
   max_n_frac: 0.10
@@ -69,9 +76,11 @@ seqs:
   exclude_blacklist: true
   blacklist_bed_gz: null   # auto-discovered under downstream/cache/
 
-  # Minimum cells with raw > 0 for a region to enter training. Prediction runs
-  # on every kept region regardless. 2 mirrors scBasset's default.
-  min_cells_per_peak_train: 2
+  # Minimum cells with raw > 0 for a region to enter the training loss.
+  # Sparser positive evidence -> noisier per-region label -> the model is
+  # better off ignoring that region during training (but predictions still
+  # run on every region for new-bin retrieval). Raised from scBasset's 2.
+  min_cells_per_peak_train: 3
 
   # Optional explicit BED restricting candidate regions (training and
   # prediction). null = use every mm region passing the filters above.
@@ -97,18 +106,23 @@ model:
 
   # Dilated conv tower replaces scBasset's 6-stage MaxPool chain. Each block:
   #   Conv1D(C, kernel=5, dilation=D, padding=same) -> BN -> GELU
-  # Channels grow geometrically as in scBasset; dilations grow exponentially
-  # so the receptive field still reaches ~few-thousand bp despite no further
-  # spatial reduction.
-  tower_channels: [288, 323, 363, 407, 456, 512]
-  tower_dilations: [2, 4, 8, 16, 32, 64]
+  # Receptive field per output position at input scale:
+  #   stem_kernel + 3 * (tower_kernel - 1) * sum(tower_dilations)
+  # Defaults below give ~390 bp RF -- matches the peak default seq_length 384.
+  # For wider windows (e.g. bin input at 1024 bp), extend dilations to
+  # [2, 4, 8, 16, 32, 64] to keep RF >= seq_length.
+  tower_channels:  [288, 323, 363, 407]
+  tower_dilations: [2, 4, 8, 16]
   tower_kernel:    5
 
   # After the tower, a 1x1 conv projects to `head_filters` channels, then a
-  # GlobalAveragePooling1D collapses the (variable) spatial dim. This is the
-  # adaptive-pool step that frees us from a fixed input length.
+  # global pool collapses the (variable) spatial dim. global_max is the
+  # right bias for sparse TF binding signal (motif hit anywhere -> firing
+  # localized at that position); global_avg dilutes the motif signal across
+  # all positions. global_avg is preferable for distributed accessibility
+  # signal.
   head_filters: 256
-  pool:         global_avg     # global_avg / global_max
+  pool:         global_max     # global_max / global_avg
 
 train:
   batch_size:    64
@@ -119,6 +133,24 @@ train:
   random_seed:   555
   cells_per_step: 0
   save_best_only: true
+
+  # Loss function -- the sparsity attack.
+  # ~99% of (region, cell) entries in single-cell TF data are zero. Plain BCE
+  # is dominated by easy negatives; gradients at the rare 1s get washed out.
+  #
+  #   bce          : plain BCE. The scBasset paper default. Baseline only.
+  #   bce_weighted : pos_weight * y * log(p) + (1-y) * log(1-p)
+  #                  pos_weight: "auto" reads pos_weight_auto from
+  #                              seqs/meta.json (= (1-pos_freq)/pos_freq)
+  #                              or set a numeric value.
+  #   focal        : Lin et al. 2017. (1 - p_t)^gamma down-weights easy
+  #                  examples; alpha re-weights positives. Designed for the
+  #                  exact extreme-class-imbalance regime we have here.
+  #                  Recommended default.
+  loss:         focal
+  pos_weight:   auto       # only used when loss == bce_weighted
+  focal_gamma:  2.0
+  focal_alpha:  0.25
 
 # -----------------------------------------------------------------------------
 # Step 04: prediction + thresholding

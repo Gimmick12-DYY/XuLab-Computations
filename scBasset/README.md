@@ -70,6 +70,20 @@ conda activate scbasset
 
 ## Run
 
+AllTF preset configs ship in `configs/`. Pick one and pass it via `CFG`:
+
+```bash
+# Peak input
+CFG=configs/alltf_peak.yaml sbatch slurm/99_full_pipeline.sbatch
+
+# Bin input
+CFG=configs/alltf_bin.yaml sbatch slurm/99_full_pipeline.sbatch
+```
+
+Both presets hold the architecture fixed at scBasset's original 1344 bp /
+MaxPool chain — they only differ in `paths.input_rds` and `paths.work_dir`,
+so they are apples-to-apples for the peak-vs-bin comparison.
+
 ```bash
 # end-to-end (~24h on 1 GPU + 128 GB for ~119k trainable bins x 10k cells,
 # then ~3M-bin genome-wide prediction)

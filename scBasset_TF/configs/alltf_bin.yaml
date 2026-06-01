@@ -1,0 +1,72 @@
+# -----------------------------------------------------------------------------
+# scBasset_TF on the AllTF *bin* matrix.
+#
+# Bin-tuned defaults (differ from the peak preset):
+#   - seq_length 1024 bp -- over-covers the 1 kb tile so the actual TF binding
+#     event is captured even if it sits near a tile edge (defeats bin-center
+#     ambiguity).
+#   - 6-stage dilated tower (RF ~1.5 kb >= seq_length).
+#   - tower_channels extended to match scBasset's geometric progression.
+#   - GlobalMaxPool head + focal loss unchanged (sparsity stance is the same).
+#
+# Use:  CFG=configs/alltf_bin.yaml sbatch slurm/99_full_pipeline.sbatch
+# -----------------------------------------------------------------------------
+
+paths:
+  input_rds:     /work/users/d/y/dyy12/XuLab/data/TF1000cells_bin1000_mtx.rds
+  work_dir:      /work/users/d/y/dyy12/XuLab/scBasset_TF/work/alltf_bin
+  genome_fa:     /work/users/d/y/dyy12/XuLab/downstream/cache/hg38.fa
+  cell_metadata: /work/users/d/y/dyy12/XuLab/data/TF1000cells.meta.tsv
+
+run:
+  input_kind: bin
+
+seqs:
+  seq_length:               1024
+  max_n_frac:               0.10
+  chrom_whitelist:          [chr1, chr2, chr3, chr4, chr5, chr6, chr7, chr8, chr9, chr10,
+                             chr11, chr12, chr13, chr14, chr15, chr16, chr17, chr18,
+                             chr19, chr20, chr21, chr22, chrX, chrY]
+  exclude_blacklist:        true
+  blacklist_bed_gz:         null
+  min_cells_per_peak_train: 3
+  bin_bed:                  null
+  predict_bed:              "off"
+
+model:
+  latent_dim:      32
+  dropout_rate:    0.20
+  l2:              0.0
+  stem_pool:       3
+  stem_filters:    288
+  stem_kernel:     17
+  tower_channels:  [288, 323, 363, 407, 456, 512]
+  tower_dilations: [2, 4, 8, 16, 32, 64]
+  tower_kernel:    5
+  head_filters:    256
+  pool:            global_max
+
+train:
+  batch_size:     64
+  epochs:         500
+  patience:       10
+  val_frac:       0.10
+  learning_rate:  1.0e-3
+  random_seed:    555
+  cells_per_step: 0
+  save_best_only: true
+  loss:           focal
+  pos_weight:     auto
+  focal_gamma:    2.0
+  focal_alpha:    0.25
+
+predict:
+  batch_size:            256
+  predict_all_bins:      true
+  threshold_mode:        sparsity_match:3
+  threshold_sample_size: 4000000
+
+impute:
+  binarize_output: true
+  keep_raw:        true
+  weight:          1.0

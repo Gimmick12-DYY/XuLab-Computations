@@ -347,6 +347,19 @@ def main() -> int:
     (seqs_dir / "barcodes.tsv").write_text("\n".join(barcodes.tolist()) + "\n")
     np.save(seqs_dir / "trainable_idx_in_h5.npy", np.where(trainable)[0].astype(np.int64))
 
+    # Sparsity stats for the loss-side sparsity attack in 03_train.py.
+    n_entries = int(train_mat.shape[0]) * int(train_mat.shape[1])
+    n_pos = int(train_mat.nnz)
+    pos_freq = (n_pos / n_entries) if n_entries > 0 else 0.0
+    if pos_freq > 0:
+        pos_weight_auto = (1.0 - pos_freq) / pos_freq
+    else:
+        pos_weight_auto = None
+    log.info("Sparsity stats on matrix_train: pos_freq=%.5f  (1 entry per ~%d)  "
+             "pos_weight_auto=%s",
+             pos_freq, int(1.0 / pos_freq) if pos_freq > 0 else -1,
+             f"{pos_weight_auto:.2f}" if pos_weight_auto is not None else "n/a")
+
     # Optional per-cell metadata pass-through (eval only)
     metadata_path = cfg["paths"].get("cell_metadata")
     metadata_meta = None
@@ -384,6 +397,10 @@ def main() -> int:
             "median": int(np.median(final_widths)),
             "max":    int(final_widths.max()),
         },
+        "pos_freq":           float(pos_freq),
+        "pos_weight_auto":    float(pos_weight_auto) if pos_weight_auto is not None else None,
+        "n_train_positives":  n_pos,
+        "n_train_entries":    n_entries,
         "cell_metadata":      metadata_meta,
     }
     (seqs_dir / "meta.json").write_text(json.dumps(meta, indent=2) + "\n")
