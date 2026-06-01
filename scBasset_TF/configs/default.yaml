@@ -1,0 +1,136 @@
+# -----------------------------------------------------------------------------
+# Default configuration for scBasset_TF — a TF-binding-focused fork of
+# scBasset/ with two structural changes:
+#
+#   1. Adaptive / GlobalAvg pooling replaces the fixed MaxPool chain.
+#      The architecture handles any `seq_length` without divisibility math.
+#      Default seq_length drops from 1344 to 768 -- the original window is too
+#      wide for TF-focused signal.
+#   2. The pipeline runs over either a *peak* matrix (variable-width regions)
+#      or a *bin* matrix (fixed 1 kb tiles). The mm/ contract is identical;
+#      `input_kind` is recorded for downstream comparison only.
+#
+# What is intentionally preserved from scBasset/:
+#   - Track A's data-only stance: `predict_bed: "off"` by default.
+#   - The mm/ / seqs/ / model/ / predict/ / impute/ tier names.
+#   - The Borzoi/scBasset evaluator wiring downstream.
+#
+# Pipeline shape:
+#   00_inspect_rds.R       sanity-check
+#   01_export_rds_to_mm.R  RDS -> mm/{matrix.mtx.gz, regions.tsv.gz, barcodes.tsv.gz}
+#   02_prepare_seqs.py     center-extract `seq_length` bp per region
+#   03_train.py            dilated tower + GlobalAvgPool, configurable length
+#   04_predict.py          genome-wide prediction (no motif filter by default)
+#   05_impute.py           assemble standard CSR schema
+# -----------------------------------------------------------------------------
+
+paths:
+  # Single RDS per run. Either a peak matrix (variable-width regions) or a bin
+  # matrix (fixed 1 kb tiles). Rownames must parse as "chr:start-end" either way.
+  input_rds:   /work/users/d/y/dyy12/XuLab/data/CTCF_peaks_mtx.rds
+  work_dir:    /work/users/d/y/dyy12/XuLab/scBasset_TF/work/ctcf_peak
+
+  # hg38 FASTA + .fai (required for step 02). Reuse scBasset's fetched copy.
+  genome_fa:   /work/users/d/y/dyy12/XuLab/downstream/cache/hg38.fa
+
+  # Per-cell metadata. Tab-separated; first column = barcode (must match
+  # mm/barcodes.tsv.gz). Remaining columns are free-form (cell_type, batch,
+  # donor, ...). Eval-only for now -- the model never reads this file.
+  # null = skip metadata loading / validation.
+  cell_metadata: null
+
+# -----------------------------------------------------------------------------
+# Run-level tags
+# -----------------------------------------------------------------------------
+run:
+  # "peak" or "bin". Cosmetic / metadata-only; nothing in the code branches on
+  # it. Recorded in meta.json files so cross-run comparisons can group results.
+  input_kind:  peak
+
+# -----------------------------------------------------------------------------
+# Step 02: sequence extraction
+# -----------------------------------------------------------------------------
+seqs:
+  # Window length, in bp. Reduced from scBasset's 1344. TF binding context
+  # rarely needs >800 bp; smaller windows = faster training + sharper focus.
+  # The architecture supports any value via GlobalAvgPool; nothing in the
+  # layer math depends on this number.
+  seq_length: 768
+
+  # Drop regions whose centered window contains > max_n_frac uppercase Ns.
+  max_n_frac: 0.10
+
+  chrom_whitelist: [chr1, chr2, chr3, chr4, chr5, chr6, chr7, chr8, chr9, chr10,
+                    chr11, chr12, chr13, chr14, chr15, chr16, chr17, chr18,
+                    chr19, chr20, chr21, chr22, chrX, chrY]
+
+  exclude_blacklist: true
+  blacklist_bed_gz: null   # auto-discovered under downstream/cache/
+
+  # Minimum cells with raw > 0 for a region to enter training. Prediction runs
+  # on every kept region regardless. 2 mirrors scBasset's default.
+  min_cells_per_peak_train: 2
+
+  # Optional explicit BED restricting candidate regions (training and
+  # prediction). null = use every mm region passing the filters above.
+  bin_bed: null
+
+  # Prediction-time BED filter. Default "off" mirrors scBasset's Track A
+  # framing -- motif BEDs are bulk-derived priors.
+  predict_bed: "off"
+
+# -----------------------------------------------------------------------------
+# Step 03: model + training
+# -----------------------------------------------------------------------------
+model:
+  latent_dim:    32
+  dropout_rate:  0.20
+  l2:            0.0
+
+  # Stem keeps a single fixed downsample (MaxPool 3) so the dilated tower
+  # operates at 1/3 the input resolution. Set to 1 to disable.
+  stem_pool:     3
+  stem_filters:  288
+  stem_kernel:   17
+
+  # Dilated conv tower replaces scBasset's 6-stage MaxPool chain. Each block:
+  #   Conv1D(C, kernel=5, dilation=D, padding=same) -> BN -> GELU
+  # Channels grow geometrically as in scBasset; dilations grow exponentially
+  # so the receptive field still reaches ~few-thousand bp despite no further
+  # spatial reduction.
+  tower_channels: [288, 323, 363, 407, 456, 512]
+  tower_dilations: [2, 4, 8, 16, 32, 64]
+  tower_kernel:    5
+
+  # After the tower, a 1x1 conv projects to `head_filters` channels, then a
+  # GlobalAveragePooling1D collapses the (variable) spatial dim. This is the
+  # adaptive-pool step that frees us from a fixed input length.
+  head_filters: 256
+  pool:         global_avg     # global_avg / global_max
+
+train:
+  batch_size:    64
+  epochs:        500
+  patience:      10
+  val_frac:      0.10
+  learning_rate: 1.0e-3
+  random_seed:   555
+  cells_per_step: 0
+  save_best_only: true
+
+# -----------------------------------------------------------------------------
+# Step 04: prediction + thresholding
+# -----------------------------------------------------------------------------
+predict:
+  batch_size:    256
+  predict_all_bins: true
+  threshold_mode: sparsity_match:3
+  threshold_sample_size: 4000000
+
+# -----------------------------------------------------------------------------
+# Step 05: persistence
+# -----------------------------------------------------------------------------
+impute:
+  binarize_output: true
+  keep_raw:        true
+  weight:          1.0

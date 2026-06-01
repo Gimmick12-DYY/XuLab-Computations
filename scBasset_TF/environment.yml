@@ -1,0 +1,37 @@
+name: scbasset_tf
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - python=3.10
+  - pip
+  - numpy
+  - scipy
+  - pandas
+  - pyarrow
+  - h5py
+  - pyyaml
+  - tqdm
+  - matplotlib
+  - scikit-learn
+  - pyfaidx               # random-access FASTA reader for genome-wide bin extraction
+  - samtools              # samtools faidx <hg38.fa>  to (re)build .fai
+  - bioconductor-summarizedexperiment
+  - r-base>=4.3
+  - r-matrix
+  - r-optparse
+  - r-seurat
+  # GPU stack -- pip-install lets us pin a wheel that matches CUDA on the cluster
+  - pip:
+    - tensorflow[and-cuda]>=2.15,<2.17
+    - keras>=3.0
+    - einops
+    - pyBigWig              # downstream/imputed_matrix_to_bigwig.py (IGV tracks)
+# Notes:
+#   - tensorflow[and-cuda] pulls in CUDA libs as wheels; if your cluster has
+#     its own CUDA + cuDNN module, drop the [and-cuda] extra and `module load`
+#     them before launching the SLURM scripts.
+#   - This pipeline needs the hg38 FASTA. Either:
+#       * point paths.genome_fa to an existing hg38.fa (must have .fai sidecar), or
+#       * let scripts/fetch_hg38_fasta.sh download it once into downstream/cache.
