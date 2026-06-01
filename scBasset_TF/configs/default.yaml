@@ -27,19 +27,21 @@
 paths:
   # AllTF input. Two parallel RDS files share the same metadata. Pick one
   # per run via this knob; standard pair forms two comparison rows:
-  #   bin matrix:  /work/.../data/TF1000cells_bin1000_mtx.rds
-  #   peak matrix: /work/.../data/TF1000cells_peaks_mtx.rds
-  input_rds:   /work/users/d/y/dyy12/XuLab/data/TF1000cells_peaks_mtx.rds
+  #   bin matrix:  /work/.../data/TF1000cells.bin1000.mtx.rds  (run.input_kind: bin)
+  #   peak matrix: /work/.../data/TF1000cells.pmat.mtx.rds     (run.input_kind: peak)
+  input_rds:   /work/users/d/y/dyy12/XuLab/data/TF1000cells.pmat.mtx.rds
   work_dir:    /work/users/d/y/dyy12/XuLab/scBasset_TF/work/alltf_peak
 
   # hg38 FASTA + .fai (required for step 02). Reuse scBasset's fetched copy.
   genome_fa:   /work/users/d/y/dyy12/XuLab/downstream/cache/hg38.fa
 
-  # Per-cell metadata TSV. Expected columns: DNA_id, cell, TF, barcode, subset.
-  # `barcode` must match mm/barcodes.tsv.gz. Carried through to <work>/seqs/
-  # but never enters the model loss; downstream eval uses the TF column to
+  # Per-cell metadata CSV (or TSV). Expected columns: DNA_id, cell, TF,
+  # barcode, subset. The `barcode` column must match mm/barcodes.tsv.gz
+  # (the loader locates it by name, so column order does not matter, and the
+  # delimiter is sniffed from the header). Carried through to <work>/seqs/ but
+  # never enters the model loss; downstream eval uses the TF column to
   # stratify metrics per TF.
-  cell_metadata: /work/users/d/y/dyy12/XuLab/data/TF1000cells.meta.tsv
+  cell_metadata: /work/users/d/y/dyy12/XuLab/data/TF1000cells.meta.csv
 
 # -----------------------------------------------------------------------------
 # Run-level tags

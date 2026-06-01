@@ -5,7 +5,7 @@
 #SBATCH --cpus-per-task=8
 #SBATCH --mem=32G
 #SBATCH --time=48:00:00
-#SBATCH --partition=volta-gpu
+#SBATCH --partition=a100-gpu,l40-gpu,gpu,volta-gpu
 #SBATCH --qos=gpu_access
 #SBATCH --gres=gpu:1
 

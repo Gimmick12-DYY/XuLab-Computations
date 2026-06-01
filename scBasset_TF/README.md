@@ -56,9 +56,12 @@ scBasset_TF addresses all three:
 - **Companion to scBasset/, not a replacement.** scBasset stays as the
   original 1344 bp / MaxPool-chain baseline. scBasset_TF is the
   TF-binding-tuned variant.
-- **Per-cell metadata is eval-only.** The TSV at `paths.cell_metadata` is
-  validated against barcodes but never enters the loss. It enables per-TF
-  stratification in downstream evaluation.
+- **Per-cell metadata is eval-only.** The CSV/TSV at `paths.cell_metadata`
+  (e.g. `data/TF1000cells.meta.csv`, columns `DNA_id, cell, TF, barcode,
+  subset`) is validated against barcodes but never enters the loss. The
+  delimiter is sniffed and the `barcode` key column is found by name, so
+  column order is irrelevant. Enables per-TF stratification in downstream
+  evaluation.
 
 ## Pipeline shape
 
@@ -138,7 +141,7 @@ dilations and channels in lockstep so RF ≥ seq_length.
 | `train.pos_weight: auto`          | Used when `loss == bce_weighted`. `auto` reads pos_weight_auto from seqs/meta.json.   |
 | `train.focal_gamma: 2.0`          | Focal loss focusing parameter. 2 is the canonical default (Lin et al. 2017).          |
 | `train.focal_alpha: 0.25`         | Focal loss positive-class weight. 0.25 also from the focal-loss paper.                |
-| `paths.cell_metadata`             | Optional per-cell TSV. Validated against barcodes; eval-only.                         |
+| `paths.cell_metadata`             | Optional per-cell CSV/TSV. Delimiter sniffed, `barcode` column found by name. Validated against barcodes; eval-only. |
 | `predict.threshold_mode: sparsity_match:3` | Same vocabulary as scBasset / cisTopic / PUscOpen.                           |
 | `impute.binarize_output: true`    | Store 1 at above-threshold entries.                                                   |
 | `impute.keep_raw: true`           | Union with raw via element-wise max.                                                  |

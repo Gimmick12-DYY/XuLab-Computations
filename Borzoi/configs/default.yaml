@@ -67,9 +67,9 @@ borzoi:
   precision:         fp16        # fp16 / bf16 / fp32
 
   # Track selection happens in step 04, but step 03 can pre-filter to save
-  # disk. Pattern is applied to Borzoi's targets_human.txt rows. null = keep
-  # all tracks (heavy; ~7000 tracks x 3M bins x f16 = ~40 GB).
-  track_prefilter:   "^(CTCF|FOXA|GATA|JUN|FOS|MYC|TBP|POL|H3K|ATAC|DNASE)"
+  # disk. Pattern is applied to Borzoi description strings (ASSAY:TARGET:...,
+  # e.g. CHIP:CTCF:GM12878, DNASE:GM12878). null = keep all tracks (heavy).
+  track_prefilter:   "^(DNASE|ATAC)|CHIP:(CTCF|FOXA|GATA|JUN|FOS|MYC|TBP|POL|H3K)"
 
   # Save partial progress per chromosome so 03 is restartable.
   checkpoint_per_chrom: true
@@ -79,10 +79,10 @@ borzoi:
 # -----------------------------------------------------------------------------
 tracks:
   # Regex applied to the prefiltered track names from step 03. Should match
-  # the TF this run is about. Examples:
-  #   "^CTCF($|_|/)"   --> CTCF tracks only
-  #   "^FOXA1($|_)"    --> FOXA1 tracks only
-  pattern:           "^CTCF($|_|/)"
+  # the TF this run is about. Examples (Borzoi uses ASSAY:TARGET:cell):
+  #   "CHIP:CTCF"      --> CTCF ChIP tracks only
+  #   "CHIP:FOXA1"     --> FOXA1 ChIP tracks only
+  pattern:           "CHIP:CTCF"
 
   # Reduction across the selected tracks.
   aggregate:         mean        # mean / max / sum

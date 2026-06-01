@@ -5,11 +5,11 @@
 #SBATCH --cpus-per-task=8
 #SBATCH --mem=128G
 #SBATCH --time=24:00:00
-#SBATCH --partition=volta-gpu
+#SBATCH --partition=a100-gpu,l40-gpu,gpu,volta-gpu
 #SBATCH --qos=gpu_access
 #SBATCH --gres=gpu:1
 
-# scBasset training on Longleaf's volta-gpu partition (Tesla V100 16 GB).
+# scBasset training on any Longleaf GPU partition (A100, L40, generic gpu, V100).
 # Common overrides:
 #   sbatch --time=48:00:00 --mem=256G --export=ALL,CFG=/path/to/big.yaml slurm/03_train.sbatch
 
