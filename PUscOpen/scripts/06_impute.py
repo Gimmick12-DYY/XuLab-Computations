@@ -80,6 +80,9 @@ def _load_target_bed_mask(bed_path,
                           ends: np.ndarray) -> np.ndarray | None:
     if not bed_path:
         return None
+    if isinstance(bed_path, str) and bed_path.strip().lower() == 'off':
+        log.info('propagate.target_bed = "off": no BED restriction applied.')
+        return None
     p = Path(bed_path)
     if not p.exists():
         log.warning('propagate.target_bed not found: %s; ignoring restriction.', p)
@@ -548,12 +551,25 @@ def main() -> int:
                      100.0 * nnz_source_mask / max(int(Rm) * int(C), 1))
 
             # Default the propagation target BED. Priority order:
-            #   1. <repo-root>/downstream/cache/CTCF_motif_hg38.bed
-            #      (motif-aware -- restricts new bins to plausible CTCF sites)
-            #   2. <work>/mask/mask.bed
-            #      (geometric candidate mask from step 02)
-            # If neither exists, target_bed stays null (no restriction).
-            if propagate_cfg.get('target_bed', None) is None:
+            #   1. propagate.target_bed = "off" (string) -> no restriction.
+            #      This is the bias-free / data-only setting; matches the
+            #      framing used by scBasset's Track A.
+            #   2. propagate.target_bed = null -> auto-detect:
+            #        a) <repo-root>/downstream/cache/CTCF_motif_hg38.bed
+            #           (motif-aware -- bulk prior; opt-in only)
+            #        b) <work>/mask/mask.bed (geometric mask from step 02)
+            # Auto-detect ("null") used to be the default. It introduces a
+            # bin-universe leak relative to evaluations whose negatives are
+            # also defined by CTCF cCRE membership: PUscOpen's prediction
+            # space and the negative bins become near-disjoint by construction
+            # and the imputer scores artifactually high. "off" is now the
+            # safe default in configs/default.yaml.
+            raw_target_bed = propagate_cfg.get('target_bed', None)
+            if isinstance(raw_target_bed, str) and raw_target_bed.strip().lower() == 'off':
+                propagate_cfg = dict(propagate_cfg)
+                propagate_cfg['target_bed'] = None
+                log.info('propagate.target_bed = "off": no BED restriction applied (data-only).')
+            elif raw_target_bed is None:
                 propagate_cfg = dict(propagate_cfg)
                 wd_path = Path(cfg['paths']['work_dir']).resolve()
                 motif_bed: Path | None = None

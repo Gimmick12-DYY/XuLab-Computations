@@ -250,17 +250,24 @@ impute:
   # on the same chromosome. Without this, the imputed matrix is just a
   # smoothed version of the bins already present in raw.
   #
-  # Defaults: target_bed defaults to <work>/mask/mask.bed (the geometric
-  # candidate mask from step 02), so propagation only fills in bins that
-  # were already considered "plausible" by the cCRE / motif rule. Pass
-  # target_bed: null on the CLI to disable that restriction.
+  # target_bed semantics (matches scBasset Track A's predict_bed):
+  #   "off"  (default) -> no BED restriction; propagation fills any
+  #                       zero-imp bin meeting the neighbor criterion.
+  #                       Use this for cross-pipeline comparisons against
+  #                       evaluations whose negatives are CTCF-cCRE-based,
+  #                       to avoid the bin-universe leak.
+  #   null             -> legacy auto-detect at runtime:
+  #                         a) <repo>/downstream/cache/CTCF_motif_hg38.bed
+  #                            (motif-aware -- bulk prior; opt-in only)
+  #                         b) <work>/mask/mask.bed (geometric mask)
+  #   "<path>"         -> explicit BED. Inherits the same caveat as null.
   # ---------------------------------------------------------------------
   propagate:
     enabled:       true
     window_bp:     5000
     min_neighbors: 2
     weight:        0.5
-    target_bed:    null   # null -> default to <work>/mask/mask.bed
+    target_bed:    "off"
     chunk_targets: 5000
 
     # PUscOpen specific: the modeled rows in matrix_csr.npz are densely
