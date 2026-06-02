@@ -58,10 +58,13 @@ if (length(barcodes) != ncol(mat)) {
                length(barcodes), ncol(mat)))
 }
 
-# rowname format check: scBasset/01_export_rds_to_mm.R requires chr:start-end
-bad <- !grepl("^[^:_]+:\\d+-\\d+$", regions)
+# rowname format check: <chrom>:<start>-<end>. Chrom names may contain
+# underscores (contigs like chr1_KI270706v1_random), so the chrom group is
+# "anything not a colon". Mirrors the regex used by scBasset_TF's
+# 02_prepare_seqs.py.
+bad <- !grepl("^[^:]+:\\d+-\\d+$", regions)
 if (any(bad)) {
-  stop(sprintf("%d rownames do not match 'chr:start-end' (first bad: %s)",
+  stop(sprintf("%d rownames do not match '<chrom>:<start>-<end>' (first bad: %s)",
                sum(bad), regions[which(bad)[1]]))
 }
 
