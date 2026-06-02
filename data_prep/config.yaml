@@ -1,0 +1,17 @@
+# Paths for build_peak_matrix.py (relative to XuLab repo root).
+#
+# Usage:
+#   bash data_prep/run_build_peak_matrix.sh CTCF
+#   TF=ZNF282 sbatch data_prep/slurm/build_peak_matrix.sbatch
+
+defaults:
+  min_cells_per_peak: 2
+  min_peaks_per_cell: 200
+
+inputs:
+  CTCF:
+    fragments: data/TF.CTCF.bed
+    out: data/CTCF.pmat.mtx.rds
+  ZNF282:
+    fragments: data/TF.ZNF282.bed
+    out: data/ZNF282.pmat.mtx.rds

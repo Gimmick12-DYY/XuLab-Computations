@@ -38,10 +38,21 @@ The env brings `macs2`, `bedtools`, `samtools`, `r-base`, `r-Matrix`,
 
 ## Usage
 
+Wired inputs live in `config.yaml` (`data/TF.CTCF.bed`, `data/TF.ZNF282.bed` →
+`data/<TF>.pmat.mtx.rds`). Run one TF:
+
+```bash
+bash data_prep/run_build_peak_matrix.sh CTCF
+# or on the cluster:
+TF=ZNF282 sbatch data_prep/slurm/build_peak_matrix.sbatch
+```
+
+Low-level CLI (paths resolved manually):
+
 ```bash
 python data_prep/build_peak_matrix.py \
     --fragments /path/to/TF.CTCF.bed.gz \
-    --out       /path/to/data/CTCF_peak_matrix.rds \
+    --out       /path/to/data/CTCF.pmat.mtx.rds \
     --tf-name   CTCF
 ```
 
@@ -94,7 +105,10 @@ and the rest of the pipeline takes over.
 ```
 data_prep/
 ├── README.md                 (this file)
+├── config.yaml               (TF -> fragments / output RDS under data/)
 ├── environment.yml           (conda env)
+├── run_build_peak_matrix.sh  (driver: config -> build_peak_matrix.py)
+├── slurm/build_peak_matrix.sbatch
 ├── build_peak_matrix.py      (Python driver: MACS2 -> filter -> bedtools -> mm -> RDS)
 └── save_peak_matrix.R        (mm -> dgCMatrix RDS subprocess)
 ```
