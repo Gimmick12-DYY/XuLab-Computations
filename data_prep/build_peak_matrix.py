@@ -6,15 +6,13 @@
 # binary peak x cell sparse matrix RDS for the scBasset / scBasset_TF
 # pipelines.
 #
-# Pipeline (no extra filtering beyond what MACS2 emits):
+# Pipeline:
 #   1. MACS2 callpeak (CUT&Tag params)
 #        --nomodel --shift -75 --extsize 150 -q 0.01 --keep-dup all
 #   2. bedtools intersect fragments x peaks (streamed)
 #   3. Build sparse (peak x cell) binary matrix
 #   4. Write mm intermediate -> R subprocess -> dgCMatrix RDS
 #
-# No blacklist filter, no chromosome whitelist, no peak/cell QC. Downstream
-# pipelines (scBasset's 02_prepare_seqs.py etc.) apply their own filters.
 # -----------------------------------------------------------------------------
 from __future__ import annotations
 
