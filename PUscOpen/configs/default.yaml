@@ -39,9 +39,16 @@ paths:
 mask:
   # Which annotations to fold into the mask. Each is OR-combined; if *all*
   # use_* flags are false the mask is the full genome minus the blacklist.
-  use_cCRE_293T:   true     # bins overlapping any HEK293T cCRE (any class)
-  use_cCRE_293T_CA: true    # restrict 293T to CA classes (chromatin accessible)
-  use_cCRE_CTCF:   true     # bins overlapping any GRCh38-cCREs.CTCF-bound entry
+  #
+  # All three cCRE flags are off by default to keep the mask blacklist-only
+  # (chr1..22 + chrX/Y minus ENCODE hg38 blacklist). This is the data-only
+  # framing: we do not want the mask to pre-restrict the candidate bins to
+  # CTCF / 293T-CA biology before the PU classifier runs. Compare to scBasset
+  # Track A and PUscOpen target_bed = "off". Set any of them to true to opt
+  # back into the cCRE-aware mask.
+  use_cCRE_293T:   false    # bins overlapping any HEK293T cCRE (any class)
+  use_cCRE_293T_CA: false   # restrict 293T to CA classes (chromatin accessible)
+  use_cCRE_CTCF:   false    # bins overlapping any GRCh38-cCREs.CTCF-bound entry
   use_motif:       false    # require a CTCF motif hit (needs motif_bed)
   motif_bed:       null     # e.g. JASPAR CTCF FIMO hits BED; null disables
   exclude_blacklist:  true  # remove blacklist bins from the mask

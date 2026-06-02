@@ -1,28 +1,23 @@
 # data_prep — upstream input prep for the scBasset / scBasset_TF pipelines
 
 Builds the `.rds` files that the imputation pipelines consume at
-`paths.input_rds`. Today it ships one entry point: a CUT&Tag fragment file
-→ peak × cell binary `dgCMatrix` RDS.
+`paths.input_rds`. Standard MACS2 peak matrix workflow — no extra filtering.
 
 ## What it does
 
 1. **MACS2 pseudo-bulk peak calling** on the fragment BED with the standard
    CUT&Tag parameters:
    `--nomodel --shift -75 --extsize 150 -q 0.01 --keep-dup all`.
-2. **Peak filter**: drop peaks not on `chr1..22 / chrX / chrY` and any peak
-   overlapping the ENCODE hg38 blacklist (Boyle Lab v2). Blacklist is
-   auto-discovered under `<repo>/downstream/cache/` (the same cache scBasset
-   uses) and downloaded on first run if missing.
-3. **bedtools intersect** to assign each fragment to peaks per barcode.
+2. **bedtools intersect** to assign each fragment to peaks per barcode.
    Streamed via subprocess pipe — no intermediate file on disk.
-4. **Sparse matrix build** with binarized counts.
-5. **Two-pass filter**: peaks present in `< min_cells_per_peak` cells are
-   dropped first; then cells with `< min_peaks_per_cell` remaining peaks
-   are dropped.
-6. **mm intermediate** → R subprocess → `dgCMatrix` RDS with
-   `chr:start-end` rownames and barcode colnames. The RDS drops directly
-   into `paths.input_rds` of any pipeline that uses
-   `scBasset/scripts/01_export_rds_to_mm.R`.
+3. **Sparse matrix build** with binarized counts.
+4. **mm intermediate** → R subprocess → `dgCMatrix` RDS with
+   `chr:start-end` rownames and barcode colnames.
+
+No blacklist filter, no chromosome whitelist, no peak/cell QC thresholds.
+Downstream pipelines (e.g. `scBasset_TF/scripts/02_prepare_seqs.py`) apply
+their own chrom + blacklist + N-content filtering, so doing it here too
+would be redundant.
 
 ## Dependencies
 
@@ -33,7 +28,7 @@ conda activate data_prep
 
 The env brings `macs2`, `bedtools`, `samtools`, `r-base`, `r-Matrix`,
 `r-optparse`, plus numpy/scipy/pandas. If your cluster has its own
-`macs2`/`bedtools` modules, you can drop those from `environment.yml` and
+`macs2`/`bedtools` modules, drop those from `environment.yml` and
 `module load` them instead.
 
 ## Usage
@@ -63,10 +58,7 @@ CLI knobs:
 | `--fragments` | required | 5-col BED(.gz): `chr, start, end, barcode, count` |
 | `--out` | required | Output `.rds` path |
 | `--tf-name` | `CTCF` | Used in MACS2 sample name (`<tf>_pseudo_peaks.narrowPeak`) |
-| `--blacklist` | auto | Falls back to `<repo>/downstream/cache/hg38-blacklist.v2.bed.gz`; downloads if missing |
-| `--work-dir` | `<out>.work/` | Intermediate files (MACS2 outputs, filtered peaks BED, mm/) |
-| `--min-cells-per-peak` | 2 | Drop peaks present in fewer cells |
-| `--min-peaks-per-cell` | 200 | Drop cells with fewer remaining peaks |
+| `--work-dir` | `<out>.work/` | Intermediate files (MACS2 outputs, peaks BED, mm/) |
 
 Final stdout block:
 
@@ -97,8 +89,9 @@ Then run the pipeline as usual:
 CFG=configs/alltf_peak.yaml sbatch slurm/99_full_pipeline.sbatch
 ```
 
-Step 01 (`01_export_rds_to_mm.R`) will read the RDS, write the mm tier,
-and the rest of the pipeline takes over.
+Step 01 (`01_export_rds_to_mm.R`) reads the RDS, writes the mm tier, and
+the rest of the pipeline takes over. Filters that this script no longer
+applies (chrom whitelist, blacklist) are applied at step 02.
 
 ## File layout
 
@@ -109,8 +102,8 @@ data_prep/
 ├── environment.yml           (conda env)
 ├── run_build_peak_matrix.sh  (driver: config -> build_peak_matrix.py)
 ├── slurm/build_peak_matrix.sbatch
-├── build_peak_matrix.py      (Python driver: MACS2 -> filter -> bedtools -> mm -> RDS)
-└── save_peak_matrix.R        (mm -> dgCMatrix RDS subprocess)
+├── build_peak_matrix.py      (MACS2 -> bedtools -> mm -> RDS)
+└── save_peak_matrix.R        (mm -> dgCMatrix RDS)
 ```
 
 ## Naming convention
