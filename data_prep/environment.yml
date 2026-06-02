@@ -1,0 +1,21 @@
+name: data_prep
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - python=3.11
+  - pip
+  - numpy
+  - scipy
+  - pandas
+  - pyyaml
+  - macs2>=2.2
+  - bedtools>=2.30
+  - samtools
+  - r-base>=4.3
+  - r-matrix
+  - r-optparse
+# Notes:
+#   - macs2 is from bioconda. If your cluster has a module for macs2, prefer
+#     `module load macs2` and drop it from this env to avoid stale wheels.
+#   - bedtools intersect is the only bedtools subcommand used; any v2.x is fine.
