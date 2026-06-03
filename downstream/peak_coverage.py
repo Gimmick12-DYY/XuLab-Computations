@@ -364,7 +364,10 @@ def main() -> int:
     args = ap.parse_args()
 
     if shutil.which("macs2") is None:
-        sys.exit("macs2 not found on PATH; activate the data_prep env or load the cluster module")
+        sys.exit(
+            "macs2 not found on PATH; activate the cistopic env "
+            "(pip macs2) or another env with a working macs2 callpeak"
+        )
 
     args.out_dir.mkdir(parents=True, exist_ok=True)
 

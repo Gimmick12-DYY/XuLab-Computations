@@ -9,13 +9,14 @@ dependencies:
   - scipy
   - pandas
   - pyyaml
-  - macs2>=2.2
   - bedtools>=2.30
+  - pip:
+    - macs2>=2.2
   - samtools
   - r-base>=4.3
   - r-matrix
   - r-optparse
 # Notes:
-#   - macs2 is from bioconda. If your cluster has a module for macs2, prefer
-#     `module load macs2` and drop it from this env to avoid stale wheels.
+#   - macs2 is installed via pip (not bioconda): conda-built wheels fail on
+#     RHEL9 / glibc 2.34+ with "undefined symbol: __log_finite".
 #   - bedtools intersect is the only bedtools subcommand used; any v2.x is fine.

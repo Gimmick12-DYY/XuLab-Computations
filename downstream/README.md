@@ -173,7 +173,8 @@ synthetic BED, runs MACS2 (`--nomodel --shift -75 --extsize 150`), and reports
 what fraction of reference positive / negative bins are covered by any called peak.
 
 Input formats match `compare_pos_neg.py` (mm, CSR, factored, dense). Use the
-`data_prep` conda env (includes `macs2`).
+`cistopic` conda env (pip-built `macs2`; bioconda macs2 in `data_prep` is
+broken on Longleaf's glibc).
 
 ```bash
 sbatch downstream/slurm/peak_coverage.sbatch
