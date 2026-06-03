@@ -11,6 +11,8 @@
 #   1. Load the (region x cell) matrix from the input dir.
 #        - mm/         (raw)           : matrix.mtx.gz + regions.tsv.gz + barcodes.tsv.gz
 #        - impute/     (csr_full)      : matrix_csr.npz + regions.tsv + barcodes.tsv
+#        - impute/     (factored)      : factors.npz + regions.tsv (cisTopic / scOpen)
+#        - impute/     (dense)         : matrix.npy + regions.tsv (FITS / MAGIC)
 #   2. Pseudo-bulk: per-bin signal = sum across cells (binary or continuous).
 #   3. Rescale so the total simulated "fragment" count equals --target-fragments
 #      (default 50,000,000 -- a typical CUT&Tag sample depth). This
@@ -93,28 +95,85 @@ def parse_region_names(names: list[str]) -> tuple[np.ndarray, np.ndarray, np.nda
 
 # ---------- per-input loader -------------------------------------------------
 
+def _per_cell_factor_from_npz(z: np.lib.npyio.NpzFile) -> tuple[bool, np.ndarray | None, float]:
+    """Return (is_vector, vector_or_none, scalar)."""
+    if "per_cell_factor" not in z.files:
+        return False, None, 1.0
+    pcf_raw = z["per_cell_factor"]
+    if getattr(pcf_raw, "ndim", 0) > 0:
+        return True, np.asarray(pcf_raw, dtype=np.float64).ravel(), 1.0
+    return False, None, float(pcf_raw)
+
+
+def load_per_bin_signal_factored(path: Path) -> tuple[np.ndarray, list[str], str]:
+    factors_path = path / "factors.npz"
+    regions_path = path / "regions.tsv"
+    log.info("  loading factored: %s + %s", factors_path, regions_path)
+    regions = read_lines(regions_path)
+    with np.load(factors_path) as z:
+        W = np.asarray(z["W"], dtype=np.float64)
+        H = np.asarray(z["H"], dtype=np.float64)
+        pcf_is_array, pcf_arr, pcf_scalar = _per_cell_factor_from_npz(z)
+        if W.shape[1] != H.shape[0]:
+            sys.exit(f"rank mismatch in {factors_path}: W{W.shape} vs H{H.shape}")
+        if pcf_is_array:
+            assert pcf_arr is not None
+            if pcf_arr.shape[0] != H.shape[1]:
+                sys.exit(
+                    f"per_cell_factor length {pcf_arr.shape[0]} != H.shape[1] {H.shape[1]} "
+                    f"in {factors_path}"
+                )
+            signal = W @ (H @ pcf_arr)
+        else:
+            signal = (W @ H.sum(axis=1)) * pcf_scalar
+    signal = np.asarray(signal, dtype=np.float64).ravel()
+    if signal.shape[0] != len(regions):
+        sys.exit(
+            f"factored row count {signal.shape[0]} != regions {len(regions)} in {path}"
+        )
+    return signal, regions, "factored"
+
+
+def load_per_bin_signal_dense(path: Path) -> tuple[np.ndarray, list[str], str]:
+    matrix_path = path / "matrix.npy"
+    regions_path = path / "regions.tsv"
+    log.info("  loading dense: %s + %s", matrix_path, regions_path)
+    arr = np.load(matrix_path, mmap_mode="r")
+    signal = np.asarray(arr.sum(axis=1)).ravel().astype(np.float64)
+    regions = read_lines(regions_path)
+    if signal.shape[0] != len(regions):
+        sys.exit(
+            f"dense row count {signal.shape[0]} != regions {len(regions)} in {path}"
+        )
+    return signal, regions, "dense"
+
+
 def load_per_bin_signal(path: Path) -> tuple[np.ndarray, list[str], str]:
     """Return (per_bin_signal float64, region_names, kind)."""
+    if (path / "matrix_csr.npz").is_file() and (path / "regions.tsv").is_file():
+        log.info("  loading impute CSR: %s", path / "matrix_csr.npz")
+        mat = sp.load_npz(path / "matrix_csr.npz").tocsr()
+        signal = np.asarray(mat.sum(axis=1)).ravel().astype(np.float64)
+        regions = read_lines(path / "regions.tsv")
+        return signal, regions, "csr_full"
+
+    if (path / "factors.npz").is_file() and (path / "regions.tsv").is_file():
+        return load_per_bin_signal_factored(path)
+
+    if (path / "matrix.npy").is_file() and (path / "regions.tsv").is_file():
+        return load_per_bin_signal_dense(path)
+
     if (path / "matrix.mtx.gz").is_file():
-        # raw mm/
         log.info("  loading raw mm: %s", path / "matrix.mtx.gz")
         mat = sio.mmread(str(path / "matrix.mtx.gz")).tocsr()
         signal = np.asarray(mat.sum(axis=1)).ravel().astype(np.float64)
         regions = read_lines(path / "regions.tsv.gz")
         return signal, regions, "mm"
 
-    if (path / "matrix_csr.npz").is_file():
-        # impute/
-        log.info("  loading impute CSR: %s", path / "matrix_csr.npz")
-        mat = sp.load_npz(path / "matrix_csr.npz").tocsr()
-        signal = np.asarray(mat.sum(axis=1)).ravel().astype(np.float64)
-        regions_path = path / "regions.tsv"
-        if not regions_path.is_file():
-            regions_path = path / "regions.tsv.gz"
-        regions = read_lines(regions_path)
-        return signal, regions, "csr_full"
-
-    sys.exit(f"no matrix found in {path} (expected matrix.mtx.gz or matrix_csr.npz)")
+    sys.exit(
+        f"no matrix found in {path} "
+        "(expected matrix.mtx.gz, matrix_csr.npz, factors.npz, or matrix.npy)"
+    )
 
 
 # ---------- synthetic BED ----------------------------------------------------

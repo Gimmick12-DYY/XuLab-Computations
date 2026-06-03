@@ -30,6 +30,7 @@ prefer the factored loader.
 
 ```bash
 sbatch downstream/slurm/compare_pos_neg_all4.sbatch      # raw + 9 imputed
+sbatch downstream/slurm/peak_coverage.sbatch           # MACS2 peak coverage (needs data_prep env)
 sbatch downstream/slurm/igv_ctcf_scbasset_tracks.sbatch  # scbasset + cascade .bw tracks
 sbatch downstream/slurm/sensitivity_specificity.sbatch
 sbatch downstream/slurm/complexity_gain.sbatch
@@ -162,6 +163,31 @@ OUT_DIR=/work/.../downstream/pos_neg,\
 INPUTS="raw=/work/.../cistopic_ctcf/mm cisTopic=/work/.../cistopic_ctcf/impute FITS=/work/.../FITS/work/ctcf/impute scOpen=/work/.../scOpen/work/ctcf/impute MAGIC=/work/.../MAGIC/work/ctcf/impute PUscOpen=/work/.../PUscOpen/work/ctcf/impute cicero=/work/.../Cicero/work/ctcf/impute scbasset=/work/.../scBasset/work/ctcf/impute scbasset_puscopen=/work/.../scBasset_PUscOpen/work/ctcf/impute scbasset_cistopic=/work/.../scBasset_cisTopic/work/ctcf/impute" \
   downstream/slurm/compare_pos_neg.sbatch
 ```
+
+### Step 2b — MACS2 peak coverage on pseudo-bulk BEDs
+
+`peak_coverage.py` mirrors the pos/neg bin reference from `prepare_pos_neg_bins.R`
+but scores **peak overlap** instead of per-bin signal AUROC: for each pipeline it
+pseudo-bulks the matrix, rescales to `--target-fragments` (default 50M), writes a
+synthetic BED, runs MACS2 (`--nomodel --shift -75 --extsize 150`), and reports
+what fraction of reference positive / negative bins are covered by any called peak.
+
+Input formats match `compare_pos_neg.py` (mm, CSR, factored, dense). Use the
+`data_prep` conda env (includes `macs2`).
+
+```bash
+sbatch downstream/slurm/peak_coverage.sbatch
+```
+
+Defaults: `BINS_TSV=downstream/bins/pos_neg_bins.tsv`,
+`PEAK_COV_OUT_DIR=downstream/peak_coverage_ctcf/`, and `INPUTS` from
+`_pipeline_paths.sh` (`default_inputs all` — raw + ten imputed pipelines).
+
+| file | contents |
+|---|---|
+| `peak_coverage.tsv` | one row per pipeline: pos/neg coverage %, peak counts, paths |
+| `<label>/synthetic.bed` | rescaled pseudo-fragment BED fed to MACS2 |
+| `<label>/<label>_peaks.narrowPeak` | MACS2 output |
 
 ### Reading the output
 
