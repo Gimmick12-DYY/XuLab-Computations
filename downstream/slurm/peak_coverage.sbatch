@@ -7,7 +7,8 @@
 #SBATCH --time=24:00:00
 
 # MACS2 peak calling on pseudo-bulk BEDs from each pipeline matrix, then
-# reference pos/neg bin coverage. Requires macs2 (data_prep conda env).
+# reference pos/neg bin coverage. Requires macs2 (cistopic env; pip build works
+# on Longleaf — bioconda macs2 in data_prep hits __log_finite on glibc 2.34+).
 #
 # Default INPUTS: raw + all ten imputed pipelines (same as compare_pos_neg_all10).
 # Override INPUTS or individual *_DIR before sbatch.
@@ -44,7 +45,7 @@ BINS_TSV="${BINS_TSV:-${ROOT_DIR}/downstream/bins/pos_neg_bins.tsv}"
 PEAK_COV_OUT_DIR="${PEAK_COV_OUT_DIR:-${ROOT_DIR}/downstream/peak_coverage_ctcf}"
 OUT_NAME="${OUT_NAME:-peak_coverage}"
 TARGET_FRAGMENTS="${TARGET_FRAGMENTS:-50000000}"
-CONDA_ENV="${CONDA_ENV:-data_prep}"
+CONDA_ENV="${CONDA_ENV:-cistopic}"
 
 if [[ -z "${INPUTS:-}" ]]; then
   default_inputs all
