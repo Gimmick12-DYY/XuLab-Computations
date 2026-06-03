@@ -233,7 +233,11 @@ def main() -> int:
                     choices=['logistic', 'rf'])
     ap.add_argument('--hold-out-fraction', type=float, default=None)
     ap.add_argument('--refined-mask-threshold', type=str, default=None)
-    ap.add_argument('--seed-positive-column', type=str, default='in_top_N_CTCF')
+    # Default changed from in_top_N_CTCF (LEGACY, leaks against the eval
+    # panel) to seed_pos (data-derived in 02_build_mask.R; honest default).
+    # Pass --seed-positive-column=in_top_N_CTCF on the CLI to reproduce
+    # the legacy behavior for ablations.
+    ap.add_argument('--seed-positive-column', type=str, default='seed_pos')
     ap.add_argument('--mask-keep-column', type=str, default='mask_keep')
     args = ap.parse_args()
 

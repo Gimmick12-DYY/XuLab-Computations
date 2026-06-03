@@ -157,10 +157,16 @@ impute:
   # weight        multiplier on the propagated value. < 1 marks the
   #               propagated entries as "softer evidence" than original
   #               imputed calls (which had weight 1).
-  # target_bed    optional BED restricting propagation TARGETS to bins
-  #               overlapping the BED (e.g. SCREEN cCREs). null = propagate
-  #               to any bin within window of an imp-positive neighbour
-  #               (broader; risks heterochromatin filling).
+  # target_bed    semantics (matches scBasset Track A and PUscOpen):
+  #               "off"  (default) -> no BED restriction. Use this for
+  #                                   cross-pipeline comparisons against
+  #                                   eval panels whose negatives are
+  #                                   CTCF-cCRE-derived, to avoid the
+  #                                   bin-universe leak.
+  #               null             -> legacy auto-detect of
+  #                                   <repo>/downstream/cache/CTCF_motif_hg38.bed
+  #                                   (bulk prior; opt-in only).
+  #               "<path>"         -> explicit BED. Same caveat as null.
   # chunk_targets memory knob for the per-chromosome chunked solve.
   # ---------------------------------------------------------------------
   propagate:
@@ -168,5 +174,5 @@ impute:
     window_bp:     5000
     min_neighbors: 2
     weight:        0.5
-    target_bed:    null
+    target_bed:    "off"
     chunk_targets: 5000

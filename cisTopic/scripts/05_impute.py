@@ -127,9 +127,13 @@ def _load_target_bed_mask(bed_path: Path | str | None,
                           ends: np.ndarray) -> np.ndarray | None:
     """Boolean mask over regions of bins overlapping any interval in the BED.
 
-    Returns None when bed_path is falsy (caller treats None as "no restriction").
+    Returns None when bed_path is falsy or set to "off" (caller treats None
+    as "no restriction").
     """
     if not bed_path:
+        return None
+    if isinstance(bed_path, str) and bed_path.strip().lower() == "off":
+        log.info('propagate.target_bed = "off": no BED restriction applied.')
         return None
     p = Path(bed_path)
     if not p.exists():
@@ -624,15 +628,24 @@ def main() -> int:
     # Neighbour propagation: introduce signal at currently-zero rows
     # (LDA / NMF can never reach them on their own).
     #
-    # If propagate.target_bed is null, auto-detect a CTCF motif BED at
-    # <repo-root>/downstream/cache/CTCF_motif_hg38.bed (run
-    # downstream/fetch_ctcf_motif_bed.sh once to populate it). With the
-    # motif BED present, propagation is restricted to bins where biology
-    # says CTCF could plausibly bind, regardless of whether LDA saw signal
-    # there.
+    # target_bed semantics (matches scBasset Track A's predict_bed and
+    # PUscOpen's target_bed):
+    #   "off"  (default) -> no BED restriction; propagation fills any
+    #                       zero-imp bin meeting the neighbor criterion.
+    #                       Use this for cross-pipeline comparisons.
+    #   null             -> legacy auto-detect of
+    #                       <repo>/downstream/cache/CTCF_motif_hg38.bed.
+    #                       Restricts propagation to plausible CTCF sites;
+    #                       introduces a bin-universe leak relative to eval
+    #                       panels whose negatives are CTCF-cCRE-derived.
+    #   "<path>"         -> explicit BED. Same caveat as null.
     # ------------------------------------------------------------------
     propagate_cfg = dict(imp.get("propagate", {}) or {})
-    if propagate_cfg.get("target_bed", None) is None:
+    raw_target_bed = propagate_cfg.get("target_bed", None)
+    if isinstance(raw_target_bed, str) and raw_target_bed.strip().lower() == "off":
+        propagate_cfg["target_bed"] = None
+        log.info('propagate.target_bed = "off": no BED restriction applied (data-only).')
+    elif raw_target_bed is None:
         wd_path = Path(cfg["paths"]["work_dir"]).resolve()
         for anc in [wd_path, *wd_path.parents]:
             cand = anc / "downstream" / "cache" / "CTCF_motif_hg38.bed"

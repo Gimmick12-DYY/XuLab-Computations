@@ -77,10 +77,24 @@ if (is.null(ann_dir) || !dir.exists(ann_dir))
 mask_cfg <- cfg$mask %||% list()
 `%||%` <- function(a, b) if (is.null(a)) b else a
 
-# Default seed parameters
+# Default seed parameters.
+# `source` controls how the PU classifier's seed positives are built:
+#   "top_observed" (default, data-derived; NO LEAK with the eval panel):
+#       top n_top bins by n_cells_observed in the raw matrix. Independent
+#       of any external annotation.
+#   "cCRE_top_N" (legacy, LEAKY against prepare_pos_neg_bins.R; opt-in only):
+#       top n_top SCREEN HEK293 CTCF cCREs by 293 CTCF z-score, optionally
+#       intersected with 293T-CA. THIS RECIPE IS IDENTICAL TO THE EVAL
+#       PANEL'S POSITIVES. Do not use for honest evaluation.
+#   "none": no seed positives are flagged. The PU classifier will refuse to
+#       train (no labels). Use only if you plan to inject seeds elsewhere.
 positive_seed <- mask_cfg$positive_seed %||% list()
-n_top <- as.integer(positive_seed$n_top %||% 10000L)
+seed_source     <- as.character(positive_seed$source %||% 'top_observed')
+n_top           <- as.integer(positive_seed$n_top %||% 10000L)
 require_293T_CA <- isTRUE(positive_seed$require_293T_CA %||% TRUE)
+if (!(seed_source %in% c('top_observed', 'cCRE_top_N', 'none'))) {
+  stop(sprintf("Unknown positive_seed.source: %s", seed_source))
+}
 
 # -----------------------------------------------------------------------------
 # Bin universe
@@ -491,9 +505,36 @@ mask_bed_df <- data.frame(chrom = as.character(seqnames(bins_gr))[keep],
 write.table(mask_bed_df, mask_bed_path, sep='\t', quote=FALSE,
             row.names=FALSE, col.names=FALSE)
 
+# -----------------------------------------------------------------------------
+# Seed positives for the PU classifier (consumed by 03_pu_classifier.py).
+# Computed from `seed_source`. The classifier reads the `seed_pos` column;
+# old behavior (in_top_N_CTCF as the seed) is still computed but ONLY for
+# reference and explicitly leaky.
+# -----------------------------------------------------------------------------
+seed_pos <- logical(N_bins)
+if (seed_source == 'top_observed') {
+  # Rank-by-observation, take top n_top.
+  ord <- order(-n_cells_observed, -total_count)   # break ties on total_count
+  take <- ord[seq_len(min(n_top, N_bins))]
+  # Drop any bins with zero observation evidence from the seed set; a "top"
+  # bin with n_cells_observed == 0 is noise, not a positive.
+  take <- take[n_cells_observed[take] > 0]
+  seed_pos[take] <- TRUE
+  message(sprintf("[mask] seed_pos: data-derived (top_observed). %d / %d bins flagged.",
+                  sum(seed_pos), N_bins))
+} else if (seed_source == 'cCRE_top_N') {
+  seed_pos <- as.logical(top_mask)
+  message(sprintf("[mask] seed_pos: cCRE_top_N (LEGACY/LEAKY). %d / %d bins flagged.",
+                  sum(seed_pos), N_bins))
+} else {
+  # 'none' -> seed_pos all FALSE; downstream classifier will refuse to train
+  message("[mask] seed_pos: none. Classifier will refuse to train.")
+}
+
 features <- data.frame(
   bin_idx_orig             = seq_len(N_bins) - 1L,
   bin_name                 = bin_names,
+  seed_pos                 = as.integer(seed_pos),
   in_cCRE_293T             = as.integer(mask_293T),
   in_cCRE_293T_CA          = as.integer(mask_293T_CA),
   in_cCRE_CTCF             = as.integer(mask_CTCF),
@@ -539,7 +580,9 @@ meta <- list(
   ),
   n_cells_total = n_cells_total,
   files = files,
-  positive_seed = list(n_top=n_top, require_293T_CA=require_293T_CA),
+  positive_seed = list(source=seed_source, n_top=n_top,
+                       require_293T_CA=require_293T_CA,
+                       n_seed_pos=sum(seed_pos)),
   outputs = list(
     mask_bed     = mask_bed_path,
     mask_tsv     = mask_tsv_path,
