@@ -6,9 +6,9 @@
 #SBATCH --mem=128G
 #SBATCH --time=24:00:00
 
-# MACS2 peak calling on pseudo-bulk BEDs from each pipeline matrix, then
-# reference pos/neg bin coverage. Requires macs2 (cistopic env; pip build works
-# on Longleaf — bioconda macs2 in data_prep hits __log_finite on glibc 2.34+).
+# MACS3 peak calling on pseudo-bulk BEDs from each pipeline matrix, then
+# reference pos/neg bin coverage. Requires macs3 (data_prep env: pip-built
+# macs3 on Python 3.11; same wheels work on Longleaf).
 #
 # Default INPUTS: raw + all ten imputed pipelines (same as compare_pos_neg_all10).
 # Override INPUTS or individual *_DIR before sbatch.
@@ -45,7 +45,7 @@ BINS_TSV="${BINS_TSV:-${ROOT_DIR}/downstream/bins/pos_neg_bins.tsv}"
 PEAK_COV_OUT_DIR="${PEAK_COV_OUT_DIR:-${ROOT_DIR}/downstream/peak_coverage_ctcf}"
 OUT_NAME="${OUT_NAME:-peak_coverage}"
 TARGET_FRAGMENTS="${TARGET_FRAGMENTS:-50000000}"
-CONDA_ENV="${CONDA_ENV:-cistopic}"
+CONDA_ENV="${CONDA_ENV:-data_prep}"
 
 if [[ -z "${INPUTS:-}" ]]; then
   default_inputs all
@@ -61,8 +61,8 @@ fi
 source "$(conda info --base)/etc/profile.d/conda.sh"
 conda activate "${CONDA_ENV}"
 
-if ! command -v macs2 >/dev/null 2>&1; then
-  echo "ERROR: macs2 not on PATH in env ${CONDA_ENV}" >&2
+if ! command -v macs3 >/dev/null 2>&1; then
+  echo "ERROR: macs3 not on PATH in env ${CONDA_ENV}" >&2
   exit 1
 fi
 

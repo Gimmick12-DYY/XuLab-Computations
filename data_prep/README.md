@@ -1,11 +1,11 @@
 # data_prep — upstream input prep for the scBasset / scBasset_TF pipelines
 
 Builds the `.rds` files that the imputation pipelines consume at
-`paths.input_rds`. Standard MACS2 peak matrix workflow — no extra filtering.
+`paths.input_rds`. Standard MACS3 peak matrix workflow — no extra filtering.
 
 ## What it does
 
-1. **MACS2 pseudo-bulk peak calling** on the fragment BED with the standard
+1. **MACS3 pseudo-bulk peak calling** on the fragment BED with the standard
    CUT&Tag parameters:
    `--nomodel --shift -75 --extsize 150 -q 0.01 --keep-dup all`.
 2. **bedtools intersect** to assign each fragment to peaks per barcode.
@@ -26,9 +26,9 @@ conda env create -f environment.yml
 conda activate data_prep
 ```
 
-The env brings `macs2`, `bedtools`, `samtools`, `r-base`, `r-Matrix`,
+The env brings `macs3`, `bedtools`, `samtools`, `r-base`, `r-Matrix`,
 `r-optparse`, plus numpy/scipy/pandas. If your cluster has its own
-`macs2`/`bedtools` modules, drop those from `environment.yml` and
+`macs3`/`bedtools` modules, drop those from `environment.yml` and
 `module load` them instead.
 
 ## Usage
@@ -57,8 +57,8 @@ CLI knobs:
 |---|---|---|
 | `--fragments` | required | 5-col BED(.gz): `chr, start, end, barcode, count` |
 | `--out` | required | Output `.rds` path |
-| `--tf-name` | `CTCF` | Used in MACS2 sample name (`<tf>_pseudo_peaks.narrowPeak`) |
-| `--work-dir` | `<out>.work/` | Intermediate files (MACS2 outputs, peaks BED, mm/) |
+| `--tf-name` | `CTCF` | Used in MACS3 sample name (`<tf>_pseudo_peaks.narrowPeak`) |
+| `--work-dir` | `<out>.work/` | Intermediate files (MACS3 outputs, peaks BED, mm/) |
 
 Final stdout block:
 
@@ -102,7 +102,7 @@ data_prep/
 ├── environment.yml           (conda env)
 ├── run_build_peak_matrix.sh  (driver: config -> build_peak_matrix.py)
 ├── slurm/build_peak_matrix.sbatch
-├── build_peak_matrix.py      (MACS2 -> bedtools -> mm -> RDS)
+├── build_peak_matrix.py      (MACS3 -> bedtools -> mm -> RDS)
 └── save_peak_matrix.R        (mm -> dgCMatrix RDS)
 ```
 

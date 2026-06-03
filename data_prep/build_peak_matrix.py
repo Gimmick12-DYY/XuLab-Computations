@@ -2,12 +2,12 @@
 # -----------------------------------------------------------------------------
 # build_peak_matrix.py
 #
-# Standard MACS2 peak matrix builder. Turns a CUT&Tag fragment BED into a
+# Standard MACS3 peak matrix builder. Turns a CUT&Tag fragment BED into a
 # binary peak x cell sparse matrix RDS for the scBasset / scBasset_TF
 # pipelines.
 #
 # Pipeline:
-#   1. MACS2 callpeak (CUT&Tag params)
+#   1. MACS3 callpeak (CUT&Tag params)
 #        --nomodel --shift -75 --extsize 150 -q 0.01 --keep-dup all
 #   2. bedtools intersect fragments x peaks (streamed)
 #   3. Build sparse (peak x cell) binary matrix
@@ -37,11 +37,11 @@ def require_tool(name: str) -> None:
         sys.exit(f"required tool not on PATH: {name}")
 
 
-def run_macs2(fragments: Path, work_dir: Path, tf_name: str) -> Path:
-    """Run MACS2 callpeak in CUT&Tag mode. Returns the narrowPeak path."""
+def run_macs3(fragments: Path, work_dir: Path, tf_name: str) -> Path:
+    """Run MACS3 callpeak in CUT&Tag mode. Returns the narrowPeak path."""
     name = f"{tf_name}_pseudo"
     cmd = [
-        "macs2", "callpeak",
+        "macs3", "callpeak",
         "-t", str(fragments),
         "-f", "BED",
         "-g", "hs",
@@ -53,16 +53,16 @@ def run_macs2(fragments: Path, work_dir: Path, tf_name: str) -> Path:
         "-q", "0.01",
         "--keep-dup", "all",
     ]
-    log.info("MACS2: %s", " ".join(cmd))
+    log.info("MACS3: %s", " ".join(cmd))
     subprocess.run(cmd, check=True)
     peaks_path = work_dir / f"{name}_peaks.narrowPeak"
     if not peaks_path.is_file():
-        sys.exit(f"MACS2 did not produce expected output: {peaks_path}")
+        sys.exit(f"MACS3 did not produce expected output: {peaks_path}")
     return peaks_path
 
 
 def parse_peaks(narrow_peak: Path, work_dir: Path) -> tuple[Path, list[tuple[str, int, int]]]:
-    """Read MACS2 narrowPeak, emit a 3-col BED unchanged. No filtering."""
+    """Read MACS3 narrowPeak, emit a 3-col BED unchanged. No filtering."""
     peaks: list[tuple[str, int, int]] = []
     with open(narrow_peak) as fh:
         for ln in fh:
@@ -76,7 +76,7 @@ def parse_peaks(narrow_peak: Path, work_dir: Path) -> tuple[Path, list[tuple[str
                 continue
             peaks.append((parts[0], start, end))
     if not peaks:
-        sys.exit("MACS2 produced no peaks; aborting.")
+        sys.exit("MACS3 produced no peaks; aborting.")
 
     out_bed = work_dir / "peaks.bed"
     with open(out_bed, "w") as fh:
@@ -195,12 +195,12 @@ def main() -> int:
     ap.add_argument("--out", required=True, type=Path,
                     help="Output .rds path (dgCMatrix)")
     ap.add_argument("--tf-name", default="CTCF",
-                    help="Used in MACS2 sample name. Default: CTCF.")
+                    help="Used in MACS3 sample name. Default: CTCF.")
     ap.add_argument("--work-dir", type=Path, default=None,
                     help="Intermediate files. Default: <out>.work/")
     args = ap.parse_args()
 
-    for tool in ("macs2", "bedtools", "Rscript", "gzip"):
+    for tool in ("macs3", "bedtools", "Rscript", "gzip"):
         require_tool(tool)
 
     fragments = args.fragments.expanduser().resolve()
@@ -215,7 +215,7 @@ def main() -> int:
     work_dir.mkdir(parents=True, exist_ok=True)
     log.info("work_dir: %s", work_dir)
 
-    narrow = run_macs2(fragments, work_dir, args.tf_name)
+    narrow = run_macs3(fragments, work_dir, args.tf_name)
     peaks_bed, peaks = parse_peaks(narrow, work_dir)
     mat, regions, barcodes = build_binary_matrix(fragments, peaks_bed, peaks)
 

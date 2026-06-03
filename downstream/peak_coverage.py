@@ -3,7 +3,7 @@
 # peak_coverage.py
 #
 # Companion to compare_pos_neg.py's BIN-level coverage / AUROC: for each
-# imputation pipeline, CALL PEAKS from the imputed matrix with MACS2, then
+# imputation pipeline, CALL PEAKS from the imputed matrix with MACS3, then
 # compute the fraction of reference positive/negative bins covered by any
 # called peak.
 #
@@ -20,7 +20,7 @@
 #      are wildly different.
 #   4. Emit a synthetic 3-col BED: each bin contributes
 #      `floor(scaled_signal)` lines of (chrom, start, end).
-#   5. Run MACS2 callpeak with the standard CUT&Tag params:
+#   5. Run MACS3 callpeak with the standard CUT&Tag params:
 #        --nomodel --shift -75 --extsize 150 -q 0.01 --keep-dup all
 #   6. Parse the narrowPeak output -> list of called peak intervals.
 #
@@ -34,7 +34,7 @@
 # Outputs (under --out-dir):
 #   peak_coverage.tsv               one row per input
 #   <label>/                        per-pipeline subdir with synthetic BED,
-#                                   MACS2 output, called peak BED.
+#                                   MACS3 output, called peak BED.
 #
 # Usage:
 #   python downstream/peak_coverage.py \
@@ -222,12 +222,12 @@ def generate_synthetic_bed(
     return n_total
 
 
-# ---------- MACS2 ------------------------------------------------------------
+# ---------- MACS3 ------------------------------------------------------------
 
-def run_macs2(bed_path: Path, work_dir: Path, name: str) -> Path:
-    """Run MACS2 in CUT&Tag mode. Returns the narrowPeak path."""
+def run_macs3(bed_path: Path, work_dir: Path, name: str) -> Path:
+    """Run MACS3 in CUT&Tag mode. Returns the narrowPeak path."""
     cmd = [
-        "macs2", "callpeak",
+        "macs3", "callpeak",
         "-t", str(bed_path),
         "-f", "BED",
         "-g", "hs",
@@ -239,16 +239,16 @@ def run_macs2(bed_path: Path, work_dir: Path, name: str) -> Path:
         "-q", "0.01",
         "--keep-dup", "all",
     ]
-    log.info("  MACS2: %s", " ".join(cmd))
+    log.info("  MACS3: %s", " ".join(cmd))
     subprocess.run(cmd, check=True)
     peaks_path = work_dir / f"{name}_peaks.narrowPeak"
     if not peaks_path.is_file():
-        sys.exit(f"MACS2 did not produce expected output: {peaks_path}")
+        sys.exit(f"MACS3 did not produce expected output: {peaks_path}")
     return peaks_path
 
 
 def load_called_peaks(narrow: Path) -> list[tuple[str, int, int]]:
-    """Parse MACS2 narrowPeak -> list of (chrom, start, end)."""
+    """Parse MACS3 narrowPeak -> list of (chrom, start, end)."""
     peaks: list[tuple[str, int, int]] = []
     with open(narrow) as fh:
         for ln in fh:
@@ -363,10 +363,10 @@ def main() -> int:
     ap.add_argument("--out-name", default="peak_coverage")
     args = ap.parse_args()
 
-    if shutil.which("macs2") is None:
+    if shutil.which("macs3") is None:
         sys.exit(
-            "macs2 not found on PATH; activate the cistopic env "
-            "(pip macs2) or another env with a working macs2 callpeak"
+            "macs3 not found on PATH; activate the data_prep env "
+            "(pip macs3) or another env with a working macs3 callpeak"
         )
 
     args.out_dir.mkdir(parents=True, exist_ok=True)
@@ -390,11 +390,11 @@ def main() -> int:
         bed_path = pipe_dir / "synthetic.bed"
         n_frag = generate_synthetic_bed(signal, regions, args.target_fragments, bed_path)
 
-        narrow = run_macs2(bed_path, pipe_dir, name=f"{label}_pseudo")
+        narrow = run_macs3(bed_path, pipe_dir, name=f"{label}_pseudo")
         peaks = load_called_peaks(narrow)
         log.info("  called peaks: %d", len(peaks))
 
-        # Save peaks BED next to MACS2 outputs for visual inspection.
+        # Save peaks BED next to MACS3 outputs for visual inspection.
         bed_called = pipe_dir / f"{label}_called_peaks.bed"
         with open(bed_called, "w") as fh:
             for c, s, e in peaks:

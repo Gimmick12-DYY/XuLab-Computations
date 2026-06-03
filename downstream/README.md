@@ -30,7 +30,7 @@ prefer the factored loader.
 
 ```bash
 sbatch downstream/slurm/compare_pos_neg_all4.sbatch      # raw + 9 imputed
-sbatch downstream/slurm/peak_coverage.sbatch           # MACS2 peak coverage (needs data_prep env)
+sbatch downstream/slurm/peak_coverage.sbatch           # MACS3 peak coverage (needs data_prep env)
 sbatch downstream/slurm/igv_ctcf_scbasset_tracks.sbatch  # scbasset + cascade .bw tracks
 sbatch downstream/slurm/sensitivity_specificity.sbatch
 sbatch downstream/slurm/complexity_gain.sbatch
@@ -164,17 +164,16 @@ INPUTS="raw=/work/.../cistopic_ctcf/mm cisTopic=/work/.../cistopic_ctcf/impute F
   downstream/slurm/compare_pos_neg.sbatch
 ```
 
-### Step 2b — MACS2 peak coverage on pseudo-bulk BEDs
+### Step 2b — MACS3 peak coverage on pseudo-bulk BEDs
 
 `peak_coverage.py` mirrors the pos/neg bin reference from `prepare_pos_neg_bins.R`
 but scores **peak overlap** instead of per-bin signal AUROC: for each pipeline it
 pseudo-bulks the matrix, rescales to `--target-fragments` (default 50M), writes a
-synthetic BED, runs MACS2 (`--nomodel --shift -75 --extsize 150`), and reports
+synthetic BED, runs MACS3 (`--nomodel --shift -75 --extsize 150`), and reports
 what fraction of reference positive / negative bins are covered by any called peak.
 
 Input formats match `compare_pos_neg.py` (mm, CSR, factored, dense). Use the
-`cistopic` conda env (pip-built `macs2`; bioconda macs2 in `data_prep` is
-broken on Longleaf's glibc).
+`data_prep` conda env (pip-built `macs3`).
 
 ```bash
 sbatch downstream/slurm/peak_coverage.sbatch
@@ -187,8 +186,8 @@ Defaults: `BINS_TSV=downstream/bins/pos_neg_bins.tsv`,
 | file | contents |
 |---|---|
 | `peak_coverage.tsv` | one row per pipeline: pos/neg coverage %, peak counts, paths |
-| `<label>/synthetic.bed` | rescaled pseudo-fragment BED fed to MACS2 |
-| `<label>/<label>_peaks.narrowPeak` | MACS2 output |
+| `<label>/synthetic.bed` | rescaled pseudo-fragment BED fed to MACS3 |
+| `<label>/<label>_peaks.narrowPeak` | MACS3 output |
 
 ### Reading the output
 

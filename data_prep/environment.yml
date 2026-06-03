@@ -11,12 +11,13 @@ dependencies:
   - pyyaml
   - bedtools>=2.30
   - pip:
-    - macs2>=2.2
+    - macs3>=3.0
   - samtools
   - r-base>=4.3
   - r-matrix
   - r-optparse
 # Notes:
-#   - macs2 is installed via pip (not bioconda): conda-built wheels fail on
-#     RHEL9 / glibc 2.34+ with "undefined symbol: __log_finite".
+#   - macs3 is the next-gen Python rewrite of MACS2: faster, better-maintained,
+#     same CLI for `callpeak`. Installed via pip to dodge the conda-built
+#     wheels' RHEL9 / glibc 2.34+ "undefined symbol: __log_finite" issue.
 #   - bedtools intersect is the only bedtools subcommand used; any v2.x is fine.
