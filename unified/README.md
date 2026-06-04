@@ -90,11 +90,24 @@ ls /work/.../downstream/cache/hg38.fa.fai
 ## Run
 
 ```bash
-# end-to-end
+# SLURM (CTCF bin matrix; exports RDS -> mm, then 00/01/02)
+cd /work/.../XuLab/unified
+sbatch slurm/99_full_pipeline.sbatch
+
+# Manual (after RDS -> mm export)
+conda activate unified
+Rscript ../cisTopic/scripts/01_export_rds_to_mm.R \
+  --input  /work/.../data/CTCF_bin1000_mtx.rds \
+  --outdir /work/.../unified/work/ctcf/mm
 python scripts/00_ingest.py --config configs/default.yaml
 python scripts/01_train.py  --config configs/default.yaml     # GPU
 python scripts/02_impute.py --config configs/default.yaml     # GPU
 ```
+
+Imputed outputs: `work/ctcf/impute/` (`matrix_csr.npz`, `regions.tsv`,
+`barcodes.tsv`, `meta.json`). Plug into downstream with
+`--input unified=work/ctcf/impute` (also wired in
+`downstream/slurm/_pipeline_paths.sh`).
 
 ## What this is not
 
