@@ -1,0 +1,23 @@
+name: unified
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - python=3.11
+  - pip
+  - numpy
+  - scipy
+  - pandas
+  - h5py
+  - pyyaml
+  - tqdm
+  - pyfaidx          # random-access FASTA reader
+  - samtools         # samtools faidx
+  - pip:
+      - torch>=2.2
+      - einops
+# Notes:
+#   - PyTorch (not TensorFlow) — chosen for the gather-heavy training loop
+#     (per-(bin, cell) pair sampling). torch.gather + sparse coo are cleaner
+#     for this access pattern than tf.gather + ragged.
+#   - Reuse downstream/cache/hg38.fa fetched by scBasset.
