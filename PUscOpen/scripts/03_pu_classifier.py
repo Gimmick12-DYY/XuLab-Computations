@@ -129,6 +129,12 @@ def _pick_threshold(pu_score: np.ndarray, mask_keep: np.ndarray,
     decision rule.
 
     Supported forms for ``mode``:
+      * "all"                      -> keep every bin in mask_keep (no
+                                     refinement). scOpen trains on the full
+                                     geometric mask. Slowest, but the only
+                                     setting that lets PUscOpen impute at
+                                     every region; PU score becomes a
+                                     ranking signal, not a hard filter.
       * float in [0, 1]            -> fixed numeric threshold on pu_score
       * "auto"                     -> median of seed-positive PU scores
       * "top_k:<N>"                -> keep the top-N bins among mask_keep
@@ -147,6 +153,15 @@ def _pick_threshold(pu_score: np.ndarray, mask_keep: np.ndarray,
 
     raw = '' if mode is None else str(mode).strip()
     s = raw.lower()
+
+    # "all" -> keep every bin in mask_keep.
+    if s in ('all', 'all_mask', 'mask_keep'):
+        override = mask_keep.copy()
+        scored_idx = np.where(mask_keep)[0]
+        if scored_idx.size == 0:
+            return 0.5, 'all:no_mask_keep', None
+        cutoff = float(pu_score[scored_idx].min())
+        return cutoff, f'all:{int(override.sum())} (full mask_keep)', override
 
     # top_k:<N>
     if s.startswith('top_k:') or s.startswith('topk:'):

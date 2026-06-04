@@ -143,6 +143,13 @@ pu:
 
   # Threshold used by step 04 to decide which bins make the refined mask.
   # Supported forms:
+  #   * "all"                -> keep every bin in the geometric mask. scOpen
+  #                              trains on every region, so PUscOpen imputes
+  #                              everywhere rather than only at the top-K
+  #                              high-PU-score bins. PU score becomes a
+  #                              ranking signal, not a hard filter. Slowest
+  #                              setting -- scOpen NMF cost scales linearly
+  #                              with bin count.
   #   * "auto"               -> median PU score of seed positives (legacy,
   #                              tends to over-prune since seed scores cluster
   #                              near 1.0)
@@ -154,9 +161,10 @@ pu:
   #                              (e.g. seed_quantile:0.05 keeps everything
   #                              above the 5th percentile of seed scores)
   #   * <float>              -> fixed numeric threshold on pu_score
-  # Default: top_k:50000 -> ~16x larger refined universe than the legacy
-  # "auto" recipe in our HEK293T benchmark.
-  refined_mask_threshold: "top_k:50000"
+  # Default: "all" -> matches the no-bulk-priors stance; the previous
+  # top_k:50000 left ~95% of the genome as forced zero in the impute output,
+  # which inflated negative-class purity in pos/neg evaluations.
+  refined_mask_threshold: "all"
 
   # If true, union benchmark negatives into refined_mask (not recommended:
   # pollutes PU/scOpen with non-candidate genome). Keep false.
