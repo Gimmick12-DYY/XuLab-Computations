@@ -45,12 +45,24 @@ BINS_TSV="${BINS_TSV:-${ROOT_DIR}/downstream/bins/pos_neg_bins.tsv}"
 PEAK_COV_OUT_DIR="${PEAK_COV_OUT_DIR:-${ROOT_DIR}/downstream/peak_coverage_ctcf}"
 OUT_NAME="${OUT_NAME:-peak_coverage}"
 TARGET_FRAGMENTS="${TARGET_FRAGMENTS:-50000000}"
+SPREAD_BP="${SPREAD_BP:-500}"
 CONDA_ENV="${CONDA_ENV:-data_prep}"
 
-if [[ -z "${INPUTS:-}" ]]; then
-  default_inputs all
-fi
+# Peak-coverage-specific default subset: raw + cisTopic + PUscOpen + scBasset
+# and its cascades, omitting FITS / scOpen / MAGIC / cicero to keep MACS3
+# runtime manageable. Override by exporting INPUTS=... before sbatch to run
+# the full set.
 pipeline_paths_native
+if [[ -z "${INPUTS:-}" ]]; then
+  INPUTS="raw=${MM_DIR} \
+cisTopic=${CISTOPIC_DIR} \
+PUscOpen=${PUSCOPEN_DIR} \
+scbasset=${SCBASSET_DIR} \
+scbasset_puscopen=${SCBASSET_PUSCOPEN_DIR} \
+scbasset_cistopic=${SCBASSET_CISTOPIC_DIR} \
+scbasset_cistopic_puscopen=${SCBASSET_CISTOPIC_PUSCOPEN_DIR} \
+unified=${UNIFIED_DIR}"
+fi
 
 if [[ ! -f "${BINS_TSV}" ]]; then
   echo "ERROR: BINS_TSV not found: ${BINS_TSV}" >&2
@@ -79,6 +91,7 @@ CMD=(
   --out-dir "${PEAK_COV_OUT_DIR}"
   --out-name "${OUT_NAME}"
   --target-fragments "${TARGET_FRAGMENTS}"
+  --spread-bp "${SPREAD_BP}"
 )
 for pair in ${INPUTS}; do
   CMD+=(--input "${pair}")

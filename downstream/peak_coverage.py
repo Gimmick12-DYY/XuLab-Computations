@@ -170,17 +170,20 @@ def load_per_bin_signal(path: Path) -> tuple[np.ndarray, list[str], str]:
 def generate_synthetic_bed(
     signal: np.ndarray, regions: list[str],
     target_fragments: int, out_bed: Path,
+    spread_bp: int = 500,
     seed: int = 42,
 ) -> int:
     """Write a synthetic 3-col BED for MACS3 callpeak.
 
     Each bin emits floor(signal_r * scale) fragments at RANDOM positions
-    uniformly distributed in [bin_start, bin_end). This is the scaling fix:
-    putting all fragments at the bin's start or midpoint stacks them at a
-    single bp -> MACS3's local pile-up beats background lambda at every
-    signaled bin -> peak called everywhere there's signal. With random
-    spread within the bin, MACS3's local-lambda test can actually
-    distinguish concentrated from diffuse signal.
+    centered on the bin midpoint within a `spread_bp` window. Why a tight
+    window (default 500 bp) rather than the full 1 kb bin: spreading across
+    the full bin dilutes the local pile-up to ~ (counts/1000) reads/bp,
+    which lands right on top of MACS3's background lambda when the matrix
+    has broad coverage (scBasset's ~20 frags/bin in 1000 bp gives 0.02/bp
+    vs. lambda 0.018/bp -- borderline reject). A 500 bp cluster gives 4x
+    the density without putting everything at a single point (which
+    degenerates to "peak at every bin").
 
     Returns total fragments written.
     """
@@ -198,22 +201,28 @@ def generate_synthetic_bed(
         sys.exit("scaled fragment count is zero; raise --target-fragments")
 
     keep = counts > 0
-    chroms_k     = chroms[keep]
-    starts_k     = starts[keep]
-    ends_k       = ends[keep]
-    counts_k     = counts[keep]
+    chroms_k = chroms[keep]
+    starts_k = starts[keep]
+    ends_k   = ends[keep]
+    counts_k = counts[keep]
+    log.info("  bins contributing fragments: %d / %d (cluster within %d bp around midpoint)",
+             int(keep.sum()), len(signal), spread_bp)
+
+    # Cluster fragments in a `spread_bp` window centered on each bin's midpoint.
+    # Cap the window to the bin's own width so we don't drop fragments outside
+    # of small/edge bins.
+    centers_k    = (starts_k + ends_k) // 2
     bin_widths_k = (ends_k - starts_k).astype(np.int64)
-    log.info("  bins contributing fragments: %d / %d (spread within each bin)",
-             int(keep.sum()), len(signal))
+    half_window  = np.minimum(spread_bp // 2, bin_widths_k // 2)
 
     chroms_r     = np.repeat(chroms_k, counts_k)
-    starts_r     = np.repeat(starts_k, counts_k)
-    bin_widths_r = np.repeat(bin_widths_k, counts_k)
+    centers_r    = np.repeat(centers_k, counts_k)
+    half_r       = np.repeat(half_window, counts_k)
 
-    # Random offset within each fragment's source bin [0, width).
     rng = np.random.default_rng(seed)
-    offsets = rng.integers(0, np.maximum(bin_widths_r, 1))
-    positions = starts_r + offsets
+    # Random offset in [-half, +half], inclusive
+    offsets = rng.integers(-half_r, half_r + 1)
+    positions = centers_r + offsets
 
     CHUNK = 1_000_000
     with open(out_bed, "w") as fh:
@@ -400,6 +409,11 @@ def main() -> int:
     ap.add_argument("--out-dir", required=True, type=Path)
     ap.add_argument("--target-fragments", type=int, default=50_000_000,
                     help="Total simulated fragments per pipeline (default 50M, typical CUT&Tag).")
+    ap.add_argument("--spread-bp", type=int, default=500,
+                    help="Width (bp) of the cluster window around each bin's midpoint that "
+                         "fragments are uniformly distributed across. Default 500 bp -- tight "
+                         "enough to give MACS3 a real local pile-up, wide enough that the call "
+                         "doesn't degenerate to 'peak at every bin'.")
     ap.add_argument("--out-name", default="peak_coverage")
     ap.add_argument("--min-overlap-frac", type=float, default=0.0,
                     help="Pass-through to `bedtools intersect -f`. "
@@ -442,9 +456,12 @@ def main() -> int:
         log.info("  matrix: %d regions, total_signal=%.3g, kind=%s",
                  len(regions), float(signal.sum()), kind)
 
-        # 1. Synthetic BED (random spread within each bin)
+        # 1. Synthetic BED (fragments clustered within spread_bp around bin midpoint)
         bed_path = pipe_dir / "synthetic.bed"
-        n_frag = generate_synthetic_bed(signal, regions, args.target_fragments, bed_path)
+        n_frag = generate_synthetic_bed(
+            signal, regions, args.target_fragments, bed_path,
+            spread_bp=args.spread_bp,
+        )
 
         # 2. MACS3 callpeak
         narrow = run_macs3(bed_path, pipe_dir, name=f"{label}_pseudo")
