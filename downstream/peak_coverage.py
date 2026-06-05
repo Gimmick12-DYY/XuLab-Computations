@@ -182,8 +182,18 @@ def generate_synthetic_bed(
     signal: np.ndarray, regions: list[str],
     target_fragments: int, out_bed: Path,
 ) -> int:
-    """Write a synthetic 3-col BED. Each bin emits floor(scaled_signal)
-    repeated lines at the bin's coordinates. Returns the total line count."""
+    """Write a synthetic 3-col BED. Each bin emits floor(scaled_signal) 1-bp
+    lines at the bin's MIDPOINT. This is the critical fix: with MACS3's
+    `--shift -75 --extsize 150`, a fragment at (chrom, start, start+1) becomes
+    a 150 bp peak window centered at start. If we emit at the bin's start
+    (left edge), the resulting peak straddles bin boundaries and bleeds into
+    the previous bin -- inflating peak coverage above bin coverage. Emitting
+    at the bin midpoint keeps the peak fully contained inside the source bin
+    (1 kb bins >> 150 bp peak width), so peak coverage <= bin coverage by
+    construction.
+
+    Returns the total line count.
+    """
     chroms, starts, ends = parse_region_names(regions)
     total_signal = float(signal.sum())
     if total_signal <= 0:
@@ -197,26 +207,27 @@ def generate_synthetic_bed(
     if n_total == 0:
         sys.exit("scaled fragment count is zero; raise --target-fragments")
 
+    # Bin midpoints (anchor for MACS3 fragments). 1 bp wide so MACS3's
+    # --extsize 150 picks up the full 150 bp window centered at the midpoint.
+    centers = (starts + ends) // 2
+
     keep = counts > 0
-    chroms_k = chroms[keep]
-    starts_k = starts[keep]
-    ends_k   = ends[keep]
-    counts_k = counts[keep]
-    log.info("  bins contributing fragments: %d / %d",
+    chroms_k  = chroms[keep]
+    centers_k = centers[keep]
+    counts_k  = counts[keep]
+    log.info("  bins contributing fragments: %d / %d (emitted at bin midpoint)",
              int(keep.sum()), len(signal))
 
-    chroms_r = np.repeat(chroms_k, counts_k)
-    starts_r = np.repeat(starts_k, counts_k)
-    ends_r   = np.repeat(ends_k,   counts_k)
+    chroms_r  = np.repeat(chroms_k, counts_k)
+    centers_r = np.repeat(centers_k, counts_k)
 
-    # Buffered write to avoid 50M-line list allocation.
+    # Buffered write to avoid huge in-memory line list.
     CHUNK = 1_000_000
     with open(out_bed, "w") as fh:
         for i in range(0, n_total, CHUNK):
             cs = chroms_r[i:i + CHUNK]
-            ss = starts_r[i:i + CHUNK].tolist()
-            es = ends_r[i:i + CHUNK].tolist()
-            fh.write("\n".join(f"{c}\t{s}\t{e}" for c, s, e in zip(cs, ss, es)))
+            ms = centers_r[i:i + CHUNK].tolist()
+            fh.write("\n".join(f"{c}\t{m}\t{m+1}" for c, m in zip(cs, ms)))
             fh.write("\n")
     log.info("  wrote synthetic BED: %s (%d lines)", out_bed, n_total)
     return n_total
@@ -302,39 +313,75 @@ def load_reference_bins(bins_tsv: Path) -> tuple[list, list]:
 
 # ---------- overlap ----------------------------------------------------------
 
-def coverage_fraction(
-    reference_bins: list[tuple[str, int, int]],
-    called_peaks: list[tuple[str, int, int]],
-) -> tuple[int, int]:
-    """Return (#bins overlapping any peak, total #bins)."""
-    if not reference_bins:
-        return 0, 0
-    peaks_by_chrom: dict[str, list[tuple[int, int]]] = defaultdict(list)
-    for chrom, s, e in called_peaks:
-        peaks_by_chrom[chrom].append((s, e))
-    for chrom in peaks_by_chrom:
-        peaks_by_chrom[chrom].sort()
-    starts_by_chrom: dict[str, np.ndarray] = {
-        c: np.asarray([s for s, _ in lst], dtype=np.int64)
-        for c, lst in peaks_by_chrom.items()
-    }
-    ends_by_chrom: dict[str, np.ndarray] = {
-        c: np.asarray([e for _, e in lst], dtype=np.int64)
-        for c, lst in peaks_by_chrom.items()
-    }
+def write_ref_bed(reference_bins: list[tuple[str, int, int]], out_bed: Path) -> None:
+    """Write reference bin set to a 3-col BED, sorted by (chrom, start)."""
+    out_bed.parent.mkdir(parents=True, exist_ok=True)
+    sorted_bins = sorted(reference_bins, key=lambda r: (r[0], r[1]))
+    with open(out_bed, "w") as fh:
+        for chrom, s, e in sorted_bins:
+            fh.write(f"{chrom}\t{s}\t{e}\n")
 
-    n_covered = 0
-    for chrom, start, end in reference_bins:
-        if chrom not in starts_by_chrom:
-            continue
-        s_arr = starts_by_chrom[chrom]
-        e_arr = ends_by_chrom[chrom]
-        # candidates: peaks with start < end
-        i = int(np.searchsorted(s_arr, end))
-        # any of [0..i) with end > start ?
-        if i > 0 and np.any(e_arr[:i] > start):
-            n_covered += 1
-    return n_covered, len(reference_bins)
+
+def coverage_via_bedtools(
+    ref_bed: Path,
+    called_peaks_bed: Path,
+    min_overlap_frac: float = 0.0,
+    covered_out_bed: Path | None = None,
+    pairs_out_tsv: Path | None = None,
+) -> tuple[int, int]:
+    """Use `bedtools intersect -u` to count reference bins overlapping any
+    called peak. `-u` is the "soft unique" semantics — each reference bin is
+    returned at most once regardless of how many peaks hit it.
+
+    Optional artifacts:
+      covered_out_bed:  if given, write the BED of reference bins that ARE
+                        covered (i.e. the `-u` output). 3-col BED, subset of
+                        ref_bed. Useful for IGV / cross-pipeline diffs.
+      pairs_out_tsv:    if given, write the per-overlap pairing as a TSV
+                        with columns: ref_chrom, ref_start, ref_end,
+                        peak_chrom, peak_start, peak_end, overlap_bp.
+                        Generated via `bedtools intersect -wo`.
+
+    `min_overlap_frac > 0` adds `-f <frac>` (require that fraction of the
+    REFERENCE bin be covered). 0 = any overlap counts (the default and the
+    semantic the bin-coverage metric uses).
+    """
+    n_total = sum(1 for ln in ref_bed.read_text().splitlines() if ln.strip())
+    if n_total == 0:
+        return 0, 0
+
+    # 1. -u to count + write the covered subset BED
+    cmd = ["bedtools", "intersect",
+           "-a", str(ref_bed),
+           "-b", str(called_peaks_bed),
+           "-u"]
+    if min_overlap_frac > 0:
+        cmd += ["-f", f"{min_overlap_frac:.6g}"]
+    proc = subprocess.run(cmd, capture_output=True, text=True, check=True)
+    covered_lines = [ln for ln in proc.stdout.splitlines() if ln.strip()]
+    n_covered = len(covered_lines)
+
+    if covered_out_bed is not None:
+        covered_out_bed.parent.mkdir(parents=True, exist_ok=True)
+        covered_out_bed.write_text("\n".join(covered_lines) + ("\n" if covered_lines else ""))
+
+    # 2. (optional) -wo for the full per-overlap pairing
+    if pairs_out_tsv is not None:
+        cmd_wo = ["bedtools", "intersect",
+                  "-a", str(ref_bed),
+                  "-b", str(called_peaks_bed),
+                  "-wo"]
+        if min_overlap_frac > 0:
+            cmd_wo += ["-f", f"{min_overlap_frac:.6g}"]
+        proc_wo = subprocess.run(cmd_wo, capture_output=True, text=True, check=True)
+        pairs_out_tsv.parent.mkdir(parents=True, exist_ok=True)
+        with open(pairs_out_tsv, "w") as fh:
+            fh.write("ref_chrom\tref_start\tref_end\tpeak_chrom\tpeak_start\tpeak_end\toverlap_bp\n")
+            for ln in proc_wo.stdout.splitlines():
+                if ln.strip():
+                    fh.write(ln + "\n")
+
+    return n_covered, n_total
 
 
 # ---------- main -------------------------------------------------------------
@@ -361,18 +408,33 @@ def main() -> int:
     ap.add_argument("--target-fragments", type=int, default=50_000_000,
                     help="Total simulated fragments per pipeline (default 50M, typical CUT&Tag).")
     ap.add_argument("--out-name", default="peak_coverage")
+    ap.add_argument("--min-overlap-frac", type=float, default=0.0,
+                    help="Pass-through to `bedtools intersect -f`. "
+                         "0 (default) = any overlap counts (same semantic as bin coverage). "
+                         "Set >0 to require that fraction of the reference bin be covered.")
+    ap.add_argument("--emit-pairs", action="store_true",
+                    help="Also emit per-pipeline overlap TSV (bedtools -wo): "
+                         "one row per (ref bin, called peak) pair with overlap bp.")
     args = ap.parse_args()
 
-    if shutil.which("macs3") is None:
-        sys.exit(
-            "macs3 not found on PATH; activate the data_prep env "
-            "(pip macs3) or another env with a working macs3 callpeak"
-        )
+    for tool in ("macs3", "bedtools"):
+        if shutil.which(tool) is None:
+            sys.exit(
+                f"{tool} not found on PATH; activate the data_prep env "
+                f"(pip macs3 + conda bedtools) or another env with both."
+            )
 
     args.out_dir.mkdir(parents=True, exist_ok=True)
 
     log.info("Loading reference bins from %s", args.bins_tsv)
     pos_bins, neg_bins = load_reference_bins(args.bins_tsv)
+
+    # Write reference bins to BED once; bedtools intersect uses them per run.
+    ref_pos_bed = args.out_dir / "_ref_pos.bed"
+    ref_neg_bed = args.out_dir / "_ref_neg.bed"
+    write_ref_bed(pos_bins, ref_pos_bed)
+    write_ref_bed(neg_bins, ref_neg_bed)
+    log.info("Wrote reference BEDs: %s, %s", ref_pos_bed, ref_neg_bed)
 
     rows: list[dict] = []
     for label, path in args.inputs:
@@ -394,14 +456,31 @@ def main() -> int:
         peaks = load_called_peaks(narrow)
         log.info("  called peaks: %d", len(peaks))
 
-        # Save peaks BED next to MACS3 outputs for visual inspection.
+        # Save peaks BED (sorted) next to MACS3 outputs for visual inspection
+        # AND for bedtools intersect.
         bed_called = pipe_dir / f"{label}_called_peaks.bed"
+        sorted_peaks = sorted(peaks, key=lambda r: (r[0], r[1]))
         with open(bed_called, "w") as fh:
-            for c, s, e in peaks:
+            for c, s, e in sorted_peaks:
                 fh.write(f"{c}\t{s}\t{e}\n")
 
-        n_pos_cov, n_pos = coverage_fraction(pos_bins, peaks)
-        n_neg_cov, n_neg = coverage_fraction(neg_bins, peaks)
+        covered_pos_bed = pipe_dir / f"{label}_pos_covered_bins.bed"
+        covered_neg_bed = pipe_dir / f"{label}_neg_covered_bins.bed"
+        pairs_pos_tsv = pipe_dir / f"{label}_pos_overlap_pairs.tsv" if args.emit_pairs else None
+        pairs_neg_tsv = pipe_dir / f"{label}_neg_overlap_pairs.tsv" if args.emit_pairs else None
+
+        n_pos_cov, n_pos = coverage_via_bedtools(
+            ref_pos_bed, bed_called,
+            min_overlap_frac=args.min_overlap_frac,
+            covered_out_bed=covered_pos_bed,
+            pairs_out_tsv=pairs_pos_tsv,
+        )
+        n_neg_cov, n_neg = coverage_via_bedtools(
+            ref_neg_bed, bed_called,
+            min_overlap_frac=args.min_overlap_frac,
+            covered_out_bed=covered_neg_bed,
+            pairs_out_tsv=pairs_neg_tsv,
+        )
         pos_cov = (100.0 * n_pos_cov / n_pos) if n_pos else float("nan")
         neg_cov = (100.0 * n_neg_cov / n_neg) if n_neg else float("nan")
         log.info("  pos cov: %d / %d (%.2f%%) ; neg cov: %d / %d (%.2f%%)",
@@ -416,6 +495,7 @@ def main() -> int:
             "n_synthetic_fragments":     int(n_frag),
             "n_called_peaks":            int(len(peaks)),
             "called_peak_total_bp":      int(sum(e - s for _, s, e in peaks)),
+            "min_overlap_frac":          float(args.min_overlap_frac),
             "n_pos":                     int(n_pos),
             "n_neg":                     int(n_neg),
             "n_pos_covered":             int(n_pos_cov),
@@ -425,6 +505,10 @@ def main() -> int:
             "input_path":                str(path),
             "narrowpeak":                str(narrow),
             "called_peaks_bed":          str(bed_called),
+            "covered_pos_bed":           str(covered_pos_bed),
+            "covered_neg_bed":           str(covered_neg_bed),
+            "pos_overlap_pairs_tsv":     str(pairs_pos_tsv) if pairs_pos_tsv else "",
+            "neg_overlap_pairs_tsv":     str(pairs_neg_tsv) if pairs_neg_tsv else "",
         })
 
     # Write the TSV summary
