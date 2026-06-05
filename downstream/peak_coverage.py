@@ -2,49 +2,36 @@
 # -----------------------------------------------------------------------------
 # peak_coverage.py
 #
-# Companion to compare_pos_neg.py's BIN-level coverage / AUROC: for each
-# imputation pipeline, CALL PEAKS from the imputed matrix with MACS3, then
-# compute the fraction of reference positive/negative bins covered by any
-# called peak.
-#
 # Per-pipeline workflow:
-#   1. Load the (region x cell) matrix from the input dir.
-#        - mm/         (raw)           : matrix.mtx.gz + regions.tsv.gz + barcodes.tsv.gz
-#        - impute/     (csr_full)      : matrix_csr.npz + regions.tsv + barcodes.tsv
-#        - impute/     (factored)      : factors.npz + regions.tsv (cisTopic / scOpen)
-#        - impute/     (dense)         : matrix.npy + regions.tsv (FITS / MAGIC)
-#   2. Pseudo-bulk: per-bin signal = sum across cells (binary or continuous).
-#   3. Rescale so the total simulated "fragment" count equals --target-fragments
-#      (default 50,000,000 -- a typical CUT&Tag sample depth). This
-#      normalizes across pipelines whose continuous-vs-binary signal scales
-#      are wildly different.
-#   4. Emit a synthetic 3-col BED: each bin contributes
-#      `floor(scaled_signal)` lines of (chrom, start, end).
-#   5. Run MACS3 callpeak with the standard CUT&Tag params:
+#   1. Load the matrix from each input dir.
+#   2. Per-bin signal = sum across cells.
+#   3. Rescale globally so total simulated fragments == --target-fragments.
+#   4. Write synthetic BED: each bin emits floor(scaled_signal) fragments at
+#      RANDOM positions uniformly within [bin_start, bin_end). The random
+#      spread (vs. all-at-midpoint) is the critical bit: with single-point
+#      fragments + MACS3 --extsize 150, every signaled bin produces a single
+#      tall pile-up that beats background and gets called as a peak -- the
+#      output then degenerates to "peak count = bin count with signal".
+#      Spreading lets MACS3's local-lambda test actually distinguish
+#      concentrated from diffuse signal.
+#   5. MACS3 callpeak with standard CUT&Tag params:
 #        --nomodel --shift -75 --extsize 150 -q 0.01 --keep-dup all
-#   6. Parse the narrowPeak output -> list of called peak intervals.
-#
-# Coverage step:
-#   - Reference bins come from prepare_pos_neg_bins.R via the bins TSV
-#     (`bin_name = chr:start-end`, `label ∈ {1, 0}` for pos / neg).
-#   - For each reference bin, mark it covered if ANY called peak overlaps.
-#   - positive_peak_coverage = #pos covered / #pos
-#     negative_peak_coverage = #neg covered / #neg
+#   6. bedtools intersect the narrowPeak against the reference pos/neg bins.
 #
 # Outputs (under --out-dir):
-#   peak_coverage.tsv               one row per input
-#   <label>/                        per-pipeline subdir with synthetic BED,
-#                                   MACS3 output, called peak BED.
+#   peak_coverage.tsv                       one row per input
+#   _ref_pos.bed, _ref_neg.bed              reference BEDs (shared)
+#   <label>/synthetic.bed                   synthetic fragments fed to MACS3
+#   <label>/<label>_pseudo_peaks.narrowPeak MACS3 output
+#   <label>/<label>_called_peaks.bed        sorted 3-col BED for bedtools intersect
+#   <label>/<label>_pos_covered_bins.bed    pos bins overlapping any peak
+#   <label>/<label>_neg_covered_bins.bed    neg bins overlapping any peak
 #
 # Usage:
 #   python downstream/peak_coverage.py \
 #     --input raw=/work/.../mm \
-#     --input cisTopic=/work/.../cisTopic/work/ctcf/impute \
-#     --input PUscOpen=/work/.../PUscOpen/work/ctcf/impute \
 #     --input scBasset=/work/.../scBasset/work/ctcf/impute \
-#     --input scBasset_PUscOpen=/work/.../scBasset_PUscOpen/work/ctcf/impute \
-#     --input scBasset_cisTopic=/work/.../scBasset_cisTopic/work/ctcf/impute \
-#     --input scBasset_cisTopic_PUscOpen=/work/.../scBasset_cisTopic_PUscOpen/work/ctcf/impute \
+#     ... \
 #     --bins-tsv /work/.../downstream/bins/pos_neg_bins.tsv \
 #     --out-dir  /work/.../downstream/peak_coverage_ctcf
 # -----------------------------------------------------------------------------
@@ -178,26 +165,29 @@ def load_per_bin_signal(path: Path) -> tuple[np.ndarray, list[str], str]:
 
 # ---------- synthetic BED ----------------------------------------------------
 
+# ---------- synthetic BED generation -----------------------------------------
+
 def generate_synthetic_bed(
     signal: np.ndarray, regions: list[str],
     target_fragments: int, out_bed: Path,
+    seed: int = 42,
 ) -> int:
-    """Write a synthetic 3-col BED. Each bin emits floor(scaled_signal) 1-bp
-    lines at the bin's MIDPOINT. This is the critical fix: with MACS3's
-    `--shift -75 --extsize 150`, a fragment at (chrom, start, start+1) becomes
-    a 150 bp peak window centered at start. If we emit at the bin's start
-    (left edge), the resulting peak straddles bin boundaries and bleeds into
-    the previous bin -- inflating peak coverage above bin coverage. Emitting
-    at the bin midpoint keeps the peak fully contained inside the source bin
-    (1 kb bins >> 150 bp peak width), so peak coverage <= bin coverage by
-    construction.
+    """Write a synthetic 3-col BED for MACS3 callpeak.
 
-    Returns the total line count.
+    Each bin emits floor(signal_r * scale) fragments at RANDOM positions
+    uniformly distributed in [bin_start, bin_end). This is the scaling fix:
+    putting all fragments at the bin's start or midpoint stacks them at a
+    single bp -> MACS3's local pile-up beats background lambda at every
+    signaled bin -> peak called everywhere there's signal. With random
+    spread within the bin, MACS3's local-lambda test can actually
+    distinguish concentrated from diffuse signal.
+
+    Returns total fragments written.
     """
     chroms, starts, ends = parse_region_names(regions)
     total_signal = float(signal.sum())
     if total_signal <= 0:
-        sys.exit(f"per-bin signal sum is zero; cannot synthesize fragments")
+        sys.exit("per-bin signal sum is zero; cannot synthesize fragments")
 
     scale = target_fragments / total_signal
     counts = np.floor(signal * scale).astype(np.int64)
@@ -207,27 +197,30 @@ def generate_synthetic_bed(
     if n_total == 0:
         sys.exit("scaled fragment count is zero; raise --target-fragments")
 
-    # Bin midpoints (anchor for MACS3 fragments). 1 bp wide so MACS3's
-    # --extsize 150 picks up the full 150 bp window centered at the midpoint.
-    centers = (starts + ends) // 2
-
     keep = counts > 0
-    chroms_k  = chroms[keep]
-    centers_k = centers[keep]
-    counts_k  = counts[keep]
-    log.info("  bins contributing fragments: %d / %d (emitted at bin midpoint)",
+    chroms_k     = chroms[keep]
+    starts_k     = starts[keep]
+    ends_k       = ends[keep]
+    counts_k     = counts[keep]
+    bin_widths_k = (ends_k - starts_k).astype(np.int64)
+    log.info("  bins contributing fragments: %d / %d (spread within each bin)",
              int(keep.sum()), len(signal))
 
-    chroms_r  = np.repeat(chroms_k, counts_k)
-    centers_r = np.repeat(centers_k, counts_k)
+    chroms_r     = np.repeat(chroms_k, counts_k)
+    starts_r     = np.repeat(starts_k, counts_k)
+    bin_widths_r = np.repeat(bin_widths_k, counts_k)
 
-    # Buffered write to avoid huge in-memory line list.
+    # Random offset within each fragment's source bin [0, width).
+    rng = np.random.default_rng(seed)
+    offsets = rng.integers(0, np.maximum(bin_widths_r, 1))
+    positions = starts_r + offsets
+
     CHUNK = 1_000_000
     with open(out_bed, "w") as fh:
         for i in range(0, n_total, CHUNK):
             cs = chroms_r[i:i + CHUNK]
-            ms = centers_r[i:i + CHUNK].tolist()
-            fh.write("\n".join(f"{c}\t{m}\t{m+1}" for c, m in zip(cs, ms)))
+            ps = positions[i:i + CHUNK].tolist()
+            fh.write("\n".join(f"{c}\t{p}\t{p+1}" for c, p in zip(cs, ps)))
             fh.write("\n")
     log.info("  wrote synthetic BED: %s (%d lines)", out_bed, n_total)
     return n_total
@@ -449,15 +442,16 @@ def main() -> int:
         log.info("  matrix: %d regions, total_signal=%.3g, kind=%s",
                  len(regions), float(signal.sum()), kind)
 
+        # 1. Synthetic BED (random spread within each bin)
         bed_path = pipe_dir / "synthetic.bed"
         n_frag = generate_synthetic_bed(signal, regions, args.target_fragments, bed_path)
 
+        # 2. MACS3 callpeak
         narrow = run_macs3(bed_path, pipe_dir, name=f"{label}_pseudo")
         peaks = load_called_peaks(narrow)
         log.info("  called peaks: %d", len(peaks))
 
-        # Save peaks BED (sorted) next to MACS3 outputs for visual inspection
-        # AND for bedtools intersect.
+        # 3. Save peaks BED (sorted) for bedtools intersect
         bed_called = pipe_dir / f"{label}_called_peaks.bed"
         sorted_peaks = sorted(peaks, key=lambda r: (r[0], r[1]))
         with open(bed_called, "w") as fh:
