@@ -170,20 +170,22 @@ def load_per_bin_signal(path: Path) -> tuple[np.ndarray, list[str], str]:
 def generate_synthetic_bed(
     signal: np.ndarray, regions: list[str],
     target_fragments: int, out_bed: Path,
-    spread_bp: int = 500,
+    spread_bp: int = 300,
     seed: int = 42,
 ) -> int:
     """Write a synthetic 3-col BED for MACS3 callpeak.
 
     Each bin emits floor(signal_r * scale) fragments at RANDOM positions
-    centered on the bin midpoint within a `spread_bp` window. Why a tight
-    window (default 500 bp) rather than the full 1 kb bin: spreading across
-    the full bin dilutes the local pile-up to ~ (counts/1000) reads/bp,
-    which lands right on top of MACS3's background lambda when the matrix
-    has broad coverage (scBasset's ~20 frags/bin in 1000 bp gives 0.02/bp
-    vs. lambda 0.018/bp -- borderline reject). A 500 bp cluster gives 4x
-    the density without putting everything at a single point (which
-    degenerates to "peak at every bin").
+    centered on the bin midpoint within a `spread_bp` window.
+
+    Why spread_bp ≈ 300 (default): MACS3's significance fold for a bin is
+        fold ≈ genome_size / (n_signaled_bins * spread_bp)
+    (per-bin fragment count cancels because it scales both pile-up and
+    global lambda). With spread_bp = 500 and ~2.3M signaled bins (scBasset),
+    fold ≈ 2.3x -- right at the q < 0.01 boundary, so most bins reject.
+    With spread_bp = 300, fold ≈ 3.8x, comfortably significant. The smaller
+    spread also stays well above the degenerate-at-single-point regime
+    (fold > 10x, every bin called).
 
     Returns total fragments written.
     """
@@ -409,11 +411,13 @@ def main() -> int:
     ap.add_argument("--out-dir", required=True, type=Path)
     ap.add_argument("--target-fragments", type=int, default=50_000_000,
                     help="Total simulated fragments per pipeline (default 50M, typical CUT&Tag).")
-    ap.add_argument("--spread-bp", type=int, default=500,
+    ap.add_argument("--spread-bp", type=int, default=300,
                     help="Width (bp) of the cluster window around each bin's midpoint that "
-                         "fragments are uniformly distributed across. Default 500 bp -- tight "
-                         "enough to give MACS3 a real local pile-up, wide enough that the call "
-                         "doesn't degenerate to 'peak at every bin'.")
+                         "fragments are uniformly distributed across. Default 300 bp -- "
+                         "calibrated for broad-fill matrices (~2M signaled bins like scBasset) "
+                         "where 500 bp dilutes per-bin density below MACS3's q < 0.01 threshold. "
+                         "The fold over background is ~ genome_size / (n_signaled_bins x spread), "
+                         "so smaller spread -> more peaks for dense pipelines.")
     ap.add_argument("--out-name", default="peak_coverage")
     ap.add_argument("--min-overlap-frac", type=float, default=0.0,
                     help="Pass-through to `bedtools intersect -f`. "
