@@ -14,8 +14,10 @@
 #      output then degenerates to "peak count = bin count with signal".
 #      Spreading lets MACS3's local-lambda test actually distinguish
 #      concentrated from diffuse signal.
-#   5. MACS3 callpeak with standard CUT&Tag params:
-#        --nomodel --shift -75 --extsize 150 -q 0.01 --keep-dup all
+#   5. MACS3 callpeak in CUT&Tag mode (coverage-tuned defaults):
+#        --nomodel --shift -100 --extsize 200 -q 0.05 --keep-dup all
+#      (--extsize/--macs-q/--spread-bp are all CLI-tunable; --shift tracks
+#       -extsize/2.)
 #   6. bedtools intersect the narrowPeak against the reference pos/neg bins.
 #
 # Outputs (under --out-dir):
@@ -170,7 +172,7 @@ def load_per_bin_signal(path: Path) -> tuple[np.ndarray, list[str], str]:
 def generate_synthetic_bed(
     signal: np.ndarray, regions: list[str],
     target_fragments: int, out_bed: Path,
-    spread_bp: int = 300,
+    spread_bp: int = 150,
     seed: int = 42,
 ) -> int:
     """Write a synthetic 3-col BED for MACS3 callpeak.
@@ -178,14 +180,18 @@ def generate_synthetic_bed(
     Each bin emits floor(signal_r * scale) fragments at RANDOM positions
     centered on the bin midpoint within a `spread_bp` window.
 
-    Why spread_bp ≈ 300 (default): MACS3's significance fold for a bin is
+    Why spread_bp ≈ 150 (default): MACS3's significance fold for a bin is
         fold ≈ genome_size / (n_signaled_bins * spread_bp)
     (per-bin fragment count cancels because it scales both pile-up and
-    global lambda). With spread_bp = 500 and ~2.3M signaled bins (scBasset),
-    fold ≈ 2.3x -- right at the q < 0.01 boundary, so most bins reject.
-    With spread_bp = 300, fold ≈ 3.8x, comfortably significant. The smaller
-    spread also stays well above the degenerate-at-single-point regime
-    (fold > 10x, every bin called).
+    global lambda). The diffuse imputation matrices (scBasset & co.) signal
+    ~2.3M bins, so the fold is set by the spread. At spread_bp = 300 that is
+    ~4x (many CTCF bins fall under q < 0.01); halving to spread_bp = 150
+    doubles the fold to ~8x, so far more of the genuine CTCF pile-ups clear
+    threshold -- which is what was suppressing coverage on the smoothed
+    methods. Sparse matrices (raw, 597k bins) are already well above
+    threshold, so this mainly lifts the diffuse pipelines. Stay >~75 bp to
+    avoid the degenerate single-point regime where every signaled bin is
+    called.
 
     Returns total fragments written.
     """
@@ -239,8 +245,20 @@ def generate_synthetic_bed(
 
 # ---------- MACS3 ------------------------------------------------------------
 
-def run_macs3(bed_path: Path, work_dir: Path, name: str) -> Path:
-    """Run MACS3 in CUT&Tag mode. Returns the narrowPeak path."""
+def run_macs3(
+    bed_path: Path, work_dir: Path, name: str,
+    qvalue: float = 0.05, extsize: int = 200,
+) -> Path:
+    """Run MACS3 in CUT&Tag mode. Returns the narrowPeak path.
+
+    `extsize` sets the pile-up (and minimum peak) width; `--shift` is pinned
+    to -extsize/2 so the extended tag stays centered on the cut site. Wider
+    extsize -> wider called peaks -> more likely to overlap a ~1 kb reference
+    bin, so it lifts coverage on top of the span/q knobs. `qvalue` is the
+    MACS3 significance cutoff; loosening it (0.01 -> 0.05) admits the
+    marginal CTCF pile-ups that the smoothed pipelines produce.
+    """
+    shift = -(extsize // 2)
     cmd = [
         "macs3", "callpeak",
         "-t", str(bed_path),
@@ -249,9 +267,9 @@ def run_macs3(bed_path: Path, work_dir: Path, name: str) -> Path:
         "-n", name,
         "--outdir", str(work_dir),
         "--nomodel",
-        "--shift", "-75",
-        "--extsize", "150",
-        "-q", "0.01",
+        "--shift", str(shift),
+        "--extsize", str(extsize),
+        "-q", f"{qvalue:g}",
         "--keep-dup", "all",
     ]
     log.info("  MACS3: %s", " ".join(cmd))
@@ -411,13 +429,21 @@ def main() -> int:
     ap.add_argument("--out-dir", required=True, type=Path)
     ap.add_argument("--target-fragments", type=int, default=50_000_000,
                     help="Total simulated fragments per pipeline (default 50M, typical CUT&Tag).")
-    ap.add_argument("--spread-bp", type=int, default=300,
+    ap.add_argument("--spread-bp", type=int, default=150,
                     help="Width (bp) of the cluster window around each bin's midpoint that "
-                         "fragments are uniformly distributed across. Default 300 bp -- "
+                         "fragments are uniformly distributed across. Default 150 bp -- "
                          "calibrated for broad-fill matrices (~2M signaled bins like scBasset) "
-                         "where 500 bp dilutes per-bin density below MACS3's q < 0.01 threshold. "
+                         "where larger spreads dilute per-bin density below MACS3's q threshold. "
                          "The fold over background is ~ genome_size / (n_signaled_bins x spread), "
                          "so smaller spread -> more peaks for dense pipelines.")
+    ap.add_argument("--macs-q", type=float, default=0.05,
+                    help="MACS3 callpeak q-value cutoff (default 0.05). Looser than the "
+                         "0.01 default to admit the marginal CTCF pile-ups from smoothed "
+                         "(imputed) matrices that otherwise fall just under threshold.")
+    ap.add_argument("--extsize", type=int, default=200,
+                    help="MACS3 --extsize (bp); --shift is pinned to -extsize/2. Default 200 "
+                         "(vs the 150 CUT&Tag standard) widens called peaks so they overlap "
+                         "the ~1 kb reference bins more readily, raising coverage.")
     ap.add_argument("--out-name", default="peak_coverage")
     ap.add_argument("--min-overlap-frac", type=float, default=0.0,
                     help="Pass-through to `bedtools intersect -f`. "
@@ -468,7 +494,10 @@ def main() -> int:
         )
 
         # 2. MACS3 callpeak
-        narrow = run_macs3(bed_path, pipe_dir, name=f"{label}_pseudo")
+        narrow = run_macs3(
+            bed_path, pipe_dir, name=f"{label}_pseudo",
+            qvalue=args.macs_q, extsize=args.extsize,
+        )
         peaks = load_called_peaks(narrow)
         log.info("  called peaks: %d", len(peaks))
 
@@ -507,6 +536,9 @@ def main() -> int:
             "n_bins_in_matrix":          int(len(regions)),
             "total_signal":              float(signal.sum()),
             "target_fragments":          int(args.target_fragments),
+            "spread_bp":                 int(args.spread_bp),
+            "macs_q":                    float(args.macs_q),
+            "extsize":                   int(args.extsize),
             "n_synthetic_fragments":     int(n_frag),
             "n_called_peaks":            int(len(peaks)),
             "called_peak_total_bp":      int(sum(e - s for _, s, e in peaks)),

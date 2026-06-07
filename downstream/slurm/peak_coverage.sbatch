@@ -45,7 +45,9 @@ BINS_TSV="${BINS_TSV:-${ROOT_DIR}/downstream/bins/pos_neg_bins.tsv}"
 PEAK_COV_OUT_DIR="${PEAK_COV_OUT_DIR:-${ROOT_DIR}/downstream/peak_coverage_ctcf}"
 OUT_NAME="${OUT_NAME:-peak_coverage}"
 TARGET_FRAGMENTS="${TARGET_FRAGMENTS:-50000000}"
-SPREAD_BP="${SPREAD_BP:-300}"
+SPREAD_BP="${SPREAD_BP:-150}"
+MACS_Q="${MACS_Q:-0.05}"
+EXTSIZE="${EXTSIZE:-200}"
 CONDA_ENV="${CONDA_ENV:-data_prep}"
 
 # Peak-coverage-specific default subset: raw + cisTopic + PUscOpen + scBasset
@@ -80,7 +82,7 @@ fi
 
 mkdir -p "${PEAK_COV_OUT_DIR}"
 
-echo "[$(date)] peak_coverage: TARGET_FRAGMENTS=${TARGET_FRAGMENTS}"
+echo "[$(date)] peak_coverage: TARGET_FRAGMENTS=${TARGET_FRAGMENTS} SPREAD_BP=${SPREAD_BP} MACS_Q=${MACS_Q} EXTSIZE=${EXTSIZE}"
 echo "BINS_TSV=${BINS_TSV}"
 echo "OUT_DIR=${PEAK_COV_OUT_DIR}"
 echo "INPUTS=${INPUTS}"
@@ -92,6 +94,8 @@ CMD=(
   --out-name "${OUT_NAME}"
   --target-fragments "${TARGET_FRAGMENTS}"
   --spread-bp "${SPREAD_BP}"
+  --macs-q "${MACS_Q}"
+  --extsize "${EXTSIZE}"
 )
 for pair in ${INPUTS}; do
   CMD+=(--input "${pair}")
