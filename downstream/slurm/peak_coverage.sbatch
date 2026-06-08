@@ -50,6 +50,7 @@ TARGET_FRAGMENTS="${TARGET_FRAGMENTS:-150000000}"
 REF_QUANTILE="${REF_QUANTILE:-0.5}"
 FRAGS_AT_REF="${FRAGS_AT_REF:-20}"
 BG_QUANTILE="${BG_QUANTILE:-0.5}"   # peak-call background bar = this quantile of nonzero signal
+BG_SCALE="${BG_SCALE:-1.0}"         # continuous multiplier on the bar (<1 = more coverage, >1 = stricter)
 MAX_FRAGS_PER_BIN="${MAX_FRAGS_PER_BIN:-500}"
 NOLAMBDA="${NOLAMBDA:-1}"          # 1 -> --nolambda (default), 0 -> --no-nolambda
 SPREAD_BP="${SPREAD_BP:-150}"
@@ -105,6 +106,7 @@ CMD=(
   --ref-quantile "${REF_QUANTILE}"
   --frags-at-ref "${FRAGS_AT_REF}"
   --bg-quantile "${BG_QUANTILE}"
+  --bg-scale "${BG_SCALE}"
   --max-frags-per-bin "${MAX_FRAGS_PER_BIN}"
   "${NOLAMBDA_FLAG}"
   --spread-bp "${SPREAD_BP}"

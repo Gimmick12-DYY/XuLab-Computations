@@ -185,6 +185,7 @@ def generate_synthetic_bed(
     ref_quantile: float = 0.5,
     frags_at_ref: float = 20.0,
     bg_quantile: float = 0.5,
+    bg_scale: float = 1.0,
     max_frags_per_bin: int = 500,
     max_total_fragments: int = 150_000_000,
     seed: int = 42,
@@ -225,6 +226,14 @@ def generate_synthetic_bed(
     (capture == 100%) for low-dynamic-range tracks like raw/scBasset. Set
     bg_quantile <= 0 to fall back to the full hs genome (old pass-through).
 
+    `bg_scale` is a continuous multiplier on the bar (default 1.0). It exists
+    because most of these matrices have median nonzero signal == 1, so the
+    nonzero distribution is piled at 1 and bg_quantile is a useless dial there
+    (q25 == q50 == q75 == 1 -> identical bar). bg_scale moves the bar
+    continuously instead: <1 lowers it (a signal-1 bin clears it -> recovers
+    coverage), >1 raises it (stricter). Sweep bg_scale to trade coverage vs.
+    specificity (maximize pos - neg separation).
+
     Returns (total fragments written, background bar in fragments).
     """
     chroms, starts, ends = parse_region_names(regions)
@@ -255,16 +264,16 @@ def generate_synthetic_bed(
     # clip+downscale transform as counts so it is on the pile-up scale.
     if bg_quantile and bg_quantile > 0:
         bar_signal = float(np.quantile(signal[nz], bg_quantile))
-        bar_frags = int(np.floor(min(bar_signal * scale, float(max_frags_per_bin)) * downscale))
-        bar_frags = max(1, bar_frags)
+        bar_raw = min(bar_signal * scale, float(max_frags_per_bin)) * downscale * bg_scale
+        bar_frags = max(1, int(np.floor(bar_raw)))
     else:
         bar_frags = 0                      # 0 -> caller uses full hs genome
 
     log.info("  scaling(per-bin): ref_q=%.3g ref_val=%.3g scale=%.6g "
-             "floor_thresh=%.3g downscale=%.3g bg_q=%.3g bar_frags=%d "
+             "floor_thresh=%.3g downscale=%.3g bg_q=%.3g bg_scale=%.3g bar_frags=%d "
              "n_synthetic_fragments=%d",
              ref_quantile, ref_val, scale, floor_thresh, downscale,
-             bg_quantile, bar_frags, n_total)
+             bg_quantile, bg_scale, bar_frags, n_total)
     if n_total == 0:
         sys.exit("scaled fragment count is zero; raise --frags-at-ref")
 
@@ -528,6 +537,12 @@ def main() -> int:
                          "WITHIN the track instead of passing every signaled bin (capture==100%%). "
                          "Higher -> stricter (more filtering, lower coverage); 0 -> disable (use "
                          "the full hs genome, the old pass-through behaviour).")
+    ap.add_argument("--bg-scale", type=float, default=1.0,
+                    help="Continuous multiplier on the background bar (default 1.0). Use this "
+                         "instead of --bg-quantile when the nonzero signal is piled at 1 (median "
+                         "== 1), where quantiles all collapse to the same bar. <1 lowers the bar "
+                         "(recovers coverage), >1 raises it (stricter). Sweep to maximize the "
+                         "pos-neg coverage gap.")
     ap.add_argument("--nolambda", action=argparse.BooleanOptionalAction, default=True,
                     help="Pass MACS3 --nolambda (default ON): score each bin against the "
                          "genome-wide background only, not the local 1k/5k/10k lambda. This is "
@@ -619,6 +634,7 @@ def main() -> int:
             ref_quantile=args.ref_quantile,
             frags_at_ref=args.frags_at_ref,
             bg_quantile=args.bg_quantile,
+            bg_scale=args.bg_scale,
             max_frags_per_bin=args.max_frags_per_bin,
             max_total_fragments=args.max_total_fragments,
         )
@@ -690,6 +706,7 @@ def main() -> int:
             "ref_quantile":              float(args.ref_quantile),
             "frags_at_ref":              float(args.frags_at_ref),
             "bg_quantile":               float(args.bg_quantile),
+            "bg_scale":                  float(args.bg_scale),
             "bg_bar_frags":              int(bg_bar),
             "effective_genome_size":     str(g_eff),
             "max_frags_per_bin":         int(args.max_frags_per_bin),
