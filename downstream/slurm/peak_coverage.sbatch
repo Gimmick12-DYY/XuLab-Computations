@@ -49,6 +49,7 @@ OUT_NAME="${OUT_NAME:-peak_coverage}"
 TARGET_FRAGMENTS="${TARGET_FRAGMENTS:-150000000}"
 REF_QUANTILE="${REF_QUANTILE:-0.5}"
 FRAGS_AT_REF="${FRAGS_AT_REF:-20}"
+BG_QUANTILE="${BG_QUANTILE:-0.5}"   # peak-call background bar = this quantile of nonzero signal
 MAX_FRAGS_PER_BIN="${MAX_FRAGS_PER_BIN:-500}"
 NOLAMBDA="${NOLAMBDA:-1}"          # 1 -> --nolambda (default), 0 -> --no-nolambda
 SPREAD_BP="${SPREAD_BP:-150}"
@@ -88,7 +89,7 @@ fi
 
 mkdir -p "${PEAK_COV_OUT_DIR}"
 
-echo "[$(date)] peak_coverage: TARGET_FRAGMENTS(cap)=${TARGET_FRAGMENTS} REF_QUANTILE=${REF_QUANTILE} FRAGS_AT_REF=${FRAGS_AT_REF} MAX_FRAGS_PER_BIN=${MAX_FRAGS_PER_BIN} NOLAMBDA=${NOLAMBDA} SPREAD_BP=${SPREAD_BP} MACS_Q=${MACS_Q} EXTSIZE=${EXTSIZE}"
+echo "[$(date)] peak_coverage: TARGET_FRAGMENTS(cap)=${TARGET_FRAGMENTS} REF_QUANTILE=${REF_QUANTILE} FRAGS_AT_REF=${FRAGS_AT_REF} BG_QUANTILE=${BG_QUANTILE} MAX_FRAGS_PER_BIN=${MAX_FRAGS_PER_BIN} NOLAMBDA=${NOLAMBDA} SPREAD_BP=${SPREAD_BP} MACS_Q=${MACS_Q} EXTSIZE=${EXTSIZE}"
 echo "BINS_TSV=${BINS_TSV}"
 echo "OUT_DIR=${PEAK_COV_OUT_DIR}"
 echo "INPUTS=${INPUTS}"
@@ -103,6 +104,7 @@ CMD=(
   --target-fragments "${TARGET_FRAGMENTS}"
   --ref-quantile "${REF_QUANTILE}"
   --frags-at-ref "${FRAGS_AT_REF}"
+  --bg-quantile "${BG_QUANTILE}"
   --max-frags-per-bin "${MAX_FRAGS_PER_BIN}"
   "${NOLAMBDA_FLAG}"
   --spread-bp "${SPREAD_BP}"

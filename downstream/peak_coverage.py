@@ -16,12 +16,16 @@
 #      bin's midpoint.
 #   5. MACS3 callpeak in CUT&Tag mode (defaults):
 #        --nomodel --shift -100 --extsize 200 -q 0.05 --keep-dup all --nolambda
-#      --nolambda is the key correction: score each bin against the GENOME-WIDE
-#      background only. With the local 1k/5k/10k lambda, a method that signals
-#      most of the genome (e.g. scBasset, ~77% of bins) inflates its own
-#      background around every CTCF site and rejects peaks that are obviously
-#      real in IGV. A single genome-wide background makes coverage track
-#      absolute signal height -- what the browser shows.
+#      --nolambda scores each bin against a single background, not the local
+#      1k/5k/10k lambda -- without it a method that signals most of the genome
+#      (scBasset, ~77% of bins) inflates its own local background and rejects
+#      peaks that are obviously real in IGV.
+#      That background is NOT the full hs genome (which is mostly empty, so the
+#      bar is ~0 and every signaled bin passes -> capture==100%, peak calling a
+#      pass-through). Instead -g is set per-method to n_frag*extsize/bar_frags,
+#      where bar_frags is the pile-up of a bin at --bg-quantile of the track's
+#      nonzero signal. So a bin is called only if it beats the track's own
+#      typical signaled level -> peak calling discriminates within the track.
 #   6. bedtools intersect the narrowPeak against the reference pos/neg bins.
 #
 # Outputs (under --out-dir):
@@ -180,10 +184,11 @@ def generate_synthetic_bed(
     spread_bp: int = 150,
     ref_quantile: float = 0.5,
     frags_at_ref: float = 20.0,
+    bg_quantile: float = 0.5,
     max_frags_per_bin: int = 500,
     max_total_fragments: int = 150_000_000,
     seed: int = 42,
-) -> int:
+) -> tuple[int, int]:
     """Write a synthetic 3-col BED for MACS3 callpeak.
 
     Each bin emits floor(signal_r * scale) fragments at RANDOM positions
@@ -213,7 +218,14 @@ def generate_synthetic_bed(
     background -- the self-raised-local-lambda penalty on dense matrices is
     gone.
 
-    Returns total fragments written.
+    `bg_quantile` sets the background bar for peak calling: a bin is kept only
+    if its signal exceeds the `bg_quantile` quantile of the track's nonzero
+    signal (applied in main via an effective genome size derived from the
+    returned bar_frags). This is what stops the caller being a pass-through
+    (capture == 100%) for low-dynamic-range tracks like raw/scBasset. Set
+    bg_quantile <= 0 to fall back to the full hs genome (old pass-through).
+
+    Returns (total fragments written, background bar in fragments).
     """
     chroms, starts, ends = parse_region_names(regions)
     nz = signal > 0
@@ -233,9 +245,26 @@ def generate_synthetic_bed(
     counts = np.floor(raw).astype(np.int64)
     n_total = int(counts.sum())
     floor_thresh = ref_val / frags_at_ref / max(downscale, 1e-12)
+
+    # Background bar for peak calling: the pile-up a bin at the bg_quantile of
+    # the NONZERO signal would produce. The caller (run via an effective genome
+    # size of n_total*extsize/bar_frags, see main) then only keeps bins whose
+    # signal exceeds the track's own bg_quantile level -- i.e. peak calling
+    # discriminates WITHIN the track instead of just testing "nonzero vs. the
+    # empty genome" (which made capture == 100%). bar_frags uses the same
+    # clip+downscale transform as counts so it is on the pile-up scale.
+    if bg_quantile and bg_quantile > 0:
+        bar_signal = float(np.quantile(signal[nz], bg_quantile))
+        bar_frags = int(np.floor(min(bar_signal * scale, float(max_frags_per_bin)) * downscale))
+        bar_frags = max(1, bar_frags)
+    else:
+        bar_frags = 0                      # 0 -> caller uses full hs genome
+
     log.info("  scaling(per-bin): ref_q=%.3g ref_val=%.3g scale=%.6g "
-             "floor_thresh=%.3g downscale=%.3g n_synthetic_fragments=%d",
-             ref_quantile, ref_val, scale, floor_thresh, downscale, n_total)
+             "floor_thresh=%.3g downscale=%.3g bg_q=%.3g bar_frags=%d "
+             "n_synthetic_fragments=%d",
+             ref_quantile, ref_val, scale, floor_thresh, downscale,
+             bg_quantile, bar_frags, n_total)
     if n_total == 0:
         sys.exit("scaled fragment count is zero; raise --frags-at-ref")
 
@@ -271,7 +300,7 @@ def generate_synthetic_bed(
             fh.write("\n".join(f"{c}\t{p}\t{p+1}" for c, p in zip(cs, ps)))
             fh.write("\n")
     log.info("  wrote synthetic BED: %s (%d lines)", out_bed, n_total)
-    return n_total
+    return n_total, bar_frags
 
 
 # ---------- MACS3 ------------------------------------------------------------
@@ -279,6 +308,7 @@ def generate_synthetic_bed(
 def run_macs3(
     bed_path: Path, work_dir: Path, name: str,
     qvalue: float = 0.05, extsize: int = 200, nolambda: bool = True,
+    effective_genome_size: str | int = "hs",
 ) -> Path:
     """Run MACS3 in CUT&Tag mode. Returns the narrowPeak path.
 
@@ -304,7 +334,7 @@ def run_macs3(
         "macs3", "callpeak",
         "-t", str(bed_path),
         "-f", "BED",
-        "-g", "hs",
+        "-g", str(effective_genome_size),
         "-n", name,
         "--outdir", str(work_dir),
         "--nomodel",
@@ -491,6 +521,13 @@ def main() -> int:
     ap.add_argument("--max-frags-per-bin", type=int, default=500,
                     help="Per-bin cap on synthetic fragments (default 500) so a single outlier "
                          "bin (e.g. PUscOpen's concentrated signal) can't dominate the file.")
+    ap.add_argument("--bg-quantile", type=float, default=0.5,
+                    help="Quantile of the NONZERO signal used as the peak-calling background "
+                         "bar (default 0.5 = median). A bin is called only if its signal beats "
+                         "this quantile of its own track -- this makes peak calling discriminate "
+                         "WITHIN the track instead of passing every signaled bin (capture==100%%). "
+                         "Higher -> stricter (more filtering, lower coverage); 0 -> disable (use "
+                         "the full hs genome, the old pass-through behaviour).")
     ap.add_argument("--nolambda", action=argparse.BooleanOptionalAction, default=True,
                     help="Pass MACS3 --nolambda (default ON): score each bin against the "
                          "genome-wide background only, not the local 1k/5k/10k lambda. This is "
@@ -576,19 +613,31 @@ def main() -> int:
 
         # 1. Synthetic BED (per-bin scaling; fragments clustered within spread_bp)
         bed_path = pipe_dir / "synthetic.bed"
-        n_frag = generate_synthetic_bed(
+        n_frag, bg_bar = generate_synthetic_bed(
             signal, regions, bed_path,
             spread_bp=args.spread_bp,
             ref_quantile=args.ref_quantile,
             frags_at_ref=args.frags_at_ref,
+            bg_quantile=args.bg_quantile,
             max_frags_per_bin=args.max_frags_per_bin,
             max_total_fragments=args.max_total_fragments,
         )
+
+        # Effective genome size sets the --nolambda background bar to the
+        # pile-up of a bin at bg_quantile, so peak calling discriminates within
+        # the track (not "nonzero vs. empty genome"). bg_bar == 0 -> full hs.
+        if bg_bar > 0:
+            g_eff: str | int = max(1_000_000, int(n_frag * args.extsize / bg_bar))
+        else:
+            g_eff = "hs"
+        log.info("  peak-call background: bar_frags=%d effective_genome_size=%s",
+                 bg_bar, g_eff)
 
         # 2. MACS3 callpeak
         narrow = run_macs3(
             bed_path, pipe_dir, name=f"{label}_pseudo",
             qvalue=args.macs_q, extsize=args.extsize, nolambda=args.nolambda,
+            effective_genome_size=g_eff,
         )
         peaks = load_called_peaks(narrow)
         log.info("  called peaks: %d", len(peaks))
@@ -640,6 +689,9 @@ def main() -> int:
             "max_total_fragments":       int(args.max_total_fragments),
             "ref_quantile":              float(args.ref_quantile),
             "frags_at_ref":              float(args.frags_at_ref),
+            "bg_quantile":               float(args.bg_quantile),
+            "bg_bar_frags":              int(bg_bar),
+            "effective_genome_size":     str(g_eff),
             "max_frags_per_bin":         int(args.max_frags_per_bin),
             "nolambda":                  bool(args.nolambda),
             "spread_bp":                 int(args.spread_bp),
