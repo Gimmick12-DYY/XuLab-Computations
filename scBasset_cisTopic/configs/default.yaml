@@ -51,7 +51,7 @@ denoise:
   # If you still see too many scBasset peaks disappear, use mode: off.
   # Earlier default (quantile:0.5) dropped half the entries and visibly
   # erased scBasset peaks in IGV; quantile:0.10 is the gentler floor.
-  mode: "quantile:0.10"
+  mode: "quantile:0.15"
 
   # Per-cell quantile is estimated from a sample of LDA-modeled bins
   # (vs computing every score). 5000 is plenty for 100k+ modeled bins.
