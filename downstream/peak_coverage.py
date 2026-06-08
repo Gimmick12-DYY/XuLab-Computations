@@ -172,7 +172,7 @@ def load_per_bin_signal(path: Path) -> tuple[np.ndarray, list[str], str]:
 def generate_synthetic_bed(
     signal: np.ndarray, regions: list[str],
     target_fragments: int, out_bed: Path,
-    spread_bp: int = 150,
+    spread_bp: int = 50,
     seed: int = 42,
 ) -> int:
     """Write a synthetic 3-col BED for MACS3 callpeak.
@@ -180,18 +180,28 @@ def generate_synthetic_bed(
     Each bin emits floor(signal_r * scale) fragments at RANDOM positions
     centered on the bin midpoint within a `spread_bp` window.
 
-    Why spread_bp ≈ 150 (default): MACS3's significance fold for a bin is
+    `spread_bp` is THE dial that commit 0e0900a ("peak-calling scheme fix")
+    introduced. MACS3's significance fold for a bin is
         fold ≈ genome_size / (n_signaled_bins * spread_bp)
     (per-bin fragment count cancels because it scales both pile-up and
-    global lambda). The diffuse imputation matrices (scBasset & co.) signal
-    ~2.3M bins, so the fold is set by the spread. At spread_bp = 300 that is
-    ~4x (many CTCF bins fall under q < 0.01); halving to spread_bp = 150
-    doubles the fold to ~8x, so far more of the genuine CTCF pile-ups clear
-    threshold -- which is what was suppressing coverage on the smoothed
-    methods. Sparse matrices (raw, 597k bins) are already well above
-    threshold, so this mainly lifts the diffuse pipelines. Stay >~75 bp to
-    avoid the degenerate single-point regime where every signaled bin is
-    called.
+    global lambda). The original pre-0e0900a scheme put every fragment at a
+    single point (spread_bp -> 0): fold blows up, so EVERY signaled bin is
+    called a peak and coverage ≈ "fraction of reference bins with any
+    surviving signal". 0e0900a spread fragments across the full ~1 kb bin,
+    which collapses the fold and suppressed coverage. We pull spread_bp back
+    down toward the original regime to recover it:
+
+        small spread_bp -> higher fold -> more peaks -> higher coverage
+                           (the limit is the signal-presence ceiling)
+        large spread_bp  -> lower fold  -> MACS3 rejects diffuse bins
+
+    At spread_bp = 50 the diffuse imputation matrices (~2.3M signaled bins)
+    sit at fold ~25x, comfortably above q, so they approach their ceiling.
+    Sparse raw is fold-saturated at any small spread; its ~53% is the
+    data sparsity ceiling (fraction of CTCF bins with any raw read) and only
+    a larger --target-fragments (lower floor cutoff) could move it. The cost
+    of small spread_bp is rising negative coverage (less specificity), so
+    this trades toward sensitivity on purpose.
 
     Returns total fragments written.
     """
@@ -429,13 +439,15 @@ def main() -> int:
     ap.add_argument("--out-dir", required=True, type=Path)
     ap.add_argument("--target-fragments", type=int, default=50_000_000,
                     help="Total simulated fragments per pipeline (default 50M, typical CUT&Tag).")
-    ap.add_argument("--spread-bp", type=int, default=150,
+    ap.add_argument("--spread-bp", type=int, default=50,
                     help="Width (bp) of the cluster window around each bin's midpoint that "
-                         "fragments are uniformly distributed across. Default 150 bp -- "
-                         "calibrated for broad-fill matrices (~2M signaled bins like scBasset) "
-                         "where larger spreads dilute per-bin density below MACS3's q threshold. "
-                         "The fold over background is ~ genome_size / (n_signaled_bins x spread), "
-                         "so smaller spread -> more peaks for dense pipelines.")
+                         "fragments are uniformly distributed across. THE dial introduced by "
+                         "commit 0e0900a: small -> near the original single-point scheme "
+                         "(every signaled bin called, max coverage); large (~1kb full bin) -> "
+                         "MACS3 rejects diffuse bins (suppressed coverage). Default 50 bp keeps "
+                         "the diffuse imputation matrices (~2M signaled bins) at fold ~25x. "
+                         "fold ~ genome_size / (n_signaled_bins x spread). Raising coverage "
+                         "this way costs specificity (negative coverage rises).")
     ap.add_argument("--macs-q", type=float, default=0.05,
                     help="MACS3 callpeak q-value cutoff (default 0.05). Looser than the "
                          "0.01 default to admit the marginal CTCF pile-ups from smoothed "
