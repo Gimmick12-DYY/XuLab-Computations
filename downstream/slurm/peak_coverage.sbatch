@@ -44,8 +44,14 @@ source "${DOWN_DIR}/slurm/_pipeline_paths.sh"
 BINS_TSV="${BINS_TSV:-${ROOT_DIR}/downstream/bins/pos_neg_bins.tsv}"
 PEAK_COV_OUT_DIR="${PEAK_COV_OUT_DIR:-${ROOT_DIR}/downstream/peak_coverage_ctcf}"
 OUT_NAME="${OUT_NAME:-peak_coverage}"
-TARGET_FRAGMENTS="${TARGET_FRAGMENTS:-50000000}"
-SPREAD_BP="${SPREAD_BP:-50}"
+# TARGET_FRAGMENTS is now a CAP on total simulated fragments (scaling is
+# per-bin, see REF_QUANTILE/FRAGS_AT_REF), not a normalization target.
+TARGET_FRAGMENTS="${TARGET_FRAGMENTS:-150000000}"
+REF_QUANTILE="${REF_QUANTILE:-0.5}"
+FRAGS_AT_REF="${FRAGS_AT_REF:-20}"
+MAX_FRAGS_PER_BIN="${MAX_FRAGS_PER_BIN:-500}"
+NOLAMBDA="${NOLAMBDA:-1}"          # 1 -> --nolambda (default), 0 -> --no-nolambda
+SPREAD_BP="${SPREAD_BP:-150}"
 MACS_Q="${MACS_Q:-0.05}"
 EXTSIZE="${EXTSIZE:-200}"
 CONDA_ENV="${CONDA_ENV:-data_prep}"
@@ -82,10 +88,12 @@ fi
 
 mkdir -p "${PEAK_COV_OUT_DIR}"
 
-echo "[$(date)] peak_coverage: TARGET_FRAGMENTS=${TARGET_FRAGMENTS} SPREAD_BP=${SPREAD_BP} MACS_Q=${MACS_Q} EXTSIZE=${EXTSIZE}"
+echo "[$(date)] peak_coverage: TARGET_FRAGMENTS(cap)=${TARGET_FRAGMENTS} REF_QUANTILE=${REF_QUANTILE} FRAGS_AT_REF=${FRAGS_AT_REF} MAX_FRAGS_PER_BIN=${MAX_FRAGS_PER_BIN} NOLAMBDA=${NOLAMBDA} SPREAD_BP=${SPREAD_BP} MACS_Q=${MACS_Q} EXTSIZE=${EXTSIZE}"
 echo "BINS_TSV=${BINS_TSV}"
 echo "OUT_DIR=${PEAK_COV_OUT_DIR}"
 echo "INPUTS=${INPUTS}"
+
+if [[ "${NOLAMBDA}" == "1" ]]; then NOLAMBDA_FLAG="--nolambda"; else NOLAMBDA_FLAG="--no-nolambda"; fi
 
 CMD=(
   python "${DOWN_DIR}/peak_coverage.py"
@@ -93,6 +101,10 @@ CMD=(
   --out-dir "${PEAK_COV_OUT_DIR}"
   --out-name "${OUT_NAME}"
   --target-fragments "${TARGET_FRAGMENTS}"
+  --ref-quantile "${REF_QUANTILE}"
+  --frags-at-ref "${FRAGS_AT_REF}"
+  --max-frags-per-bin "${MAX_FRAGS_PER_BIN}"
+  "${NOLAMBDA_FLAG}"
   --spread-bp "${SPREAD_BP}"
   --macs-q "${MACS_Q}"
   --extsize "${EXTSIZE}"

@@ -5,19 +5,23 @@
 # Per-pipeline workflow:
 #   1. Load the matrix from each input dir.
 #   2. Per-bin signal = sum across cells.
-#   3. Rescale globally so total simulated fragments == --target-fragments.
-#   4. Write synthetic BED: each bin emits floor(scaled_signal) fragments at
-#      RANDOM positions uniformly within [bin_start, bin_end). The random
-#      spread (vs. all-at-midpoint) is the critical bit: with single-point
-#      fragments + MACS3 --extsize 150, every signaled bin produces a single
-#      tall pile-up that beats background and gets called as a peak -- the
-#      output then degenerates to "peak count = bin count with signal".
-#      Spreading lets MACS3's local-lambda test actually distinguish
-#      concentrated from diffuse signal.
-#   5. MACS3 callpeak in CUT&Tag mode (coverage-tuned defaults):
-#        --nomodel --shift -100 --extsize 200 -q 0.05 --keep-dup all
-#      (--extsize/--macs-q/--spread-bp are all CLI-tunable; --shift tracks
-#       -extsize/2.)
+#   3. PER-BIN scaling: count_r = floor(signal_r * frags_at_ref / ref_val),
+#      where ref_val is a within-method quantile of the nonzero signal. This is
+#      NOT normalized to a fixed total (the old scheme); the absolute scale
+#      cancels in MACS3's fold, so per-total vs per-bin only changes which
+#      low-signal bins survive floor(). Per-total normalization made that
+#      survival threshold grow with the number of signaled bins, penalizing
+#      dense (well-imputed) matrices -- per-bin scaling removes that.
+#   4. Write synthetic BED: fragments clustered within --spread-bp of each
+#      bin's midpoint.
+#   5. MACS3 callpeak in CUT&Tag mode (defaults):
+#        --nomodel --shift -100 --extsize 200 -q 0.05 --keep-dup all --nolambda
+#      --nolambda is the key correction: score each bin against the GENOME-WIDE
+#      background only. With the local 1k/5k/10k lambda, a method that signals
+#      most of the genome (e.g. scBasset, ~77% of bins) inflates its own
+#      background around every CTCF site and rejects peaks that are obviously
+#      real in IGV. A single genome-wide background makes coverage track
+#      absolute signal height -- what the browser shows.
 #   6. bedtools intersect the narrowPeak against the reference pos/neg bins.
 #
 # Outputs (under --out-dir):
@@ -171,8 +175,13 @@ def load_per_bin_signal(path: Path) -> tuple[np.ndarray, list[str], str]:
 
 def generate_synthetic_bed(
     signal: np.ndarray, regions: list[str],
-    target_fragments: int, out_bed: Path,
-    spread_bp: int = 50,
+    out_bed: Path,
+    *,
+    spread_bp: int = 150,
+    ref_quantile: float = 0.5,
+    frags_at_ref: float = 20.0,
+    max_frags_per_bin: int = 500,
+    max_total_fragments: int = 150_000_000,
     seed: int = 42,
 ) -> int:
     """Write a synthetic 3-col BED for MACS3 callpeak.
@@ -180,43 +189,55 @@ def generate_synthetic_bed(
     Each bin emits floor(signal_r * scale) fragments at RANDOM positions
     centered on the bin midpoint within a `spread_bp` window.
 
-    `spread_bp` is THE dial that commit 0e0900a ("peak-calling scheme fix")
-    introduced. MACS3's significance fold for a bin is
-        fold ≈ genome_size / (n_signaled_bins * spread_bp)
-    (per-bin fragment count cancels because it scales both pile-up and
-    global lambda). The original pre-0e0900a scheme put every fragment at a
-    single point (spread_bp -> 0): fold blows up, so EVERY signaled bin is
-    called a peak and coverage ≈ "fraction of reference bins with any
-    surviving signal". 0e0900a spread fragments across the full ~1 kb bin,
-    which collapses the fold and suppressed coverage. We pull spread_bp back
-    down toward the original regime to recover it:
+    SCALING (per-bin, not per-total). The fragment count for a bin is
+        count_r = floor(signal_r * scale),  scale = frags_at_ref / ref_val
+    where ref_val = the `ref_quantile` quantile of the NONZERO signal. This
+    replaces the old `scale = target_fragments / total_signal`. The absolute
+    scale CANCELS in MACS3's fold test (it multiplies both the pile-up and the
+    background lambda), so it does not change relative peak significance -- its
+    only jobs are (a) floor() survival and (b) total file size. The old
+    per-total scaling made the floor survival threshold `1/scale =
+    total_signal/target` GROW with the number of signaled bins, so dense
+    (well-imputed) matrices had their low-signal CTCF bins categorically zeroed
+    before peak calling. Anchoring to a within-method quantile makes the
+    threshold `ref_val / frags_at_ref` independent of how many bins are
+    signaled -- removing that density penalty. Per-bin counts are clipped to
+    `max_frags_per_bin` (so a single outlier bin, e.g. PUscOpen, can't blow up
+    the file) and the whole set is uniformly downscaled if the total would
+    exceed `max_total_fragments` (fold-neutral under --nolambda).
 
-        small spread_bp -> higher fold -> more peaks -> higher coverage
-                           (the limit is the signal-presence ceiling)
-        large spread_bp  -> lower fold  -> MACS3 rejects diffuse bins
-
-    At spread_bp = 50 the diffuse imputation matrices (~2.3M signaled bins)
-    sit at fold ~25x, comfortably above q, so they approach their ceiling.
-    Sparse raw is fold-saturated at any small spread; its ~53% is the
-    data sparsity ceiling (fraction of CTCF bins with any raw read) and only
-    a larger --target-fragments (lower floor cutoff) could move it. The cost
-    of small spread_bp is rising negative coverage (less specificity), so
-    this trades toward sensitivity on purpose.
+    `spread_bp` is the dial from commit 0e0900a: small -> tight pile-up ->
+    higher fold; large (~1 kb bin) -> MACS3 rejects diffuse bins. With
+    --nolambda the fold is `signal_r / genome_avg_signal`, so spread_bp only
+    sets pile-up width (and the minimum-peak width via --extsize), not the
+    background -- the self-raised-local-lambda penalty on dense matrices is
+    gone.
 
     Returns total fragments written.
     """
     chroms, starts, ends = parse_region_names(regions)
-    total_signal = float(signal.sum())
-    if total_signal <= 0:
-        sys.exit("per-bin signal sum is zero; cannot synthesize fragments")
+    nz = signal > 0
+    if not nz.any():
+        sys.exit("per-bin signal is all zero; cannot synthesize fragments")
 
-    scale = target_fragments / total_signal
-    counts = np.floor(signal * scale).astype(np.int64)
+    ref_val = float(np.quantile(signal[nz], ref_quantile))
+    if ref_val <= 0:                      # quantile landed on a zero/tiny bin
+        ref_val = float(signal[nz].min())
+    scale = frags_at_ref / ref_val
+    raw = np.minimum(signal * scale, float(max_frags_per_bin))
+    predicted = float(raw.sum())
+    downscale = 1.0
+    if predicted > max_total_fragments:
+        downscale = max_total_fragments / predicted
+        raw = raw * downscale
+    counts = np.floor(raw).astype(np.int64)
     n_total = int(counts.sum())
-    log.info("  scaling: total_signal=%.3g  scale=%.6g  n_synthetic_fragments=%d",
-             total_signal, scale, n_total)
+    floor_thresh = ref_val / frags_at_ref / max(downscale, 1e-12)
+    log.info("  scaling(per-bin): ref_q=%.3g ref_val=%.3g scale=%.6g "
+             "floor_thresh=%.3g downscale=%.3g n_synthetic_fragments=%d",
+             ref_quantile, ref_val, scale, floor_thresh, downscale, n_total)
     if n_total == 0:
-        sys.exit("scaled fragment count is zero; raise --target-fragments")
+        sys.exit("scaled fragment count is zero; raise --frags-at-ref")
 
     keep = counts > 0
     chroms_k = chroms[keep]
@@ -257,7 +278,7 @@ def generate_synthetic_bed(
 
 def run_macs3(
     bed_path: Path, work_dir: Path, name: str,
-    qvalue: float = 0.05, extsize: int = 200,
+    qvalue: float = 0.05, extsize: int = 200, nolambda: bool = True,
 ) -> Path:
     """Run MACS3 in CUT&Tag mode. Returns the narrowPeak path.
 
@@ -267,6 +288,16 @@ def run_macs3(
     bin, so it lifts coverage on top of the span/q knobs. `qvalue` is the
     MACS3 significance cutoff; loosening it (0.01 -> 0.05) admits the
     marginal CTCF pile-ups that the smoothed pipelines produce.
+
+    `nolambda` (default True) passes MACS3 `--nolambda`, which tests each bin
+    against the GENOME-WIDE background only, not the local 1k/5k/10k lambda.
+    This is the fix for the dense-imputation bias: with local lambda, a method
+    that signals most of the genome (scBasset signals ~77% of bins) inflates
+    the background in the 10 kb window around every CTCF site, collapsing the
+    fold and rejecting genuine peaks that are obviously real in IGV. With a
+    single genome-wide background the denominator is identical for every bin,
+    so a CTCF bin is called iff its own signal exceeds the method's genome
+    average -- which is what the eye reads off the browser track.
     """
     shift = -(extsize // 2)
     cmd = [
@@ -282,6 +313,8 @@ def run_macs3(
         "-q", f"{qvalue:g}",
         "--keep-dup", "all",
     ]
+    if nolambda:
+        cmd.append("--nolambda")
     log.info("  MACS3: %s", " ".join(cmd))
     subprocess.run(cmd, check=True)
     peaks_path = work_dir / f"{name}_peaks.narrowPeak"
@@ -437,21 +470,42 @@ def main() -> int:
     ap.add_argument("--bins-tsv", required=True, type=Path,
                     help="prepare_pos_neg_bins.R output (label + bin_name).")
     ap.add_argument("--out-dir", required=True, type=Path)
-    ap.add_argument("--target-fragments", type=int, default=50_000_000,
-                    help="Total simulated fragments per pipeline (default 50M, typical CUT&Tag).")
-    ap.add_argument("--spread-bp", type=int, default=50,
-                    help="Width (bp) of the cluster window around each bin's midpoint that "
-                         "fragments are uniformly distributed across. THE dial introduced by "
-                         "commit 0e0900a: small -> near the original single-point scheme "
-                         "(every signaled bin called, max coverage); large (~1kb full bin) -> "
-                         "MACS3 rejects diffuse bins (suppressed coverage). Default 50 bp keeps "
-                         "the diffuse imputation matrices (~2M signaled bins) at fold ~25x. "
-                         "fold ~ genome_size / (n_signaled_bins x spread). Raising coverage "
-                         "this way costs specificity (negative coverage rises).")
+    ap.add_argument("--target-fragments", type=int, default=150_000_000,
+                    dest="max_total_fragments",
+                    help="Safety CAP on total simulated fragments per pipeline (default 150M). "
+                         "Scaling is now per-bin (see --frags-at-ref), not normalized to this "
+                         "total; the set is only uniformly downscaled if it would exceed the cap "
+                         "(fold-neutral under --nolambda). Kept under the old flag name for "
+                         "backward compatibility with the sbatch wrapper.")
+    ap.add_argument("--ref-quantile", type=float, default=0.5,
+                    help="Quantile of the NONZERO per-bin signal used as the scaling anchor "
+                         "(default 0.5 = median). The floor() survival threshold is "
+                         "ref_val/frags-at-ref, independent of how many bins are signaled -- "
+                         "this removes the density penalty the old total-normalization imposed "
+                         "on well-imputed (dense) matrices.")
+    ap.add_argument("--frags-at-ref", type=float, default=20.0,
+                    help="Fragments emitted by a bin whose signal equals the --ref-quantile "
+                         "anchor (default 20). Larger -> more low-signal bins survive floor(). "
+                         "Absolute value cancels in MACS3's fold, so it only affects floor "
+                         "survival and file size.")
+    ap.add_argument("--max-frags-per-bin", type=int, default=500,
+                    help="Per-bin cap on synthetic fragments (default 500) so a single outlier "
+                         "bin (e.g. PUscOpen's concentrated signal) can't dominate the file.")
+    ap.add_argument("--nolambda", action=argparse.BooleanOptionalAction, default=True,
+                    help="Pass MACS3 --nolambda (default ON): score each bin against the "
+                         "genome-wide background only, not the local 1k/5k/10k lambda. This is "
+                         "the fix for dense-imputation bias -- a method that signals most of the "
+                         "genome no longer inflates its own local background and rejects real "
+                         "CTCF peaks. Use --no-nolambda to restore local-lambda behavior.")
     ap.add_argument("--macs-q", type=float, default=0.05,
                     help="MACS3 callpeak q-value cutoff (default 0.05). Looser than the "
                          "0.01 default to admit the marginal CTCF pile-ups from smoothed "
                          "(imputed) matrices that otherwise fall just under threshold.")
+    ap.add_argument("--spread-bp", type=int, default=150,
+                    help="Width (bp) of the cluster window around each bin's midpoint that "
+                         "fragments are spread across. With --nolambda this sets pile-up width "
+                         "only (background is genome-wide), not the fold; keep it <= --extsize. "
+                         "Default 150.")
     ap.add_argument("--extsize", type=int, default=200,
                     help="MACS3 --extsize (bp); --shift is pinned to -extsize/2. Default 200 "
                          "(vs the 150 CUT&Tag standard) widens called peaks so they overlap "
@@ -485,6 +539,16 @@ def main() -> int:
     write_ref_bed(neg_bins, ref_neg_bed)
     log.info("Wrote reference BEDs: %s, %s", ref_pos_bed, ref_neg_bed)
 
+    # Reference bin names ("chr:start-end") for the signal-ceiling diagnostic.
+    # The ceiling = fraction of reference bins with ANY nonzero matrix signal
+    # *before* peak calling. It is the hard upper bound on coverage: a bin with
+    # no signal can never be in a peak. Comparing ceiling vs. realized coverage
+    # tells us whether a low number is the method's fault (low ceiling -> the
+    # imputation never put signal there) or the peak-caller's (high ceiling but
+    # low coverage -> spread/floor/q is dropping it).
+    pos_names = {f"{c}:{s}-{e}" for c, s, e in pos_bins}
+    neg_names = {f"{c}:{s}-{e}" for c, s, e in neg_bins}
+
     rows: list[dict] = []
     for label, path in args.inputs:
         log.info("=== %s :: %s ===", label, path)
@@ -495,20 +559,36 @@ def main() -> int:
         pipe_dir.mkdir(parents=True, exist_ok=True)
 
         signal, regions, kind = load_per_bin_signal(path)
-        log.info("  matrix: %d regions, total_signal=%.3g, kind=%s",
-                 len(regions), float(signal.sum()), kind)
+        nnz = int(np.count_nonzero(signal))
+        log.info("  matrix: %d regions, total_signal=%.3g, nnz=%d (%.1f%% of bins), kind=%s",
+                 len(regions), float(signal.sum()), nnz,
+                 100.0 * nnz / len(regions) if regions else float("nan"), kind)
 
-        # 1. Synthetic BED (fragments clustered within spread_bp around bin midpoint)
+        # Signal ceiling: reference bins that have nonzero matrix signal at all.
+        nz_names = {name for name, sig in zip(regions, signal) if sig > 0}
+        n_pos_sig = sum(1 for nm in pos_names if nm in nz_names)
+        n_neg_sig = sum(1 for nm in neg_names if nm in nz_names)
+        pos_ceiling = 100.0 * n_pos_sig / len(pos_names) if pos_names else float("nan")
+        neg_ceiling = 100.0 * n_neg_sig / len(neg_names) if neg_names else float("nan")
+        log.info("  signal ceiling: pos %d/%d (%.2f%%) ; neg %d/%d (%.2f%%) -- max coverage if "
+                 "peak-calling were perfect", n_pos_sig, len(pos_names), pos_ceiling,
+                 n_neg_sig, len(neg_names), neg_ceiling)
+
+        # 1. Synthetic BED (per-bin scaling; fragments clustered within spread_bp)
         bed_path = pipe_dir / "synthetic.bed"
         n_frag = generate_synthetic_bed(
-            signal, regions, args.target_fragments, bed_path,
+            signal, regions, bed_path,
             spread_bp=args.spread_bp,
+            ref_quantile=args.ref_quantile,
+            frags_at_ref=args.frags_at_ref,
+            max_frags_per_bin=args.max_frags_per_bin,
+            max_total_fragments=args.max_total_fragments,
         )
 
         # 2. MACS3 callpeak
         narrow = run_macs3(
             bed_path, pipe_dir, name=f"{label}_pseudo",
-            qvalue=args.macs_q, extsize=args.extsize,
+            qvalue=args.macs_q, extsize=args.extsize, nolambda=args.nolambda,
         )
         peaks = load_called_peaks(narrow)
         log.info("  called peaks: %d", len(peaks))
@@ -539,15 +619,29 @@ def main() -> int:
         )
         pos_cov = (100.0 * n_pos_cov / n_pos) if n_pos else float("nan")
         neg_cov = (100.0 * n_neg_cov / n_neg) if n_neg else float("nan")
-        log.info("  pos cov: %d / %d (%.2f%%) ; neg cov: %d / %d (%.2f%%)",
-                 n_pos_cov, n_pos, pos_cov, n_neg_cov, n_neg, neg_cov)
+        # Capture rate = realized coverage / signal ceiling: of the reference
+        # bins that HAVE signal, what fraction got called into a peak. Isolates
+        # peak-caller efficiency from the method's signal placement.
+        pos_capture = (100.0 * n_pos_cov / n_pos_sig) if n_pos_sig else float("nan")
+        log.info("  pos cov: %d / %d (%.2f%%) ; neg cov: %d / %d (%.2f%%) ; "
+                 "pos capture (cov/ceiling): %.2f%%",
+                 n_pos_cov, n_pos, pos_cov, n_neg_cov, n_neg, neg_cov, pos_capture)
 
         rows.append({
             "run":                       label,
             "kind":                      kind,
             "n_bins_in_matrix":          int(len(regions)),
+            "n_nonzero_bins":            nnz,
             "total_signal":              float(signal.sum()),
-            "target_fragments":          int(args.target_fragments),
+            "n_pos_with_signal":         int(n_pos_sig),
+            "n_neg_with_signal":         int(n_neg_sig),
+            "pos_signal_ceiling_pct":    round(pos_ceiling, 4),
+            "neg_signal_ceiling_pct":    round(neg_ceiling, 4),
+            "max_total_fragments":       int(args.max_total_fragments),
+            "ref_quantile":              float(args.ref_quantile),
+            "frags_at_ref":              float(args.frags_at_ref),
+            "max_frags_per_bin":         int(args.max_frags_per_bin),
+            "nolambda":                  bool(args.nolambda),
             "spread_bp":                 int(args.spread_bp),
             "macs_q":                    float(args.macs_q),
             "extsize":                   int(args.extsize),
@@ -561,6 +655,7 @@ def main() -> int:
             "n_neg_covered":             int(n_neg_cov),
             "positive_peak_coverage_pct": round(pos_cov, 4),
             "negative_peak_coverage_pct": round(neg_cov, 4),
+            "positive_capture_pct":       round(pos_capture, 4),
             "input_path":                str(path),
             "narrowpeak":                str(narrow),
             "called_peaks_bed":          str(bed_called),
