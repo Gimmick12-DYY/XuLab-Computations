@@ -59,6 +59,7 @@ from pathlib import Path
 import numpy as np
 import scipy.io as sio
 import scipy.sparse as sp
+from scipy.stats import rankdata
 
 log = logging.getLogger("peak_coverage")
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
@@ -102,7 +103,7 @@ def _per_cell_factor_from_npz(z: np.lib.npyio.NpzFile) -> tuple[bool, np.ndarray
     return False, None, float(pcf_raw)
 
 
-def load_per_bin_signal_factored(path: Path) -> tuple[np.ndarray, list[str], str]:
+def load_per_bin_signal_factored(path: Path) -> tuple[np.ndarray, list[str], str, int]:
     factors_path = path / "factors.npz"
     regions_path = path / "regions.tsv"
     log.info("  loading factored: %s + %s", factors_path, regions_path)
@@ -123,36 +124,38 @@ def load_per_bin_signal_factored(path: Path) -> tuple[np.ndarray, list[str], str
             signal = W @ (H @ pcf_arr)
         else:
             signal = (W @ H.sum(axis=1)) * pcf_scalar
+        n_cells = int(H.shape[1])
     signal = np.asarray(signal, dtype=np.float64).ravel()
     if signal.shape[0] != len(regions):
         sys.exit(
             f"factored row count {signal.shape[0]} != regions {len(regions)} in {path}"
         )
-    return signal, regions, "factored"
+    return signal, regions, "factored", n_cells
 
 
-def load_per_bin_signal_dense(path: Path) -> tuple[np.ndarray, list[str], str]:
+def load_per_bin_signal_dense(path: Path) -> tuple[np.ndarray, list[str], str, int]:
     matrix_path = path / "matrix.npy"
     regions_path = path / "regions.tsv"
     log.info("  loading dense: %s + %s", matrix_path, regions_path)
     arr = np.load(matrix_path, mmap_mode="r")
     signal = np.asarray(arr.sum(axis=1)).ravel().astype(np.float64)
+    n_cells = int(arr.shape[1])
     regions = read_lines(regions_path)
     if signal.shape[0] != len(regions):
         sys.exit(
             f"dense row count {signal.shape[0]} != regions {len(regions)} in {path}"
         )
-    return signal, regions, "dense"
+    return signal, regions, "dense", n_cells
 
 
-def load_per_bin_signal(path: Path) -> tuple[np.ndarray, list[str], str]:
-    """Return (per_bin_signal float64, region_names, kind)."""
+def load_per_bin_signal(path: Path) -> tuple[np.ndarray, list[str], str, int]:
+    """Return (per_bin_signal float64, region_names, kind, n_cells)."""
     if (path / "matrix_csr.npz").is_file() and (path / "regions.tsv").is_file():
         log.info("  loading impute CSR: %s", path / "matrix_csr.npz")
         mat = sp.load_npz(path / "matrix_csr.npz").tocsr()
         signal = np.asarray(mat.sum(axis=1)).ravel().astype(np.float64)
         regions = read_lines(path / "regions.tsv")
-        return signal, regions, "csr_full"
+        return signal, regions, "csr_full", int(mat.shape[1])
 
     if (path / "factors.npz").is_file() and (path / "regions.tsv").is_file():
         return load_per_bin_signal_factored(path)
@@ -165,7 +168,7 @@ def load_per_bin_signal(path: Path) -> tuple[np.ndarray, list[str], str]:
         mat = sio.mmread(str(path / "matrix.mtx.gz")).tocsr()
         signal = np.asarray(mat.sum(axis=1)).ravel().astype(np.float64)
         regions = read_lines(path / "regions.tsv.gz")
-        return signal, regions, "mm"
+        return signal, regions, "mm", int(mat.shape[1])
 
     sys.exit(
         f"no matrix found in {path} "
@@ -488,6 +491,63 @@ def coverage_via_bedtools(
     return n_covered, n_total
 
 
+# ---------- AUROC + table formatting -----------------------------------------
+
+def signal_auroc(pos_scores: np.ndarray, neg_scores: np.ndarray) -> float:
+    """AUROC of per-bin signal discriminating positive vs negative reference
+    bins (Mann-Whitney U; tie-corrected via average ranks). Zeros included, so
+    it scores the full reference universe. Equivalent to
+    P(signal at a random pos bin > signal at a random neg bin)."""
+    n1, n0 = len(pos_scores), len(neg_scores)
+    if n1 == 0 or n0 == 0:
+        return float("nan")
+    ranks = rankdata(np.concatenate([pos_scores, neg_scores]))
+    r1 = float(ranks[:n1].sum())
+    return (r1 - n1 * (n1 + 1) / 2.0) / (n1 * n0)
+
+
+def _fmt_count(v: float) -> str:
+    """K/M-abbreviated count, e.g. 76 -> '76', 9800 -> '9.8K', 1.04e6 -> '1.04M'."""
+    if not np.isfinite(v):
+        return "NA"
+    av = abs(v)
+    if av >= 1e6:
+        return f"{v / 1e6:.2f}M"
+    if av >= 1e3:
+        return f"{v / 1e3:.1f}K"
+    return f"{v:.0f}"
+
+
+def format_summary_table(rows: list[dict], macs_q: float) -> str:
+    """Render the slide-style fixed-width table. `raw` rows are pushed last."""
+    ordered = [r for r in rows if r["run"] != "raw"] + [r for r in rows if r["run"] == "raw"]
+
+    cols = [
+        # (header, key, formatter, align)
+        ("Pipeline",            lambda r: str(r["run"]),                                  "<"),
+        ("Valued bins",         lambda r: f'{r["n_nonzero_bins"]:,}',                     ">"),
+        ("Mean UMI/cell",       lambda r: _fmt_count(r["mean_umi_per_cell"]),             ">"),
+        ("Pos.cov %",           lambda r: f'{r["pos_signal_ceiling_pct"]:.1f}',           ">"),
+        ("Neg.cov %",           lambda r: f'{r["neg_signal_ceiling_pct"]:.1f}',           ">"),
+        ("Pos in peaks %",      lambda r: f'{r["positive_peak_coverage_pct"]:.3g}',       ">"),
+        ("Neg in peaks %",      lambda r: f'{r["negative_peak_coverage_pct"]:.3g}',       ">"),
+        (f"Peaks (q={macs_q:g})", lambda r: f'{r["n_called_peaks"]:,}',                   ">"),
+        ("AUROC",               lambda r: f'{r["auroc"]:.4f}',                            ">"),
+    ]
+
+    cells = [[fmt(r) for _, fmt, _ in cols] for r in ordered]
+    widths = [max(len(h), *(len(row[i]) for row in cells)) if cells else len(h)
+              for i, (h, _, _) in enumerate(cols)]
+
+    def line(values: list[str]) -> str:
+        return "  ".join(f"{v:{cols[i][2]}{widths[i]}}" for i, v in enumerate(values))
+
+    header = line([h for h, _, _ in cols])
+    sep = "-" * len(header)
+    body = "\n".join(line(row) for row in cells)
+    return f"{header}\n{sep}\n{body}"
+
+
 # ---------- main -------------------------------------------------------------
 
 def parse_input_arg(s: str) -> tuple[str, Path]:
@@ -610,21 +670,41 @@ def main() -> int:
         pipe_dir = args.out_dir / label
         pipe_dir.mkdir(parents=True, exist_ok=True)
 
-        signal, regions, kind = load_per_bin_signal(path)
+        signal, regions, kind, n_cells = load_per_bin_signal(path)
         nnz = int(np.count_nonzero(signal))
-        log.info("  matrix: %d regions, total_signal=%.3g, nnz=%d (%.1f%% of bins), kind=%s",
-                 len(regions), float(signal.sum()), nnz,
+        total_signal = float(signal.sum())
+        mean_umi_per_cell = total_signal / n_cells if n_cells else float("nan")
+        log.info("  matrix: %d regions x %d cells, total_signal=%.3g, mean_umi/cell=%.4g, "
+                 "nnz=%d (%.1f%% of bins), kind=%s",
+                 len(regions), n_cells, total_signal, mean_umi_per_cell, nnz,
                  100.0 * nnz / len(regions) if regions else float("nan"), kind)
 
-        # Signal ceiling: reference bins that have nonzero matrix signal at all.
-        nz_names = {name for name, sig in zip(regions, signal) if sig > 0}
-        n_pos_sig = sum(1 for nm in pos_names if nm in nz_names)
-        n_neg_sig = sum(1 for nm in neg_names if nm in nz_names)
+        # Nonzero-signal distribution: tells us whether the matrix has dynamic
+        # range to discriminate (median >> 1) or is near-binary (median ~ 1, so
+        # peak calling can only ever be near-pass-through; bg_scale can't create
+        # contrast that isn't in the data).
+        if nnz:
+            _nzv = signal[signal > 0]
+            _pc = np.percentile(_nzv, [50, 75, 90, 99, 99.9])
+            log.info("  nonzero signal pctiles: p50=%.3g p75=%.3g p90=%.3g p99=%.3g p99.9=%.3g "
+                     "max=%.3g mean=%.3g", *_pc, float(_nzv.max()), float(_nzv.mean()))
+
+        # Per-bin signal at reference bins (0 where the matrix has no signal).
+        # Drives both the signal ceiling and the AUROC.
+        sig_by_name = {name: sig for name, sig in zip(regions, signal) if sig > 0}
+        pos_scores = np.fromiter((sig_by_name.get(nm, 0.0) for nm in pos_names),
+                                 dtype=np.float64, count=len(pos_names))
+        neg_scores = np.fromiter((sig_by_name.get(nm, 0.0) for nm in neg_names),
+                                 dtype=np.float64, count=len(neg_names))
+        n_pos_sig = int(np.count_nonzero(pos_scores))
+        n_neg_sig = int(np.count_nonzero(neg_scores))
         pos_ceiling = 100.0 * n_pos_sig / len(pos_names) if pos_names else float("nan")
         neg_ceiling = 100.0 * n_neg_sig / len(neg_names) if neg_names else float("nan")
-        log.info("  signal ceiling: pos %d/%d (%.2f%%) ; neg %d/%d (%.2f%%) -- max coverage if "
-                 "peak-calling were perfect", n_pos_sig, len(pos_names), pos_ceiling,
-                 n_neg_sig, len(neg_names), neg_ceiling)
+        auroc = signal_auroc(pos_scores, neg_scores)
+        log.info("  signal ceiling: pos %d/%d (%.2f%%) ; neg %d/%d (%.2f%%) ; AUROC=%.4f "
+                 "-- ceiling = max coverage if peak-calling were perfect",
+                 n_pos_sig, len(pos_names), pos_ceiling,
+                 n_neg_sig, len(neg_names), neg_ceiling, auroc)
 
         # 1. Synthetic BED (per-bin scaling; fragments clustered within spread_bp)
         bed_path = pipe_dir / "synthetic.bed"
@@ -695,13 +775,16 @@ def main() -> int:
         rows.append({
             "run":                       label,
             "kind":                      kind,
+            "n_cells":                   int(n_cells),
             "n_bins_in_matrix":          int(len(regions)),
             "n_nonzero_bins":            nnz,
-            "total_signal":              float(signal.sum()),
+            "total_signal":              total_signal,
+            "mean_umi_per_cell":         round(mean_umi_per_cell, 6),
             "n_pos_with_signal":         int(n_pos_sig),
             "n_neg_with_signal":         int(n_neg_sig),
             "pos_signal_ceiling_pct":    round(pos_ceiling, 4),
             "neg_signal_ceiling_pct":    round(neg_ceiling, 4),
+            "auroc":                     round(auroc, 6),
             "max_total_fragments":       int(args.max_total_fragments),
             "ref_quantile":              float(args.ref_quantile),
             "frags_at_ref":              float(args.frags_at_ref),
@@ -743,6 +826,13 @@ def main() -> int:
             for r in rows:
                 fh.write("\t".join(str(r[c]) for c in cols) + "\n")
         log.info("Wrote %s (%d rows)", tsv_path, len(rows))
+
+        # Slide-style summary table (fixed-width .txt + echoed to the log).
+        table = format_summary_table(rows, args.macs_q)
+        table_path = args.out_dir / f"{args.out_name}_table.txt"
+        table_path.write_text(table + "\n")
+        log.info("Wrote %s", table_path)
+        log.info("Summary table (q=%g):\n%s", args.macs_q, table)
     else:
         log.warning("No rows produced; nothing to write")
     return 0
