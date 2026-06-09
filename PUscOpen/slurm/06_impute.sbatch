@@ -3,17 +3,16 @@
 #SBATCH --output=%x-%j.out
 #SBATCH --error=%x-%j.err
 #SBATCH --cpus-per-task=4
-#SBATCH --mem=256G
-#SBATCH --time=08:00:00
+#SBATCH --mem=128G
+#SBATCH --time=06:00:00
 
-# NOTE: the dominant cost is building the DENSE W*H reconstruction of the
-# modeled subspace (modeled_regions x cells); at ~592k x 10410 that is ~6.2e9
-# nonzeros ~= 48 GB held resident, plus the source_mask copy + propagation +
-# output assembly. 128G OOM'd at the final assembly step for K=4, so 256G.
-# source_threshold_mode = sparsity_match:K sets how many entries survive
-# (output nnz ~ K * raw_nnz) -> more propagation/assembly memory at higher K.
-# If 256G still OOMs: lower K (sparsity_match:2), or restrict
-# impute.propagate.target_bed to a candidate BED instead of "off".
+# Memory is dominated by the DENSE imputed matrix over the modeled subspace:
+# (refined_mask rows) x cells x ~16 bytes, plus a copy during the propagation
+# add. With refined_mask_threshold=top_k:200000 that is ~200k x 10410 ~= 17 GB,
+# so 128G is ample. It scales LINEARLY with refined_mask_threshold's row count:
+# top_k:300000 ~= 25 GB, "all" (~592k rows) ~= 49 GB and OOMs even at 256G via
+# the old COO round-trip (now fixed) -- so raise N only as far as your RAM (and
+# every downstream consumer that load_npz's this matrix) can hold.
 
 set -euo pipefail
 

@@ -341,17 +341,22 @@ def _propagate_to_zero_bins(csr_in: sparse.csr_matrix,
     new_rows_arr = np.concatenate(new_rows)
     new_cols_arr = np.concatenate(new_cols)
     new_vals_arr = np.concatenate(new_vals)
+    del new_rows, new_cols, new_vals
     log.info('Propagation: added %d new (region, cell) entries across %d new bins',
              int(new_vals_arr.size), n_propagated_bins)
 
-    orig_coo = csr_in.tocoo()
-    all_rows = np.concatenate([orig_coo.row, new_rows_arr])
-    all_cols = np.concatenate([orig_coo.col, new_cols_arr])
-    all_vals = np.concatenate([orig_coo.data, new_vals_arr])
-    csr_out = sparse.coo_matrix(
-        (all_vals, (all_rows, all_cols)),
+    # The new entries live in rows that were EMPTY in csr_in (target_eligible =
+    # ~has_signal), so they are row-disjoint from csr_in. Build them as a small
+    # separate CSR and add, instead of round-tripping the (potentially huge)
+    # csr_in through COO -- csr_in.tocoo() alone allocates an int64 row array of
+    # size csr_in.nnz (tens of GB for a dense modeled subspace) and the
+    # concatenate+rebuild makes 3-4 full copies, which is what OOMs.
+    csr_new = sparse.csr_matrix(
+        (new_vals_arr, (new_rows_arr, new_cols_arr)),
         shape=csr_in.shape, dtype=np.float32,
-    ).tocsr()
+    )
+    del new_rows_arr, new_cols_arr, new_vals_arr
+    csr_out = (csr_in + csr_new).tocsr()
     csr_out.sum_duplicates()
 
     return csr_out, {
@@ -607,6 +612,10 @@ def main() -> int:
         log.info('Wrote %s (shape=%s, nnz=%d) -- imp only, pre-propagation',
                  csr_imp_only_path, csr_imp_only.shape, csr_imp_only.nnz)
         sparse.save_npz(csr_imp_only_path, csr_imp_only)
+        # Free the (potentially tens-of-GB) pre-propagation matrix before
+        # writing the propagated one, so both are not resident simultaneously.
+        if csr is not csr_imp_only:
+            del csr_imp_only
 
         log.info('Wrote %s (shape=%s, nnz=%d) -- after propagation',
                  csr_path, csr.shape, csr.nnz)

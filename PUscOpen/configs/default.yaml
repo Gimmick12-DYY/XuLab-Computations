@@ -161,10 +161,14 @@ pu:
   #                              (e.g. seed_quantile:0.05 keeps everything
   #                              above the 5th percentile of seed scores)
   #   * <float>              -> fixed numeric threshold on pu_score
-  # Default: "all" -> matches the no-bulk-priors stance; the previous
-  # top_k:50000 left ~95% of the genome as forced zero in the impute output,
-  # which inflated negative-class purity in pos/neg evaluations.
-  refined_mask_threshold: "all"
+  # "all" is the cleanest stance but is INFEASIBLE here: step 06 stores the
+  # imputed matrix DENSE over the modeled rows, so "all" (~592k raw-nonzero
+  # rows) x 10410 cells ~= 49 GB, which OOMs 06_impute and then has to be loaded
+  # by every downstream consumer (cascade union + peak_coverage). The matrix
+  # size scales linearly with the row count, so we cap it: top_k:N -> ~N modeled
+  # rows -> ~N*83KB matrix -> ~N valued bins (plus propagated). top_k:200000
+  # gives ~17 GB / ~200k bins (4x the old 50k) -- tune N to your RAM budget.
+  refined_mask_threshold: "top_k:200000"
 
   # If true, union benchmark negatives into refined_mask (not recommended:
   # pollutes PU/scOpen with non-candidate genome). Keep false.
@@ -308,10 +312,12 @@ impute:
     #   sparsity_match[:K]  -> pick t s.t. #(imp > t) on modeled rows = K * raw_nnz
     #   quantile:Q          -> top (1 - Q) fraction of imputed values
     #   fixed:T             -> numeric
-    # K controls density/coverage AND memory of the propagation step (output nnz
-    # ~ K * raw_nnz). K=1 = raw-like sparsity (~50k bins, the old cap); higher K
-    # covers more of the genome. "Whole genome" (effectively K -> very large)
-    # makes the propagation near-dense (~3M bins x ~10k cells) and OOMs, so ramp
-    # K gradually and watch RSS. K=4 ~= 4x raw nnz; bump SLURM --mem with it.
-    source_threshold_mode: sparsity_match:4
+    # NOTE: this threshold only selects which entries act as imp-POSITIVE
+    # SOURCES for neighbour propagation -- it does NOT set the output bin count
+    # (that is the dense modeled-row count, controlled by refined_mask_threshold
+    # above). Higher K = more propagation sources = more propagation memory, with
+    # little effect on valued-bin count. Keep at 1 unless you specifically want
+    # denser propagation; K=4 was tried for "genome-wide" but the bins come from
+    # refined_mask_threshold, not here.
+    source_threshold_mode: sparsity_match:1
     source_threshold_sample_size: 4000000
