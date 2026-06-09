@@ -187,12 +187,10 @@ def generate_synthetic_bed(
     spread_bp: int = 150,
     ref_quantile: float = 0.5,
     frags_at_ref: float = 20.0,
-    bg_quantile: float = 0.5,
-    bg_scale: float = 1.0,
     max_frags_per_bin: int = 500,
     max_total_fragments: int = 150_000_000,
     seed: int = 42,
-) -> tuple[int, int]:
+) -> tuple[int, float, float]:
     """Write a synthetic 3-col BED for MACS3 callpeak.
 
     Each bin emits floor(signal_r * scale) fragments at RANDOM positions
@@ -222,22 +220,14 @@ def generate_synthetic_bed(
     background -- the self-raised-local-lambda penalty on dense matrices is
     gone.
 
-    `bg_quantile` sets the background bar for peak calling: a bin is kept only
-    if its signal exceeds the `bg_quantile` quantile of the track's nonzero
-    signal (applied in main via an effective genome size derived from the
-    returned bar_frags). This is what stops the caller being a pass-through
-    (capture == 100%) for low-dynamic-range tracks like raw/scBasset. Set
-    bg_quantile <= 0 to fall back to the full hs genome (old pass-through).
+    The peak-calling background bar (which depends on bg_quantile, bg_scale and
+    extsize) is computed OUTSIDE this function (see `bar_frags_for` /
+    `effective_genome_size`) so it can be swept without regenerating the BED --
+    the synthetic fragments depend only on the scaling args, not on q / bg_scale
+    / extsize.
 
-    `bg_scale` is a continuous multiplier on the bar (default 1.0). It exists
-    because most of these matrices have median nonzero signal == 1, so the
-    nonzero distribution is piled at 1 and bg_quantile is a useless dial there
-    (q25 == q50 == q75 == 1 -> identical bar). bg_scale moves the bar
-    continuously instead: <1 lowers it (a signal-1 bin clears it -> recovers
-    coverage), >1 raises it (stricter). Sweep bg_scale to trade coverage vs.
-    specificity (maximize pos - neg separation).
-
-    Returns (total fragments written, background bar in fragments).
+    Returns (total fragments written, scale, downscale) so the caller can derive
+    the background bar for any bg_scale.
     """
     chroms, starts, ends = parse_region_names(regions)
     nz = signal > 0
@@ -257,26 +247,9 @@ def generate_synthetic_bed(
     counts = np.floor(raw).astype(np.int64)
     n_total = int(counts.sum())
     floor_thresh = ref_val / frags_at_ref / max(downscale, 1e-12)
-
-    # Background bar for peak calling: the pile-up a bin at the bg_quantile of
-    # the NONZERO signal would produce. The caller (run via an effective genome
-    # size of n_total*extsize/bar_frags, see main) then only keeps bins whose
-    # signal exceeds the track's own bg_quantile level -- i.e. peak calling
-    # discriminates WITHIN the track instead of just testing "nonzero vs. the
-    # empty genome" (which made capture == 100%). bar_frags uses the same
-    # clip+downscale transform as counts so it is on the pile-up scale.
-    if bg_quantile and bg_quantile > 0:
-        bar_signal = float(np.quantile(signal[nz], bg_quantile))
-        bar_raw = min(bar_signal * scale, float(max_frags_per_bin)) * downscale * bg_scale
-        bar_frags = max(1, int(np.floor(bar_raw)))
-    else:
-        bar_frags = 0                      # 0 -> caller uses full hs genome
-
     log.info("  scaling(per-bin): ref_q=%.3g ref_val=%.3g scale=%.6g "
-             "floor_thresh=%.3g downscale=%.3g bg_q=%.3g bg_scale=%.3g bar_frags=%d "
-             "n_synthetic_fragments=%d",
-             ref_quantile, ref_val, scale, floor_thresh, downscale,
-             bg_quantile, bg_scale, bar_frags, n_total)
+             "floor_thresh=%.3g downscale=%.3g n_synthetic_fragments=%d",
+             ref_quantile, ref_val, scale, floor_thresh, downscale, n_total)
     if n_total == 0:
         sys.exit("scaled fragment count is zero; raise --frags-at-ref")
 
@@ -312,7 +285,27 @@ def generate_synthetic_bed(
             fh.write("\n".join(f"{c}\t{p}\t{p+1}" for c, p in zip(cs, ps)))
             fh.write("\n")
     log.info("  wrote synthetic BED: %s (%d lines)", out_bed, n_total)
-    return n_total, bar_frags
+    return n_total, scale, downscale
+
+
+def bar_frags_for(bar_signal: float, scale: float, downscale: float,
+                  max_frags_per_bin: int, bg_scale: float) -> int:
+    """Background bar in fragments = pile-up of a bin at `bar_signal` (the
+    bg_quantile of the nonzero signal), under the same clip+downscale transform
+    as the synthetic counts, times the continuous `bg_scale` multiplier.
+    Returns 0 when disabled (-> caller falls back to the full hs genome)."""
+    if bar_signal <= 0 or bg_scale <= 0:
+        return 0
+    bar_raw = min(bar_signal * scale, float(max_frags_per_bin)) * downscale * bg_scale
+    return max(1, int(np.floor(bar_raw)))
+
+
+def effective_genome_size(n_frag: int, extsize: int, bar_frags: int) -> str | int:
+    """Effective genome size that makes the --nolambda genome-wide background
+    equal to `bar_frags` pile-up over an extsize window. bar_frags == 0 -> 'hs'."""
+    if bar_frags <= 0:
+        return "hs"
+    return max(1_000_000, int(n_frag * extsize / bar_frags))
 
 
 # ---------- MACS3 ------------------------------------------------------------
@@ -548,6 +541,63 @@ def format_summary_table(rows: list[dict], macs_q: float) -> str:
     return f"{header}\n{sep}\n{body}"
 
 
+def _parse_num_list(s: str | None, fallback: float, want_int: bool = False) -> list:
+    """Parse a comma list like '0.01,0.05,0.1' -> [0.01,0.05,0.1]. None/'' -> [fallback]."""
+    if not s:
+        return [int(fallback) if want_int else float(fallback)]
+    out = []
+    for tok in s.split(","):
+        tok = tok.strip()
+        if not tok:
+            continue
+        out.append(int(float(tok)) if want_int else float(tok))
+    return out or [int(fallback) if want_int else float(fallback)]
+
+
+def format_q_sweep_block(rows: list[dict], q_list: list[float],
+                         bg_scale: float, extsize: int) -> str:
+    """Arrow-style table for one (bg_scale, extsize): rows = pipelines, with
+    Peaks / Pos-in-peaks / Neg-in-peaks shown as 'v1 -> v2 -> v3' across q_list.
+    Mirrors the slide format. `raw` rows pushed last."""
+    sub = [r for r in rows
+           if abs(r["bg_scale"] - bg_scale) < 1e-9 and r["extsize"] == extsize]
+    runs = list(dict.fromkeys(r["run"] for r in sub))
+    runs = [r for r in runs if r != "raw"] + [r for r in runs if r == "raw"]
+
+    def cell(run: str, key: str, fmt: str) -> str:
+        by_q = {r["macs_q"]: r for r in sub if r["run"] == run}
+        return " -> ".join(
+            (format(by_q[q][key], fmt) if q in by_q else "NA") for q in q_list)
+
+    def first(run: str, key: str, fmt: str) -> str:
+        for r in sub:
+            if r["run"] == run:
+                return format(r[key], fmt)
+        return "NA"
+
+    qhead = "->".join(f"{q:g}" for q in q_list)
+    cols = [
+        ("Pipeline",            lambda run: run,                                              "<"),
+        (f"Peaks (q={qhead})",  lambda run: cell(run, "n_called_peaks", ",d"),                ">"),
+        ("Pos in peaks %",      lambda run: cell(run, "positive_peak_coverage_pct", ".3g"),   ">"),
+        ("Neg in peaks %",      lambda run: cell(run, "negative_peak_coverage_pct", ".3g"),   ">"),
+        ("Pos ceiling %",       lambda run: first(run, "pos_signal_ceiling_pct", ".1f"),      ">"),
+        ("AUROC",               lambda run: first(run, "auroc", ".4f"),                       ">"),
+    ]
+    cells = [[fn(run) for _, fn, _ in cols] for run in runs]
+    widths = [max(len(h), *(len(row[i]) for row in cells)) if cells else len(h)
+              for i, (h, _, _) in enumerate(cols)]
+
+    def line(vals: list[str]) -> str:
+        return "  ".join(f"{v:{cols[i][2]}{widths[i]}}" for i, v in enumerate(vals))
+
+    title = f"=== bg_scale={bg_scale:g}  extsize={extsize}  (q sweep: {qhead}) ==="
+    header = line([h for h, _, _ in cols])
+    sep = "-" * len(header)
+    body = "\n".join(line(row) for row in cells)
+    return f"{title}\n{header}\n{sep}\n{body}"
+
+
 # ---------- main -------------------------------------------------------------
 
 def parse_input_arg(s: str) -> tuple[str, Path]:
@@ -622,6 +672,17 @@ def main() -> int:
                     help="MACS3 --extsize (bp); --shift is pinned to -extsize/2. Default 200 "
                          "(vs the 150 CUT&Tag standard) widens called peaks so they overlap "
                          "the ~1 kb reference bins more readily, raising coverage.")
+    ap.add_argument("--q-sweep", type=str, default=None,
+                    help="Comma list of MACS3 q cutoffs to sweep, e.g. '0.01,0.05,0.1'. "
+                         "The synthetic BED is generated ONCE per pipeline and reused across "
+                         "the whole grid. Overrides --macs-q. Default: just --macs-q.")
+    ap.add_argument("--bg-scale-sweep", type=str, default=None,
+                    help="Comma list of bg_scale multipliers to sweep, e.g. '1.0,0.9,0.8'. "
+                         "Lower -> lower background bar -> more coverage (watch neg). "
+                         "Overrides --bg-scale. Default: just --bg-scale.")
+    ap.add_argument("--extsize-sweep", type=str, default=None,
+                    help="Comma list of extsize values to sweep, e.g. '200,300'. "
+                         "Overrides --extsize. Default: just --extsize.")
     ap.add_argument("--out-name", default="peak_coverage")
     ap.add_argument("--min-overlap-frac", type=float, default=0.0,
                     help="Pass-through to `bedtools intersect -f`. "
@@ -660,6 +721,18 @@ def main() -> int:
     # low coverage -> spread/floor/q is dropping it).
     pos_names = {f"{c}:{s}-{e}" for c, s, e in pos_bins}
     neg_names = {f"{c}:{s}-{e}" for c, s, e in neg_bins}
+
+    # Sweep grid: q x bg_scale x extsize. Single values reproduce the old
+    # behavior. The synthetic BED is generated once per pipeline (it depends
+    # only on the scaling args), then reused across every combo.
+    q_list  = _parse_num_list(args.q_sweep,        args.macs_q)
+    bg_list = _parse_num_list(args.bg_scale_sweep, args.bg_scale)
+    ext_list = _parse_num_list(args.extsize_sweep, args.extsize, want_int=True)
+    combos = [(q, bg, ext) for ext in ext_list for bg in bg_list for q in q_list]
+    sweeping = len(combos) > 1
+    if sweeping:
+        log.info("Sweep: %d combos per pipeline  (q=%s  bg_scale=%s  extsize=%s)",
+                 len(combos), q_list, bg_list, ext_list)
 
     rows: list[dict] = []
     for label, path in args.inputs:
@@ -706,116 +779,109 @@ def main() -> int:
                  n_pos_sig, len(pos_names), pos_ceiling,
                  n_neg_sig, len(neg_names), neg_ceiling, auroc)
 
-        # 1. Synthetic BED (per-bin scaling; fragments clustered within spread_bp)
+        # 1. Synthetic BED -- ONCE per pipeline (independent of q/bg_scale/extsize)
         bed_path = pipe_dir / "synthetic.bed"
-        n_frag, bg_bar = generate_synthetic_bed(
+        n_frag, scale, downscale = generate_synthetic_bed(
             signal, regions, bed_path,
             spread_bp=args.spread_bp,
             ref_quantile=args.ref_quantile,
             frags_at_ref=args.frags_at_ref,
-            bg_quantile=args.bg_quantile,
-            bg_scale=args.bg_scale,
             max_frags_per_bin=args.max_frags_per_bin,
             max_total_fragments=args.max_total_fragments,
         )
+        bar_signal = (float(np.quantile(signal[signal > 0], args.bg_quantile))
+                      if args.bg_quantile and args.bg_quantile > 0 else 0.0)
 
-        # Effective genome size sets the --nolambda background bar to the
-        # pile-up of a bin at bg_quantile, so peak calling discriminates within
-        # the track (not "nonzero vs. empty genome"). bg_bar == 0 -> full hs.
-        if bg_bar > 0:
-            g_eff: str | int = max(1_000_000, int(n_frag * args.extsize / bg_bar))
-        else:
-            g_eff = "hs"
-        log.info("  peak-call background: bar_frags=%d effective_genome_size=%s",
-                 bg_bar, g_eff)
+        # 2. Sweep MACS3 over the (q, bg_scale, extsize) grid, reusing the BED.
+        for (q, bg_scale, extsize) in combos:
+            bar_frags = bar_frags_for(bar_signal, scale, downscale,
+                                      args.max_frags_per_bin, bg_scale)
+            g_eff = effective_genome_size(n_frag, extsize, bar_frags)
+            tag = "" if not sweeping else f"_q{q:g}_bg{bg_scale:g}_ext{extsize}"
+            if sweeping:
+                log.info("  [combo q=%g bg_scale=%g extsize=%d] bar_frags=%d g_eff=%s",
+                         q, bg_scale, extsize, bar_frags, g_eff)
 
-        # 2. MACS3 callpeak
-        narrow = run_macs3(
-            bed_path, pipe_dir, name=f"{label}_pseudo",
-            qvalue=args.macs_q, extsize=args.extsize, nolambda=args.nolambda,
-            effective_genome_size=g_eff,
-        )
-        peaks = load_called_peaks(narrow)
-        log.info("  called peaks: %d", len(peaks))
+            narrow = run_macs3(
+                bed_path, pipe_dir, name=f"{label}_pseudo{tag}",
+                qvalue=q, extsize=extsize, nolambda=args.nolambda,
+                effective_genome_size=g_eff,
+            )
+            peaks = load_called_peaks(narrow)
+            log.info("  called peaks: %d", len(peaks))
 
-        # 3. Save peaks BED (sorted) for bedtools intersect
-        bed_called = pipe_dir / f"{label}_called_peaks.bed"
-        sorted_peaks = sorted(peaks, key=lambda r: (r[0], r[1]))
-        with open(bed_called, "w") as fh:
-            for c, s, e in sorted_peaks:
-                fh.write(f"{c}\t{s}\t{e}\n")
+            bed_called = pipe_dir / f"{label}_called_peaks{tag}.bed"
+            sorted_peaks = sorted(peaks, key=lambda r: (r[0], r[1]))
+            with open(bed_called, "w") as fh:
+                for c, s, e in sorted_peaks:
+                    fh.write(f"{c}\t{s}\t{e}\n")
 
-        covered_pos_bed = pipe_dir / f"{label}_pos_covered_bins.bed"
-        covered_neg_bed = pipe_dir / f"{label}_neg_covered_bins.bed"
-        pairs_pos_tsv = pipe_dir / f"{label}_pos_overlap_pairs.tsv" if args.emit_pairs else None
-        pairs_neg_tsv = pipe_dir / f"{label}_neg_overlap_pairs.tsv" if args.emit_pairs else None
+            covered_pos_bed = pipe_dir / f"{label}_pos_covered_bins{tag}.bed"
+            covered_neg_bed = pipe_dir / f"{label}_neg_covered_bins{tag}.bed"
+            pairs_pos_tsv = pipe_dir / f"{label}_pos_overlap_pairs{tag}.tsv" if args.emit_pairs else None
+            pairs_neg_tsv = pipe_dir / f"{label}_neg_overlap_pairs{tag}.tsv" if args.emit_pairs else None
 
-        n_pos_cov, n_pos = coverage_via_bedtools(
-            ref_pos_bed, bed_called,
-            min_overlap_frac=args.min_overlap_frac,
-            covered_out_bed=covered_pos_bed,
-            pairs_out_tsv=pairs_pos_tsv,
-        )
-        n_neg_cov, n_neg = coverage_via_bedtools(
-            ref_neg_bed, bed_called,
-            min_overlap_frac=args.min_overlap_frac,
-            covered_out_bed=covered_neg_bed,
-            pairs_out_tsv=pairs_neg_tsv,
-        )
-        pos_cov = (100.0 * n_pos_cov / n_pos) if n_pos else float("nan")
-        neg_cov = (100.0 * n_neg_cov / n_neg) if n_neg else float("nan")
-        # Capture rate = realized coverage / signal ceiling: of the reference
-        # bins that HAVE signal, what fraction got called into a peak. Isolates
-        # peak-caller efficiency from the method's signal placement.
-        pos_capture = (100.0 * n_pos_cov / n_pos_sig) if n_pos_sig else float("nan")
-        log.info("  pos cov: %d / %d (%.2f%%) ; neg cov: %d / %d (%.2f%%) ; "
-                 "pos capture (cov/ceiling): %.2f%%",
-                 n_pos_cov, n_pos, pos_cov, n_neg_cov, n_neg, neg_cov, pos_capture)
+            n_pos_cov, n_pos = coverage_via_bedtools(
+                ref_pos_bed, bed_called,
+                min_overlap_frac=args.min_overlap_frac,
+                covered_out_bed=covered_pos_bed, pairs_out_tsv=pairs_pos_tsv,
+            )
+            n_neg_cov, n_neg = coverage_via_bedtools(
+                ref_neg_bed, bed_called,
+                min_overlap_frac=args.min_overlap_frac,
+                covered_out_bed=covered_neg_bed, pairs_out_tsv=pairs_neg_tsv,
+            )
+            pos_cov = (100.0 * n_pos_cov / n_pos) if n_pos else float("nan")
+            neg_cov = (100.0 * n_neg_cov / n_neg) if n_neg else float("nan")
+            pos_capture = (100.0 * n_pos_cov / n_pos_sig) if n_pos_sig else float("nan")
+            log.info("  -> q=%g bg_scale=%g extsize=%d : pos %.2f%% ; neg %.2f%% ; "
+                     "capture %.2f%% ; peaks %d", q, bg_scale, extsize,
+                     pos_cov, neg_cov, pos_capture, len(peaks))
 
-        rows.append({
-            "run":                       label,
-            "kind":                      kind,
-            "n_cells":                   int(n_cells),
-            "n_bins_in_matrix":          int(len(regions)),
-            "n_nonzero_bins":            nnz,
-            "total_signal":              total_signal,
-            "mean_umi_per_cell":         round(mean_umi_per_cell, 6),
-            "n_pos_with_signal":         int(n_pos_sig),
-            "n_neg_with_signal":         int(n_neg_sig),
-            "pos_signal_ceiling_pct":    round(pos_ceiling, 4),
-            "neg_signal_ceiling_pct":    round(neg_ceiling, 4),
-            "auroc":                     round(auroc, 6),
-            "max_total_fragments":       int(args.max_total_fragments),
-            "ref_quantile":              float(args.ref_quantile),
-            "frags_at_ref":              float(args.frags_at_ref),
-            "bg_quantile":               float(args.bg_quantile),
-            "bg_scale":                  float(args.bg_scale),
-            "bg_bar_frags":              int(bg_bar),
-            "effective_genome_size":     str(g_eff),
-            "max_frags_per_bin":         int(args.max_frags_per_bin),
-            "nolambda":                  bool(args.nolambda),
-            "spread_bp":                 int(args.spread_bp),
-            "macs_q":                    float(args.macs_q),
-            "extsize":                   int(args.extsize),
-            "n_synthetic_fragments":     int(n_frag),
-            "n_called_peaks":            int(len(peaks)),
-            "called_peak_total_bp":      int(sum(e - s for _, s, e in peaks)),
-            "min_overlap_frac":          float(args.min_overlap_frac),
-            "n_pos":                     int(n_pos),
-            "n_neg":                     int(n_neg),
-            "n_pos_covered":             int(n_pos_cov),
-            "n_neg_covered":             int(n_neg_cov),
-            "positive_peak_coverage_pct": round(pos_cov, 4),
-            "negative_peak_coverage_pct": round(neg_cov, 4),
-            "positive_capture_pct":       round(pos_capture, 4),
-            "input_path":                str(path),
-            "narrowpeak":                str(narrow),
-            "called_peaks_bed":          str(bed_called),
-            "covered_pos_bed":           str(covered_pos_bed),
-            "covered_neg_bed":           str(covered_neg_bed),
-            "pos_overlap_pairs_tsv":     str(pairs_pos_tsv) if pairs_pos_tsv else "",
-            "neg_overlap_pairs_tsv":     str(pairs_neg_tsv) if pairs_neg_tsv else "",
-        })
+            rows.append({
+                "run":                       label,
+                "kind":                      kind,
+                "n_cells":                   int(n_cells),
+                "n_bins_in_matrix":          int(len(regions)),
+                "n_nonzero_bins":            nnz,
+                "total_signal":              total_signal,
+                "mean_umi_per_cell":         round(mean_umi_per_cell, 6),
+                "n_pos_with_signal":         int(n_pos_sig),
+                "n_neg_with_signal":         int(n_neg_sig),
+                "pos_signal_ceiling_pct":    round(pos_ceiling, 4),
+                "neg_signal_ceiling_pct":    round(neg_ceiling, 4),
+                "auroc":                     round(auroc, 6),
+                "max_total_fragments":       int(args.max_total_fragments),
+                "ref_quantile":              float(args.ref_quantile),
+                "frags_at_ref":              float(args.frags_at_ref),
+                "bg_quantile":               float(args.bg_quantile),
+                "bg_scale":                  float(bg_scale),
+                "bg_bar_frags":              int(bar_frags),
+                "effective_genome_size":     str(g_eff),
+                "max_frags_per_bin":         int(args.max_frags_per_bin),
+                "nolambda":                  bool(args.nolambda),
+                "spread_bp":                 int(args.spread_bp),
+                "macs_q":                    float(q),
+                "extsize":                   int(extsize),
+                "n_synthetic_fragments":     int(n_frag),
+                "n_called_peaks":            int(len(peaks)),
+                "called_peak_total_bp":      int(sum(e - s for _, s, e in peaks)),
+                "min_overlap_frac":          float(args.min_overlap_frac),
+                "n_pos":                     int(n_pos),
+                "n_neg":                     int(n_neg),
+                "n_pos_covered":             int(n_pos_cov),
+                "n_neg_covered":             int(n_neg_cov),
+                "positive_peak_coverage_pct": round(pos_cov, 4),
+                "negative_peak_coverage_pct": round(neg_cov, 4),
+                "positive_capture_pct":       round(pos_capture, 4),
+                "input_path":                str(path),
+                "narrowpeak":                str(narrow),
+                "called_peaks_bed":          str(bed_called),
+                "covered_pos_bed":           str(covered_pos_bed),
+                "covered_neg_bed":           str(covered_neg_bed),
+                "pos_overlap_pairs_tsv":     str(pairs_pos_tsv) if pairs_pos_tsv else "",
+                "neg_overlap_pairs_tsv":     str(pairs_neg_tsv) if pairs_neg_tsv else "",
+            })
 
     # Write the TSV summary
     tsv_path = args.out_dir / f"{args.out_name}.tsv"
@@ -827,12 +893,24 @@ def main() -> int:
                 fh.write("\t".join(str(r[c]) for c in cols) + "\n")
         log.info("Wrote %s (%d rows)", tsv_path, len(rows))
 
-        # Slide-style summary table (fixed-width .txt + echoed to the log).
-        table = format_summary_table(rows, args.macs_q)
-        table_path = args.out_dir / f"{args.out_name}_table.txt"
-        table_path.write_text(table + "\n")
-        log.info("Wrote %s", table_path)
-        log.info("Summary table (q=%g):\n%s", args.macs_q, table)
+        if sweeping:
+            # One arrow-style q-sweep block per (bg_scale, extsize).
+            blocks = []
+            for ext in ext_list:
+                for bg in bg_list:
+                    blocks.append(format_q_sweep_block(rows, q_list, bg, ext))
+            table = "\n\n".join(blocks)
+            table_path = args.out_dir / f"{args.out_name}_sweep_table.txt"
+            table_path.write_text(table + "\n")
+            log.info("Wrote %s", table_path)
+            log.info("Sweep tables:\n%s", table)
+        else:
+            # Slide-style single-setting summary table.
+            table = format_summary_table(rows, args.macs_q)
+            table_path = args.out_dir / f"{args.out_name}_table.txt"
+            table_path.write_text(table + "\n")
+            log.info("Wrote %s", table_path)
+            log.info("Summary table (q=%g):\n%s", args.macs_q, table)
     else:
         log.warning("No rows produced; nothing to write")
     return 0

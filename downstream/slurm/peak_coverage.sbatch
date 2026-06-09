@@ -56,6 +56,12 @@ NOLAMBDA="${NOLAMBDA:-1}"          # 1 -> --nolambda (default), 0 -> --no-nolamb
 SPREAD_BP="${SPREAD_BP:-150}"
 MACS_Q="${MACS_Q:-0.05}"
 EXTSIZE="${EXTSIZE:-200}"
+# Optional sweeps (comma lists). When set, override the single value above and
+# the BED is generated once per pipeline then reused across the grid.
+# e.g.  Q_SWEEP=0.01,0.05,0.1  BG_SCALE_SWEEP=1.0,0.9,0.8  sbatch ...
+Q_SWEEP="${Q_SWEEP:-}"
+BG_SCALE_SWEEP="${BG_SCALE_SWEEP:-}"
+EXTSIZE_SWEEP="${EXTSIZE_SWEEP:-}"
 CONDA_ENV="${CONDA_ENV:-data_prep}"
 
 # Peak-coverage-specific default subset: raw + cisTopic + PUscOpen + scBasset
@@ -90,7 +96,7 @@ fi
 
 mkdir -p "${PEAK_COV_OUT_DIR}"
 
-echo "[$(date)] peak_coverage: TARGET_FRAGMENTS(cap)=${TARGET_FRAGMENTS} REF_QUANTILE=${REF_QUANTILE} FRAGS_AT_REF=${FRAGS_AT_REF} BG_QUANTILE=${BG_QUANTILE} MAX_FRAGS_PER_BIN=${MAX_FRAGS_PER_BIN} NOLAMBDA=${NOLAMBDA} SPREAD_BP=${SPREAD_BP} MACS_Q=${MACS_Q} EXTSIZE=${EXTSIZE}"
+echo "[$(date)] peak_coverage: TARGET_FRAGMENTS(cap)=${TARGET_FRAGMENTS} REF_QUANTILE=${REF_QUANTILE} FRAGS_AT_REF=${FRAGS_AT_REF} BG_QUANTILE=${BG_QUANTILE} MAX_FRAGS_PER_BIN=${MAX_FRAGS_PER_BIN} NOLAMBDA=${NOLAMBDA} SPREAD_BP=${SPREAD_BP} MACS_Q=${MACS_Q} EXTSIZE=${EXTSIZE} Q_SWEEP=${Q_SWEEP:-none} BG_SCALE_SWEEP=${BG_SCALE_SWEEP:-none} EXTSIZE_SWEEP=${EXTSIZE_SWEEP:-none}"
 echo "BINS_TSV=${BINS_TSV}"
 echo "OUT_DIR=${PEAK_COV_OUT_DIR}"
 echo "INPUTS=${INPUTS}"
@@ -113,6 +119,9 @@ CMD=(
   --macs-q "${MACS_Q}"
   --extsize "${EXTSIZE}"
 )
+[[ -n "${Q_SWEEP}" ]]        && CMD+=(--q-sweep "${Q_SWEEP}")
+[[ -n "${BG_SCALE_SWEEP}" ]] && CMD+=(--bg-scale-sweep "${BG_SCALE_SWEEP}")
+[[ -n "${EXTSIZE_SWEEP}" ]]  && CMD+=(--extsize-sweep "${EXTSIZE_SWEEP}")
 for pair in ${INPUTS}; do
   CMD+=(--input "${pair}")
 done
@@ -121,3 +130,8 @@ echo "Running: ${CMD[*]}"
 
 echo "[$(date)] Done."
 echo "  ${PEAK_COV_OUT_DIR}/${OUT_NAME}.tsv"
+if [[ -n "${Q_SWEEP}${BG_SCALE_SWEEP}${EXTSIZE_SWEEP}" ]]; then
+  echo "  ${PEAK_COV_OUT_DIR}/${OUT_NAME}_sweep_table.txt"
+else
+  echo "  ${PEAK_COV_OUT_DIR}/${OUT_NAME}_table.txt"
+fi
