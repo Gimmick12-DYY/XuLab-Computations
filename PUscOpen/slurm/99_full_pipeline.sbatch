@@ -3,7 +3,7 @@
 #SBATCH --output=%x-%j.out
 #SBATCH --error=%x-%j.err
 #SBATCH --cpus-per-task=4
-#SBATCH --mem=128G
+#SBATCH --mem=256G
 #SBATCH --time=18:00:00
 
 # Run the full PUscOpen pipeline in one SLURM allocation:
