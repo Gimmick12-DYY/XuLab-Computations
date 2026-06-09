@@ -740,6 +740,15 @@ def main() -> int:
         if not path.is_dir():
             log.warning("  skip: %s is not a directory", path)
             continue
+        # Skip inputs with no loadable matrix instead of sys.exit-ing -- one
+        # bad/empty input must not abort the whole (expensive) sweep and discard
+        # every other pipeline's results.
+        if not any((path / f).is_file() for f in
+                   ("matrix_csr.npz", "factors.npz", "matrix.npy", "matrix.mtx.gz")):
+            log.warning("  skip: no matrix found in %s "
+                        "(expected matrix_csr.npz / factors.npz / matrix.npy / matrix.mtx.gz)",
+                        path)
+            continue
         pipe_dir = args.out_dir / label
         pipe_dir.mkdir(parents=True, exist_ok=True)
 
