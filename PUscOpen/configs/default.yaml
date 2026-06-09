@@ -308,5 +308,10 @@ impute:
     #   sparsity_match[:K]  -> pick t s.t. #(imp > t) on modeled rows = K * raw_nnz
     #   quantile:Q          -> top (1 - Q) fraction of imputed values
     #   fixed:T             -> numeric
-    source_threshold_mode: sparsity_match:1
+    # K controls density/coverage AND memory of the propagation step (output nnz
+    # ~ K * raw_nnz). K=1 = raw-like sparsity (~50k bins, the old cap); higher K
+    # covers more of the genome. "Whole genome" (effectively K -> very large)
+    # makes the propagation near-dense (~3M bins x ~10k cells) and OOMs, so ramp
+    # K gradually and watch RSS. K=4 ~= 4x raw nnz; bump SLURM --mem with it.
+    source_threshold_mode: sparsity_match:4
     source_threshold_sample_size: 4000000
