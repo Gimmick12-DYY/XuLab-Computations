@@ -2,9 +2,9 @@
 #SBATCH --job-name=scb_pu_full
 #SBATCH --output=%x-%j.out
 #SBATCH --error=%x-%j.err
-#SBATCH --cpus-per-task=16
-#SBATCH --mem=200G
-#SBATCH --time=36:00:00
+#SBATCH --cpus-per-task=4
+#SBATCH --mem=128G
+#SBATCH --time=12:00:00
 
 # Cascade: scBasset -> PUscOpen
 #

@@ -610,8 +610,9 @@ def main() -> int:
         csr_path          = imp_dir / 'matrix_csr.npz'
         csr_imp_only_path = imp_dir / 'matrix_csr_imputed_only.npz'
 
+        nnz_imputed_only = int(csr_imp_only.nnz)
         log.info('Wrote %s (shape=%s, nnz=%d) -- imp only, pre-propagation',
-                 csr_imp_only_path, csr_imp_only.shape, csr_imp_only.nnz)
+                 csr_imp_only_path, csr_imp_only.shape, nnz_imputed_only)
         sparse.save_npz(csr_imp_only_path, csr_imp_only)
         # Free the (potentially tens-of-GB) pre-propagation matrix before
         # writing the propagated one, so both are not resident simultaneously.
@@ -643,7 +644,7 @@ def main() -> int:
             'barcodes_path':            str(barcodes_out),
             'shape':                    [int(N), int(C)],
             'nnz':                      int(csr.nnz),
-            'nnz_imputed_only':         int(csr_imp_only.nnz),
+            'nnz_imputed_only':         nnz_imputed_only,
             'n_modeled_rows':           int(Rm),
             'n_cells':                  int(C),
             'rank_k':                   int(W.shape[1]),
