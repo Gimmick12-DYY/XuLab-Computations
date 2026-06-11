@@ -2,20 +2,19 @@
 # -----------------------------------------------------------------------------
 # 01_union.py
 #
-# Combine scBasset+cisTopic (BACKBONE) with scBasset+PUscOpen (additive):
+# Combine scBasset+cisTopic (BACKBONE) with scBasset+PUscOpen (ENHANCER):
 #
-#     pus_norm  = pus * (cis_total / pus_total)        # rescale pus to cis scale
-#     out[r, c] = cis[r, c] + w * pus_norm[r, c]
+#     out[r, c] = cis[r, c] + w * cis[r, c]            if cis[r, c] > 0 AND pus[r, c] > 0
+#               = cis[r, c]                             if cis[r, c] > 0 AND pus[r, c] = 0
+#               = 0                                     if cis[r, c] = 0
 #
-# pus is renormalised so its total signal equals cis's (equal mean per-cell
-# sum) -- otherwise pus's ~1e5-scale values would swamp cis's ~1-17. Then:
-#   * cis-only entries pass through as cis,
-#   * overlap entries are boosted by w * pus_norm,
-#   * pus-only entries are ADDED at w * pus_norm.
-# This REPLACES the old enhancer rule (which preserved out.nnz == cis.nnz and
-# dropped all pus-only entries); now the dense PUscOpen coverage reaches the
-# cascade. `w` = combine.enhancer_weight (default 1.0 -> pus contributes the
-# same total mass as cis).
+# i.e. multiplicative boost (1 + w) at every (bin, cell) where pus also
+# fires, otherwise the cis value passes through unchanged.
+#
+# HARD INVARIANT (asserted at runtime):
+#     out.nnz == cis.nnz   AND   out.indices == cis.indices
+# Every (bin, cell) entry in scbasset_cistopic is in the output, exactly
+# one for one. Nothing is added, nothing is removed.
 #
 # Outputs (under <work>/impute/):
 #   matrix_csr.npz   sparse float32 (n_regions, n_cells)
@@ -48,9 +47,8 @@ def main() -> int:
     ap.add_argument("--scbasset-cistopic-impute-dir", type=str, default=None)
     ap.add_argument("--scbasset-puscopen-impute-dir", type=str, default=None)
     ap.add_argument("--enhancer-weight", type=float, default=None,
-                    help="Weight w on the normalised pus contribution: "
-                         "out = cis + w * pus_norm. Default 1.0 (pus_norm carries the "
-                         "same total mass as cis). 0 disables pus (output == cis).")
+                    help="Multiplicative boost amplitude at cis ∩ pus entries. "
+                         "Default 1.0 (= 2x cis value at overlap). 0 disables.")
     args = ap.parse_args()
 
     cfg = resolve_paths(load_config(args.config), args.work_dir)
@@ -102,41 +100,39 @@ def main() -> int:
     log.info("  scbasset_puscopen nnz=%d", pus.nnz)
     log.info("=" * 64)
 
-    # -------- Additive union (pus renormalised to cis's scale) --------------
-    # pus values live on a ~1e5 scale and cis on ~1-17, so a raw add would let
-    # pus swamp the backbone. Rescale pus so its TOTAL signal equals cis's (i.e.
-    # equal mean per-cell sum), then add with weight w:
-    #     out[r, c] = cis[r, c] + w * pus_norm[r, c]
-    # Every cis entry is preserved; overlap entries get a w*pus_norm boost; and
-    # -- the change from the old enhancer rule -- pus-only entries are now ADDED
-    # rather than dropped, so the (dense) PUscOpen coverage actually reaches the
-    # cascade.
-    cis_total = float(cis.sum())
-    pus_total = float(pus.sum())
-    norm_factor = (cis_total / pus_total) if pus_total > 0 else 0.0
-    log.info("pus normalisation: cis_total=%.4g  pus_total=%.4g  -> pus_scale=%.6g "
-             "(x enhancer_weight=%g)", cis_total, pus_total, norm_factor, enhancer_weight)
+    # -------- The combine, written so the invariant is obvious --------------
+    # 1. Start with cis as the output (every cis entry preserved verbatim).
+    out = cis.copy()
 
-    if norm_factor > 0 and enhancer_weight != 0 and pus.nnz > 0:
-        pus_norm = (pus * np.float32(enhancer_weight * norm_factor)).tocsr()
-        out = (cis + pus_norm).tocsr()
-    else:
-        out = cis.copy()
-    out.eliminate_zeros()
-    out.sum_duplicates()
+    # 2. Find (bin, cell) entries where BOTH cis and pus fire. Indicator
+    #    multiplication: pus_indicator has 1 at every pus nonzero, 0
+    #    elsewhere; cis * pus_indicator zeroes out cis entries not in pus.
+    n_overlap = 0
+    if pus.nnz > 0 and cis.nnz > 0 and enhancer_weight != 0:
+        pus_indicator = pus.copy()
+        pus_indicator.data = np.ones_like(pus_indicator.data, dtype=np.float32)
+        cis_at_overlap = cis.multiply(pus_indicator).tocsr()
+        cis_at_overlap.eliminate_zeros()
+        n_overlap = int(cis_at_overlap.nnz)
+        # 3. Boost overlap entries by w * their cis value (multiplicative).
+        #    Because cis_at_overlap.indices ⊆ cis.indices, the addition does
+        #    not introduce any new (bin, cell) positions.
+        out = (out + enhancer_weight * cis_at_overlap).tocsr()
 
-    # All values are > 0, so no entry cancels: out.nnz == |cis ∪ pus|, which
-    # gives the overlap and pus-only counts for free.
-    n_overlap  = int(cis.nnz + pus.nnz - out.nnz)
-    n_pus_only = int(pus.nnz - n_overlap)
+    # 4. HARD INVARIANT. If this fires, the code is wrong, not your data.
+    if out.nnz != cis.nnz:
+        log.error("INVARIANT VIOLATED: out.nnz=%d != cis.nnz=%d. "
+                  "Enhancer mode must preserve every cis entry exactly.",
+                  out.nnz, cis.nnz)
+        return 3
 
-    log.info("Combined (additive, pus normalised to cis scale; w=%g):", enhancer_weight)
-    log.info("  cis entries (all preserved) = %d", cis.nnz)
-    log.info("  cis ∩ pus (boosted)         = %d  (%.2f%% of cis)",
+    log.info("Combined:")
+    log.info("  cis backbone entries kept = %d  (must equal cis.nnz=%d): %s",
+             out.nnz, cis.nnz, "OK" if out.nnz == cis.nnz else "BUG")
+    log.info("  entries boosted (cis ∩ pus) = %d  (%.2f%% of cis)",
              n_overlap, 100.0 * n_overlap / max(cis.nnz, 1))
-    log.info("  pus-only entries ADDED      = %d  (was dropped under the old rule)",
-             n_pus_only)
-    log.info("  output nnz                  = %d", out.nnz)
+    log.info("  pus-only entries dropped  = %d  (pus.nnz - overlap)",
+             pus.nnz - n_overlap)
     log.info("=" * 64)
     log.info("Value stats:")
     log.info("  cis data: min=%.4g, mean=%.4g, max=%.4g",
@@ -158,20 +154,18 @@ def main() -> int:
     (impute_dir / "barcodes.tsv").write_text("\n".join(cis_barcodes) + "\n")
 
     meta = {
-        "pipeline":                       "scbasset_cistopic (backbone) + scbasset_puscopen (additive, normalised)",
-        "rule":                            "out[r,c] = cis[r,c] + w * pus_norm[r,c]; pus_norm = pus * (cis_total/pus_total)",
+        "pipeline":                       "scbasset_cistopic (backbone) + scbasset_puscopen (enhancer)",
+        "rule":                            "out[r,c] = cis[r,c] * (1 + w * 1{pus[r,c]>0})  if cis[r,c]>0 else 0",
         "enhancer_weight":                 enhancer_weight,
-        "pus_norm_factor":                 float(norm_factor),
-        "cis_total_signal":               cis_total,
-        "pus_total_signal":               pus_total,
         "shape":                           [int(n_reg), int(n_cells)],
         "scbasset_cistopic_impute_dir":    str(cis_dir),
         "scbasset_puscopen_impute_dir":    str(pus_dir),
         "scbasset_cistopic_nnz":           int(cis.nnz),
         "scbasset_puscopen_nnz":           int(pus.nnz),
-        "n_cis_pus_overlap_boosted":       int(n_overlap),
-        "n_pus_only_entries_added":        int(n_pus_only),
+        "n_cis_entries_boosted_by_pus":    int(n_overlap),
+        "n_pus_only_entries_dropped":      int(pus.nnz - n_overlap),
         "output_nnz":                      int(out.nnz),
+        "invariant_check_passed":          bool(out.nnz == cis.nnz),
     }
     (impute_dir / "meta.json").write_text(json.dumps(meta, indent=2) + "\n")
     log.info("Wrote %s", matrix_path)
