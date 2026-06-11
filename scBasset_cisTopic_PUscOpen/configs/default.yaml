@@ -17,11 +17,15 @@ sources:
   scbasset_puscopen_impute_dir: /work/users/d/y/dyy12/XuLab/scBasset_PUscOpen/work/ctcf/impute
 
 combine:
-  # Multiplicative boost amplitude at cis ∩ pus entries.
-  #   1.0 (default) -> overlap entries have 2x the cis value
-  #   2.0          -> overlap entries have 3x the cis value
-  #   5.0          -> overlap entries have 6x the cis value
-  #   0            -> disables the enhancer (output == cis exactly)
+  # Additive union: out = cis + w * pus_norm, where pus is first renormalised to
+  # cis's total signal (pus_norm = pus * cis_total/pus_total). w =
+  # enhancer_weight controls how much normalised pus contributes:
+  #   1.0 (default) -> pus_norm carries the same total mass as cis
+  #   0.5          -> pus contributes half
+  #   0            -> pus disabled (output == cis exactly)
+  # NOTE: pus-only entries are now ADDED (the old rule dropped them and kept
+  # out.nnz == cis.nnz). Output nnz grows toward |cis ∪ pus|, so this matrix is
+  # ~as dense as PUscOpen -- size 01_union + downstream RAM accordingly.
   enhancer_weight: 1.0
 
 paths:
