@@ -342,8 +342,10 @@ def _propagate_to_zero_bins(csr_in: sparse.csr_matrix,
     new_cols_arr = np.concatenate(new_cols)
     new_vals_arr = np.concatenate(new_vals)
     del new_rows, new_cols, new_vals
+    n_new_entries = int(new_vals_arr.size)
+    mean_new_per_bin = float(n_new_entries / max(n_propagated_bins, 1))
     log.info('Propagation: added %d new (region, cell) entries across %d new bins',
-             int(new_vals_arr.size), n_propagated_bins)
+             n_new_entries, n_propagated_bins)
 
     # The new entries live in rows that were EMPTY in csr_in (target_eligible =
     # ~has_signal), so they are row-disjoint from csr_in. Build them as a small
@@ -362,11 +364,10 @@ def _propagate_to_zero_bins(csr_in: sparse.csr_matrix,
     return csr_out, {
         'enabled': True,
         'n_propagated_bins': n_propagated_bins,
-        'n_new_entries': int(new_vals_arr.size),
+        'n_new_entries': n_new_entries,
         'n_target_total': n_target_total,
         'n_source_total': n_source_total,
-        'mean_new_entries_per_propagated_bin':
-            float(new_vals_arr.size / max(n_propagated_bins, 1)),
+        'mean_new_entries_per_propagated_bin': mean_new_per_bin,
         'window_bp': window_bp, 'min_neighbors': min_neighbors,
         'weight': weight,
         'target_bed': str(target_bed) if target_bed else None,
@@ -609,8 +610,9 @@ def main() -> int:
         csr_path          = imp_dir / 'matrix_csr.npz'
         csr_imp_only_path = imp_dir / 'matrix_csr_imputed_only.npz'
 
+        nnz_imputed_only = int(csr_imp_only.nnz)
         log.info('Wrote %s (shape=%s, nnz=%d) -- imp only, pre-propagation',
-                 csr_imp_only_path, csr_imp_only.shape, csr_imp_only.nnz)
+                 csr_imp_only_path, csr_imp_only.shape, nnz_imputed_only)
         sparse.save_npz(csr_imp_only_path, csr_imp_only)
         # Free the (potentially tens-of-GB) pre-propagation matrix before
         # writing the propagated one, so both are not resident simultaneously.
@@ -642,7 +644,7 @@ def main() -> int:
             'barcodes_path':            str(barcodes_out),
             'shape':                    [int(N), int(C)],
             'nnz':                      int(csr.nnz),
-            'nnz_imputed_only':         int(csr_imp_only.nnz),
+            'nnz_imputed_only':         nnz_imputed_only,
             'n_modeled_rows':           int(Rm),
             'n_cells':                  int(C),
             'rank_k':                   int(W.shape[1]),
