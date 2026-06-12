@@ -47,10 +47,15 @@ OUT_NAME="${OUT_NAME:-peak_coverage}"
 # TARGET_FRAGMENTS is now a CAP on total simulated fragments (scaling is
 # per-bin, see REF_QUANTILE/FRAGS_AT_REF), not a normalization target.
 TARGET_FRAGMENTS="${TARGET_FRAGMENTS:-150000000}"
+# rank -> percentile-normalise each method's per-bin signal so peak coverage is
+# comparable across methods (removes the heavy-tail penalty on PUscOpen). With
+# rank-norm the support is uniform, so FRAGS_AT_REF can be higher (finer pile-up
+# resolution, only the bottom ~0.5% floored) without the dense methods exploding.
+NORMALIZE_SIGNAL="${NORMALIZE_SIGNAL:-rank}"
 REF_QUANTILE="${REF_QUANTILE:-0.5}"
-FRAGS_AT_REF="${FRAGS_AT_REF:-20}"
+FRAGS_AT_REF="${FRAGS_AT_REF:-100}"
 BG_QUANTILE="${BG_QUANTILE:-0.5}"   # peak-call background bar = this quantile of nonzero signal
-BG_SCALE="${BG_SCALE:-1.0}"         # continuous multiplier on the bar (<1 = more coverage, >1 = stricter)
+BG_SCALE="${BG_SCALE:-1.0}"         # bar multiplier (<1 = more coverage). Sweep e.g. 1.0,0.8,0.6
 MAX_FRAGS_PER_BIN="${MAX_FRAGS_PER_BIN:-500}"
 NOLAMBDA="${NOLAMBDA:-1}"          # 1 -> --nolambda (default), 0 -> --no-nolambda
 SPREAD_BP="${SPREAD_BP:-150}"
@@ -96,7 +101,7 @@ fi
 
 mkdir -p "${PEAK_COV_OUT_DIR}"
 
-echo "[$(date)] peak_coverage: TARGET_FRAGMENTS(cap)=${TARGET_FRAGMENTS} REF_QUANTILE=${REF_QUANTILE} FRAGS_AT_REF=${FRAGS_AT_REF} BG_QUANTILE=${BG_QUANTILE} MAX_FRAGS_PER_BIN=${MAX_FRAGS_PER_BIN} NOLAMBDA=${NOLAMBDA} SPREAD_BP=${SPREAD_BP} MACS_Q=${MACS_Q} EXTSIZE=${EXTSIZE} Q_SWEEP=${Q_SWEEP:-none} BG_SCALE_SWEEP=${BG_SCALE_SWEEP:-none} EXTSIZE_SWEEP=${EXTSIZE_SWEEP:-none}"
+echo "[$(date)] peak_coverage: NORMALIZE_SIGNAL=${NORMALIZE_SIGNAL} TARGET_FRAGMENTS(cap)=${TARGET_FRAGMENTS} REF_QUANTILE=${REF_QUANTILE} FRAGS_AT_REF=${FRAGS_AT_REF} BG_QUANTILE=${BG_QUANTILE} MAX_FRAGS_PER_BIN=${MAX_FRAGS_PER_BIN} NOLAMBDA=${NOLAMBDA} SPREAD_BP=${SPREAD_BP} MACS_Q=${MACS_Q} EXTSIZE=${EXTSIZE} Q_SWEEP=${Q_SWEEP:-none} BG_SCALE_SWEEP=${BG_SCALE_SWEEP:-none} EXTSIZE_SWEEP=${EXTSIZE_SWEEP:-none}"
 echo "BINS_TSV=${BINS_TSV}"
 echo "OUT_DIR=${PEAK_COV_OUT_DIR}"
 echo "INPUTS=${INPUTS}"
@@ -109,6 +114,7 @@ CMD=(
   --out-dir "${PEAK_COV_OUT_DIR}"
   --out-name "${OUT_NAME}"
   --target-fragments "${TARGET_FRAGMENTS}"
+  --normalize-signal "${NORMALIZE_SIGNAL}"
   --ref-quantile "${REF_QUANTILE}"
   --frags-at-ref "${FRAGS_AT_REF}"
   --bg-quantile "${BG_QUANTILE}"

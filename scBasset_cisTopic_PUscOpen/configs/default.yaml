@@ -14,7 +14,11 @@
 
 sources:
   scbasset_cistopic_impute_dir: /work/users/d/y/dyy12/XuLab/scBasset_cisTopic/work/ctcf/impute
-  scbasset_puscopen_impute_dir: /work/users/d/y/dyy12/XuLab/scBasset_PUscOpen/work/ctcf/impute
+  # SPARSE scbasset_puscopen (top_k:50000) -- the cascade enhancer must be a
+  # selective sharpener, not the dense (top_k:500000) standalone matrix. The
+  # dense one (.../work/ctcf/impute) still feeds the standalone benchmark row;
+  # this sparse one (.../work/ctcf_sparse/impute) is built via configs/sparse.yaml.
+  scbasset_puscopen_impute_dir: /work/users/d/y/dyy12/XuLab/scBasset_PUscOpen/work/ctcf_sparse/impute
 
 combine:
   # Multiplicative boost amplitude at cis ∩ pus entries.

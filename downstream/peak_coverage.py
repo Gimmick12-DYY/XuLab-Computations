@@ -499,6 +499,36 @@ def signal_auroc(pos_scores: np.ndarray, neg_scores: np.ndarray) -> float:
     return (r1 - n1 * (n1 + 1) / 2.0) / (n1 * n0)
 
 
+def normalize_per_bin_signal(signal: np.ndarray, mode: str) -> np.ndarray:
+    """Optionally remap the per-bin signal so every method shares the SAME
+    value-distribution shape before fragmentation. Without this, peak coverage
+    is biased: compressed/binary tracks (median ~ 1, e.g. raw/scBasset) clear
+    the median-anchored floor+bar all at once, while heavy-tailed tracks
+    (PUscOpen's wide W*H range) get their long lower tail floored and only the
+    extreme top called -> artifactually low coverage despite good AUROC.
+
+    mode:
+      'none' -> identity (raw per-bin signal).
+      'rank' -> each nonzero bin -> its percentile rank in (0, 1] among nonzero
+                bins (ties averaged); zeros stay zero. The support becomes
+                uniform, so floor/scale/bar behave identically for every method.
+                It is order-preserving, so the signal ceiling and AUROC are
+                unchanged -- only the peak-calling sees the normalised shape.
+    """
+    m = (mode or "none").strip().lower()
+    if m in ("none", "off") or signal.size == 0:
+        return signal
+    if m != "rank":
+        raise SystemExit(f"Unknown --normalize-signal mode {mode!r}; use none | rank")
+    nz = signal > 0
+    n = int(nz.sum())
+    if n == 0:
+        return signal
+    out = np.zeros(signal.shape[0], dtype=np.float64)
+    out[nz] = rankdata(signal[nz], method="average") / float(n)   # uniform on (0, 1]
+    return out
+
+
 def _fmt_count(v: float) -> str:
     """K/M-abbreviated count, e.g. 76 -> '76', 9800 -> '9.8K', 1.04e6 -> '1.04M'."""
     if not np.isfinite(v):
@@ -659,6 +689,13 @@ def main() -> int:
                          "the fix for dense-imputation bias -- a method that signals most of the "
                          "genome no longer inflates its own local background and rejects real "
                          "CTCF peaks. Use --no-nolambda to restore local-lambda behavior.")
+    ap.add_argument("--normalize-signal", choices=["none", "rank"], default="none",
+                    help="Remap per-bin signal to a common distribution SHAPE before "
+                         "fragmentation so peak coverage is comparable across methods. "
+                         "'rank' -> percentile-rank (uniform) each method's nonzero bins, "
+                         "removing the metric's bias toward compressed/binary tracks "
+                         "(raw/scBasset) over heavy-tailed ones (PUscOpen). Order-preserving, "
+                         "so signal ceiling and AUROC are unchanged. Default 'none'.")
     ap.add_argument("--macs-q", type=float, default=0.05,
                     help="MACS3 callpeak q-value cutoff (default 0.05). Looser than the "
                          "0.01 default to admit the marginal CTCF pile-ups from smoothed "
@@ -788,17 +825,28 @@ def main() -> int:
                  n_pos_sig, len(pos_names), pos_ceiling,
                  n_neg_sig, len(neg_names), neg_ceiling, auroc)
 
+        # Optional rank-normalisation so fragment scaling sees the SAME
+        # distribution shape for every method (removes the heavy-tail penalty
+        # that under-calls PUscOpen-type tracks). Order-preserving, so ceiling /
+        # AUROC above are unaffected -- only the peak-calling sees this.
+        frag_signal = normalize_per_bin_signal(signal, args.normalize_signal)
+        if args.normalize_signal != "none" and nnz:
+            _fz = frag_signal[frag_signal > 0]
+            log.info("  normalize_signal=%s -> frag-signal p50=%.3g p90=%.3g max=%.3g",
+                     args.normalize_signal, float(np.median(_fz)),
+                     float(np.quantile(_fz, 0.9)), float(_fz.max()))
+
         # 1. Synthetic BED -- ONCE per pipeline (independent of q/bg_scale/extsize)
         bed_path = pipe_dir / "synthetic.bed"
         n_frag, scale, downscale = generate_synthetic_bed(
-            signal, regions, bed_path,
+            frag_signal, regions, bed_path,
             spread_bp=args.spread_bp,
             ref_quantile=args.ref_quantile,
             frags_at_ref=args.frags_at_ref,
             max_frags_per_bin=args.max_frags_per_bin,
             max_total_fragments=args.max_total_fragments,
         )
-        bar_signal = (float(np.quantile(signal[signal > 0], args.bg_quantile))
+        bar_signal = (float(np.quantile(frag_signal[frag_signal > 0], args.bg_quantile))
                       if args.bg_quantile and args.bg_quantile > 0 else 0.0)
 
         # 2. Sweep MACS3 over the (q, bg_scale, extsize) grid, reusing the BED.
@@ -850,6 +898,7 @@ def main() -> int:
             rows.append({
                 "run":                       label,
                 "kind":                      kind,
+                "normalize_signal":          str(args.normalize_signal),
                 "n_cells":                   int(n_cells),
                 "n_bins_in_matrix":          int(len(regions)),
                 "n_nonzero_bins":            nnz,
