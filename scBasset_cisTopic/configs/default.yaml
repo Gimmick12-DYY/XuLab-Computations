@@ -69,9 +69,13 @@ combine:
   # (scBasset's calls only survive if LDA validates them).
   union_with_cistopic: true
 
-  # Store 1.0 at every nonzero. scBasset and cisTopic use different value
-  # scales so the union magnitudes are not meaningful anyway.
-  binarize_output: true
+  # Store 1.0 at every nonzero (binary), or keep the union magnitudes (false).
+  # Binary collapses the per-bin signal to a cell-count whose median is 1 and
+  # caps peak coverage at the median-1 resolution wall; false keeps scBasset's
+  # continuous sigmoid (now that scBasset stores probabilities) max'd with
+  # cisTopic so the per-bin signal has real dynamic range. The two value scales
+  # are reconciled downstream by peak_coverage's per-bin / rank normalization.
+  binarize_output: false
 
 paths:
   work_dir: /work/users/d/y/dyy12/XuLab/scBasset_cisTopic/work/ctcf

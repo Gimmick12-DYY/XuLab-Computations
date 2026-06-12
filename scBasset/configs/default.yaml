@@ -129,8 +129,12 @@ predict:
 # -----------------------------------------------------------------------------
 impute:
   # If true, store 1 at every above-threshold entry; else store the sigmoid
-  # probability. Binary is the cleanest drop-in for the raw matrix.
-  binarize_output: true
+  # probability. Binary is the cleanest drop-in for the raw matrix, but it
+  # collapses the per-bin signal to a cell-count whose median is 1, capping peak
+  # coverage at the median-1 resolution wall. false -> keep the continuous
+  # sigmoid probability so the per-bin signal (sum over cells) has real dynamic
+  # range for downstream peak calling and the cascade.
+  binarize_output: false
 
   # Union with raw at the end so we never lose an observed entry.
   keep_raw: true
