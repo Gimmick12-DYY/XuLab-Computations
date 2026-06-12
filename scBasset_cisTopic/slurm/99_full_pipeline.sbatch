@@ -2,8 +2,8 @@
 #SBATCH --job-name=scb_cis_full
 #SBATCH --output=%x-%j.out
 #SBATCH --error=%x-%j.err
-#SBATCH --cpus-per-task=8
-#SBATCH --mem=96G
+#SBATCH --cpus-per-task=4
+#SBATCH --mem=48G
 #SBATCH --time=02:00:00
 
 # Single-step pipeline. Run scBasset and standalone cisTopic first; their
