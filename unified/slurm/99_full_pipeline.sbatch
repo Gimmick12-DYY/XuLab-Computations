@@ -3,9 +3,9 @@
 #SBATCH --output=%x-%j.out
 #SBATCH --error=%x-%j.err
 #SBATCH --cpus-per-task=8
-#SBATCH --mem=64G
+#SBATCH --mem=32G
 #SBATCH --time=24:00:00
-#SBATCH --partition=a100-gpu,l40-gpu
+#SBATCH --partition=a100-gpu,l40-gpu,volta-gpu
 #SBATCH --qos=gpu_access
 #SBATCH --gres=gpu:1
 

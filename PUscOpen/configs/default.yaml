@@ -168,7 +168,7 @@ pu:
   # size scales linearly with the row count, so we cap it: top_k:N -> ~N modeled
   # rows -> ~N*83KB matrix -> ~N valued bins (plus propagated). top_k:200000
   # gives ~17 GB / ~200k bins (4x the old 50k) -- tune N to your RAM budget.
-  refined_mask_threshold: "top_k:200000"
+  refined_mask_threshold: "top_k:500000"
 
   # If true, union benchmark negatives into refined_mask (not recommended:
   # pollutes PU/scOpen with non-candidate genome). Keep false.

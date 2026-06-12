@@ -3,8 +3,8 @@
 #SBATCH --output=%x-%j.out
 #SBATCH --error=%x-%j.err
 #SBATCH --cpus-per-task=4
-#SBATCH --mem=96G
-#SBATCH --time=01:00:00
+#SBATCH --mem=256G
+#SBATCH --time=02:00:00
 
 # Single-step pipeline. Both scBasset_cisTopic and scBasset_PUscOpen must
 # have finished first.

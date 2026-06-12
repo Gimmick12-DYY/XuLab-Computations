@@ -3,7 +3,7 @@
 #SBATCH --output=%x-%j.out
 #SBATCH --error=%x-%j.err
 #SBATCH --cpus-per-task=4
-#SBATCH --mem=96G
+#SBATCH --mem=128G
 #SBATCH --time=01:00:00
 
 # Element-wise max union of scBasset+cisTopic and scBasset+PUscOpen.

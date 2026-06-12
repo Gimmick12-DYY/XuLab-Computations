@@ -128,7 +128,7 @@ pu:
   cv_folds:          5
   hold_out_fraction: 0.20
 
-  refined_mask_threshold: "top_k:200000"
+  refined_mask_threshold: "top_k:500000"
   force_include_benchmark_negatives: false
 
 # -----------------------------------------------------------------------------
