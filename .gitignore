@@ -26,6 +26,7 @@ downstream/bin_sensitivity_specificity/
 downstream/raw_vs_imputed_diff/
 downstream/impute_union_mm/
 downstream/peak_coverage_ctcf/
+downstream/peak_coverage_ctcf_qsweep/
 .DS_Store
 *.pyc
 *.pkl
