@@ -73,9 +73,15 @@ combine:
   # Binary collapses the per-bin signal to a cell-count whose median is 1 and
   # caps peak coverage at the median-1 resolution wall; false keeps scBasset's
   # continuous sigmoid (now that scBasset stores probabilities) max'd with
-  # cisTopic so the per-bin signal has real dynamic range. The two value scales
-  # are reconciled downstream by peak_coverage's per-bin / rank normalization.
+  # cisTopic so the per-bin signal has real dynamic range.
   binarize_output: false
+
+  # When NOT binarising, divide each source by its own nonzero median before the
+  # elementwise max so scBasset (sigmoid, <1) and cisTopic (counts, ~100s) meet
+  # on a common scale (both medians -> 1). Without this, cisTopic's larger scale
+  # wins every overlap and the cascade collapses into "cisTopic only" (AUROC
+  # drops to cisTopic's). No effect when binarize_output: true.
+  rescale_before_union: true
 
 paths:
   work_dir: /work/users/d/y/dyy12/XuLab/scBasset_cisTopic/work/ctcf

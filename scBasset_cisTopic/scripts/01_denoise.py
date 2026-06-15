@@ -83,6 +83,7 @@ def main() -> int:
     keep_truly_new = bool(den.get("keep_truly_new_bins", True))
     union_with_cis = bool(cmb.get("union_with_cistopic", True))
     binarise = bool(cmb.get("binarize_output", True))
+    rescale_before_union = bool(cmb.get("rescale_before_union", True))
     for d in (scb_dir, cis_dir):
         if not d.is_dir():
             log.error("Missing source dir: %s", d); return 1
@@ -262,6 +263,8 @@ def main() -> int:
 
     # ---- Optional union with cisTopic standalone ----------------------------
     cis_nnz_total = -1
+    f_anchor = c_anchor = 0.0
+    did_rescale = False
     if union_with_cis:
         log.info("Loading cisTopic CSR for union step")
         cis = sp.load_npz(cis_dir / "matrix_csr.npz").tocsr().astype(np.float32)
@@ -270,6 +273,30 @@ def main() -> int:
                       cis.shape, scb.shape); return 4
         cis_nnz_total = int(cis.nnz)
         log.info("  cistopic nnz=%d", cis_nnz_total)
+
+        # Per-source rescaling BEFORE the elementwise max. scBasset (continuous
+        # sigmoid, <1 when binarize_output=false) and cisTopic (counts, ~100s)
+        # live on wildly different scales; a raw max() lets cisTopic win at
+        # essentially every overlap, collapsing the cascade into "cisTopic only"
+        # (its AUROC drops to cisTopic's). Dividing each source by its own
+        # nonzero median puts both medians at 1.0 so max() compares like-for-
+        # like: scBasset's high-confidence bins survive where cisTopic is weak,
+        # while cisTopic's heavy tail still wins where it is strong. Skipped when
+        # binarising (values are about to be set to 1) or for a degenerate
+        # empty/zero-median source.
+        if rescale_before_union and not binarise:
+            f_anchor = float(np.median(filtered.data)) if filtered.nnz else 0.0
+            c_anchor = float(np.median(cis.data)) if cis.nnz else 0.0
+            if f_anchor > 0 and c_anchor > 0:
+                log.info("  rescale-before-union: scBasset median=%.4g, cisTopic "
+                         "median=%.4g -> divide each so both medians = 1.0",
+                         f_anchor, c_anchor)
+                filtered.data /= np.float32(f_anchor)
+                cis.data /= np.float32(c_anchor)
+                did_rescale = True
+            else:
+                log.warning("  rescale-before-union skipped: a source has no "
+                            "nonzero median (scb=%.4g cis=%.4g)", f_anchor, c_anchor)
         out = filtered.maximum(cis).tocsr()
     else:
         out = filtered
@@ -303,6 +330,9 @@ def main() -> int:
         "filtered_scbasset_nnz":     int(filtered.nnz),
         "union_with_cistopic":       bool(union_with_cis),
         "cistopic_nnz_total":        int(cis_nnz_total),
+        "rescale_before_union":      bool(union_with_cis and did_rescale),
+        "scbasset_median_anchor":    float(f_anchor),
+        "cistopic_median_anchor":    float(c_anchor),
         "binarize_output":           bool(binarise),
         "output_nnz":                int(out.nnz),
     }
