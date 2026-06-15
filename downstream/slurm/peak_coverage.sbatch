@@ -47,11 +47,14 @@ OUT_NAME="${OUT_NAME:-peak_coverage}"
 # TARGET_FRAGMENTS is now a CAP on total simulated fragments (scaling is
 # per-bin, see REF_QUANTILE/FRAGS_AT_REF), not a normalization target.
 TARGET_FRAGMENTS="${TARGET_FRAGMENTS:-150000000}"
-# rank -> percentile-normalise each method's per-bin signal so peak coverage is
-# comparable across methods (removes the heavy-tail penalty on PUscOpen). With
-# rank-norm the support is uniform, so FRAGS_AT_REF can be higher (finer pile-up
-# resolution, only the bottom ~0.5% floored) without the dense methods exploding.
-NORMALIZE_SIGNAL="${NORMALIZE_SIGNAL:-rank}"
+# NORMALIZE_SIGNAL: keep at 'none'. 'rank' (percentile-normalise each method's
+# per-bin signal) is INCOMPATIBLE with the fold-based caller: it forces every
+# method to a fixed 2x median->max range, and collapses tie-heavy (near-binary)
+# tracks (raw/scBasset) to a single constant -> every bin's pile-up equals the
+# median background bar -> fold 1.0 -> MACS calls 0 peaks (only the genuinely
+# continuous 'unified' survived). Cross-method fairness comes from the
+# median-anchored per-bin scaling, not from flattening the distribution.
+NORMALIZE_SIGNAL="${NORMALIZE_SIGNAL:-none}"
 REF_QUANTILE="${REF_QUANTILE:-0.5}"
 FRAGS_AT_REF="${FRAGS_AT_REF:-100}"
 BG_QUANTILE="${BG_QUANTILE:-0.5}"   # peak-call background bar = this quantile of nonzero signal
