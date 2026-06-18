@@ -130,5 +130,5 @@ impute:
 
   # Output convention
   binarize_output: false        # 1 at every above-threshold entry
-  keep_raw:        true        # union with raw via element-wise max
+  keep_raw:        false        # union with raw via element-wise max
   weight:          1.0

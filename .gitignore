@@ -27,6 +27,7 @@ downstream/raw_vs_imputed_diff/
 downstream/impute_union_mm/
 downstream/peak_coverage_ctcf/
 downstream/peak_coverage_ctcf_qsweep/
+downstream/peak_coverage_ctcf_unified_opsweep
 .DS_Store
 *.pyc
 *.pkl
