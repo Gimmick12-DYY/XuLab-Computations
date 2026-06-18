@@ -8,6 +8,8 @@
 #SBATCH --partition=a100-gpu,l40-gpu
 #SBATCH --qos=gpu_access
 #SBATCH --gres=gpu:1
+#SBATCH --mail-type=END
+#SBATCH --mail-user=dyy12@unc.edu
 
 # End-to-end unified model on the CTCF 1 kb bin matrix:
 #   export RDS -> mm
