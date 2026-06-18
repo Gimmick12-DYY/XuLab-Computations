@@ -117,6 +117,24 @@ python scripts/01_train.py --config "${CFG}"
 echo "[$(date)] Step 02: impute -> CSR"
 python scripts/02_impute.py --config "${CFG}"
 
+# Step 03 (eval): peak_coverage metrics. Submitted as a DEPENDENT CPU job
+# (afterok) rather than run inline, so this scarce GPU is released the moment
+# impute finishes -- macs3/bedtools need the data_prep env, not the GPU
+# `unified` env. The eval job reuses whatever knobs are in this job's
+# environment (e.g. a BG_SCALE_SWEEP you exported). Set RUN_EVAL=0 to skip.
+if [[ "${RUN_EVAL:-1}" == "1" ]]; then
+  echo "[$(date)] Step 03: submitting peak_coverage eval (dependent CPU job)"
+  if command -v sbatch >/dev/null 2>&1 && [[ -n "${SLURM_JOB_ID:-}" ]]; then
+    sbatch --dependency="afterok:${SLURM_JOB_ID}" \
+           --export=ALL,CFG="${CFG}" \
+           "${ROOT_DIR}/slurm/03_eval.sbatch" \
+      && echo "  eval queued (runs on CPU after this job succeeds)" \
+      || echo "  WARN: could not submit eval; run 'sbatch slurm/03_eval.sbatch' manually"
+  else
+    echo "  WARN: not under sbatch; run 'sbatch slurm/03_eval.sbatch' manually after this finishes"
+  fi
+fi
+
 echo "[$(date)] unified CTCF pipeline completed."
 echo "Imputed outputs: ${IMPUTE_DIR}/"
 echo "Downstream compare_pos_neg:"

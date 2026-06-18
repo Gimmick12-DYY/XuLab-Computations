@@ -98,6 +98,18 @@ train:
   # was a CTCF-specific assumption).
   n_neg_per_pos: 5
 
+  # Hard-negative mining (Tier-1A). A fraction of the sampled negatives are
+  # "mined": draw a larger uniform candidate pool, score it with the CURRENT
+  # model, and keep the highest-scoring pairs (the model's worst false
+  # positives) as the negatives for the loss. This focuses gradient on the
+  # decision boundary -- the accessible / flanking bins the model wrongly lights
+  # up -- which is exactly what drives the high negative coverage and caps
+  # AUROC. Mining is TRAIN-only (validation stays uniform so its loss remains a
+  # stable early-stopping target). 0.0 -> pure uniform (original behavior).
+  hard_negative_frac: 0.5       # fraction of negatives that are hard-mined
+  hard_pool_mult:     4         # candidate pool size = this x (#hard); top kept
+  hard_pool_cap:      2000000   # absolute cap on the candidate pool (memory bound)
+
   # Chunked training: process one chromosome at a time, chunked into
   # `chunk_size` contiguous bins per step. Bin-context conv runs over the
   # full chunk so within-chunk neighbors carry information.

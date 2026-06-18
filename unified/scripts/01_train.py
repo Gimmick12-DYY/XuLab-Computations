@@ -8,8 +8,10 @@
 #   1. Pick a chunk of `chunk_size` contiguous bins within one chromosome.
 #   2. Encode the chunk: ẽ_r = BinContext( SeqEncoder( seq_chunk ) ).
 #   3. Collect all observed positives in the chunk (rows of matrix.npz).
-#   4. Sample n_neg negatives per positive: uniform (bin, cell) draws within
-#      the chunk x all cells. Reject (bin, cell) pairs that are positives.
+#   4. Sample n_neg negatives per positive. A `hard_negative_frac` portion are
+#      HARD-MINED (TRAIN only): draw a larger uniform candidate pool, score it
+#      with the current model, and keep the top-scoring (worst false-positive)
+#      pairs. The remainder are uniform (bin, cell) draws. All reject positives.
 #   5. forward_pairs -> yhat. Focal loss against y (1 for pos, 0 for neg).
 #   6. Backprop, optimizer.step.
 #
@@ -127,6 +129,9 @@ def main() -> int:
     log_every = int(t_cfg.get("log_every", 50))
     focal_g = float(t_cfg.get("focal_gamma", 2.0))
     focal_a = float(t_cfg.get("focal_alpha", 0.25))
+    hard_neg_frac = float(t_cfg.get("hard_negative_frac", 0.0))
+    hard_pool_mult = int(t_cfg.get("hard_pool_mult", 4))
+    hard_pool_cap = int(t_cfg.get("hard_pool_cap", 2_000_000))
 
     seqs_dir = Path(cfg["paths"]["seqs"])
     model_dir = Path(cfg["paths"]["model"])
@@ -174,6 +179,8 @@ def main() -> int:
 
     n_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
     log.info("Model built: %.2fM trainable params", n_params / 1e6)
+    log.info("Hard-negative mining: frac=%.2f pool_mult=%d pool_cap=%d (frac=0 -> pure uniform)",
+             hard_neg_frac, hard_pool_mult, hard_pool_cap)
 
     optimizer = torch.optim.Adam(model.parameters(), lr=lr, weight_decay=wd)
 
@@ -200,6 +207,22 @@ def main() -> int:
         seq_t = torch.from_numpy(seq_np).to(device, non_blocking=True)
         return model.encode_bins(seq_t)
 
+    def score_pairs(e_tilde: "torch.Tensor", bins_np: np.ndarray,
+                    cells_np: np.ndarray, slice_size: int = 1_000_000) -> np.ndarray:
+        """Score (bin, cell) pairs with the current model, no grad. Used only to
+        RANK hard-negative candidates. forward_pairs has no dropout/BN, so this
+        is deterministic given e_tilde; sliced to bound memory."""
+        n = int(bins_np.shape[0])
+        out = np.empty(n, dtype=np.float32)
+        with torch.no_grad():
+            for s0 in range(0, n, slice_size):
+                s1 = min(n, s0 + slice_size)
+                pb = torch.from_numpy(np.ascontiguousarray(bins_np[s0:s1])).to(device)
+                pc = torch.from_numpy(np.ascontiguousarray(cells_np[s0:s1])).to(device)
+                yh, _, _ = model.forward_pairs(e_tilde, pb, pc)
+                out[s0:s1] = yh.detach().cpu().numpy()
+        return out
+
     def run_batch(lo: int, hi: int, training: bool) -> tuple[float, int, int]:
         e_tilde = encode_chunk(lo, hi)
         chunk_n = hi - lo
@@ -212,15 +235,47 @@ def main() -> int:
             return 0.0, 0, 0
         pos_set = {(int(b), int(c)) for b, c in zip(pos_bins, pos_cells)}
 
-        neg = sample_negatives(chunk_n, n_cells, n_pos * n_neg,
-                               pos_set, rng=rng_neg)
-        neg_bins = neg[:, 0]
-        neg_cells = neg[:, 1]
+        # ---- negatives: a hard-mined fraction + a uniform fraction ----------
+        # Hard mining runs only while TRAINING so the validation loss stays a
+        # stable, comparable early-stopping target. We oversample a uniform
+        # candidate pool, score it with the current model, and keep the
+        # top-scoring pairs (the model's worst false positives).
+        n_neg_total = n_pos * n_neg
+        n_hard = int(round(hard_neg_frac * n_neg_total)) if (training and hard_neg_frac > 0.0) else 0
+        n_unif = n_neg_total - n_hard
+        neg_b_parts: list[np.ndarray] = []
+        neg_c_parts: list[np.ndarray] = []
+
+        if n_hard > 0:
+            pool_size = min(n_hard * max(1, hard_pool_mult), hard_pool_cap)
+            pool = sample_negatives(chunk_n, n_cells, pool_size, pos_set, rng=rng_neg)
+            if pool.shape[0] > 0:
+                scores = score_pairs(e_tilde, pool[:, 0], pool[:, 1])
+                k = min(n_hard, pool.shape[0])
+                top = (np.argpartition(-scores, k - 1)[:k]
+                       if k < pool.shape[0] else np.arange(pool.shape[0]))
+                neg_b_parts.append(pool[top, 0])
+                neg_c_parts.append(pool[top, 1])
+                n_unif += (n_hard - k)   # top up uniform if the pool fell short
+
+        if n_unif > 0:
+            unif = sample_negatives(chunk_n, n_cells, n_unif, pos_set, rng=rng_neg)
+            if unif.shape[0] > 0:
+                neg_b_parts.append(unif[:, 0])
+                neg_c_parts.append(unif[:, 1])
+
+        if neg_b_parts:
+            neg_bins = np.concatenate(neg_b_parts)
+            neg_cells = np.concatenate(neg_c_parts)
+        else:
+            neg_bins = np.zeros(0, dtype=np.int64)
+            neg_cells = np.zeros(0, dtype=np.int64)
+        n_neg_actual = int(neg_bins.size)
 
         bin_idx = np.concatenate([pos_bins, neg_bins])
         cell_idx = np.concatenate([pos_cells, neg_cells])
         y = np.concatenate([np.ones(n_pos, dtype=np.float32),
-                             np.zeros(neg.shape[0], dtype=np.float32)])
+                             np.zeros(n_neg_actual, dtype=np.float32)])
 
         bin_t = torch.from_numpy(bin_idx).to(device)
         cell_t = torch.from_numpy(cell_idx).to(device)
@@ -235,7 +290,7 @@ def main() -> int:
             loss.backward()
             optimizer.step()
 
-        return float(loss.detach().item()), n_pos, int(neg.shape[0])
+        return float(loss.detach().item()), n_pos, n_neg_actual
 
     # Negative sampler RNG is a child of the main rng so per-step state is
     # repeatable across runs.
@@ -316,6 +371,9 @@ def main() -> int:
         "best_val_loss": best_val,
         "epochs_run":    len(csv_rows),
         "n_params_train": int(n_params),
+        "hard_negative_frac": hard_neg_frac,
+        "hard_pool_mult":     hard_pool_mult,
+        "hard_pool_cap":      hard_pool_cap,
         "ckpt":          str(model_dir / "ckpt.pt"),
         "training_csv":  str(csv_path),
     }
