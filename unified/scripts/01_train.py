@@ -44,7 +44,7 @@ import numpy as np
 import scipy.sparse as sp
 
 from _cfg import base_parser, load_config, resolve_paths
-from _model import GatedUnifiedModel, focal_bce
+from _model import GatedUnifiedModel, focal_bce, pairwise_ranking_loss
 
 log = logging.getLogger("01_train")
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
@@ -54,6 +54,21 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(mess
 
 def load_chrom_ranges(path: Path) -> list[dict]:
     return json.loads(path.read_text())
+
+
+def sample_silent_negatives(silent_local_bins: np.ndarray, n_cells: int,
+                            n: int, rng: np.random.Generator) -> np.ndarray:
+    """(n, 2) array of (bin_local_idx, cell_idx) where bin_local_idx is drawn
+    only from `silent_local_bins` -- bins that are observed in ZERO cells
+    globally. Because these bins have no positives anywhere, every (bin, cell)
+    pair is a CONFIDENT true negative, immune to the dropout/PU trap that makes
+    'observed in another cell' pairs unsafe to mine as hard negatives. No
+    pos_set rejection is needed (silent bins contribute no positives)."""
+    if n <= 0 or silent_local_bins.size == 0:
+        return np.zeros((0, 2), dtype=np.int64)
+    bins = silent_local_bins[rng.integers(0, silent_local_bins.size, size=n)]
+    cells = rng.integers(0, n_cells, size=n)
+    return np.stack([bins.astype(np.int64), cells.astype(np.int64)], axis=1)
 
 
 def sample_negatives(chunk_n_bins: int, n_cells: int, n_neg: int,
@@ -132,6 +147,10 @@ def main() -> int:
     hard_neg_frac = float(t_cfg.get("hard_negative_frac", 0.0))
     hard_pool_mult = int(t_cfg.get("hard_pool_mult", 4))
     hard_pool_cap = int(t_cfg.get("hard_pool_cap", 2_000_000))
+    hard_neg_inactive_thresh = int(t_cfg.get("hard_negative_inactive_thresh", 0))
+    ranking_weight = float(t_cfg.get("ranking_loss_weight", 0.0))
+    ranking_grade_by_count = bool(t_cfg.get("ranking_grade_by_count", True))
+    rc_prob = float(t_cfg.get("rc_augment_prob", 0.0))
 
     seqs_dir = Path(cfg["paths"]["seqs"])
     model_dir = Path(cfg["paths"]["model"])
@@ -152,6 +171,12 @@ def main() -> int:
 
     Y = sp.load_npz(mat_path).tocsr().astype(np.uint8)
     chrom_ranges = load_chrom_ranges(cr_path)
+
+    # Per-bin global observation count (number of cells with any signal). Bins at
+    # or below `hard_negative_inactive_thresh` are "silent" -> confident true
+    # negatives, the only safe pool for hard-negative mining under dropout.
+    bin_obs_count = np.asarray(Y.getnnz(axis=1)).ravel()
+    bin_is_silent = bin_obs_count <= hard_neg_inactive_thresh
     with h5py.File(h5_path, "r") as h5:
         n_bins = int(h5["X"].shape[0])
         n_cells = int(h5.attrs["n_cells"])
@@ -179,8 +204,13 @@ def main() -> int:
 
     n_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
     log.info("Model built: %.2fM trainable params", n_params / 1e6)
-    log.info("Hard-negative mining: frac=%.2f pool_mult=%d pool_cap=%d (frac=0 -> pure uniform)",
-             hard_neg_frac, hard_pool_mult, hard_pool_cap)
+    log.info("Hard-negative mining: frac=%.2f pool_mult=%d pool_cap=%d inactive_thresh=%d "
+             "(frac=0 -> pure uniform); silent bins (obs<=%d) = %d / %d (%.1f%%) -- the safe pool",
+             hard_neg_frac, hard_pool_mult, hard_pool_cap, hard_neg_inactive_thresh,
+             hard_neg_inactive_thresh, int(bin_is_silent.sum()), n_bins,
+             100.0 * bin_is_silent.mean())
+    log.info("Ranking loss: weight=%.3g grade_by_count=%s ; RC-augment prob=%.2f "
+             "(both data-internal, no priors)", ranking_weight, ranking_grade_by_count, rc_prob)
 
     optimizer = torch.optim.Adam(model.parameters(), lr=lr, weight_decay=wd)
 
@@ -202,9 +232,16 @@ def main() -> int:
     h5 = h5py.File(h5_path, "r")
     X_ds = h5["X"]
 
-    def encode_chunk(lo: int, hi: int) -> "torch.Tensor":
+    def encode_chunk(lo: int, hi: int, augment: bool = False) -> "torch.Tensor":
         seq_np = X_ds[lo:hi].astype(np.float32)
-        seq_t = torch.from_numpy(seq_np).to(device, non_blocking=True)
+        if augment and rc_prob > 0.0:
+            # Reverse-complement augmentation (TRAIN only). A universal dsDNA
+            # symmetry, not a prior: reverse along length AND channels (ACGT
+            # order -> channel [::-1] maps A<->T, C<->G). Per-bin random flip.
+            flip = rng_aug.random(seq_np.shape[0]) < rc_prob
+            if flip.any():
+                seq_np[flip] = seq_np[flip][:, ::-1, ::-1]
+        seq_t = torch.from_numpy(np.ascontiguousarray(seq_np)).to(device, non_blocking=True)
         return model.encode_bins(seq_t)
 
     def score_pairs(e_tilde: "torch.Tensor", bins_np: np.ndarray,
@@ -224,7 +261,7 @@ def main() -> int:
         return out
 
     def run_batch(lo: int, hi: int, training: bool) -> tuple[float, int, int]:
-        e_tilde = encode_chunk(lo, hi)
+        e_tilde = encode_chunk(lo, hi, augment=training)
         chunk_n = hi - lo
         # Positives = nonzeros in Y[lo:hi]
         sub = Y[lo:hi].tocoo()
@@ -247,8 +284,13 @@ def main() -> int:
         neg_c_parts: list[np.ndarray] = []
 
         if n_hard > 0:
+            # Hard-negative candidate pool: ONLY globally-silent bins in this
+            # chunk, so every candidate is a confident true negative (no dropout
+            # contamination). Among those, keep the ones the model scores
+            # highest -- the flanking / motif-but-unbound false positives.
+            silent_local = np.nonzero(bin_is_silent[lo:hi])[0].astype(np.int64)
             pool_size = min(n_hard * max(1, hard_pool_mult), hard_pool_cap)
-            pool = sample_negatives(chunk_n, n_cells, pool_size, pos_set, rng=rng_neg)
+            pool = sample_silent_negatives(silent_local, n_cells, pool_size, rng_neg)
             if pool.shape[0] > 0:
                 scores = score_pairs(e_tilde, pool[:, 0], pool[:, 1])
                 k = min(n_hard, pool.shape[0])
@@ -257,6 +299,8 @@ def main() -> int:
                 neg_b_parts.append(pool[top, 0])
                 neg_c_parts.append(pool[top, 1])
                 n_unif += (n_hard - k)   # top up uniform if the pool fell short
+            else:
+                n_unif += n_hard         # no silent bins in chunk -> all uniform
 
         if n_unif > 0:
             unif = sample_negatives(chunk_n, n_cells, n_unif, pos_set, rng=rng_neg)
@@ -283,6 +327,20 @@ def main() -> int:
 
         yhat, _, _ = model.forward_pairs(e_tilde, bin_t, cell_t)
         loss = focal_bce(yhat, y_t, gamma=focal_g, alpha=focal_a)
+
+        # Pairwise ranking (AUC surrogate) on logits, optionally graded by each
+        # positive's per-bin observation count -- a data-internal confidence,
+        # no priors, no manufactured confident negatives. Pushes observed sites
+        # above uniform draws and strong sites highest.
+        if ranking_weight > 0.0 and n_pos > 0 and n_neg_actual > 0:
+            logit = torch.logit(yhat.clamp(1e-6, 1.0 - 1e-6))
+            pos_w = None
+            if ranking_grade_by_count:
+                w_np = np.log1p(bin_obs_count[lo + pos_bins].astype(np.float64)).astype(np.float32)
+                pos_w = torch.from_numpy(w_np).to(device)
+            rank = pairwise_ranking_loss(logit[:n_pos], logit[n_pos:], pos_weight=pos_w)
+            loss = loss + ranking_weight * rank
+
         loss = loss + l1_alpha * model.alpha_l1()
 
         if training:
@@ -295,6 +353,8 @@ def main() -> int:
     # Negative sampler RNG is a child of the main rng so per-step state is
     # repeatable across runs.
     rng_neg = np.random.default_rng(seed + 1)
+    # Augmentation RNG (reverse-complement flips), independent of neg sampling.
+    rng_aug = np.random.default_rng(seed + 2)
 
     # Training loop
     best_val = math.inf
@@ -374,6 +434,11 @@ def main() -> int:
         "hard_negative_frac": hard_neg_frac,
         "hard_pool_mult":     hard_pool_mult,
         "hard_pool_cap":      hard_pool_cap,
+        "hard_negative_inactive_thresh": hard_neg_inactive_thresh,
+        "n_silent_bins":      int(bin_is_silent.sum()),
+        "ranking_loss_weight": ranking_weight,
+        "ranking_grade_by_count": ranking_grade_by_count,
+        "rc_augment_prob":    rc_prob,
         "ckpt":          str(model_dir / "ckpt.pt"),
         "training_csv":  str(csv_path),
     }

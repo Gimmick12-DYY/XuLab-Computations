@@ -342,6 +342,30 @@ def focal_bce(yhat: torch.Tensor, y: torch.Tensor,
     return loss.mean()
 
 
+def pairwise_ranking_loss(pos_score: torch.Tensor, neg_score: torch.Tensor,
+                          pos_weight: torch.Tensor | None = None) -> torch.Tensor:
+    """Weighted pairwise logistic (RankNet) AUC surrogate.
+
+    Pairs each negative with a uniformly-chosen positive and penalizes
+    score(neg) >= score(pos) smoothly via softplus(neg - pos). Minimizing this
+    maximizes P(score_pos > score_neg) = AUROC. `pos_weight` (per positive,
+    e.g. observation-count confidence) up-weights pairs whose positive is more
+    strongly observed -- a purely data-internal grading, no priors. Scores
+    should be LOGITS (full range), not probabilities.
+    """
+    P = int(pos_score.shape[0])
+    N = int(neg_score.shape[0])
+    if P == 0 or N == 0:
+        return pos_score.new_zeros(())
+    idx = torch.randint(0, P, (N,), device=pos_score.device)
+    paired_pos = pos_score[idx]
+    loss = F.softplus(neg_score - paired_pos)       # log(1 + exp(neg - pos))
+    if pos_weight is not None:
+        w = pos_weight[idx]
+        return (loss * w).sum() / w.sum().clamp_min(1e-8)
+    return loss.mean()
+
+
 # ---------- self-check -------------------------------------------------------
 
 def _smoke_check() -> None:

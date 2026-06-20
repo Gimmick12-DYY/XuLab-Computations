@@ -98,17 +98,40 @@ train:
   # was a CTCF-specific assumption).
   n_neg_per_pos: 5
 
-  # Hard-negative mining (Tier-1A). A fraction of the sampled negatives are
-  # "mined": draw a larger uniform candidate pool, score it with the CURRENT
-  # model, and keep the highest-scoring pairs (the model's worst false
-  # positives) as the negatives for the loss. This focuses gradient on the
-  # decision boundary -- the accessible / flanking bins the model wrongly lights
-  # up -- which is exactly what drives the high negative coverage and caps
-  # AUROC. Mining is TRAIN-only (validation stays uniform so its loss remains a
-  # stable early-stopping target). 0.0 -> pure uniform (original behavior).
-  hard_negative_frac: 0.5       # fraction of negatives that are hard-mined
-  hard_pool_mult:     4         # candidate pool size = this x (#hard); top kept
-  hard_pool_cap:      2000000   # absolute cap on the candidate pool (memory bound)
+  # Hard-negative mining (Tier-1A) -- DISABLED (hard_negative_frac: 0.0).
+  #
+  # This task has no ground-truth negatives, and the model's PURPOSE is to
+  # predict positives at unlabeled locations, so every manufactured "confident
+  # negative" is either:
+  #   - a DROPOUT of an observed site (unrestricted mining -> model collapses;
+  #     measured pos.cov 82.6->22.5, AUROC 0.77->0.60), or
+  #   - a DISCOVERY the model should be making (mining globally-silent bins
+  #     punishes the Basset CNN's core ability to create signal at zero bins).
+  # The hardest (highest-scoring) negatives are precisely those two cases, so
+  # hard-negative mining is the wrong tool here. Kept in code (frac=0 -> exact
+  # original uniform behavior) only as an ablation toggle; do NOT raise frac for
+  # CTCF. The safe AUROC levers are positive/sequence-side (motif-aware encoder)
+  # and the label-free pairwise ranking loss.
+  hard_negative_frac: 0.0       # 0 = pure uniform negatives (the only safe setting here)
+  hard_pool_mult:     4         # (unused at frac=0)
+  hard_pool_cap:      2000000   # (unused at frac=0)
+  hard_negative_inactive_thresh: 0   # (unused at frac=0)
+
+  # Pairwise ranking loss (AUC surrogate), ADDED to the focal loss. Ranks
+  # observed sites above uniform draws; ranking_grade_by_count additionally
+  # weights each positive by log1p(its global observation count) so strongly-
+  # observed sites are pushed highest. Purely data-internal -- no priors, no
+  # manufactured confident negatives -- and optimizes AUROC directly. The
+  # uniform negatives stay diluted (not selected), so no dropout/discovery
+  # amplification. 0.0 -> focal only (original behavior).
+  ranking_loss_weight:    1.0
+  ranking_grade_by_count: true
+
+  # Reverse-complement augmentation: with this probability each bin's sequence
+  # window is replaced by its reverse complement before encoding. A universal
+  # double-stranded-DNA symmetry (NOT a prior) -- helps the from-scratch CNN
+  # learn strand-invariant features and generalizes to any TF. TRAIN only.
+  rc_augment_prob: 0.5
 
   # Chunked training: process one chromosome at a time, chunked into
   # `chunk_size` contiguous bins per step. Bin-context conv runs over the
