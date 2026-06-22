@@ -14,7 +14,13 @@
 # Optional env vars:
 #   CACHE_DIR     where to download cCRE/blacklist files (default: $OUT_DIR/cache)
 #   N_TOP         top-N CTCF cCREs by score (default: 10000)
-#   SEED          RNG seed for negative sampling (default: 2026)
+#   SEED          RNG seed for negative sampling (random mode only; default: 2026)
+#   NEGATIVE_MODE 'desert' (rank candidate bins by bulk CTCF coverage, strictest =
+#                 absolute deserts) or 'random' (legacy). Default: desert if
+#                 BULK_CTCF_BAM is set, else random.
+#   BULK_CTCF_BAM coordinate-sorted + indexed bulk CTCF ChIP-seq BAM. Required
+#                 for desert mode; per-bin coverage via `samtools bedcov`.
+#   SAMTOOLS      samtools executable (default: samtools; must provide `bedcov`)
 #   CONDA_ENV     conda env with R + Bioconductor (default: cistopic; FITS env works too)
 
 set -euo pipefail
@@ -38,6 +44,14 @@ fi
 CACHE_DIR="${CACHE_DIR:-${OUT_DIR}/cache}"
 N_TOP="${N_TOP:-10000}"
 SEED="${SEED:-2026}"
+SAMTOOLS="${SAMTOOLS:-samtools}"
+BULK_CTCF_BAM="${BULK_CTCF_BAM:-}"
+# Default to desert mode iff a bulk BAM is provided; else legacy random.
+if [[ -n "${BULK_CTCF_BAM}" ]]; then
+  NEGATIVE_MODE="${NEGATIVE_MODE:-desert}"
+else
+  NEGATIVE_MODE="${NEGATIVE_MODE:-random}"
+fi
 CONDA_ENV="${CONDA_ENV:-cistopic}"
 
 if [[ -f /etc/profile.d/modules.sh ]]; then
@@ -48,9 +62,29 @@ fi
 source "$(conda info --base)/etc/profile.d/conda.sh"
 conda activate "${CONDA_ENV}"
 
-Rscript "${DOWN_DIR}/prepare_pos_neg_bins.R" \
-  --mm-dir   "${MM_DIR}" \
-  --out-dir  "${OUT_DIR}" \
-  --cache-dir "${CACHE_DIR}" \
-  --n-top    "${N_TOP}" \
+if [[ "${NEGATIVE_MODE}" == "desert" ]]; then
+  if [[ -z "${BULK_CTCF_BAM}" ]]; then
+    echo "ERROR: NEGATIVE_MODE=desert requires BULK_CTCF_BAM=<bulk CTCF ChIP-seq BAM>" >&2
+    exit 1
+  fi
+  if ! command -v "${SAMTOOLS}" >/dev/null 2>&1; then
+    echo "ERROR: samtools ('${SAMTOOLS}') not on PATH in env ${CONDA_ENV}; set SAMTOOLS or load a module" >&2
+    exit 1
+  fi
+  echo "[$(date)] Negative mode: desert (bulk BAM=${BULK_CTCF_BAM})"
+else
+  echo "[$(date)] Negative mode: random (seed=${SEED})"
+fi
+
+RARGS=(
+  --mm-dir   "${MM_DIR}"
+  --out-dir  "${OUT_DIR}"
+  --cache-dir "${CACHE_DIR}"
+  --n-top    "${N_TOP}"
   --seed     "${SEED}"
+  --negative-mode "${NEGATIVE_MODE}"
+  --samtools "${SAMTOOLS}"
+)
+[[ -n "${BULK_CTCF_BAM}" ]] && RARGS+=(--bulk-ctcf-bam "${BULK_CTCF_BAM}")
+
+Rscript "${DOWN_DIR}/prepare_pos_neg_bins.R" "${RARGS[@]}"

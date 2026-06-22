@@ -35,6 +35,8 @@ suppressPackageStartupMessages({
   library(GenomicRanges)
 })
 
+`%+%` <- function(a, b) paste0(a, b)   # string concat for readable help text
+
 option_list <- list(
   make_option(c('--mm-dir'),  type = 'character',
               help = 'Directory with regions.tsv.gz produced by 01_export_rds_to_mm.R'),
@@ -45,7 +47,17 @@ option_list <- list(
   make_option(c('--n-top'), type = 'integer', default = 10000L,
               help = 'Top-N CTCF cCREs by score [default %default]'),
   make_option(c('--seed'), type = 'integer', default = 2026L,
-              help = 'RNG seed for the negative sampler [default %default]'),
+              help = 'RNG seed for the (random-mode) negative sampler [default %default]'),
+  make_option(c('--negative-mode'), type = 'character', default = 'desert',
+              help = "How to pick negatives: 'desert' (rank candidate bins by bulk "
+                     %+% "CTCF coverage, take the strictest = lowest-signal/farthest) or "
+                     %+% "'random' (legacy: uniform sample). 'desert' requires "
+                     %+% "--bulk-ctcf-bam; falls back to 'random' if absent. [default %default]"),
+  make_option(c('--bulk-ctcf-bam'), type = 'character', default = NULL,
+              help = 'Coordinate-sorted + indexed (.bai) bulk CTCF ChIP-seq BAM. Per-bin '
+                     %+% 'coverage is computed with `samtools bedcov`; lowest = most desert.'),
+  make_option(c('--samtools'), type = 'character', default = 'samtools',
+              help = 'samtools executable (default %default; needs >=1.x bedcov).'),
   make_option(c('--no-download'), action = 'store_true', default = FALSE,
               help = 'Fail instead of downloading missing input files.')
 )
@@ -202,12 +214,105 @@ ctcf_bound_gr <- GRanges(
 )
 hits_bound <- findOverlaps(CTCF_bins_gr, ctcf_bound_gr)
 nonneg_idx_local <- unique(queryHits(hits_bound))
+
+# STRICTER candidate pool: a desert bin must overlap NO cCRE at all (not just
+# CTCF-bound) -- i.e. it is non-regulatory genome, not merely "no called CTCF".
+# Union the 293 + 293T cCRE registries as the all-cCRE exclusion set.
+all_ccre <- rbind(bed_293[, c('chrom', 'start', 'end')],
+                  bed_293T[, c('chrom', 'start', 'end')])
+all_ccre_gr <- GRanges(
+  seqnames = all_ccre$chrom,
+  ranges   = IRanges(start = as.numeric(all_ccre$start) + 1,
+                     end   = as.numeric(all_ccre$end))
+)
+hits_ccre <- findOverlaps(CTCF_bins_gr, all_ccre_gr)
+ccre_idx_local <- unique(queryHits(hits_ccre))
+
 all_local <- seq_along(CTCF_bins_gr)
-potential_neg <- setdiff(all_local, nonneg_idx_local)
-set.seed(opt$seed)
-neg_idx_local <- sample(potential_neg, size = length(pos_idx_local))
-message(sprintf('[prep] Negative bin count: %d (sampled from %d candidates).',
-                length(neg_idx_local), length(potential_neg)))
+potential_neg <- setdiff(all_local, union(nonneg_idx_local, ccre_idx_local))
+message(sprintf('[prep] Candidate negatives (no cCRE AND no CTCF-bound cCRE): %d / %d post-blacklist',
+                length(potential_neg), length(all_local)))
+if (length(potential_neg) < length(pos_idx_local))
+  stop(sprintf('Only %d candidate negatives for %d positives; loosen the cCRE filter.',
+               length(potential_neg), length(pos_idx_local)))
+
+neg_mode <- tolower(opt$`negative-mode`)
+bam <- opt$`bulk-ctcf-bam`
+if (neg_mode == 'desert' && (is.null(bam) || !nzchar(bam))) {
+  warning('[prep] negative-mode=desert but --bulk-ctcf-bam not given; falling back to random.')
+  neg_mode <- 'random'
+}
+
+neg_signal <- rep(NA_real_, length(pos_idx_local))   # bulk CTCF coverage of chosen negs (desert mode)
+neg_dist   <- rep(NA_real_, length(pos_idx_local))   # distance to nearest CTCF-bound site
+
+if (neg_mode == 'desert') {
+  if (!file.exists(bam))
+    stop(sprintf('Bulk CTCF BAM not found: %s', bam))
+  if (!file.exists(paste0(bam, '.bai')) && !file.exists(sub('\\.bam$', '.bai', bam)))
+    stop(sprintf('BAM index (.bai) not found for %s -- run `samtools index %s`', bam, bam))
+
+  message('[prep] Desert mode: ranking ', length(potential_neg),
+          ' candidates by bulk CTCF coverage via samtools bedcov')
+  cand_gr <- CTCF_bins_gr[potential_neg]
+  # 0-based half-open BED for samtools; carry the local index in column 4.
+  cand_bed <- file.path(out_dir, '_neg_candidates.bed')
+  write.table(
+    data.frame(chrom = as.character(seqnames(cand_gr)),
+               start = start(cand_gr) - 1L,
+               end   = end(cand_gr),
+               name  = seq_along(potential_neg)),
+    cand_bed, sep = '\t', row.names = FALSE, col.names = FALSE, quote = FALSE)
+
+  # `samtools bedcov BAM BED` -> input BED columns + a trailing coverage column
+  # (sum of per-base read depth over each region). Order is preserved.
+  cov_lines <- system2(opt$samtools, c('bedcov', shQuote(cand_bed), shQuote(bam)),
+                       stdout = TRUE, stderr = '')
+  if (length(cov_lines) == 0L)
+    stop('samtools bedcov produced no output; check samtools + BAM.')
+  cov_df <- read.table(text = cov_lines, sep = '\t', stringsAsFactors = FALSE)
+  coverage <- as.numeric(cov_df[[ncol(cov_df)]])
+  if (length(coverage) != length(potential_neg))
+    stop(sprintf('bedcov row count %d != candidate count %d', length(coverage), length(potential_neg)))
+  if (sum(coverage, na.rm = TRUE) <= 0)
+    stop('All candidate coverage is 0 -- likely chrom-name mismatch between BAM header '
+         %+% "and bins (e.g. 'chr1' vs '1'). Check `samtools idxstats`.")
+
+  # Distance to nearest CTCF-bound site (secondary desertness criterion).
+  d2n <- distanceToNearest(cand_gr, ctcf_bound_gr, ignore.strand = TRUE)
+  dist_vec <- rep(Inf, length(cand_gr))
+  dist_vec[queryHits(d2n)] <- mcols(d2n)$distance
+
+  # Desertness ranking: PRIMARY lowest bulk CTCF coverage, TIEBREAK farthest
+  # from any CTCF-bound site. Deterministic (no seed). Take the strictest N.
+  ord <- order(coverage, -dist_vec)
+  sel <- ord[seq_len(length(pos_idx_local))]
+  neg_idx_local <- potential_neg[sel]
+  neg_signal    <- coverage[sel]
+  neg_dist      <- dist_vec[sel]
+  message(sprintf('[prep] Desert negatives: %d selected. Coverage of chosen: max=%.3g (cutoff), '
+                  %+% 'median=%.3g, min=%.3g; candidate coverage median=%.3g',
+                  length(neg_idx_local), max(neg_signal), median(neg_signal),
+                  min(neg_signal), median(coverage)))
+
+  # Diagnostic: full candidate ranking for inspection / threshold tuning.
+  rank_tsv <- file.path(out_dir, 'neg_desert_ranking.tsv')
+  diag <- data.frame(
+    bin_name   = bin_names[local_to_orig[potential_neg]],
+    bulk_ctcf_coverage = coverage,
+    dist_to_ctcf_bound = dist_vec,
+    selected   = potential_neg %in% neg_idx_local
+  )
+  diag <- diag[order(diag$bulk_ctcf_coverage, -diag$dist_to_ctcf_bound), ]
+  write.table(diag, rank_tsv, sep = '\t', row.names = FALSE, quote = FALSE)
+  message('[prep] Wrote candidate ranking ', rank_tsv)
+  file.remove(cand_bed)
+} else {
+  set.seed(opt$seed)
+  neg_idx_local <- sample(potential_neg, size = length(pos_idx_local))
+  message(sprintf('[prep] Negative bin count (random): %d (sampled from %d candidates).',
+                  length(neg_idx_local), length(potential_neg)))
+}
 
 # -- map back to original (mm) row indices, write TSV ------------------------
 to_orig0 <- function(local_1based) local_to_orig[local_1based] - 1L  # 0-based
@@ -235,6 +340,11 @@ meta <- list(
   n_pos            = length(pos_idx_local),
   n_neg            = length(neg_idx_local),
   n_top_cCRE       = opt$`n-top`,
+  negative_mode    = neg_mode,
+  bulk_ctcf_bam    = if (is.null(bam)) 'NA' else bam,
+  n_candidate_neg  = length(potential_neg),
+  neg_coverage_cutoff = if (neg_mode == 'desert') max(neg_signal) else -1,
+  neg_coverage_median = if (neg_mode == 'desert') as.numeric(median(neg_signal)) else -1,
   seed             = opt$seed,
   cache_dir        = cache,
   sources          = URLS
