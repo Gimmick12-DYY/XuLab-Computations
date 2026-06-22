@@ -30,7 +30,7 @@ fi
 cd "${ROOT_DIR}"
 
 CFG="${CFG:-${ROOT_DIR}/configs/default.yaml}"
-CONDA_ENV="${CONDA_ENV:-scbasset_tf}"
+CONDA_ENV="${CONDA_ENV:-scbasset}"
 RUN_INSPECT="${RUN_INSPECT:-0}"
 
 source "$(conda info --base)/etc/profile.d/conda.sh"

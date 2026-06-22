@@ -19,6 +19,11 @@ dependencies:
   - pyyaml
   - tqdm
   - openjdk>=17        # required by MALLET
+  # --- universal analysis tools (absorbs the former `data_prep` env) ----------
+  # This env is now the single CPU analysis env for cisTopic, the cascades, and
+  # ALL of downstream/ (peak_coverage, prepare_pos_neg_bins desert mode, etc.).
+  - samtools           # prepare_pos_neg_bins.R desert mode (samtools bedcov); faidx
+  - bedtools>=2.30     # downstream/peak_coverage.py (bedtools intersect)
   - r-base>=4.3
   - r-matrix
   - r-optparse
@@ -27,6 +32,9 @@ dependencies:
   - r-seurat           # only needed if the .rds turns out to be a Seurat object
   - pip:
       - git+https://github.com/aertslab/pycisTopic.git
+      # macs3 via pip (not conda) to dodge the conda wheels' RHEL9 / glibc 2.34+
+      # "undefined symbol: __log_finite" issue. Absorbed from the data_prep env.
+      - macs3>=3.0
   # MALLET itself is not a pip/conda package; download the binary separately:
   #   wget https://github.com/mimno/Mallet/releases/download/v202108/Mallet-202108-bin.tar.gz
   #   tar -xf Mallet-202108-bin.tar.gz

@@ -70,7 +70,7 @@ EXTSIZE="${EXTSIZE:-200}"
 Q_SWEEP="${Q_SWEEP:-}"
 BG_SCALE_SWEEP="${BG_SCALE_SWEEP:-}"
 EXTSIZE_SWEEP="${EXTSIZE_SWEEP:-}"
-CONDA_ENV="${CONDA_ENV:-data_prep}"
+CONDA_ENV="${CONDA_ENV:-cistopic}"
 
 # Peak-coverage-specific default subset: raw + cisTopic + PUscOpen + scBasset
 # and its cascades, omitting FITS / scOpen / MAGIC / cicero to keep MACS3

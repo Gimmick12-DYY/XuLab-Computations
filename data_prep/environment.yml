@@ -1,23 +1,21 @@
-name: data_prep
+# -----------------------------------------------------------------------------
+# MERGED INTO `cistopic`  (see cisTopic/environment.yml).
+#
+# The former `data_prep` env (macs3 + bedtools + samtools + R) is now a subset
+# of the `cistopic` env, which serves as the single universal CPU analysis env
+# for cisTopic, the cascades, and ALL of downstream/ (peak_coverage,
+# prepare_pos_neg_bins desert mode, build_peak_matrix, ...). This removes the
+# recurring "tool X not on PATH in this env" breakage.
+#
+# Create that env instead:
+#     conda env create -f cisTopic/environment.yml      # name: cistopic
+#
+# Every sbatch that used to default to CONDA_ENV=data_prep now defaults to
+# cistopic. This file is kept only as a signpost (not used to build anything).
+# -----------------------------------------------------------------------------
+name: cistopic
 channels:
   - conda-forge
   - bioconda
 dependencies:
   - python=3.11
-  - pip
-  - numpy
-  - scipy
-  - pandas
-  - pyyaml
-  - bedtools>=2.30
-  - pip:
-    - macs3>=3.0
-  - samtools
-  - r-base>=4.3
-  - r-matrix
-  - r-optparse
-# Notes:
-#   - macs3 is the next-gen Python rewrite of MACS2: faster, better-maintained,
-#     same CLI for `callpeak`. Installed via pip to dodge the conda-built
-#     wheels' RHEL9 / glibc 2.34+ "undefined symbol: __log_finite" issue.
-#   - bedtools intersect is the only bedtools subcommand used; any v2.x is fine.

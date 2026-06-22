@@ -14,7 +14,7 @@
 set -euo pipefail
 
 TF="${TF:-CTCF}"
-CONDA_ENV="${CONDA_ENV:-data_prep}"
+CONDA_ENV="${CONDA_ENV:-cistopic}"
 
 SUBMIT_DIR="${SLURM_SUBMIT_DIR:-$(pwd)}"
 if [[ -d "${SUBMIT_DIR}/data_prep" ]]; then

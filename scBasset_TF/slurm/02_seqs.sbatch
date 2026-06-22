@@ -23,7 +23,7 @@ fi
 cd "${ROOT_DIR}"
 
 CFG="${CFG:-${ROOT_DIR}/configs/default.yaml}"
-CONDA_ENV="${CONDA_ENV:-scbasset_tf}"
+CONDA_ENV="${CONDA_ENV:-scbasset}"
 
 source "$(conda info --base)/etc/profile.d/conda.sh"
 conda activate "${CONDA_ENV}"

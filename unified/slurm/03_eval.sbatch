@@ -13,7 +13,8 @@
 # counts and AUROC right after impute -- no need to run the full-set
 # downstream/slurm/peak_coverage.sbatch every iteration.
 #
-# Needs macs3 + bedtools -> the data_prep env (NOT the GPU `unified` env). This
+# Needs macs3 + bedtools -> the `cistopic` analysis env (NOT the GPU `unified`
+# env; macs3/bedtools/samtools were merged into cistopic from data_prep). This
 # is a CPU-only job: 99_full_pipeline.sbatch auto-submits it with an afterok
 # dependency (RUN_EVAL=1, the default) so the GPU is freed after impute. Or run
 # it standalone any time the impute matrix exists:
@@ -41,7 +42,7 @@ XULAB_ROOT="$(cd "${ROOT_DIR}/.." && pwd)"
 cd "${ROOT_DIR}"
 
 CFG="${CFG:-${ROOT_DIR}/configs/default.yaml}"
-CONDA_ENV_EVAL="${CONDA_ENV_EVAL:-data_prep}"
+CONDA_ENV_EVAL="${CONDA_ENV_EVAL:-cistopic}"
 
 source "$(conda info --base)/etc/profile.d/conda.sh"
 conda activate "${CONDA_ENV_EVAL}"
