@@ -15,12 +15,16 @@
 #   CACHE_DIR     where to download cCRE/blacklist files (default: $OUT_DIR/cache)
 #   N_TOP         top-N CTCF cCREs by score (default: 10000)
 #   SEED          RNG seed for negative sampling (random mode only; default: 2026)
-#   NEGATIVE_MODE 'desert' (rank candidate bins by bulk CTCF coverage, strictest =
-#                 absolute deserts) or 'random' (legacy). Default: desert if
+#   NEGATIVE_MODE 'all_candidates' (use the ENTIRE no-cCRE candidate pool ->
+#                 genome-wide FP rate; recommended), 'desert' (rank by bulk CTCF
+#                 coverage, take the strictest -- WARNING: the extreme tail is
+#                 dead chromatin where every method scores 0, uninformative), or
+#                 'random' (legacy: matched to #positives). Default: desert if
 #                 BULK_CTCF_BAM is set, else random.
+#   MAX_NEG       cap on #negatives in all_candidates mode (0 = no cap; default 0)
 #   BULK_CTCF_BAM coordinate-sorted + indexed bulk CTCF ChIP-seq BAM. Required
-#                 for desert mode; per-bin coverage via `samtools bedcov`.
-#   SAMTOOLS      samtools executable (default: samtools; must provide `bedcov`)
+#                 for desert mode only; per-bin coverage via `samtools bedcov`.
+#   SAMTOOLS      samtools executable (default: samtools; desert mode only)
 #   CONDA_ENV     conda env with R + Bioconductor (default: cistopic; FITS env works too)
 
 set -euo pipefail
@@ -44,6 +48,12 @@ fi
 CACHE_DIR="${CACHE_DIR:-${OUT_DIR}/cache}"
 N_TOP="${N_TOP:-10000}"
 SEED="${SEED:-2026}"
+MAX_NEG="${MAX_NEG:-0}"
+# Balanced-set targets (bin counts). N_POS>0 selects top-N positive bins by CTCF
+# z-score; N_NEG>0 random-samples N_NEG negatives from the candidate pool. Set
+# both equal for a balanced benchmark, e.g. N_POS=100000 N_NEG=100000.
+N_POS="${N_POS:-0}"
+N_NEG="${N_NEG:-0}"
 SAMTOOLS="${SAMTOOLS:-samtools}"
 BULK_CTCF_BAM="${BULK_CTCF_BAM:-}"
 # Default to desert mode iff a bulk BAM is provided; else legacy random.
@@ -83,6 +93,8 @@ if [[ "${NEGATIVE_MODE}" == "desert" ]]; then
   fi
   echo "[$(date)] using samtools: $(command -v "${SAMTOOLS}")"
   echo "[$(date)] Negative mode: desert (bulk BAM=${BULK_CTCF_BAM})"
+elif [[ "${NEGATIVE_MODE}" == "all_candidates" || "${NEGATIVE_MODE}" == "all" ]]; then
+  echo "[$(date)] Negative mode: all_candidates (max_neg=${MAX_NEG})"
 else
   echo "[$(date)] Negative mode: random (seed=${SEED})"
 fi
@@ -93,6 +105,9 @@ RARGS=(
   --cache-dir "${CACHE_DIR}"
   --n-top    "${N_TOP}"
   --seed     "${SEED}"
+  --max-neg  "${MAX_NEG}"
+  --n-pos    "${N_POS}"
+  --n-neg    "${N_NEG}"
   --negative-mode "${NEGATIVE_MODE}"
   --samtools "${SAMTOOLS}"
 )

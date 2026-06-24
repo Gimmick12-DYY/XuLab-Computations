@@ -49,10 +49,28 @@ option_list <- list(
   make_option(c('--seed'), type = 'integer', default = 2026L,
               help = 'RNG seed for the (random-mode) negative sampler [default %default]'),
   make_option(c('--negative-mode'), type = 'character', default = 'desert',
-              help = "How to pick negatives: 'desert' (rank candidate bins by bulk "
-                     %+% "CTCF coverage, take the strictest = lowest-signal/farthest) or "
-                     %+% "'random' (legacy: uniform sample). 'desert' requires "
-                     %+% "--bulk-ctcf-bam; falls back to 'random' if absent. [default %default]"),
+              help = "How to pick negatives from the candidate pool (post-blacklist bins "
+                     %+% "overlapping NO cCRE): 'all_candidates' (use the ENTIRE pool -> "
+                     %+% "genome-wide false-positive rate, the discriminating metric), "
+                     %+% "'desert' (rank by bulk CTCF coverage, take the strictest = "
+                     %+% "lowest-signal/farthest; WARNING: the extreme tail is dead/closed "
+                     %+% "chromatin where every method calls 0 peaks -> uninformative), or "
+                     %+% "'random' (legacy: uniform sample matched to #positives). 'desert' "
+                     %+% "requires --bulk-ctcf-bam. [default %default]"),
+  make_option(c('--max-neg'), type = 'double', default = 0,
+              help = 'Cap on the number of negatives in all_candidates mode (0 = no cap, '
+                     %+% 'use every candidate). If the pool exceeds this, a random subset '
+                     %+% 'of this size is taken (seed = --seed). [default %default]'),
+  make_option(c('--n-pos'), type = 'double', default = 0,
+              help = 'Target number of POSITIVE bins. >0 selects the top-N bins by their '
+                     %+% 'best overlapping CTCF z-score (high-confidence first), ignoring '
+                     %+% '--n-top. 0 = legacy (bins overlapping the top --n-top cCREs). '
+                     %+% '[default %default]'),
+  make_option(c('--n-neg'), type = 'double', default = 0,
+              help = 'Target number of NEGATIVE bins. >0 takes a random sample of this size '
+                     %+% 'from the no-cCRE candidate pool (seed = --seed), overriding '
+                     %+% '--negative-mode. Use with --n-pos for a balanced set (e.g. '
+                     %+% '100k/100k). 0 = use --negative-mode. [default %default]'),
   make_option(c('--bulk-ctcf-bam'), type = 'character', default = NULL,
               help = 'Coordinate-sorted + indexed (.bai) bulk CTCF ChIP-seq BAM. Per-bin '
                      %+% 'coverage is computed with `samtools bedcov`; lowest = most desert.'),
@@ -187,20 +205,46 @@ bed_293T <- read.table(LOCAL$cCRE_293T_bed, sep = '\t', stringsAsFactors = FALSE
   dplyr::rename(chrom = V1, start = V2, end = V3, cCRE = V4, class = V10)
 bed_293T_CA <- bed_293T %>% filter(grepl('CA', class))
 
-bed_top <- bed_293_CTCF %>%
-  filter(cCRE %in% bed_293T_CA$cCRE) %>%
-  arrange(desc(score)) %>%
-  head(opt$`n-top`)
-message(sprintf('[prep] Top-%d CTCF cCREs after 293T-CA filter: %d rows.',
-                opt$`n-top`, nrow(bed_top)))
+# CTCF cCREs (293 CTCF class) that are accessible in 293T, with z-scores.
+bed_ctcf_ca <- bed_293_CTCF %>%
+  filter(cCRE %in% bed_293T_CA$cCRE, !is.na(score))
 
-ctcf_top_gr <- GRanges(
-  seqnames = bed_top[, 1],
-  ranges   = IRanges(start = as.numeric(bed_top[, 2]),
-                     end   = as.numeric(bed_top[, 3]))
-)
-hits_top <- findOverlaps(CTCF_bins_gr, ctcf_top_gr)
-pos_idx_local <- unique(queryHits(hits_top))
+n_pos_target <- as.integer(opt$`n-pos`)
+if (n_pos_target > 0) {
+  # Rank POSITIVE BINS directly by their best (max) overlapping CTCF z-score and
+  # take the top n_pos -- high-confidence sites first. This decouples the
+  # positive count from --n-top so we can build a large balanced set (e.g. 100k).
+  ctcf_all_gr <- GRanges(
+    seqnames = bed_ctcf_ca$chrom,
+    ranges   = IRanges(start = as.numeric(bed_ctcf_ca$start),
+                       end   = as.numeric(bed_ctcf_ca$end))
+  )
+  mcols(ctcf_all_gr)$score <- as.numeric(bed_ctcf_ca$score)
+  hits_all <- findOverlaps(CTCF_bins_gr, ctcf_all_gr)
+  qh <- queryHits(hits_all)
+  sc <- mcols(ctcf_all_gr)$score[subjectHits(hits_all)]
+  bin_best_z <- tapply(sc, qh, max)                 # per-bin max z-score
+  pos_bins_all <- as.integer(names(bin_best_z))
+  ord <- order(as.numeric(bin_best_z), decreasing = TRUE)
+  take <- min(n_pos_target, length(pos_bins_all))
+  if (take < n_pos_target)
+    warning(sprintf('[prep] only %d positive bins available; requested %d', take, n_pos_target))
+  pos_idx_local <- pos_bins_all[ord[seq_len(take)]]
+  message(sprintf('[prep] Positive bins (top %d by per-bin CTCF z-score): %d of %d candidate bins.',
+                  n_pos_target, length(pos_idx_local), length(pos_bins_all)))
+} else {
+  # Legacy: bins overlapping the top --n-top CTCF cCREs by z-score.
+  bed_top <- bed_ctcf_ca %>% arrange(desc(score)) %>% head(opt$`n-top`)
+  message(sprintf('[prep] Top-%d CTCF cCREs after 293T-CA filter: %d rows.',
+                  opt$`n-top`, nrow(bed_top)))
+  ctcf_top_gr <- GRanges(
+    seqnames = bed_top[, 1],
+    ranges   = IRanges(start = as.numeric(bed_top[, 2]),
+                       end   = as.numeric(bed_top[, 3]))
+  )
+  hits_top <- findOverlaps(CTCF_bins_gr, ctcf_top_gr)
+  pos_idx_local <- unique(queryHits(hits_top))
+}
 message(sprintf('[prep] Positive bin count (post-blacklist): %d', length(pos_idx_local)))
 
 # -- negative set ------------------------------------------------------------
@@ -246,7 +290,22 @@ if (neg_mode == 'desert' && (is.null(bam) || !nzchar(bam))) {
 neg_signal <- rep(NA_real_, length(pos_idx_local))   # bulk CTCF coverage of chosen negs (desert mode)
 neg_dist   <- rep(NA_real_, length(pos_idx_local))   # distance to nearest CTCF-bound site
 
-if (neg_mode == 'desert') {
+n_neg_target <- as.integer(opt$`n-neg`)
+if (n_neg_target > 0) {
+  # Explicit negative count: random sample from the no-cCRE candidate pool.
+  # Overrides --negative-mode so a balanced set (e.g. --n-pos 100k --n-neg 100k)
+  # is one call. Representative (not the dead-desert extreme), so neg coverage
+  # stays method-dependent and nonzero.
+  set.seed(opt$seed)
+  take <- min(n_neg_target, length(potential_neg))
+  if (take < n_neg_target)
+    warning(sprintf('[prep] only %d candidate negatives available; requested %d',
+                    take, n_neg_target))
+  neg_idx_local <- sample(potential_neg, size = take)
+  neg_mode <- sprintf('random_n%d', n_neg_target)
+  message(sprintf('[prep] Negative bins (random sample, --n-neg): %d of %d candidates.',
+                  length(neg_idx_local), length(potential_neg)))
+} else if (neg_mode == 'desert') {
   if (!file.exists(bam))
     stop(sprintf('Bulk CTCF BAM not found: %s', bam))
   if (!file.exists(paste0(bam, '.bai')) && !file.exists(sub('\\.bam$', '.bai', bam)))
@@ -307,6 +366,28 @@ if (neg_mode == 'desert') {
   write.table(diag, rank_tsv, sep = '\t', row.names = FALSE, quote = FALSE)
   message('[prep] Wrote candidate ranking ', rank_tsv)
   file.remove(cand_bed)
+} else if (neg_mode %in% c('all_candidates', 'all')) {
+  # Use the ENTIRE candidate pool as negatives (no ranking, no extreme-tail
+  # selection). The pool spans the whole non-cCRE genome -- dead deserts AND
+  # accessible-but-unbound regions -- so neg coverage becomes a method-dependent
+  # genome-wide FALSE-POSITIVE RATE again (the 'absolute desert' tail collapsed
+  # it to 0 for every method). Positives stay the cCRE-derived set; classes are
+  # intentionally imbalanced, which is fine -- coverage is a per-class fraction
+  # and AUROC (Mann-Whitney) is imbalance-robust.
+  neg_idx_local <- potential_neg
+  cap <- as.numeric(opt$`max-neg`)
+  if (cap > 0 && length(neg_idx_local) > cap) {
+    set.seed(opt$seed)
+    neg_idx_local <- sample(neg_idx_local, size = as.integer(cap))
+    message(sprintf('[prep] all_candidates: capped to %d of %d candidates (--max-neg).',
+                    length(neg_idx_local), length(potential_neg)))
+  } else {
+    message(sprintf('[prep] all_candidates: using all %d candidates as negatives.',
+                    length(neg_idx_local)))
+  }
+  message(sprintf('[prep] Class sizes: %d positives, %d negatives (ratio 1:%.1f).',
+                  length(pos_idx_local), length(neg_idx_local),
+                  length(neg_idx_local) / max(length(pos_idx_local), 1)))
 } else {
   set.seed(opt$seed)
   neg_idx_local <- sample(potential_neg, size = length(pos_idx_local))
@@ -340,6 +421,8 @@ meta <- list(
   n_pos            = length(pos_idx_local),
   n_neg            = length(neg_idx_local),
   n_top_cCRE       = opt$`n-top`,
+  n_pos_target     = n_pos_target,
+  n_neg_target     = n_neg_target,
   negative_mode    = neg_mode,
   bulk_ctcf_bam    = if (is.null(bam)) 'NA' else bam,
   n_candidate_neg  = length(potential_neg),
