@@ -164,6 +164,6 @@ impute:
   threshold_sample_size: 4000000
 
   # Output convention
-  binarize_output: false        # 1 at every above-threshold entry
-  keep_raw:        false        # union with raw via element-wise max
+  binarize_output: true        # 1 at every above-threshold entry
+  keep_raw:        true        # union with raw via element-wise max
   weight:          1.0
