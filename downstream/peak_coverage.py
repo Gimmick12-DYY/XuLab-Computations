@@ -728,7 +728,21 @@ def main() -> int:
     ap.add_argument("--emit-pairs", action="store_true",
                     help="Also emit per-pipeline overlap TSV (bedtools -wo): "
                          "one row per (ref bin, called peak) pair with overlap bp.")
+    ap.add_argument("--reuse-peaks-from", type=Path, default=None,
+                    help="Skip synthetic-BED generation and MACS3; instead reuse the existing "
+                         "<label>/<label>_called_peaks.bed under this directory. Peaks are a "
+                         "property of the imputed matrix, NOT of the pos/neg labels, so they can "
+                         "be reused when only the reference regions change. The matrix is still "
+                         "loaded to recompute the signal ceiling + AUROC, and bedtools recomputes "
+                         "the pos/neg in-peaks coverage against the new reference. Single-combo "
+                         "only (no q/bg/extsize sweep).")
     args = ap.parse_args()
+
+    if args.reuse_peaks_from is not None:
+        if any((args.q_sweep, args.bg_scale_sweep, args.extsize_sweep)):
+            sys.exit("--reuse-peaks-from is incompatible with sweeps (peaks are reused as-is).")
+        if not args.reuse_peaks_from.is_dir():
+            sys.exit(f"--reuse-peaks-from not a directory: {args.reuse_peaks_from}")
 
     for tool in ("macs3", "bedtools"):
         if shutil.which(tool) is None:
@@ -836,36 +850,51 @@ def main() -> int:
                      args.normalize_signal, float(np.median(_fz)),
                      float(np.quantile(_fz, 0.9)), float(_fz.max()))
 
-        # 1. Synthetic BED -- ONCE per pipeline (independent of q/bg_scale/extsize)
-        bed_path = pipe_dir / "synthetic.bed"
-        n_frag, scale, downscale = generate_synthetic_bed(
-            frag_signal, regions, bed_path,
-            spread_bp=args.spread_bp,
-            ref_quantile=args.ref_quantile,
-            frags_at_ref=args.frags_at_ref,
-            max_frags_per_bin=args.max_frags_per_bin,
-            max_total_fragments=args.max_total_fragments,
-        )
-        bar_signal = (float(np.quantile(frag_signal[frag_signal > 0], args.bg_quantile))
-                      if args.bg_quantile and args.bg_quantile > 0 else 0.0)
+        # 1. Synthetic BED -- ONCE per pipeline (independent of q/bg_scale/extsize).
+        # Skipped entirely when reusing peaks from a prior run (peaks depend only
+        # on the matrix, not on which bins are labeled pos/neg).
+        reuse = args.reuse_peaks_from is not None
+        if not reuse:
+            bed_path = pipe_dir / "synthetic.bed"
+            n_frag, scale, downscale = generate_synthetic_bed(
+                frag_signal, regions, bed_path,
+                spread_bp=args.spread_bp,
+                ref_quantile=args.ref_quantile,
+                frags_at_ref=args.frags_at_ref,
+                max_frags_per_bin=args.max_frags_per_bin,
+                max_total_fragments=args.max_total_fragments,
+            )
+            bar_signal = (float(np.quantile(frag_signal[frag_signal > 0], args.bg_quantile))
+                          if args.bg_quantile and args.bg_quantile > 0 else 0.0)
+        else:
+            n_frag, scale, downscale, bar_signal = 0, 1.0, 1.0, 0.0
 
         # 2. Sweep MACS3 over the (q, bg_scale, extsize) grid, reusing the BED.
         for (q, bg_scale, extsize) in combos:
-            bar_frags = bar_frags_for(bar_signal, scale, downscale,
-                                      args.max_frags_per_bin, bg_scale)
-            g_eff = effective_genome_size(n_frag, extsize, bar_frags)
             tag = "" if not sweeping else f"_q{q:g}_bg{bg_scale:g}_ext{extsize}"
-            if sweeping:
-                log.info("  [combo q=%g bg_scale=%g extsize=%d] bar_frags=%d g_eff=%s",
-                         q, bg_scale, extsize, bar_frags, g_eff)
+            if reuse:
+                src_bed = args.reuse_peaks_from / label / f"{label}_called_peaks{tag}.bed"
+                if not src_bed.is_file():
+                    log.warning("  reuse: missing %s; skipping pipeline", src_bed)
+                    break
+                peaks = load_called_peaks(src_bed)
+                bar_frags, g_eff, narrow = 0, "reused", src_bed
+                log.info("  reused %d peaks from %s", len(peaks), src_bed)
+            else:
+                bar_frags = bar_frags_for(bar_signal, scale, downscale,
+                                          args.max_frags_per_bin, bg_scale)
+                g_eff = effective_genome_size(n_frag, extsize, bar_frags)
+                if sweeping:
+                    log.info("  [combo q=%g bg_scale=%g extsize=%d] bar_frags=%d g_eff=%s",
+                             q, bg_scale, extsize, bar_frags, g_eff)
 
-            narrow = run_macs3(
-                bed_path, pipe_dir, name=f"{label}_pseudo{tag}",
-                qvalue=q, extsize=extsize, nolambda=args.nolambda,
-                effective_genome_size=g_eff,
-            )
-            peaks = load_called_peaks(narrow)
-            log.info("  called peaks: %d", len(peaks))
+                narrow = run_macs3(
+                    bed_path, pipe_dir, name=f"{label}_pseudo{tag}",
+                    qvalue=q, extsize=extsize, nolambda=args.nolambda,
+                    effective_genome_size=g_eff,
+                )
+                peaks = load_called_peaks(narrow)
+                log.info("  called peaks: %d", len(peaks))
 
             bed_called = pipe_dir / f"{label}_called_peaks{tag}.bed"
             sorted_peaks = sorted(peaks, key=lambda r: (r[0], r[1]))

@@ -131,6 +131,10 @@ CMD=(
 [[ -n "${Q_SWEEP}" ]]        && CMD+=(--q-sweep "${Q_SWEEP}")
 [[ -n "${BG_SCALE_SWEEP}" ]] && CMD+=(--bg-scale-sweep "${BG_SCALE_SWEEP}")
 [[ -n "${EXTSIZE_SWEEP}" ]]  && CMD+=(--extsize-sweep "${EXTSIZE_SWEEP}")
+# REUSE_PEAKS_FROM: skip MACS and reuse existing <label>/<label>_called_peaks.bed
+# from this dir (peaks are independent of pos/neg labels). Only the reference
+# regions change -> recompute coverage/ceiling/AUROC against the new BINS_TSV.
+[[ -n "${REUSE_PEAKS_FROM:-}" ]] && CMD+=(--reuse-peaks-from "${REUSE_PEAKS_FROM}")
 for pair in ${INPUTS}; do
   CMD+=(--input "${pair}")
 done
