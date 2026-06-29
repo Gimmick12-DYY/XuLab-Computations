@@ -1,0 +1,169 @@
+# -----------------------------------------------------------------------------
+# Default configuration for the `unified` model.
+#
+# The model jointly trains all five submodules (sequence encoder, bin-context,
+# bilinear head, gate MLP, cell bank) against a focal loss with negative
+# sampling. No external priors, no bulk annotations, no pretrained weights.
+#
+# Pipeline:
+#   00_ingest.py     mm/ + hg38.fa -> seqs.h5 (one-hot 768bp per bin)
+#                                  + matrix.npz (binary, aligned)
+#                                  + chrom_ranges.json (per-chrom indices)
+#   01_train.py      GPU. Chunked per-chrom training, focal loss.
+#   02_impute.py     GPU. Forward over all bins, threshold, write CSR.
+# -----------------------------------------------------------------------------
+
+paths:
+  # Single-TF CTCF 1 kb bin matrix (same .rds as scBasset / cisTopic / PUscOpen).
+  input_rds:   /work/users/d/y/dyy12/XuLab/data/ZBTB7A_bin1000_mtx.rds
+  work_dir:    /work/users/d/y/dyy12/XuLab/unified/work/zbtb7a
+
+  # hg38 FASTA + .fai (reuse scBasset's cache).
+  genome_fa:   /work/users/d/y/dyy12/XuLab/downstream/cache/hg38.fa
+
+  # resolve_paths() also creates under work_dir:
+  #   mm/      <- 01_export_rds_to_mm.R (RDS -> matrix.mtx.gz + regions + barcodes)
+  #   seqs/    <- 00_ingest.py (seqs.h5, matrix.npz, chrom_ranges.json)
+  #   model/   <- 01_train.py (ckpt.pt)
+  #   impute/  <- 02_impute.py (matrix_csr.npz, regions.tsv, barcodes.tsv, meta.json)
+  #
+  # Downstream comparators:
+  #   --input unified=/work/.../unified/work/ctcf/impute
+  #   (same schema as scBasset / cisTopic / PUscOpen impute dirs)
+
+# -----------------------------------------------------------------------------
+# Step 00: data prep
+# -----------------------------------------------------------------------------
+seqs:
+  # 768 bp TF-binding-focused window. Adaptive enough for any TF; narrower than
+  # scBasset's 1344 (which was for accessibility).
+  seq_length: 768
+
+  # Drop bins whose window contains > max_n_frac uppercase Ns.
+  max_n_frac: 0.10
+
+  # Autosomes + chrX/Y by default.
+  chrom_whitelist: [chr1, chr2, chr3, chr4, chr5, chr6, chr7, chr8, chr9, chr10,
+                    chr11, chr12, chr13, chr14, chr15, chr16, chr17, chr18,
+                    chr19, chr20, chr21, chr22, chrX, chrY]
+
+  # ENCODE hg38 blacklist (auto-detected under downstream/cache/).
+  exclude_blacklist: true
+  blacklist_bed_gz:  null
+
+  # Minimum cells with raw > 0 for a bin to enter training (predictions still
+  # run on every kept bin).
+  min_cells_per_peak_train: 2
+
+# -----------------------------------------------------------------------------
+# Step 01: model
+# -----------------------------------------------------------------------------
+model:
+  # Embedding dim. Carries the bin's sequence representation AND its
+  # gating signal -- bigger than scBasset's 32 because it does two jobs.
+  latent_dim: 64
+
+  # Sequence encoder (Basset-family conv tower)
+  stem_filters:    288
+  stem_kernel:     17
+  stem_pool:       3
+  tower_channels:  [288, 323, 363, 407]    # 4 stages, each w/ MaxPool(2)
+  tower_kernel:    5
+  head_filters:    256
+  dropout:         0.20
+
+  # Bin-axis multi-scale context (the irreducibly new submodule).
+  # Effective genomic context per branch (in kb, assuming 1 kb bins):
+  #   dilation 1  -> kernel 3 = 3 kb   (sharp / promoter)
+  #   dilation 4  -> kernel 3 with d=4 = 9 kb (enhancer-class)
+  #   dilation 16 -> kernel 3 with d=16 = 33 kb (broad-domain)
+  context_dilations: [1, 4, 16]
+  context_kernel:    3
+  alpha_init:        0.1
+
+  # Gate MLP applied to concat[ẽ_r, u_c] -> 1
+  gate_hidden:    [128, 64, 32]
+  gate_use_concat: true   # concat([ẽ_r ; u_c]); false would use bilinear pool
+
+# -----------------------------------------------------------------------------
+# Step 01: training
+# -----------------------------------------------------------------------------
+train:
+  # Loss (focal) -- TF-binding matrices are ~99% zero so plain BCE collapses.
+  focal_gamma:  2.0
+  focal_alpha:  0.25
+
+  # Negative sampling -- dense BCE over R*C ~ 1e9 entries is intractable.
+  # We sample uniformly within the chrom whitelist (no density weighting; that
+  # was a CTCF-specific assumption).
+  n_neg_per_pos: 5
+
+  # Hard-negative mining (Tier-1A) -- DISABLED (hard_negative_frac: 0.0).
+  #
+  # This task has no ground-truth negatives, and the model's PURPOSE is to
+  # predict positives at unlabeled locations, so every manufactured "confident
+  # negative" is either:
+  #   - a DROPOUT of an observed site (unrestricted mining -> model collapses;
+  #     measured pos.cov 82.6->22.5, AUROC 0.77->0.60), or
+  #   - a DISCOVERY the model should be making (mining globally-silent bins
+  #     punishes the Basset CNN's core ability to create signal at zero bins).
+  # The hardest (highest-scoring) negatives are precisely those two cases, so
+  # hard-negative mining is the wrong tool here. Kept in code (frac=0 -> exact
+  # original uniform behavior) only as an ablation toggle; do NOT raise frac for
+  # CTCF. The safe AUROC levers are positive/sequence-side (motif-aware encoder)
+  # and the label-free pairwise ranking loss.
+  hard_negative_frac: 0.0       # 0 = pure uniform negatives (the only safe setting here)
+  hard_pool_mult:     4         # (unused at frac=0)
+  hard_pool_cap:      2000000   # (unused at frac=0)
+  hard_negative_inactive_thresh: 0   # (unused at frac=0)
+
+  # Pairwise ranking loss (AUC surrogate), ADDED to the focal loss. Ranks
+  # observed sites above uniform draws; ranking_grade_by_count additionally
+  # weights each positive by log1p(its global observation count) so strongly-
+  # observed sites are pushed highest. Purely data-internal -- no priors, no
+  # manufactured confident negatives -- and optimizes AUROC directly. The
+  # uniform negatives stay diluted (not selected), so no dropout/discovery
+  # amplification. 0.0 -> focal only (original behavior).
+  ranking_loss_weight:    1.0
+  ranking_grade_by_count: true
+
+  # Reverse-complement augmentation: with this probability each bin's sequence
+  # window is replaced by its reverse complement before encoding. A universal
+  # double-stranded-DNA symmetry (NOT a prior) -- helps the from-scratch CNN
+  # learn strand-invariant features and generalizes to any TF. TRAIN only.
+  rc_augment_prob: 0.5
+
+  # Chunked training: process one chromosome at a time, chunked into
+  # `chunk_size` contiguous bins per step. Bin-context conv runs over the
+  # full chunk so within-chunk neighbors carry information.
+  chunk_size: 4096
+
+  # Optimizer
+  learning_rate: 1.0e-3
+  weight_decay:  1.0e-5
+  l1_alpha:      1.0e-4        # L1 on the per-channel residual gain
+
+  # Schedule
+  epochs:        50
+  patience:      10            # early stop on val loss
+  val_frac:      0.10          # held-out *bin* fraction (per chrom)
+  random_seed:   555
+
+  # I/O
+  cache_embeddings: false      # if true, cache ẽ_r between epochs (memory hit)
+  log_every:       50          # steps
+
+# -----------------------------------------------------------------------------
+# Step 02: impute
+# -----------------------------------------------------------------------------
+impute:
+  batch_chunks_per_chrom: null  # null = single pass per chrom; else chunked
+
+  # Threshold mode -- same vocabulary as scBasset / cisTopic / PUscOpen.
+  threshold_mode: sparsity_match:3
+  threshold_sample_size: 4000000
+
+  # Output convention
+  binarize_output: true        # 1 at every above-threshold entry
+  keep_raw:        true        # union with raw via element-wise max
+  weight:          1.0
