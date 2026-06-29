@@ -70,13 +70,11 @@ EXCLUDE_FLANK_BP="${EXCLUDE_FLANK_BP:-0}"
 #   NEG_MAX_COVERAGE=0              -> keep only zero-bulk-read bins (needs BULK_BAM)
 NEG_UNIVERSE="${NEG_UNIVERSE:-non_ccre}"
 NEG_MAX_COVERAGE="${NEG_MAX_COVERAGE:--1}"
-# Default negative mode: desert iff a bulk BAM is given, else random (random
-# matches #negatives to #positives -> a balanced set with no BAM needed).
-if [[ -n "${BULK_BAM}" ]]; then
-  NEGATIVE_MODE="${NEGATIVE_MODE:-desert}"
-else
-  NEGATIVE_MODE="${NEGATIVE_MODE:-random}"
-fi
+# Default negative mode is always 'random' (matches #negatives to #positives).
+# A BULK_BAM no longer forces 'desert' -- the BAM is also used by the coverage
+# filter (NEG_MAX_COVERAGE) with random selection. Set NEGATIVE_MODE=desert
+# explicitly if you want desert ranking.
+NEGATIVE_MODE="${NEGATIVE_MODE:-random}"
 CONDA_ENV="${CONDA_ENV:-cistopic}"
 
 if [[ -f /etc/profile.d/modules.sh ]]; then
