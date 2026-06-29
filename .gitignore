@@ -33,6 +33,10 @@ downstream/peak_coverage_ctcf_12kpos100kneg_qsweep
 downstream/peak_coverage_ctcf_old12k
 downstream/peak_coverage_unified_old12k
 downstream/peak_coverage_unified_12kpos100kneg
+downstream/peak_coverage_znf768
+downstream/peak_coverage_nfya
+downstream/bins_nfya
+downstream/bins_znf768
 .DS_Store
 *.pyc
 *.pkl
