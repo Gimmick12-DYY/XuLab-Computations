@@ -55,9 +55,19 @@ MAX_NEG="${MAX_NEG:-0}"
 N_POS="${N_POS:-0}"
 N_NEG="${N_NEG:-0}"
 SAMTOOLS="${SAMTOOLS:-samtools}"
-BULK_CTCF_BAM="${BULK_CTCF_BAM:-}"
-# Default to desert mode iff a bulk BAM is provided; else legacy random.
-if [[ -n "${BULK_CTCF_BAM}" ]]; then
+# Bulk BAM for desert ranking. BULK_BAM is the TF-agnostic name; BULK_CTCF_BAM
+# kept for back-compat. Either works.
+BULK_BAM="${BULK_BAM:-${BULK_CTCF_BAM:-}}"
+# GENERIC (non-CTCF) mode: define positives from a TF ChIP-seq narrowPeak instead
+# of CTCF SCREEN cCREs. Set TF_PEAKS_BED to switch on. PEAK_SIGNAL_COL ranks
+# positive bins (narrowPeak col 7 = signalValue); EXCLUDE_FLANK_BP drops bins
+# within N bp of a peak from the negative pool.
+TF_PEAKS_BED="${TF_PEAKS_BED:-}"
+PEAK_SIGNAL_COL="${PEAK_SIGNAL_COL:-7}"
+EXCLUDE_FLANK_BP="${EXCLUDE_FLANK_BP:-0}"
+# Default negative mode: desert iff a bulk BAM is given, else random (random
+# matches #negatives to #positives -> a balanced set with no BAM needed).
+if [[ -n "${BULK_BAM}" ]]; then
   NEGATIVE_MODE="${NEGATIVE_MODE:-desert}"
 else
   NEGATIVE_MODE="${NEGATIVE_MODE:-random}"
@@ -72,9 +82,16 @@ fi
 source "$(conda info --base)/etc/profile.d/conda.sh"
 conda activate "${CONDA_ENV}"
 
+if [[ -n "${TF_PEAKS_BED}" ]]; then
+  if [[ ! -f "${TF_PEAKS_BED}" ]]; then
+    echo "ERROR: TF_PEAKS_BED not found: ${TF_PEAKS_BED}" >&2; exit 1
+  fi
+  echo "[$(date)] GENERIC mode: positives from TF peaks ${TF_PEAKS_BED} (signal col ${PEAK_SIGNAL_COL})"
+fi
+
 if [[ "${NEGATIVE_MODE}" == "desert" ]]; then
-  if [[ -z "${BULK_CTCF_BAM}" ]]; then
-    echo "ERROR: NEGATIVE_MODE=desert requires BULK_CTCF_BAM=<bulk CTCF ChIP-seq BAM>" >&2
+  if [[ -z "${BULK_BAM}" ]]; then
+    echo "ERROR: NEGATIVE_MODE=desert requires BULK_BAM=<bulk ChIP-seq BAM>" >&2
     exit 1
   fi
   if ! command -v "${SAMTOOLS}" >/dev/null 2>&1; then
@@ -92,7 +109,7 @@ if [[ "${NEGATIVE_MODE}" == "desert" ]]; then
     exit 1
   fi
   echo "[$(date)] using samtools: $(command -v "${SAMTOOLS}")"
-  echo "[$(date)] Negative mode: desert (bulk BAM=${BULK_CTCF_BAM})"
+  echo "[$(date)] Negative mode: desert (bulk BAM=${BULK_BAM})"
 elif [[ "${NEGATIVE_MODE}" == "all_candidates" || "${NEGATIVE_MODE}" == "all" ]]; then
   echo "[$(date)] Negative mode: all_candidates (max_neg=${MAX_NEG})"
 else
@@ -111,6 +128,9 @@ RARGS=(
   --negative-mode "${NEGATIVE_MODE}"
   --samtools "${SAMTOOLS}"
 )
-[[ -n "${BULK_CTCF_BAM}" ]] && RARGS+=(--bulk-ctcf-bam "${BULK_CTCF_BAM}")
+[[ -n "${BULK_BAM}" ]]      && RARGS+=(--bulk-bam "${BULK_BAM}")
+[[ -n "${TF_PEAKS_BED}" ]] && RARGS+=(--tf-peaks-bed "${TF_PEAKS_BED}" \
+                                      --peak-signal-col "${PEAK_SIGNAL_COL}" \
+                                      --exclude-flank-bp "${EXCLUDE_FLANK_BP}")
 
 Rscript "${DOWN_DIR}/prepare_pos_neg_bins.R" "${RARGS[@]}"

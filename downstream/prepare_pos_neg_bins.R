@@ -74,6 +74,21 @@ option_list <- list(
   make_option(c('--bulk-ctcf-bam'), type = 'character', default = NULL,
               help = 'Coordinate-sorted + indexed (.bai) bulk CTCF ChIP-seq BAM. Per-bin '
                      %+% 'coverage is computed with `samtools bedcov`; lowest = most desert.'),
+  make_option(c('--bulk-bam'), type = 'character', default = NULL,
+              help = 'Alias for --bulk-ctcf-bam; the TF-agnostic name. The bulk ChIP-seq BAM '
+                     %+% 'for the TF being benchmarked (desert ranking via samtools bedcov).'),
+  make_option(c('--tf-peaks-bed'), type = 'character', default = NULL,
+              help = 'GENERIC (non-CTCF) mode. A narrowPeak/BED of the TF\'s bulk ChIP-seq '
+                     %+% 'peaks. Positives become bins overlapping these peaks (ranked by '
+                     %+% '--peak-signal-col); the SCREEN/cCRE downloads are skipped. Leave '
+                     %+% 'unset to use the CTCF cCRE machinery.'),
+  make_option(c('--peak-signal-col'), type = 'integer', default = 7L,
+              help = 'Column in --tf-peaks-bed used to rank positive bins (narrowPeak col 7 = '
+                     %+% 'signalValue). [default %default]'),
+  make_option(c('--exclude-flank-bp'), type = 'double', default = 0,
+              help = 'In generic mode, also exclude bins within this many bp of any TF peak '
+                     %+% 'from the negative candidate pool (avoids near-peak shoulders). '
+                     %+% '[default %default]'),
   make_option(c('--samtools'), type = 'character', default = 'samtools',
               help = 'samtools executable (default %default; needs >=1.x bedcov).'),
   make_option(c('--no-download'), action = 'store_true', default = FALSE,
@@ -90,6 +105,17 @@ out_dir  <- normalizePath(out_dir, mustWork = TRUE)
 cache    <- if (is.null(opt$`cache-dir`)) file.path(out_dir, 'cache') else opt$`cache-dir`
 dir.create(cache, showWarnings = FALSE, recursive = TRUE)
 cache    <- normalizePath(cache, mustWork = TRUE)
+
+# GENERIC (TF-agnostic) mode: positives come from a TF ChIP-seq narrowPeak
+# instead of CTCF SCREEN cCREs. Detected by --tf-peaks-bed.
+generic_mode <- !is.null(opt$`tf-peaks-bed`) && nzchar(opt$`tf-peaks-bed`)
+# Bulk BAM: accept the TF-agnostic --bulk-bam, falling back to --bulk-ctcf-bam.
+opt$`bulk-ctcf-bam` <- if (!is.null(opt$`bulk-bam`) && nzchar(opt$`bulk-bam`))
+  opt$`bulk-bam` else opt$`bulk-ctcf-bam`
+if (generic_mode) {
+  tf_peaks_path <- normalizePath(opt$`tf-peaks-bed`, mustWork = TRUE)
+  message('[prep] GENERIC mode: positives from TF peaks ', tf_peaks_path)
+}
 
 URLS <- list(
   ctcf_bound_bed   = 'https://downloads.wenglab.org/GRCh38-cCREs.CTCF-bound.bed',
@@ -140,7 +166,10 @@ ensure_file <- function(key) {
   path
 }
 
-for (k in names(URLS)) ensure_file(k)
+# In generic mode only the blacklist is needed (positives come from the local
+# TF peaks BED, not the SCREEN/cCRE downloads).
+dl_keys <- if (generic_mode) 'blacklist_bed_gz' else names(URLS)
+for (k in dl_keys) ensure_file(k)
 
 # -- bin universe ------------------------------------------------------------
 reg_path <- file.path(mm_dir, 'regions.tsv.gz')
@@ -192,90 +221,131 @@ CTCF_bins_gr <- CTCF_bins_gr_raw[keep_orig]
 local_to_orig <- keep_orig
 
 # -- positive set ------------------------------------------------------------
-message('[prep] Building positive set (top ', opt$`n-top`, ' CTCF cCREs)...')
-ctcf_293_z <- read.table(LOCAL$ctcf_293_zscores, sep = '\t', stringsAsFactors = FALSE) %>%
-  dplyr::rename(cCRE = V1, score = V2)
-bed_293 <- read.table(LOCAL$cCRE_293_bed, sep = '\t', stringsAsFactors = FALSE) %>%
-  dplyr::rename(chrom = V1, start = V2, end = V3, cCRE = V4, class = V10)
-bed_293_CTCF <- bed_293 %>%
-  left_join(ctcf_293_z, by = 'cCRE') %>%
-  filter(grepl('CTCF', class))
-
-bed_293T <- read.table(LOCAL$cCRE_293T_bed, sep = '\t', stringsAsFactors = FALSE) %>%
-  dplyr::rename(chrom = V1, start = V2, end = V3, cCRE = V4, class = V10)
-bed_293T_CA <- bed_293T %>% filter(grepl('CA', class))
-
-# CTCF cCREs (293 CTCF class) that are accessible in 293T, with z-scores.
-bed_ctcf_ca <- bed_293_CTCF %>%
-  filter(cCRE %in% bed_293T_CA$cCRE, !is.na(score))
-
 n_pos_target <- as.integer(opt$`n-pos`)
-if (n_pos_target > 0) {
-  # Rank POSITIVE BINS directly by their best (max) overlapping CTCF z-score and
-  # take the top n_pos -- high-confidence sites first. This decouples the
-  # positive count from --n-top so we can build a large balanced set (e.g. 100k).
-  ctcf_all_gr <- GRanges(
-    seqnames = bed_ctcf_ca$chrom,
-    ranges   = IRanges(start = as.numeric(bed_ctcf_ca$start),
-                       end   = as.numeric(bed_ctcf_ca$end))
+# `feature_gr`: the TF's binding feature ranges (CTCF cCREs or TF peaks). Used
+# below both to EXCLUDE positives from the negative pool and (desert mode) as
+# the distance-to-nearest-site tiebreak.
+if (generic_mode) {
+  message('[prep] Building positive set from TF peaks: ', tf_peaks_path)
+  pk <- read.table(tf_peaks_path, sep = '\t', stringsAsFactors = FALSE,
+                   comment.char = '', quote = '', header = FALSE)
+  if (ncol(pk) < 3L) stop('TF peaks BED needs >= 3 columns (chrom,start,end).')
+  sigcol <- as.integer(opt$`peak-signal-col`)
+  pk_score <- if (ncol(pk) >= sigcol) suppressWarnings(as.numeric(pk[[sigcol]])) else rep(1, nrow(pk))
+  pk_score[is.na(pk_score)] <- 0
+  feature_gr <- GRanges(
+    seqnames = pk[[1]],
+    ranges   = IRanges(start = as.numeric(pk[[2]]) + 1, end = as.numeric(pk[[3]]))
   )
-  mcols(ctcf_all_gr)$score <- as.numeric(bed_ctcf_ca$score)
-  hits_all <- findOverlaps(CTCF_bins_gr, ctcf_all_gr)
-  qh <- queryHits(hits_all)
-  sc <- mcols(ctcf_all_gr)$score[subjectHits(hits_all)]
-  bin_best_z <- tapply(sc, qh, max)                 # per-bin max z-score
-  pos_bins_all <- as.integer(names(bin_best_z))
-  ord <- order(as.numeric(bin_best_z), decreasing = TRUE)
-  take <- min(n_pos_target, length(pos_bins_all))
-  if (take < n_pos_target)
-    warning(sprintf('[prep] only %d positive bins available; requested %d', take, n_pos_target))
-  pos_idx_local <- pos_bins_all[ord[seq_len(take)]]
-  message(sprintf('[prep] Positive bins (top %d by per-bin CTCF z-score): %d of %d candidate bins.',
-                  n_pos_target, length(pos_idx_local), length(pos_bins_all)))
+  mcols(feature_gr)$score <- pk_score
+  message(sprintf('[prep] %d TF peaks loaded (rank by column %d).', length(feature_gr), sigcol))
+
+  hits_pk <- findOverlaps(CTCF_bins_gr, feature_gr)
+  if (length(hits_pk) == 0L)
+    stop('No bins overlap any TF peak -- check chrom naming (chr1 vs 1) / coordinates.')
+  bin_best <- tapply(mcols(feature_gr)$score[subjectHits(hits_pk)], queryHits(hits_pk), max)
+  pos_bins_all <- as.integer(names(bin_best))
+  if (n_pos_target > 0) {
+    ord  <- order(as.numeric(bin_best), decreasing = TRUE)
+    take <- min(n_pos_target, length(pos_bins_all))
+    if (take < n_pos_target)
+      warning(sprintf('[prep] only %d positive bins available; requested %d', take, n_pos_target))
+    pos_idx_local <- pos_bins_all[ord[seq_len(take)]]
+    message(sprintf('[prep] Positive bins (top %d by peak signal): %d of %d peak-overlapping bins.',
+                    n_pos_target, length(pos_idx_local), length(pos_bins_all)))
+  } else {
+    pos_idx_local <- pos_bins_all
+    message(sprintf('[prep] Positive bins (all peak-overlapping): %d', length(pos_idx_local)))
+  }
 } else {
-  # Legacy: bins overlapping the top --n-top CTCF cCREs by z-score.
-  bed_top <- bed_ctcf_ca %>% arrange(desc(score)) %>% head(opt$`n-top`)
-  message(sprintf('[prep] Top-%d CTCF cCREs after 293T-CA filter: %d rows.',
-                  opt$`n-top`, nrow(bed_top)))
-  ctcf_top_gr <- GRanges(
-    seqnames = bed_top[, 1],
-    ranges   = IRanges(start = as.numeric(bed_top[, 2]),
-                       end   = as.numeric(bed_top[, 3]))
-  )
-  hits_top <- findOverlaps(CTCF_bins_gr, ctcf_top_gr)
-  pos_idx_local <- unique(queryHits(hits_top))
+  message('[prep] Building positive set (top ', opt$`n-top`, ' CTCF cCREs)...')
+  ctcf_293_z <- read.table(LOCAL$ctcf_293_zscores, sep = '\t', stringsAsFactors = FALSE) %>%
+    dplyr::rename(cCRE = V1, score = V2)
+  bed_293 <- read.table(LOCAL$cCRE_293_bed, sep = '\t', stringsAsFactors = FALSE) %>%
+    dplyr::rename(chrom = V1, start = V2, end = V3, cCRE = V4, class = V10)
+  bed_293_CTCF <- bed_293 %>%
+    left_join(ctcf_293_z, by = 'cCRE') %>%
+    filter(grepl('CTCF', class))
+
+  bed_293T <- read.table(LOCAL$cCRE_293T_bed, sep = '\t', stringsAsFactors = FALSE) %>%
+    dplyr::rename(chrom = V1, start = V2, end = V3, cCRE = V4, class = V10)
+  bed_293T_CA <- bed_293T %>% filter(grepl('CA', class))
+
+  # CTCF cCREs (293 CTCF class) that are accessible in 293T, with z-scores.
+  bed_ctcf_ca <- bed_293_CTCF %>%
+    filter(cCRE %in% bed_293T_CA$cCRE, !is.na(score))
+
+  if (n_pos_target > 0) {
+    # Rank POSITIVE BINS by their best (max) overlapping CTCF z-score, take top n_pos.
+    ctcf_all_gr <- GRanges(
+      seqnames = bed_ctcf_ca$chrom,
+      ranges   = IRanges(start = as.numeric(bed_ctcf_ca$start),
+                         end   = as.numeric(bed_ctcf_ca$end))
+    )
+    mcols(ctcf_all_gr)$score <- as.numeric(bed_ctcf_ca$score)
+    hits_all <- findOverlaps(CTCF_bins_gr, ctcf_all_gr)
+    bin_best_z <- tapply(mcols(ctcf_all_gr)$score[subjectHits(hits_all)], queryHits(hits_all), max)
+    pos_bins_all <- as.integer(names(bin_best_z))
+    ord <- order(as.numeric(bin_best_z), decreasing = TRUE)
+    take <- min(n_pos_target, length(pos_bins_all))
+    if (take < n_pos_target)
+      warning(sprintf('[prep] only %d positive bins available; requested %d', take, n_pos_target))
+    pos_idx_local <- pos_bins_all[ord[seq_len(take)]]
+    message(sprintf('[prep] Positive bins (top %d by per-bin CTCF z-score): %d of %d candidate bins.',
+                    n_pos_target, length(pos_idx_local), length(pos_bins_all)))
+  } else {
+    bed_top <- bed_ctcf_ca %>% arrange(desc(score)) %>% head(opt$`n-top`)
+    message(sprintf('[prep] Top-%d CTCF cCREs after 293T-CA filter: %d rows.',
+                    opt$`n-top`, nrow(bed_top)))
+    ctcf_top_gr <- GRanges(
+      seqnames = bed_top[, 1],
+      ranges   = IRanges(start = as.numeric(bed_top[, 2]), end = as.numeric(bed_top[, 3]))
+    )
+    pos_idx_local <- unique(queryHits(findOverlaps(CTCF_bins_gr, ctcf_top_gr)))
+  }
 }
 message(sprintf('[prep] Positive bin count (post-blacklist): %d', length(pos_idx_local)))
 
 # -- negative set ------------------------------------------------------------
 message('[prep] Building negative set ...')
-CTCF_bound <- read.table(LOCAL$ctcf_bound_bed, sep = '\t', stringsAsFactors = FALSE) %>%
-  dplyr::rename(chrom = V1, start = V2, end = V3, cCRE = V5, class = V6)
-ctcf_bound_gr <- GRanges(
-  seqnames = CTCF_bound[, 1],
-  ranges   = IRanges(start = as.numeric(CTCF_bound[, 2]),
-                     end   = as.numeric(CTCF_bound[, 3]))
-)
-hits_bound <- findOverlaps(CTCF_bins_gr, ctcf_bound_gr)
-nonneg_idx_local <- unique(queryHits(hits_bound))
-
-# STRICTER candidate pool: a desert bin must overlap NO cCRE at all (not just
-# CTCF-bound) -- i.e. it is non-regulatory genome, not merely "no called CTCF".
-# Union the 293 + 293T cCRE registries as the all-cCRE exclusion set.
-all_ccre <- rbind(bed_293[, c('chrom', 'start', 'end')],
-                  bed_293T[, c('chrom', 'start', 'end')])
-all_ccre_gr <- GRanges(
-  seqnames = all_ccre$chrom,
-  ranges   = IRanges(start = as.numeric(all_ccre$start) + 1,
-                     end   = as.numeric(all_ccre$end))
-)
-hits_ccre <- findOverlaps(CTCF_bins_gr, all_ccre_gr)
-ccre_idx_local <- unique(queryHits(hits_ccre))
-
 all_local <- seq_along(CTCF_bins_gr)
-potential_neg <- setdiff(all_local, union(nonneg_idx_local, ccre_idx_local))
-message(sprintf('[prep] Candidate negatives (no cCRE AND no CTCF-bound cCRE): %d / %d post-blacklist',
-                length(potential_neg), length(all_local)))
+if (generic_mode) {
+  # Candidate negatives = post-blacklist bins NOT overlapping any TF peak
+  # (optionally extended by --exclude-flank-bp to drop near-peak shoulders).
+  excl_gr <- feature_gr
+  flank <- as.numeric(opt$`exclude-flank-bp`)
+  if (flank > 0) excl_gr <- suppressWarnings(
+    GenomicRanges::resize(excl_gr, width = width(excl_gr) + 2 * flank, fix = 'center'))
+  nonneg_idx_local <- unique(queryHits(findOverlaps(CTCF_bins_gr, excl_gr)))
+  potential_neg <- setdiff(all_local, nonneg_idx_local)
+  ctcf_bound_gr <- feature_gr   # desert distance tiebreak = distance to nearest TF peak
+  message(sprintf('[prep] Candidate negatives (no TF peak%s): %d / %d post-blacklist',
+                  if (flank > 0) sprintf(' +/-%gbp', flank) else '',
+                  length(potential_neg), length(all_local)))
+} else {
+  CTCF_bound <- read.table(LOCAL$ctcf_bound_bed, sep = '\t', stringsAsFactors = FALSE) %>%
+    dplyr::rename(chrom = V1, start = V2, end = V3, cCRE = V5, class = V6)
+  ctcf_bound_gr <- GRanges(
+    seqnames = CTCF_bound[, 1],
+    ranges   = IRanges(start = as.numeric(CTCF_bound[, 2]),
+                       end   = as.numeric(CTCF_bound[, 3]))
+  )
+  nonneg_idx_local <- unique(queryHits(findOverlaps(CTCF_bins_gr, ctcf_bound_gr)))
+
+  # STRICTER candidate pool: a desert bin must overlap NO cCRE at all (not just
+  # CTCF-bound) -- non-regulatory genome, not merely "no called CTCF". Union the
+  # 293 + 293T cCRE registries as the all-cCRE exclusion set.
+  all_ccre <- rbind(bed_293[, c('chrom', 'start', 'end')],
+                    bed_293T[, c('chrom', 'start', 'end')])
+  all_ccre_gr <- GRanges(
+    seqnames = all_ccre$chrom,
+    ranges   = IRanges(start = as.numeric(all_ccre$start) + 1, end = as.numeric(all_ccre$end))
+  )
+  ccre_idx_local <- unique(queryHits(findOverlaps(CTCF_bins_gr, all_ccre_gr)))
+  potential_neg <- setdiff(all_local, union(nonneg_idx_local, ccre_idx_local))
+  message(sprintf('[prep] Candidate negatives (no cCRE AND no CTCF-bound cCRE): %d / %d post-blacklist',
+                  length(potential_neg), length(all_local)))
+}
 if (length(potential_neg) < length(pos_idx_local))
   stop(sprintf('Only %d candidate negatives for %d positives; loosen the cCRE filter.',
                length(potential_neg), length(pos_idx_local)))
