@@ -22,9 +22,8 @@ DATA_DIR="${DATA_DIR:-$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)/data}"
 SAMTOOLS="${SAMTOOLS:-samtools}"
 BASE="https://www.encodeproject.org/files"
 
-# TF -> "peaks_ENCFF bam_ENCFF cellline"
+# TF -> "peaks_ENCFF bam_ENCFF cellline"  (all HEK293 except NFYA = K562)
 declare -A REF=(
-  [CTCF]="ENCFF000NONE ENCFF000NONE HEK293"   # already prepared via SCREEN cCRE path
   [ZNF768]="ENCFF489EFG ENCFF921GNM HEK293"
   [ZBTB7A]="ENCFF114DGV ENCFF559CGO HEK293"
   [ZIC2]="ENCFF359GIY ENCFF156XLC HEK293"

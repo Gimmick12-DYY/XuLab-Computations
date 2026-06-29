@@ -89,6 +89,11 @@ option_list <- list(
               help = 'In generic mode, also exclude bins within this many bp of any TF peak '
                      %+% 'from the negative candidate pool (avoids near-peak shoulders). '
                      %+% '[default %default]'),
+  make_option(c('--no-exclude-ccre'), action = 'store_true', default = FALSE,
+              help = 'Generic mode: by DEFAULT the negative candidate pool also excludes ALL '
+                     %+% 'cCREs (293+293T registries), matching the CTCF negative definition '
+                     %+% '(non-regulatory genome). Pass this flag to exclude only the TF peaks '
+                     %+% 'instead (larger, accessibility-inclusive pool).'),
   make_option(c('--samtools'), type = 'character', default = 'samtools',
               help = 'samtools executable (default %default; needs >=1.x bedcov).'),
   make_option(c('--no-download'), action = 'store_true', default = FALSE,
@@ -166,9 +171,17 @@ ensure_file <- function(key) {
   path
 }
 
-# In generic mode only the blacklist is needed (positives come from the local
-# TF peaks BED, not the SCREEN/cCRE downloads).
-dl_keys <- if (generic_mode) 'blacklist_bed_gz' else names(URLS)
+# Generic mode: positives come from the local TF peaks BED, so we skip the
+# CTCF-specific SCREEN files (ctcf_bound_bed, ctcf_293_zscores). We still fetch
+# the cCRE registries when the negative pool excludes all cCREs (the default,
+# to match the CTCF negative definition).
+exclude_all_ccre <- !isTRUE(opt$`no-exclude-ccre`)
+if (generic_mode) {
+  dl_keys <- if (exclude_all_ccre)
+    c('blacklist_bed_gz', 'cCRE_293_bed', 'cCRE_293T_bed') else 'blacklist_bed_gz'
+} else {
+  dl_keys <- names(URLS)
+}
 for (k in dl_keys) ensure_file(k)
 
 # -- bin universe ------------------------------------------------------------
@@ -311,16 +324,34 @@ message('[prep] Building negative set ...')
 all_local <- seq_along(CTCF_bins_gr)
 if (generic_mode) {
   # Candidate negatives = post-blacklist bins NOT overlapping any TF peak
-  # (optionally extended by --exclude-flank-bp to drop near-peak shoulders).
+  # (optionally extended by --exclude-flank-bp), AND (default) NOT overlapping
+  # any cCRE -- so the negative pool matches the CTCF definition (non-regulatory
+  # genome). Pass --no-exclude-ccre to keep only the TF-peak exclusion.
   excl_gr <- feature_gr
   flank <- as.numeric(opt$`exclude-flank-bp`)
   if (flank > 0) excl_gr <- suppressWarnings(
     GenomicRanges::resize(excl_gr, width = width(excl_gr) + 2 * flank, fix = 'center'))
-  nonneg_idx_local <- unique(queryHits(findOverlaps(CTCF_bins_gr, excl_gr)))
+  peak_idx_local <- unique(queryHits(findOverlaps(CTCF_bins_gr, excl_gr)))
+
+  ccre_idx_local <- integer(0)
+  if (exclude_all_ccre) {
+    bed_293 <- read.table(LOCAL$cCRE_293_bed, sep = '\t', stringsAsFactors = FALSE)
+    bed_293T <- read.table(LOCAL$cCRE_293T_bed, sep = '\t', stringsAsFactors = FALSE)
+    all_ccre <- rbind(bed_293[, 1:3], bed_293T[, 1:3])
+    names(all_ccre) <- c('chrom', 'start', 'end')
+    all_ccre_gr <- GRanges(
+      seqnames = all_ccre$chrom,
+      ranges   = IRanges(start = as.numeric(all_ccre$start) + 1, end = as.numeric(all_ccre$end))
+    )
+    ccre_idx_local <- unique(queryHits(findOverlaps(CTCF_bins_gr, all_ccre_gr)))
+  }
+
+  nonneg_idx_local <- union(peak_idx_local, ccre_idx_local)
   potential_neg <- setdiff(all_local, nonneg_idx_local)
   ctcf_bound_gr <- feature_gr   # desert distance tiebreak = distance to nearest TF peak
-  message(sprintf('[prep] Candidate negatives (no TF peak%s): %d / %d post-blacklist',
+  message(sprintf('[prep] Candidate negatives (no TF peak%s%s): %d / %d post-blacklist',
                   if (flank > 0) sprintf(' +/-%gbp', flank) else '',
+                  if (exclude_all_ccre) ' AND no cCRE' else '',
                   length(potential_neg), length(all_local)))
 } else {
   CTCF_bound <- read.table(LOCAL$ctcf_bound_bed, sep = '\t', stringsAsFactors = FALSE) %>%
@@ -485,22 +516,29 @@ message('[prep] Wrote ', tsv_path)
 
 meta <- list(
   mm_regions       = reg_path,
+  positive_source  = if (generic_mode) 'tf_peaks_bed' else 'CTCF_SCREEN_cCRE',
+  generic_mode     = generic_mode,
+  tf_peaks_bed     = if (generic_mode) tf_peaks_path else 'NA',
   n_bins_universe  = length(bin_names),
   n_blacklist      = length(blacklist_indices),
   n_post_blacklist = length(CTCF_bins_gr),
   n_pos            = length(pos_idx_local),
   n_neg            = length(neg_idx_local),
-  n_top_cCRE       = opt$`n-top`,
+  n_top_cCRE       = if (generic_mode) -1 else opt$`n-top`,
   n_pos_target     = n_pos_target,
   n_neg_target     = n_neg_target,
   negative_mode    = neg_mode,
-  bulk_ctcf_bam    = if (is.null(bam)) 'NA' else bam,
+  bulk_bam         = if (is.null(bam)) 'NA' else bam,
   n_candidate_neg  = length(potential_neg),
   neg_coverage_cutoff = if (neg_mode == 'desert') max(neg_signal) else -1,
   neg_coverage_median = if (neg_mode == 'desert') as.numeric(median(neg_signal)) else -1,
   seed             = opt$seed,
   cache_dir        = cache,
-  sources          = URLS
+  # Only the sources actually used in this mode (generic uses just the blacklist
+  # + the TF peaks BED; the CTCF SCREEN/cCRE URLs are not fetched in generic mode).
+  sources          = if (generic_mode)
+    list(blacklist_bed_gz = URLS$blacklist_bed_gz, tf_peaks_bed = tf_peaks_path)
+    else URLS
 )
 
 # Keep the dependency-free path: write JSON manually so this script does not
