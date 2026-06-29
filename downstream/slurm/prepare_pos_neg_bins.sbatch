@@ -68,7 +68,7 @@ EXCLUDE_FLANK_BP="${EXCLUDE_FLANK_BP:-0}"
 # CTCF/cCRE-path negative universe + coverage filter.
 #   NEG_UNIVERSE=accessible_unbound -> cCRE bins not CTCF-bound (hard negatives)
 #   NEG_MAX_COVERAGE=0              -> keep only zero-bulk-read bins (needs BULK_BAM)
-NEG_UNIVERSE="${NEG_UNIVERSE:-non_ccre}"
+NEG_UNIVERSE="${NEG_UNIVERSE:-non_ctcf_bound}"
 NEG_MAX_COVERAGE="${NEG_MAX_COVERAGE:--1}"
 # Default negative mode is always 'random' (matches #negatives to #positives).
 # A BULK_BAM no longer forces 'desert' -- the BAM is also used by the coverage
