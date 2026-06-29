@@ -116,11 +116,11 @@ option_list <- list(
                      %+% 'cCREs (293+293T registries), matching the CTCF negative definition '
                      %+% '(non-regulatory genome). Pass this flag to exclude only the TF peaks '
                      %+% 'instead (larger, accessibility-inclusive pool).'),
-  make_option(c('--neg-universe'), type = 'character', default = 'non_ccre',
-              help = "CTCF/cCRE path negative UNIVERSE: 'non_ccre' (bins overlapping no cCRE; "
-                     %+% "default) or 'accessible_unbound' (bins overlapping a cCRE but NOT a "
-                     %+% "CTCF-bound cCRE -- accessible regulatory regions where CTCF does not "
-                     %+% "bind). [default %default]"),
+  make_option(c('--neg-universe'), type = 'character', default = 'non_ctcf_bound',
+              help = "CTCF/cCRE path negative UNIVERSE: 'non_ctcf_bound' (ORIGINAL: every bin "
+                     %+% "NOT overlapping a CTCF-bound cCRE; default), 'non_ccre' (bins "
+                     %+% "overlapping no cCRE at all), or 'accessible_unbound' (cCRE bins not "
+                     %+% "CTCF-bound). [default %default]"),
   make_option(c('--neg-max-coverage'), type = 'double', default = -1,
               help = 'If >=0, restrict the negative universe to bins whose bulk ChIP coverage '
                      %+% '(samtools bedcov over --bulk-bam) is <= this value. 0 = keep only '
@@ -408,14 +408,19 @@ if (generic_mode) {
 
   neg_universe <- tolower(opt$`neg-universe`)
   if (neg_universe == 'accessible_unbound') {
-    # Accessible regulatory bins (overlap a cCRE) that are NOT CTCF-bound. Hard
-    # true negatives: open chromatin where CTCF does not bind.
+    # cCRE bins that are NOT CTCF-bound (accessible, CTCF-unbound).
     potential_neg <- setdiff(ccre_idx_local, nonneg_idx_local)
     message(sprintf('[prep] Candidate negatives (cCRE AND not CTCF-bound): %d / %d post-blacklist',
                     length(potential_neg), length(all_local)))
-  } else {
+  } else if (neg_universe == 'non_ccre') {
+    # Bins overlapping no cCRE at all (non-regulatory genome).
     potential_neg <- setdiff(all_local, union(nonneg_idx_local, ccre_idx_local))
     message(sprintf('[prep] Candidate negatives (no cCRE AND no CTCF-bound cCRE): %d / %d post-blacklist',
+                    length(potential_neg), length(all_local)))
+  } else {
+    # ORIGINAL (default): every bin NOT overlapping a CTCF-bound cCRE.
+    potential_neg <- setdiff(all_local, nonneg_idx_local)
+    message(sprintf('[prep] Candidate negatives (not CTCF-bound cCRE): %d / %d post-blacklist',
                     length(potential_neg), length(all_local)))
   }
 }
