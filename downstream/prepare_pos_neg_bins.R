@@ -37,6 +37,28 @@ suppressPackageStartupMessages({
 
 `%+%` <- function(a, b) paste0(a, b)   # string concat for readable help text
 
+# Sum of per-base bulk read depth over each bin (samtools bedcov), aligned to
+# the order of `local_idx` into `gr`. Used for the desert ranking and the
+# --neg-max-coverage filter.
+bedcov_coverage <- function(local_idx, gr, bam, samtools, tmp_bed) {
+  cand <- gr[local_idx]
+  utils::write.table(
+    data.frame(chrom = as.character(GenomicRanges::seqnames(cand)),
+               start = GenomicRanges::start(cand) - 1L,
+               end   = GenomicRanges::end(cand),
+               name  = seq_along(local_idx)),
+    tmp_bed, sep = '\t', row.names = FALSE, col.names = FALSE, quote = FALSE)
+  lines <- system2(samtools, c('bedcov', shQuote(tmp_bed), shQuote(bam)),
+                   stdout = TRUE, stderr = '')
+  if (length(lines) == 0L) stop('samtools bedcov produced no output; check samtools + BAM.')
+  df  <- utils::read.table(text = lines, sep = '\t', stringsAsFactors = FALSE)
+  cov <- as.numeric(df[[ncol(df)]])
+  if (length(cov) != length(local_idx))
+    stop(sprintf('bedcov row count %d != candidate count %d', length(cov), length(local_idx)))
+  file.remove(tmp_bed)
+  cov
+}
+
 option_list <- list(
   make_option(c('--mm-dir'),  type = 'character',
               help = 'Directory with regions.tsv.gz produced by 01_export_rds_to_mm.R'),
@@ -94,6 +116,16 @@ option_list <- list(
                      %+% 'cCREs (293+293T registries), matching the CTCF negative definition '
                      %+% '(non-regulatory genome). Pass this flag to exclude only the TF peaks '
                      %+% 'instead (larger, accessibility-inclusive pool).'),
+  make_option(c('--neg-universe'), type = 'character', default = 'non_ccre',
+              help = "CTCF/cCRE path negative UNIVERSE: 'non_ccre' (bins overlapping no cCRE; "
+                     %+% "default) or 'accessible_unbound' (bins overlapping a cCRE but NOT a "
+                     %+% "CTCF-bound cCRE -- accessible regulatory regions where CTCF does not "
+                     %+% "bind). [default %default]"),
+  make_option(c('--neg-max-coverage'), type = 'double', default = -1,
+              help = 'If >=0, restrict the negative universe to bins whose bulk ChIP coverage '
+                     %+% '(samtools bedcov over --bulk-bam) is <= this value. 0 = keep only '
+                     %+% 'ZERO-read bins (confident true negatives). Requires --bulk-bam. '
+                     %+% '-1 = no filter. [default %default]'),
   make_option(c('--samtools'), type = 'character', default = 'samtools',
               help = 'samtools executable (default %default; needs >=1.x bedcov).'),
   make_option(c('--no-download'), action = 'store_true', default = FALSE,
@@ -373,16 +405,49 @@ if (generic_mode) {
     ranges   = IRanges(start = as.numeric(all_ccre$start) + 1, end = as.numeric(all_ccre$end))
   )
   ccre_idx_local <- unique(queryHits(findOverlaps(CTCF_bins_gr, all_ccre_gr)))
-  potential_neg <- setdiff(all_local, union(nonneg_idx_local, ccre_idx_local))
-  message(sprintf('[prep] Candidate negatives (no cCRE AND no CTCF-bound cCRE): %d / %d post-blacklist',
-                  length(potential_neg), length(all_local)))
+
+  neg_universe <- tolower(opt$`neg-universe`)
+  if (neg_universe == 'accessible_unbound') {
+    # Accessible regulatory bins (overlap a cCRE) that are NOT CTCF-bound. Hard
+    # true negatives: open chromatin where CTCF does not bind.
+    potential_neg <- setdiff(ccre_idx_local, nonneg_idx_local)
+    message(sprintf('[prep] Candidate negatives (cCRE AND not CTCF-bound): %d / %d post-blacklist',
+                    length(potential_neg), length(all_local)))
+  } else {
+    potential_neg <- setdiff(all_local, union(nonneg_idx_local, ccre_idx_local))
+    message(sprintf('[prep] Candidate negatives (no cCRE AND no CTCF-bound cCRE): %d / %d post-blacklist',
+                    length(potential_neg), length(all_local)))
+  }
 }
+bam <- opt$`bulk-ctcf-bam`   # already resolved to --bulk-bam alias upstream
+
+# Optional coverage filter on the negative UNIVERSE: keep only bins whose bulk
+# ChIP coverage is <= --neg-max-coverage (0 => zero-read = confident negatives).
+neg_max_cov <- as.numeric(opt$`neg-max-coverage`)
+if (neg_max_cov >= 0) {
+  if (is.null(bam) || !nzchar(bam))
+    stop('--neg-max-coverage requires --bulk-bam (a bulk ChIP BAM for samtools bedcov).')
+  if (!file.exists(bam)) stop(sprintf('Bulk BAM not found: %s', bam))
+  if (!file.exists(paste0(bam, '.bai')) && !file.exists(sub('\\.bam$', '.bai', bam)))
+    stop(sprintf('BAM index (.bai) not found for %s -- run `samtools index %s`', bam, bam))
+  message(sprintf('[prep] Coverage filter: scoring %d candidates with samtools bedcov ...',
+                  length(potential_neg)))
+  cov_univ <- bedcov_coverage(potential_neg, CTCF_bins_gr, bam, opt$samtools,
+                              file.path(out_dir, '_neg_universe_cov.bed'))
+  keep <- cov_univ <= neg_max_cov
+  if (sum(cov_univ, na.rm = TRUE) <= 0)
+    stop('All candidate coverage is 0 -- likely a chrom-name mismatch between BAM '
+         %+% "header and bins (e.g. 'chr1' vs '1'). Check `samtools idxstats`.")
+  message(sprintf('[prep] Coverage filter (<= %g reads): %d / %d candidates kept.',
+                  neg_max_cov, sum(keep), length(potential_neg)))
+  potential_neg <- potential_neg[keep]
+}
+
 if (length(potential_neg) < length(pos_idx_local))
-  stop(sprintf('Only %d candidate negatives for %d positives; loosen the cCRE filter.',
+  stop(sprintf('Only %d candidate negatives for %d positives; loosen the cCRE/coverage filter.',
                length(potential_neg), length(pos_idx_local)))
 
 neg_mode <- tolower(opt$`negative-mode`)
-bam <- opt$`bulk-ctcf-bam`
 if (neg_mode == 'desert' && (is.null(bam) || !nzchar(bam))) {
   warning('[prep] negative-mode=desert but --bulk-ctcf-bam not given; falling back to random.')
   neg_mode <- 'random'
@@ -528,6 +593,8 @@ meta <- list(
   n_pos_target     = n_pos_target,
   n_neg_target     = n_neg_target,
   negative_mode    = neg_mode,
+  neg_universe     = if (generic_mode) 'generic_peaks' else tolower(opt$`neg-universe`),
+  neg_max_coverage = neg_max_cov,
   bulk_bam         = if (is.null(bam)) 'NA' else bam,
   n_candidate_neg  = length(potential_neg),
   neg_coverage_cutoff = if (neg_mode == 'desert') max(neg_signal) else -1,

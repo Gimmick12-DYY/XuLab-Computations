@@ -65,6 +65,11 @@ BULK_BAM="${BULK_BAM:-${BULK_CTCF_BAM:-}}"
 TF_PEAKS_BED="${TF_PEAKS_BED:-}"
 PEAK_SIGNAL_COL="${PEAK_SIGNAL_COL:-7}"
 EXCLUDE_FLANK_BP="${EXCLUDE_FLANK_BP:-0}"
+# CTCF/cCRE-path negative universe + coverage filter.
+#   NEG_UNIVERSE=accessible_unbound -> cCRE bins not CTCF-bound (hard negatives)
+#   NEG_MAX_COVERAGE=0              -> keep only zero-bulk-read bins (needs BULK_BAM)
+NEG_UNIVERSE="${NEG_UNIVERSE:-non_ccre}"
+NEG_MAX_COVERAGE="${NEG_MAX_COVERAGE:--1}"
 # Default negative mode: desert iff a bulk BAM is given, else random (random
 # matches #negatives to #positives -> a balanced set with no BAM needed).
 if [[ -n "${BULK_BAM}" ]]; then
@@ -89,32 +94,31 @@ if [[ -n "${TF_PEAKS_BED}" ]]; then
   echo "[$(date)] GENERIC mode: positives from TF peaks ${TF_PEAKS_BED} (signal col ${PEAK_SIGNAL_COL})"
 fi
 
-if [[ "${NEGATIVE_MODE}" == "desert" ]]; then
+# Does this run need samtools? (desert ranking OR the coverage filter)
+COV_FILTER=0
+if awk -v x="${NEG_MAX_COVERAGE}" 'BEGIN{exit !(x>=0)}'; then COV_FILTER=1; fi
+NEED_SAMTOOLS=0
+[[ "${NEGATIVE_MODE}" == "desert" || "${COV_FILTER}" == "1" ]] && NEED_SAMTOOLS=1
+
+if [[ "${NEED_SAMTOOLS}" == "1" ]]; then
   if [[ -z "${BULK_BAM}" ]]; then
-    echo "ERROR: NEGATIVE_MODE=desert requires BULK_BAM=<bulk ChIP-seq BAM>" >&2
+    echo "ERROR: desert mode and NEG_MAX_COVERAGE>=0 both require BULK_BAM=<bulk ChIP-seq BAM>" >&2
     exit 1
   fi
   if ! command -v "${SAMTOOLS}" >/dev/null 2>&1; then
-    # The cistopic env may not ship samtools. Try the cluster module before
-    # giving up, so desert mode works without rebuilding the conda env.
     echo "[$(date)] samtools not on PATH; trying 'module load samtools'"
     module load samtools 2>/dev/null || true
   fi
   if ! command -v "${SAMTOOLS}" >/dev/null 2>&1; then
     echo "ERROR: samtools ('${SAMTOOLS}') not on PATH in env ${CONDA_ENV} and no samtools module." >&2
-    echo "  Fix (pick one):" >&2
-    echo "   - conda install -n ${CONDA_ENV} -c bioconda samtools" >&2
-    echo "   - module load samtools   (then resubmit)" >&2
-    echo "   - SAMTOOLS=/path/to/samtools sbatch ..." >&2
+    echo "  Fix: conda install -n ${CONDA_ENV} -c bioconda samtools | module load samtools | SAMTOOLS=/path" >&2
     exit 1
   fi
   echo "[$(date)] using samtools: $(command -v "${SAMTOOLS}")"
-  echo "[$(date)] Negative mode: desert (bulk BAM=${BULK_BAM})"
-elif [[ "${NEGATIVE_MODE}" == "all_candidates" || "${NEGATIVE_MODE}" == "all" ]]; then
-  echo "[$(date)] Negative mode: all_candidates (max_neg=${MAX_NEG})"
-else
-  echo "[$(date)] Negative mode: random (seed=${SEED})"
 fi
+
+echo "[$(date)] Negative universe: ${NEG_UNIVERSE}$([[ "${COV_FILTER}" == "1" ]] && echo " ; coverage filter <= ${NEG_MAX_COVERAGE} reads (BAM=${BULK_BAM})")"
+echo "[$(date)] Negative mode: ${NEGATIVE_MODE}"
 
 RARGS=(
   --mm-dir   "${MM_DIR}"
@@ -126,6 +130,8 @@ RARGS=(
   --n-pos    "${N_POS}"
   --n-neg    "${N_NEG}"
   --negative-mode "${NEGATIVE_MODE}"
+  --neg-universe "${NEG_UNIVERSE}"
+  --neg-max-coverage "${NEG_MAX_COVERAGE}"
   --samtools "${SAMTOOLS}"
 )
 [[ -n "${BULK_BAM}" ]]      && RARGS+=(--bulk-bam "${BULK_BAM}")
