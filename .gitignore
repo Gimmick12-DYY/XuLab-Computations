@@ -37,6 +37,16 @@ downstream/peak_coverage_znf768
 downstream/peak_coverage_nfya
 downstream/bins_nfya
 downstream/bins_znf768
+downstream/bins_maz
+downstream/bins_znf777
+downstream/bins_zic2
+downstream/bins_zbtb7a
+downstream/bins_setdb1
+downstream/peak_coverage_znf777
+downstream/peak_coverage_zic2
+downstream/peak_coverage_zbtb7a
+downstream/peak_coverage_setdb1
+downstream/peak_coverage_maz
 .DS_Store
 *.pyc
 *.pkl
