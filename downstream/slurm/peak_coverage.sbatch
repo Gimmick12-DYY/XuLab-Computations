@@ -41,7 +41,14 @@ cd "${ROOT_DIR}"
 # shellcheck source=_pipeline_paths.sh
 source "${DOWN_DIR}/slurm/_pipeline_paths.sh"
 
-BINS_TSV="${BINS_TSV:-${ROOT_DIR}/downstream/bins/pos_neg_bins.tsv}"
+# NOTE: if BINS_TSV is unset this defaults to CTCF's bins -- a footgun for
+# multi-TF runs (it would silently score a non-CTCF TF against CTCF binding).
+# Warn loudly so an omitted BINS_TSV is obvious in the log.
+if [[ -z "${BINS_TSV:-}" ]]; then
+  BINS_TSV="${ROOT_DIR}/downstream/bins/pos_neg_bins.tsv"
+  echo "WARNING: BINS_TSV not set -> defaulting to CTCF bins (${BINS_TSV})." >&2
+  echo "         For a non-CTCF TF you MUST set BINS_TSV=.../downstream/bins_<tf>/pos_neg_bins.tsv" >&2
+fi
 PEAK_COV_OUT_DIR="${PEAK_COV_OUT_DIR:-${ROOT_DIR}/downstream/peak_coverage_ctcf}"
 OUT_NAME="${OUT_NAME:-peak_coverage}"
 # TARGET_FRAGMENTS is now a CAP on total simulated fragments (scaling is
