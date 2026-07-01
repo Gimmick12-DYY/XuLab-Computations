@@ -107,6 +107,12 @@ option_list <- list(
   make_option(c('--peak-signal-col'), type = 'integer', default = 7L,
               help = 'Column in --tf-peaks-bed used to rank positive bins (narrowPeak col 7 = '
                      %+% 'signalValue). [default %default]'),
+  make_option(c('--positives-in-ccre'), action = 'store_true', default = FALSE,
+              help = 'Generic mode: define "TF-bound cCRE" = cCRE registry (293+293T) '
+                     %+% 'intersected with the TF peaks, and take POSITIVES as bins overlapping '
+                     %+% 'those (cCRE-based, matching the CTCF cCRE definition). Negatives then '
+                     %+% 'exclude TF-bound cCREs (not raw peaks). Without this, positives are '
+                     %+% 'bins overlapping any TF peak (peak-based).'),
   make_option(c('--exclude-flank-bp'), type = 'double', default = 0,
               help = 'In generic mode, also exclude bins within this many bp of any TF peak '
                      %+% 'from the negative candidate pool (avoids near-peak shoulders). '
@@ -207,14 +213,26 @@ ensure_file <- function(key) {
 # CTCF-specific SCREEN files (ctcf_bound_bed, ctcf_293_zscores). We still fetch
 # the cCRE registries when the negative pool excludes all cCREs (the default,
 # to match the CTCF negative definition).
-exclude_all_ccre <- !isTRUE(opt$`no-exclude-ccre`)
+exclude_all_ccre  <- !isTRUE(opt$`no-exclude-ccre`)
+positives_in_ccre <- isTRUE(opt$`positives-in-ccre`)
 if (generic_mode) {
-  dl_keys <- if (exclude_all_ccre)
+  # cCRE registries are needed if we exclude all cCREs OR restrict positives to
+  # cCREs (TF-bound cCRE). Otherwise only the blacklist.
+  dl_keys <- if (exclude_all_ccre || positives_in_ccre)
     c('blacklist_bed_gz', 'cCRE_293_bed', 'cCRE_293T_bed') else 'blacklist_bed_gz'
 } else {
   dl_keys <- names(URLS)
 }
 for (k in dl_keys) ensure_file(k)
+
+# Shared cCRE GRanges (293 + 293T registries), loaded once when needed.
+load_all_ccre_gr <- function() {
+  b1 <- read.table(LOCAL$cCRE_293_bed,  sep = '\t', stringsAsFactors = FALSE)[, 1:3]
+  b2 <- read.table(LOCAL$cCRE_293T_bed, sep = '\t', stringsAsFactors = FALSE)[, 1:3]
+  ac <- rbind(b1, b2); names(ac) <- c('chrom', 'start', 'end')
+  GRanges(seqnames = ac$chrom,
+          ranges = IRanges(start = as.numeric(ac$start) + 1, end = as.numeric(ac$end)))
+}
 
 # -- bin universe ------------------------------------------------------------
 reg_path <- file.path(mm_dir, 'regions.tsv.gz')
@@ -290,6 +308,25 @@ if (generic_mode) {
     stop('No bins overlap any TF peak -- check chrom naming (chr1 vs 1) / coordinates.')
   bin_best <- tapply(mcols(feature_gr)$score[subjectHits(hits_pk)], queryHits(hits_pk), max)
   pos_bins_all <- as.integer(names(bin_best))
+
+  # cCRE-based (matches CTCF): TF-bound cCRE = cCRE registry intersected with the
+  # TF peaks. Keep only positive bins that ALSO overlap a cCRE.
+  if (positives_in_ccre) {
+    all_ccre_gr <- load_all_ccre_gr()
+    ccre_bins <- unique(queryHits(findOverlaps(CTCF_bins_gr, all_ccre_gr)))
+    keep <- pos_bins_all %in% ccre_bins   # bin_best and pos_bins_all are position-aligned
+    bin_best <- bin_best[keep]
+    pos_bins_all <- pos_bins_all[keep]
+    if (length(pos_bins_all) == 0L)
+      stop('positives-in-ccre: no TF peak overlaps any cCRE -- check cell line / registry.')
+    message(sprintf('[prep] TF-bound cCRE restriction: %d peak-bins are at a cCRE (cCRE-based positives).',
+                    length(pos_bins_all)))
+  }
+
+  # Bins the negative pool must exclude (the TF's binding). cCRE-based -> the
+  # TF-bound cCRE bins; peak-based -> all peak-overlapping bins.
+  binding_idx_local <- pos_bins_all
+
   if (n_pos_target > 0) {
     ord  <- order(as.numeric(bin_best), decreasing = TRUE)
     take <- min(n_pos_target, length(pos_bins_all))
@@ -355,34 +392,27 @@ message(sprintf('[prep] Positive bin count (post-blacklist): %d', length(pos_idx
 message('[prep] Building negative set ...')
 all_local <- seq_along(CTCF_bins_gr)
 if (generic_mode) {
-  # Candidate negatives = post-blacklist bins NOT overlapping any TF peak
-  # (optionally extended by --exclude-flank-bp), AND (default) NOT overlapping
-  # any cCRE -- so the negative pool matches the CTCF definition (non-regulatory
-  # genome). Pass --no-exclude-ccre to keep only the TF-peak exclusion.
-  excl_gr <- feature_gr
+  # Candidate negatives = post-blacklist bins NOT in the TF's binding set
+  # (`binding_idx_local`: TF-bound cCRE bins when --positives-in-ccre, else all
+  # TF-peak bins), optionally also excluding all cCREs (--no-exclude-ccre off).
+  # This mirrors CTCF: exclude the TF's bound regions, then the bedcov zero-read
+  # filter removes any residual bound bins.
+  excl_idx <- binding_idx_local
   flank <- as.numeric(opt$`exclude-flank-bp`)
-  if (flank > 0) excl_gr <- suppressWarnings(
-    GenomicRanges::resize(excl_gr, width = width(excl_gr) + 2 * flank, fix = 'center'))
-  peak_idx_local <- unique(queryHits(findOverlaps(CTCF_bins_gr, excl_gr)))
-
+  if (flank > 0) {
+    fexcl <- suppressWarnings(
+      GenomicRanges::resize(feature_gr, width = width(feature_gr) + 2 * flank, fix = 'center'))
+    excl_idx <- union(excl_idx, unique(queryHits(findOverlaps(CTCF_bins_gr, fexcl))))
+  }
   ccre_idx_local <- integer(0)
   if (exclude_all_ccre) {
-    bed_293 <- read.table(LOCAL$cCRE_293_bed, sep = '\t', stringsAsFactors = FALSE)
-    bed_293T <- read.table(LOCAL$cCRE_293T_bed, sep = '\t', stringsAsFactors = FALSE)
-    all_ccre <- rbind(bed_293[, 1:3], bed_293T[, 1:3])
-    names(all_ccre) <- c('chrom', 'start', 'end')
-    all_ccre_gr <- GRanges(
-      seqnames = all_ccre$chrom,
-      ranges   = IRanges(start = as.numeric(all_ccre$start) + 1, end = as.numeric(all_ccre$end))
-    )
-    ccre_idx_local <- unique(queryHits(findOverlaps(CTCF_bins_gr, all_ccre_gr)))
+    ccre_idx_local <- unique(queryHits(findOverlaps(CTCF_bins_gr, load_all_ccre_gr())))
   }
-
-  nonneg_idx_local <- union(peak_idx_local, ccre_idx_local)
+  nonneg_idx_local <- union(excl_idx, ccre_idx_local)
   potential_neg <- setdiff(all_local, nonneg_idx_local)
   ctcf_bound_gr <- feature_gr   # desert distance tiebreak = distance to nearest TF peak
-  message(sprintf('[prep] Candidate negatives (no TF peak%s%s): %d / %d post-blacklist',
-                  if (flank > 0) sprintf(' +/-%gbp', flank) else '',
+  message(sprintf('[prep] Candidate negatives (not %s%s): %d / %d post-blacklist',
+                  if (positives_in_ccre) 'TF-bound cCRE' else 'TF peak',
                   if (exclude_all_ccre) ' AND no cCRE' else '',
                   length(potential_neg), length(all_local)))
 } else {
@@ -586,7 +616,8 @@ message('[prep] Wrote ', tsv_path)
 
 meta <- list(
   mm_regions       = reg_path,
-  positive_source  = if (generic_mode) 'tf_peaks_bed' else 'CTCF_SCREEN_cCRE',
+  positive_source  = if (!generic_mode) 'CTCF_SCREEN_cCRE'
+                     else if (positives_in_ccre) 'tf_bound_cCRE' else 'tf_peaks',
   generic_mode     = generic_mode,
   tf_peaks_bed     = if (generic_mode) tf_peaks_path else 'NA',
   n_bins_universe  = length(bin_names),

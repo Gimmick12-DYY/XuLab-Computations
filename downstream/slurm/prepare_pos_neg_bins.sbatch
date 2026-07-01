@@ -65,6 +65,14 @@ BULK_BAM="${BULK_BAM:-${BULK_CTCF_BAM:-}}"
 TF_PEAKS_BED="${TF_PEAKS_BED:-}"
 PEAK_SIGNAL_COL="${PEAK_SIGNAL_COL:-7}"
 EXCLUDE_FLANK_BP="${EXCLUDE_FLANK_BP:-0}"
+# cCRE-based positives (default 1): TF-bound cCRE = cCRE registry ∩ TF peaks;
+# positives = bins overlapping those (matches the CTCF cCRE definition). Set 0
+# for raw peak-based positives (bins overlapping any TF peak).
+POSITIVES_IN_CCRE="${POSITIVES_IN_CCRE:-1}"
+# Generic path: exclude ALL cCREs from the negative universe? Default 0 (NO) so
+# the universe matches CTCF's (exclude only the TF's own binding, then rely on
+# the bedcov zero-read filter). Set 1 to also drop all cCREs.
+EXCLUDE_ALL_CCRE="${EXCLUDE_ALL_CCRE:-0}"
 # CTCF/cCRE-path negative universe + coverage filter.
 #   NEG_UNIVERSE=accessible_unbound -> cCRE bins not CTCF-bound (hard negatives)
 #   NEG_MAX_COVERAGE=0              -> keep only zero-bulk-read bins (needs BULK_BAM)
@@ -136,5 +144,7 @@ RARGS=(
 [[ -n "${TF_PEAKS_BED}" ]] && RARGS+=(--tf-peaks-bed "${TF_PEAKS_BED}" \
                                       --peak-signal-col "${PEAK_SIGNAL_COL}" \
                                       --exclude-flank-bp "${EXCLUDE_FLANK_BP}")
+[[ "${EXCLUDE_ALL_CCRE}" != "1" ]] && RARGS+=(--no-exclude-ccre)
+[[ -n "${TF_PEAKS_BED}" && "${POSITIVES_IN_CCRE}" == "1" ]] && RARGS+=(--positives-in-ccre)
 
 Rscript "${DOWN_DIR}/prepare_pos_neg_bins.R" "${RARGS[@]}"
