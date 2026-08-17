@@ -1,0 +1,17 @@
+dataset	gsm	srr	layout	group	keep	note
+# Independent wild-type HEK293T ATAC-seq for validating the OmniATAC open-chromatin mask.
+# keep=yes rows are downloaded (00) and pooled per-dataset for peak calling (01).
+# GSE283384: MORC2 overexpression study; only the lipofectamine-only CONTROL reps are WT.
+gse283384_wt	GSM8661240	SRR31586677	PAIRED	control	yes	WT HEK293T + lipofectamine, rep1
+gse283384_wt	GSM8661241	SRR31586676	PAIRED	control	yes	WT HEK293T + lipofectamine, rep2
+gse283384_wt	GSM8661242	NA	PAIRED	morc2_oe	no	MORC2 overexpression rep1 (perturbed, excluded; SRR not resolved)
+gse283384_wt	GSM8661243	NA	PAIRED	morc2_oe	no	MORC2 overexpression rep2 (perturbed, excluded; SRR not resolved)
+# GSE152177: HEK293T ATAC across rs4420550 genotypes; pooled as WT replicates (single SNP locus).
+gse152177_wt	GSM4605460	SRR11973751	PAIRED	GG	yes	rs4420550 G/G
+gse152177_wt	GSM4605461	SRR11973752	PAIRED	GG	yes	rs4420550 G/G
+gse152177_wt	GSM4605462	SRR11973753	PAIRED	GG	yes	rs4420550 G/G
+gse152177_wt	GSM4605463	SRR11973754	PAIRED	GG	yes	rs4420550 G/G
+gse152177_wt	GSM4605464	SRR11973755	PAIRED	AA	yes	rs4420550 A/A
+gse152177_wt	GSM4605465	SRR11973756	PAIRED	AA	yes	rs4420550 A/A
+gse152177_wt	GSM4605466	SRR11973757	PAIRED	AA	yes	rs4420550 A/A
+gse152177_wt	GSM4605467	SRR11973758	PAIRED	AA	yes	rs4420550 A/A

@@ -1,0 +1,18 @@
+# conda env for the ATAC-seq validation module.
+#   mamba env create -f atac_validation/environment.yml -p /work/users/d/y/dyy12/conda/envs/atac
+name: atac
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - python=3.10
+  - sra-tools>=3.0      # prefetch, fasterq-dump
+  - fastp>=0.23         # paired-end adapter/quality trimming (auto Nextera)
+  - bowtie2>=2.5
+  - samtools>=1.18
+  - macs2>=2.2.9
+  - bedtools>=2.31      # optional; python fallback exists for merge/overlap
+  - pigz
+  - numpy
+  - pandas
+  - matplotlib
