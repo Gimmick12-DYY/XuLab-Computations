@@ -16,7 +16,8 @@
 # Output: atac_validation/work/<dataset>/fastq/<srr>_{1,2}.fastq.gz
 
 set -euo pipefail
-source "$(dirname "$0")/../scripts/lib.sh"
+# $0 is a spool copy under SLURM; always source via the Longleaf checkout.
+source "${XULAB:-/work/users/d/y/dyy12/XuLab}/atac_validation/scripts/lib.sh"
 
 mapfile -t ROWS < <(all_runs)
 IDX="${SLURM_ARRAY_TASK_ID:-0}"

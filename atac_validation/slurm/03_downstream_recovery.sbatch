@@ -18,7 +18,7 @@
 #   TFS="ctcf maz zic2" sbatch atac_validation/slurm/03_downstream_recovery.sbatch
 
 set -euo pipefail
-source "$(dirname "$0")/../scripts/lib.sh"
+source "${XULAB:-/work/users/d/y/dyy12/XuLab}/atac_validation/scripts/lib.sh"
 cd "${AV}/scripts"
 
 BINS_DIR="${BINS_DIR:-${XULAB}/downstream}"

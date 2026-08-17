@@ -17,7 +17,7 @@ BT2_INDEX="${BT2_INDEX:-${REF_DIR}/hg38}"
 
 # ENCODE hg38 blacklist. Optional: if the file is missing the filter is skipped
 # (with a warning) rather than failing the run.
-BLACKLIST_BED="${BLACKLIST_BED:-${XULAB}/downstream/cache/hg38.blacklist.bed.gz}"
+BLACKLIST_BED="${BLACKLIST_BED:-${XULAB}/downstream/cache/hg38-blacklist.v2.bed.gz}"
 
 # 1 kb bin universe shared by every unified impute (any TF works; CTCF is canonical).
 REGIONS_TSV="${REGIONS_TSV:-${XULAB}/unified/work/ctcf/impute/regions.tsv}"

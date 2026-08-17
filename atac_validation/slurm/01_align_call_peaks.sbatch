@@ -23,7 +23,7 @@
 #   data/HEK293T_ATAC_<dataset>_MACS2.narrowPeak.gz   (copy, drop-in mask)
 
 set -euo pipefail
-source "$(dirname "$0")/../scripts/lib.sh"
+source "${XULAB:-/work/users/d/y/dyy12/XuLab}/atac_validation/scripts/lib.sh"
 
 DATASETS=(gse283384_wt gse152177_wt)
 IDX="${SLURM_ARRAY_TASK_ID:-0}"

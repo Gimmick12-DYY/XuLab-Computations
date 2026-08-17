@@ -13,7 +13,7 @@
 #   sbatch atac_validation/slurm/02_overlap_union.sbatch
 
 set -euo pipefail
-source "$(dirname "$0")/../scripts/lib.sh"
+source "${XULAB:-/work/users/d/y/dyy12/XuLab}/atac_validation/scripts/lib.sh"
 cd "${AV}/scripts"
 
 GSE283384_PEAKS="${XULAB}/data/HEK293T_ATAC_gse283384_wt_MACS2.narrowPeak.gz"

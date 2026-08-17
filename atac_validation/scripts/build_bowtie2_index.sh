@@ -13,7 +13,7 @@
 #   sbatch atac_validation/scripts/build_bowtie2_index.sh
 
 set -euo pipefail
-source "$(dirname "$0")/lib.sh"
+source "${XULAB:-/work/users/d/y/dyy12/XuLab}/atac_validation/scripts/lib.sh"
 
 mkdir -p "${REF_DIR}"
 if [[ -s "${BT2_INDEX}.1.bt2" || -s "${BT2_INDEX}.1.bt2l" ]]; then

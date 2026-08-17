@@ -52,6 +52,9 @@ union + downstream bins ─(03 recovery)→ results/open_positive_recovery_*.tsv
 ## Gotchas
 - `_maskutil.py` finds `_regions.py` via `parents[2]/unified/scripts`; keep the
   `atac_validation/scripts/` depth or fix that path.
+- SLURM copies the `.sbatch` into a spool dir, so never
+  `source "$(dirname "$0")/../scripts/lib.sh"`. Source via
+  `${XULAB:-/work/users/d/y/dyy12/XuLab}/atac_validation/scripts/lib.sh`.
 - `data/` and `atac_validation/{work,ref}/` are gitignored. Peaks/union BED land
   in `data/` (untracked, like the existing OmniATAC symlink). Only `results/*.tsv`
   + code are tracked (`*.png/*.pdf` ignored).
