@@ -85,6 +85,14 @@ model:
   gate_hidden:    [128, 64, 32]
   gate_use_concat: true   # concat([ẽ_r ; u_c]); false would use bilinear pool
 
+  # Sparsity-aware gate: condition on original raw coverage.
+  # When true, ingest must provide counts.npz + cell_depth.npy (re-run 00_ingest).
+  #   use_cell_depth — append log1p(per-cell library size) to the gate
+  #   use_obs_count  — append log1p(raw count at (bin,cell)); 0 if unobserved
+  sparsity_aware:  false
+  use_cell_depth:  false
+  use_obs_count:   false
+
 # -----------------------------------------------------------------------------
 # Step 01: training
 # -----------------------------------------------------------------------------
@@ -127,6 +135,9 @@ train:
   ranking_loss_weight:    1.0
   ranking_grade_by_count: true
 
+  # When sparsity_aware, up-weight focal loss on positives by log1p(raw count).
+  loss_weight_by_count: false
+
   # Reverse-complement augmentation: with this probability each bin's sequence
   # window is replaced by its reverse complement before encoding. A universal
   # double-stranded-DNA symmetry (NOT a prior) -- helps the from-scratch CNN
@@ -167,3 +178,10 @@ impute:
   binarize_output: true        # 1 at every above-threshold entry
   keep_raw:        true        # union with raw via element-wise max
   weight:          1.0
+
+  # Open-chromatin mask (HEK293T OmniATAC IDR optimal peaks).
+  # New imputed entries outside this BED are deleted before keep_raw union;
+  # observed raw signal outside open chromatin is preserved when keep_raw=true.
+  # Set to null / "off" to disable.
+  open_chromatin_bed: /work/users/d/y/dyy12/XuLab/data/HEK293T_OmniATAC_idr_optimal.narrowPeak.gz
+  open_chromatin_mask_imputed_only: true

@@ -85,6 +85,12 @@ model:
   gate_hidden:    [128, 64, 32]
   gate_use_concat: true   # concat([ẽ_r ; u_c]); false would use bilinear pool
 
+  # Sparsity-aware gate: condition on original raw coverage.
+  # When true, ingest must provide counts.npz + cell_depth.npy (re-run 00_ingest).
+  sparsity_aware:  false
+  use_cell_depth:  false
+  use_obs_count:   false
+
 # -----------------------------------------------------------------------------
 # Step 01: training
 # -----------------------------------------------------------------------------
@@ -126,6 +132,9 @@ train:
   # amplification. 0.0 -> focal only (original behavior).
   ranking_loss_weight:    1.0
   ranking_grade_by_count: true
+
+  # When sparsity_aware, up-weight focal loss on positives by log1p(raw count).
+  loss_weight_by_count: false
 
   # Reverse-complement augmentation: with this probability each bin's sequence
   # window is replaced by its reverse complement before encoding. A universal

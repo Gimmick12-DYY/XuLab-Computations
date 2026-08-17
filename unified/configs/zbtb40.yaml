@@ -15,8 +15,8 @@
 
 paths:
   # Single-TF CTCF 1 kb bin matrix (same .rds as scBasset / cisTopic / PUscOpen).
-  input_rds:   /work/users/d/y/dyy12/XuLab/data/ZBTB7A_bin1000_mtx.rds
-  work_dir:    /work/users/d/y/dyy12/XuLab/unified/work/zbtb7a
+  input_rds:   /work/users/d/y/dyy12/XuLab/data/ZBTB40_bin1000_mtx.rds
+  work_dir:    /work/users/d/y/dyy12/XuLab/unified/work/zbtb40
 
   # hg38 FASTA + .fai (reuse scBasset's cache).
   genome_fa:   /work/users/d/y/dyy12/XuLab/downstream/cache/hg38.fa
@@ -87,6 +87,8 @@ model:
 
   # Sparsity-aware gate: condition on original raw coverage.
   # When true, ingest must provide counts.npz + cell_depth.npy (re-run 00_ingest).
+  #   use_cell_depth — append log1p(per-cell library size) to the gate
+  #   use_obs_count  — append log1p(raw count at (bin,cell)); 0 if unobserved
   sparsity_aware:  false
   use_cell_depth:  false
   use_obs_count:   false
