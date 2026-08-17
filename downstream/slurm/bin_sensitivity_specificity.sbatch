@@ -7,15 +7,13 @@
 #SBATCH --time=01:00:00
 
 # Bin-level coverage of positive / negative bin sets (from prepare_pos_neg_bins.R).
-# Sparsity-matched by default: the reference input (MATCH_TO, default "raw") is
-# scored at THRESHOLD; every other pipeline picks its threshold so the total
-# number of "calls" (covered pos+neg bins) equals the reference's. Set
-# MATCH_TO="" to apply THRESHOLD uniformly instead.
+# Default definition: valued bins = any nonzero signal (THRESHOLD=0, no
+# sparsity matching). Optional MATCH_TO / TOP_K restore sparsity-matched or
+# fixed top-K calling when needed for apples-to-apples comparisons.
 #
 # Imputed pipelines default to each pipeline's native <work>/impute/ (CSR,
-# factors, or dense per bin_sensitivity_specificity.py). That keeps top-K
-# bin coverage sensitive to imputer-specific rankings. Union CSRs from
-# Override INPUTS or *_DIR to point at alternate impute locations if needed.
+# factors, or dense per bin_sensitivity_specificity.py). Override INPUTS or
+# *_DIR to point at alternate impute locations if needed.
 #
 # Optional env vars (defaults shown):
 #   ROOT_DIR      repo root (default: auto from submit dir, else /work/users/d/y/dyy12/XuLab)
@@ -39,12 +37,10 @@
 #                 (default: ${ROOT_DIR}/scBasset_cisTopic_PUscOpen/work/ctcf/impute)
 #   CONDA_ENV     conda env (default: cistopic; FITS/scopen/magic envs work too)
 #   OUT_NAME      basename for output files (default: bin_coverage)
-#   THRESHOLD     reference signal threshold (default 0; "any nonzero signal")
-#   MATCH_TO      reference input label for sparsity matching (default "raw";
-#                 empty string disables matching)
-#   MATCH_MULT    multiplier on raw's base_K when MATCH_TO is set (default 1.35
-#                 → K ≈ 1.35× #(bins with ref signal>t), capped at #bins).
-#                 Set to 1.0 for the old ~9k K; raise further or set TOP_K to fix K.
+#   THRESHOLD     signal threshold (default 0; valued bins = any nonzero)
+#   MATCH_TO      reference label for sparsity matching (default "" = off;
+#                 set to "raw" to enable matched top-K)
+#   MATCH_MULT    multiplier on reference K when MATCH_TO is set (default 1.0)
 #   TOP_K         explicit K for every pipeline; overrides MATCH_TO / MATCH_MULT
 
 set -euo pipefail
@@ -82,8 +78,8 @@ if [[ -z "${BINS_TSV:-}" || -z "${OUT_DIR:-}" || -z "${INPUTS:-}" ]]; then
 fi
 CONDA_ENV="${CONDA_ENV:-cistopic}"
 OUT_NAME="${OUT_NAME:-bin_coverage}"
-THRESHOLD="${THRESHOLD:-0.01}"
-MATCH_TO="${MATCH_TO-raw}"
+THRESHOLD="${THRESHOLD:-0}"
+MATCH_TO="${MATCH_TO-}"
 MATCH_MULT="${MATCH_MULT:-1.0}"
 TOP_K="${TOP_K:-}"
 

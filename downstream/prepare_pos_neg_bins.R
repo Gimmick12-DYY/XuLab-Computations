@@ -37,9 +37,6 @@ suppressPackageStartupMessages({
 
 `%+%` <- function(a, b) paste0(a, b)   # string concat for readable help text
 
-# Sum of per-base bulk read depth over each bin (samtools bedcov), aligned to
-# the order of `local_idx` into `gr`. Used for the desert ranking and the
-# --neg-max-coverage filter.
 bedcov_coverage <- function(local_idx, gr, bam, samtools, tmp_bed) {
   cand <- gr[local_idx]
   utils::write.table(
@@ -57,6 +54,25 @@ bedcov_coverage <- function(local_idx, gr, bam, samtools, tmp_bed) {
     stop(sprintf('bedcov row count %d != candidate count %d', length(cov), length(local_idx)))
   file.remove(tmp_bed)
   cov
+}
+
+# narrowPeak cols 8/9 store -log10(p) and -log10(q). ENCODE often writes -1 when
+# p is unavailable; in that case only the q filter is applied.
+filter_peaks_by_threshold <- function(pk, q_max, p_max) {
+  if (nrow(pk) == 0L) return(pk)
+  keep <- rep(TRUE, nrow(pk))
+  if (ncol(pk) >= 9L) {
+    q_col <- suppressWarnings(as.numeric(pk[[9]]))
+    keep <- keep & !is.na(q_col) & q_col >= -log10(q_max)
+  }
+  if (ncol(pk) >= 8L) {
+    p_col <- suppressWarnings(as.numeric(pk[[8]]))
+    p_valid <- !is.na(p_col) & p_col > 0
+    if (any(p_valid)) {
+      keep <- keep & (!p_valid | (p_col >= -log10(p_max)))
+    }
+  }
+  pk[keep, , drop = FALSE]
 }
 
 option_list <- list(
@@ -107,12 +123,22 @@ option_list <- list(
   make_option(c('--peak-signal-col'), type = 'integer', default = 7L,
               help = 'Column in --tf-peaks-bed used to rank positive bins (narrowPeak col 7 = '
                      %+% 'signalValue). [default %default]'),
+  make_option(c('--positive-mode'), type = 'character', default = 'all_bound',
+              help = "Generic TF positive definition: 'all_bound' (all TF-bound cCRE bins), "
+                     %+% "'fixed_n' (top --n-pos bins by peak signal; default 5000 when "
+                     %+% "--n-pos=0), or 'peak_cutoff' (bulk peaks with q<--peak-q-max AND "
+                     %+% "p<--peak-p-max, then TF-bound cCRE bins). True negatives always "
+                     %+% "exclude TF-bound cCREs, bedcov zero-read filter, random match."),
+  make_option(c('--peak-q-max'), type = 'double', default = 0.01,
+              help = 'positive-mode=peak_cutoff: keep narrowPeak rows with q-value below this '
+                     %+% '(col 9 = -log10 q). [default %default]'),
+  make_option(c('--peak-p-max'), type = 'double', default = 1e-5,
+              help = 'positive-mode=peak_cutoff: keep narrowPeak rows with p-value below this '
+                     %+% '(col 8 = -log10 p). [default %default]'),
   make_option(c('--positives-in-ccre'), action = 'store_true', default = FALSE,
-              help = 'Generic mode: define "TF-bound cCRE" = cCRE registry (293+293T) '
-                     %+% 'intersected with the TF peaks, and take POSITIVES as bins overlapping '
-                     %+% 'those (cCRE-based, matching the CTCF cCRE definition). Negatives then '
-                     %+% 'exclude TF-bound cCREs (not raw peaks). Without this, positives are '
-                     %+% 'bins overlapping any TF peak (peak-based).'),
+              help = 'DEPRECATED (use --positive-mode). Generic mode: define "TF-bound cCRE" '
+                     %+% '= cCRE registry (293+293T) intersected with the TF peaks, and take '
+                     %+% 'POSITIVES as bins overlapping those. Negatives exclude TF-bound cCREs.'),
   make_option(c('--exclude-flank-bp'), type = 'double', default = 0,
               help = 'In generic mode, also exclude bins within this many bp of any TF peak '
                      %+% 'from the negative candidate pool (avoids near-peak shoulders). '
@@ -215,7 +241,15 @@ ensure_file <- function(key) {
 # to match the CTCF negative definition).
 exclude_all_ccre  <- !isTRUE(opt$`no-exclude-ccre`)
 positives_in_ccre <- isTRUE(opt$`positives-in-ccre`)
+positive_mode     <- tolower(opt$`positive-mode`)
+peak_q_max <- as.numeric(opt$`peak-q-max`)
+peak_p_max <- as.numeric(opt$`peak-p-max`)
 if (generic_mode) {
+  if (!positive_mode %in% c('fixed_n', 'all_bound', 'peak_cutoff'))
+    stop("--positive-mode must be one of: fixed_n, all_bound, peak_cutoff")
+  positives_in_ccre <- TRUE
+  if (positive_mode == 'fixed_n' && as.integer(opt$`n-pos`) <= 0L)
+    opt$`n-pos` <- 5000
   # cCRE registries are needed if we exclude all cCREs OR restrict positives to
   # cCREs (TF-bound cCRE). Otherwise only the blacklist.
   dl_keys <- if (exclude_all_ccre || positives_in_ccre)
@@ -289,55 +323,82 @@ n_pos_target <- as.integer(opt$`n-pos`)
 # below both to EXCLUDE positives from the negative pool and (desert mode) as
 # the distance-to-nearest-site tiebreak.
 if (generic_mode) {
-  message('[prep] Building positive set from TF peaks: ', tf_peaks_path)
-  pk <- read.table(tf_peaks_path, sep = '\t', stringsAsFactors = FALSE,
-                   comment.char = '', quote = '', header = FALSE)
-  if (ncol(pk) < 3L) stop('TF peaks BED needs >= 3 columns (chrom,start,end).')
+  message('[prep] Building positive set from TF peaks: ', tf_peaks_path,
+          ' (mode=', positive_mode, ')')
+  pk_all <- read.table(tf_peaks_path, sep = '\t', stringsAsFactors = FALSE,
+                       comment.char = '', quote = '', header = FALSE)
+  if (ncol(pk_all) < 3L) stop('TF peaks BED needs >= 3 columns (chrom,start,end).')
   sigcol <- as.integer(opt$`peak-signal-col`)
-  pk_score <- if (ncol(pk) >= sigcol) suppressWarnings(as.numeric(pk[[sigcol]])) else rep(1, nrow(pk))
-  pk_score[is.na(pk_score)] <- 0
-  feature_gr <- GRanges(
-    seqnames = pk[[1]],
-    ranges   = IRanges(start = as.numeric(pk[[2]]) + 1, end = as.numeric(pk[[3]]))
-  )
-  mcols(feature_gr)$score <- pk_score
-  message(sprintf('[prep] %d TF peaks loaded (rank by column %d).', length(feature_gr), sigcol))
+
+  peaks_to_gr <- function(pk_df) {
+    sc <- if (ncol(pk_df) >= sigcol) suppressWarnings(as.numeric(pk_df[[sigcol]]))
+          else rep(1, nrow(pk_df))
+    sc[is.na(sc)] <- 0
+    gr <- GRanges(
+      seqnames = pk_df[[1]],
+      ranges   = IRanges(start = as.numeric(pk_df[[2]]) + 1, end = as.numeric(pk_df[[3]]))
+    )
+    mcols(gr)$score <- sc
+    gr
+  }
+
+  # Full peak set -> TF-bound cCRE bins (always used for negative exclusion).
+  all_feature_gr <- peaks_to_gr(pk_all)
+  all_ccre_gr <- load_all_ccre_gr()
+  ccre_bins <- unique(queryHits(findOverlaps(CTCF_bins_gr, all_ccre_gr)))
+  hits_all_pk <- findOverlaps(CTCF_bins_gr, all_feature_gr)
+  if (length(hits_all_pk) == 0L)
+    stop('No bins overlap any TF peak -- check chrom naming (chr1 vs 1) / coordinates.')
+  peak_bins_all <- unique(queryHits(hits_all_pk))
+  bound_ccre_bins <- peak_bins_all[peak_bins_all %in% ccre_bins]
+  if (length(bound_ccre_bins) == 0L)
+    stop('No TF-bound cCRE bins (peak ∩ cCRE) -- check cell line / registry.')
+  binding_idx_local <- bound_ccre_bins
+  message(sprintf('[prep] TF-bound cCRE bins (negative exclusion set): %d', length(binding_idx_local)))
+
+  pk <- if (positive_mode == 'peak_cutoff') {
+    n_before <- nrow(pk_all)
+    pk_f <- filter_peaks_by_threshold(pk_all, peak_q_max, peak_p_max)
+    if (nrow(pk_f) == 0L)
+      stop('peak_cutoff: no peaks pass q<', peak_q_max,
+           ' (and p<', peak_p_max, ' where p is available)')
+    message(sprintf('[prep] peak_cutoff: %d / %d peaks pass q<%g (p<%g when available).',
+                    nrow(pk_f), n_before, peak_q_max, peak_p_max))
+    pk_f
+  } else pk_all
+
+  feature_gr <- peaks_to_gr(pk)
+  message(sprintf('[prep] %d TF peaks for positives (rank by column %d).',
+                  length(feature_gr), sigcol))
 
   hits_pk <- findOverlaps(CTCF_bins_gr, feature_gr)
   if (length(hits_pk) == 0L)
-    stop('No bins overlap any TF peak -- check chrom naming (chr1 vs 1) / coordinates.')
+    stop('No bins overlap selected TF peaks -- check chrom naming / cutoff.')
   bin_best <- tapply(mcols(feature_gr)$score[subjectHits(hits_pk)], queryHits(hits_pk), max)
   pos_bins_all <- as.integer(names(bin_best))
 
-  # cCRE-based (matches CTCF): TF-bound cCRE = cCRE registry intersected with the
-  # TF peaks. Keep only positive bins that ALSO overlap a cCRE.
-  if (positives_in_ccre) {
-    all_ccre_gr <- load_all_ccre_gr()
-    ccre_bins <- unique(queryHits(findOverlaps(CTCF_bins_gr, all_ccre_gr)))
-    keep <- pos_bins_all %in% ccre_bins   # bin_best and pos_bins_all are position-aligned
-    bin_best <- bin_best[keep]
+  if (positive_mode %in% c('fixed_n', 'all_bound', 'peak_cutoff')) {
+    keep <- pos_bins_all %in% bound_ccre_bins
+    bin_best <- bin_best[as.character(pos_bins_all[keep])]
     pos_bins_all <- pos_bins_all[keep]
     if (length(pos_bins_all) == 0L)
-      stop('positives-in-ccre: no TF peak overlaps any cCRE -- check cell line / registry.')
-    message(sprintf('[prep] TF-bound cCRE restriction: %d peak-bins are at a cCRE (cCRE-based positives).',
-                    length(pos_bins_all)))
+      stop('No TF-bound cCRE bins among selected peaks.')
+    message(sprintf('[prep] TF-bound cCRE restriction (%s): %d positive candidate bins.',
+                    positive_mode, length(pos_bins_all)))
   }
 
-  # Bins the negative pool must exclude (the TF's binding). cCRE-based -> the
-  # TF-bound cCRE bins; peak-based -> all peak-overlapping bins.
-  binding_idx_local <- pos_bins_all
-
-  if (n_pos_target > 0) {
+  if (positive_mode == 'fixed_n') {
     ord  <- order(as.numeric(bin_best), decreasing = TRUE)
     take <- min(n_pos_target, length(pos_bins_all))
     if (take < n_pos_target)
       warning(sprintf('[prep] only %d positive bins available; requested %d', take, n_pos_target))
     pos_idx_local <- pos_bins_all[ord[seq_len(take)]]
-    message(sprintf('[prep] Positive bins (top %d by peak signal): %d of %d peak-overlapping bins.',
+    message(sprintf('[prep] Positive bins (fixed_n top %d): %d of %d TF-bound cCRE bins.',
                     n_pos_target, length(pos_idx_local), length(pos_bins_all)))
   } else {
     pos_idx_local <- pos_bins_all
-    message(sprintf('[prep] Positive bins (all peak-overlapping): %d', length(pos_idx_local)))
+    message(sprintf('[prep] Positive bins (%s): %d TF-bound cCRE bins.',
+                    positive_mode, length(pos_idx_local)))
   }
 } else {
   message('[prep] Building positive set (top ', opt$`n-top`, ' CTCF cCREs)...')
@@ -392,11 +453,8 @@ message(sprintf('[prep] Positive bin count (post-blacklist): %d', length(pos_idx
 message('[prep] Building negative set ...')
 all_local <- seq_along(CTCF_bins_gr)
 if (generic_mode) {
-  # Candidate negatives = post-blacklist bins NOT in the TF's binding set
-  # (`binding_idx_local`: TF-bound cCRE bins when --positives-in-ccre, else all
-  # TF-peak bins), optionally also excluding all cCREs (--no-exclude-ccre off).
-  # This mirrors CTCF: exclude the TF's bound regions, then the bedcov zero-read
-  # filter removes any residual bound bins.
+  # Candidate negatives = post-blacklist bins NOT overlapping TF-bound cCREs
+  # (peak ∩ cCRE intersection), optionally also excluding all cCREs.
   excl_idx <- binding_idx_local
   flank <- as.numeric(opt$`exclude-flank-bp`)
   if (flank > 0) {
@@ -411,8 +469,7 @@ if (generic_mode) {
   nonneg_idx_local <- union(excl_idx, ccre_idx_local)
   potential_neg <- setdiff(all_local, nonneg_idx_local)
   ctcf_bound_gr <- feature_gr   # desert distance tiebreak = distance to nearest TF peak
-  message(sprintf('[prep] Candidate negatives (not %s%s): %d / %d post-blacklist',
-                  if (positives_in_ccre) 'TF-bound cCRE' else 'TF peak',
+  message(sprintf('[prep] Candidate negatives (not TF-bound cCRE%s): %d / %d post-blacklist',
                   if (exclude_all_ccre) ' AND no cCRE' else '',
                   length(potential_neg), length(all_local)))
 } else {
@@ -617,7 +674,12 @@ message('[prep] Wrote ', tsv_path)
 meta <- list(
   mm_regions       = reg_path,
   positive_source  = if (!generic_mode) 'CTCF_SCREEN_cCRE'
-                     else if (positives_in_ccre) 'tf_bound_cCRE' else 'tf_peaks',
+                     else if (positive_mode == 'peak_cutoff') 'tf_bound_cCRE_peak_cutoff'
+                     else if (positive_mode == 'fixed_n') 'tf_bound_cCRE_fixed_n'
+                     else 'tf_bound_cCRE',
+  positive_mode    = if (generic_mode) positive_mode else 'NA',
+  peak_q_max       = if (generic_mode && identical(positive_mode, 'peak_cutoff')) peak_q_max else -1,
+  peak_p_max       = if (generic_mode && identical(positive_mode, 'peak_cutoff')) peak_p_max else -1,
   generic_mode     = generic_mode,
   tf_peaks_bed     = if (generic_mode) tf_peaks_path else 'NA',
   n_bins_universe  = length(bin_names),

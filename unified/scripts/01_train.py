@@ -151,15 +151,31 @@ def main() -> int:
     ranking_weight = float(t_cfg.get("ranking_loss_weight", 0.0))
     ranking_grade_by_count = bool(t_cfg.get("ranking_grade_by_count", True))
     rc_prob = float(t_cfg.get("rc_augment_prob", 0.0))
+    # Sparsity-aware training: gate sees cell depth + per-pair raw count;
+    # focal loss up-weights strongly observed positives.
+    sparsity_aware = bool(m_cfg.get("sparsity_aware", False))
+    use_cell_depth = bool(m_cfg.get("use_cell_depth", True))
+    use_obs_count = bool(m_cfg.get("use_obs_count", True))
+    loss_weight_by_count = bool(t_cfg.get("loss_weight_by_count", True))
 
     seqs_dir = Path(cfg["paths"]["seqs"])
     model_dir = Path(cfg["paths"]["model"])
     h5_path = seqs_dir / "seqs.h5"
     mat_path = seqs_dir / "matrix.npz"
+    counts_path = seqs_dir / "counts.npz"
+    depth_path = seqs_dir / "cell_depth.npy"
     cr_path = seqs_dir / "chrom_ranges.json"
     for p in (h5_path, mat_path, cr_path):
         if not p.is_file():
             log.error("Missing %s -- run 00_ingest.py first", p); return 1
+    if sparsity_aware:
+        for p in (counts_path, depth_path):
+            if not p.is_file():
+                log.error(
+                    "sparsity_aware=true but missing %s -- re-run 00_ingest.py "
+                    "(writes counts.npz + cell_depth.npy)", p
+                )
+                return 1
 
     log.info("Importing torch ...")
     import torch
@@ -171,6 +187,20 @@ def main() -> int:
 
     Y = sp.load_npz(mat_path).tocsr().astype(np.uint8)
     chrom_ranges = load_chrom_ranges(cr_path)
+    counts = None
+    cell_depth_log = None
+    if sparsity_aware:
+        counts = sp.load_npz(counts_path).tocsr()
+        if counts.shape != Y.shape:
+            log.error("counts.npz shape %s != matrix.npz %s", counts.shape, Y.shape)
+            return 1
+        cell_depth = np.load(depth_path).astype(np.float64).ravel()
+        if cell_depth.size != Y.shape[1]:
+            log.error("cell_depth length %d != n_cells %d", cell_depth.size, Y.shape[1])
+            return 1
+        cell_depth_log = np.log1p(cell_depth).astype(np.float32)
+        log.info("Sparsity-aware inputs: counts nnz=%d  cell_depth mean=%.1f median=%.1f",
+                 counts.nnz, float(cell_depth.mean()), float(np.median(cell_depth)))
 
     # Per-bin global observation count (number of cells with any signal). Bins at
     # or below `hard_negative_inactive_thresh` are "silent" -> confident true
@@ -200,10 +230,17 @@ def main() -> int:
         alpha_init=float(m_cfg.get("alpha_init", 0.1)),
         gate_hidden=tuple(m_cfg.get("gate_hidden", [128, 64, 32])),
         gate_use_concat=bool(m_cfg.get("gate_use_concat", True)),
+        sparsity_aware=sparsity_aware,
+        use_cell_depth=use_cell_depth,
+        use_obs_count=use_obs_count,
     ).to(device)
 
     n_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
-    log.info("Model built: %.2fM trainable params", n_params / 1e6)
+    log.info("Model built: %.2fM trainable params  (sparsity_aware=%s gate_in=%d)",
+             n_params / 1e6, sparsity_aware, model._gate_in_dim)
+    cell_depth_t = None
+    if sparsity_aware and use_cell_depth:
+        cell_depth_t = torch.from_numpy(cell_depth_log).to(device)
     log.info("Hard-negative mining: frac=%.2f pool_mult=%d pool_cap=%d inactive_thresh=%d "
              "(frac=0 -> pure uniform); silent bins (obs<=%d) = %d / %d (%.1f%%) -- the safe pool",
              hard_neg_frac, hard_pool_mult, hard_pool_cap, hard_neg_inactive_thresh,
@@ -256,7 +293,14 @@ def main() -> int:
                 s1 = min(n, s0 + slice_size)
                 pb = torch.from_numpy(np.ascontiguousarray(bins_np[s0:s1])).to(device)
                 pc = torch.from_numpy(np.ascontiguousarray(cells_np[s0:s1])).to(device)
-                yh, _, _ = model.forward_pairs(e_tilde, pb, pc)
+                # Hard-neg candidates are unobserved -> obs_count = 0.
+                obs = (torch.zeros(s1 - s0, device=device, dtype=torch.float32)
+                       if sparsity_aware and use_obs_count else None)
+                yh, _, _ = model.forward_pairs(
+                    e_tilde, pb, pc,
+                    cell_depth=cell_depth_t if sparsity_aware and use_cell_depth else None,
+                    obs_count=obs,
+                )
                 out[s0:s1] = yh.detach().cpu().numpy()
         return out
 
@@ -321,12 +365,39 @@ def main() -> int:
         y = np.concatenate([np.ones(n_pos, dtype=np.float32),
                              np.zeros(n_neg_actual, dtype=np.float32)])
 
+        # Per-pair raw count (0 for negatives) and optional focal loss weights.
+        obs_np = np.zeros(bin_idx.size, dtype=np.float32)
+        loss_w_np = np.ones(bin_idx.size, dtype=np.float32)
+        if sparsity_aware and counts is not None and n_pos > 0:
+            sub_counts = counts[lo:hi]
+            pos_counts = np.empty(n_pos, dtype=np.float64)
+            for i in range(n_pos):
+                r = int(pos_bins[i]); c = int(pos_cells[i])
+                start, end = sub_counts.indptr[r], sub_counts.indptr[r + 1]
+                idxs = sub_counts.indices[start:end]
+                j = int(np.searchsorted(idxs, c))
+                pos_counts[i] = (
+                    float(sub_counts.data[start + j])
+                    if j < idxs.size and idxs[j] == c else 0.0
+                )
+            obs_np[:n_pos] = np.log1p(pos_counts).astype(np.float32)
+            if loss_weight_by_count:
+                loss_w_np[:n_pos] = np.maximum(obs_np[:n_pos], 1e-3)
+
         bin_t = torch.from_numpy(bin_idx).to(device)
         cell_t = torch.from_numpy(cell_idx).to(device)
         y_t = torch.from_numpy(y).to(device)
+        obs_t = (torch.from_numpy(obs_np).to(device)
+                 if sparsity_aware and use_obs_count else None)
+        w_t = (torch.from_numpy(loss_w_np).to(device)
+               if (sparsity_aware and loss_weight_by_count) else None)
 
-        yhat, _, _ = model.forward_pairs(e_tilde, bin_t, cell_t)
-        loss = focal_bce(yhat, y_t, gamma=focal_g, alpha=focal_a)
+        yhat, _, _ = model.forward_pairs(
+            e_tilde, bin_t, cell_t,
+            cell_depth=cell_depth_t if sparsity_aware and use_cell_depth else None,
+            obs_count=obs_t,
+        )
+        loss = focal_bce(yhat, y_t, gamma=focal_g, alpha=focal_a, weight=w_t)
 
         # Pairwise ranking (AUC surrogate) on logits, optionally graded by each
         # positive's per-bin observation count -- a data-internal confidence,
@@ -439,6 +510,10 @@ def main() -> int:
         "ranking_loss_weight": ranking_weight,
         "ranking_grade_by_count": ranking_grade_by_count,
         "rc_augment_prob":    rc_prob,
+        "sparsity_aware":     sparsity_aware,
+        "use_cell_depth":     use_cell_depth,
+        "use_obs_count":      use_obs_count,
+        "loss_weight_by_count": loss_weight_by_count,
         "ckpt":          str(model_dir / "ckpt.pt"),
         "training_csv":  str(csv_path),
     }

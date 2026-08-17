@@ -21,6 +21,8 @@
 #     trainable    (n_bins_kept,)               bool   (raw nnz >= min_cells)
 #     attrs: seq_length, n_cells, n_bins_full, genome_fa
 #   matrix.npz                    binarized CSR, aligned to row order in seqs.h5
+#   counts.npz                    raw integer CSR (same rows) for sparsity-aware train
+#   cell_depth.npy                per-cell library size (sum of raw counts over bins)
 #   barcodes.tsv                  cell barcodes
 #   chrom_ranges.json             [{"chrom":"chr1","start_idx":0,"end_idx":n1}, ...]
 #   meta.json                     counts + paths
@@ -291,9 +293,18 @@ def main() -> int:
         h5.attrs["n_bins_full"] = int(mat.shape[0])
         h5.attrs["genome_fa"]   = str(genome_fa)
 
-    # Binarized matrix aligned to the final bin order
+    # Binarized matrix aligned to the final bin order (positive sampling / training labels)
     train_mat = (mat[final_idx] > 0).astype(np.uint8).tocsr()
     sp.save_npz(seqs_dir / "matrix.npz", train_mat)
+
+    # Raw integer counts (same row order) + per-cell depth for sparsity-aware training.
+    # matrix.npz stays binary so positive sampling is unchanged; counts.npz keeps
+    # the originally observed magnitudes the gate / loss can condition on.
+    counts_mat = mat[final_idx].tocsr().astype(np.int32)
+    sp.save_npz(seqs_dir / "counts.npz", counts_mat)
+    cell_depth = np.asarray(mat.sum(axis=0)).ravel().astype(np.float64)  # full-mm cells
+    np.save(seqs_dir / "cell_depth.npy", cell_depth)
+
     (seqs_dir / "barcodes.tsv").write_text("\n".join(barcodes.tolist()) + "\n")
 
     # Per-chromosome index ranges (used by 01_train.py to chunk by chrom)
@@ -327,8 +338,12 @@ def main() -> int:
         "genome_fa":        str(genome_fa),
         "h5":               str(h5_path),
         "matrix_npz":       str(seqs_dir / "matrix.npz"),
+        "counts_npz":       str(seqs_dir / "counts.npz"),
+        "cell_depth_npy":   str(seqs_dir / "cell_depth.npy"),
         "n_positives":      n_train_pos,
         "pos_freq":         float(pos_freq),
+        "cell_depth_mean":  float(cell_depth.mean()),
+        "cell_depth_median": float(np.median(cell_depth)),
     }
     (seqs_dir / "meta.json").write_text(json.dumps(meta, indent=2) + "\n")
     log.info("Done: %s", {k: meta[k] for k in

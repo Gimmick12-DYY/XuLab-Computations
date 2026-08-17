@@ -10,9 +10,11 @@
 # without a 293 reference).
 #
 # Usage:
-#   bash data_prep/fetch_tf_bulk.sh ZBTB7A ZIC2 MAZ ZNF777 SETDB1
+#   bash data_prep/fetch_tf_bulk.sh ZBTB7A ZIC2 MAZ ZNF777
 #   bash data_prep/fetch_tf_bulk.sh all
 #   DATA_DIR=/work/.../data bash data_prep/fetch_tf_bulk.sh MAZ
+#
+# ZNF282 is not on ENCODE — use data_prep/fetch_znf282_bulk.sh (GEO GSM2466515).
 #
 # Output per TF <T>:  <DATA_DIR>/<T>_<LINE>_peaks.bed  and  <T>_<LINE>.bam(.bai)
 # -----------------------------------------------------------------------------
@@ -24,17 +26,17 @@ BASE="https://www.encodeproject.org/files"
 
 # TF -> "peaks_ENCFF bam_ENCFF cellline"  (all HEK293 except NFYA = K562)
 declare -A REF=(
+  [CTCF]="ENCFF282PGY ENCFF139DCW HEK293"
   [ZNF768]="ENCFF489EFG ENCFF921GNM HEK293"
   [ZBTB7A]="ENCFF114DGV ENCFF559CGO HEK293"
   [ZIC2]="ENCFF359GIY ENCFF156XLC HEK293"
   [MAZ]="ENCFF529XTF ENCFF085SQS HEK293"
   [ZNF777]="ENCFF735CAY ENCFF436UNS HEK293"
-  [SETDB1]="ENCFF812YDP ENCFF271LDX HEK293"
   [NFYA]="ENCFF765GYT ENCFF873PQC K562"
 )
 
 if [[ "${1:-}" == "all" ]]; then
-  TFS=(ZNF768 ZBTB7A ZIC2 MAZ ZNF777 SETDB1 NFYA)
+  TFS=(CTCF ZNF768 ZBTB7A ZIC2 MAZ ZNF777 NFYA)
 else
   TFS=("$@")
 fi

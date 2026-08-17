@@ -8,7 +8,8 @@
 #SBATCH --partition=a100-gpu,l40-gpu
 #SBATCH --qos=gpu_access
 #SBATCH --gres=gpu:1
-#SBATCH --mail-type=END
+# Bulk runs: email only on failure (set MAIL_TYPE=END to also notify on success).
+#SBATCH --mail-type=FAIL
 #SBATCH --mail-user=dyy12@unc.edu
 
 # End-to-end unified model on the CTCF 1 kb bin matrix:
@@ -32,14 +33,19 @@
 
 set -euo pipefail
 
+# Resolve XuLab/unified without using BASH_SOURCE — under sbatch the script is
+# copied into /var/spool/... so dirname(BASH_SOURCE) is useless.
 SUBMIT_DIR="${SLURM_SUBMIT_DIR:-$(pwd)}"
 if [[ -d "${SUBMIT_DIR}/scripts" && -d "${SUBMIT_DIR}/configs" ]]; then
-  ROOT_DIR="${SUBMIT_DIR}"
+  # sbatch cwd / --chdir was unified/
+  ROOT_DIR="$(cd "${SUBMIT_DIR}" && pwd)"
+elif [[ -d "${SUBMIT_DIR}/unified/scripts" && -d "${SUBMIT_DIR}/unified/configs" ]]; then
+  # sbatch cwd was XuLab repo root
+  ROOT_DIR="$(cd "${SUBMIT_DIR}/unified" && pwd)"
 elif [[ -d "${SUBMIT_DIR}/../scripts" && -d "${SUBMIT_DIR}/../configs" ]]; then
   ROOT_DIR="$(cd "${SUBMIT_DIR}/.." && pwd)"
 else
-  SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-  ROOT_DIR="$(cd "${SCRIPT_DIR}/.." && pwd)"
+  ROOT_DIR="/work/users/d/y/dyy12/XuLab/unified"
 fi
 XULAB_ROOT="$(cd "${ROOT_DIR}/.." && pwd)"
 cd "${ROOT_DIR}"

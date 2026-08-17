@@ -41,9 +41,35 @@ import scipy.sparse as sp
 
 from _cfg import base_parser, load_config, resolve_paths
 from _model import GatedUnifiedModel
+from _regions import open_chromatin_bin_mask
 
 log = logging.getLogger("02_impute")
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
+
+
+def apply_open_chromatin_mask(
+    pred: sp.spmatrix,
+    open_mask: np.ndarray,
+) -> sp.csr_matrix:
+    """Zero all predicted entries on bins outside open chromatin."""
+    pred = pred.tocsr()
+    if open_mask.shape[0] != pred.shape[0]:
+        raise SystemExit(
+            f"open_mask length {open_mask.shape[0]} != n_bins {pred.shape[0]}"
+        )
+    closed = np.where(~open_mask)[0]
+    if closed.size == 0:
+        return pred
+    n_before = int(pred.nnz)
+    pred_l = pred.tolil(copy=True)
+    pred_l[closed] = sp.lil_matrix((closed.size, pred.shape[1]), dtype=pred.dtype)
+    out = pred_l.tocsr()
+    out.eliminate_zeros()
+    log.info(
+        "Open-chromatin mask: zeroed pred on %d closed bins; nnz %d -> %d",
+        int(closed.size), n_before, int(out.nnz),
+    )
+    return out
 
 
 def read_lines_gz(p: Path) -> list[str]:
@@ -98,6 +124,10 @@ def main() -> int:
     binarize = bool(i_cfg.get("binarize_output", True))
     keep_raw = bool(i_cfg.get("keep_raw", True))
     weight = float(i_cfg.get("weight", 1.0))
+    open_bed = i_cfg.get("open_chromatin_bed", None)
+    # imputed_only=True: mask pred only; raw outside ATAC kept via keep_raw.
+    # False: also wipe raw outside ATAC in the final matrix (rarely wanted).
+    mask_imputed_only = bool(i_cfg.get("open_chromatin_mask_imputed_only", True))
 
     seqs_dir = Path(cfg["paths"]["seqs"])
     mm_dir = Path(cfg["paths"]["mm"])
@@ -132,6 +162,35 @@ def main() -> int:
     mm_row_idx = np.asarray(h5["mm_row_idx"])
     chrom_ranges = json.loads(cr_path.read_text())
 
+    # Prefer sparsity flags saved in the checkpoint config (train-time truth).
+    ckpt_cfg = {}
+    ckpt_probe = torch.load(ckpt_path, map_location="cpu")
+    if isinstance(ckpt_probe.get("config"), dict):
+        ckpt_cfg = ckpt_probe["config"]
+    del ckpt_probe
+    ckpt_m = (ckpt_cfg.get("model") or {}) if ckpt_cfg else {}
+    sparsity_aware = bool(ckpt_m.get("sparsity_aware", m_cfg.get("sparsity_aware", False)))
+    use_cell_depth = bool(ckpt_m.get("use_cell_depth", m_cfg.get("use_cell_depth", True)))
+    use_obs_count = bool(ckpt_m.get("use_obs_count", m_cfg.get("use_obs_count", True)))
+
+    counts = None
+    cell_depth_t = None
+    if sparsity_aware:
+        counts_path = seqs_dir / "counts.npz"
+        depth_path = seqs_dir / "cell_depth.npy"
+        for p in (counts_path, depth_path):
+            if not p.is_file():
+                log.error("sparsity_aware ckpt but missing %s -- re-run 00_ingest.py", p)
+                return 1
+        counts = sp.load_npz(counts_path).tocsr()
+        if counts.shape != (n_bins_kept, n_cells):
+            log.error("counts.npz shape %s != (%d, %d)", counts.shape, n_bins_kept, n_cells)
+            return 1
+        cell_depth_log = np.log1p(np.load(depth_path).astype(np.float64).ravel()).astype(np.float32)
+        if cell_depth_log.size != n_cells:
+            log.error("cell_depth length mismatch"); return 1
+        log.info("Sparsity-aware impute: cell_depth + counts.npz")
+
     # Build model + load weights
     model = GatedUnifiedModel(
         n_cells=n_cells,
@@ -149,17 +208,38 @@ def main() -> int:
         alpha_init=float(m_cfg.get("alpha_init", 0.1)),
         gate_hidden=tuple(m_cfg.get("gate_hidden", [128, 64, 32])),
         gate_use_concat=bool(m_cfg.get("gate_use_concat", True)),
+        sparsity_aware=sparsity_aware,
+        use_cell_depth=use_cell_depth,
+        use_obs_count=use_obs_count,
     ).to(device)
     ckpt = torch.load(ckpt_path, map_location=device)
     model.load_state_dict(ckpt["state_dict"])
     model.eval()
-    log.info("Loaded ckpt epoch=%s val_loss=%.4f", ckpt.get("epoch"),
-             float(ckpt.get("val_loss", float("nan"))))
+    log.info("Loaded ckpt epoch=%s val_loss=%.4f sparsity_aware=%s",
+             ckpt.get("epoch"), float(ckpt.get("val_loss", float("nan"))),
+             sparsity_aware)
+    if sparsity_aware and use_cell_depth:
+        cell_depth_t = torch.from_numpy(cell_depth_log).to(device)
 
     def encode_chunk(lo: int, hi: int) -> "torch.Tensor":
         seq_np = X_ds[lo:hi].astype(np.float32)
         seq_t = torch.from_numpy(seq_np).to(device, non_blocking=True)
         return model.encode_bins(seq_t)
+
+    def predict_lo_hi(lo: int, hi: int) -> "torch.Tensor":
+        e_tilde = encode_chunk(lo, hi)
+        if not sparsity_aware:
+            return model.predict_chunk(e_tilde)
+        obs_t = None
+        if use_obs_count:
+            assert counts is not None
+            obs_np = np.log1p(counts[lo:hi].toarray().astype(np.float32))
+            obs_t = torch.from_numpy(np.ascontiguousarray(obs_np)).to(device)
+        return model.predict_chunk(
+            e_tilde,
+            cell_depth=cell_depth_t if use_cell_depth else None,
+            obs_counts=obs_t,
+        )
 
     mode, param = parse_threshold_mode(threshold_mode_str)
 
@@ -183,8 +263,7 @@ def main() -> int:
                 continue
             lo = cr["start_idx"] + int(rng.integers(0, cr["n_bins"]))
             hi = min(cr["end_idx"], lo + min(chunk_size, sample_target - gathered + 16))
-            e_tilde = encode_chunk(lo, hi)
-            yhat = model.predict_chunk(e_tilde)
+            yhat = predict_lo_hi(lo, hi)
             sample_vals.append(yhat.detach().cpu().numpy().ravel())
             gathered += yhat.shape[0]
     sv = np.concatenate(sample_vals)[:threshold_sample_size]
@@ -207,8 +286,7 @@ def main() -> int:
             chrom = cr["chrom"]
             for lo in range(cr["start_idx"], cr["end_idx"], chunk_size):
                 hi = min(cr["end_idx"], lo + chunk_size)
-                e_tilde = encode_chunk(lo, hi)
-                yhat = model.predict_chunk(e_tilde).detach().cpu().numpy()
+                yhat = predict_lo_hi(lo, hi).detach().cpu().numpy()
                 keep = yhat > threshold
                 if not keep.any():
                     continue
@@ -237,18 +315,41 @@ def main() -> int:
     pred.sum_duplicates()
     pred.eliminate_zeros()
 
-    # Optional binarize / weight + raw union
+    # Optional binarize / weight + open-chromatin mask + raw union
     if binarize:
         pred = (pred > 0).astype(np.float32).tocsr()
     elif weight != 1.0:
         pred = pred.copy()
         pred.data *= weight
 
+    open_mask = open_chromatin_bin_mask(raw_regions, open_bed)
+    if open_mask is not None:
+        n_open = int(open_mask.sum())
+        log.info(
+            "Open-chromatin BED %s: %d / %d bins open (%.2f%%)",
+            open_bed, n_open, n_bins_full, 100.0 * n_open / max(n_bins_full, 1),
+        )
+        pred_nnz_pre = int(pred.nnz)
+        pred = apply_open_chromatin_mask(pred, open_mask)
+        log.info("Masked imputed calls outside open chromatin: pred nnz %d -> %d",
+                 pred_nnz_pre, int(pred.nnz))
+
     raw_bin = (raw != 0).astype(np.float32)
     if keep_raw:
         out = raw_bin.maximum(pred).tocsr()
     else:
         out = pred.tocsr()
+
+    if open_mask is not None and not mask_imputed_only:
+        # Also drop raw outside open chromatin (hard mask of final matrix).
+        closed = np.where(~open_mask)[0]
+        if closed.size:
+            out_l = out.tolil(copy=True)
+            out_l[closed] = sp.lil_matrix((closed.size, out.shape[1]), dtype=out.dtype)
+            out = out_l.tocsr()
+            log.info("Hard open-chromatin mask: wiped %d closed bins including raw",
+                     int(closed.size))
+
     out.eliminate_zeros()
 
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -268,6 +369,9 @@ def main() -> int:
         "binarize_output":  binarize,
         "keep_raw":         keep_raw,
         "weight":           weight,
+        "open_chromatin_bed": str(open_bed) if open_bed else None,
+        "open_chromatin_n_open_bins": int(open_mask.sum()) if open_mask is not None else None,
+        "open_chromatin_mask_imputed_only": mask_imputed_only,
         "ckpt":             str(ckpt_path),
         "mm_dir":           str(mm_dir),
     }

@@ -170,9 +170,14 @@ class GatedUnifiedModel(nn.Module):
     Forward pattern is two-stage by design:
       1. `encode_bins(seq)` produces `e_tilde` for a chunk of bins. This
          contains the sequence encoder + bin-context. Run once per chunk.
-      2. `forward_pairs(e_tilde, bin_idx, cell_idx)` is called for arbitrary
-         (r, c) pairs sampled within the chunk. Returns yhat = g * p plus the
-         g and p for diagnostics.
+      2. `forward_pairs(e_tilde, bin_idx, cell_idx, ...)` is called for
+         arbitrary (r, c) pairs sampled within the chunk. Returns
+         yhat = g * p plus the g and p for diagnostics.
+
+    When ``sparsity_aware`` is True the gate also sees:
+      * log1p(cell library size) — how much raw information that cell had
+      * log1p(observed raw count at (r,c)) — 0 for unobserved / negatives
+    so imputation is explicitly conditioned on original data sparsity.
 
     This split avoids re-running the conv tower for every sampled (r, c)
     pair -- only the per-(bin, cell) head is recomputed per pair.
@@ -194,11 +199,17 @@ class GatedUnifiedModel(nn.Module):
                  alpha_init: float = 0.1,
                  gate_hidden: tuple[int, ...] = (128, 64, 32),
                  gate_use_concat: bool = True,
-                 cell_bank_init_std: float = 0.01):
+                 cell_bank_init_std: float = 0.01,
+                 sparsity_aware: bool = False,
+                 use_cell_depth: bool = True,
+                 use_obs_count: bool = True):
         super().__init__()
         self.n_cells = int(n_cells)
         self.latent_dim = int(latent_dim)
         self.gate_use_concat = bool(gate_use_concat)
+        self.sparsity_aware = bool(sparsity_aware)
+        self.use_cell_depth = bool(use_cell_depth) and self.sparsity_aware
+        self.use_obs_count = bool(use_obs_count) and self.sparsity_aware
 
         self.seq_encoder = SequenceEncoder(
             seq_length=seq_length,
@@ -224,8 +235,13 @@ class GatedUnifiedModel(nn.Module):
         )
         self.b = nn.Parameter(torch.zeros(n_cells))
 
-        # Gate MLP: concat[ẽ ; u] -> 1 (or bilinear pool if gate_use_concat=False).
+        # Gate MLP: concat[ẽ ; u (; log1p(lib) ; log1p(x))] -> 1
         gate_in = latent_dim * 2 if self.gate_use_concat else latent_dim
+        if self.use_cell_depth:
+            gate_in += 1
+        if self.use_obs_count:
+            gate_in += 1
+        self._gate_in_dim = gate_in
         prev = gate_in
         gate_layers: list[nn.Module] = []
         for h in gate_hidden:
@@ -233,6 +249,27 @@ class GatedUnifiedModel(nn.Module):
             prev = h
         gate_layers += [nn.Linear(prev, 1)]
         self.gate_mlp = nn.Sequential(*gate_layers)
+
+    def _gate_features(self,
+                       e: torch.Tensor,
+                       u: torch.Tensor,
+                       cell_depth_pairs: torch.Tensor | None,
+                       obs_count_pairs: torch.Tensor | None
+                       ) -> torch.Tensor:
+        """Build gate input for P pairs. e,u: (P, D)."""
+        if self.gate_use_concat:
+            parts = [e, u]
+        else:
+            parts = [e * u]
+        if self.use_cell_depth:
+            if cell_depth_pairs is None:
+                raise ValueError("sparsity_aware/use_cell_depth requires cell_depth")
+            parts.append(cell_depth_pairs.reshape(-1, 1).to(dtype=e.dtype))
+        if self.use_obs_count:
+            if obs_count_pairs is None:
+                raise ValueError("sparsity_aware/use_obs_count requires obs_count")
+            parts.append(obs_count_pairs.reshape(-1, 1).to(dtype=e.dtype))
+        return torch.cat(parts, dim=-1)
 
     # ---- forward by chunk: encode all bins in one chrom slice --------------
 
@@ -251,14 +288,21 @@ class GatedUnifiedModel(nn.Module):
     def forward_pairs(self,
                       e_tilde: torch.Tensor,
                       bin_idx: torch.Tensor,
-                      cell_idx: torch.Tensor
+                      cell_idx: torch.Tensor,
+                      cell_depth: torch.Tensor | None = None,
+                      obs_count: torch.Tensor | None = None,
                       ) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
         """Returns (yhat, p, g) each of shape (n_pairs,).
 
         Args:
-            e_tilde:  (n_bins_in_chunk, D), output of encode_bins.
-            bin_idx:  (n_pairs,) int64, indices into e_tilde.
-            cell_idx: (n_pairs,) int64, indices into self.U.
+            e_tilde:    (n_bins_in_chunk, D), output of encode_bins.
+            bin_idx:    (n_pairs,) int64, indices into e_tilde.
+            cell_idx:   (n_pairs,) int64, indices into self.U.
+            cell_depth: (n_cells,) or (n_pairs,) log1p(library size). Required
+                        when use_cell_depth. If length == n_cells, indexed by
+                        cell_idx.
+            obs_count:  (n_pairs,) log1p(raw count at each pair). Required when
+                        use_obs_count (0 for negatives / unobserved).
         """
         e = e_tilde[bin_idx]                  # (P, D)
         u = self.U[cell_idx]                  # (P, D)
@@ -267,10 +311,15 @@ class GatedUnifiedModel(nn.Module):
         p_logits = (e * u).sum(dim=-1) + b
         p = torch.sigmoid(p_logits)
 
-        if self.gate_use_concat:
-            gate_in = torch.cat([e, u], dim=-1)
-        else:
-            gate_in = e * u
+        depth_pairs = None
+        if self.use_cell_depth:
+            assert cell_depth is not None
+            if cell_depth.numel() == self.n_cells:
+                depth_pairs = cell_depth[cell_idx]
+            else:
+                depth_pairs = cell_depth
+        obs_pairs = obs_count if self.use_obs_count else None
+        gate_in = self._gate_features(e, u, depth_pairs, obs_pairs)
         g = torch.sigmoid(self.gate_mlp(gate_in).squeeze(-1))
 
         yhat = g * p
@@ -280,41 +329,62 @@ class GatedUnifiedModel(nn.Module):
 
     def predict_chunk(self,
                       e_tilde: torch.Tensor,
-                      cell_idx: torch.Tensor | None = None
+                      cell_idx: torch.Tensor | None = None,
+                      cell_depth: torch.Tensor | None = None,
+                      obs_counts: torch.Tensor | None = None,
                       ) -> torch.Tensor:
         """Predict yhat for every (bin in chunk, cell in cell_idx).
 
         Returns dense (n_bins_in_chunk, len(cell_idx)) tensor. Used at impute
         time, never at training time.
+
+        Args:
+            cell_depth: (n_cells_full,) log1p lib size; indexed by cell_idx.
+            obs_counts: (n_bins, n_cells_subset) log1p raw counts aligned to
+                        the cell subset being predicted (same columns as
+                        cell_idx). Required when use_obs_count.
         """
         if cell_idx is None:
             U = self.U
             b = self.b
+            cell_idx_local = None
         else:
             U = self.U[cell_idx]
             b = self.b[cell_idx]
+            cell_idx_local = cell_idx
 
         # Bilinear prediction (n_bins, n_cells)
         p_logits = e_tilde @ U.T + b.unsqueeze(0)
         p = torch.sigmoid(p_logits)
 
-        # Gate: per (bin, cell) -> need to construct concat features for all pairs.
-        # We do this in cell-axis chunks to bound memory.
         n_bins, D = e_tilde.shape
         n_cells = U.shape[0]
         g = torch.empty(n_bins, n_cells, device=e_tilde.device, dtype=p.dtype)
-        # Cell-axis chunking to bound concat tensor size.
         cell_chunk = max(1, min(1024, n_cells))
         for j0 in range(0, n_cells, cell_chunk):
             j1 = min(n_cells, j0 + cell_chunk)
             u_slice = U[j0:j1]                                    # (cj, D)
+            cj = j1 - j0
             if self.gate_use_concat:
-                gate_in = torch.cat([
-                    e_tilde.unsqueeze(1).expand(n_bins, j1 - j0, D),
-                    u_slice.unsqueeze(0).expand(n_bins, j1 - j0, D),
+                base = torch.cat([
+                    e_tilde.unsqueeze(1).expand(n_bins, cj, D),
+                    u_slice.unsqueeze(0).expand(n_bins, cj, D),
                 ], dim=-1)                                         # (n_bins, cj, 2D)
             else:
-                gate_in = (e_tilde.unsqueeze(1) * u_slice.unsqueeze(0))
+                base = (e_tilde.unsqueeze(1) * u_slice.unsqueeze(0))
+
+            extras: list[torch.Tensor] = []
+            if self.use_cell_depth:
+                assert cell_depth is not None
+                if cell_idx_local is None:
+                    d = cell_depth[j0:j1]
+                else:
+                    d = cell_depth[cell_idx_local[j0:j1]]
+                extras.append(d.view(1, cj, 1).expand(n_bins, cj, 1).to(dtype=base.dtype))
+            if self.use_obs_count:
+                assert obs_counts is not None
+                extras.append(obs_counts[:, j0:j1].unsqueeze(-1).to(dtype=base.dtype))
+            gate_in = torch.cat([base, *extras], dim=-1) if extras else base
             g[:, j0:j1] = torch.sigmoid(self.gate_mlp(gate_in).squeeze(-1))
         return g * p
 
@@ -328,10 +398,12 @@ class GatedUnifiedModel(nn.Module):
 
 def focal_bce(yhat: torch.Tensor, y: torch.Tensor,
               gamma: float = 2.0, alpha: float = 0.25,
-              eps: float = 1e-7) -> torch.Tensor:
+              eps: float = 1e-7,
+              weight: torch.Tensor | None = None) -> torch.Tensor:
     """Standard sigmoid focal loss.
 
-    yhat, y in (0, 1); shapes match. Returns mean over the batch.
+    yhat, y in (0, 1); shapes match. Returns mean over the batch (or weighted
+    mean if ``weight`` is given — used to up-weight strongly observed positives).
     Equivalent formulation to RetinaNet (Lin et al. 2017).
     """
     yhat = yhat.clamp(eps, 1.0 - eps)
@@ -339,6 +411,9 @@ def focal_bce(yhat: torch.Tensor, y: torch.Tensor,
     a_t = torch.where(y > 0.5, torch.full_like(yhat, alpha),
                       torch.full_like(yhat, 1.0 - alpha))
     loss = -a_t * (1.0 - p_t) ** gamma * torch.log(p_t)
+    if weight is not None:
+        w = weight.to(dtype=loss.dtype)
+        return (loss * w).sum() / w.sum().clamp_min(1e-8)
     return loss.mean()
 
 

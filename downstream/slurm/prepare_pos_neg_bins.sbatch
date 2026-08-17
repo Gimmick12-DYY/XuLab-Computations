@@ -65,19 +65,23 @@ BULK_BAM="${BULK_BAM:-${BULK_CTCF_BAM:-}}"
 TF_PEAKS_BED="${TF_PEAKS_BED:-}"
 PEAK_SIGNAL_COL="${PEAK_SIGNAL_COL:-7}"
 EXCLUDE_FLANK_BP="${EXCLUDE_FLANK_BP:-0}"
-# cCRE-based positives (default 1): TF-bound cCRE = cCRE registry ∩ TF peaks;
-# positives = bins overlapping those (matches the CTCF cCRE definition). Set 0
-# for raw peak-based positives (bins overlapping any TF peak).
-POSITIVES_IN_CCRE="${POSITIVES_IN_CCRE:-1}"
+# Positive benchmark definition (generic TF mode). True negatives are always:
+#   exclude TF-bound cCREs -> bedcov zero-read filter -> random sample to match #pos.
+#   fixed_n     top N_POS TF-bound cCRE bins by peak signal (default N_POS=5000)
+#   all_bound   every TF-bound cCRE bin
+#   peak_cutoff bins overlapping bulk peaks with q<PEAK_Q_MAX and p<PEAK_P_MAX
+POS_MODE="${POS_MODE:-all_bound}"
+PEAK_Q_MAX="${PEAK_Q_MAX:-0.01}"
+PEAK_P_MAX="${PEAK_P_MAX:-1e-5}"
 # Generic path: exclude ALL cCREs from the negative universe? Default 0 (NO) so
-# the universe matches CTCF's (exclude only the TF's own binding, then rely on
-# the bedcov zero-read filter). Set 1 to also drop all cCREs.
+# the universe matches the standard TF benchmark (exclude only TF-bound cCREs,
+# then rely on the bedcov zero-read filter). Set 1 to also drop all cCREs.
 EXCLUDE_ALL_CCRE="${EXCLUDE_ALL_CCRE:-0}"
 # CTCF/cCRE-path negative universe + coverage filter.
 #   NEG_UNIVERSE=accessible_unbound -> cCRE bins not CTCF-bound (hard negatives)
 #   NEG_MAX_COVERAGE=0              -> keep only zero-bulk-read bins (needs BULK_BAM)
 NEG_UNIVERSE="${NEG_UNIVERSE:-non_ctcf_bound}"
-NEG_MAX_COVERAGE="${NEG_MAX_COVERAGE:--1}"
+NEG_MAX_COVERAGE="${NEG_MAX_COVERAGE:-0}"
 # Default negative mode is always 'random' (matches #negatives to #positives).
 # A BULK_BAM no longer forces 'desert' -- the BAM is also used by the coverage
 # filter (NEG_MAX_COVERAGE) with random selection. Set NEGATIVE_MODE=desert
@@ -97,7 +101,10 @@ if [[ -n "${TF_PEAKS_BED}" ]]; then
   if [[ ! -f "${TF_PEAKS_BED}" ]]; then
     echo "ERROR: TF_PEAKS_BED not found: ${TF_PEAKS_BED}" >&2; exit 1
   fi
-  echo "[$(date)] GENERIC mode: positives from TF peaks ${TF_PEAKS_BED} (signal col ${PEAK_SIGNAL_COL})"
+  if [[ "${POS_MODE}" == "fixed_n" && "${N_POS}" == "0" ]]; then
+    N_POS=5000
+  fi
+  echo "[$(date)] GENERIC mode: positives from TF peaks ${TF_PEAKS_BED} (POS_MODE=${POS_MODE}, signal col ${PEAK_SIGNAL_COL})"
 fi
 
 # Does this run need samtools? (desert ranking OR the coverage filter)
@@ -144,7 +151,9 @@ RARGS=(
 [[ -n "${TF_PEAKS_BED}" ]] && RARGS+=(--tf-peaks-bed "${TF_PEAKS_BED}" \
                                       --peak-signal-col "${PEAK_SIGNAL_COL}" \
                                       --exclude-flank-bp "${EXCLUDE_FLANK_BP}")
+[[ -n "${TF_PEAKS_BED}" ]] && RARGS+=(--positive-mode "${POS_MODE}" \
+                                      --peak-q-max "${PEAK_Q_MAX}" \
+                                      --peak-p-max "${PEAK_P_MAX}")
 [[ "${EXCLUDE_ALL_CCRE}" != "1" ]] && RARGS+=(--no-exclude-ccre)
-[[ -n "${TF_PEAKS_BED}" && "${POSITIVES_IN_CCRE}" == "1" ]] && RARGS+=(--positives-in-ccre)
 
 Rscript "${DOWN_DIR}/prepare_pos_neg_bins.R" "${RARGS[@]}"

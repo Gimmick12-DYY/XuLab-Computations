@@ -99,7 +99,48 @@ Outputs:
 `mm/regions.tsv.gz` only needs to be done once per data set — the same bin
 index file works for any imputed output derived from that input.
 
-SLURM:
+#### Generic TF benchmarks (non-CTCF)
+
+For TFs other than CTCF, pass `--tf-peaks-bed` and `--bulk-bam` (or set
+`TF_PEAKS_BED` / `BULK_BAM` in the SLURM wrapper). **True negatives are fixed**
+across all positive definitions:
+
+1. Exclude bins overlapping **TF-bound cCREs** (bulk ChIP peaks ∩ SCREEN cCRE
+   registry, 293 + 293T).
+2. Run `samtools bedcov` on the bulk ChIP BAM over the remaining candidates;
+   keep only **zero-read** bins (`--neg-max-coverage 0`).
+3. **Randomly sample** negatives to match the positive count (`--negative-mode random`).
+
+**True positives** — modes via `--positive-mode` (or `POS_MODE` in SLURM):
+
+| mode | definition |
+|---|---|
+| `final` | **Slide definition.** CTCF / MAZ / ZIC2: top ~12k positives (CTCF = SCREEN top-10k cCREs as in `Bin_posVSneg.ipynb`; MAZ/ZIC2 = top 12k TF-bound cCRE bins by peak signal). Other TFs: all TF-bound cCRE bins. |
+| `fixed_n` | Top `N_POS` (default 5000) TF-bound cCRE bins ranked by bulk peak `signalValue` |
+| `all_bound` | Every TF-bound cCRE bin |
+| `peak_cutoff` | Bins overlapping bulk narrowPeak rows with **q < 0.01** and **p < 1e-5** (cols 9/8 = −log10) |
+
+Final (slide) definition for the full panel:
+
+```bash
+bash downstream/slurm/run_final_benchmark_bins.sh
+bash downstream/slurm/run_final_downstream_eval.sh
+# -> downstream/bins_<tf>_final/
+```
+
+Sensitivity modes for one TF:
+
+```bash
+bash downstream/slurm/run_tf_benchmark_modes.sh MAZ
+# -> downstream/bins_maz_fixed_n/
+#    downstream/bins_maz_all_bound/
+#    downstream/bins_maz_peak_cutoff/
+```
+
+SETDB1 is **no longer** in the benchmark TF panel (`fetch_tf_bulk.sh all` =
+ZNF768, ZBTB7A, ZIC2, MAZ, ZNF777, NFYA).
+
+SLURM (single mode):
 
 ```bash
 sbatch --export=ALL,\

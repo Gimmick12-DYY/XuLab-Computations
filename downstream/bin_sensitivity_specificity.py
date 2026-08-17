@@ -3,22 +3,22 @@
 # bin_sensitivity_specificity.py
 #
 # Bin-level coverage report. For each pipeline and each bin set (positive /
-# negative bins from prepare_pos_neg_bins.R), report the fraction of bins
-# whose per-bin total imputed signal exceeds the chosen threshold.
+# negative bins from prepare_pos_neg_bins.R), report the fraction of
+# "valued bins" — bins whose per-bin total signal exceeds the threshold.
 #
 #   pos_coverage = #(positive bins with signal > t) / n_pos
 #   neg_coverage = #(negative bins with signal > t) / n_neg
 #
-# Threshold modes (top-K wins when set; otherwise sparsity matching; otherwise
-# fixed threshold):
-#   --top-k N             : every pipeline calls its top-N bins (apples-to-apples).
-#   --match-to LABEL      : SPARSITY-MATCHED. K = number of bins called by LABEL
-#                           (default 'raw') at --threshold. K can be scaled by
-#                           --match-multiplier. Every pipeline (including LABEL)
-#                           then calls its top-K bins.
-#   --threshold T         : fallback when neither is set; covered = signal > T.
+# Default definition (valued bins):
+#   --threshold 0 --no-match   : covered = any nonzero signal.
 #
-# No ROC / AUPR / F1 -- just coverage at a comparable signal level.
+# Optional alternate modes (for sparsity-matched / fixed-budget comparisons):
+#   --top-k N             : every pipeline calls its top-N bins.
+#   --match-to LABEL      : K = #bins called by LABEL at --threshold; every
+#                           pipeline then calls its top-K bins.
+#   --threshold T         : covered = signal > T (with --no-match).
+#
+# No ROC / AUPR / F1 -- just coverage at the chosen operating point.
 #
 # Union note: if --input points at a directory whose matrix_csr.npz is
 # max(raw, imputed), per-bin totals track raw and top-K coverage under
@@ -567,13 +567,16 @@ def main() -> int:
                          'passed multiple times.')
     ap.add_argument('--out-name', type=str, default='bin_coverage')
     ap.add_argument('--threshold', type=float, default=0.0,
-                    help='Per-bin signal threshold for the reference input '
-                         '(or, with --no-match, every input). Default 0.0.')
-    ap.add_argument('--match-to', type=str, default='raw',
+                    help='Per-bin signal threshold. Default 0.0 = valued bins '
+                         '(any nonzero). With --match-to, applies to the '
+                         'reference only; with --no-match, to every input.')
+    ap.add_argument('--match-to', type=str, default='',
                     help='Reference input label for sparsity-matched coverage. '
-                         'Default "raw"; pass "" or use --no-match to disable.')
+                         'Default "" (off; valued-bin / fixed-threshold mode). '
+                         'Pass e.g. "raw" to enable matched top-K.')
     ap.add_argument('--no-match', dest='match_to', action='store_const', const='',
-                    help='Disable sparsity matching; use --threshold everywhere.')
+                    help='Disable sparsity matching; use --threshold everywhere '
+                         '(default behavior).')
     ap.add_argument('--match-multiplier', type=float, default=1.0,
                     help='Scale the reference K by this factor when --match-to '
                          'is active (default 1.0).')

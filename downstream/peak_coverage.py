@@ -486,11 +486,19 @@ def coverage_via_bedtools(
 
 # ---------- AUROC + table formatting -----------------------------------------
 
-def signal_auroc(pos_scores: np.ndarray, neg_scores: np.ndarray) -> float:
+def signal_auroc(pos_scores: np.ndarray, neg_scores: np.ndarray,
+                 *, valued_only: bool = False) -> float:
     """AUROC of per-bin signal discriminating positive vs negative reference
-    bins (Mann-Whitney U; tie-corrected via average ranks). Zeros included, so
-    it scores the full reference universe. Equivalent to
-    P(signal at a random pos bin > signal at a random neg bin)."""
+    bins (Mann-Whitney U; tie-corrected via average ranks).
+
+    Default (valued_only=False) scores the FULL reference universe, zeros
+    included — matching the historical peak_coverage / slide-table AUROC
+    (P(signal_pos > signal_neg) over all pos/neg bins). Pass valued_only=True
+    to restrict to nonzero-signal bins only.
+    """
+    if valued_only:
+        pos_scores = pos_scores[pos_scores > 0]
+        neg_scores = neg_scores[neg_scores > 0]
     n1, n0 = len(pos_scores), len(neg_scores)
     if n1 == 0 or n0 == 0:
         return float("nan")
@@ -763,13 +771,13 @@ def main() -> int:
     write_ref_bed(neg_bins, ref_neg_bed)
     log.info("Wrote reference BEDs: %s, %s", ref_pos_bed, ref_neg_bed)
 
-    # Reference bin names ("chr:start-end") for the signal-ceiling diagnostic.
-    # The ceiling = fraction of reference bins with ANY nonzero matrix signal
-    # *before* peak calling. It is the hard upper bound on coverage: a bin with
-    # no signal can never be in a peak. Comparing ceiling vs. realized coverage
-    # tells us whether a low number is the method's fault (low ceiling -> the
-    # imputation never put signal there) or the peak-caller's (high ceiling but
-    # low coverage -> spread/floor/q is dropping it).
+    # Reference bin names ("chr:start-end") for the valued-bin (nonzero) metric.
+    # Pos/Neg.cov % = fraction of reference bins with ANY nonzero matrix signal
+    # *before* peak calling. A bin with no signal can never be in a peak, so
+    # this is also the hard upper bound on peak coverage. Comparing valued-bin
+    # cov vs realized peak cov tells us whether a low number is the method's
+    # fault (no signal put there) or the peak-caller's (signal present but
+    # spread/floor/q drops it).
     pos_names = {f"{c}:{s}-{e}" for c, s, e in pos_bins}
     neg_names = {f"{c}:{s}-{e}" for c, s, e in neg_bins}
 
@@ -834,8 +842,8 @@ def main() -> int:
         pos_ceiling = 100.0 * n_pos_sig / len(pos_names) if pos_names else float("nan")
         neg_ceiling = 100.0 * n_neg_sig / len(neg_names) if neg_names else float("nan")
         auroc = signal_auroc(pos_scores, neg_scores)
-        log.info("  signal ceiling: pos %d/%d (%.2f%%) ; neg %d/%d (%.2f%%) ; AUROC=%.4f "
-                 "-- ceiling = max coverage if peak-calling were perfect",
+        log.info("  valued bins (nonzero): pos %d/%d (%.2f%%) ; neg %d/%d (%.2f%%) ; "
+                 "AUROC(valued)=%.4f",
                  n_pos_sig, len(pos_names), pos_ceiling,
                  n_neg_sig, len(neg_names), neg_ceiling, auroc)
 

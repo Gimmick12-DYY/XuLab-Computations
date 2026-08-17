@@ -65,11 +65,31 @@ handle the spread of TF binding patterns:
 ## Pipeline shape
 
 ```
-00_ingest.py     mm/ + hg38.fa → seqs.h5 (one-hot 768bp) + matrix.npz
-                  + chrom_ranges.json (per-chrom bin index ranges)
-01_train.py      chunked training, focal loss + negative sampling (GPU)
+00_ingest.py     mm/ + hg38.fa → seqs.h5 + matrix.npz (binary)
+                  + counts.npz (raw ints) + cell_depth.npy + chrom_ranges.json
+01_train.py      chunked training, focal + ranking loss (GPU).
+                  With model.sparsity_aware: gate also sees log1p(cell depth)
+                  and log1p(raw count); positives loss-weighted by strength.
 02_impute.py     forward over all bins, threshold via sparsity_match,
-                  write standard cross-pipeline schema (GPU)
+                  **open-chromatin mask** (drop new calls outside HEK293T
+                  OmniATAC IDR optimal peaks), then keep_raw union (GPU)
+02b_apply_open_chromatin_mask.py
+                  CPU post-hoc remask of an existing impute CSR (no retrain)
+```
+
+Open-chromatin mask (default on via `impute.open_chromatin_bed` in
+`configs/default.yaml`):
+
+- BED: `data/HEK293T_OmniATAC_idr_optimal.narrowPeak.gz` (~72k IDR optimal)
+- Semantics: **imputed-only** — new model calls outside open chromatin are
+  deleted; observed raw signal outside ATAC is kept when `keep_raw: true`
+- Disable with `open_chromatin_bed: null` (or `"off"`)
+
+Post-hoc remask all existing TFs (array job, CPU):
+
+```bash
+N=$(ls -d unified/work/*/impute/matrix_csr.npz | wc -l)
+sbatch --array=0-$((N-1)) unified/slurm/02b_apply_open_chromatin_mask.sbatch
 ```
 
 Outputs land at `<work>/impute/{matrix_csr.npz, regions.tsv, barcodes.tsv,
