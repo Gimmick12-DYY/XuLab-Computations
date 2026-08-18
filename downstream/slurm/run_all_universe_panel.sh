@@ -27,8 +27,18 @@ SBATCH_BINS="${SLURM_DIR}/prepare_pos_neg_bins.sbatch"
 DEFAULT_TFS=(CTCF MAZ ZIC2 ZBTB7A ZNF777 NFYA ZNF282)
 MODE=all_universe
 SKIP_EVAL="${SKIP_EVAL:-0}"
-# Shared cCRE/blacklist cache (avoid re-download).
-CACHE_DIR="${CACHE_DIR:-${DOWN_DIR}/bins_ctcf_all_bound/cache}"
+# Shared cCRE/blacklist cache (avoid re-download). Prefer the durable
+# downstream/cache; fall back to any per-TF cache that still has SCREEN beds.
+CACHE_DIR="${CACHE_DIR:-}"
+if [[ -z "${CACHE_DIR}" ]]; then
+  if [[ -d "${DOWN_DIR}/cache" ]]; then
+    CACHE_DIR="${DOWN_DIR}/cache"
+  elif [[ -d "${DOWN_DIR}/bins_ctcf_peak_cutoff_q05/cache" ]]; then
+    CACHE_DIR="${DOWN_DIR}/bins_ctcf_peak_cutoff_q05/cache"
+  else
+    CACHE_DIR="${DOWN_DIR}/bins_ctcf_all_universe/cache"
+  fi
+fi
 
 if [[ $# -eq 0 ]]; then
   TFS=("${DEFAULT_TFS[@]}")
@@ -88,12 +98,14 @@ SEED=2026 \
   tag="${tf}_${MODE}"
   bins_tsv="${OUT}/pos_neg_bins.tsv"
   inputs="raw=${MM} unified=${IMPUTE}"
-  # Prefer all_bound MACS peaks; ZNF282 falls back to final / peak_cutoff_q05.
+  # Prefer same-mode MACS peaks; then older modes that share the same impute matrix.
   peak_base=""
   for cand in \
-    "${DOWN_DIR}/peak_coverage_${tf}_all_bound" \
+    "${DOWN_DIR}/peak_coverage_${tf}_${MODE}" \
+    "${DOWN_DIR}/peak_coverage_${tf}_all_universe" \
     "${DOWN_DIR}/peak_coverage_${tf}_final" \
-    "${DOWN_DIR}/peak_coverage_${tf}_peak_cutoff_q05"
+    "${DOWN_DIR}/peak_coverage_${tf}_peak_cutoff_q05" \
+    "${DOWN_DIR}/peak_coverage_${tf}_all_bound"
   do
     if [[ -d "${cand}/raw" && -d "${cand}/unified" ]]; then
       peak_base="${cand}"

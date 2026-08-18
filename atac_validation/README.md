@@ -49,6 +49,8 @@ sbatch --array=0-$((N-1)) atac_validation/slurm/00_download.sbatch
 sbatch --array=0-1 atac_validation/slurm/01_align_call_peaks.sbatch
 #   -> data/HEK293T_ATAC_gse283384_wt_MACS2.narrowPeak.gz
 #   -> data/HEK293T_ATAC_gse152177_wt_MACS2.narrowPeak.gz
+# If pooled BAMs already exist but peaks are missing, resume with:
+#   sbatch --array=0-1 atac_validation/slurm/01b_macs_from_pooled.sbatch
 
 # 3. overlap (bin Jaccard) + union mask
 sbatch atac_validation/slurm/02_overlap_union.sbatch
