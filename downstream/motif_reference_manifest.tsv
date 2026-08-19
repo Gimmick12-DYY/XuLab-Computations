@@ -1,0 +1,39 @@
+# Reference-motif availability per TF, per pipeline. Drives motif_enrichment.sbatch:
+# a TF's HOMER step runs only when homer=yes; its AME step runs only when the
+# selected HOCOMOCO column (core/full, see HOCOMOCO_DB) is a valid grade.
+#
+# columns: tf  homer(yes/no)  hocomoco_core(grade|Missing)  hocomoco_full(grade|Missing)
+# grade = HOCOMOCO v11 motif quality A/B/C/D; Missing = no motif for this TF.
+# tf is lowercase to match unified/work/<tf>/impute.
+#
+# Transcribed from the availability spreadsheet. VERIFY hocomoco_full: my reading
+# shows 11 present (hoxa5/msx2/hoxd10 = grade D) vs the sheet's total of 10.
+# Extend this file with the remaining study TFs (incl. the panel: ctcf, maz, ...).
+#
+# tf	homer	hocomoco_core	hocomoco_full
+adnp	no	Missing	Missing
+mef2d	yes	A	A
+hoxa5	no	Missing	D
+znf143	yes	A	A
+ets2	no	B	B
+trafd1	no	Missing	Missing
+zbtb40	no	Missing	Missing
+sox12	no	Missing	Missing
+akap8l	no	Missing	Missing
+nrf1	yes	A	A
+znf581	no	Missing	Missing
+msx2	no	Missing	D
+neurod4	no	Missing	Missing
+nr1d2	no	Missing	Missing
+hp1	no	Missing	Missing
+znf606	no	Missing	Missing
+znf79	no	Missing	Missing
+hoxd10	yes	Missing	D
+srebf2	yes	B	B
+foxk1	yes	A	A
+pcgf6	no	Missing	Missing
+znf503	no	Missing	Missing
+epas1	yes	B	B
+setdb1	no	Missing	Missing
+mef2a	yes	A	A
+hoxc4	no	Missing	Missing
