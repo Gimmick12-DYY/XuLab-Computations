@@ -3,12 +3,18 @@
 #SBATCH --output=av_macs_only-%A_%a.out
 #SBATCH --error=av_macs_only-%A_%a.err
 #SBATCH --cpus-per-task=8
-#SBATCH --mem=48G
+#SBATCH --mem=64G
 #SBATCH --time=12:00:00
 #SBATCH --mail-type=FAIL
 #
-# Resume OCR validation from existing pooled BAMs: index → MACS2 → blacklist →
-# copy narrowPeak into data/. Skips download/align/pool.
+# Resume OCR validation from existing per-run filtered BAMs:
+#   rebuild pool from keep=yes rows -> coordinate sort -> index -> MACS2 ->
+#   blacklist -> copy narrowPeak into data/.
+#
+# Always re-pools from samples.tsv when FORCE_REPOOL=1 (or no usable pool);
+# otherwise reuses an existing coordinate-sorted ${dataset}.pooled.bam+.bai.
+# MACS2 in the atac env must be a local source build (bioconda binary fails on
+# RHEL9 with undefined symbol __log_finite).
 #
 # Usage (2 datasets):
 #   sbatch --array=0-1 atac_validation/slurm/01b_macs_from_pooled.sbatch
@@ -26,17 +32,42 @@ DATASET="${DATASETS[$IDX]}"
 
 BAMDIR="${WORK}/${DATASET}/bam"
 PKDIR="${WORK}/${DATASET}/peaks"
-mkdir -p "${PKDIR}"
+mkdir -p "${BAMDIR}" "${PKDIR}"
+export TMPDIR="${TMPDIR:-${BAMDIR}}"
 
-POOLED="${BAMDIR}/${DATASET}.pooled.bam"
-if [[ ! -s "${POOLED}" ]]; then
-  echo "missing pooled BAM: ${POOLED}" >&2
-  echo "Re-run 01_align_call_peaks.sbatch for this dataset first." >&2
+FILT_BAMS=()
+while IFS=$'\t' read -r _GSM SRR; do
+  [[ -z "${SRR}" || "${SRR}" == "NA" ]] && continue
+  FILT="${BAMDIR}/${SRR}.filt.bam"
+  if [[ ! -s "${FILT}" ]]; then
+    echo "missing filtered BAM: ${FILT}" >&2
+    echo "Re-run 01_align_call_peaks.sbatch for this dataset first." >&2
+    exit 1
+  fi
+  FILT_BAMS+=("${FILT}")
+done < <(dataset_runs "${DATASET}")
+
+if (( ${#FILT_BAMS[@]} == 0 )); then
+  echo "no keep=yes runs for ${DATASET}" >&2
   exit 1
 fi
 
-if [[ ! -s "${POOLED}.bai" ]]; then
-  echo "[$(date)] ${DATASET}: indexing pooled BAM"
+POOLED="${BAMDIR}/${DATASET}.pooled.bam"
+MERGED="${BAMDIR}/${DATASET}.pooled.merged.bam"
+# Reuse an already-sorted+indexed pool unless FORCE_REPOOL=1.
+if [[ "${FORCE_REPOOL:-0}" != "1" && -s "${POOLED}" && -s "${POOLED}.bai" ]]; then
+  echo "[$(date)] ${DATASET}: reusing existing pooled BAM (${POOLED})"
+else
+  echo "[$(date)] ${DATASET}: pooling ${#FILT_BAMS[@]} keep=yes run(s) -> sort"
+  rm -f "${POOLED}.bai" "${MERGED}" "${MERGED}.bai"
+  if (( ${#FILT_BAMS[@]} == 1 )); then
+    cp -f "${FILT_BAMS[0]}" "${MERGED}"
+  else
+    samtools merge -f -@ "${THREADS}" "${MERGED}" "${FILT_BAMS[@]}"
+  fi
+  # Force a true coordinate sort so samtools index / MACS2 see contiguous chrom blocks.
+  samtools sort -@ "${THREADS}" -o "${POOLED}" "${MERGED}"
+  rm -f "${MERGED}"
   samtools index -@ "${THREADS}" "${POOLED}"
 fi
 

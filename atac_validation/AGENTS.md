@@ -50,6 +50,13 @@ union + downstream bins ─(03 recovery)→ results/open_positive_recovery_*.tsv
   bin-level analysis.
 
 ## Gotchas
+- GSE152177: only `group=AA` / rs4420550 A/A is WT (`keep=yes`); G/G is
+  `keep=no`. Pooling reads `dataset_runs` → changing `keep` rebuilds the pool
+  via `01b` without re-aligning.
+- After `samtools merge`, always `samtools sort` before `index` (merged BAMs can
+  claim `SO:coordinate` but fail with "Chromosome blocks not continuous").
+- Bioconda `macs2` can fail on RHEL9 (`undefined symbol: __log_finite`). Fix:
+  `pip install --no-binary MACS2 'MACS2==2.2.9.1'` inside the atac env.
 - `_maskutil.py` finds `_regions.py` via `parents[2]/unified/scripts`; keep the
   `atac_validation/scripts/` depth or fix that path.
 - SLURM copies the `.sbatch` into a spool dir, so never

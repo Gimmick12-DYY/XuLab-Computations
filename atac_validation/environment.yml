@@ -10,7 +10,7 @@ dependencies:
   - fastp>=0.23         # paired-end adapter/quality trimming (auto Nextera)
   - bowtie2>=2.5
   - samtools>=1.18
-  - macs2>=2.2.9
+  - macs2>=2.2.9        # if ImportError __log_finite on RHEL9: pip install --no-binary MACS2 MACS2==2.2.9.1
   - bedtools>=2.31      # optional; python fallback exists for merge/overlap
   - pigz
   - numpy

@@ -96,13 +96,20 @@ if (( ${#FILT_BAMS[@]} == 0 )); then
 fi
 
 POOLED="${BAMDIR}/${DATASET}.pooled.bam"
-echo "[$(date)] ${DATASET}: pooling ${#FILT_BAMS[@]} run(s)"
+MERGED="${BAMDIR}/${DATASET}.pooled.merged.bam"
+echo "[$(date)] ${DATASET}: pooling ${#FILT_BAMS[@]} run(s) -> sort"
+export TMPDIR="${TMPDIR:-${BAMDIR}}"
+rm -f "${POOLED}.bai" "${MERGED}"
 if (( ${#FILT_BAMS[@]} == 1 )); then
-  cp "${FILT_BAMS[0]}" "${POOLED}"
+  cp -f "${FILT_BAMS[0]}" "${MERGED}"
 else
-  samtools merge -f -@ "${THREADS}" "${POOLED}" "${FILT_BAMS[@]}"
+  samtools merge -f -@ "${THREADS}" "${MERGED}" "${FILT_BAMS[@]}"
 fi
-samtools index "${POOLED}"
+# Re-sort after merge: some merges are labeled SO:coordinate but not indexable
+# ("Chromosome blocks not continuous").
+samtools sort -@ "${THREADS}" -o "${POOLED}" "${MERGED}"
+rm -f "${MERGED}"
+samtools index -@ "${THREADS}" "${POOLED}"
 
 echo "[$(date)] ${DATASET}: MACS2 callpeak (BAMPE, q=${MACS_Q})"
 macs2 callpeak -t "${POOLED}" -f BAMPE -g hs -n "${DATASET}" \

@@ -21,7 +21,7 @@ Scripts are written to run on Longleaf; nothing here is run locally.
 | Dataset tag | GEO | Samples used | Layout | Why |
 |-------------|-----|--------------|--------|-----|
 | `gse283384_wt` | GSE283384 | 2 lipofectamine-only **controls** (GSM8661240/41) | PAIRED | Cleanest WT HEK293T; MORC2-OE samples excluded |
-| `gse152177_wt` | GSE152177 | 8 libraries (4 G/G + 4 A/A at rs4420550), **pooled** | PAIRED | WT HEK293T; single-SNP locus, treated as reps |
+| `gse152177_wt` | GSE152177 | 4 **A/A** libraries at rs4420550 (G/G excluded), **pooled** | PAIRED | A/A = WT allele; G/G kept in table as `keep=no` |
 
 SRR accessions are hard-coded in `metadata/samples.tsv` (resolved from GEO/SRA).
 `keep=yes` rows are downloaded and pooled per dataset.
@@ -41,7 +41,7 @@ mamba env create -f atac_validation/environment.yml \
 # 0b. bowtie2 index from the shared hg38 FASTA (once)
 sbatch atac_validation/scripts/build_bowtie2_index.sh
 
-# 1. download FASTQ (10 keep=yes runs -> array 0..9)
+# 1. download FASTQ (keep=yes runs; currently 6 = 2 control + 4 A/A)
 N=$(awk -F'\t' '$1 !~ /^#/ && $6=="yes"' atac_validation/metadata/samples.tsv | wc -l)
 sbatch --array=0-$((N-1)) atac_validation/slurm/00_download.sbatch
 
@@ -49,7 +49,7 @@ sbatch --array=0-$((N-1)) atac_validation/slurm/00_download.sbatch
 sbatch --array=0-1 atac_validation/slurm/01_align_call_peaks.sbatch
 #   -> data/HEK293T_ATAC_gse283384_wt_MACS2.narrowPeak.gz
 #   -> data/HEK293T_ATAC_gse152177_wt_MACS2.narrowPeak.gz
-# If pooled BAMs already exist but peaks are missing, resume with:
+# If per-run *.filt.bam already exist, rebuild pool (honors keep=yes) + MACS with:
 #   sbatch --array=0-1 atac_validation/slurm/01b_macs_from_pooled.sbatch
 
 # 3. overlap (bin Jaccard) + union mask
