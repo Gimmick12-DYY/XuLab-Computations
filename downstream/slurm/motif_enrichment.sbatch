@@ -18,8 +18,11 @@
 #   N=$(LIST=1 bash downstream/slurm/motif_enrichment.sbatch | grep -vc '^#')
 #   sbatch --array=0-$((N-1)) downstream/slurm/motif_enrichment.sbatch
 #
+# Peaks are called at MACS3 q<0.05 on the imputed pseudobulk (call_imputed_peaks.py,
+# reusing peak_coverage.py -- the project peak-calling standard), then HOMER + AME.
+#
 # Required on the cluster:
-#   - conda env with numpy+scipy (CONDA_ENV, default 'unified')
+#   - conda env with macs3 + numpy/scipy (CONDA_ENV, default 'data_prep')
 #   - HOMER (findMotifsGenome.pl) and/or MEME suite (ame, bed2fasta) on PATH
 #     (set HOMER_MODULE / MEME_MODULE to `module load` them, or bake into CONDA_ENV)
 #   - HOMER genome 'hg38' installed (or HOMER_GENOME=/path/to/hg38.fa)
@@ -91,9 +94,9 @@ HOCOMOCO_MEME="${HOCOMOCO_MEME:-${DOWN_DIR}/cache/HOCOMOCOv11_full_HUMAN_mono_me
 OPEN_BED="${OPEN_BED:-${ROOT_DIR}/data/HEK293T_OmniATAC_idr_optimal.narrowPeak.gz}"
 THREADS="${SLURM_CPUS_PER_TASK:-8}"
 
-MIN_CELLS="${MIN_CELLS:-2}"
-MIN_FRAC="${MIN_FRAC:-0.02}"
-TOP_N="${TOP_N:-0}"
+MACS_Q="${MACS_Q:-0.05}"      # imputed peaks called at MACS3 q<0.05 (project standard)
+MIN_PEAKS="${MIN_PEAKS:-200}" # below this, skip motif enrichment (too sparse to validate)
+PEAK_WORK="${OUT}/peaks"      # MACS3 synthetic BED + narrowPeak intermediates
 HOMER_BG="${HOMER_BG:-0}"        # 1 -> HOMER -bg <background> instead of -useNewBg
 AME_CONTROL="${AME_CONTROL:-0}"  # 1 -> AME --control <background.fa> instead of shuffled
 
@@ -102,12 +105,13 @@ BG_BED="${OUT}/${TF}.background.bed"
 mkdir -p "${OUT}"
 
 # ---- environment -----------------------------------------------------------
-CONDA_ENV="${CONDA_ENV:-unified}"
+CONDA_ENV="${CONDA_ENV:-data_prep}"   # needs macs3 + numpy/scipy (peak calling)
 source "$(conda info --base)/etc/profile.d/conda.sh"
 conda activate "${CONDA_ENV}"
 [[ -n "${HOMER_MODULE:-}" ]] && module load ${HOMER_MODULE}
 [[ -n "${MEME_MODULE:-}" ]] && module load ${MEME_MODULE}
 
+command -v macs3 >/dev/null 2>&1 || { echo "ERROR: macs3 not on PATH in env ${CONDA_ENV}" >&2; exit 1; }
 if (( RUN_HOMER == 1 )); then
   command -v findMotifsGenome.pl >/dev/null 2>&1 || { echo "ERROR: findMotifsGenome.pl not on PATH" >&2; exit 1; }
 fi
@@ -120,11 +124,21 @@ echo "[$(date)] TF=${TF} run_homer=${RUN_HOMER} run_ame=${RUN_AME}"
 
 # ---- 1. imputed matrix -> peak BED (+ background) --------------------------
 if [[ ! -s "${BED}" ]]; then
-  python "${DOWN_DIR}/build_imputed_peaks.py" \
+  set +e
+  python "${DOWN_DIR}/call_imputed_peaks.py" \
     --impute-dir "${IMPUTE_DIR}" --tf "${TF}" \
-    --out-bed "${BED}" \
-    --min-cells "${MIN_CELLS}" --min-frac "${MIN_FRAC}" --top-n "${TOP_N}" \
+    --out-bed "${BED}" --out-dir "${PEAK_WORK}" \
+    --macs-q "${MACS_Q}" --min-peaks "${MIN_PEAKS}" \
     --open-bed "${OPEN_BED}" --bg-out "${BG_BED}"
+  rc=$?
+  set -e
+  if (( rc == 3 )); then
+    echo "[skip] ${TF}: fewer than ${MIN_PEAKS} imputed peaks; not running enrichment" >&2
+    echo "${TF}" >> "${OUT_ROOT}/skipped_insufficient_peaks.txt"
+    exit 0
+  elif (( rc != 0 )); then
+    exit "${rc}"
+  fi
 else
   echo "[$(date)] ${TF}: reuse existing ${BED}"
 fi

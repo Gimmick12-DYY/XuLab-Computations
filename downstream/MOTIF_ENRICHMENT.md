@@ -8,7 +8,7 @@ masked imputed** TF calls. One SLURM array task per TF; efficient by constructio
 
 ```
 unified/work/<tf>/impute/matrix_csr.npz
-        │  build_imputed_peaks.py  (bins bound in enough cells -> merged BED)
+        │  call_imputed_peaks.py  (pseudobulk -> MACS3 q<0.05 -> narrowPeak)
         ▼
 downstream/motif/<tf>/<tf>.imputed_peaks.bed          (+ <tf>.background.bed)
         │
@@ -16,26 +16,26 @@ downstream/motif/<tf>/<tf>.imputed_peaks.bed          (+ <tf>.background.bed)
         └── AME    bed2fasta <bed> hg38.fa -> ame(<fa>, HOCOMOCO.meme)
 ```
 
-### 1. Called-peak definition (`build_imputed_peaks.py`)
+### 1. Called-peak definition (`call_imputed_peaks.py`)
 
-The imputed matrix is binary (post open-mask + keep_raw). A bin is a "peak" when
-imputed-bound in enough cells:
+Peaks are called at **MACS3 q < 0.05** on the imputed pseudobulk, using the exact
+method in `peak_coverage.py` (the project peak-calling standard): per-bin signal =
+sum across cells → synthetic fragment BED → `macs3 callpeak --nomodel --shift
+-extsize/2 --extsize 200 -q 0.05 --keep-dup all --nolambda`, with the effective
+genome size set from the track's own background quantile. This is uniform and
+statistically comparable across TFs (unlike a fixed prevalence cutoff, which gave
+1–10k peaks depending only on imputation density).
 
-```
-n_cells_bound = rowsum(matrix_csr)
-keep bin iff n_cells_bound >= MIN_CELLS  AND  n_cells_bound/n_cells >= MIN_FRAC
-             (optionally cap to the strongest TOP_N bins)
-```
-
-Adjacent kept bins are merged into intervals. **Sanity-check peak counts** against
-the TF's bulk ChIP (tens of thousands) and tune `MIN_CELLS` / `MIN_FRAC` / `TOP_N`.
+If MACS3 calls fewer than `MIN_PEAKS` (default 200), the builder exits 3 and the
+TF is **skipped** (logged to `motif/skipped_insufficient_peaks.txt`) — a TF with
+that little confident imputed signal can't yield a valid enrichment.
 
 ### 2. Background (accessibility-matched, recommended)
 
-`build_imputed_peaks.py --open-bed <mask>` also writes `<tf>.background.bed`:
-open-chromatin bins that are **not** called peaks (and not within `--flank-bp`).
-Using this as the HOMER `-bg` / AME `--control` makes enriched motifs reflect TF
-specificity rather than mere accessibility.
+`--open-bed <mask>` also writes `<tf>.background.bed`: open-chromatin bins that are
+**not** covered by a called peak (and not within `--flank-bp`). Using this as the
+HOMER `-bg` / AME `--control` makes enriched motifs reflect TF specificity rather
+than mere accessibility.
 
 ## Reference-gated by manifest
 
@@ -69,13 +69,14 @@ TFS="mef2a znf143" sbatch --array=0-1 downstream/slurm/motif_enrichment.sbatch
 |-----|---------|---------|
 | `MANIFEST` | `downstream/motif_reference_manifest.tsv` | per-TF reference availability |
 | `TFS` | manifest-eligible | explicit TF list (still gated by the manifest) |
-| `CONDA_ENV` | `unified` | env with numpy+scipy for the BED builder |
+| `CONDA_ENV` | `data_prep` | env with macs3 + numpy/scipy (peak calling) |
 | `HOMER_MODULE` / `MEME_MODULE` | unset | `module load` args for HOMER / MEME |
 | `HOMER_GENOME` | `hg38` | HOMER genome name or `/path/hg38.fa` |
 | `HG38_FA` | `downstream/cache/hg38.fa` | FASTA for bed2fasta |
 | `HOCOMOCO_MEME` | `cache/HOCOMOCOv11_full_HUMAN_mono_meme_format.meme` | AME motif DB (HOCOMOCO v11 full) |
 | `OPEN_BED` | OmniATAC IDR peaks | mask used to build the background (swap for `HEK293T_ATAC_union3.bed.gz`) |
-| `MIN_CELLS` / `MIN_FRAC` / `TOP_N` | `2` / `0.02` / `0` | peak thresholds |
+| `MACS_Q` | `0.05` | MACS3 q-value cutoff for imputed peak calling |
+| `MIN_PEAKS` | `200` | skip a TF if MACS3 calls fewer than this many peaks |
 | `HOMER_BG` | `0` | `1` -> HOMER `-bg background.bed` instead of `-useNewBg` |
 | `AME_CONTROL` | `0` | `1` -> AME `--control background.fa` instead of shuffled |
 
