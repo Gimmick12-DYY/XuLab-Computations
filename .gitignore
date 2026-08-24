@@ -26,8 +26,7 @@ atac_omniatac/
 # ATAC-seq validation: keep scripts/slurm/metadata/results TSVs, drop heavy outputs
 atac_validation/work/
 atac_validation/ref/
-atac_validation/results/*.png
-atac_validation/results/*.pdf
+atac_validation/results/
 
 # Downstream caches & regenerable eval outputs (keep scripts/slurm tracked)
 downstream/cache/
