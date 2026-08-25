@@ -74,7 +74,7 @@ TFS="mef2a znf143" sbatch --array=0-1 downstream/slurm/motif_enrichment.sbatch
 | `HOMER_GENOME` | `hg38` | HOMER genome name or `/path/hg38.fa` |
 | `HG38_FA` | `downstream/cache/hg38.fa` | FASTA for bed2fasta |
 | `HOCOMOCO_MEME` | `cache/HOCOMOCOv11_full_HUMAN_mono_meme_format.meme` | AME motif DB (HOCOMOCO v11 full) |
-| `OPEN_BED` | OmniATAC IDR peaks | mask used to build the background (swap for `HEK293T_ATAC_union3.bed.gz`) |
+| `OPEN_BED` | `data/HEK293T_ATAC_union3.bed.gz` | open-chromatin mask for accessibility-matched background (same union used to remask imputes) |
 | `MACS_Q` | `0.05` | MACS3 q-value cutoff for imputed peak calling |
 | `MIN_PEAKS` | `200` | skip a TF if MACS3 calls fewer than this many peaks |
 | `HOMER_BG` | `0` | `1` -> HOMER `-bg background.bed` instead of `-useNewBg` |

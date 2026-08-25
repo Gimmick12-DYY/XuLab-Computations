@@ -91,7 +91,7 @@ OUT="${OUT_ROOT}/${TF}"
 HG38_FA="${HG38_FA:-${DOWN_DIR}/cache/hg38.fa}"
 HOMER_GENOME="${HOMER_GENOME:-hg38}"
 HOCOMOCO_MEME="${HOCOMOCO_MEME:-${DOWN_DIR}/cache/HOCOMOCOv11_full_HUMAN_mono_meme_format.meme}"
-OPEN_BED="${OPEN_BED:-${ROOT_DIR}/data/HEK293T_OmniATAC_idr_optimal.narrowPeak.gz}"
+OPEN_BED="${OPEN_BED:-${ROOT_DIR}/data/HEK293T_ATAC_union3.bed.gz}"
 THREADS="${SLURM_CPUS_PER_TASK:-8}"
 
 MACS_Q="${MACS_Q:-0.05}"      # imputed peaks called at MACS3 q<0.05 (project standard)

@@ -35,7 +35,7 @@ downstream/bins_*/
 downstream/bin_coverage_*/
 downstream/peak_coverage_*/
 downstream/compare_pos_neg_*/
-downstream/motif/
+downstream/motif*/
 downstream/slide_tables/
 downstream/pos_neg_all*/
 downstream/sensitivity_specificity/
