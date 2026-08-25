@@ -97,8 +97,13 @@ THREADS="${SLURM_CPUS_PER_TASK:-8}"
 MACS_Q="${MACS_Q:-0.05}"      # imputed peaks called at MACS3 q<0.05 (project standard)
 MIN_PEAKS="${MIN_PEAKS:-200}" # below this, skip motif enrichment (too sparse to validate)
 PEAK_WORK="${OUT}/peaks"      # MACS3 synthetic BED + narrowPeak intermediates
-HOMER_BG="${HOMER_BG:-0}"        # 1 -> HOMER -bg <background> instead of -useNewBg
-AME_CONTROL="${AME_CONTROL:-0}"  # 1 -> AME --control <background.fa> instead of shuffled
+# Accessibility-matched background is ON by default: imputed peaks are open-chromatin
+# (GC/CpG-rich), so vs a generic genome background EVERY TF trivially enriches for
+# GC-box/CpG motifs (SP2/AP2/MECP2). Comparing against OTHER open chromatin
+# (<tf>.background.bed) controls for accessibility and isolates TF-specific signal.
+# Set =0 to fall back to HOMER -useNewBg / AME shuffled (not recommended here).
+HOMER_BG="${HOMER_BG:-1}"        # 1 -> HOMER -bg <background>; 0 -> -useNewBg
+AME_CONTROL="${AME_CONTROL:-1}"  # 1 -> AME --control <background.fa>; 0 -> shuffled
 
 BED="${OUT}/${TF}.imputed_peaks.bed"
 BG_BED="${OUT}/${TF}.background.bed"
@@ -122,8 +127,15 @@ fi
 
 echo "[$(date)] TF=${TF} run_homer=${RUN_HOMER} run_ame=${RUN_AME}"
 
-# ---- 1. imputed matrix -> peak BED (+ background) --------------------------
-if [[ ! -s "${BED}" ]]; then
+# ---- 1. imputed matrix -> q<0.05 peak BED (+ background) --------------------
+# Every analyzed TF is peak-called at MACS3 q<MACS_Q first. Reuse is keyed on the
+# MACS narrowPeak (produced ONLY by this q<0.05 caller), never on the final BED --
+# so a stale BED from any other method is always regenerated, not reused.
+NARROW="${PEAK_WORK}/${TF}_qcut_peaks.narrowPeak"
+if [[ -s "${NARROW}" && -s "${BED}" ]]; then
+  echo "[$(date)] ${TF}: reuse existing q<${MACS_Q} peaks (${NARROW})"
+else
+  echo "[$(date)] ${TF}: calling peaks at MACS3 q<${MACS_Q}"
   set +e
   python "${DOWN_DIR}/call_imputed_peaks.py" \
     --impute-dir "${IMPUTE_DIR}" --tf "${TF}" \
@@ -139,9 +151,18 @@ if [[ ! -s "${BED}" ]]; then
   elif (( rc != 0 )); then
     exit "${rc}"
   fi
-else
-  echo "[$(date)] ${TF}: reuse existing ${BED}"
 fi
+
+# Enforce the peak floor on the FINAL BED -- covers the reuse branch too, so a
+# stale/small BED (e.g. from the old prevalence method) can never reach HOMER/AME
+# and produce a vacuous "Total target sequences = 1" result.
+N_PEAKS=$(wc -l < "${BED}" 2>/dev/null | tr -d '[:space:]' || echo 0)
+if (( ${N_PEAKS:-0} < MIN_PEAKS )); then
+  echo "[skip] ${TF}: ${N_PEAKS} peaks in BED < MIN_PEAKS=${MIN_PEAKS}; not running enrichment" >&2
+  echo "${TF}" >> "${OUT_ROOT}/skipped_insufficient_peaks.txt"
+  exit 0
+fi
+echo "[$(date)] ${TF}: ${N_PEAKS} peaks -> enrichment"
 
 # ---- 2. HOMER de novo + known motif enrichment -----------------------------
 if (( RUN_HOMER == 1 )); then

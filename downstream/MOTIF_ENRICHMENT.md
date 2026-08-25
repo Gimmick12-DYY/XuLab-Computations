@@ -12,8 +12,8 @@ unified/work/<tf>/impute/matrix_csr.npz
         ▼
 downstream/motif/<tf>/<tf>.imputed_peaks.bed          (+ <tf>.background.bed)
         │
-        ├── HOMER  findMotifsGenome.pl <bed> hg38 homer/ -useNewBg -p 8 -size given
-        └── AME    bed2fasta <bed> hg38.fa -> ame(<fa>, HOCOMOCO.meme)
+        ├── HOMER  findMotifsGenome.pl <bed> hg38 homer/ -bg <background> -p 8 -size given
+        └── AME    ame --control <background.fa> <peaks.fa> HOCOMOCO.meme
 ```
 
 ### 1. Called-peak definition (`call_imputed_peaks.py`)
@@ -63,7 +63,7 @@ sbatch --array=0-$((N-1)) downstream/slurm/motif_enrichment.sbatch
 TFS="mef2a znf143" sbatch --array=0-1 downstream/slurm/motif_enrichment.sbatch
 ```
 
-### Key env knobs (all optional; defaults mirror the provided samples)
+### Key env knobs (all optional)
 
 | Var | Default | Meaning |
 |-----|---------|---------|
@@ -77,14 +77,17 @@ TFS="mef2a znf143" sbatch --array=0-1 downstream/slurm/motif_enrichment.sbatch
 | `OPEN_BED` | `data/HEK293T_ATAC_union3.bed.gz` | open-chromatin mask for accessibility-matched background (same union used to remask imputes) |
 | `MACS_Q` | `0.05` | MACS3 q-value cutoff for imputed peak calling |
 | `MIN_PEAKS` | `200` | skip a TF if MACS3 calls fewer than this many peaks |
-| `HOMER_BG` | `0` | `1` -> HOMER `-bg background.bed` instead of `-useNewBg` |
-| `AME_CONTROL` | `0` | `1` -> AME `--control background.fa` instead of shuffled |
+| `HOMER_BG` | `1` | `1` -> HOMER `-bg background.bed` (accessibility-matched); `0` -> `-useNewBg` |
+| `AME_CONTROL` | `1` | `1` -> AME `--control background.fa` (accessibility-matched); `0` -> shuffled |
 
 ## Notes
 
-- Defaults reproduce the provided commands exactly (`-useNewBg`, AME shuffled
-  control). Set `HOMER_BG=1` / `AME_CONTROL=1` for the accessibility-matched
-  background (recommended for open-chromatin-restricted imputed calls).
+- **Background matters most here.** Imputed peaks are open-chromatin (GC/CpG-rich),
+  so against a generic genome background every TF trivially enriches for GC-box/CpG
+  motifs (SP2/AP2/MECP2) — the same result for all TFs. The pipeline therefore
+  defaults to the accessibility-matched background (`HOMER_BG=1`, `AME_CONTROL=1`):
+  each TF's peaks are compared against *other* open chromatin, isolating
+  TF-specific signal. Set both `=0` to fall back to `-useNewBg` / AME shuffled.
 - HOMER preparses the genome on first use. For large parallel arrays, warm it by
   running one TF first, or set a shared `-preparsedDir`, to avoid concurrent
   preparse writes.
