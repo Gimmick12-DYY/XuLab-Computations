@@ -12,10 +12,13 @@
 # Usage:
 #   # all TFs with impute/matrix_csr.npz
 #   N=$(ls -d /work/users/d/y/dyy12/XuLab/unified/work/*/impute/matrix_csr.npz | wc -l)
-#   sbatch --array=0-$((N-1)) unified/slurm/02b_apply_open_chromatin_mask.sbatch
+#   sbatch --array=0-$((N-1)) \
+#     --export=ALL,OPEN_CHROMATIN_BED=/path/to/union.bed.gz,RESTORE_PRE_OPENMASK=1 \
+#     unified/slurm/02b_apply_open_chromatin_mask.sbatch
 #
-#   # panel only
-#   TFS="ctcf,maz,zic2,zbtb7a,znf777,nfya,znf282" sbatch --array=0-6 \
+#   # panel only (colon-separated: Slurm --export splits on commas)
+#   TFS="ctcf:maz:zic2:zbtb7a:znf777:nfya:znf282" sbatch --array=0-6 \
+#     --export=ALL,TFS,OPEN_CHROMATIN_BED=...,RESTORE_PRE_OPENMASK=1 \
 #     unified/slurm/02b_apply_open_chromatin_mask.sbatch
 
 set -euo pipefail
@@ -31,7 +34,15 @@ fi
 cd "${ROOT_DIR}"
 
 if [[ -n "${TFS:-}" ]]; then
-  IFS=',' read -r -a TF_ARR <<< "${TFS}"
+  # Prefer colon/space separators: Slurm --export=ALL,TFS=a,b,c splits on commas.
+  TFS_NORM="${TFS//:/,}"
+  TFS_NORM="${TFS_NORM// /,}"
+  IFS=',' read -r -a TF_ARR <<< "${TFS_NORM}"
+  _tmp=()
+  for t in "${TF_ARR[@]}"; do
+    [[ -n "${t}" ]] && _tmp+=("${t}")
+  done
+  TF_ARR=("${_tmp[@]}")
 else
   mapfile -t TF_ARR < <(
     for d in "${ROOT_DIR}"/work/*/impute/matrix_csr.npz; do
@@ -55,8 +66,24 @@ if [[ ! -f "${CFG}" ]]; then
   CFG="${ROOT_DIR}/configs/default.yaml"
 fi
 
-echo "[$(date)] TF=${TF} work=${WORK}"
-"${PY}" scripts/02b_apply_open_chromatin_mask.py \
-  --config "${CFG}" \
-  --work-dir "${WORK}"
+IMPUTE="${WORK}/impute"
+PRE="${IMPUTE}/matrix_csr.npz.pre_openmask"
+CSR="${IMPUTE}/matrix_csr.npz"
+# Re-applying a wider mask on an already-masked CSR cannot restore dropped
+# imputed calls. Restore the unmasked backup first when present.
+if [[ "${RESTORE_PRE_OPENMASK:-1}" == "1" && -s "${PRE}" ]]; then
+  echo "[$(date)] ${TF}: restoring ${PRE} -> ${CSR}"
+  cp -f "${PRE}" "${CSR}"
+elif [[ ! -s "${CSR}" ]]; then
+  echo "missing ${CSR} (and no usable pre_openmask)" >&2
+  exit 1
+fi
+
+OPEN_BED="${OPEN_CHROMATIN_BED:-}"
+echo "[$(date)] TF=${TF} work=${WORK} open_bed=${OPEN_BED:-<config>}"
+CMD=("${PY}" scripts/02b_apply_open_chromatin_mask.py --config "${CFG}" --work-dir "${WORK}")
+if [[ -n "${OPEN_BED}" ]]; then
+  CMD+=(--open-chromatin-bed "${OPEN_BED}")
+fi
+"${CMD[@]}"
 echo "[$(date)] done ${TF}"

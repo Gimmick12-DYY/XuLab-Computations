@@ -179,9 +179,12 @@ impute:
   keep_raw:        true        # union with raw via element-wise max
   weight:          1.0
 
-  # Open-chromatin mask (HEK293T OmniATAC IDR optimal peaks).
+  # Open-chromatin mask. Current: union of OmniATAC IDR + GSE283384 WT +
+  # GSE152177 A/A MACS2 peaks (atac_validation). Prior OmniATAC-only path:
+  #   data/HEK293T_OmniATAC_idr_optimal.narrowPeak.gz
   # New imputed entries outside this BED are deleted before keep_raw union;
   # observed raw signal outside open chromatin is preserved when keep_raw=true.
-  # Set to null / "off" to disable.
-  open_chromatin_bed: /work/users/d/y/dyy12/XuLab/data/HEK293T_OmniATAC_idr_optimal.narrowPeak.gz
+  # Set to null / "off" to disable. Remask existing CSRs from
+  # matrix_csr.npz.pre_openmask via 02b (do not re-mask an already-masked CSR).
+  open_chromatin_bed: /work/users/d/y/dyy12/XuLab/data/HEK293T_ATAC_union3.bed.gz
   open_chromatin_mask_imputed_only: true
