@@ -50,8 +50,8 @@ scBasset_TF addresses all three:
   weights, no motif BEDs in the default path (`predict_bed: "off"`).
 - **TF-aware via Y, not via architecture.** The model has no TF
   conditioning. Per-TF behavior comes from the AllTF matrix already carrying
-  per-TF signal in the cells (verified via metadata grouping in
-  `downstream/eval_basic.py`). Multi-task TF-conditioned head is a planned
+  per-TF signal in the cells (verified via metadata grouping of the
+  AllTF matrix). Multi-task TF-conditioned head is a planned
   follow-up; not implemented yet.
 - **Companion to scBasset/, not a replacement.** scBasset stays as the
   original 1344 bp / MaxPool-chain baseline. scBasset_TF is the

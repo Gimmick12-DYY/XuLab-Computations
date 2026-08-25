@@ -95,6 +95,6 @@ replaces:      prior data/CTCF_HEK293_peaks.bed (inflated ~322k positive bins)
 EOF
 
 echo "[fetch_ctcf_chip] wrote ${OUT_BED} (${n_new} peaks) + ${PROV}"
-echo "[fetch_ctcf_chip] Next: rebuild CTCF bins + eval (+ openpos / slide patch):"
+echo "[fetch_ctcf_chip] Next: rebuild CTCF bins + eval, then regenerate slide tables:"
 echo "    bash downstream/slurm/run_all_universe_panel.sh CTCF"
-echo "    # then openpos bins/eval + downstream/update_slide_ctcf_rows.py"
+echo "    # then openpos bins/eval + build_slide_all_universe*.py"

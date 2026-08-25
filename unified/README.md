@@ -94,7 +94,7 @@ sbatch --array=0-$((N-1)) unified/slurm/02b_apply_open_chromatin_mask.sbatch
 
 Outputs land at `<work>/impute/{matrix_csr.npz, regions.tsv, barcodes.tsv,
 meta.json}` — same schema as scBasset / cisTopic / PUscOpen, so the existing
-`downstream/compare_pos_neg.py`, `peak_coverage.py`, and `eval_basic.py`
+`downstream/compare_pos_neg.py` and `peak_coverage.py`
 harnesses ingest it directly.
 
 ## Setup
