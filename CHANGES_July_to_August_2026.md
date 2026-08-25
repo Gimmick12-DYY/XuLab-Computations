@@ -117,11 +117,14 @@ Runners were fixed to export **variable names** (`--export=ALL,BINS_TSV,OUT_DIR,
 
 ## 4. Bulk concordance matrices (raw / imputed × bulk)
 
-Scripts under `downstream/`:
+All correlation analyses are consolidated into `downstream/correlation_analysis.py`
+(subcommands; former standalone scripts noted):
 
-- `plot_vs_bulk_spearman_heatmap.py` (+ `slurm/plot_vs_bulk_spearman.sbatch`)
-- `plot_vs_bulk_qn_pearson_heatmap.py` (QN then Pearson; Spearman is QN-invariant)
-- Related: `plot_raw_vs_imputed_spearman_heatmap.py`, `plot_sc_vs_bulk_validation.py`
+- `vs-bulk-spearman`   (+ `slurm/plot_vs_bulk_spearman.sbatch`) — was `plot_vs_bulk_spearman_heatmap.py`
+- `vs-bulk-qn-pearson` (QN then Pearson; Spearman is QN-invariant) — was `plot_vs_bulk_qn_pearson_heatmap.py`
+- `raw-vs-imputed`     — was `plot_raw_vs_imputed_spearman_heatmap.py`
+- `sc-vs-bulk`         — was `plot_sc_vs_bulk_validation.py`
+- `raw-vs-unified`     — was `raw_vs_unified_pearson.py`
 
 **Feature spaces:** `all` (~3M bins), `union_peaks` (~458k), `ccre`; optional **`--open-chromatin`** intersects with OmniATAC open bins → output tags `*_open_*`.
 

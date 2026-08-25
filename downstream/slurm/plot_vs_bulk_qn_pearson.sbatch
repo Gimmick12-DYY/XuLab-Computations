@@ -24,6 +24,6 @@ PY="${CONDA_ENV}/bin/python"
 
 cd "${ROOT_DIR}"
 
-echo "[$(date)] plot_vs_bulk_qn_pearson_heatmap.py --features ${FEATURES} --qn ${QN}"
-"${PY}" downstream/plot_vs_bulk_qn_pearson_heatmap.py --features "${FEATURES}" --qn "${QN}"
+echo "[$(date)] correlation_analysis.py vs-bulk-qn-pearson --features ${FEATURES} --qn ${QN}"
+"${PY}" downstream/correlation_analysis.py vs-bulk-qn-pearson --features "${FEATURES}" --qn "${QN}"
 echo "[$(date)] done"

@@ -27,9 +27,9 @@ cd "${ROOT_DIR}"
 export PATH="/nas/longleaf/rhel9/apps/bedtools/2.31.1/bedtools2/bin:${PATH:-}"
 command -v bedtools >/dev/null
 
-echo "[$(date)] plot_raw_vs_imputed_spearman_heatmap.py --tfs ${TFS} --features ${FEATURES}"
+echo "[$(date)] correlation_analysis.py raw-vs-imputed --tfs ${TFS} --features ${FEATURES}"
 echo "[$(date)] OUT_DIR=${OUT_DIR}"
-"${PY}" downstream/plot_raw_vs_imputed_spearman_heatmap.py \
+"${PY}" downstream/correlation_analysis.py raw-vs-imputed \
   --tfs "${TFS}" \
   --features "${FEATURES}" \
   --method spearman \

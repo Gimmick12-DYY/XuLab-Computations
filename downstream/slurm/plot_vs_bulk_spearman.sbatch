@@ -32,6 +32,6 @@ if [[ "${OPEN}" == "1" || "${OPEN}" == "true" || "${OPEN}" == "yes" ]]; then
   extra+=(--open-chromatin)
 fi
 
-echo "[$(date)] starting plot_vs_bulk_spearman_heatmap.py --features ${FEATURES} ${extra[*]:-}"
-"${PY}" downstream/plot_vs_bulk_spearman_heatmap.py --features "${FEATURES}" "${extra[@]+"${extra[@]}"}"
+echo "[$(date)] starting correlation_analysis.py vs-bulk-spearman --features ${FEATURES} ${extra[*]:-}"
+"${PY}" downstream/correlation_analysis.py vs-bulk-spearman --features "${FEATURES}" "${extra[@]+"${extra[@]}"}"
 echo "[$(date)] done"
