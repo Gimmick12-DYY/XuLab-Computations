@@ -92,7 +92,8 @@ IMPUTE_DIR="${IMPUTE_DIR:-${ROOT_DIR}/unified/work/${TF}/impute}"
 # tree (motif_tfspec) so it never collides with the plain (accessibility) run.
 TF_SPECIFIC="${TF_SPECIFIC:-0}"
 CONSENSUS_NPY="${CONSENSUS_NPY:-${DOWN_DIR}/motif/consensus_accessibility.npy}"
-CONSENSUS_NORMALIZE="${CONSENSUS_NORMALIZE:-rank}"
+CONSENSUS_NORMALIZE="${CONSENSUS_NORMALIZE:-fraction}"  # count-preserving (callable peaks)
+CONSENSUS_SCALE="${CONSENSUS_SCALE:-1.0}"               # <1 softer / more peaks, >1 stricter
 if [[ "${TF_SPECIFIC}" == "1" ]]; then
   OUT_ROOT="${OUT_ROOT:-${DOWN_DIR}/motif_tfspec}"
 else
@@ -144,7 +145,7 @@ CONSENSUS_ARGS=()
 if [[ "${TF_SPECIFIC}" == "1" ]]; then
   [[ -s "${CONSENSUS_NPY}" ]] || { echo "ERROR: TF_SPECIFIC=1 but consensus missing: ${CONSENSUS_NPY}
   build once: python ${DOWN_DIR}/build_consensus_accessibility.py --out-npy ${CONSENSUS_NPY}" >&2; exit 1; }
-  CONSENSUS_ARGS=(--consensus-npy "${CONSENSUS_NPY}" --consensus-normalize "${CONSENSUS_NORMALIZE}")
+  CONSENSUS_ARGS=(--consensus-npy "${CONSENSUS_NPY}" --consensus-normalize "${CONSENSUS_NORMALIZE}" --consensus-scale "${CONSENSUS_SCALE}")
 fi
 
 # ---- 1. imputed matrix -> q<0.05 peak BED (+ background) --------------------

@@ -34,16 +34,25 @@ that little confident imputed signal can't yield a valid enrichment.
 
 The plain peaks above are dominated by accessibility (all TFs' pseudobulks are
 ~identical, 75–91% peak overlap → generic GC/CpG motifs). `TF_SPECIFIC=1` calls
-peaks on the **residual above a shared accessibility consensus** instead:
+peaks on the **observed-minus-expected residual** instead — count-preserving so
+the residual stays peaky and MACS3 can call it:
 
 ```
-consensus = mean over TFs of rank-normalized pseudobulk   (build_consensus_accessibility.py)
-residual_X = max(0, rank(signal_X) - consensus)           (call_imputed_peaks.py --consensus-npy)
+consensus  = mean over TFs of (pseudobulk / sum)          # accessibility SHAPE, sums to ~1
+expected_X = consensus * total_X                          # counts under pure accessibility
+residual_X = max(0, signal_X - scale * expected_X)        # scale=CONSENSUS_SCALE (default 1)
 ```
 
-Bins where TF X is bound *more than the average TF* survive; shared accessibility
-cancels to ~0. Peaks are then called on that residual (same MACS3 q<0.05), so
-enrichment reflects TF-specific signal. Build the consensus once:
+Bins where TF X exceeds its accessibility expectation stay sharp (count units);
+proportional-to-accessibility washes to ~0. Peaks are then called on that residual
+(same MACS3 q<0.05).
+
+> **Note:** the earlier `rank` normalization made residuals *uniform*, so MACS3
+> called **0 peaks** for every TF. The default is now `fraction` (count-like).
+> If too many TFs still fall under `MIN_PEAKS`, soften with `CONSENSUS_SCALE=0.7`
+> (subtract less accessibility) before concluding there is no TF-specific signal.
+
+Build the consensus once (default `--normalize fraction`):
 
 ```bash
 python downstream/build_consensus_accessibility.py \
@@ -105,7 +114,8 @@ TF_SPECIFIC=1 sbatch --array=0-$((N-1)) downstream/slurm/motif_enrichment.sbatch
 | `MACS_Q` | `0.05` | MACS3 q-value cutoff for imputed peak calling |
 | `MIN_PEAKS` | `200` | skip a TF if MACS3 calls fewer than this many peaks |
 | `TF_SPECIFIC` | `0` | `1` -> consensus-subtracted peaks (needs `CONSENSUS_NPY`); output tree `motif_tfspec/` |
-| `CONSENSUS_NPY` | `motif/consensus_accessibility.npy` | consensus built by `build_consensus_accessibility.py` |
+| `CONSENSUS_NPY` | `motif/consensus_accessibility.npy` | consensus built by `build_consensus_accessibility.py` (rebuild with default `--normalize fraction`) |
+| `CONSENSUS_SCALE` | `1.0` | subtract `scale`×expected accessibility; `<1` softer / more peaks |
 | `HOMER_BG` | `0` | `0` -> HOMER `-useNewBg` (original); `1` -> `-bg background.bed` (accessibility-matched) |
 | `AME_CONTROL` | `0` | `0` -> AME shuffled (original); `1` -> `--control background.fa` (accessibility-matched) |
 

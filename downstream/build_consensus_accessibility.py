@@ -35,6 +35,25 @@ if str(_DOWN) not in sys.path:
 from peak_coverage import load_per_bin_signal, normalize_per_bin_signal  # noqa: E402
 
 
+def norm_track(signal: np.ndarray, mode: str) -> np.ndarray:
+    """Per-track normalization before averaging into the consensus.
+
+    fraction : signal / sum(signal) -> probability profile over bins (removes
+               per-TF depth AND breadth). Consensus is then an accessibility
+               *shape* that sums to ~1; call_imputed_peaks scales it by each TF's
+               own total to get COUNT-like expected values (peaks stay callable).
+    rank     : percentile-rank nonzero bins to (0,1] (uniform marginal). Robust
+               but produces smooth residuals -> MACS3 finds no peaks. Inspection only.
+    none     : raw pseudobulk counts (only meaningful for depth-matched TFs).
+    """
+    if mode == "fraction":
+        tot = float(signal.sum())
+        return signal / tot if tot > 0 else signal
+    if mode in ("rank", "none"):
+        return normalize_per_bin_signal(signal, mode)
+    raise SystemExit(f"unknown normalize mode {mode!r}")
+
+
 def discover_tfs(work_root: Path) -> list[str]:
     return sorted(
         d.name for d in work_root.iterdir()
@@ -48,8 +67,10 @@ def main() -> int:
     ap.add_argument("--work-root", type=Path, default=_DOWN.parent / "unified" / "work")
     ap.add_argument("--tfs", nargs="*", default=None,
                     help="lowercase TF keys; default = every <tf>/impute/matrix_csr.npz")
-    ap.add_argument("--normalize", choices=["rank", "none"], default="rank",
-                    help="per-track normalization before averaging (default rank)")
+    ap.add_argument("--normalize", choices=["fraction", "rank", "none"], default="fraction",
+                    help="per-track normalization before averaging (default fraction: "
+                         "count-preserving observed-vs-expected; rank yields smooth "
+                         "residuals that MACS3 cannot peak-call)")
     ap.add_argument("--out-npy", type=Path, required=True)
     ap.add_argument("--min-tfs", type=int, default=5,
                     help="require at least this many TFs for a meaningful consensus")
@@ -68,7 +89,7 @@ def main() -> int:
             print(f"[skip] {tf}: no matrix_csr.npz", flush=True)
             continue
         signal, _regions, _kind, n_cells = load_per_bin_signal(d)
-        s = normalize_per_bin_signal(signal, args.normalize)
+        s = norm_track(signal, args.normalize)
         if acc is None:
             n_bins = int(s.shape[0])
             acc = np.zeros(n_bins, dtype=np.float64)

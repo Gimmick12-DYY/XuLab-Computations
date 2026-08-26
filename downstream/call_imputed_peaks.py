@@ -24,6 +24,7 @@ from __future__ import annotations
 
 import argparse
 import gzip
+import json
 import sys
 from pathlib import Path
 
@@ -100,9 +101,14 @@ def main() -> int:
     # - consensus) instead of the raw pseudobulk. Isolates signal enriched ABOVE the
     # shared accessibility landscape. Build the consensus with build_consensus_accessibility.py.
     ap.add_argument("--consensus-npy", type=Path, default=None,
-                    help="consensus accessibility vector; subtract before peak calling")
-    ap.add_argument("--consensus-normalize", choices=["rank", "none"], default="rank",
-                    help="per-track normalization; MUST match build_consensus_accessibility.py")
+                    help="consensus accessibility profile; subtract before peak calling")
+    ap.add_argument("--consensus-normalize", choices=["fraction", "rank", "none"], default="fraction",
+                    help="MUST match build_consensus_accessibility.py. fraction (default) = "
+                         "count-preserving observed-vs-expected (callable peaks); rank = smooth "
+                         "residual (MACS3 finds no peaks).")
+    ap.add_argument("--consensus-scale", type=float, default=1.0,
+                    help="subtract scale*expected accessibility (default 1.0). <1 = softer "
+                         "(keep more signal, more peaks); >1 = stricter.")
     # accessibility-matched background (optional).
     ap.add_argument("--open-bed", type=Path, default=None)
     ap.add_argument("--bg-out", type=Path, default=None)
@@ -123,12 +129,31 @@ def main() -> int:
         cons = np.load(args.consensus_npy)
         if cons.shape[0] != signal.shape[0]:
             raise SystemExit(f"consensus len {cons.shape[0]} != bins {signal.shape[0]}")
-        s_norm = normalize_per_bin_signal(signal, args.consensus_normalize)
-        residual = s_norm - cons
+        # Guard: the consensus was built with a specific normalization; residual math
+        # below must match it, or the subtraction is meaningless.
+        meta_path = Path(str(args.consensus_npy) + ".meta.json")
+        if meta_path.is_file():
+            built = json.loads(meta_path.read_text()).get("normalize")
+            if built and built != args.consensus_normalize:
+                raise SystemExit(
+                    f"consensus built with normalize={built} but --consensus-normalize="
+                    f"{args.consensus_normalize}; rebuild or pass the matching mode")
+        mode = args.consensus_normalize
+        if mode == "fraction":
+            # consensus is an accessibility SHAPE (sums to ~1). Expected counts for
+            # this TF under pure accessibility = shape * its own total. Residual keeps
+            # read units, so bins where the TF EXCEEDS accessibility stay peaky.
+            expected = cons * float(signal.sum())
+            residual = signal - args.consensus_scale * expected
+        elif mode == "rank":
+            residual = normalize_per_bin_signal(signal, "rank") - args.consensus_scale * cons
+        else:  # none (count-space consensus; depth-matched TFs only)
+            residual = signal - args.consensus_scale * cons
         np.clip(residual, 0.0, None, out=residual)
         n_pos = int(np.count_nonzero(residual))
-        print(f"[{args.tf}] consensus-subtracted ({args.consensus_normalize}): "
-              f"{n_pos} bins above consensus (of {int(np.count_nonzero(s_norm))} signaled) "
+        print(f"[{args.tf}] consensus-subtracted ({mode}, scale={args.consensus_scale}): "
+              f"{n_pos} bins above expected accessibility; "
+              f"residual max={float(residual.max()):.4g} sum={float(residual.sum()):.4g} "
               f"-> TF-specific peak calling", flush=True)
         if n_pos == 0:
             raise SystemExit(f"{args.tf}: residual all zero after consensus subtraction")
