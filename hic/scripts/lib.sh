@@ -24,7 +24,7 @@ ALIGNER="${ALIGNER:-bwa-mem}"            # bwa-mem (standard) | chromap (fast, r
 CHUNK_SIZE="${CHUNK_SIZE:-1500000}"      # read pairs per mapping chunk (runHiC --chunkSize)
 
 # Compartment calling (cooltools eigs-cis).
-COMPARTMENT_RES="${COMPARTMENT_RES:-100000}"   # 100 kb bins for A/B compartments
+COMPARTMENT_RES="${COMPARTMENT_RES:-25000}"    # 25 kb bins for A/B compartments (deep library)
 
 THREADS="${THREADS:-${SLURM_CPUS_PER_TASK:-16}}"
 

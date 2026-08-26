@@ -42,9 +42,9 @@ sbatch hic/slurm/02_pileup.sbatch
 # 4. QC
 sbatch hic/slurm/03_quality.sbatch
 
-# 5. A/B compartments (GC-phased) @ 100 kb -> the co-binding input
+# 5. A/B compartments (GC-phased) @ 25 kb -> the co-binding input
 sbatch hic/slurm/04_compartments.sbatch
-#   COMPARTMENT_RES=250000 sbatch hic/slurm/04_compartments.sbatch
+#   COMPARTMENT_RES=100000 sbatch hic/slurm/04_compartments.sbatch
 ```
 
 ### `datasets.tsv` (runHiC metadata)
@@ -73,12 +73,14 @@ is far faster and fine for compartment-scale analysis — recommended here. Reru
 
 ## A/B compartments → co-binding
 
-`04_compartments.sbatch` runs `cooltools eigs-cis` on the balanced matrix with a
-**GC phasing track**, so the first eigenvector E1 is oriented **E1>0 = A** (open,
-GC-rich) / **E1<0 = B**. Outputs under `work/compartments/`:
+`04_compartments.sbatch` runs `cooltools eigs-cis` at **25 kb** (`COMPARTMENT_RES`,
+default 25000) on the balanced matrix with a **GC phasing track**, so the first
+eigenvector E1 is oriented **E1>0 = A** (open, GC-rich) / **E1<0 = B**. If the
+`.mcool` lacks a 25 kb level, the step coarsens+balances one from a divisor
+resolution automatically. Outputs under `work/compartments/`:
 
-- `compartments_<res>.cis.vecs.tsv` — per-bin E1/E2/E3
-- `compartments_<res>.E1.bedGraph` — A/B track (chrom start end E1)
+- `compartments_25000.cis.vecs.tsv` — per-bin E1/E2/E3
+- `compartments_25000.E1.bedGraph` — A/B track (chrom start end E1)
 
 For the co-binding analysis, intersect each TF's binding/imputed peaks with the
 A/B bedGraph to test compartment preference and TF–TF co-localization within
@@ -97,3 +99,6 @@ A vs B. (Next module; not built here.)
   `runHiC quality -h` and adjust.
 - **Genome:** main chromosomes only (no alt/scaffold) so multi-mapping doesn't
   distort contacts or compartments.
+- **25 kb compartments:** finer than the usual 100 kb–1 Mb, but this library is
+  deep (~330M pairs) so eigs at 25 kb are supported. If E1 looks noisy on
+  sparser chromosomes, bump `COMPARTMENT_RES` (e.g. 50000/100000).

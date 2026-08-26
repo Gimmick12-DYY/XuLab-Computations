@@ -11,10 +11,11 @@
 # so E1 > 0 = A (GC-rich) and E1 < 0 = B. This is the bridge from the Hi-C
 # pipeline to the co-binding analysis.
 #
-#   sbatch hic/slurm/04_compartments.sbatch
-#   COMPARTMENT_RES=250000 sbatch hic/slurm/04_compartments.sbatch
+#   sbatch hic/slurm/04_compartments.sbatch                    # 25 kb (default)
+#   COMPARTMENT_RES=100000 sbatch hic/slurm/04_compartments.sbatch
 #
-# Prereq: 02_pileup produced a balanced .mcool with a ${COMPARTMENT_RES} level.
+# Prereq: 02_pileup produced a balanced .mcool. If it lacks the ${COMPARTMENT_RES}
+# level, this coarsens+balances it from a divisor resolution automatically.
 
 set -euo pipefail
 source "${XULAB:-/work/users/d/y/dyy12/XuLab}/hic/scripts/lib.sh"
@@ -24,18 +25,28 @@ command -v cooltools >/dev/null 2>&1 || { echo "cooltools not on PATH in env ${C
 MCOOL="${MCOOL:-$(ls "${WORK}"/coolers-"${GENOME}"/*.mcool 2>/dev/null | head -1)}"
 [[ -s "${MCOOL:-}" ]] || { echo "no .mcool under ${WORK}/coolers-${GENOME}/ (run 02)" >&2; exit 1; }
 RES="${COMPARTMENT_RES}"
-COOL="${MCOOL}::/resolutions/${RES}"
-
-if ! cooler info "${COOL}" >/dev/null 2>&1; then
-  echo "resolution ${RES} not in ${MCOOL}; available:" >&2
-  cooler ls "${MCOOL}" >&2
-  echo "set COMPARTMENT_RES to one of the above (or cooler zoomify to add ${RES})." >&2
-  exit 1
-fi
 
 OUT="${WORK}/compartments"
 mkdir -p "${OUT}"
 cd "${OUT}"
+
+COOL="${MCOOL}::/resolutions/${RES}"
+if ! cooler info "${COOL}" >/dev/null 2>&1; then
+  echo "[$(date)] ${RES} bp not in mcool; available: $(cooler ls "${MCOOL}" | sed 's#.*/##' | tr '\n' ' ')"
+  # Largest available resolution that evenly divides RES -> coarsen from it.
+  BASE=""
+  for r in $(cooler ls "${MCOOL}" | sed 's#.*/##' | sort -nr); do
+    [[ "${r}" =~ ^[0-9]+$ ]] || continue
+    if (( r <= RES )) && (( RES % r == 0 )); then BASE="${r}"; break; fi
+  done
+  [[ -n "${BASE}" ]] || { echo "no resolution divides ${RES}; re-bin at ${RES} in step 02." >&2; exit 1; }
+  FACTOR=$(( RES / BASE ))
+  COARSE="${OUT}/${GENOME}_${RES}.cool"
+  echo "[$(date)] coarsen ${BASE} -> ${RES} (x${FACTOR}) + balance"
+  cooler coarsen -k "${FACTOR}" -o "${COARSE}" "${MCOOL}::/resolutions/${BASE}"
+  cooler balance -p "${THREADS}" "${COARSE}"
+  COOL="${COARSE}"
+fi
 
 echo "[$(date)] binnify + GC phasing track @ ${RES} bp"
 cooltools genome binnify "${CHROMSIZES}" "${RES}" > "bins_${RES}.bed"
