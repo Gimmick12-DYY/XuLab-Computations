@@ -1,0 +1,15 @@
+# conda env for the TF co-binding module (graph clustering of Cicero pairs).
+#   mamba env create -f cobinding/environment.yml -p /work/users/d/y/dyy12/conda/envs/cobinding
+name: cobinding
+channels:
+  - conda-forge
+dependencies:
+  - python=3.10
+  - networkx>=3
+  - pandas
+  - numpy
+  - matplotlib
+  - python-louvain      # Louvain community detection
+  - python-igraph       # (optional) Leiden backend
+  - leidenalg           # (optional) Leiden community detection
+  - pip

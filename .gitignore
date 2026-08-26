@@ -32,6 +32,10 @@ atac_validation/results/
 hic/data/
 hic/work/
 
+# Co-binding: keep scripts/slurm, drop the aggregated edge list + cluster outputs
+cobinding/work/
+cobinding/results/
+
 # Downstream caches & regenerable eval outputs (keep scripts/slurm tracked)
 downstream/cache/
 downstream/bins/
