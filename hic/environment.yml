@@ -1,0 +1,23 @@
+# conda env for the HEK293T Hi-C pipeline (runHiC + A/B compartments).
+#   mamba env create -f hic/environment.yml -p /work/users/d/y/dyy12/conda/envs/hic
+name: hic
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - python=3.10
+  - sra-tools>=3.0      # prefetch (SRR24709565 -> .sra)
+  - bwa                 # default aligner (runHiC -A bwa-mem)
+  - chromap             # optional fast aligner (runHiC -A chromap) -- recommended for 330M pairs
+  - minimap2
+  - pairtools           # pair parsing / dedup / filtering (runHiC backend)
+  - cooler              # contact matrices (.cool/.mcool)
+  - cooltools           # A/B compartments (eigs-cis), GC phasing track
+  - pairix
+  - samtools>=1.18
+  - numpy
+  - scipy
+  - pandas
+  - pip
+  - pip:
+      - runHiC          # XiaoTaoWang/HiC_pipeline (PyPI)

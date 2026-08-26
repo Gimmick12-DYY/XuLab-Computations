@@ -28,6 +28,10 @@ atac_validation/work/
 atac_validation/ref/
 atac_validation/results/
 
+# Hi-C: keep scripts/slurm/metadata, drop the runHiC data tree + workspace outputs
+hic/data/
+hic/work/
+
 # Downstream caches & regenerable eval outputs (keep scripts/slurm tracked)
 downstream/cache/
 downstream/bins/
