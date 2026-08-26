@@ -37,6 +37,7 @@ from peak_coverage import (  # noqa: E402  (vetted peak-calling standard)
     effective_genome_size,
     generate_synthetic_bed,
     load_per_bin_signal,
+    normalize_per_bin_signal,
     run_macs3,
 )
 
@@ -95,6 +96,13 @@ def main() -> int:
     ap.add_argument("--bg-quantile", type=float, default=0.5)
     ap.add_argument("--bg-scale", type=float, default=1.0)
     ap.add_argument("--no-nolambda", action="store_true", help="disable MACS3 --nolambda")
+    # Consensus-subtracted (TF-specific) peaks: call on residual = max(0, norm(signal)
+    # - consensus) instead of the raw pseudobulk. Isolates signal enriched ABOVE the
+    # shared accessibility landscape. Build the consensus with build_consensus_accessibility.py.
+    ap.add_argument("--consensus-npy", type=Path, default=None,
+                    help="consensus accessibility vector; subtract before peak calling")
+    ap.add_argument("--consensus-normalize", choices=["rank", "none"], default="rank",
+                    help="per-track normalization; MUST match build_consensus_accessibility.py")
     # accessibility-matched background (optional).
     ap.add_argument("--open-bed", type=Path, default=None)
     ap.add_argument("--bg-out", type=Path, default=None)
@@ -108,6 +116,23 @@ def main() -> int:
     signal, regions, kind, n_cells = load_per_bin_signal(args.impute_dir)
     print(f"[{args.tf}] {len(regions)} bins x {n_cells} cells (kind={kind}), "
           f"nonzero={int(np.count_nonzero(signal))}", flush=True)
+
+    if args.consensus_npy:
+        if not args.consensus_npy.is_file():
+            raise SystemExit(f"consensus not found: {args.consensus_npy}")
+        cons = np.load(args.consensus_npy)
+        if cons.shape[0] != signal.shape[0]:
+            raise SystemExit(f"consensus len {cons.shape[0]} != bins {signal.shape[0]}")
+        s_norm = normalize_per_bin_signal(signal, args.consensus_normalize)
+        residual = s_norm - cons
+        np.clip(residual, 0.0, None, out=residual)
+        n_pos = int(np.count_nonzero(residual))
+        print(f"[{args.tf}] consensus-subtracted ({args.consensus_normalize}): "
+              f"{n_pos} bins above consensus (of {int(np.count_nonzero(s_norm))} signaled) "
+              f"-> TF-specific peak calling", flush=True)
+        if n_pos == 0:
+            raise SystemExit(f"{args.tf}: residual all zero after consensus subtraction")
+        signal = residual
 
     synth = args.out_dir / f"{args.tf}.synthetic.bed"
     n_frag, scale, downscale = generate_synthetic_bed(

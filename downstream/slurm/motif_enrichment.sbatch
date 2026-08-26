@@ -86,7 +86,18 @@ fi
 
 # ---- paths / knobs ---------------------------------------------------------
 IMPUTE_DIR="${IMPUTE_DIR:-${ROOT_DIR}/unified/work/${TF}/impute}"
-OUT_ROOT="${OUT_ROOT:-${DOWN_DIR}/motif}"
+
+# TF-specific (consensus-subtracted) peaks: call peaks on the residual above the
+# shared accessibility consensus, isolating TF-specific signal. Separate output
+# tree (motif_tfspec) so it never collides with the plain (accessibility) run.
+TF_SPECIFIC="${TF_SPECIFIC:-0}"
+CONSENSUS_NPY="${CONSENSUS_NPY:-${DOWN_DIR}/motif/consensus_accessibility.npy}"
+CONSENSUS_NORMALIZE="${CONSENSUS_NORMALIZE:-rank}"
+if [[ "${TF_SPECIFIC}" == "1" ]]; then
+  OUT_ROOT="${OUT_ROOT:-${DOWN_DIR}/motif_tfspec}"
+else
+  OUT_ROOT="${OUT_ROOT:-${DOWN_DIR}/motif}"
+fi
 OUT="${OUT_ROOT}/${TF}"
 HG38_FA="${HG38_FA:-${DOWN_DIR}/cache/hg38.fa}"
 HOMER_GENOME="${HOMER_GENOME:-hg38}"
@@ -97,13 +108,14 @@ THREADS="${SLURM_CPUS_PER_TASK:-8}"
 MACS_Q="${MACS_Q:-0.05}"      # imputed peaks called at MACS3 q<0.05 (project standard)
 MIN_PEAKS="${MIN_PEAKS:-200}" # below this, skip motif enrichment (too sparse to validate)
 PEAK_WORK="${OUT}/peaks"      # MACS3 synthetic BED + narrowPeak intermediates
-# Accessibility-matched background is ON by default: imputed peaks are open-chromatin
-# (GC/CpG-rich), so vs a generic genome background EVERY TF trivially enriches for
-# GC-box/CpG motifs (SP2/AP2/MECP2). Comparing against OTHER open chromatin
-# (<tf>.background.bed) controls for accessibility and isolates TF-specific signal.
-# Set =0 to fall back to HOMER -useNewBg / AME shuffled (not recommended here).
-HOMER_BG="${HOMER_BG:-1}"        # 1 -> HOMER -bg <background>; 0 -> -useNewBg
-AME_CONTROL="${AME_CONTROL:-1}"  # 1 -> AME --control <background.fa>; 0 -> shuffled
+# Background: default OFF, matching the original commands exactly --
+#   HOMER: findMotifsGenome.pl <peaks> hg38 <out> -useNewBg -p 8 -size given
+#   AME:   ame --o <out> <peaks.fa> HOCOMOCO.meme        (shuffled control)
+# Opt-in accessibility-matched background (open chromatin minus this TF's peaks,
+# <tf>.background.bed) via HOMER_BG=1 / AME_CONTROL=1 -- tried, did not recover
+# TF-specific motifs (imputed peaks are ~accessibility, 75-91% shared across TFs).
+HOMER_BG="${HOMER_BG:-0}"        # 0 -> HOMER -useNewBg (original); 1 -> -bg <background>
+AME_CONTROL="${AME_CONTROL:-0}"  # 0 -> AME shuffled (original); 1 -> --control <background.fa>
 
 BED="${OUT}/${TF}.imputed_peaks.bed"
 BG_BED="${OUT}/${TF}.background.bed"
@@ -125,7 +137,15 @@ if (( RUN_AME == 1 )); then
   [[ -s "${HOCOMOCO_MEME}" ]] || { echo "ERROR: HOCOMOCO full meme not found: ${HOCOMOCO_MEME}" >&2; exit 1; }
 fi
 
-echo "[$(date)] TF=${TF} run_homer=${RUN_HOMER} run_ame=${RUN_AME}"
+echo "[$(date)] TF=${TF} run_homer=${RUN_HOMER} run_ame=${RUN_AME} tf_specific=${TF_SPECIFIC}"
+
+# Consensus-subtracted (TF-specific) peak calling requires a prebuilt consensus.
+CONSENSUS_ARGS=()
+if [[ "${TF_SPECIFIC}" == "1" ]]; then
+  [[ -s "${CONSENSUS_NPY}" ]] || { echo "ERROR: TF_SPECIFIC=1 but consensus missing: ${CONSENSUS_NPY}
+  build once: python ${DOWN_DIR}/build_consensus_accessibility.py --out-npy ${CONSENSUS_NPY}" >&2; exit 1; }
+  CONSENSUS_ARGS=(--consensus-npy "${CONSENSUS_NPY}" --consensus-normalize "${CONSENSUS_NORMALIZE}")
+fi
 
 # ---- 1. imputed matrix -> q<0.05 peak BED (+ background) --------------------
 # Every analyzed TF is peak-called at MACS3 q<MACS_Q first. Reuse is keyed on the
@@ -141,7 +161,8 @@ else
     --impute-dir "${IMPUTE_DIR}" --tf "${TF}" \
     --out-bed "${BED}" --out-dir "${PEAK_WORK}" \
     --macs-q "${MACS_Q}" --min-peaks "${MIN_PEAKS}" \
-    --open-bed "${OPEN_BED}" --bg-out "${BG_BED}"
+    --open-bed "${OPEN_BED}" --bg-out "${BG_BED}" \
+    "${CONSENSUS_ARGS[@]+"${CONSENSUS_ARGS[@]}"}"
   rc=$?
   set -e
   if (( rc == 3 )); then

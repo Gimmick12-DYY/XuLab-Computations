@@ -12,8 +12,8 @@ unified/work/<tf>/impute/matrix_csr.npz
         ▼
 downstream/motif/<tf>/<tf>.imputed_peaks.bed          (+ <tf>.background.bed)
         │
-        ├── HOMER  findMotifsGenome.pl <bed> hg38 homer/ -bg <background> -p 8 -size given
-        └── AME    ame --control <background.fa> <peaks.fa> HOCOMOCO.meme
+        ├── HOMER  findMotifsGenome.pl <bed> hg38 homer/ -useNewBg -p 8 -size given
+        └── AME    bed2fasta <bed> hg38.fa -> ame(<peaks.fa>, HOCOMOCO.meme)
 ```
 
 ### 1. Called-peak definition (`call_imputed_peaks.py`)
@@ -30,12 +30,35 @@ If MACS3 calls fewer than `MIN_PEAKS` (default 200), the builder exits 3 and the
 TF is **skipped** (logged to `motif/skipped_insufficient_peaks.txt`) — a TF with
 that little confident imputed signal can't yield a valid enrichment.
 
-### 2. Background (accessibility-matched, recommended)
+### 2. TF-specific (consensus-subtracted) peaks — `TF_SPECIFIC=1`
+
+The plain peaks above are dominated by accessibility (all TFs' pseudobulks are
+~identical, 75–91% peak overlap → generic GC/CpG motifs). `TF_SPECIFIC=1` calls
+peaks on the **residual above a shared accessibility consensus** instead:
+
+```
+consensus = mean over TFs of rank-normalized pseudobulk   (build_consensus_accessibility.py)
+residual_X = max(0, rank(signal_X) - consensus)           (call_imputed_peaks.py --consensus-npy)
+```
+
+Bins where TF X is bound *more than the average TF* survive; shared accessibility
+cancels to ~0. Peaks are then called on that residual (same MACS3 q<0.05), so
+enrichment reflects TF-specific signal. Build the consensus once:
+
+```bash
+python downstream/build_consensus_accessibility.py \
+  --out-npy downstream/motif/consensus_accessibility.npy      # all impute dirs, rank-normalized
+```
+
+Outputs go to a **separate tree** (`downstream/motif_tfspec/`) so they never mix
+with the plain run. If a TF has little signal above consensus it falls under
+`MIN_PEAKS` and is skipped — that is the honest "no TF-specific signal" outcome.
+
+### 3. Background (accessibility-matched, opt-in)
 
 `--open-bed <mask>` also writes `<tf>.background.bed`: open-chromatin bins that are
-**not** covered by a called peak (and not within `--flank-bp`). Using this as the
-HOMER `-bg` / AME `--control` makes enriched motifs reflect TF specificity rather
-than mere accessibility.
+**not** covered by a called peak (and not within `--flank-bp`). Available as HOMER
+`-bg` / AME `--control` via `HOMER_BG=1` / `AME_CONTROL=1` (default off — see Notes).
 
 ## Reference-gated by manifest
 
@@ -61,6 +84,10 @@ sbatch --array=0-$((N-1)) downstream/slurm/motif_enrichment.sbatch
 
 # explicit subset (still gated by the manifest)
 TFS="mef2a znf143" sbatch --array=0-1 downstream/slurm/motif_enrichment.sbatch
+
+# TF-specific (consensus-subtracted) peaks -> motif_tfspec/
+python downstream/build_consensus_accessibility.py --out-npy downstream/motif/consensus_accessibility.npy
+TF_SPECIFIC=1 sbatch --array=0-$((N-1)) downstream/slurm/motif_enrichment.sbatch
 ```
 
 ### Key env knobs (all optional)
@@ -77,17 +104,21 @@ TFS="mef2a znf143" sbatch --array=0-1 downstream/slurm/motif_enrichment.sbatch
 | `OPEN_BED` | `data/HEK293T_ATAC_union3.bed.gz` | open-chromatin mask for accessibility-matched background (same union used to remask imputes) |
 | `MACS_Q` | `0.05` | MACS3 q-value cutoff for imputed peak calling |
 | `MIN_PEAKS` | `200` | skip a TF if MACS3 calls fewer than this many peaks |
-| `HOMER_BG` | `1` | `1` -> HOMER `-bg background.bed` (accessibility-matched); `0` -> `-useNewBg` |
-| `AME_CONTROL` | `1` | `1` -> AME `--control background.fa` (accessibility-matched); `0` -> shuffled |
+| `TF_SPECIFIC` | `0` | `1` -> consensus-subtracted peaks (needs `CONSENSUS_NPY`); output tree `motif_tfspec/` |
+| `CONSENSUS_NPY` | `motif/consensus_accessibility.npy` | consensus built by `build_consensus_accessibility.py` |
+| `HOMER_BG` | `0` | `0` -> HOMER `-useNewBg` (original); `1` -> `-bg background.bed` (accessibility-matched) |
+| `AME_CONTROL` | `0` | `0` -> AME shuffled (original); `1` -> `--control background.fa` (accessibility-matched) |
 
 ## Notes
 
-- **Background matters most here.** Imputed peaks are open-chromatin (GC/CpG-rich),
-  so against a generic genome background every TF trivially enriches for GC-box/CpG
-  motifs (SP2/AP2/MECP2) — the same result for all TFs. The pipeline therefore
-  defaults to the accessibility-matched background (`HOMER_BG=1`, `AME_CONTROL=1`):
-  each TF's peaks are compared against *other* open chromatin, isolating
-  TF-specific signal. Set both `=0` to fall back to `-useNewBg` / AME shuffled.
+- **Defaults match the original commands exactly**: HOMER `-useNewBg -p 8 -size given`,
+  AME shuffled control (`HOMER_BG=0`, `AME_CONTROL=0`).
+- The accessibility-matched background (`HOMER_BG=1` / `AME_CONTROL=1`, using
+  `<tf>.background.bed` = open chromatin minus this TF's peaks) was tried to counter
+  the fact that open-chromatin peaks are GC/CpG-rich and enrich for generic GC-box/CpG
+  motifs (SP2/AP2/MECP2). It did **not** recover TF-specific motifs — because the
+  imputed peaks themselves are ~accessibility (75–91% shared across TFs), so there is
+  little TF-specific signal for any background to isolate. Kept as an opt-in only.
 - HOMER preparses the genome on first use. For large parallel arrays, warm it by
   running one TF first, or set a shared `-preparsedDir`, to avoid concurrent
   preparse writes.
