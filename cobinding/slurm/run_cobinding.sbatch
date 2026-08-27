@@ -29,7 +29,11 @@ RESULTS="${COB_RESULTS:-${COB}/results}"
 TF="${TF:-RBBP4}"
 # Input files for this TF: .sel (full pp+dd+pd) + .pdc (annotated). Override to
 # restrict, e.g. GLOB='TF.{tf}.fitConns.res.sel' for full-network only.
-GLOB="${GLOB:-TF.{tf}.fitConns.res.*}"
+# Do not put '{tf}' inside ${GLOB:-...} — bash treats the inner '}' as the end
+# of the parameter expansion and the glob becomes TF.{tf.fitConns.res.*}
+if [[ -z "${GLOB:-}" ]]; then
+  GLOB='TF.{tf}.fitConns.res.*'
+fi
 REBUILD="${REBUILD:-1}"
 Q_KEEP="${Q_KEEP:-1.0}"
 QVAL="${QVAL:-0.05}"

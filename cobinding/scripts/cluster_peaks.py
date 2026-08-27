@@ -170,7 +170,10 @@ def main() -> int:
     print(f"[done] outputs under {args.out_dir}")
 
     if args.plot:
-        _plot(G, part, cliques, args.out_dir, args.max_plot_nodes)
+        try:
+            _plot(G, part, cliques, args.out_dir, args.max_plot_nodes)
+        except Exception as e:  # noqa: BLE001
+            print(f"[plot] skipped: {e}", flush=True)
     return 0
 
 
@@ -194,15 +197,18 @@ def _plot(G, part, cliques, out_dir: Path, max_nodes: int) -> None:
         print(f"[plot] network capped to top {max_nodes} peaks by degree")
     if H.number_of_nodes() == 0:
         return
-    pos = nx.spring_layout(H, seed=2026, weight="weight")
-    fig, ax = plt.subplots(figsize=(12, 12))
-    nx.draw_networkx_edges(H, pos, alpha=0.1, ax=ax)
-    nx.draw_networkx_nodes(H, pos, node_size=15,
-                           node_color=[part.get(n, -1) for n in H.nodes()], cmap="tab20", ax=ax)
-    ax.set_title("RBBP4 peak co-accessibility (nodes colored by higher-order cluster)")
-    ax.axis("off"); fig.tight_layout()
-    fig.savefig(out_dir / "tf_peak_network.png", dpi=150); plt.close(fig)
-    print(f"[plot] wrote {out_dir/'tf_peak_network.png'}, {out_dir/'clique_sizes.png'}")
+    try:
+        pos = nx.spring_layout(H, seed=2026, weight="weight")
+        fig, ax = plt.subplots(figsize=(12, 12))
+        nx.draw_networkx_edges(H, pos, alpha=0.1, ax=ax)
+        nx.draw_networkx_nodes(H, pos, node_size=15,
+                               node_color=[part.get(n, -1) for n in H.nodes()], cmap="tab20", ax=ax)
+        ax.set_title("RBBP4 peak co-accessibility (nodes colored by higher-order cluster)")
+        ax.axis("off"); fig.tight_layout()
+        fig.savefig(out_dir / "tf_peak_network.png", dpi=150); plt.close(fig)
+        print(f"[plot] wrote {out_dir/'tf_peak_network.png'}, {out_dir/'clique_sizes.png'}")
+    except Exception as e:  # noqa: BLE001
+        print(f"[plot] network figure skipped ({e}); tables + clique_sizes.png are complete")
 
 
 if __name__ == "__main__":

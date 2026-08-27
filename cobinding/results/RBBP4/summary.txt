@@ -1,0 +1,6 @@
+peaks	15732
+edges	11342
+communities	4891
+connected_components	4888 (largest=197)
+cliques(>= 3)	355 (largest=4)
+filters	q<0.05 coaccess>=0.0 support>=1

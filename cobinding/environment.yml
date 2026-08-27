@@ -8,6 +8,7 @@ dependencies:
   - networkx>=3
   - pandas
   - numpy
+  - scipy               # networkx spring_layout for tf_peak_network.png
   - matplotlib
   - python-louvain      # Louvain community detection
   - python-igraph       # (optional) Leiden backend
