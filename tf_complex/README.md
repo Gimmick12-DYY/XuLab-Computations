@@ -41,10 +41,13 @@ broad/deep TFs overlap trivially (a coverage rich-club). So the tool:
   share a bin;
 - defines **"bound" = each TF's top-`TOP_N` strongest bins** (default 20 000) —
   coverage-equalized and background-free, so overlap reflects *specific* co-binding;
-- defaults to **`cooccur`** = `log2(observed/expected)` overlap, with the expected
-  computed over the **full scope universe** (genome / all-A / all-B bins) — a
-  co-occurrence *enrichment* ("bind together above chance"). `spearman/pearson/jaccard`
-  also available;
+- defaults to **`cooccur`** = `log2(observed/expected)` overlap. The expected is
+  computed over the **bindable universe** (`--universe bound`: bins bound by ≥1 TF),
+  **not** the whole genome. TFs draw their bins from a tiny accessible fraction of the
+  genome, so a genome-wide null makes *every* pair look enriched (a universal positive
+  gradient / rich-club — no discrete complexes). The bindable-universe null puts
+  accessibility-only pairs at **~0** and leaves only *specific* co-binding positive.
+  `spearman/pearson/jaccard` also available;
 - prints **coverage + off-diagonal magnitude diagnostics** so a flat/rich-club result
   is explained.
 
@@ -65,6 +68,7 @@ Outputs (three scopes — **genome / A-only / B-only**):
 | `AB_BED` | `hic/work/compartments/compartments_25000.AB.bed` | A/B calls (hic step 05) |
 | `REBUILD` | `1` | `0` = reuse the built matrix |
 | `METRIC` | `cooccur` | `cooccur` (log2 obs/exp) \| `spearman` \| `pearson` \| `jaccard` |
+| `UNIVERSE` | `bound` | cooccur null: `bound` (bins bound by ≥1 TF; removes accessibility inflation) \| `genome` |
 | `AGG_BP` | `10000` | aggregate 1 kb bins into this window before correlating |
 | `TOP_N` | `20000` | "bound" = each TF's top-N strongest bins (coverage-equalize, drop background) |
 | `MIN_TFS_PER_BIN` | `2` | (spearman/pearson only) feature bins must be bound in ≥ this many TFs |

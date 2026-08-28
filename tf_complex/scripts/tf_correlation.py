@@ -86,8 +86,13 @@ def cooccur_enrich(Bscope, N):
     """log2(observed/expected) overlap of bound bins over a scope of N universe bins.
 
     Bscope: scope_bins x TFs (sparse bool). obs = |Ai n Aj| = Bscope.T @ Bscope;
-    expected under independence = |Ai||Aj|/N. N is the FULL scope universe (all bins
-    in genome / all A / all B) -- NOT the >=2-TF subset, which would bias the null.
+    expected under independence = |Ai||Aj|/N.
+
+    N is the size of the null universe. Use the BINDABLE universe (bins bound by >=1
+    TF), NOT the whole genome: TFs draw their bins from a tiny accessible fraction of
+    the genome, so a genome-wide null makes *every* pair look enriched (universal
+    positive gradient, no discrete complexes). Conditioning on the bindable universe
+    puts accessibility-only pairs at ~0 and leaves only specific co-binding positive.
     """
     Bi = Bscope.astype(np.int32)                     # bool matmul OR's; int sums the overlap count
     obs = np.asarray((Bi.T @ Bi).todense()).astype(np.float64)
@@ -133,6 +138,10 @@ def main() -> int:
                          "removes background). 0 = any signal>0 (not recommended: broad/deep TFs "
                          "then overlap trivially). Default 20000.")
     ap.add_argument("--metric", choices=["cooccur", "spearman", "pearson", "jaccard"], default="cooccur")
+    ap.add_argument("--universe", choices=["bound", "genome"], default="bound",
+                    help="null universe for cooccur expected: 'bound' = bins bound by >=1 TF "
+                         "(default; removes shared-accessibility inflation), 'genome' = all bins "
+                         "in scope (every pair looks enriched).")
     ap.add_argument("--min-tfs-per-bin", type=int, default=2)
     ap.add_argument("--cluster-threshold", type=float, default=1.0,
                     help="TFs join a complex when their genome-scope score >= this, in the "
@@ -187,7 +196,11 @@ def main() -> int:
             print(f"[{name}] only {N} bins; skipping", flush=True)
             continue
         Bscope = Bb[np.flatnonzero(m)]
-        co = cooccur_enrich(Bscope, N)
+        if args.universe == "bound":
+            Nuniv = int((np.asarray(Bscope.sum(axis=1)).ravel() > 0).sum())  # bins bound by >=1 TF
+        else:
+            Nuniv = N
+        co = cooccur_enrich(Bscope, Nuniv)
         write_matrix(args.out_dir / f"cooccur_{name}.tsv", np.nan_to_num(co), tfs)
         if args.metric == "cooccur":
             R = co
@@ -198,9 +211,9 @@ def main() -> int:
             R = corr_matrix(M[fidx].toarray(), args.metric)
             write_matrix(args.out_dir / f"corr_{name}.tsv", np.nan_to_num(R), tfs)
         off = R[~np.eye(len(tfs), dtype=bool)]
-        print(f"[{name}] N={N:,} bins  {args.metric} off-diag: "
-              f"median={np.median(off):.3f} p90={np.percentile(off,90):.3f} "
-              f"max={np.nanmax(off):.3f}", flush=True)
+        print(f"[{name}] scope={N:,} bins, null_universe={Nuniv:,} ({args.universe})  "
+              f"{args.metric} off-diag: median={np.median(off):.3f} "
+              f"p90={np.percentile(off,90):.3f} max={np.nanmax(off):.3f}", flush=True)
         if name == "genome":
             prim = np.nan_to_num(R)
 
