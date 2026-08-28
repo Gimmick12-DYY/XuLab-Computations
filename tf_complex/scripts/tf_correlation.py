@@ -82,19 +82,19 @@ def compartment_of(ab_bed, cchrom, cstart):
                     dtype="<U1")
 
 
-def cooccur(subB):
-    """log2(observed/expected) overlap of bound bins. subB: bins x TFs bool."""
-    N = subB.shape[0]
-    n1 = subB.sum(axis=0).astype(np.float64)
-    n = subB.shape[1]
-    R = np.zeros((n, n))
-    Bf = subB.astype(np.float64)
-    for i in range(n):
-        obs = (subB[:, i:i + 1] & subB).sum(axis=0).astype(np.float64)
-        exp = n1[i] * n1 / N if N else np.zeros(n)
-        with np.errstate(divide="ignore", invalid="ignore"):
-            R[i] = np.where((obs > 0) & (exp > 0), np.log2(obs / exp), 0.0)
-    return R
+def cooccur_enrich(Bscope, N):
+    """log2(observed/expected) overlap of bound bins over a scope of N universe bins.
+
+    Bscope: scope_bins x TFs (sparse bool). obs = |Ai n Aj| = Bscope.T @ Bscope;
+    expected under independence = |Ai||Aj|/N. N is the FULL scope universe (all bins
+    in genome / all A / all B) -- NOT the >=2-TF subset, which would bias the null.
+    """
+    Bi = Bscope.astype(np.int32)                     # bool matmul OR's; int sums the overlap count
+    obs = np.asarray((Bi.T @ Bi).todense()).astype(np.float64)
+    n1 = np.asarray(Bscope.sum(axis=0)).ravel().astype(np.float64)
+    exp = np.outer(n1, n1) / N if N else np.zeros_like(obs)
+    with np.errstate(divide="ignore", invalid="ignore"):
+        return np.where((obs > 0) & (exp > 0), np.log2(obs / exp), 0.0)
 
 
 def corr_matrix(sub, metric):
@@ -128,6 +128,10 @@ def main() -> int:
     ap.add_argument("--out-dir", type=Path, required=True)
     ap.add_argument("--agg-bp", type=int, default=10000,
                     help="aggregate fine bins into this window (bp) before correlating (default 10000)")
+    ap.add_argument("--top-n", type=int, default=20000,
+                    help="define 'bound' as each TF's top-N bins by signal (coverage-equalized, "
+                         "removes background). 0 = any signal>0 (not recommended: broad/deep TFs "
+                         "then overlap trivially). Default 20000.")
     ap.add_argument("--metric", choices=["cooccur", "spearman", "pearson", "jaccard"], default="cooccur")
     ap.add_argument("--min-tfs-per-bin", type=int, default=2)
     ap.add_argument("--cluster-threshold", type=float, default=1.0,
@@ -148,44 +152,65 @@ def main() -> int:
         print(f"[aggregate] -> {M.shape[0]:,} x {args.agg_bp}bp bins", flush=True)
     comp = compartment_of(args.ab_bed, chrom, start)
 
-    # sparsity diagnostics
-    nz = np.asarray((M > 0).sum(axis=0)).ravel()
-    print(f"[sparsity] bound bins per TF: median={int(np.median(nz))} "
+    # "bound" = each TF's top-N strongest bins (coverage-equalized, drops background).
+    if args.top_n and args.top_n > 0:
+        Mc = M.tocsc()
+        ri, ci = [], []
+        for j in range(M.shape[1]):
+            st, en = Mc.indptr[j], Mc.indptr[j + 1]
+            data = Mc.data[st:en]; ind = Mc.indices[st:en]
+            if data.size > args.top_n:
+                keep = ind[np.argpartition(data, -args.top_n)[-args.top_n:]]  # exactly top-N
+            else:
+                keep = ind[data > 0]
+            ri.append(keep); ci.append(np.full(keep.size, j))
+        ri = np.concatenate(ri) if ri else np.array([], int)
+        ci = np.concatenate(ci) if ci else np.array([], int)
+        Bb = sp.csc_matrix((np.ones(ri.size, dtype=bool), (ri, ci)), shape=M.shape)
+    else:
+        Bb = (M > 0).tocsc()
+
+    nz = np.asarray(Bb.sum(axis=0)).ravel()
+    print(f"[bound] top_n={args.top_n}: bound bins per TF median={int(np.median(nz))} "
           f"min={int(nz.min())} max={int(nz.max())}  (of {M.shape[0]:,} bins)", flush=True)
 
-    nnz_per_bin = np.asarray((M > 0).sum(axis=1)).ravel()
-    feat = nnz_per_bin >= args.min_tfs_per_bin
-    print(f"[features] bins bound in >= {args.min_tfs_per_bin} TFs: {int(feat.sum()):,}", flush=True)
-    if feat.sum() < 10:
-        raise SystemExit("too few feature bins; lower --min-tfs-per-bin or --agg-bp")
-
+    feat = np.asarray(Bb.sum(axis=1)).ravel() >= args.min_tfs_per_bin   # for spearman/pearson only
+    Bb = Bb.tocsr()
     args.out_dir.mkdir(parents=True, exist_ok=True)
-    scopes = {"genome": feat, "A": feat & (comp == "A"), "B": feat & (comp == "B")}
+
+    # scope = the FULL bin universe restricted to genome / A / B (the enrichment null).
+    bin_scopes = {"genome": np.ones(M.shape[0], dtype=bool), "A": comp == "A", "B": comp == "B"}
     prim = None
-    for name, mask in scopes.items():
-        idx = np.flatnonzero(mask)
-        if idx.size < 10:
-            print(f"[{name}] only {idx.size} bins; skipping", flush=True)
+    for name, m in bin_scopes.items():
+        N = int(m.sum())
+        if N < 10:
+            print(f"[{name}] only {N} bins; skipping", flush=True)
             continue
-        sub = M[idx].toarray()
-        co = cooccur(sub > 0)
+        Bscope = Bb[np.flatnonzero(m)]
+        co = cooccur_enrich(Bscope, N)
         write_matrix(args.out_dir / f"cooccur_{name}.tsv", np.nan_to_num(co), tfs)
-        R = co if args.metric == "cooccur" else corr_matrix(sub, args.metric)
-        if args.metric != "cooccur":
+        if args.metric == "cooccur":
+            R = co
+        elif args.metric == "jaccard":
+            R = corr_matrix(Bscope.toarray().astype(np.float64), "jaccard")
+        else:  # spearman/pearson over feature bins in the scope
+            fidx = np.flatnonzero(m & feat)
+            R = corr_matrix(M[fidx].toarray(), args.metric)
             write_matrix(args.out_dir / f"corr_{name}.tsv", np.nan_to_num(R), tfs)
         off = R[~np.eye(len(tfs), dtype=bool)]
-        print(f"[{name}] {idx.size:,} bins  {args.metric} off-diag: "
+        print(f"[{name}] N={N:,} bins  {args.metric} off-diag: "
               f"median={np.median(off):.3f} p90={np.percentile(off,90):.3f} "
               f"max={np.nanmax(off):.3f}", flush=True)
         if name == "genome":
             prim = np.nan_to_num(R)
 
     # per-TF A/B enrichment (size-normalized by number of A vs B feature bins)
-    nA = int(scopes["A"].sum()); nB = int(scopes["B"].sum())
+    isA = comp == "A"; isB = comp == "B"
+    nA = int(isA.sum()); nB = int(isB.sum())
     exp_a = nA / (nA + nB) if (nA + nB) else float("nan")
     with (args.out_dir / "tf_compartment.tsv").open("w") as f:
         f.write("tf\tbound_bins\ttotal_signal\tsignal_fracA\texp_fracA\tlog2_enrichA\n")
-        Ac = np.flatnonzero(scopes["A"]); Bc = np.flatnonzero(scopes["B"])
+        Ac = np.flatnonzero(isA); Bc = np.flatnonzero(isB)
         for j, tf in enumerate(tfs):
             col = M[:, j]
             sA = float(col[Ac].sum()); sB = float(col[Bc].sum()); tot = sA + sB

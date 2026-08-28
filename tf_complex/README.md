@@ -33,15 +33,20 @@ Every TF's raw pseudobulk (`mm/matrix.mtx.gz` summed over cells) → `work/tf_ma
 
 ### 2. `tf_correlation.py` — co-occupancy → complexes
 
-**Sparsity matters.** Raw scCUT&Tag is sparse and each TF is profiled in *different*
-cells, so at 1 kb two co-binding TFs rarely hit the same bin → Spearman ≈ 0 (a flat
-heatmap). So the tool:
+**Sparsity + coverage both matter.** Raw scCUT&Tag is sparse and each TF is profiled
+in *different* cells, so at 1 kb two co-binding TFs rarely hit the same bin (Spearman
+≈ 0, flat heatmap); and TFs vary ~250× in depth, so "bound = any signal" makes
+broad/deep TFs overlap trivially (a coverage rich-club). So the tool:
 - **aggregates** fine bins into `AGG_BP` windows (default 10 kb) so co-localizing TFs
   share a bin;
-- defaults to **`cooccur`** = `log2(observed/expected)` overlap of bound bins — a
-  co-occurrence *enrichment* robust to sparsity ("bind together above chance"),
-  rather than Spearman on sparse counts (still available via `METRIC`);
-- prints **sparsity + off-diagonal magnitude diagnostics** so a flat result is explained.
+- defines **"bound" = each TF's top-`TOP_N` strongest bins** (default 20 000) —
+  coverage-equalized and background-free, so overlap reflects *specific* co-binding;
+- defaults to **`cooccur`** = `log2(observed/expected)` overlap, with the expected
+  computed over the **full scope universe** (genome / all-A / all-B bins) — a
+  co-occurrence *enrichment* ("bind together above chance"). `spearman/pearson/jaccard`
+  also available;
+- prints **coverage + off-diagonal magnitude diagnostics** so a flat/rich-club result
+  is explained.
 
 Outputs (three scopes — **genome / A-only / B-only**):
 - `cooccur_{genome,A,B}.tsv` — co-occurrence enrichment (always written).
@@ -61,7 +66,8 @@ Outputs (three scopes — **genome / A-only / B-only**):
 | `REBUILD` | `1` | `0` = reuse the built matrix |
 | `METRIC` | `cooccur` | `cooccur` (log2 obs/exp) \| `spearman` \| `pearson` \| `jaccard` |
 | `AGG_BP` | `10000` | aggregate 1 kb bins into this window before correlating |
-| `MIN_TFS_PER_BIN` | `2` | feature bins must be bound in ≥ this many TFs |
+| `TOP_N` | `20000` | "bound" = each TF's top-N strongest bins (coverage-equalize, drop background) |
+| `MIN_TFS_PER_BIN` | `2` | (spearman/pearson only) feature bins must be bound in ≥ this many TFs |
 | `CLUSTER_THRESHOLD` | `1.0` | complex if score ≥ this (cooccur log2 fold; 1.0 = 2× co-binding) |
 
 ## Reading the result

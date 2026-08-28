@@ -29,6 +29,7 @@ AB_BED="${AB_BED:-${XULAB}/hic/work/compartments/compartments_25000.AB.bed}"
 REBUILD="${REBUILD:-1}"
 METRIC="${METRIC:-cooccur}"        # cooccur (log2 obs/exp overlap) | spearman | pearson | jaccard
 AGG_BP="${AGG_BP:-10000}"          # aggregate 1kb bins -> this window before correlating
+TOP_N="${TOP_N:-20000}"            # 'bound' = each TF's top-N strongest bins (removes background)
 MIN_TFS_PER_BIN="${MIN_TFS_PER_BIN:-2}"
 CLUSTER_THRESHOLD="${CLUSTER_THRESHOLD:-1.0}"   # complex if score>=this (cooccur log2 fold; 1.0=2x)
 
@@ -49,6 +50,6 @@ fi
 echo "[$(date)] tf_correlation (metric=${METRIC}, A/B-stratified)"
 python "${TFC}/scripts/tf_correlation.py" \
   --matrix-dir "${MATRIX_DIR}" --ab-bed "${AB_BED}" --out-dir "${RESULTS}" \
-  --metric "${METRIC}" --agg-bp "${AGG_BP}" --min-tfs-per-bin "${MIN_TFS_PER_BIN}" \
-  --cluster-threshold "${CLUSTER_THRESHOLD}" --plot
+  --metric "${METRIC}" --agg-bp "${AGG_BP}" --top-n "${TOP_N}" \
+  --min-tfs-per-bin "${MIN_TFS_PER_BIN}" --cluster-threshold "${CLUSTER_THRESHOLD}" --plot
 echo "[$(date)] done -> ${RESULTS}"
