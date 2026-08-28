@@ -39,9 +39,8 @@ Q_KEEP="${Q_KEEP:-1.0}"
 QVAL="${QVAL:-0.05}"
 COACCESS_MIN="${COACCESS_MIN:-0.0}"
 MIN_SUPPORT="${MIN_SUPPORT:-1}"
-METHOD="${METHOD:-louvain}"
 MIN_CLIQUE="${MIN_CLIQUE:-3}"
-MIN_CLUSTER="${MIN_CLUSTER:-3}"
+SHARE="${SHARE:-2}"           # cliques merge into a module when sharing >= SHARE regions
 
 CONDA_ENV="${CONDA_ENV:-cobinding}"
 source "$(conda info --base)/etc/profile.d/conda.sh"
@@ -63,5 +62,5 @@ echo "[$(date)] cluster_peaks TF=${TF} (q<${QVAL} coaccess>=${COACCESS_MIN} supp
 python "${COB}/scripts/cluster_peaks.py" \
   --edges "${EDGES}" --out-dir "${RESULTS}/${TF}" \
   --qval "${QVAL}" --coaccess-min "${COACCESS_MIN}" --min-support "${MIN_SUPPORT}" \
-  --method "${METHOD}" --min-clique "${MIN_CLIQUE}" --min-cluster "${MIN_CLUSTER}" --plot
+  --min-clique "${MIN_CLIQUE}" --share "${SHARE}" --plot
 echo "[$(date)] done -> ${RESULTS}/${TF}"

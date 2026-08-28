@@ -65,9 +65,9 @@ def parse_row(toks: list[str]):
             break
     tail.reverse()
     if len(tail) >= 3:
-        coaccess, q = tail[-3], tail[-1]
+        coaccess, pval, q = tail[-3], tail[-2], tail[-1]
     elif tail:
-        coaccess, q = tail[-1], None
+        coaccess, pval, q = tail[-1], None, None
     else:
         return None
     # types + annotation (token right after each 'proximal'/'distal').
@@ -82,7 +82,7 @@ def parse_row(toks: list[str]):
     t2 = types[1] if len(types) >= 2 else ""
     a1 = annots[0] if len(annots) >= 1 else ""
     a2 = annots[1] if len(annots) >= 2 else ""
-    return peaks[0], peaks[1], coaccess, q, t1, t2, a1, a2
+    return peaks[0], peaks[1], coaccess, pval, q, t1, t2, a1, a2
 
 
 def main() -> int:
@@ -117,7 +117,7 @@ def main() -> int:
                 r = parse_row(line.rstrip("\n").split("\t"))
                 if r is None:
                     continue
-                p1, p2, ca, q, t1, t2, a1, a2 = r
+                p1, p2, ca, pv, q, t1, t2, a1, a2 = r
                 if p1 == p2:
                     continue
                 if q is not None and (q != q or q >= args.q_keep):
@@ -131,24 +131,27 @@ def main() -> int:
                         (node_genes if ty == "proximal" else node_states)[pk].add(an)
                     node_edges[pk] += 1
                 key = frozenset((p1, p2))
+                pval = pv if pv is not None else 1.0
                 qv = q if q is not None else 1.0
                 e = edges.get(key)
                 if e is None:
-                    edges[key] = [ca, qv, 1, t1, t2]
+                    edges[key] = [ca, pval, qv, 1, t1, t2]
                 else:
                     if ca > e[0]:
                         e[0] = ca
-                    if qv < e[1]:
-                        e[1] = qv
-                    e[2] += 1
+                    if pval < e[1]:
+                        e[1] = pval
+                    if qv < e[2]:
+                        e[2] = qv
+                    e[3] += 1
 
     args.out_dir.mkdir(parents=True, exist_ok=True)
     edges_path = args.out_dir / f"{args.tf}.peak_edges.tsv"
     with edges_path.open("w") as out:
-        out.write("peak1\tpeak2\tcoaccess\tqval\ttype1\ttype2\tn_links\n")
-        for key, (ca, qv, n, t1, t2) in edges.items():
+        out.write("peak1\tpeak2\tcoaccess\tpval\tqval\ttype1\ttype2\tn_links\n")
+        for key, (ca, pv, qv, n, t1, t2) in edges.items():
             p1, p2 = sorted(key)
-            out.write(f"{p1}\t{p2}\t{ca:.6g}\t{qv:.6g}\t{t1}\t{t2}\t{n}\n")
+            out.write(f"{p1}\t{p2}\t{ca:.6g}\t{pv:.6g}\t{qv:.6g}\t{t1}\t{t2}\t{n}\n")
     annot_path = args.out_dir / f"{args.tf}.peak_annot.tsv"
     with annot_path.open("w") as out:
         out.write("peak\ttypes\tgenes\tstates\tn_edges\n")

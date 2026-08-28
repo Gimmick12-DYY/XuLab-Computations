@@ -42,9 +42,14 @@ sbatch hic/slurm/02_pileup.sbatch
 # 4. QC
 sbatch hic/slurm/03_quality.sbatch
 
-# 5. A/B compartments (GC-phased) @ 25 kb -> the co-binding input
+# 5. A/B compartments (GC-phased) @ 25 kb -> E1 eigenvector track
 sbatch hic/slurm/04_compartments.sbatch
 #   COMPARTMENT_RES=100000 sbatch hic/slurm/04_compartments.sbatch
+
+# 6. classify bins -> A/B + compartment sizes, and assign a region set (size-normalized)
+sbatch hic/slurm/05_classify_compartments.sbatch
+REGIONS=/work/.../cobinding/results/RBBP4/nodes.tsv LABEL=RBBP4_cobind \
+  sbatch hic/slurm/05_classify_compartments.sbatch
 ```
 
 ### `datasets.tsv` (runHiC metadata)
@@ -82,9 +87,19 @@ resolution automatically. Outputs under `work/compartments/`:
 - `compartments_25000.cis.vecs.tsv` — per-bin E1/E2/E3
 - `compartments_25000.E1.bedGraph` — A/B track (chrom start end E1)
 
-For the co-binding analysis, intersect each TF's binding/imputed peaks with the
-A/B bedGraph to test compartment preference and TF–TF co-localization within
-A vs B. (Next module; not built here.)
+**Step 6 — classify + size-normalize** (`05_classify_compartments.sbatch`):
+- `classify_compartments.py` → `*.AB.bed` (per-bin A/B), `*.domains.bed` (merged
+  compartment runs), `*.sizes.tsv` (**compartment sizes** = total A vs B bp, the
+  normalizer).
+- `assign_regions_to_compartments.py` (general; takes a BED or any chr:s-e file —
+  co-binding `nodes.tsv`/`modules.tsv` or per-TF peaks) → per-region A/B call +
+  **size-normalized enrichment**: `log2(obs_fracA / exp_fracA)` where `exp_fracA`
+  is the A share of the genome, plus a binomial test. So a bigger compartment
+  doesn't trivially win.
+
+This is the A/B-compartment **co-binding** analysis: run it on RBBP4's co-binding
+modules and on each TF's peaks to get their A/B preference, then feed the
+correlation / motif / complex steps.
 
 ## Outputs & tracking
 

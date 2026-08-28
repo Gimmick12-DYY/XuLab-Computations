@@ -36,17 +36,24 @@ REBUILD=0 QVAL=0.01 sbatch cobinding/slurm/run_cobinding.sbatch   # re-cluster o
 ### 1. `build_peak_graph.py` — peak graph (run once per TF)
 Globs the TF's connection files, normalizes coordinates, dedups peak-pair edges
 (max coaccess, min q). Writes `work/<tf>.peak_edges.tsv`
-(`peak1 peak2 coaccess qval type1 type2 n_links`) and `work/<tf>.peak_annot.tsv`
+(`peak1 peak2 coaccess pval qval type1 type2 n_links`) and `work/<tf>.peak_annot.tsv`
 (`peak types genes states n_edges`).
 
-### 2. `cluster_peaks.py` — higher-order clusters (fast; tune here)
-Filters edges, builds the weighted peak graph, and writes to `results/<tf>/`:
-- **`clusters.tsv`** — communities (Louvain / `METHOD=leiden`), each annotated with
-  n_proximal / n_distal, gene set, chromatin-state composition, and **genomic span**.
-- **`cliques.tsv`** — maximal cliques (fully co-accessible peak sets); needs the
-  full `.sel` network (bipartite `.pdc` yields none).
-- **`nodes.tsv`** — peak, community, k-core, degree, type, genes, states.
-- **`summary.txt`** + (`--plot`) `tf_peak_network.png`, `clique_sizes.png`.
+### 2. `cluster_peaks.py` — cliques + overlap modules (fast; tune here)
+Filters edges (FDR ≤ `QVAL`), builds the peak graph, and writes to `results/<tf>/`:
+- **`cliques.tsv`** — **strict maximal cliques** (≥ `MIN_CLIQUE`): every region
+  co-binds every other (`density = 1`). The fully-coordinated cores.
+- **`modules.tsv`** — **overlap modules**: strict cliques merged only when they
+  **share ≥ `SHARE` regions** (default 2 = an edge). A partially-complete
+  higher-order architecture anchored by complete subgraphs. Columns:
+  `module_id n_regions n_source_cliques n_edges density chromosome span_bp
+  region_types genes … max_pair_fdr states regions`.
+- **`nodes.tsv`** — peak, degree, k-core, n_cliques, n_modules, type, genes, states.
+- **`summary.txt`** + (`--plot`) `clique_sizes.png`, `module_sizes.png`.
+
+> Reproduces the reference workbook exactly on the full RBBP4 `.sel`
+> (FDR≤0.05: 355 cliques / 326 modules; FDR≤0.01: 300 / 277).
+> Needs the full `.sel` network for cliques (bipartite `.pdc` yields none).
 
 ### Knobs (env vars on the sbatch)
 
@@ -55,21 +62,23 @@ Filters edges, builds the weighted peak graph, and writes to `results/<tf>/`:
 | `TF` | `RBBP4` | which TF's files to process |
 | `GLOB` | `TF.{tf}.fitConns.res.*` | input files (`…res.sel` for full-network only) |
 | `REBUILD` | `1` | `0` = reuse the built peak graph |
-| `QVAL` | `0.05` | edge q-value cutoff |
+| `QVAL` | `0.05` | edge FDR cutoff (≤); run again at `0.01` for the strict tier |
 | `COACCESS_MIN` | `0.0` | min Cicero coaccess per edge |
 | `MIN_SUPPORT` | `1` | min `n_links` per peak pair |
-| `METHOD` | `louvain` | `louvain` \| `leiden` |
 | `MIN_CLIQUE` | `3` | smallest clique reported |
-| `MIN_CLUSTER` | `3` | smallest community reported |
+| `SHARE` | `2` | cliques merge into a module when sharing ≥ this many regions |
 
 ## Reading the result
 
-- **Clusters** = higher-order co-binding hubs. On RBBP4 the top ones span ~2–3 Mb
-  local domains (promoters + enhancers co-binding within a regulatory
-  neighbourhood) — a natural tie-in to the Hi-C **A/B compartment** work.
-- **Cliques** (with `.sel`) = the strict a–b–c sets: every region co-binds every
-  other.
-- **k-core** in `nodes.tsv` ranks how embedded a region is in dense co-binding.
+- **Cliques** = the strict a–b–c sets: every region co-binds every other
+  (density 1). The tight, fully-coordinated cores.
+- **Overlap modules** = the cluster unit. Cliques that share ≥2 regions are fused
+  into a partially-complete higher-order architecture (density < 1) still anchored
+  by complete subgraphs. **Focus on `n_source_cliques > 1`** — those are the
+  genuine "beyond a single clique" assemblies (on RBBP4: 25 of 326 at FDR≤0.05).
+- **`nodes.tsv`**: `n_cliques` / `n_modules` per region flag the shared "hinge"
+  regions that anchor higher-order coordination; `k-core` ranks embeddedness.
+- Module genomic spans tie naturally into the Hi-C **A/B compartment** work.
 
 ## Notes
 
