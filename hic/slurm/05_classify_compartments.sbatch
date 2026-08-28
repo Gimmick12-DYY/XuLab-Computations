@@ -12,8 +12,10 @@
 # size-normalized enrichment. This is the A/B-compartment co-binding step.
 #
 #   sbatch hic/slurm/05_classify_compartments.sbatch
-#   REGIONS=/work/.../cobinding/results/RBBP4/nodes.tsv LABEL=RBBP4_cobind \
+#   REGIONS=/work/.../cobinding/results/RBBP4/nodes.tsv LABEL=RBBP4_peaks \
 #     sbatch hic/slurm/05_classify_compartments.sbatch
+#   COBIND_TF=RBBP4 sbatch hic/slurm/05_classify_compartments.sbatch
+#     # -> peaks (nodes.tsv) + module spans (modules.tsv --bounding-box)
 #
 # Prereq: 04_compartments produced compartments_<res>.E1.bedGraph.
 
@@ -33,14 +35,33 @@ echo "[$(date)] classify bins -> A/B + sizes"
 python "${HIC}/scripts/classify_compartments.py" \
   --e1-bedgraph "${E1}" --out-prefix "${PREFIX}"
 
-# Optional: assign a region set to A/B, size-normalized.
+assign_regions() {
+  local regions="$1" label="$2"; shift 2
+  local out="${COMP}/${label}.compartments.tsv"
+  echo "[$(date)] assign regions ${label} -> A/B (size-normalized)"
+  python "${HIC}/scripts/assign_regions_to_compartments.py" \
+    --regions "${regions}" --ab-bed "${PREFIX}.AB.bed" \
+    --out "${out}" --summary "${COMP}/${label}.enrichment.tsv" --label "${label}" "$@"
+}
+
+# Explicit region set (BED or chr:s-e file).
 if [[ -n "${REGIONS:-}" ]]; then
   [[ -s "${REGIONS}" ]] || { echo "REGIONS not found: ${REGIONS}" >&2; exit 1; }
   LABEL="${LABEL:-$(basename "${REGIONS}" | sed 's/\.[^.]*$//')}"
-  OUT="${COMP}/${LABEL}.compartments.tsv"
-  echo "[$(date)] assign regions ${LABEL} -> A/B (size-normalized)"
-  python "${HIC}/scripts/assign_regions_to_compartments.py" \
-    --regions "${REGIONS}" --ab-bed "${PREFIX}.AB.bed" \
-    --out "${OUT}" --summary "${COMP}/${LABEL}.enrichment.tsv" --label "${LABEL}"
+  assign_regions "${REGIONS}" "${LABEL}"
+fi
+
+# Co-binding TF: peaks (nodes.tsv) + module genomic spans (modules.tsv).
+if [[ -n "${COBIND_TF:-}" ]]; then
+  COB_RES="${COB_RES:-${XULAB}/cobinding/results/${COBIND_TF}}"
+  NODES="${COB_RES}/nodes.tsv"
+  MODULES="${COB_RES}/modules.tsv"
+  [[ -s "${NODES}" ]] || { echo "COBIND_TF=${COBIND_TF} but missing ${NODES} (run cobinding first)" >&2; exit 1; }
+  assign_regions "${NODES}" "${COBIND_TF}_peaks"
+  if [[ -s "${MODULES}" ]]; then
+    assign_regions "${MODULES}" "${COBIND_TF}_modules" --bounding-box
+  else
+    echo "[$(date)] no ${MODULES}; skip module-span assignment"
+  fi
 fi
 echo "[$(date)] done -> ${COMP}"

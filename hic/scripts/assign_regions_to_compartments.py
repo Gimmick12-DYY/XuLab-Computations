@@ -58,23 +58,39 @@ def load_ab(path: Path):
     return by_chrom, res, abp, bbp
 
 
-def iter_regions(path: Path):
-    """Yield (chrom, start, end, name) from a BED or any chr:s-e-bearing file."""
+def iter_regions(path: Path, bounding_box: bool = False):
+    """Yield (chrom, start, end, name) from a BED or any chr:s-e-bearing file.
+
+    bounding_box: collapse every chr:s-e token on a line into one span (same
+    chromosome) named by the first column — for cobinding modules.tsv / cliques.tsv.
+    """
     with open(path) as f:
         for ln in f:
             ln = ln.rstrip("\n")
             if not ln or ln.startswith("#"):
                 continue
             cols = ln.split("\t")
-            # BED: chrom \t int \t int
-            if len(cols) >= 3 and cols[0].startswith("chr") and cols[1].isdigit() and cols[2].isdigit():
+            # BED: chrom \t int \t int  (chrom must be a bare chrN, not chr:s-e)
+            if (len(cols) >= 3 and re.fullmatch(r"chr[0-9A-Za-z]+", cols[0])
+                    and cols[1].isdigit() and cols[2].isdigit()):
                 name = cols[3] if len(cols) > 3 else f"{cols[0]}:{cols[1]}-{cols[2]}"
                 yield cols[0], int(cols[1]), int(cols[2]), name
                 continue
-            # else: every chr:s-e token on the line is a region, tagged by first field
             name = cols[0]
-            for m in _COORD.finditer(ln):
-                yield m.group(1), int(m.group(2)), int(m.group(3)), name
+            hits = list(_COORD.finditer(ln))
+            if not hits:
+                continue
+            if bounding_box:
+                chroms = {m.group(1) for m in hits}
+                if len(chroms) != 1:
+                    continue  # skip trans-chrom modules
+                c = chroms.pop()
+                s = min(int(m.group(2)) for m in hits)
+                e = max(int(m.group(3)) for m in hits)
+                yield c, s, e, name
+            else:
+                for m in hits:
+                    yield m.group(1), int(m.group(2)), int(m.group(3)), name
 
 
 def assign(chrom, s, e, by_chrom, res):
@@ -103,6 +119,9 @@ def main() -> int:
     ap.add_argument("--out", type=Path, required=True)
     ap.add_argument("--summary", type=Path, default=None)
     ap.add_argument("--label", default="regions", help="label for the summary row")
+    ap.add_argument("--bounding-box", action="store_true",
+                    help="one region per input line = bounding box of all chr:s-e tokens "
+                         "(cobinding modules.tsv / cliques.tsv)")
     args = ap.parse_args()
 
     by_chrom, res, abp, bbp = load_ab(args.ab_bed)
@@ -116,7 +135,7 @@ def main() -> int:
     args.out.parent.mkdir(parents=True, exist_ok=True)
     with args.out.open("w") as o:
         o.write("chrom\tstart\tend\tname\tcompartment\tfrac_A\n")
-        for c, s, e, name in iter_regions(args.regions):
+        for c, s, e, name in iter_regions(args.regions, bounding_box=args.bounding_box):
             key = (c, s, e)
             comp, fa = assign(c, s, e, by_chrom, res)
             o.write(f"{c}\t{s}\t{e}\t{name}\t{comp}\t{fa:.3f}\n" if fa == fa

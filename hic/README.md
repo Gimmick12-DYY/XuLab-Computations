@@ -48,7 +48,8 @@ sbatch hic/slurm/04_compartments.sbatch
 
 # 6. classify bins -> A/B + compartment sizes, and assign a region set (size-normalized)
 sbatch hic/slurm/05_classify_compartments.sbatch
-REGIONS=/work/.../cobinding/results/RBBP4/nodes.tsv LABEL=RBBP4_cobind \
+COBIND_TF=RBBP4 sbatch hic/slurm/05_classify_compartments.sbatch   # peaks + modules
+REGIONS=/work/.../cobinding/results/RBBP4/nodes.tsv LABEL=RBBP4_peaks \
   sbatch hic/slurm/05_classify_compartments.sbatch
 ```
 
