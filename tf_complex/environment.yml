@@ -1,0 +1,12 @@
+# conda env for the TF-complex analysis (co-occupancy correlation -> complexes).
+#   mamba env create -f tf_complex/environment.yml -p /work/users/d/y/dyy12/conda/envs/tf_complex
+name: tf_complex
+channels:
+  - conda-forge
+dependencies:
+  - python=3.10
+  - numpy
+  - scipy
+  - pandas
+  - matplotlib
+  - pip

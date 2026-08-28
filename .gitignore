@@ -32,6 +32,9 @@ atac_validation/results/
 hic/data/
 hic/work/
 
+# TF complex: keep scripts/slurm/results, drop the large binding matrix
+tf_complex/work/
+
 # Co-binding: keep scripts/slurm, drop the aggregated edge list + cluster outputs
 
 
