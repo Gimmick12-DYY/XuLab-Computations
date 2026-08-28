@@ -31,17 +31,25 @@ sbatch tf_complex/slurm/run_tf_correlation.sbatch
 Every TF's raw pseudobulk (`mm/matrix.mtx.gz` summed over cells) → `work/tf_matrix.npz`
 (bins × TFs, CSC) + `tfs.txt` + `regions.tsv`.
 
-### 2. `tf_correlation.py` — correlation → complexes
-- **Feature bins**: bins bound (signal > 0) in ≥ `MIN_TFS_PER_BIN` TFs (drops
-  empty/singleton bins that inflate co-absence).
-- **TF × TF correlation** (`METRIC` = spearman / pearson / jaccard) over three
-  scopes: **genome-wide**, **A-only**, **B-only** → `corr_genome.tsv`, `corr_A.tsv`,
-  `corr_B.tsv`.
-- **Clustering**: average-linkage on `1 − corr`; clusters ≥ 2 TFs merging above
-  `CORR_THRESHOLD` → `candidate_complexes.tsv` (complex_id, n_tfs, mean_intra_corr,
-  members).
-- **`tf_compartment.tsv`**: per-TF A/B preference, size-normalized
-  (`log2(signal_fracA / exp_fracA)`, exp = A share of feature bins).
+### 2. `tf_correlation.py` — co-occupancy → complexes
+
+**Sparsity matters.** Raw scCUT&Tag is sparse and each TF is profiled in *different*
+cells, so at 1 kb two co-binding TFs rarely hit the same bin → Spearman ≈ 0 (a flat
+heatmap). So the tool:
+- **aggregates** fine bins into `AGG_BP` windows (default 10 kb) so co-localizing TFs
+  share a bin;
+- defaults to **`cooccur`** = `log2(observed/expected)` overlap of bound bins — a
+  co-occurrence *enrichment* robust to sparsity ("bind together above chance"),
+  rather than Spearman on sparse counts (still available via `METRIC`);
+- prints **sparsity + off-diagonal magnitude diagnostics** so a flat result is explained.
+
+Outputs (three scopes — **genome / A-only / B-only**):
+- `cooccur_{genome,A,B}.tsv` — co-occurrence enrichment (always written).
+- `corr_{...}.tsv` — the chosen `METRIC` matrix (if not cooccur).
+- **`candidate_complexes.tsv`** — TFs joined into **connected components** where the
+  genome score ≥ `CLUSTER_THRESHOLD` (complex_id, n_tfs, mean_intra_score, members).
+- **`tf_compartment.tsv`** — per-TF A/B preference, size-normalized
+  (`log2(signal_fracA / exp_fracA)`).
 - `correlation_heatmap.png` (`--plot`), clustered.
 
 ## Knobs (env vars)
@@ -51,9 +59,10 @@ Every TF's raw pseudobulk (`mm/matrix.mtx.gz` summed over cells) → `work/tf_ma
 | `WORK_ROOT` | `unified/work` | per-TF raw `mm` matrices |
 | `AB_BED` | `hic/work/compartments/compartments_25000.AB.bed` | A/B calls (hic step 05) |
 | `REBUILD` | `1` | `0` = reuse the built matrix |
-| `METRIC` | `spearman` | `spearman` \| `pearson` \| `jaccard` |
+| `METRIC` | `cooccur` | `cooccur` (log2 obs/exp) \| `spearman` \| `pearson` \| `jaccard` |
+| `AGG_BP` | `10000` | aggregate 1 kb bins into this window before correlating |
 | `MIN_TFS_PER_BIN` | `2` | feature bins must be bound in ≥ this many TFs |
-| `CORR_THRESHOLD` | `0.5` | merge TFs into a complex above this correlation |
+| `CLUSTER_THRESHOLD` | `1.0` | complex if score ≥ this (cooccur log2 fold; 1.0 = 2× co-binding) |
 
 ## Reading the result
 - **`candidate_complexes.tsv`** = TF groups that co-occupy → protein-complex candidates.
