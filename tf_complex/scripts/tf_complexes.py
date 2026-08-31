@@ -109,9 +109,10 @@ def main() -> int:
                          "co-occupancy signal).")
     ap.add_argument("--blacklist", type=Path, default=None, help="ENCODE blacklist BED to remove")
     ap.add_argument("--cluster", choices=["threshold", "hierarchical"], default="hierarchical")
-    ap.add_argument("--cluster-threshold", type=float, default=0.5,
+    ap.add_argument("--cluster-threshold", type=float, default=0.2,
                     help="threshold mode: edge if similarity >= this. hierarchical mode: distance "
-                         "cut = 1 - this. Set from the printed p90/p95.")
+                         "cut = 1 - this. pearson co-occupancy is small in abs terms (~0.1-0.4); "
+                         "set near the printed p95.")
     ap.add_argument("--plot", action="store_true")
     args = ap.parse_args()
 

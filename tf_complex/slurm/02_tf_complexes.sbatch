@@ -29,7 +29,7 @@ METRIC="${METRIC:-pearson}"             # pearson (phi, default) | jaccard
 HOT_FRAC="${HOT_FRAC:-0.5}"             # drop loci bound by > this fraction of TFs (HOT artifacts)
 MIN_OCC="${MIN_OCC:-2}"                 # keep loci bound by >= this many TFs
 CLUSTER="${CLUSTER:-hierarchical}"      # hierarchical | threshold
-CLUSTER_THRESHOLD="${CLUSTER_THRESHOLD:-0.5}"   # set from printed p90/p95
+CLUSTER_THRESHOLD="${CLUSTER_THRESHOLD:-0.2}"   # pearson co-occupancy is small in abs terms; set near printed p95
 REBUILD="${REBUILD:-1}"                 # 0 = reuse peak_matrix.npz
 
 CONDA_ENV="${CONDA_ENV:-tf_complex}"

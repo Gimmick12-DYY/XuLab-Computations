@@ -59,8 +59,17 @@ sbatch tf_complex/slurm/01_call_raw_peaks.sbatch
 
 # 2. union peaks -> HOT removal -> pearson correlation -> complexes  (needs hic step 05 A/B)
 sbatch tf_complex/slurm/02_tf_complexes.sbatch
-#   METRIC=jaccard HOT_FRAC=0.4 CLUSTER_THRESHOLD=0.6 sbatch tf_complex/slurm/02_tf_complexes.sbatch
+#   METRIC=jaccard HOT_FRAC=0.4 CLUSTER_THRESHOLD=0.25 sbatch tf_complex/slurm/02_tf_complexes.sbatch
 #   REBUILD=0 sbatch tf_complex/slurm/02_tf_complexes.sbatch   # reuse peak_matrix.npz
+
+# 3. shared-motif test per complex (checklist step 4): HOMER + AME on each complex's
+#    co-bound loci vs the union-peak background  (reuses downstream/ motif caches)
+N=$(tail -n +2 tf_complex/results/complex_beds/complex_manifest.tsv 2>/dev/null | wc -l)  # 0 first time
+sbatch tf_complex/slurm/03_complex_motifs.sbatch            # task 0 builds the BEDs + manifest
+sbatch --array=0-$((N-1)) tf_complex/slurm/03_complex_motifs.sbatch   # then one task per complex
+python tf_complex/scripts/summarize_complex_motifs.py \
+  --bed-dir tf_complex/results/complex_beds \
+  --motif-dir tf_complex/results/complex_motifs --out tf_complex/results/complex_motif_summary.tsv
 ```
 
 ### 1. `call_raw_peaks.py` — per-TF raw peaks
@@ -80,6 +89,22 @@ TF×TF similarity, clusters → complexes, and annotates A/B. Outputs:
 - **`tf_compartment.tsv`** — per-TF A/B preference, size-normalized.
 - `complex_heatmap.png` (`--plot`), clustered.
 
+Also prints a `coverage check:` line (low-peak-TF block median — near 0 = clean).
+pearson co-occupancy is **small in absolute terms** (p95 ≈ 0.2, max ≈ 0.44 on the
+HEK293T panel); set `CLUSTER_THRESHOLD` near the printed p95, not ~1. Genome-level
+clustering yields **communities** (one broad active-promoter community + tight small
+groups); specific complexes (NuRD rbbp4/rbbp7, PRC2 ezh2/mtf2, CTCF–cohesin
+ctcf/stag2) appear as elevated pairwise values and are sharpened by step 4 below.
+
+### 4. shared-motif test — `build_complex_beds.py` + `03_complex_motifs.sbatch` + `summarize_complex_motifs.py`
+For each complex: co-bound loci (≥ `MIN_FRAC` of members) → HOMER de novo + AME
+(HOCOMOCO v11 full), **against the union-peak background** (other bound loci, not
+random genome — avoids generic GC/accessibility motifs). `summarize_complex_motifs.py`
+collates the top motifs and flags `SHARED_MEMBER` (a member's motif is enriched → that
+member is the DNA-binding anchor) or `SHARED_COMMON` (one motif dominates) →
+`complex_motif_summary.tsv`. Reuses the `downstream/` motif commands + caches (HG38_FA,
+HOMER hg38, HOCOMOCO meme).
+
 ## Knobs (env vars)
 
 | var | default | meaning |
@@ -92,8 +117,9 @@ TF×TF similarity, clusters → complexes, and annotates A/B. Outputs:
 | `HOT_FRAC` | `0.5` | drop loci bound by > this fraction of TFs (HOT artifacts) |
 | `MIN_OCC` | `2` | keep loci bound by ≥ this many TFs |
 | `CLUSTER` | `hierarchical` | `hierarchical` (avg-linkage cut) \| `threshold` (connected comps) |
-| `CLUSTER_THRESHOLD` | `0.5` | similarity cut; set near the printed **p90/p95** |
+| `CLUSTER_THRESHOLD` | `0.2` | similarity cut (pearson is small in abs terms); set near the printed **p95** |
 | `REBUILD` | `1` | `0` = reuse `peak_matrix.npz` |
+| `MIN_FRAC` (step 4) | `0.5` | a locus is a complex's "co-bound" if ≥ this fraction of members bind it |
 
 ## Reading the result
 - **`candidate_complexes.tsv`** = TF groups that co-occupy → protein-complex candidates.
