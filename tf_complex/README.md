@@ -5,60 +5,71 @@ co-occupancy → shared motif → protein complex**. Independent of the Cicero
 higher-order co-binding module (`cobinding/`) — this is a parallel analysis of the
 whole TF panel.
 
-## Idea
-TFs that bind the **same genomic regions** are candidate members of a protein
-complex. We correlate every TF pair by their raw binding profile, stratify by A/B
-compartment (from the matched Hi-C), cluster the correlation into TF groups, then
-(next steps) test whether each group shares a motif → call it a complex.
+## Method — aligned with the literature
 
-## Why RAW binding, not imputed
+Finding protein complexes from binding maps is a solved, standard problem. The
+canonical reference is **Partridge et al. 2020, *Nature*** ("Occupancy maps of 208
+chromatin-associated proteins in one human cell type"): build a **loci × protein**
+binding matrix, reduce with **PCA**, cluster the protein correlation → complexes
+(they recovered cohesin, NuRD, POL2/TSS). We follow that method, with two
+corrections the literature demands:
+
+1. **Co-occupancy is measured over called PEAKS**, not genome-wide signal bins —
+   peaks are far less accessibility-driven. Peaks are called per-TF at MACS3
+   **q < 0.05** (the project standard, `downstream/peak_coverage.py`) from **raw**
+   pseudobulk.
+2. **HOT (high-occupancy-target) loci are removed.** A handful of loci — active
+   promoters / super-enhancers — are bound by nearly *every* TF and are largely
+   ChIP-seq artifacts (GC/CpG-rich, motif-free; Wreczycka et al. 2019). They create
+   a universal "rich-club" that makes every TF pair look co-bound. We drop loci
+   bound by > `HOT_FRAC` of the panel, plus the ENCODE blacklist.
+
+**A/B compartments are used as an ANNOTATION** of the resulting complexes/TFs
+(which complex is A- vs B-biased), **not** as the axis that defines co-binding:
+every TF binds active chromatin, so every TF is A-leaning and A/B cannot
+discriminate complexes. This is why the earlier "A/B compartment correlation"
+framing did not work.
+
+### Why RAW binding, not imputed
 The imputed matrices are **open-chromatin masked**, which forces every TF into the
-same open bins and would inflate co-occupancy. So profiles come from the **raw**
-per-TF pseudobulk (`unified/work/<tf>/mm`), sum across cells per 1 kb bin.
+same open bins and would inflate co-occupancy. Peaks come from the **raw** per-TF
+pseudobulk (`unified/work/<tf>/mm`). See [[imputed-peaks-accessibility-wash]].
 
 ## Pipeline
 
 ```bash
 mamba env create -f tf_complex/environment.yml -p /work/users/d/y/dyy12/conda/envs/tf_complex
 
-# needs the Hi-C A/B calls first (hic step 05): compartments_25000.AB.bed
-sbatch tf_complex/slurm/run_tf_correlation.sbatch
-#   METRIC=jaccard CORR_THRESHOLD=0.4 sbatch tf_complex/slurm/run_tf_correlation.sbatch
-#   REBUILD=0 sbatch tf_complex/slurm/run_tf_correlation.sbatch     # reuse the matrix
+# optional but recommended: ENCODE blacklist (skipped automatically if absent)
+mkdir -p tf_complex/ref && cd tf_complex/ref
+wget https://github.com/Boyle-Lab/Blacklist/raw/master/lists/hg38-blacklist.v2.bed.gz
+gunzip hg38-blacklist.v2.bed.gz && cd -
+
+# 1. per-TF raw peaks (array job, one TF per task; set --array=0-<N-1>)
+sbatch tf_complex/slurm/01_call_raw_peaks.sbatch
+
+# 2. union peaks -> HOT removal -> PCA correlation -> complexes  (needs hic step 05 A/B)
+sbatch tf_complex/slurm/02_tf_complexes.sbatch
+#   METRIC=jaccard HOT_FRAC=0.4 CLUSTER_THRESHOLD=0.6 sbatch tf_complex/slurm/02_tf_complexes.sbatch
+#   REBUILD=0 sbatch tf_complex/slurm/02_tf_complexes.sbatch   # reuse peak_matrix.npz
 ```
 
-### 1. `build_tf_matrix.py` — raw binding matrix (run once)
-Every TF's raw pseudobulk (`mm/matrix.mtx.gz` summed over cells) → `work/tf_matrix.npz`
-(bins × TFs, CSC) + `tfs.txt` + `regions.tsv`.
+### 1. `call_raw_peaks.py` — per-TF raw peaks
+MACS3 q<0.05 on each TF's raw pseudobulk → `work/peaks/<tf>.bed`. Reuses the vetted
+`downstream/peak_coverage.py` standard (synthetic fragments → MACS3 `--nolambda`).
 
-### 2. `tf_correlation.py` — co-occupancy → complexes
+### 2. `build_peak_matrix.py` — union → loci × TF matrix
+Merges all per-TF peaks into consensus **loci** (bedtools-merge style); each locus
+records which TFs bind it → `work/peak_matrix.npz` (loci × TF bool) + `loci.bed`
+(with occupancy) + `tfs.txt` + `loci_ab.tsv` (per-locus A/B label).
 
-**Sparsity + coverage both matter.** Raw scCUT&Tag is sparse and each TF is profiled
-in *different* cells, so at 1 kb two co-binding TFs rarely hit the same bin (Spearman
-≈ 0, flat heatmap); and TFs vary ~250× in depth, so "bound = any signal" makes
-broad/deep TFs overlap trivially (a coverage rich-club). So the tool:
-- **aggregates** fine bins into `AGG_BP` windows (default 10 kb) so co-localizing TFs
-  share a bin;
-- defines **"bound" = each TF's top-`TOP_N` strongest bins** (default 20 000) —
-  coverage-equalized and background-free, so overlap reflects *specific* co-binding;
-- defaults to **`cooccur`** = `log2(observed/expected)` overlap. The expected is
-  computed over the **bindable universe** (`--universe bound`: bins bound by ≥1 TF),
-  **not** the whole genome. TFs draw their bins from a tiny accessible fraction of the
-  genome, so a genome-wide null makes *every* pair look enriched (a universal positive
-  gradient / rich-club — no discrete complexes). The bindable-universe null puts
-  accessibility-only pairs at **~0** and leaves only *specific* co-binding positive.
-  `spearman/pearson/jaccard` also available;
-- prints **coverage + off-diagonal magnitude diagnostics** so a flat/rich-club result
-  is explained.
-
-Outputs (three scopes — **genome / A-only / B-only**):
-- `cooccur_{genome,A,B}.tsv` — co-occurrence enrichment (always written).
-- `corr_{...}.tsv` — the chosen `METRIC` matrix (if not cooccur).
-- **`candidate_complexes.tsv`** — TFs joined into **connected components** where the
-  genome score ≥ `CLUSTER_THRESHOLD` (complex_id, n_tfs, mean_intra_score, members).
-- **`tf_compartment.tsv`** — per-TF A/B preference, size-normalized
-  (`log2(signal_fracA / exp_fracA)`).
-- `correlation_heatmap.png` (`--plot`), clustered.
+### 3. `tf_complexes.py` — HOT removal → correlation → complexes
+Drops HOT loci (`--hot-frac`) + blacklist + singletons (`--min-occ`), computes the
+TF×TF similarity, clusters → complexes, and annotates A/B. Outputs:
+- `tf_similarity_{genome,A,B}.tsv` — TF×TF similarity (chosen metric).
+- **`candidate_complexes.tsv`** — clustered TF groups (complex_id, n_tfs, mean_intra_sim, members).
+- **`tf_compartment.tsv`** — per-TF A/B preference, size-normalized.
+- `complex_heatmap.png` (`--plot`), clustered.
 
 ## Knobs (env vars)
 
@@ -66,23 +77,28 @@ Outputs (three scopes — **genome / A-only / B-only**):
 |-----|---------|---------|
 | `WORK_ROOT` | `unified/work` | per-TF raw `mm` matrices |
 | `AB_BED` | `hic/work/compartments/compartments_25000.AB.bed` | A/B calls (hic step 05) |
-| `REBUILD` | `1` | `0` = reuse the built matrix |
-| `METRIC` | `cooccur` | `cooccur` (log2 obs/exp) \| `spearman` \| `pearson` \| `jaccard` |
-| `UNIVERSE` | `bound` | cooccur null: `bound` (bins bound by ≥1 TF; removes accessibility inflation) \| `genome` |
-| `AGG_BP` | `10000` | aggregate 1 kb bins into this window before correlating |
-| `TOP_N` | `20000` | "bound" = each TF's top-N strongest bins (coverage-equalize, drop background) |
-| `MIN_TFS_PER_BIN` | `2` | (spearman/pearson only) feature bins must be bound in ≥ this many TFs |
-| `CLUSTER_THRESHOLD` | `1.0` | complex if score ≥ this (cooccur log2 fold; 1.0 = 2× co-binding) |
+| `BLACKLIST` | `tf_complex/ref/hg38-blacklist.v2.bed` | ENCODE blacklist (optional) |
+| `MACS_Q` | `0.05` | per-TF peak-calling q-value |
+| `METRIC` | `pca` | `pca` (Partridge-style) \| `pearson` (phi) \| `jaccard` |
+| `N_PC` | `25` | PCs for `pca` metric |
+| `HOT_FRAC` | `0.5` | drop loci bound by > this fraction of TFs (HOT artifacts) |
+| `MIN_OCC` | `2` | keep loci bound by ≥ this many TFs |
+| `CLUSTER` | `hierarchical` | `hierarchical` (avg-linkage cut) \| `threshold` (connected comps) |
+| `CLUSTER_THRESHOLD` | `0.5` | similarity cut; set near the printed **p90/p95** |
+| `REBUILD` | `1` | `0` = reuse `peak_matrix.npz` |
 
 ## Reading the result
 - **`candidate_complexes.tsv`** = TF groups that co-occupy → protein-complex candidates.
-- Compare **A-only vs B-only** correlations to see whether a complex is
-  compartment-specific.
+  Validate by checking a known HEK293T complex comes out together.
+- The `[genome] … off-diag: median/p90/p95` diagnostic sets `CLUSTER_THRESHOLD`
+  (real complexes sit in the p90–p95 tail; median should be near 0 after HOT removal).
+- Compare **A vs B** similarity matrices for compartment-specific complexes.
 - **`tf_compartment.tsv`** gives each TF's A/B lean (size-normalized).
 
 Next in the checklist: for each candidate complex, test **shared/same motif**
-(HOMER/AME on the group's binding), then **define the protein complex**.
+(HOMER/AME on the group's peaks, reuse `downstream/`), then **define the protein
+complex**.
 
 ## Tracking
-`tf_complex/work/` (binding matrix) is gitignored; `results/` TSVs are small and
-kept. Scripts / slurm / env / README tracked.
+`tf_complex/work/` (peaks + matrix) and `results/` are gitignored; scripts / slurm /
+env / README tracked.
