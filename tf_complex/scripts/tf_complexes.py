@@ -5,14 +5,19 @@
 # TF co-occupancy -> candidate protein complexes, from the peak occupancy matrix
 # (build_peak_matrix.py). Follows the field-standard method (Partridge et al. 2020,
 # Nature, "Occupancy maps of 208 chromatin-associated proteins"): build a
-# loci x TF binding matrix, remove high-occupancy artifacts, reduce with PCA, and
-# cluster the TF correlation -> complexes (they recovered cohesin, NuRD, POL2...).
+# loci x TF binding matrix, remove high-occupancy artifacts, correlate TFs, and
+# cluster -> complexes (they recovered cohesin, NuRD, POL2...).
 #
-# Two corrections the literature demands (see tf_complex/README.md):
-#   1. Remove HOT loci (bound by > --hot-frac of TFs) + optional ENCODE blacklist.
-#      HOT / high-occupancy-target regions are largely ChIP-seq artifacts
-#      (GC/CpG-rich, motif-free) that make every TF pair look co-bound.
-#   2. Correlate binding PROFILES (default via PCA), not raw pairwise overlap.
+# Correction the literature demands (see tf_complex/README.md):
+#   Remove HOT loci (bound by > --hot-frac of TFs) + optional ENCODE blacklist.
+#   HOT / high-occupancy-target regions are largely ChIP-seq artifacts (GC/CpG-rich,
+#   motif-free) that make every TF pair look co-bound.
+#
+# Metric = pearson (phi of binary peak vectors, default) or jaccard. Both recover
+# complexes across the panel's ~1000x peak-count spread WITHOUT a coverage block,
+# once HOT loci are removed. (A PCA/SVD step was tried and REMOVED: row-centering the
+# loci made sparse low-peak TFs collinear -> a spurious 36-TF "complex" that just
+# tracked peak count.)
 #
 # A/B compartments are used as an ANNOTATION of the resulting complexes/TFs, NOT as
 # the axis that defines co-binding (every TF is A-leaning, so A/B can't discriminate).
@@ -56,18 +61,6 @@ def loci_hit_blacklist(loci_bed, bl):
     return np.array(hit, dtype=bool)
 
 
-def pca_similarity(Bkeep, n_pc):
-    """Partridge-style: PCA of the loci x TF matrix, then Pearson correlation between
-    TFs in PC space. Centers per-locus, SVD, take TF loadings on top PCs, correlate."""
-    X = Bkeep.astype(np.float64).toarray()                # loci x TF
-    X -= X.mean(axis=1, keepdims=True)                    # center each locus (row)
-    k = min(n_pc, min(X.shape) - 1)
-    # right singular vectors give per-TF coordinates
-    U, S, Vt = np.linalg.svd(X, full_matrices=False)
-    load = (Vt[:k].T * S[:k])                             # TF x k (loadings)
-    return np.corrcoef(load)                              # TF x TF Pearson in PC space
-
-
 def jaccard_similarity(Bkeep):
     B = Bkeep.astype(bool)
     n = B.shape[1]
@@ -92,9 +85,7 @@ def write_matrix(path, M, labels):
             f.write(lab + "\t" + "\t".join(f"{M[i, j]:.4f}" for j in range(len(labels))) + "\n")
 
 
-def similarity(Bkeep, metric, n_pc):
-    if metric == "pca":
-        return pca_similarity(Bkeep, n_pc)
+def similarity(Bkeep, metric):
     if metric == "jaccard":
         return jaccard_similarity(Bkeep)
     return pearson_similarity(Bkeep)
@@ -105,8 +96,11 @@ def main() -> int:
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--matrix-dir", type=Path, required=True, help="build_peak_matrix.py output")
     ap.add_argument("--out-dir", type=Path, required=True)
-    ap.add_argument("--metric", choices=["pca", "pearson", "jaccard"], default="pca")
-    ap.add_argument("--n-pc", type=int, default=25, help="PCs for --metric pca")
+    ap.add_argument("--metric", choices=["pearson", "jaccard"], default="pearson",
+                    help="TF-TF similarity over HOT-removed loci. pearson (phi of binary peak "
+                         "vectors, default) and jaccard both recover complexes without a "
+                         "coverage block; peak-count spread is handled by HOT removal, not a "
+                         "dimensionality reduction.")
     ap.add_argument("--hot-frac", type=float, default=0.5,
                     help="drop loci bound by more than this FRACTION of TFs (HOT / high-occupancy "
                          "artifacts). 0.5 = drop loci bound by >half the panel.")
@@ -150,6 +144,10 @@ def main() -> int:
         scopes["A"] = keep & (labs == "A")
         scopes["B"] = keep & (labs == "B")
 
+    # bottom-quartile TFs by peak count -- used to flag any residual coverage block
+    tf_peaks = np.asarray((B > 0).sum(axis=0)).ravel()
+    low_q = np.flatnonzero(tf_peaks <= np.percentile(tf_peaks, 25))
+
     prim = None
     for name, m in scopes.items():
         idx = np.flatnonzero(m)
@@ -157,13 +155,24 @@ def main() -> int:
             print(f"[{name}] only {idx.size} loci; skipping", flush=True)
             continue
         Bk = B[idx]
-        # drop TFs with no peaks in this scope would break corr; keep all, corr handles via nan->0
-        R = np.nan_to_num(similarity(Bk, args.metric, args.n_pc))
+        # keep all TFs; corr of a zero-peak-in-scope TF -> nan -> 0
+        R = np.nan_to_num(similarity(Bk, args.metric))
         write_matrix(args.out_dir / f"tf_similarity_{name}.tsv", R, tfs)
         off = R[~np.eye(n_tf, dtype=bool)]
+        # coverage-artifact check: similarity among low-peak TFs, and corr(peak_count, mean_sim)
+        low_sub = R[np.ix_(low_q, low_q)]
+        low_off = low_sub[~np.eye(len(low_q), dtype=bool)] if len(low_q) > 1 else np.array([0.0])
+        msim = (R.sum(axis=1) - np.diag(R)) / (n_tf - 1)
+        cov_r = np.corrcoef(tf_peaks, msim)[0, 1] if n_tf > 2 else float("nan")
         print(f"[{name}] {idx.size:,} loci  {args.metric} off-diag: median={np.median(off):.3f} "
               f"p90={np.percentile(off,90):.3f} p95={np.percentile(off,95):.3f} "
               f"max={np.nanmax(off):.3f}", flush=True)
+        # low-peak-TF block median ~0 = no depth artifact; a large POSITIVE value means
+        # low-peak TFs cluster trivially (the PCA failure mode). cov_r can be nonzero
+        # legitimately if a real complex happens to be depth-correlated, so read it with
+        # the block median, not alone.
+        print(f"[{name}] coverage check: low-peak-TF block median={np.median(low_off):+.3f} "
+              f"(near 0 = clean), corr(peak_count, mean_sim)={cov_r:+.3f}", flush=True)
         if name == "genome":
             prim = R
 

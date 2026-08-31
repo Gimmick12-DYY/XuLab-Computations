@@ -10,8 +10,8 @@ whole TF panel.
 Finding protein complexes from binding maps is a solved, standard problem. The
 canonical reference is **Partridge et al. 2020, *Nature*** ("Occupancy maps of 208
 chromatin-associated proteins in one human cell type"): build a **loci × protein**
-binding matrix, reduce with **PCA**, cluster the protein correlation → complexes
-(they recovered cohesin, NuRD, POL2/TSS). We follow that method, with two
+binding matrix, remove high-occupancy artifacts, correlate proteins, and cluster →
+complexes (they recovered cohesin, NuRD, POL2/TSS). We follow that method, with two
 corrections the literature demands:
 
 1. **Co-occupancy is measured over called PEAKS**, not genome-wide signal bins —
@@ -23,6 +23,15 @@ corrections the literature demands:
    ChIP-seq artifacts (GC/CpG-rich, motif-free; Wreczycka et al. 2019). They create
    a universal "rich-club" that makes every TF pair look co-bound. We drop loci
    bound by > `HOT_FRAC` of the panel, plus the ENCODE blacklist.
+
+**Metric = `pearson`** (phi of the binary peak vectors, default) or **`jaccard`**.
+Both recover complexes across the panel's ~1000× peak-count spread *without* a
+coverage block, once HOT loci are removed — validated on a synthetic with a deep
+(high-peak) and a shallow (low-peak) complex at realistic universe scale. **A
+PCA/SVD step was tried and removed**: row-centering the loci made sparse low-peak
+TFs collinear, producing a spurious ~36-TF "complex" that just tracked peak count.
+The `[genome] coverage check:` log line reports the low-peak-TF block median (near 0
+= clean) so any residual depth artifact is visible.
 
 **A/B compartments are used as an ANNOTATION** of the resulting complexes/TFs
 (which complex is A- vs B-biased), **not** as the axis that defines co-binding:
@@ -48,7 +57,7 @@ gunzip hg38-blacklist.v2.bed.gz && cd -
 # 1. per-TF raw peaks (array job, one TF per task; set --array=0-<N-1>)
 sbatch tf_complex/slurm/01_call_raw_peaks.sbatch
 
-# 2. union peaks -> HOT removal -> PCA correlation -> complexes  (needs hic step 05 A/B)
+# 2. union peaks -> HOT removal -> pearson correlation -> complexes  (needs hic step 05 A/B)
 sbatch tf_complex/slurm/02_tf_complexes.sbatch
 #   METRIC=jaccard HOT_FRAC=0.4 CLUSTER_THRESHOLD=0.6 sbatch tf_complex/slurm/02_tf_complexes.sbatch
 #   REBUILD=0 sbatch tf_complex/slurm/02_tf_complexes.sbatch   # reuse peak_matrix.npz
@@ -79,8 +88,7 @@ TF×TF similarity, clusters → complexes, and annotates A/B. Outputs:
 | `AB_BED` | `hic/work/compartments/compartments_25000.AB.bed` | A/B calls (hic step 05) |
 | `BLACKLIST` | `tf_complex/ref/hg38-blacklist.v2.bed` | ENCODE blacklist (optional) |
 | `MACS_Q` | `0.05` | per-TF peak-calling q-value |
-| `METRIC` | `pca` | `pca` (Partridge-style) \| `pearson` (phi) \| `jaccard` |
-| `N_PC` | `25` | PCs for `pca` metric |
+| `METRIC` | `pearson` | `pearson` (phi of binary peak vectors) \| `jaccard` |
 | `HOT_FRAC` | `0.5` | drop loci bound by > this fraction of TFs (HOT artifacts) |
 | `MIN_OCC` | `2` | keep loci bound by ≥ this many TFs |
 | `CLUSTER` | `hierarchical` | `hierarchical` (avg-linkage cut) \| `threshold` (connected comps) |

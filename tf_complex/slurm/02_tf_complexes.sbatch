@@ -8,8 +8,9 @@
 #SBATCH --mail-type=FAIL
 #
 # Step 2: union per-TF peaks -> loci x TF matrix, remove HOT loci + blacklist,
-# PCA-correlate TFs, cluster -> candidate protein complexes (Partridge 2020 style).
-# A/B compartments annotate the complexes (they do NOT define co-binding).
+# correlate TFs (pearson/jaccard), cluster -> candidate protein complexes
+# (Partridge 2020 style). A/B compartments annotate the complexes (they do NOT
+# define co-binding).
 #
 #   sbatch tf_complex/slurm/02_tf_complexes.sbatch
 #   METRIC=jaccard HOT_FRAC=0.4 CLUSTER_THRESHOLD=0.5 sbatch tf_complex/slurm/02_tf_complexes.sbatch
@@ -24,8 +25,7 @@ RESULTS="${RESULTS:-${TFC}/results}"
 AB_BED="${AB_BED:-${XULAB}/hic/work/compartments/compartments_25000.AB.bed}"
 BLACKLIST="${BLACKLIST:-${TFC}/ref/hg38-blacklist.v2.bed}"   # optional; skipped if missing
 
-METRIC="${METRIC:-pca}"                 # pca (Partridge-style, default) | pearson | jaccard
-N_PC="${N_PC:-25}"
+METRIC="${METRIC:-pearson}"             # pearson (phi, default) | jaccard
 HOT_FRAC="${HOT_FRAC:-0.5}"             # drop loci bound by > this fraction of TFs (HOT artifacts)
 MIN_OCC="${MIN_OCC:-2}"                 # keep loci bound by >= this many TFs
 CLUSTER="${CLUSTER:-hierarchical}"      # hierarchical | threshold
@@ -52,7 +52,7 @@ BL_ARG=()
 echo "[$(date)] tf_complexes (metric=${METRIC}, hot_frac=${HOT_FRAC})"
 python "${TFC}/scripts/tf_complexes.py" \
   --matrix-dir "${MATRIX_DIR}" --out-dir "${RESULTS}" \
-  --metric "${METRIC}" --n-pc "${N_PC}" \
+  --metric "${METRIC}" \
   --hot-frac "${HOT_FRAC}" --min-occ "${MIN_OCC}" \
   --cluster "${CLUSTER}" --cluster-threshold "${CLUSTER_THRESHOLD}" \
   "${BL_ARG[@]}" --plot
