@@ -35,6 +35,7 @@ hic/work/
 # TF complex: keep scripts/slurm/results, drop the large binding matrix
 tf_complex/work/
 tf_complex/results/
+tf_complex/ref/
 
 # Co-binding: keep scripts/slurm, drop the aggregated edge list + cluster outputs
 cobinding/work/
