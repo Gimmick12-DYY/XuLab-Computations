@@ -57,6 +57,11 @@ def main() -> int:
     ap.add_argument("--min-frac", type=float, default=0.5,
                     help="a locus is 'co-bound' if >= ceil(min-frac * n_members) members bind it "
                          "(and always >=2). Default 0.5 = at least half the complex.")
+    ap.add_argument("--window", type=int, default=200,
+                    help="emit FIXED-WIDTH windows of this size centered on each locus midpoint "
+                         "(default 200). Equalizes foreground/background length -- co-bound loci "
+                         "are intrinsically wider (merged from more peaks), which would otherwise "
+                         "bias motif enrichment by length/GC. 0 = keep original locus widths.")
     ap.add_argument("--min-cobound", type=int, default=100,
                     help="warn if a complex has fewer than this many co-bound loci (too few for "
                          "a reliable motif enrichment).")
@@ -69,11 +74,15 @@ def main() -> int:
     complexes = parse_complexes(args.complexes)
     args.out_dir.mkdir(parents=True, exist_ok=True)
 
+    w = args.window
     def write_bed(path, mask, tag):
         idx = np.flatnonzero(mask)
         with open(path, "w") as f:
             for k, i in enumerate(idx):
                 c, s, e = loci[i]
+                if w and w > 0:                       # fixed-width window on midpoint
+                    mid = (s + e) // 2
+                    s, e = max(0, mid - w // 2), mid + w - w // 2
                 f.write(f"{c}\t{s}\t{e}\t{tag}_{k}\t0\t.\n")
         return idx.size
 

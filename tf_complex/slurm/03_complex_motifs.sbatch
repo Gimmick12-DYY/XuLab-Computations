@@ -30,6 +30,7 @@ COMPLEXES="${COMPLEXES:-${TFC}/results/candidate_complexes.tsv}"
 BED_DIR="${BED_DIR:-${TFC}/results/complex_beds}"
 OUT_ROOT="${OUT_ROOT:-${TFC}/results/complex_motifs}"
 MIN_FRAC="${MIN_FRAC:-0.5}"
+WINDOW="${WINDOW:-200}"   # fixed-width motif windows (equalizes fg/bg length; 0 = original loci)
 
 # reuse downstream motif caches
 HG38_FA="${HG38_FA:-${DOWN_DIR}/cache/hg38.fa}"
@@ -51,7 +52,7 @@ if [[ ! -s "${MANIFEST}" ]]; then
   [[ -s "${COMPLEXES}" ]] || { echo "no candidate_complexes.tsv at ${COMPLEXES}" >&2; exit 1; }
   python "${TFC}/scripts/build_complex_beds.py" \
     --matrix-dir "${MATRIX_DIR}" --complexes "${COMPLEXES}" \
-    --out-dir "${BED_DIR}" --min-frac "${MIN_FRAC}"
+    --out-dir "${BED_DIR}" --min-frac "${MIN_FRAC}" --window "${WINDOW}"
 fi
 
 mapfile -t CIDS < <(tail -n +2 "${MANIFEST}" | cut -f1)
@@ -68,7 +69,8 @@ echo "[$(date)] ${CID}: $(wc -l < "${FG}") co-bound loci"
 # ---- HOMER de novo + known ------------------------------------------------
 if command -v findMotifsGenome.pl >/dev/null 2>&1; then
   if [[ ! -s "${OUT}/homer/homerResults.html" ]]; then
-    HOMER_ARGS=(-p "${THREADS}" -size given)
+    if [[ "${WINDOW}" -gt 0 ]]; then HOMER_SIZE="${WINDOW}"; else HOMER_SIZE="given"; fi
+    HOMER_ARGS=(-p "${THREADS}" -size "${HOMER_SIZE}")
     if [[ "${USE_GENOME_BG}" == "1" ]]; then HOMER_ARGS+=(-useNewBg); else HOMER_ARGS+=(-bg "${BG}"); fi
     findMotifsGenome.pl "${FG}" "${HOMER_GENOME}" "${OUT}/homer/" "${HOMER_ARGS[@]}"
   else echo "[$(date)] ${CID}: HOMER exists, skip"; fi

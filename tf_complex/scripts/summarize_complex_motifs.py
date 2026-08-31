@@ -74,6 +74,39 @@ def tf_token(motif_name):
     return s.lower()
 
 
+def motif_class(motif_name):
+    """HOMER family class in the first parens: 'Prop1(Homeobox)/...' -> homeobox."""
+    m = re.search(r"\(([^)]+)\)", motif_name)
+    return m.group(1).split(",")[0].strip().lower() if m else ""
+
+
+# member gene -> DNA-binding family, so a family-level motif hit counts even when the
+# specific factor differs (e.g. a Homeobox motif for a HOX member). Only SPECIFIC
+# families -- NOT the C2H2-Zf superfamily (it lumps SP/KLF/KRAB-ZNF/MAZ, which bind
+# unrelated sequences, so a "Zf" match is meaningless).
+FAMILY = {
+    "homeobox": ("hox", "prop", "phox", "isl", "msx", "dlx", "nkx", "pitx", "lhx", "cdx"),
+    "bhlh": ("mlx", "myc", "tcf", "hes", "neurod", "ascl"),
+    "ets": ("ets", "elf", "elk", "erg", "fli"),
+    "forkhead": ("foxc", "foxk", "foxj", "foxa", "foxo", "foxp"),
+    "bzip": ("ddit3", "atf", "cebp", "jun", "fos", "e4f"),
+}
+
+
+def member_matches_motif(members_low, name):
+    """True if a member matches this motif by name (substring, either dir, >=3) or by family."""
+    tok = tf_token(name)
+    for m in members_low:
+        if len(tok) >= 3 and (tok in m or m in tok):
+            return m
+    cls = motif_class(name)
+    for m in members_low:
+        for fam, pref in FAMILY.items():
+            if cls == fam and m.startswith(pref):
+                return m
+    return None
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -84,27 +117,32 @@ def main() -> int:
     args = ap.parse_args()
 
     manifest = read_manifest(args.bed_dir / "complex_manifest.tsv")
-    lines = ["complex_id\tmembers\tshared_call\thomer_top\tame_top"]
+    lines = ["complex_id\tmembers\tshared_call\ttop_class\thomer_top\tame_top"]
     for cid, members in manifest:
         cdir = args.motif_dir / cid
         homer = homer_top(cdir, args.top)
         ame = ame_top(cdir, args.top)
-        mem_l = {m.lower() for m in members}
-        top_tokens = [tf_token(n) for n, _ in homer] + [tf_token(n) for n, _ in ame]
-        member_hit = sorted({t for t in top_tokens if t in mem_l})
+        # scan deeper for a member motif (the #1 hit is often a generic promoter motif;
+        # a real member's motif can sit a few ranks down) but only display the top-N.
+        homer_deep = homer_top(cdir, max(args.top, 15))
+        ame_deep = ame_top(cdir, max(args.top, 15))
+        mem_l = [m.lower() for m in members]
+        member_hit = sorted({member_matches_motif(mem_l, n) for n, _ in homer_deep + ame_deep
+                             if member_matches_motif(mem_l, n)})
+        # dominant HOMER family class among the top hits (context even w/o a member match)
+        classes = [motif_class(n) for n, _ in homer if motif_class(n)]
+        top_class = max(set(classes), key=classes.count) if classes else "-"
         # "common": same token is #1 in both HOMER and AME
-        common = ""
-        if homer and ame and tf_token(homer[0][0]) == tf_token(ame[0][0]):
-            common = tf_token(homer[0][0])
+        common = (homer and ame and tf_token(homer[0][0]) == tf_token(ame[0][0]))
         if member_hit:
             call = "SHARED_MEMBER:" + ",".join(member_hit)
         elif common:
-            call = "SHARED_COMMON:" + common
+            call = "SHARED_COMMON:" + tf_token(homer[0][0])
         else:
             call = "none/weak"
         h = "; ".join(f"{n}(q={q:.1e})" for n, q in homer) or "-"
         a = "; ".join(f"{n}(q={q:.1e})" for n, q in ame) or "-"
-        lines.append(f"{cid}\t{','.join(members)}\t{call}\t{h}\t{a}")
+        lines.append(f"{cid}\t{','.join(members)}\t{call}\t{top_class}\t{h}\t{a}")
 
     text = "\n".join(lines) + "\n"
     if args.out:
