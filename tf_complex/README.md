@@ -64,12 +64,16 @@ sbatch tf_complex/slurm/02_tf_complexes.sbatch
 
 # 3. shared-motif test per complex (checklist step 4): HOMER + AME on each complex's
 #    co-bound loci vs the union-peak background  (reuses downstream/ motif caches)
-N=$(tail -n +2 tf_complex/results/complex_beds/complex_manifest.tsv 2>/dev/null | wc -l)  # 0 first time
 sbatch tf_complex/slurm/03_complex_motifs.sbatch            # task 0 builds the BEDs + manifest
+N=$(tail -n +2 tf_complex/results/complex_beds/complex_manifest.tsv | wc -l)
 sbatch --array=0-$((N-1)) tf_complex/slurm/03_complex_motifs.sbatch   # then one task per complex
 python tf_complex/scripts/summarize_complex_motifs.py \
   --bed-dir tf_complex/results/complex_beds \
   --motif-dir tf_complex/results/complex_motifs --out tf_complex/results/complex_motif_summary.tsv
+
+#    ...same for the A-A and B-B complexes (SCOPE restricts fg+bg to that compartment):
+#    SCOPE=A sbatch tf_complex/slurm/03_complex_motifs.sbatch   # then --array over complex_beds_A/
+#    SCOPE=B sbatch tf_complex/slurm/03_complex_motifs.sbatch   # results in complex_motifs_{A,B}/
 ```
 
 ### 1. `call_raw_peaks.py` — per-TF raw peaks
@@ -109,7 +113,9 @@ random genome — avoids generic GC/accessibility motifs). `summarize_complex_mo
 collates the top motifs and flags `SHARED_MEMBER` (a member's motif is enriched → that
 member is the DNA-binding anchor) or `SHARED_COMMON` (one motif dominates) →
 `complex_motif_summary.tsv`. Reuses the `downstream/` motif commands + caches (HG38_FA,
-HOMER hg38, HOCOMOCO meme).
+HOMER hg38, HOCOMOCO meme). `SCOPE=A|B` runs the same test on the compartment-specific
+complexes with fg+bg restricted to that compartment (does an A-A complex share a motif
+*within A*?), writing to `complex_beds_{A,B}/` + `complex_motifs_{A,B}/`.
 
 ## Knobs (env vars)
 

@@ -26,9 +26,21 @@ ROOT_DIR="${ROOT_DIR:-/work/users/d/y/dyy12/XuLab}"
 TFC="${ROOT_DIR}/tf_complex"
 DOWN_DIR="${ROOT_DIR}/downstream"
 MATRIX_DIR="${MATRIX_DIR:-${TFC}/work}"
-COMPLEXES="${COMPLEXES:-${TFC}/results/candidate_complexes.tsv}"
-BED_DIR="${BED_DIR:-${TFC}/results/complex_beds}"
-OUT_ROOT="${OUT_ROOT:-${TFC}/results/complex_motifs}"
+
+# SCOPE selects which complexes to motif-test. genome (default) | A | B. For A/B the
+# co-bound fg + bg are restricted to that compartment's loci (an A-A complex is tested
+# on its A sites vs other A-bound sites). Outputs go to scope-suffixed dirs so the
+# three runs never collide.
+SCOPE="${SCOPE:-genome}"
+case "${SCOPE}" in
+  genome) CX_FILE="candidate_complexes.tsv";   SUF="";   COMPARTMENT_ARG=() ;;
+  A)      CX_FILE="candidate_complexes_A.tsv"; SUF="_A"; COMPARTMENT_ARG=(--compartment A) ;;
+  B)      CX_FILE="candidate_complexes_B.tsv"; SUF="_B"; COMPARTMENT_ARG=(--compartment B) ;;
+  *) echo "bad SCOPE=${SCOPE} (want genome|A|B)" >&2; exit 1 ;;
+esac
+COMPLEXES="${COMPLEXES:-${TFC}/results/${CX_FILE}}"
+BED_DIR="${BED_DIR:-${TFC}/results/complex_beds${SUF}}"
+OUT_ROOT="${OUT_ROOT:-${TFC}/results/complex_motifs${SUF}}"
 MIN_FRAC="${MIN_FRAC:-0.5}"
 WINDOW="${WINDOW:-200}"   # fixed-width motif windows (equalizes fg/bg length; 0 = original loci)
 
@@ -52,7 +64,8 @@ if [[ ! -s "${MANIFEST}" ]]; then
   [[ -s "${COMPLEXES}" ]] || { echo "no candidate_complexes.tsv at ${COMPLEXES}" >&2; exit 1; }
   python "${TFC}/scripts/build_complex_beds.py" \
     --matrix-dir "${MATRIX_DIR}" --complexes "${COMPLEXES}" \
-    --out-dir "${BED_DIR}" --min-frac "${MIN_FRAC}" --window "${WINDOW}"
+    --out-dir "${BED_DIR}" --min-frac "${MIN_FRAC}" --window "${WINDOW}" \
+    "${COMPARTMENT_ARG[@]}"
 fi
 
 mapfile -t CIDS < <(tail -n +2 "${MANIFEST}" | cut -f1)

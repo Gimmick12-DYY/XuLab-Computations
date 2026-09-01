@@ -65,6 +65,10 @@ def main() -> int:
     ap.add_argument("--min-cobound", type=int, default=100,
                     help="warn if a complex has fewer than this many co-bound loci (too few for "
                          "a reliable motif enrichment).")
+    ap.add_argument("--compartment", choices=["A", "B"], default=None,
+                    help="restrict co-bound foreground AND background to loci in this compartment "
+                         "(from loci_ab.tsv). Use for candidate_complexes_A/B.tsv so an A-A complex "
+                         "is motif-tested on its A sites vs other A-bound sites.")
     args = ap.parse_args()
 
     B = sp.load_npz(args.matrix_dir / "peak_matrix.npz").tocsc()
@@ -73,6 +77,18 @@ def main() -> int:
     loci = read_loci(args.matrix_dir / "loci.bed")
     complexes = parse_complexes(args.complexes)
     args.out_dir.mkdir(parents=True, exist_ok=True)
+
+    comp_mask = None
+    if args.compartment:
+        ab_path = args.matrix_dir / "loci_ab.tsv"
+        if not ab_path.is_file():
+            raise SystemExit(f"--compartment {args.compartment} needs {ab_path} (rebuild peak matrix with --ab-bed)")
+        labs = np.array([ln.split("\t")[1].strip() for ln in open(ab_path)], dtype="<U1")
+        if labs.shape[0] != B.shape[0]:
+            raise SystemExit(f"loci_ab rows {labs.shape[0]} != loci {B.shape[0]}")
+        comp_mask = labs == args.compartment
+        print(f"[compartment] restricting to {int(comp_mask.sum()):,} {args.compartment}-loci "
+              f"of {B.shape[0]:,}", flush=True)
 
     w = args.window
     def write_bed(path, mask, tag):
@@ -99,6 +115,9 @@ def main() -> int:
             thr = max(2, math.ceil(args.min_frac * len(mem_idx)))
             fg = occ >= thr
             bg = (~fg) & (np.asarray(B.sum(axis=1)).ravel() > 0)   # bound elsewhere, not by this group
+            if comp_mask is not None:                             # compartment-specific: A vs A, B vs B
+                fg = fg & comp_mask
+                bg = bg & comp_mask
             n_fg = write_bed(args.out_dir / f"{cid}.cobound.bed", fg, cid)
             n_bg = write_bed(args.out_dir / f"{cid}.bg.bed", bg, f"{cid}bg")
             flag = "  <-- FEW LOCI" if n_fg < args.min_cobound else ""
