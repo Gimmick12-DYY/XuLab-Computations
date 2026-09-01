@@ -18,6 +18,11 @@
 #   N=$(LIST=1 bash downstream/slurm/motif_enrichment.sbatch | grep -vc '^#')
 #   sbatch --array=0-$((N-1)) downstream/slurm/motif_enrichment.sbatch
 #
+# Background comparison (BG_MODE, same peaks, different control -> coexisting dirs
+# homer_{genome,ocr}/ + ame_{genome,ocr}/):
+#   BG_MODE=genome TFS="nrf1 ctcf e2f3" sbatch --array=0-2 downstream/slurm/motif_enrichment.sbatch
+#   BG_MODE=ocr    TFS="nrf1 ctcf e2f3" sbatch --array=0-2 downstream/slurm/motif_enrichment.sbatch
+#
 # Peaks are called at MACS3 q<0.05 on the imputed pseudobulk (call_imputed_peaks.py,
 # reusing peak_coverage.py -- the project peak-calling standard), then HOMER + AME.
 #
@@ -118,6 +123,27 @@ PEAK_WORK="${OUT}/peaks"      # MACS3 synthetic BED + narrowPeak intermediates
 HOMER_BG="${HOMER_BG:-0}"        # 0 -> HOMER -useNewBg (original); 1 -> -bg <background>
 AME_CONTROL="${AME_CONTROL:-0}"  # 0 -> AME shuffled (original); 1 -> --control <background.fa>
 
+# Background mode -- the ONE knob for the genome-vs-OCR comparison. Holds the peaks
+# fixed and swaps only the background/control:
+#   genome : HOMER -useNewBg  + AME shuffled       (whole-genome / GC-matched)
+#   ocr    : HOMER -bg <bg>   + AME --control <bg>  (OCR-matched = open chromatin
+#            OPEN_BED minus this TF's peaks; built by call_imputed_peaks --open-bed)
+# Outputs land in homer${SUF}/ and ame${SUF}/ so both backgrounds COEXIST for the same
+# TF. Leave BG_MODE unset to keep legacy behavior + honor HOMER_BG/AME_CONTROL directly.
+BG_MODE="${BG_MODE:-}"
+if [[ -n "${BG_MODE}" ]]; then
+  case "${BG_MODE}" in
+    genome) HOMER_BG=0; AME_CONTROL=0 ;;
+    ocr)    HOMER_BG=1; AME_CONTROL=1 ;;
+    *) echo "bad BG_MODE=${BG_MODE} (want genome|ocr)" >&2; exit 1 ;;
+  esac
+  SUF="_${BG_MODE}"
+else
+  SUF=""
+fi
+HOMER_OUT="${OUT}/homer${SUF}"
+AME_DIR="${OUT}/ame${SUF}"
+
 BED="${OUT}/${TF}.imputed_peaks.bed"
 BG_BED="${OUT}/${TF}.background.bed"
 mkdir -p "${OUT}"
@@ -195,17 +221,17 @@ echo "[$(date)] ${TF}: ${N_PEAKS} peaks -> enrichment"
 
 # ---- 2. HOMER de novo + known motif enrichment -----------------------------
 if (( RUN_HOMER == 1 )); then
-  if [[ ! -s "${OUT}/homer/homerResults.html" ]]; then
-    echo "[$(date)] ${TF}: HOMER findMotifsGenome.pl"
+  if [[ ! -s "${HOMER_OUT}/homerResults.html" ]]; then
+    echo "[$(date)] ${TF}: HOMER findMotifsGenome.pl (bg=${BG_MODE:-legacy})"
     HOMER_ARGS=(-p "${THREADS}" -size given)
     if [[ "${HOMER_BG}" == "1" && -s "${BG_BED}" ]]; then
       HOMER_ARGS+=(-bg "${BG_BED}")
     else
       HOMER_ARGS+=(-useNewBg)
     fi
-    findMotifsGenome.pl "${BED}" "${HOMER_GENOME}" "${OUT}/homer/" "${HOMER_ARGS[@]}"
+    findMotifsGenome.pl "${BED}" "${HOMER_GENOME}" "${HOMER_OUT}/" "${HOMER_ARGS[@]}"
   else
-    echo "[$(date)] ${TF}: HOMER results exist, skipping"
+    echo "[$(date)] ${TF}: HOMER results exist (${HOMER_OUT}), skipping"
   fi
 else
   echo "[$(date)] ${TF}: no HOMER reference, skipping HOMER"
@@ -213,8 +239,8 @@ fi
 
 # ---- 3. AME known-motif enrichment (HOCOMOCO v11 full) ---------------------
 if (( RUN_AME == 1 )); then
-  mkdir -p "${OUT}/ame/seq"
-  PEAK_FA="${OUT}/ame/seq/${TF}.peaks.fa"
+  mkdir -p "${AME_DIR}/seq"
+  PEAK_FA="${AME_DIR}/seq/${TF}.peaks.fa"
   if command -v bed2fasta >/dev/null 2>&1; then
     bed2fasta -o "${PEAK_FA}" "${BED}" "${HG38_FA}"
   else
@@ -222,9 +248,9 @@ if (( RUN_AME == 1 )); then
     bedtools getfasta -fi "${HG38_FA}" -bed "${BED}" -fo "${PEAK_FA}"
   fi
 
-  AME_ARGS=(--o "${OUT}/ame/${TF}")
+  AME_ARGS=(--oc "${AME_DIR}/${TF}")
   if [[ "${AME_CONTROL}" == "1" && -s "${BG_BED}" ]]; then
-    BG_FA="${OUT}/ame/seq/${TF}.background.fa"
+    BG_FA="${AME_DIR}/seq/${TF}.background.fa"
     if command -v bed2fasta >/dev/null 2>&1; then
       bed2fasta -o "${BG_FA}" "${BG_BED}" "${HG38_FA}"
     else
