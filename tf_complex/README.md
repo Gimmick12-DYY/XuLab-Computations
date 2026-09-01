@@ -83,11 +83,17 @@ records which TFs bind it → `work/peak_matrix.npz` (loci × TF bool) + `loci.b
 
 ### 3. `tf_complexes.py` — HOT removal → correlation → complexes
 Drops HOT loci (`--hot-frac`) + blacklist + singletons (`--min-occ`), computes the
-TF×TF similarity, clusters → complexes, and annotates A/B. Outputs:
-- `tf_similarity_{genome,A,B}.tsv` — TF×TF similarity (chosen metric).
-- **`candidate_complexes.tsv`** — clustered TF groups (complex_id, n_tfs, mean_intra_sim, members).
+TF×TF similarity **genome-wide and within A-only / B-only loci**, clusters each →
+complexes, and annotates A/B. Outputs:
+- `tf_similarity_{genome,A,B}.tsv` — TF×TF similarity. **`_A` = A-A co-binding**
+  (TFs correlated over A-compartment loci only), **`_B` = B-B** (B-only loci).
+- **`candidate_complexes.tsv`** and **`candidate_complexes_{A,B}.tsv`** — clustered TF
+  groups genome-wide and per compartment (a complex that appears in `_A` but not `_B`
+  is A-compartment-specific).
+- **`tf_ab_differential.tsv`** — per-pair `sim_A − sim_B`; **`tf_ab_top_pairs.tsv`** —
+  the most A-specific (delta>0) and B-specific (delta<0) co-binding pairs.
 - **`tf_compartment.tsv`** — per-TF A/B preference, size-normalized.
-- `complex_heatmap.png` (`--plot`), clustered.
+- `complex_heatmap{,_A,_B}.png` (`--plot`), clustered per scope.
 
 Also prints a `coverage check:` line (low-peak-TF block median — near 0 = clean).
 pearson co-occupancy is **small in absolute terms** (p95 ≈ 0.2, max ≈ 0.44 on the
@@ -126,7 +132,10 @@ HOMER hg38, HOCOMOCO meme).
   Validate by checking a known HEK293T complex comes out together.
 - The `[genome] … off-diag: median/p90/p95` diagnostic sets `CLUSTER_THRESHOLD`
   (real complexes sit in the p90–p95 tail; median should be near 0 after HOT removal).
-- Compare **A vs B** similarity matrices for compartment-specific complexes.
+- **A-A vs B-B**: `candidate_complexes_A.tsv` / `_B.tsv` are the complexes recovered
+  within each compartment; `tf_ab_top_pairs.tsv` ranks the most compartment-specific
+  co-binding pairs. Note B compartments hold far fewer TF peaks, so B-B rests on fewer
+  loci — treat weak B-only complexes cautiously.
 - **`tf_compartment.tsv`** gives each TF's A/B lean (size-normalized).
 
 Next in the checklist: for each candidate complex, test **shared/same motif**

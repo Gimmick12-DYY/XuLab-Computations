@@ -149,7 +149,7 @@ def main() -> int:
     tf_peaks = np.asarray((B > 0).sum(axis=0)).ravel()
     low_q = np.flatnonzero(tf_peaks <= np.percentile(tf_peaks, 25))
 
-    prim = None
+    Rs = {}
     for name, m in scopes.items():
         idx = np.flatnonzero(m)
         if idx.size < 50:
@@ -174,54 +174,31 @@ def main() -> int:
         # the block median, not alone.
         print(f"[{name}] coverage check: low-peak-TF block median={np.median(low_off):+.3f} "
               f"(near 0 = clean), corr(peak_count, mean_sim)={cov_r:+.3f}", flush=True)
-        if name == "genome":
-            prim = R
+        Rs[name] = R
 
-    # --- clustering -> candidate complexes ---
-    if prim is not None:
-        if args.cluster == "hierarchical":
-            D = 1.0 - prim
-            D = (D + D.T) / 2.0
-            np.fill_diagonal(D, 0.0)
-            D[D < 0] = 0.0
-            Z = linkage(squareform(D, checks=False), method="average")
-            labels_c = fcluster(Z, t=1.0 - args.cluster_threshold, criterion="distance")
-            groups = defaultdict(list)
-            for i, c in enumerate(labels_c):
-                groups[c].append(i)
-            members_list = list(groups.values())
-        else:  # threshold connected components
-            A = prim >= args.cluster_threshold
-            np.fill_diagonal(A, False)
-            parent = list(range(n_tf))
+    # --- per-scope clustering -> candidate complexes (genome + A-A + B-B) ---
+    for name, R in Rs.items():
+        members_list = cluster_members(R, n_tf, args)
+        out_name = "candidate_complexes.tsv" if name == "genome" else f"candidate_complexes_{name}.tsv"
+        ncx = write_complexes(args.out_dir / out_name, members_list, R, tfs)
+        print(f"[complexes:{name}] {ncx} candidate complexes (>=2 TFs) -> {out_name}", flush=True)
+        if args.plot:
+            _plot(R, tfs, args.out_dir, args.metric, suffix=("" if name == "genome" else f"_{name}"))
 
-            def find(x):
-                while parent[x] != x:
-                    parent[x] = parent[parent[x]]; x = parent[x]
-                return x
-            for i in range(n_tf):
-                for j in range(i + 1, n_tf):
-                    if A[i, j]:
-                        a, b = find(i), find(j)
-                        if a != b:
-                            parent[a] = b
-            groups = defaultdict(list)
-            for i in range(n_tf):
-                groups[find(i)].append(i)
-            members_list = list(groups.values())
-
-        with (args.out_dir / "candidate_complexes.tsv").open("w") as f:
-            f.write("complex_id\tn_tfs\tmean_intra_sim\tmembers\n")
-            cid = 0
-            for members in sorted(members_list, key=len, reverse=True):
-                if len(members) < 2:
-                    continue
-                cid += 1
-                s = prim[np.ix_(members, members)]
-                mic = (s.sum() - np.trace(s)) / (len(members) * (len(members) - 1))
-                f.write(f"CX{cid:03d}\t{len(members)}\t{mic:.3f}\t"
-                        f"{','.join(sorted(tfs[i] for i in members))}\n")
-        print(f"[complexes] {cid} candidate complexes (>=2 TFs)", flush=True)
+    # --- A vs B differential: which pairs co-bind MORE in A vs in B ---
+    if "A" in Rs and "B" in Rs:
+        dAB = Rs["A"] - Rs["B"]
+        write_matrix(args.out_dir / "tf_ab_differential.tsv", dAB, tfs)
+        iu = np.triu_indices(n_tf, 1)
+        d = dAB[iu]; order = np.argsort(d)
+        with (args.out_dir / "tf_ab_top_pairs.tsv").open("w") as f:
+            f.write("pair\tsim_A\tsim_B\tdelta_A_minus_B\tcompartment_pref\n")
+            for k in list(order[::-1][:25]) + list(order[:25]):   # top A-specific, then top B-specific
+                i, j = int(iu[0][k]), int(iu[1][k])
+                f.write(f"{tfs[i]}-{tfs[j]}\t{Rs['A'][i,j]:.4f}\t{Rs['B'][i,j]:.4f}\t"
+                        f"{d[k]:+.4f}\t{'A' if d[k] > 0 else 'B'}\n")
+        print(f"[A/B diff] wrote tf_ab_differential.tsv + tf_ab_top_pairs.tsv "
+              f"(A-specific pairs: delta>0, B-specific: delta<0)", flush=True)
 
     # --- per-TF A/B enrichment (size-normalized), annotation ---
     if labs is not None:
@@ -237,13 +214,56 @@ def main() -> int:
                 l2 = np.log2(fa / exp_a) if tot and fa > 0 and exp_a > 0 else float("nan")
                 f.write(f"{tf}\t{int(col.sum())}\t{pA}\t{fa:.4f}\t{exp_a:.4f}\t{l2:.4f}\n")
 
-    if args.plot and prim is not None:
-        _plot(prim, tfs, args.out_dir, args.metric)
     print(f"[done] -> {args.out_dir}")
     return 0
 
 
-def _plot(R, tfs, out_dir, metric):
+def cluster_members(R, n_tf, args):
+    """Cluster the TF x TF similarity R into groups (list of member-index lists)."""
+    if args.cluster == "hierarchical":
+        D = 1.0 - R; D = (D + D.T) / 2.0; np.fill_diagonal(D, 0.0); D[D < 0] = 0.0
+        Z = linkage(squareform(D, checks=False), method="average")
+        labels_c = fcluster(Z, t=1.0 - args.cluster_threshold, criterion="distance")
+        groups = defaultdict(list)
+        for i, c in enumerate(labels_c):
+            groups[c].append(i)
+        return list(groups.values())
+    A = R >= args.cluster_threshold
+    np.fill_diagonal(A, False)
+    parent = list(range(n_tf))
+
+    def find(x):
+        while parent[x] != x:
+            parent[x] = parent[parent[x]]; x = parent[x]
+        return x
+    for i in range(n_tf):
+        for j in range(i + 1, n_tf):
+            if A[i, j]:
+                a, b = find(i), find(j)
+                if a != b:
+                    parent[a] = b
+    groups = defaultdict(list)
+    for i in range(n_tf):
+        groups[find(i)].append(i)
+    return list(groups.values())
+
+
+def write_complexes(path, members_list, R, tfs):
+    cid = 0
+    with open(path, "w") as f:
+        f.write("complex_id\tn_tfs\tmean_intra_sim\tmembers\n")
+        for members in sorted(members_list, key=len, reverse=True):
+            if len(members) < 2:
+                continue
+            cid += 1
+            s = R[np.ix_(members, members)]
+            mic = (s.sum() - np.trace(s)) / (len(members) * (len(members) - 1))
+            f.write(f"CX{cid:03d}\t{len(members)}\t{mic:.3f}\t"
+                    f"{','.join(sorted(tfs[i] for i in members))}\n")
+    return cid
+
+
+def _plot(R, tfs, out_dir, metric, suffix=""):
     try:
         import matplotlib
         matplotlib.use("Agg")
@@ -260,9 +280,11 @@ def _plot(R, tfs, out_dir, metric):
     ax.set_xticks(range(n), [tfs[i] for i in order], rotation=90, fontsize=5)
     ax.set_yticks(range(n), [tfs[i] for i in order], fontsize=5)
     fig.colorbar(im, ax=ax, label=f"TF co-occupancy ({metric})")
-    ax.set_title(f"TF x TF co-occupancy ({metric}, HOT-removed, clustered)")
-    fig.tight_layout(); fig.savefig(out_dir / "complex_heatmap.png", dpi=150); plt.close(fig)
-    print(f"[plot] wrote {out_dir/'complex_heatmap.png'} (vmax={vmax:.2f})")
+    scope = suffix.lstrip("_") or "genome"
+    ax.set_title(f"TF x TF co-occupancy ({metric}, {scope}, HOT-removed, clustered)")
+    out = out_dir / f"complex_heatmap{suffix}.png"
+    fig.tight_layout(); fig.savefig(out, dpi=150); plt.close(fig)
+    print(f"[plot] wrote {out} (vmax={vmax:.2f})")
 
 
 if __name__ == "__main__":
