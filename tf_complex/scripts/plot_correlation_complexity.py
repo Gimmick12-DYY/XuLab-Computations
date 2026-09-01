@@ -9,7 +9,8 @@
 #
 # Inputs:
 #   --sim-tsv    a tf_similarity_{genome,A,B}.tsv (TF x TF, from tf_complexes.py)
-#   --cell-meta  data/TF1000cells.meta.csv  ("Row Labels,Count of cell"): per-TF cells
+#   --cell-meta  data/TF1000cells.meta.csv  (per-cell table with a TF column; counted
+#                per TF) or a two-column TF,count table
 #   --out        output PNG
 #
 #   python tf_complex/scripts/plot_correlation_complexity.py \
@@ -38,13 +39,29 @@ def load_sim(path):
 
 
 def load_cells(path):
-    cc = {}
+    """Accept either a TF,count table or the per-cell TF1000cells.meta.csv."""
     with open(path) as fh:
         rd = csv.reader(fh)
-        for r in rd:
-            if len(r) < 2 or not r[1].strip().isdigit():
+        rows = list(rd)
+    if not rows:
+        return {}
+    hdr = [h.strip() for h in rows[0]]
+    # per-cell table: DNA_id,cell,TF,barcode,subset -> count rows per TF
+    if "TF" in hdr:
+        i = hdr.index("TF")
+        cc = {}
+        for r in rows[1:]:
+            if len(r) <= i:
                 continue
-            cc[r[0].strip().lower()] = int(r[1])
+            tf = r[i].strip().lower()
+            if tf:
+                cc[tf] = cc.get(tf, 0) + 1
+        return cc
+    cc = {}
+    for r in rows:
+        if len(r) < 2 or not r[1].strip().isdigit():
+            continue
+        cc[r[0].strip().lower()] = int(r[1])
     return cc
 
 
@@ -56,12 +73,16 @@ def main() -> int:
     ap.add_argument("--out", type=Path, required=True)
     ap.add_argument("--title", default=None)
     ap.add_argument("--n-clusters", type=int, default=8, help="color bars by this many clusters")
+    ap.add_argument("--cell-in", type=float, default=0.38,
+                    help="inches per TF; heatmap is square at n * cell-in")
+    ap.add_argument("--font-size", type=float, default=16,
+                    help="TF name font size (pt); title/axes scale from this")
+    ap.add_argument("--dpi", type=int, default=180)
     args = ap.parse_args()
 
     import matplotlib
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
-    from matplotlib.gridspec import GridSpec
 
     tfs, R = load_sim(args.sim_tsv)
     n = len(tfs)
@@ -76,31 +97,51 @@ def main() -> int:
     Z = linkage(squareform(D, checks=False), method="average")
     clust = fcluster(Z, t=args.n_clusters, criterion="maxclust")
 
-    fig = plt.figure(figsize=(max(9, n * 0.28), max(8, n * 0.28)))
-    gs = GridSpec(1, 3, width_ratios=[0.13, 0.58, 0.29], wspace=0.09)
-    axd = fig.add_subplot(gs[0])
-    axh = fig.add_subplot(gs[1])
-    axb = fig.add_subplot(gs[2])
+    # Square heatmap cells: height = n * cell-in; width = dendrogram + heatmap + labels + bars.
+    # The old square figsize + aspect='auto' stretched the heatmap into tall rectangles.
+    fs = args.font_size
+    heat_in = n * args.cell_in
+    dend_in, gap_in, bar_in = 1.8, 2.2, 4.4
+    left_in, right_in, bot_in, top_in = 0.35, 0.5, 2.8, 1.0
+    fig_w = left_in + dend_in + heat_in + gap_in + bar_in + right_in
+    fig_h = bot_in + heat_in + top_in
+    fig = plt.figure(figsize=(fig_w, fig_h))
 
-    # dendrogram (left); leaves[0] is at the BOTTOM -> use origin='lower' to align
+    def box(x, w):
+        return [x / fig_w, bot_in / fig_h, w / fig_w, heat_in / fig_h]
+
+    x = left_in
+    axd = fig.add_axes(box(x, dend_in)); x += dend_in
+    axh = fig.add_axes(box(x, heat_in)); x += heat_in + gap_in
+    axb = fig.add_axes(box(x, bar_in))
+    cax = fig.add_axes([left_in / fig_w, 0.35 / fig_h, 2.2 / fig_w, 0.38 / fig_h])
+
+    # dendrogram (left); leaves[0] is at the BOTTOM -> origin='lower' on the heatmap
     dn = dendrogram(Z, orientation="left", ax=axd, no_labels=True,
                     link_color_func=lambda k: "#555555")
     order = dn["leaves"]
     axd.set_xticks([]); axd.set_yticks([])
+    # scipy left-dendrogram y is 5, 15, ..., 10n-5; keep that scale so leaves line up
+    axd.set_ylim(0, 10 * n)
     for s in axd.spines.values():
         s.set_visible(False)
 
     Ro = R[np.ix_(order, order)]
     off = Ro[~np.eye(n, dtype=bool)]
     vmax = max(0.05, np.nanpercentile(np.abs(off), 99))
-    im = axh.imshow(Ro, aspect="auto", origin="lower", cmap="RdBu_r", vmin=-vmax, vmax=vmax)
-    axh.set_xticks(range(n)); axh.set_xticklabels([tfs[i].upper() for i in order], rotation=90, fontsize=6)
-    axh.set_yticks([]); axh.tick_params(length=0)
-    cax = fig.add_axes([0.055, 0.12, 0.013, 0.16])
-    fig.colorbar(im, cax=cax, label="Pearson r")
+    im = axh.imshow(Ro, aspect="equal", origin="lower", cmap="RdBu_r",
+                    vmin=-vmax, vmax=vmax, interpolation="nearest")
+    axh.set_xlim(-0.5, n - 0.5); axh.set_ylim(-0.5, n - 0.5)
+    axh.set_xticks(range(n))
+    axh.set_xticklabels([tfs[i].upper() for i in order], rotation=90, fontsize=fs)
+    axh.set_yticks([])
+    axh.tick_params(length=0, pad=3)
+    cb = fig.colorbar(im, cax=cax, orientation="horizontal")
+    cb.set_label("Pearson r", fontsize=fs + 1)
+    cb.ax.tick_params(labelsize=fs)
+    cax.xaxis.set_ticks_position("bottom")
 
-    # cell-count bars (right), same bottom-to-top order, log x, colored by cluster.
-    # TF labels sit on the LEFT of the bar panel = in the gap between heatmap and bars.
+    # cell-count bars (right), same bottom-to-top order, log x, colored by cluster
     cmap = plt.get_cmap("tab10")
     y = np.arange(n)
     bar_counts = counts[order]
@@ -109,18 +150,20 @@ def main() -> int:
     axb.set_xscale("log")
     axb.set_ylim(-0.5, n - 0.5)
     axb.set_yticks(range(n))
-    axb.set_yticklabels([tfs[i].upper() for i in order], fontsize=6)
-    axb.tick_params(axis="y", length=0)
-    axb.set_xlabel("Number of cells")
+    axb.set_yticklabels([tfs[i].upper() for i in order], fontsize=fs)
+    axb.tick_params(axis="y", length=0, pad=4)
+    axb.tick_params(axis="x", labelsize=fs)
+    axb.set_xlabel("Number of cells", fontsize=fs + 1)
     axb.grid(axis="x", ls=":", alpha=0.4)
     for s in ("top", "right", "left"):
         axb.spines[s].set_visible(False)
 
     title = args.title or f"TF-TF correlation vs cell count ({args.sim_tsv.stem})"
-    fig.suptitle(title, y=0.995, fontsize=11)
-    fig.savefig(args.out, dpi=160, bbox_inches="tight")
+    fig.suptitle(title, y=1.0 - 0.18 / fig_h, fontsize=fs + 5)
+    args.out.parent.mkdir(parents=True, exist_ok=True)
+    fig.savefig(args.out, dpi=args.dpi)
     plt.close(fig)
-    print(f"[done] wrote {args.out}  (vmax={vmax:.2f}, {n} TFs)")
+    print(f"[done] wrote {args.out}  (vmax={vmax:.2f}, {n} TFs, {fig_w:.1f}x{fig_h:.1f} in)")
     return 0
 
 
