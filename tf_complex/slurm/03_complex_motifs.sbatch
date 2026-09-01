@@ -77,14 +77,16 @@ if command -v findMotifsGenome.pl >/dev/null 2>&1; then
 else echo "[warn] findMotifsGenome.pl not on PATH; skipping HOMER"; fi
 
 # ---- AME (HOCOMOCO v11 full) ----------------------------------------------
+# fasta lives OUTSIDE the AME output dir, and we use --oc (overwrite): `ame --o <dir>`
+# aborts if <dir> already exists, so pre-creating ame/ (or a rerun) would silently fail.
 if command -v ame >/dev/null 2>&1 && [[ -s "${HOCOMOCO_MEME}" ]]; then
-  mkdir -p "${OUT}/ame/seq"
-  FG_FA="${OUT}/ame/seq/${CID}.fa"
+  mkdir -p "${OUT}/seq"
+  FG_FA="${OUT}/seq/${CID}.fa"
   tofasta() { if command -v bed2fasta >/dev/null 2>&1; then bed2fasta -o "$2" "$1" "${HG38_FA}"; else bedtools getfasta -fi "${HG38_FA}" -bed "$1" -fo "$2"; fi; }
   tofasta "${FG}" "${FG_FA}"
-  AME_ARGS=(--o "${OUT}/ame")
+  AME_ARGS=(--oc "${OUT}/ame")
   if [[ "${USE_GENOME_BG}" != "1" ]]; then
-    BG_FA="${OUT}/ame/seq/${CID}.bg.fa"; tofasta "${BG}" "${BG_FA}"; AME_ARGS+=(--control "${BG_FA}")
+    BG_FA="${OUT}/seq/${CID}.bg.fa"; tofasta "${BG}" "${BG_FA}"; AME_ARGS+=(--control "${BG_FA}")
   fi
   ame "${AME_ARGS[@]}" "${FG_FA}" "${HOCOMOCO_MEME}"
 else echo "[warn] ame/HOCOMOCO not available; skipping AME"; fi

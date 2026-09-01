@@ -152,7 +152,14 @@ fi
 # Every analyzed TF is peak-called at MACS3 q<MACS_Q first. Reuse is keyed on the
 # MACS narrowPeak (produced ONLY by this q<0.05 caller), never on the final BED --
 # so a stale BED from any other method is always regenerated, not reused.
+# FORCE_PEAKS=1 -> ignore any cached peaks and re-call (needed when you change MACS_Q
+# to recall MORE/fewer peaks: the narrowPeak name is q-independent, so a looser q would
+# otherwise reuse the old q<0.05 set).
 NARROW="${PEAK_WORK}/${TF}_qcut_peaks.narrowPeak"
+if [[ "${FORCE_PEAKS:-0}" == "1" ]]; then
+  echo "[$(date)] ${TF}: FORCE_PEAKS=1 -> re-calling (clearing ${NARROW}, ${BED})"
+  rm -f "${NARROW}" "${BED}"
+fi
 if [[ -s "${NARROW}" && -s "${BED}" ]]; then
   echo "[$(date)] ${TF}: reuse existing q<${MACS_Q} peaks (${NARROW})"
 else
