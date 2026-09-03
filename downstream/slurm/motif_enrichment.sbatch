@@ -223,11 +223,14 @@ echo "[$(date)] ${TF}: ${N_PEAKS} peaks -> enrichment"
 if (( RUN_HOMER == 1 )); then
   if [[ ! -s "${HOMER_OUT}/homerResults.html" ]]; then
     echo "[$(date)] ${TF}: HOMER findMotifsGenome.pl (bg=${BG_MODE:-legacy})"
-    HOMER_ARGS=(-p "${THREADS}" -size given)
     if [[ "${HOMER_BG}" == "1" && -s "${BG_BED}" ]]; then
-      HOMER_ARGS+=(-bg "${BG_BED}")
+      # Custom -bg: the foreground MACS peaks (~275bp) and the OCR background (~1kb bins)
+      # MUST be equalized in width. With -size given the wider background inflates every
+      # motif's background%, so the TF's own (long, GC-rich) motif looks DEPLETED -> P=1.0
+      # (a length artifact, NOT real depletion). -size <N> re-centers BOTH fg and bg to N bp.
+      HOMER_ARGS=(-p "${THREADS}" -size "${HOMER_BG_SIZE:-200}" -bg "${BG_BED}")
     else
-      HOMER_ARGS+=(-useNewBg)
+      HOMER_ARGS=(-p "${THREADS}" -size given -useNewBg)
     fi
     findMotifsGenome.pl "${BED}" "${HOMER_GENOME}" "${HOMER_OUT}/" "${HOMER_ARGS[@]}"
   else
@@ -241,20 +244,26 @@ fi
 if (( RUN_AME == 1 )); then
   mkdir -p "${AME_DIR}/seq"
   PEAK_FA="${AME_DIR}/seq/${TF}.peaks.fa"
-  if command -v bed2fasta >/dev/null 2>&1; then
-    bed2fasta -o "${PEAK_FA}" "${BED}" "${HG38_FA}"
-  else
-    echo "[$(date)] bed2fasta not found; using bedtools getfasta"
-    bedtools getfasta -fi "${HG38_FA}" -bed "${BED}" -fo "${PEAK_FA}"
+  # When a custom --control is used, foreground (~275bp) and OCR background (~1kb) MUST be
+  # equalized in width or AME's per-sequence motif frequency is length-biased (same bug as
+  # HOMER). Re-center BOTH to AME_BG_SIZE bp; with the shuffled control (no --control) the
+  # peaks are used as-is (shuffle preserves length, so no fg/bg mismatch).
+  tofa() { if command -v bed2fasta >/dev/null 2>&1; then bed2fasta -o "$2" "$1" "${HG38_FA}"; else bedtools getfasta -fi "${HG38_FA}" -bed "$1" -fo "$2"; fi; }
+  resize_bed() { awk -v w="${AME_BG_SIZE:-200}" 'BEGIN{OFS="\t"}{c=int(($2+$3)/2); s=c-int(w/2); if(s<0)s=0; print $1,s,c+int(w/2),$4,$5,$6}' "$1"; }
+  PEAK_SRC="${BED}"
+  if [[ "${AME_CONTROL}" == "1" && -s "${BG_BED}" ]]; then
+    PEAK_SRC="${AME_DIR}/seq/${TF}.peaks_win.bed"; resize_bed "${BED}" > "${PEAK_SRC}"
   fi
+  tofa "${PEAK_SRC}" "${PEAK_FA}"
 
   AME_ARGS=(--oc "${AME_DIR}/${TF}")
   if [[ "${AME_CONTROL}" == "1" && -s "${BG_BED}" ]]; then
     BG_FA="${AME_DIR}/seq/${TF}.background.fa"
+    BG_WIN="${AME_DIR}/seq/${TF}.background_win.bed"; resize_bed "${BG_BED}" > "${BG_WIN}"
     if command -v bed2fasta >/dev/null 2>&1; then
-      bed2fasta -o "${BG_FA}" "${BG_BED}" "${HG38_FA}"
+      bed2fasta -o "${BG_FA}" "${BG_WIN}" "${HG38_FA}"
     else
-      bedtools getfasta -fi "${HG38_FA}" -bed "${BG_BED}" -fo "${BG_FA}"
+      bedtools getfasta -fi "${HG38_FA}" -bed "${BG_WIN}" -fo "${BG_FA}"
     fi
     AME_ARGS+=(--control "${BG_FA}")
   fi
