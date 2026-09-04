@@ -23,6 +23,10 @@
 #   BG_MODE=genome TFS="nrf1 ctcf e2f3" sbatch --array=0-2 downstream/slurm/motif_enrichment.sbatch
 #   BG_MODE=ocr    TFS="nrf1 ctcf e2f3" sbatch --array=0-2 downstream/slurm/motif_enrichment.sbatch
 #
+# ALL panel TFs (HOMER+AME for every TF, manifest bypassed):
+#   N=$(ALL_TFS=1 LIST=1 bash downstream/slurm/motif_enrichment.sbatch | grep -vc '^#')
+#   ALL_TFS=1 sbatch --array=0-$((N-1)) downstream/slurm/motif_enrichment.sbatch
+#
 # Peaks are called at MACS3 q<0.05 on the imputed pseudobulk (call_imputed_peaks.py,
 # reusing peak_coverage.py -- the project peak-calling standard), then HOMER + AME.
 #
@@ -60,20 +64,36 @@ tf_gate() {
     END { if(!f) print "-1 -1" }
   ' "${MANIFEST}"
 }
+# ALL_TFS=1: every panel TF with an imputed matrix. HOMER (de novo + known) and AME (vs
+# the whole HOCOMOCO db) both run WITHOUT a per-TF reference -- the manifest only gated
+# which TFs to skip and which own-motif to validate. So ALL_TFS bypasses the gate and
+# runs both steps for everyone. (Own-motif validation still needs a manifest/DB entry.)
+discover_all_tfs() {
+  for d in "${ROOT_DIR}"/unified/work/*/impute; do
+    [[ -f "${d}/matrix_csr.npz" ]] && basename "$(dirname "${d}")"
+  done | sort -u
+}
 
 if [[ "${LIST:-0}" == "1" ]]; then
-  eligible_tfs
-  echo "# eligible=$(eligible_tfs | wc -l) (HOMER where homer=yes; AME where hocomoco_full present)" >&2
+  if [[ "${ALL_TFS:-0}" == "1" ]]; then
+    discover_all_tfs
+    echo "# ALL_TFS=1: $(discover_all_tfs | wc -l) panel TFs (HOMER+AME both, manifest bypassed)" >&2
+  else
+    eligible_tfs
+    echo "# eligible=$(eligible_tfs | wc -l) (HOMER where homer=yes; AME where hocomoco_full present)" >&2
+  fi
   exit 0
 fi
 
 # ---- TF for this array task ------------------------------------------------
 if [[ -n "${TFS:-}" ]]; then
-  read -r -a TF_ARR <<< "${TFS}"           # explicit list (still gated by manifest)
+  read -r -a TF_ARR <<< "${TFS}"           # explicit list
+elif [[ "${ALL_TFS:-0}" == "1" ]]; then
+  mapfile -t TF_ARR < <(discover_all_tfs)   # every panel TF
 else
-  mapfile -t TF_ARR < <(eligible_tfs)
+  mapfile -t TF_ARR < <(eligible_tfs)       # manifest-gated subset
 fi
-(( ${#TF_ARR[@]} > 0 )) || { echo "no eligible TFs in ${MANIFEST}" >&2; exit 1; }
+(( ${#TF_ARR[@]} > 0 )) || { echo "no TFs to run (ALL_TFS=${ALL_TFS:-0}, manifest ${MANIFEST})" >&2; exit 1; }
 IDX="${SLURM_ARRAY_TASK_ID:-0}"
 if (( IDX < 0 || IDX >= ${#TF_ARR[@]} )); then
   echo "array index ${IDX} out of range (n=${#TF_ARR[@]})" >&2
@@ -81,12 +101,16 @@ if (( IDX < 0 || IDX >= ${#TF_ARR[@]} )); then
 fi
 TF="${TF_ARR[$IDX]}"
 
-read -r RUN_HOMER RUN_AME < <(tf_gate "${TF}")
-if [[ "${RUN_HOMER}" == "-1" ]]; then
-  echo "[skip] ${TF} not in manifest" >&2; exit 0
-fi
-if (( RUN_HOMER == 0 && RUN_AME == 0 )); then
-  echo "[skip] ${TF}: no reference motif" >&2; exit 0
+if [[ "${ALL_TFS:-0}" == "1" ]]; then
+  RUN_HOMER=1; RUN_AME=1                     # run both for every TF, no reference needed
+else
+  read -r RUN_HOMER RUN_AME < <(tf_gate "${TF}")
+  if [[ "${RUN_HOMER}" == "-1" ]]; then
+    echo "[skip] ${TF} not in manifest" >&2; exit 0
+  fi
+  if (( RUN_HOMER == 0 && RUN_AME == 0 )); then
+    echo "[skip] ${TF}: no reference motif" >&2; exit 0
+  fi
 fi
 
 # ---- paths / knobs ---------------------------------------------------------
