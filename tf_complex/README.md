@@ -134,6 +134,7 @@ complexes with fg+bg restricted to that compartment (does an A-A complex share a
 | `MIN_OCC` | `2` | keep loci bound by ≥ this many TFs |
 | `CLUSTER` | `hierarchical` | `hierarchical` (avg-linkage cut) \| `threshold` (connected comps) |
 | `CLUSTER_THRESHOLD` | `0.2` | similarity cut (pearson is small in abs terms); set near the printed **p95** |
+| `SPQN` | `0` | `1` = Spatial Quantile Normalization (Wang/Hicks/Hansen 2022) — removes the cell-count/complexity confound (correlation ∝ TF binding degree). Writes `spqn_similarity_*.tsv`, clusters+plots the corrected matrix. **Compresses the scale → lower `CLUSTER_THRESHOLD` to the printed post-SpQN p95.** Knobs `SPQN_NGROUP`/`SPQN_W`/`SPQN_REF_FRAC`. |
 | `REBUILD` | `1` | `0` = reuse `peak_matrix.npz` |
 | `MIN_FRAC` (step 4) | `0.5` | a locus is a complex's "co-bound" if ≥ this fraction of members bind it |
 

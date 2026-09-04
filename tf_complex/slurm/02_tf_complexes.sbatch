@@ -32,6 +32,10 @@ HOT_FRAC="${HOT_FRAC:-0.5}"             # drop loci bound by > this fraction of 
 MIN_OCC="${MIN_OCC:-2}"                 # keep loci bound by >= this many TFs
 CLUSTER="${CLUSTER:-hierarchical}"      # hierarchical | threshold
 CLUSTER_THRESHOLD="${CLUSTER_THRESHOLD:-0.2}"   # pearson co-occupancy is small in abs terms; set near printed p95
+SPQN="${SPQN:-0}"                       # 1 = Spatial Quantile Normalization (remove the cell-count/
+                                        # complexity confound). NOTE SpQN compresses the scale ->
+                                        # lower CLUSTER_THRESHOLD to the printed post-SpQN p95.
+SPQN_NGROUP="${SPQN_NGROUP:-10}"; SPQN_W="${SPQN_W:-20}"; SPQN_REF_FRAC="${SPQN_REF_FRAC:-0.8}"
 REBUILD="${REBUILD:-1}"                 # 0 = reuse peak_matrix.npz
 
 CONDA_ENV="${CONDA_ENV:-tf_complex}"
@@ -53,10 +57,11 @@ BL_ARG=()
 
 echo "[$(date)] tf_complexes (metric=${METRIC}, hot_frac=${HOT_FRAC})"
 CELL_META="${CELL_META:-${XULAB}/data/TF1000cells.meta.csv}"   # per-TF cell counts for the complexity-format heatmap
+SPQN_ARG=(); [[ "${SPQN}" == "1" ]] && SPQN_ARG=(--spqn --spqn-ngroup "${SPQN_NGROUP}" --spqn-w "${SPQN_W}" --spqn-ref-frac "${SPQN_REF_FRAC}")
 python "${TFC}/scripts/tf_complexes.py" \
   --matrix-dir "${MATRIX_DIR}" --out-dir "${RESULTS}" \
   --metric "${METRIC}" --cell-meta "${CELL_META}" \
   --hot-frac "${HOT_FRAC}" --min-occ "${MIN_OCC}" \
   --cluster "${CLUSTER}" --cluster-threshold "${CLUSTER_THRESHOLD}" \
-  "${BL_ARG[@]}" --plot
+  "${SPQN_ARG[@]}" "${BL_ARG[@]}" --plot
 echo "[$(date)] done -> ${RESULTS}  (corr_complexity_{genome,A,B}.png = complexity format)"

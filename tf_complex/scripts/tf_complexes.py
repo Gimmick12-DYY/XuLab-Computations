@@ -80,6 +80,51 @@ def pearson_similarity(Bkeep):
     return np.corrcoef(Bkeep.astype(np.float64).toarray().T)   # TF x TF phi
 
 
+def spqn(R, feat_mean, n_group=10, w=20, ref_frac=0.8):
+    """Spatial Quantile Normalization (Wang, Hicks & Hansen 2022, PLoS Comput Biol).
+
+    Removes the mean-correlation bias: correlations inflated for high-signal features.
+    Order features by feat_mean; partition the correlation matrix into an n_group x
+    n_group grid of DISJOINT submatrices X_ij, each embedded in a larger OVERLAPPING
+    window Y_ij (size w, for a stable local-distribution estimate); quantile-normalize
+    each bin to a high-signal REFERENCE bin's distribution:
+        X~_ij = q_ref( F_emp(Y_ij)(X_ij) ).
+    Returns the corrected (symmetric, diag=1) matrix in the original TF order.
+    """
+    n = R.shape[0]
+    w = min(w, n)
+    n_group = max(2, min(n_group, n - w + 1))
+    order = np.argsort(feat_mean)                          # ascending signal
+    Ro = R[np.ix_(order, order)].astype(float)
+    dstep = (n - w) / (n_group - 1) if n_group > 1 else 0
+    ystart = [int(round(k * dstep)) for k in range(n_group)]   # overlapping Y windows
+    xbnd = np.linspace(0, n, n_group + 1).astype(int)          # disjoint X partition
+
+    def yvals(i, j):
+        sub = Ro[ystart[i]:ystart[i] + w, ystart[j]:ystart[j] + w]
+        mask = ~np.eye(*sub.shape, dtype=bool) if ystart[i] == ystart[j] else np.ones(sub.shape, bool)
+        return np.sort(sub[mask].ravel())
+
+    r = int(round(ref_frac * (n_group - 1)))
+    ref = yvals(r, r)
+    refq = np.linspace(0, 1, len(ref)) if len(ref) else np.array([0.0, 1.0])
+    out = Ro.copy()
+    for i in range(n_group):
+        for j in range(n_group):
+            Ys = yvals(i, j)
+            if len(Ys) == 0:
+                continue
+            xi, xj = slice(xbnd[i], xbnd[i + 1]), slice(xbnd[j], xbnd[j + 1])
+            block = Ro[xi, xj]
+            q = np.searchsorted(Ys, block.ravel(), side="right") / len(Ys)   # CDF within Y
+            out[xi, xj] = np.interp(q, refq, ref).reshape(block.shape)
+    out = (out + out.T) / 2.0
+    inv = np.argsort(order)
+    out = out[np.ix_(inv, inv)]                            # back to original TF order
+    np.fill_diagonal(out, 1.0)
+    return out
+
+
 def write_matrix(path, M, labels):
     with open(path, "w") as f:
         f.write("TF\t" + "\t".join(labels) + "\n")
@@ -115,6 +160,15 @@ def main() -> int:
                     help="threshold mode: edge if similarity >= this. hierarchical mode: distance "
                          "cut = 1 - this. pearson co-occupancy is small in abs terms (~0.1-0.4); "
                          "set near the printed p95.")
+    ap.add_argument("--spqn", action="store_true",
+                    help="apply Spatial Quantile Normalization (Wang/Hicks/Hansen 2022) to remove "
+                         "the mean-correlation bias (correlation depending on a TF's binding degree "
+                         "= the cell-count/complexity confound). Clusters+plots the corrected matrix; "
+                         "also writes spqn_similarity_{scope}.tsv.")
+    ap.add_argument("--spqn-ngroup", type=int, default=10, help="SpQN: number of signal bins")
+    ap.add_argument("--spqn-w", type=int, default=20, help="SpQN: overlapping window size (features)")
+    ap.add_argument("--spqn-ref-frac", type=float, default=0.8,
+                    help="SpQN: reference bin position (0-1; high = high-signal reference)")
     ap.add_argument("--plot", action="store_true")
     ap.add_argument("--cell-meta", type=Path,
                     default=Path(__file__).resolve().parents[2] / "data" / "TF1000cells.meta.csv",
@@ -165,19 +219,29 @@ def main() -> int:
         # keep all TFs; corr of a zero-peak-in-scope TF -> nan -> 0
         R = np.nan_to_num(similarity(Bk, args.metric))
         write_matrix(args.out_dir / f"tf_similarity_{name}.tsv", R, tfs)
+
+        def cov_of(M):  # corr(per-TF binding degree, per-TF mean correlation) = the confound
+            ms = (M.sum(axis=1) - np.diag(M)) / (n_tf - 1)
+            return np.corrcoef(tf_peaks, ms)[0, 1] if n_tf > 2 else float("nan")
+        cov_r = cov_of(R)
+
+        # SpQN (Wang/Hicks/Hansen 2022): remove the mean-correlation bias -- correlation
+        # magnitude depending on a TF's binding degree (the cell-count/complexity confound).
+        if args.spqn:
+            deg = np.asarray(Bk.sum(axis=0)).ravel().astype(float)   # per-TF degree in this scope
+            Rn = spqn(R, deg, args.spqn_ngroup, args.spqn_w, args.spqn_ref_frac)
+            write_matrix(args.out_dir / f"spqn_similarity_{name}.tsv", Rn, tfs)
+            print(f"[{name}] SpQN: corr(degree, mean_corr) {cov_r:+.3f} -> {cov_of(Rn):+.3f} "
+                  f"(n_group={args.spqn_ngroup}, w={args.spqn_w})", flush=True)
+            R = Rn   # cluster + plot the corrected matrix
+            cov_r = cov_of(R)
+
         off = R[~np.eye(n_tf, dtype=bool)]
-        # coverage-artifact check: similarity among low-peak TFs, and corr(peak_count, mean_sim)
         low_sub = R[np.ix_(low_q, low_q)]
         low_off = low_sub[~np.eye(len(low_q), dtype=bool)] if len(low_q) > 1 else np.array([0.0])
-        msim = (R.sum(axis=1) - np.diag(R)) / (n_tf - 1)
-        cov_r = np.corrcoef(tf_peaks, msim)[0, 1] if n_tf > 2 else float("nan")
-        print(f"[{name}] {idx.size:,} loci  {args.metric} off-diag: median={np.median(off):.3f} "
-              f"p90={np.percentile(off,90):.3f} p95={np.percentile(off,95):.3f} "
-              f"max={np.nanmax(off):.3f}", flush=True)
-        # low-peak-TF block median ~0 = no depth artifact; a large POSITIVE value means
-        # low-peak TFs cluster trivially (the PCA failure mode). cov_r can be nonzero
-        # legitimately if a real complex happens to be depth-correlated, so read it with
-        # the block median, not alone.
+        print(f"[{name}] {idx.size:,} loci  {args.metric}{'+spqn' if args.spqn else ''} off-diag: "
+              f"median={np.median(off):.3f} p90={np.percentile(off,90):.3f} "
+              f"p95={np.percentile(off,95):.3f} max={np.nanmax(off):.3f}", flush=True)
         print(f"[{name}] coverage check: low-peak-TF block median={np.median(low_off):+.3f} "
               f"(near 0 = clean), corr(peak_count, mean_sim)={cov_r:+.3f}", flush=True)
         Rs[name] = R
@@ -189,9 +253,12 @@ def main() -> int:
         ncx = write_complexes(args.out_dir / out_name, members_list, R, tfs)
         print(f"[complexes:{name}] {ncx} candidate complexes (>=2 TFs) -> {out_name}", flush=True)
         if args.plot:
-            plot_complexity(args.out_dir / f"tf_similarity_{name}.tsv", args.cell_meta,
+            sim_file = args.out_dir / (f"spqn_similarity_{name}.tsv" if args.spqn
+                                       else f"tf_similarity_{name}.tsv")
+            tag = f"{args.metric}+SpQN" if args.spqn else args.metric
+            plot_complexity(sim_file, args.cell_meta,
                             args.out_dir / f"corr_complexity_{name}.png",
-                            f"TF-TF {args.metric} co-occupancy ({name}) vs cell count",
+                            f"TF-TF {tag} co-occupancy ({name}) vs cell count",
                             R, tfs, args.metric, name)
 
     # --- A vs B differential: which pairs co-bind MORE in A vs in B ---
