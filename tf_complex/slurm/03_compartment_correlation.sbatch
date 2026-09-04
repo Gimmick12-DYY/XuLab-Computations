@@ -23,11 +23,11 @@ TFC="${XULAB}/tf_complex"
 WORK_ROOT="${WORK_ROOT:-${XULAB}/unified/work}"
 DOMAINS_BED="${DOMAINS_BED:-${XULAB}/hic/work/compartments/compartments_25000.domains.bed}"
 MATRIX_DIR="${MATRIX_DIR:-${TFC}/work/compartment}"
-RESULTS="${RESULTS:-${TFC}/results_compartment}"
 SOURCE="${SOURCE:-raw}"                  # raw (mm) | imputed
 INPUT="${INPUT:-cpm}"                    # cpm (per-TF read fraction, default) | count
+RESULTS="${RESULTS:-${TFC}/results_compartment_${INPUT}}"   # _cpm and _count coexist
 CELL_META="${CELL_META:-${XULAB}/data/TF1000cells.meta.csv}"
-CLUSTER_THRESHOLD="${CLUSTER_THRESHOLD:-0}"   # >0 also clusters -> candidate_complexes
+CLUSTER_THRESHOLD="${CLUSTER_THRESHOLD:-0.3}"   # cluster -> candidate_complexes; set near printed p95
 REBUILD="${REBUILD:-1}"
 CONDA_ENV="${CONDA_ENV:-tf_complex}"
 
