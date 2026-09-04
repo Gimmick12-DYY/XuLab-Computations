@@ -41,8 +41,13 @@ def main() -> int:
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--matrix-dir", type=Path, required=True, help="build_compartment_matrix.py output")
     ap.add_argument("--out-dir", type=Path, required=True)
-    ap.add_argument("--input", choices=["cpm", "count"], default="cpm",
-                    help="cpm = per-TF CPM read fraction (default) | count = raw counts")
+    ap.add_argument("--input", choices=["fraction", "cpm", "count"], default="fraction",
+                    help="fraction (default) = per-DOMAIN fraction: each domain's reads / that "
+                         "domain's total across ALL TFs (the domain's TF composition). Removes BOTH "
+                         "domain size AND domain activity -> the correlation reflects TF-specific "
+                         "co-binding, not 'this domain is big/active' (which makes every TF pair "
+                         "correlate ~0.4). cpm = per-TF CPM (does NOT remove domain activity). "
+                         "count = raw.")
     ap.add_argument("--size-normalize", action="store_true", default=True,
                     help="divide each domain's reads by its size (reads/bp) BEFORE correlating. "
                          "REQUIRED: without it the correlation is dominated by domain size (a big "
@@ -71,16 +76,24 @@ def main() -> int:
 
     X = np.asarray(M.todense())                          # domains x TFs (counts)
     tf_total = X.sum(axis=0)                              # per-TF library size (for confound diag)
-    if args.size_normalize:                              # reads/bp -> remove domain-size domination
+    if args.size_normalize:                              # reads/bp -> remove domain-size (also cancels under 'fraction')
         X = X / np.where(bp > 0, bp, 1.0)[:, None]
-        print("[size] normalized reads by domain size (reads/bp)", flush=True)
-    if args.input == "cpm":
+    if args.input == "fraction":
+        dt = X.sum(axis=1, keepdims=True); dt[dt == 0] = 1.0
+        X = X / dt                                        # per-DOMAIN fraction (TF composition of each domain)
+        if args.log1p:
+            X = np.log1p(X * 1e4)
+        print(f"[input] per-domain FRACTION{'+log1p' if args.log1p else ''} "
+              "(removes domain size + activity)", flush=True)
+    elif args.input == "cpm":
         tot = X.sum(axis=0, keepdims=True); tot[tot == 0] = 1.0
         X = X / tot * 1e6                                 # per-TF CPM fraction
         if args.log1p:
             X = np.log1p(X)
-        print(f"[input] CPM{'+log1p' if args.log1p else ''} fraction per TF", flush=True)
+        print(f"[input] per-TF CPM{'+log1p' if args.log1p else ''}", flush=True)
     else:
+        if args.log1p:
+            X = np.log1p(X)
         print("[input] raw counts", flush=True)
 
     args.out_dir.mkdir(parents=True, exist_ok=True)
