@@ -27,7 +27,9 @@ RESULTS="${RESULTS:-${TFC}/results${SUF}}"
 AB_BED="${AB_BED:-${XULAB}/hic/work/compartments/compartments_25000.AB.bed}"
 BLACKLIST="${BLACKLIST:-${TFC}/ref/hg38-blacklist.v2.bed}"   # optional; skipped if missing
 
-METRIC="${METRIC:-pearson}"             # pearson (phi, default) | jaccard
+METRIC="${METRIC:-pearson}"             # pearson (phi, default) | jaccard  (binary signal only)
+SIGNAL="${SIGNAL:-cpm}"                 # cpm (CPM-normalized signalValue; de-confounds depth at the
+                                        # input, default) | binary (peak presence 0/1)
 HOT_FRAC="${HOT_FRAC:-0.5}"             # drop loci bound by > this fraction of TFs (HOT artifacts)
 MIN_OCC="${MIN_OCC:-2}"                 # keep loci bound by >= this many TFs
 CLUSTER="${CLUSTER:-hierarchical}"      # hierarchical | threshold
@@ -44,8 +46,10 @@ conda activate "${CONDA_ENV}"
 [[ -s "${AB_BED}" ]] || { echo "missing A/B calls: ${AB_BED}" >&2; exit 1; }
 mkdir -p "${MATRIX_DIR}" "${RESULTS}"
 
-if [[ "${REBUILD}" == "1" || ! -s "${MATRIX_DIR}/peak_matrix.npz" ]]; then
-  echo "[$(date)] build_peak_matrix (union per-TF peaks -> loci x TF)"
+# CPM needs signal_matrix.npz (only produced by the current builder) -> force a rebuild if absent
+NEED_SIG=0; [[ "${SIGNAL}" == "cpm" && ! -s "${MATRIX_DIR}/signal_matrix.npz" ]] && NEED_SIG=1
+if [[ "${REBUILD}" == "1" || ! -s "${MATRIX_DIR}/peak_matrix.npz" || "${NEED_SIG}" == "1" ]]; then
+  echo "[$(date)] build_peak_matrix (union per-TF peaks -> loci x TF + signal_matrix)"
   python "${TFC}/scripts/build_peak_matrix.py" \
     --peaks-dir "${PEAKS_DIR}" --out-dir "${MATRIX_DIR}" --ab-bed "${AB_BED}"
 else
@@ -60,7 +64,7 @@ CELL_META="${CELL_META:-${XULAB}/data/TF1000cells.meta.csv}"   # per-TF cell cou
 SPQN_ARG=(); [[ "${SPQN}" == "1" ]] && SPQN_ARG=(--spqn --spqn-ngroup "${SPQN_NGROUP}" --spqn-w "${SPQN_W}" --spqn-ref-frac "${SPQN_REF_FRAC}")
 python "${TFC}/scripts/tf_complexes.py" \
   --matrix-dir "${MATRIX_DIR}" --out-dir "${RESULTS}" \
-  --metric "${METRIC}" --cell-meta "${CELL_META}" \
+  --metric "${METRIC}" --signal "${SIGNAL}" --cell-meta "${CELL_META}" \
   --hot-frac "${HOT_FRAC}" --min-occ "${MIN_OCC}" \
   --cluster "${CLUSTER}" --cluster-threshold "${CLUSTER_THRESHOLD}" \
   "${SPQN_ARG[@]}" "${BL_ARG[@]}" --plot

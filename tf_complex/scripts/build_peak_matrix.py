@@ -31,30 +31,37 @@ def read_bed(path: Path):
         if not ln.strip() or ln.startswith(("#", "track", "browser")):
             continue
         p = ln.split("\t")
-        out.append((p[0], int(p[1]), int(p[2])))
+        sig = 0.0
+        if len(p) > 4:
+            try:
+                sig = float(p[4])                # MACS signalValue (peak intensity)
+            except ValueError:
+                sig = 0.0
+        out.append((p[0], int(p[1]), int(p[2]), sig))
     return out
 
 
 def merge_to_loci(intervals):
-    """intervals: list of (chrom, start, end, tf_idx). Returns (loci, memberships).
+    """intervals: list of (chrom, start, end, tf_idx, signal). Returns (loci, members, sig).
 
-    loci: list of (chrom, start, end); memberships: list of set(tf_idx). Overlapping
-    (or book-ended) intervals from ANY TF merge into one locus.
+    loci: list of (chrom, start, end); members: list of set(tf_idx); sig: list of
+    {tf_idx: max signalValue}. Overlapping intervals from ANY TF merge into one locus;
+    per (locus, TF) we keep the strongest peak's signalValue (for CPM-normalized signal).
     """
     intervals = sorted(intervals, key=lambda x: (x[0], x[1], x[2]))
-    loci, members = [], []
+    loci, members, sigs = [], [], []
     cc = cs = ce = None
-    cur = set()
-    for c, s, e, t in intervals:
+    cur = set(); cursig = {}
+    for c, s, e, t, v in intervals:
         if cc == c and s <= ce:              # overlaps current locus
-            ce = max(ce, e); cur.add(t)
+            ce = max(ce, e); cur.add(t); cursig[t] = max(cursig.get(t, 0.0), v)
         else:
             if cc is not None:
-                loci.append((cc, cs, ce)); members.append(cur)
-            cc, cs, ce, cur = c, s, e, {t}
+                loci.append((cc, cs, ce)); members.append(cur); sigs.append(cursig)
+            cc, cs, ce, cur, cursig = c, s, e, {t}, {t: v}
     if cc is not None:
-        loci.append((cc, cs, ce)); members.append(cur)
-    return loci, members
+        loci.append((cc, cs, ce)); members.append(cur); sigs.append(cursig)
+    return loci, members, sigs
 
 
 def compartment_of(ab_bed, loci):
@@ -106,23 +113,26 @@ def main() -> int:
     intervals = []
     for j, (tf, f) in enumerate(beds):
         n = 0
-        for c, s, e in read_bed(f):
-            intervals.append((c, s, e, j)); n += 1
+        for c, s, e, v in read_bed(f):
+            intervals.append((c, s, e, j, v)); n += 1
         print(f"[{j+1}/{len(beds)}] {tf}: {n} peaks", flush=True)
 
-    loci, members = merge_to_loci(intervals)
+    loci, members, sigs = merge_to_loci(intervals)
     nL, nT = len(loci), len(tfs)
-    ri, ci = [], []
+    ri, ci, sv = [], [], []
     for i, mem in enumerate(members):
         for t in mem:
-            ri.append(i); ci.append(t)
+            ri.append(i); ci.append(t); sv.append(sigs[i].get(t, 0.0))
     B = sp.csc_matrix((np.ones(len(ri), dtype=bool), (ri, ci)), shape=(nL, nT))
+    # continuous per-locus signalValue matrix (for CPM-normalized correlation)
+    S = sp.csc_matrix((np.asarray(sv, dtype=np.float32), (ri, ci)), shape=(nL, nT))
     occ = np.asarray(B.sum(axis=1)).ravel()
     print(f"[loci] {nL:,} consensus loci x {nT} TFs; occupancy median={int(np.median(occ))} "
           f"max={int(occ.max())} (>=2 TFs: {int((occ>=2).sum()):,})", flush=True)
 
     args.out_dir.mkdir(parents=True, exist_ok=True)
     sp.save_npz(args.out_dir / "peak_matrix.npz", B)
+    sp.save_npz(args.out_dir / "signal_matrix.npz", S)
     (args.out_dir / "tfs.txt").write_text("\n".join(tfs) + "\n")
     with (args.out_dir / "loci.bed").open("w") as f:
         for i, (c, s, e) in enumerate(loci):

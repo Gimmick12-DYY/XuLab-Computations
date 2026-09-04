@@ -129,7 +129,8 @@ complexes with fg+bg restricted to that compartment (does an A-A complex share a
 | `AB_BED` | `hic/work/compartments/compartments_25000.AB.bed` | A/B calls (hic step 05) |
 | `BLACKLIST` | `tf_complex/ref/hg38-blacklist.v2.bed` | ENCODE blacklist (optional) |
 | `MACS_Q` | `0.05` | per-TF peak-calling q-value |
-| `METRIC` | `pearson` | `pearson` (phi of binary peak vectors) \| `jaccard` |
+| `SIGNAL` | `cpm` | `cpm` = per-locus signalValue **CPM-normalized per TF** (÷total×1e6, log1p) then Pearson-correlated — de-confounds per-TF depth (cell-count/complexity) **at the input**, more directly than SpQN. \| `binary` = peak presence 0/1 |
+| `METRIC` | `pearson` | binary-signal metric: `pearson` (phi) \| `jaccard` |
 | `HOT_FRAC` | `0.5` | drop loci bound by > this fraction of TFs (HOT artifacts) |
 | `MIN_OCC` | `2` | keep loci bound by ≥ this many TFs |
 | `CLUSTER` | `hierarchical` | `hierarchical` (avg-linkage cut) \| `threshold` (connected comps) |

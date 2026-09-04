@@ -148,6 +148,11 @@ def main() -> int:
                          "vectors, default) and jaccard both recover complexes without a "
                          "coverage block; peak-count spread is handled by HOT removal, not a "
                          "dimensionality reduction.")
+    ap.add_argument("--signal", choices=["binary", "cpm"], default="binary",
+                    help="binary (default) = peak presence 0/1. cpm = per-locus signalValue "
+                         "CPM-normalized per TF (signal/total x 1e6, log1p) then Pearson-correlated "
+                         "-- normalizes out per-TF depth (the cell-count/complexity confound) at "
+                         "the input, more directly than SpQN. Needs signal_matrix.npz.")
     ap.add_argument("--hot-frac", type=float, default=0.5,
                     help="drop loci bound by more than this FRACTION of TFs (HOT / high-occupancy "
                          "artifacts). 0.5 = drop loci bound by >half the panel.")
@@ -182,6 +187,16 @@ def main() -> int:
     occ = np.asarray(B.sum(axis=1)).ravel()
     print(f"[matrix] {B.shape[0]:,} loci x {n_tf} TFs (nnz={B.nnz:,})", flush=True)
 
+    # CPM-normalized signal (per-TF signalValue / total x 1e6, log1p) -- de-confounds
+    # per-TF depth at the input rather than post-hoc (SpQN).
+    Scpm = None
+    if args.signal == "cpm":
+        S = sp.load_npz(args.matrix_dir / "signal_matrix.npz").tocsc().astype(np.float64)
+        colsum = np.asarray(S.sum(axis=0)).ravel(); colsum[colsum == 0] = 1.0
+        Scpm = S.multiply((1e6 / colsum).reshape(1, -1)).tocsc()
+        Scpm.data = np.log1p(Scpm.data)
+        print(f"[signal] CPM-normalized log1p signal (nnz={Scpm.nnz:,})", flush=True)
+
     # --- remove HOT loci + blacklist + singletons ---
     hot_cut = args.hot_frac * n_tf
     keep = (occ >= args.min_occ) & (occ <= hot_cut)
@@ -215,9 +230,11 @@ def main() -> int:
         if idx.size < 50:
             print(f"[{name}] only {idx.size} loci; skipping", flush=True)
             continue
-        Bk = B[idx]
-        # keep all TFs; corr of a zero-peak-in-scope TF -> nan -> 0
-        R = np.nan_to_num(similarity(Bk, args.metric))
+        # keep all TFs; corr of a zero-signal-in-scope TF -> nan -> 0
+        if args.signal == "cpm":
+            R = np.nan_to_num(np.corrcoef(Scpm[idx].toarray(), rowvar=False))
+        else:
+            R = np.nan_to_num(similarity(B[idx], args.metric))
         write_matrix(args.out_dir / f"tf_similarity_{name}.tsv", R, tfs)
 
         def cov_of(M):  # corr(per-TF binding degree, per-TF mean correlation) = the confound
