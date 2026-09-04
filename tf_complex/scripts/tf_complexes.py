@@ -148,6 +148,11 @@ def main() -> int:
                          "vectors, default) and jaccard both recover complexes without a "
                          "coverage block; peak-count spread is handled by HOT removal, not a "
                          "dimensionality reduction.")
+    ap.add_argument("--top-n-peaks", type=int, default=0,
+                    help="equalize per-TF peak COUNT: keep each TF's top-N strongest peaks "
+                         "(by signalValue) before correlating. This removes the degree/complexity "
+                         "confound at the input (the confound is peak-COUNT driven, not magnitude — "
+                         "fraction/CPM does NOT fix it). 0 = off. Try ~ the panel median peak count.")
     ap.add_argument("--signal", choices=["binary", "cpm"], default="binary",
                     help="binary (default) = peak presence 0/1. cpm = per-locus signalValue "
                          "CPM-normalized per TF (signal/total x 1e6, log1p) then Pearson-correlated "
@@ -184,8 +189,25 @@ def main() -> int:
     B = sp.load_npz(args.matrix_dir / "peak_matrix.npz").tocsc()
     tfs = [t.strip() for t in (args.matrix_dir / "tfs.txt").read_text().split() if t.strip()]
     n_tf = len(tfs)
-    occ = np.asarray(B.sum(axis=1)).ravel()
     print(f"[matrix] {B.shape[0]:,} loci x {n_tf} TFs (nnz={B.nnz:,})", flush=True)
+
+    # equalize per-TF peak COUNT (top-N strongest by signalValue) -> removes the degree
+    # confound at the input. Needs signal_matrix.npz to rank peaks.
+    if args.top_n_peaks and args.top_n_peaks > 0:
+        Ssig = sp.load_npz(args.matrix_dir / "signal_matrix.npz").tocsc()
+        Bc = B.tocsc().copy(); keep_r, keep_c = [], []
+        for j in range(n_tf):
+            col = Ssig.getcol(j)
+            idx, val = col.indices, col.data
+            if idx.size > args.top_n_peaks:
+                idx = idx[np.argpartition(val, -args.top_n_peaks)[-args.top_n_peaks:]]
+            keep_r.append(idx); keep_c.append(np.full(idx.size, j))
+        rr = np.concatenate(keep_r); cc = np.concatenate(keep_c)
+        B = sp.csc_matrix((np.ones(rr.size, dtype=bool), (rr, cc)), shape=B.shape)
+        print(f"[top-n] equalized to <= {args.top_n_peaks} peaks/TF "
+              f"(median now {int(np.median(np.asarray((B>0).sum(0)).ravel()))})", flush=True)
+
+    occ = np.asarray(B.sum(axis=1)).ravel()
 
     # CPM-normalized signal (per-TF signalValue / total x 1e6, log1p) -- de-confounds
     # per-TF depth at the input rather than post-hoc (SpQN).
