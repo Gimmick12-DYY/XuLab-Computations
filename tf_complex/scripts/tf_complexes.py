@@ -272,7 +272,11 @@ def main() -> int:
         if args.plot:
             sim_file = args.out_dir / (f"spqn_similarity_{name}.tsv" if args.spqn
                                        else f"tf_similarity_{name}.tsv")
-            tag = f"{args.metric}+SpQN" if args.spqn else args.metric
+            tag = args.metric
+            if args.signal == "cpm":
+                tag = f"CPM-{args.metric}"
+            if args.spqn:
+                tag += "+SpQN"
             plot_complexity(sim_file, args.cell_meta,
                             args.out_dir / f"corr_complexity_{name}.png",
                             f"TF-TF {tag} co-occupancy ({name}) vs cell count",

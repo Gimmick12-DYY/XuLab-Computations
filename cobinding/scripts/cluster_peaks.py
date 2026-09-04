@@ -16,9 +16,12 @@
 # genes, chromatin states, genomic span, pair scores (coaccess) and FDR.
 #
 # Outputs (--out-dir): cliques.tsv, modules.tsv, nodes.tsv, summary.txt,
-#   + clique_sizes.png / module_sizes.png / tf_peak_network.png (--plot).
+#   + clique_sizes.png / module_sizes.png / tf_peak_network.png /
+#     clique_chromosomes.png (--plot).
 #   The network figure uses one node per region (peak), keeps only regions that
 #   sit in a clique/module, and draws co-accessibility edges among them.
+#   The chromosome figure places each big clique (K4+ / multi-clique module)
+#   on hg38 chr1–22 + X.
 # -----------------------------------------------------------------------------
 from __future__ import annotations
 
@@ -32,6 +35,17 @@ import networkx as nx
 import pandas as pd
 
 _COORD = re.compile(r"^(chr[0-9A-Za-z]+):(\d+)-(\d+)$")
+
+# hg38 primary assembly lengths; 23 chromosomes = chr1–22 + X
+HG38_LEN = {
+    "chr1": 248956422, "chr2": 242193529, "chr3": 198295559, "chr4": 190214555,
+    "chr5": 181538259, "chr6": 170805979, "chr7": 159345973, "chr8": 145138636,
+    "chr9": 138394717, "chr10": 133797422, "chr11": 135086622, "chr12": 133275309,
+    "chr13": 114364328, "chr14": 107043718, "chr15": 101991189, "chr16": 90338345,
+    "chr17": 83257441, "chr18": 80373285, "chr19": 58617616, "chr20": 64444167,
+    "chr21": 46709983, "chr22": 50818468, "chrX": 156040895,
+}
+CHROMS_23 = [f"chr{i}" for i in range(1, 23)] + ["chrX"]
 
 
 def span(peaks) -> tuple[str, int]:
@@ -227,8 +241,142 @@ def _plot(G, cliques, mods, types, genes, out_dir: Path, tf: str) -> None:
         ax.set_xlabel(xl); ax.set_ylabel("count"); ax.set_title(f"{tf} {xl}")
         fig.tight_layout(); fig.savefig(out_dir / f"{name}.png", dpi=150); plt.close(fig)
     _plot_network(G, cliques, mods, types, genes, out_dir, tf)
+    _plot_chromosomes(mods, genes, out_dir, tf)
     print(f"[plot] wrote {out_dir/'clique_sizes.png'}, {out_dir/'module_sizes.png'}, "
-          f"{out_dir/'tf_peak_network.png'}")
+          f"{out_dir/'tf_peak_network.png'}, {out_dir/'clique_chromosomes.png'}")
+
+
+def _locus(regs) -> tuple[str, int, int] | None:
+    """Single-chromosome span (chrom, start, end) from region ids, or None."""
+    by = defaultdict(lambda: [10**12, 0])
+    for p in regs:
+        m = _COORD.match(p)
+        if not m:
+            continue
+        c, s, e = m.group(1), int(m.group(2)), int(m.group(3))
+        by[c][0] = min(by[c][0], s)
+        by[c][1] = max(by[c][1], e)
+    if len(by) != 1:
+        return None
+    c, (s, e) = next(iter(by.items()))
+    return c, s, e
+
+
+def _gene_short(regs, genes) -> str:
+    g = sorted({x for r in regs for x in genes.get(r, ()) if x and x != "."})
+    g = [x for x in g if not x.startswith("ENSG")] + [x for x in g if x.startswith("ENSG")]
+    if not g:
+        return ""
+    return ";".join(g[:2]) + ("…" if len(g) > 2 else "")
+
+
+def _plot_chromosomes(mods, genes, out_dir: Path, tf: str) -> None:
+    """Ideogram of chr1–22 + X with big-clique (K4+ / multi-clique) spans."""
+    import matplotlib
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+    from matplotlib.patches import FancyBboxPatch, Rectangle
+
+    big = []
+    for i, (regs, nsrc) in enumerate(mods):
+        if len(regs) < 4 and nsrc <= 1:
+            continue
+        loc = _locus(regs)
+        if loc is None or loc[0] not in HG38_LEN:
+            continue
+        chrom, start, end = loc
+        big.append({
+            "i": i, "regs": regs, "nsrc": nsrc, "n": len(regs),
+            "chrom": chrom, "start": start, "end": end,
+            "label": _gene_short(regs, genes),
+        })
+    if not big:
+        print("[plot] no big cliques on chr1–22/X; skip chromosomes"); return
+
+    tab = plt.cm.tab20.colors
+    by_chr: dict[str, list] = defaultdict(list)
+    for b in big:
+        by_chr[b["chrom"]].append(b)
+
+    # dodge overlapping spans within a chromosome
+    lanes: dict[str, dict[int, int]] = {}
+    n_lanes: dict[str, int] = {}
+    for chrom, items in by_chr.items():
+        items = sorted(items, key=lambda x: (x["start"], -x["end"]))
+        ends: list[int] = []
+        lanes[chrom] = {}
+        for b in items:
+            placed = False
+            for li, le in enumerate(ends):
+                if b["start"] >= le + 200_000:
+                    ends[li] = b["end"]
+                    lanes[chrom][b["i"]] = li
+                    placed = True
+                    break
+            if not placed:
+                ends.append(b["end"])
+                lanes[chrom][b["i"]] = len(ends) - 1
+        n_lanes[chrom] = max(len(ends), 1)
+
+    row_h = 1.0
+    fig_h = max(9.5, 0.42 * len(CHROMS_23) + 1.8)
+    fig, ax = plt.subplots(figsize=(13.5, fig_h))
+    xmax = max(HG38_LEN.values()) / 1e6
+
+    for yi, chrom in enumerate(CHROMS_23):
+        y = -yi * row_h
+        clen = HG38_LEN[chrom] / 1e6
+        ax.add_patch(FancyBboxPatch(
+            (0, y - 0.16), clen, 0.32,
+            boxstyle="round,pad=0.02,rounding_size=0.12",
+            facecolor="#e6e8eb", edgecolor="#9aa0a6", linewidth=0.7,
+            mutation_aspect=0.4))
+        ax.text(-2.2, y, chrom.replace("chr", ""), ha="right", va="center",
+                fontsize=10, fontweight="medium", color="#222")
+        nl = n_lanes.get(chrom, 1)
+        for b in by_chr.get(chrom, []):
+            li = lanes[chrom][b["i"]]
+            yoff = (li - (nl - 1) / 2.0) * 0.22
+            x0, x1 = b["start"] / 1e6, b["end"] / 1e6
+            # span can be <1 Mb; keep a visible minimum width
+            w = max(x1 - x0, 0.55)
+            color = tab[b["i"] % len(tab)] if b["nsrc"] > 1 else (0.35, 0.42, 0.55)
+            ax.add_patch(Rectangle(
+                (x0, y + yoff - 0.11), w, 0.22,
+                facecolor=color, edgecolor="0.15", linewidth=0.5, zorder=3,
+                alpha=0.92 if b["nsrc"] > 1 else 0.75))
+            # individual peaks as ticks
+            for p in b["regs"]:
+                m = _COORD.match(p)
+                if m:
+                    mid = (int(m.group(2)) + int(m.group(3))) / 2 / 1e6
+                    ax.plot([mid, mid], [y + yoff - 0.11, y + yoff + 0.11],
+                            color="0.1", lw=0.7, zorder=4)
+            lab = b["label"] or f"{b['n']} reg"
+            side = 1 if (b["i"] + yi) % 2 == 0 else -1
+            ax.annotate(
+                lab, xy=(x0 + w / 2, y + yoff),
+                xytext=(0, side * 10), textcoords="offset points",
+                ha="center", va="bottom" if side > 0 else "top",
+                fontsize=7, color="#111",
+                arrowprops=dict(arrowstyle="-", color="#888", lw=0.5))
+
+    ax.set_xlim(-8, xmax + 8)
+    ax.set_ylim(-row_h * (len(CHROMS_23) - 0.3), 0.7)
+    ax.set_xlabel("Position (Mb, hg38)", fontsize=11)
+    ax.set_yticks([])
+    for sp in ("top", "right", "left"):
+        ax.spines[sp].set_visible(False)
+    n_multi = sum(1 for b in big if b["nsrc"] > 1)
+    ax.set_title(
+        f"{tf} big cliques on 23 chromosomes\n"
+        f"{len(big)} loci (≥4 regions or multi-clique) · "
+        f"{n_multi} multi-clique modules (colored) · "
+        f"K4 single cliques (slate) · bars = genomic span",
+        fontsize=13, loc="left", pad=8)
+    fig.tight_layout()
+    fig.savefig(out_dir / "clique_chromosomes.png", dpi=170, bbox_inches="tight")
+    plt.close(fig)
 
 
 def _pack_components(H, seed: int = 2026, gap: float = 3.15):
