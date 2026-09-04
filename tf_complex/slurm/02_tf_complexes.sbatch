@@ -19,9 +19,11 @@ set -euo pipefail
 
 XULAB="${XULAB:-/work/users/d/y/dyy12/XuLab}"
 TFC="${XULAB}/tf_complex"
-PEAKS_DIR="${PEAKS_DIR:-${TFC}/work/peaks}"
-MATRIX_DIR="${MATRIX_DIR:-${TFC}/work}"
-RESULTS="${RESULTS:-${TFC}/results}"
+SOURCE="${SOURCE:-raw}"                          # raw | imputed (must match step 01)
+SUF=""; [[ "${SOURCE}" == "imputed" ]] && SUF="_imputed"
+PEAKS_DIR="${PEAKS_DIR:-${TFC}/work/peaks${SUF}}"
+MATRIX_DIR="${MATRIX_DIR:-${TFC}/work${SUF}}"
+RESULTS="${RESULTS:-${TFC}/results${SUF}}"
 AB_BED="${AB_BED:-${XULAB}/hic/work/compartments/compartments_25000.AB.bed}"
 BLACKLIST="${BLACKLIST:-${TFC}/ref/hg38-blacklist.v2.bed}"   # optional; skipped if missing
 

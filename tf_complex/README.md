@@ -56,9 +56,11 @@ gunzip hg38-blacklist.v2.bed.gz && cd -
 
 # 1. per-TF raw peaks (array job, one TF per task; set --array=0-<N-1>)
 sbatch tf_complex/slurm/01_call_raw_peaks.sbatch
+#   SOURCE=imputed sbatch tf_complex/slurm/01_call_raw_peaks.sbatch   # imputed variant (coexists)
 
 # 2. union peaks -> HOT removal -> pearson correlation -> complexes  (needs hic step 05 A/B)
 sbatch tf_complex/slurm/02_tf_complexes.sbatch
+#   SOURCE=imputed sbatch tf_complex/slurm/02_tf_complexes.sbatch     # -> tf_complex/results_imputed/
 #   METRIC=jaccard HOT_FRAC=0.4 CLUSTER_THRESHOLD=0.25 sbatch tf_complex/slurm/02_tf_complexes.sbatch
 #   REBUILD=0 sbatch tf_complex/slurm/02_tf_complexes.sbatch   # reuse peak_matrix.npz
 

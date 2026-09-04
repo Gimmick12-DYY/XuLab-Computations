@@ -58,7 +58,12 @@ def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--raw-dir", type=Path, required=True,
-                    help="per-TF raw pseudobulk dir (contains mm/matrix.mtx.gz)")
+                    help="per-TF dir containing mm/ (raw) and/or impute/ (imputed)")
+    ap.add_argument("--source", choices=["raw", "imputed"], default="raw",
+                    help="raw = mm/matrix.mtx.gz (default); imputed = impute/matrix_csr.npz "
+                         "(open-chromatin-masked). Imputed densifies sparse low-cell TFs -- "
+                         "test whether that reduces the cell-count/complexity confound, at the "
+                         "cost of the shared-accessibility wash.")
     ap.add_argument("--tf", required=True)
     ap.add_argument("--out-bed", type=Path, required=True)
     ap.add_argument("--out-dir", type=Path, required=True, help="dir for MACS intermediates")
@@ -76,12 +81,14 @@ def main() -> int:
     ap.add_argument("--no-nolambda", action="store_true")
     args = ap.parse_args()
 
-    mm = args.raw_dir / "mm"
-    if not (mm / "matrix.mtx.gz").is_file():
-        raise SystemExit(f"missing {mm/'matrix.mtx.gz'}")
+    sub = "mm" if args.source == "raw" else "impute"
+    src = args.raw_dir / sub
+    have = (src / "matrix.mtx.gz").is_file() or (src / "matrix_csr.npz").is_file()
+    if not have:
+        raise SystemExit(f"missing matrix in {src} (source={args.source})")
     args.out_dir.mkdir(parents=True, exist_ok=True)
 
-    signal, regions, kind, n_cells = load_per_bin_signal(mm)
+    signal, regions, kind, n_cells = load_per_bin_signal(src)
     print(f"[{args.tf}] {len(regions)} bins x {n_cells} cells (kind={kind}), "
           f"nonzero={int(np.count_nonzero(signal))}", flush=True)
 
