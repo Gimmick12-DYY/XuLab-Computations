@@ -256,7 +256,13 @@ if (( RUN_AME == 1 )); then
   fi
   tofa "${PEAK_SRC}" "${PEAK_FA}"
 
-  AME_ARGS=(--oc "${AME_DIR}/${TF}")
+  # --scoring max = best single motif match per sequence. AME's DEFAULT (avg) averages
+  # the PWM score over every position, which dilutes a focal TF motif (e.g. one 19bp CTCF
+  # hit in a 275bp peak) to nothing and instead surfaces broad GC-rich motifs -- this is
+  # why default AME misses CTCF/NRF1 (and why they were NA in the reference table). 'max'
+  # discriminates on the strongest hit, the right scoring for punctate TF motifs.
+  AME_SCORING="${AME_SCORING:-max}"
+  AME_ARGS=(--oc "${AME_DIR}/${TF}" --scoring "${AME_SCORING}")
   if [[ "${AME_CONTROL}" == "1" && -s "${BG_BED}" ]]; then
     BG_FA="${AME_DIR}/seq/${TF}.background.fa"
     BG_WIN="${AME_DIR}/seq/${TF}.background_win.bed"; resize_bed "${BG_BED}" > "${BG_WIN}"
@@ -267,7 +273,7 @@ if (( RUN_AME == 1 )); then
     fi
     AME_ARGS+=(--control "${BG_FA}")
   fi
-  echo "[$(date)] ${TF}: AME (HOCOMOCO v11 full)"
+  echo "[$(date)] ${TF}: AME (HOCOMOCO v11 full, scoring=${AME_SCORING})"
   ame "${AME_ARGS[@]}" "${PEAK_FA}" "${HOCOMOCO_MEME}"
 else
   echo "[$(date)] ${TF}: not in HOCOMOCO full, skipping AME"
