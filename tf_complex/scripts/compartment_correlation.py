@@ -43,6 +43,11 @@ def main() -> int:
     ap.add_argument("--out-dir", type=Path, required=True)
     ap.add_argument("--input", choices=["cpm", "count"], default="cpm",
                     help="cpm = per-TF CPM read fraction (default) | count = raw counts")
+    ap.add_argument("--size-normalize", action="store_true", default=True,
+                    help="divide each domain's reads by its size (reads/bp) BEFORE correlating. "
+                         "REQUIRED: without it the correlation is dominated by domain size (a big "
+                         "domain has more reads for every TF -> all TFs correlate ~0.8). Default on.")
+    ap.add_argument("--no-size-normalize", dest="size_normalize", action="store_false")
     ap.add_argument("--log1p", action="store_true", default=True,
                     help="log1p the CPM (logCPM; standard for count correlation). Default on.")
     ap.add_argument("--no-log1p", dest="log1p", action="store_false")
@@ -58,12 +63,17 @@ def main() -> int:
     M = sp.load_npz(args.matrix_dir / "compartment_matrix.npz").tocsc().astype(np.float64)
     tfs = [t.strip() for t in (args.matrix_dir / "tfs.txt").read_text().split() if t.strip()]
     n_tf = len(tfs)
-    labs = np.array([ln.split("\t")[3].strip() for ln in open(args.matrix_dir / "domains.tsv")], dtype="<U1")
+    dom_rows = [ln.split("\t") for ln in open(args.matrix_dir / "domains.tsv")]
+    labs = np.array([r[3].strip() for r in dom_rows], dtype="<U1")
+    bp = np.array([float(r[4]) for r in dom_rows], dtype=np.float64)   # domain size (bp)
     nD = M.shape[0]
     print(f"[matrix] {nD:,} domains x {n_tf} TFs", flush=True)
 
     X = np.asarray(M.todense())                          # domains x TFs (counts)
     tf_total = X.sum(axis=0)                              # per-TF library size (for confound diag)
+    if args.size_normalize:                              # reads/bp -> remove domain-size domination
+        X = X / np.where(bp > 0, bp, 1.0)[:, None]
+        print("[size] normalized reads by domain size (reads/bp)", flush=True)
     if args.input == "cpm":
         tot = X.sum(axis=0, keepdims=True); tot[tot == 0] = 1.0
         X = X / tot * 1e6                                 # per-TF CPM fraction
