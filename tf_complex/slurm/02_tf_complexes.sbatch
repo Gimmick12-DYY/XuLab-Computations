@@ -52,10 +52,11 @@ BL_ARG=()
 [[ -s "${BLACKLIST}" ]] && BL_ARG=(--blacklist "${BLACKLIST}") || echo "[warn] no blacklist at ${BLACKLIST}; skipping blacklist filter"
 
 echo "[$(date)] tf_complexes (metric=${METRIC}, hot_frac=${HOT_FRAC})"
+CELL_META="${CELL_META:-${XULAB}/data/TF1000cells.meta.csv}"   # per-TF cell counts for the complexity-format heatmap
 python "${TFC}/scripts/tf_complexes.py" \
   --matrix-dir "${MATRIX_DIR}" --out-dir "${RESULTS}" \
-  --metric "${METRIC}" \
+  --metric "${METRIC}" --cell-meta "${CELL_META}" \
   --hot-frac "${HOT_FRAC}" --min-occ "${MIN_OCC}" \
   --cluster "${CLUSTER}" --cluster-threshold "${CLUSTER_THRESHOLD}" \
   "${BL_ARG[@]}" --plot
-echo "[$(date)] done -> ${RESULTS}"
+echo "[$(date)] done -> ${RESULTS}  (corr_complexity_{genome,A,B}.png = complexity format)"

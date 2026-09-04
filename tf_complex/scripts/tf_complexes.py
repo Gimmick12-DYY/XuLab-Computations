@@ -26,11 +26,13 @@
 #   tf_similarity_{genome,A,B}.tsv   TF x TF similarity (chosen metric)
 #   candidate_complexes.tsv          clustered TF groups
 #   tf_compartment.tsv               per-TF A/B enrichment (size-normalized)
-#   complex_heatmap.png (--plot)
+#   corr_complexity_{genome,A,B}.png (--plot)  dendrogram + heatmap + per-TF cell-count bars
 # -----------------------------------------------------------------------------
 from __future__ import annotations
 
 import argparse
+import subprocess
+import sys
 from collections import defaultdict
 from pathlib import Path
 
@@ -114,6 +116,10 @@ def main() -> int:
                          "cut = 1 - this. pearson co-occupancy is small in abs terms (~0.1-0.4); "
                          "set near the printed p95.")
     ap.add_argument("--plot", action="store_true")
+    ap.add_argument("--cell-meta", type=Path,
+                    default=Path(__file__).resolve().parents[2] / "data" / "TF1000cells.meta.csv",
+                    help="per-TF cell counts for the complexity-format heatmap (dendrogram + "
+                         "heatmap + cell-count bars). Every scope's matrix is plotted this way.")
     args = ap.parse_args()
 
     B = sp.load_npz(args.matrix_dir / "peak_matrix.npz").tocsc()
@@ -183,7 +189,10 @@ def main() -> int:
         ncx = write_complexes(args.out_dir / out_name, members_list, R, tfs)
         print(f"[complexes:{name}] {ncx} candidate complexes (>=2 TFs) -> {out_name}", flush=True)
         if args.plot:
-            _plot(R, tfs, args.out_dir, args.metric, suffix=("" if name == "genome" else f"_{name}"))
+            plot_complexity(args.out_dir / f"tf_similarity_{name}.tsv", args.cell_meta,
+                            args.out_dir / f"corr_complexity_{name}.png",
+                            f"TF-TF {args.metric} co-occupancy ({name}) vs cell count",
+                            R, tfs, args.metric, name)
 
     # --- A vs B differential: which pairs co-bind MORE in A vs in B ---
     if "A" in Rs and "B" in Rs:
@@ -261,6 +270,23 @@ def write_complexes(path, members_list, R, tfs):
             f.write(f"CX{cid:03d}\t{len(members)}\t{mic:.3f}\t"
                     f"{','.join(sorted(tfs[i] for i in members))}\n")
     return cid
+
+
+def plot_complexity(sim_tsv, cell_meta, out_png, title, R, tfs, metric, name):
+    """Complexity-format heatmap (dendrogram + heatmap + per-TF cell-count bars) via
+    plot_correlation_complexity.py -- applied to EVERY scope (genome/A/B). Falls back to
+    the plain heatmap only if the cell-count metadata is unavailable."""
+    script = Path(__file__).resolve().parent / "plot_correlation_complexity.py"
+    if cell_meta and Path(cell_meta).is_file() and script.is_file() and Path(sim_tsv).is_file():
+        rc = subprocess.run([sys.executable, str(script),
+                             "--sim-tsv", str(sim_tsv), "--cell-meta", str(cell_meta),
+                             "--out", str(out_png), "--title", title]).returncode
+        if rc == 0:
+            return
+        print(f"[plot] complexity plot failed (rc={rc}); plain-heatmap fallback", flush=True)
+    else:
+        print(f"[plot] cell-meta {cell_meta} not found; plain-heatmap fallback", flush=True)
+    _plot(R, tfs, out_png.parent, metric, suffix=("" if name == "genome" else f"_{name}"))
 
 
 def _plot(R, tfs, out_dir, metric, suffix=""):

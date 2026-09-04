@@ -99,7 +99,9 @@ complexes, and annotates A/B. Outputs:
 - **`tf_ab_differential.tsv`** — per-pair `sim_A − sim_B`; **`tf_ab_top_pairs.tsv`** —
   the most A-specific (delta>0) and B-specific (delta<0) co-binding pairs.
 - **`tf_compartment.tsv`** — per-TF A/B preference, size-normalized.
-- `complex_heatmap{,_A,_B}.png` (`--plot`), clustered per scope.
+- **`corr_complexity_{genome,A,B}.png`** (`--plot`) — every scope's matrix in the
+  **complexity format**: row dendrogram + clustered heatmap + per-TF cell-count bars
+  (`plot_correlation_complexity.py`), so the cell-count/complexity effect is visible.
 
 Also prints a `coverage check:` line (low-peak-TF block median — near 0 = clean).
 pearson co-occupancy is **small in absolute terms** (p95 ≈ 0.2, max ≈ 0.44 on the
