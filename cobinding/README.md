@@ -49,7 +49,9 @@ Filters edges (FDR ≤ `QVAL`), builds the peak graph, and writes to `results/<t
   `module_id n_regions n_source_cliques n_edges density chromosome span_bp
   region_types genes … max_pair_fdr states regions`.
 - **`nodes.tsv`** — peak, degree, k-core, n_cliques, n_modules, type, genes, states.
-- **`summary.txt`** + (`--plot`) `clique_sizes.png`, `module_sizes.png`.
+- **`summary.txt`** + (`--plot`) `clique_sizes.png`, `module_sizes.png`,
+  `tf_peak_network.png` (one node per region; only clique/module members;
+  edges are co-accessibility links; isolated pairs omitted).
 
 > Reproduces the reference workbook exactly on the full RBBP4 `.sel`
 > (FDR≤0.05: 355 cliques / 326 modules; FDR≤0.01: 300 / 277).
