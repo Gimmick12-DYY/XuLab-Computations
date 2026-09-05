@@ -123,8 +123,14 @@ TF_SPECIFIC="${TF_SPECIFIC:-0}"
 CONSENSUS_NPY="${CONSENSUS_NPY:-${DOWN_DIR}/motif/consensus_accessibility.npy}"
 CONSENSUS_NORMALIZE="${CONSENSUS_NORMALIZE:-fraction}"  # count-preserving (callable peaks)
 CONSENSUS_SCALE="${CONSENSUS_SCALE:-1.0}"               # <1 softer / more peaks, >1 stricter
+# REGION=peaks (default, MACS3-called peaks) | bins (the TF's top binding BINS taken
+# directly from the bin matrix -- no peak calling; fills the "...for bins" table columns).
+REGION="${REGION:-peaks}"
+TOP_N_BINS="${TOP_N_BINS:-20000}"        # REGION=bins: top-N bins by signal
 if [[ "${TF_SPECIFIC}" == "1" ]]; then
   OUT_ROOT="${OUT_ROOT:-${DOWN_DIR}/motif_tfspec}"
+elif [[ "${REGION}" == "bins" ]]; then
+  OUT_ROOT="${OUT_ROOT:-${DOWN_DIR}/motif_bins}"
 else
   OUT_ROOT="${OUT_ROOT:-${DOWN_DIR}/motif}"
 fi
@@ -179,7 +185,7 @@ conda activate "${CONDA_ENV}"
 [[ -n "${HOMER_MODULE:-}" ]] && module load ${HOMER_MODULE}
 [[ -n "${MEME_MODULE:-}" ]] && module load ${MEME_MODULE}
 
-command -v macs3 >/dev/null 2>&1 || { echo "ERROR: macs3 not on PATH in env ${CONDA_ENV}" >&2; exit 1; }
+[[ "${REGION}" == "peaks" ]] && { command -v macs3 >/dev/null 2>&1 || { echo "ERROR: macs3 not on PATH in env ${CONDA_ENV}" >&2; exit 1; }; }
 if (( RUN_HOMER == 1 )); then
   command -v findMotifsGenome.pl >/dev/null 2>&1 || { echo "ERROR: findMotifsGenome.pl not on PATH" >&2; exit 1; }
 fi
@@ -205,6 +211,24 @@ fi
 # FORCE_PEAKS=1 -> ignore any cached peaks and re-call (needed when you change MACS_Q
 # to recall MORE/fewer peaks: the narrowPeak name is q-independent, so a looser q would
 # otherwise reuse the old q<0.05 set).
+if [[ "${REGION}" == "bins" ]]; then
+  # BINS: top-N binding bins straight from the bin matrix (no MACS). Reuse the same
+  # HOMER/AME + BG_MODE below; only the region/background definition differs.
+  [[ "${FORCE_PEAKS:-0}" == "1" ]] && rm -f "${BED}"
+  if [[ ! -s "${BED}" ]]; then
+    echo "[$(date)] ${TF}: emitting top-${TOP_N_BINS} BINS"
+    set +e
+    python "${DOWN_DIR}/emit_bins_bed.py" \
+      --matrix-dir "${IMPUTE_DIR}" --tf "${TF}" \
+      --out-bed "${BED}" --top-n "${TOP_N_BINS}" --min-peaks "${MIN_PEAKS}" \
+      --open-bed "${OPEN_BED}" --bg-out "${BG_BED}"
+    rc=$?; set -e
+    if (( rc == 3 )); then
+      echo "[skip] ${TF}: fewer than ${MIN_PEAKS} bins" >&2
+      echo "${TF}" >> "${OUT_ROOT}/skipped_insufficient_peaks.txt"; exit 0
+    elif (( rc != 0 )); then exit "${rc}"; fi
+  fi
+else
 NARROW="${PEAK_WORK}/${TF}_qcut_peaks.narrowPeak"
 if [[ "${FORCE_PEAKS:-0}" == "1" ]]; then
   echo "[$(date)] ${TF}: FORCE_PEAKS=1 -> re-calling (clearing ${NARROW}, ${BED})"
@@ -230,6 +254,7 @@ else
   elif (( rc != 0 )); then
     exit "${rc}"
   fi
+fi
 fi
 
 # Enforce the peak floor on the FINAL BED -- covers the reuse branch too, so a
