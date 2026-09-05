@@ -29,18 +29,21 @@ if str(_DOWN) not in sys.path:
 from peak_coverage import load_per_bin_signal  # noqa: E402  (handles mm + impute)
 
 
-def load_domains(path):
-    """Read A/B domains. Accepts classify_compartments .domains.bed (chrom start end
-    label ...) or per-bin .AB.bed (merged here into contiguous same-label domains)."""
+def load_domains(path, unit="bin"):
+    """Read A/B compartment units. unit='bin' (default): use each BED row as-is -- the
+    25 kb compartment bins from .AB.bed (uniform size -> no domain-size confound). unit=
+    'domain': merge contiguous same-label bins into variable-length domains (Mb-scale)."""
     raw = []
     for ln in open(path):
         p = ln.rstrip("\n").split("\t")
         if len(p) < 4:
             continue
-        raw.append((p[0], int(p[1]), int(p[2]), p[3].strip()))
+        raw.append([p[0], int(p[1]), int(p[2]), p[3].strip()])
     raw.sort(key=lambda x: (x[0], x[1]))
+    if unit == "bin":
+        return raw                                # each 25 kb bin is a unit
     dom = []
-    for c, s, e, lab in raw:                      # merge contiguous same-label (idempotent for domains)
+    for c, s, e, lab in raw:                       # merge contiguous same-label -> domains
         if dom and dom[-1][0] == c and dom[-1][3] == lab and s <= dom[-1][2]:
             dom[-1][2] = max(dom[-1][2], e)
         else:
@@ -76,14 +79,17 @@ def main() -> int:
     ap.add_argument("--work-root", type=Path,
                     default=Path(__file__).resolve().parents[2] / "unified" / "work")
     ap.add_argument("--domains-bed", type=Path, required=True,
-                    help="compartment domains: classify_compartments .domains.bed or .AB.bed")
+                    help="compartment units: .AB.bed (25 kb bins, for --unit bin) or .domains.bed")
+    ap.add_argument("--unit", choices=["bin", "domain"], default="bin",
+                    help="bin (default) = 25 kb compartment bins (uniform size, no size confound); "
+                         "domain = merged contiguous A/B segments (Mb-scale)")
     ap.add_argument("--out-dir", type=Path, required=True)
     ap.add_argument("--source", choices=["raw", "imputed"], default="raw")
     ap.add_argument("--tfs", nargs="*", default=None)
     args = ap.parse_args()
 
     sub = "mm" if args.source == "raw" else "impute"
-    domains = load_domains(args.domains_bed)
+    domains = load_domains(args.domains_bed, args.unit)
     didx = domain_index(domains)
     nD = len(domains)
     print(f"[domains] {nD:,} units "

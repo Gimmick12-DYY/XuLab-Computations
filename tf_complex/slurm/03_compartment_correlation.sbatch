@@ -21,10 +21,15 @@ set -euo pipefail
 XULAB="${XULAB:-/work/users/d/y/dyy12/XuLab}"
 TFC="${XULAB}/tf_complex"
 WORK_ROOT="${WORK_ROOT:-${XULAB}/unified/work}"
-DOMAINS_BED="${DOMAINS_BED:-${XULAB}/hic/work/compartments/compartments_25000.domains.bed}"
+UNIT="${UNIT:-bin}"                      # bin (25kb compartment bins, uniform size, default) | domain (Mb segments)
+if [[ "${UNIT}" == "bin" ]]; then
+  DOMAINS_BED="${DOMAINS_BED:-${XULAB}/hic/work/compartments/compartments_25000.AB.bed}"
+else
+  DOMAINS_BED="${DOMAINS_BED:-${XULAB}/hic/work/compartments/compartments_25000.domains.bed}"
+fi
 MATRIX_DIR="${MATRIX_DIR:-${TFC}/work/compartment}"
 SOURCE="${SOURCE:-raw}"                  # raw (mm) | imputed
-INPUT="${INPUT:-fraction}"               # fraction (per-DOMAIN, removes size+activity, default) | cpm | count
+INPUT="${INPUT:-tf_fraction}"            # tf_fraction (per-TF: reads/TF-total, default) | domain_fraction | count
 RESULTS="${RESULTS:-${TFC}/results_compartment_${INPUT}}"   # _cpm and _count coexist
 CELL_META="${CELL_META:-${XULAB}/data/TF1000cells.meta.csv}"
 CLUSTER_THRESHOLD="${CLUSTER_THRESHOLD:-0.3}"   # cluster -> candidate_complexes; set near printed p95
@@ -39,7 +44,7 @@ mkdir -p "${MATRIX_DIR}" "${RESULTS}"
 if [[ "${REBUILD}" == "1" || ! -s "${MATRIX_DIR}/compartment_matrix.npz" ]]; then
   echo "[$(date)] build compartment x TF read matrix (source=${SOURCE})"
   python "${TFC}/scripts/build_compartment_matrix.py" \
-    --work-root "${WORK_ROOT}" --domains-bed "${DOMAINS_BED}" \
+    --work-root "${WORK_ROOT}" --domains-bed "${DOMAINS_BED}" --unit "${UNIT}" \
     --out-dir "${MATRIX_DIR}" --source "${SOURCE}"
 fi
 

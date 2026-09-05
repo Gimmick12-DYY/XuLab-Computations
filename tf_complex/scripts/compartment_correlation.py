@@ -41,21 +41,20 @@ def main() -> int:
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--matrix-dir", type=Path, required=True, help="build_compartment_matrix.py output")
     ap.add_argument("--out-dir", type=Path, required=True)
-    ap.add_argument("--input", choices=["fraction", "cpm", "count"], default="fraction",
-                    help="fraction (default) = per-DOMAIN fraction: each domain's reads / that "
-                         "domain's total across ALL TFs (the domain's TF composition). Removes BOTH "
-                         "domain size AND domain activity -> the correlation reflects TF-specific "
-                         "co-binding, not 'this domain is big/active' (which makes every TF pair "
-                         "correlate ~0.4). cpm = per-TF CPM (does NOT remove domain activity). "
-                         "count = raw.")
-    ap.add_argument("--size-normalize", action="store_true", default=True,
-                    help="divide each domain's reads by its size (reads/bp) BEFORE correlating. "
-                         "REQUIRED: without it the correlation is dominated by domain size (a big "
-                         "domain has more reads for every TF -> all TFs correlate ~0.8). Default on.")
-    ap.add_argument("--no-size-normalize", dest="size_normalize", action="store_false")
-    ap.add_argument("--log1p", action="store_true", default=True,
-                    help="log1p the CPM (logCPM; standard for count correlation). Default on.")
-    ap.add_argument("--no-log1p", dest="log1p", action="store_false")
+    ap.add_argument("--input", choices=["tf_fraction", "domain_fraction", "count"], default="tf_fraction",
+                    help="tf_fraction (default) = per-TF fraction: each TF's reads in a compartment / "
+                         "that TF's TOTAL reads (its distribution across compartments, sums to 1). "
+                         "domain_fraction = each compartment's reads / that compartment's total across "
+                         "all TFs (the domain's TF composition). count = raw reads.")
+    ap.add_argument("--size-normalize", action="store_true", default=False,
+                    help="divide each domain's reads by its size (reads/bp) before correlating. "
+                         "Off by default = 'just the fraction'. NOTE per-TF fraction is Pearson "
+                         "scale-invariant, so tf_fraction alone == raw counts (size-dominated, "
+                         "all-high); turn this on (or use --input domain_fraction) to de-confound.")
+    ap.add_argument("--log1p", action="store_true", default=False,
+                    help="log1p-transform the input before correlating. OFF by default: 'just the "
+                         "fraction' = raw per-domain fraction, Pearson (simpler and a stronger "
+                         "complex signal in tests). Turn on for count/cpm-heavy tails.")
     ap.add_argument("--min-reads", type=float, default=0.0,
                     help="drop domains with total reads (across TFs) <= this (sparse units add noise)")
     ap.add_argument("--cluster-threshold", type=float, default=0.0,
@@ -76,25 +75,22 @@ def main() -> int:
 
     X = np.asarray(M.todense())                          # domains x TFs (counts)
     tf_total = X.sum(axis=0)                              # per-TF library size (for confound diag)
-    if args.size_normalize:                              # reads/bp -> remove domain-size (also cancels under 'fraction')
+    if args.size_normalize:                              # reads/bp -> remove domain-size domination
         X = X / np.where(bp > 0, bp, 1.0)[:, None]
-    if args.input == "fraction":
-        dt = X.sum(axis=1, keepdims=True); dt[dt == 0] = 1.0
-        X = X / dt                                        # per-DOMAIN fraction (TF composition of each domain)
-        if args.log1p:
-            X = np.log1p(X * 1e4)
-        print(f"[input] per-domain FRACTION{'+log1p' if args.log1p else ''} "
-              "(removes domain size + activity)", flush=True)
-    elif args.input == "cpm":
+        print("[size] normalized reads by domain size (reads/bp)", flush=True)
+    if args.input == "tf_fraction":
         tot = X.sum(axis=0, keepdims=True); tot[tot == 0] = 1.0
-        X = X / tot * 1e6                                 # per-TF CPM fraction
-        if args.log1p:
-            X = np.log1p(X)
-        print(f"[input] per-TF CPM{'+log1p' if args.log1p else ''}", flush=True)
+        X = X / tot                                       # per-TF fraction (TF's reads / TF total)
+        print(f"[input] per-TF FRACTION{'+log1p' if args.log1p else ''} "
+              "(each TF's reads in compartment / its total)", flush=True)
+    elif args.input == "domain_fraction":
+        dt = X.sum(axis=1, keepdims=True); dt[dt == 0] = 1.0
+        X = X / dt                                        # per-domain fraction (domain's TF composition)
+        print(f"[input] per-domain FRACTION{'+log1p' if args.log1p else ''}", flush=True)
     else:
-        if args.log1p:
-            X = np.log1p(X)
         print("[input] raw counts", flush=True)
+    if args.log1p:
+        X = np.log1p(X * (1e4 if args.input != "count" else 1))
 
     args.out_dir.mkdir(parents=True, exist_ok=True)
     scopes = {"genome": np.ones(nD, dtype=bool), "A": labs == "A", "B": labs == "B"}
