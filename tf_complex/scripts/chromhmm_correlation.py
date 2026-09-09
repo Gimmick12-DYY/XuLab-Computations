@@ -103,62 +103,41 @@ def main() -> int:
     return 0
 
 
-def _plot(R, tfs, states, Z, clust, comp, cells, out_dir):
+def _plot(R, tfs, states, Z, clust, comp, cells, out_dir, vmin=0.65):
+    """Replicate the reference: dendrogram | TFxTF heatmap (RdYlBu_r, 0.65-1) | cell-count bars."""
     try:
         import matplotlib
         matplotlib.use("Agg")
         import matplotlib.pyplot as plt
-        from matplotlib.patches import Patch
     except Exception as e:  # noqa: BLE001
         print(f"[plot] skipped: {e}"); return
     n = len(tfs)
     dn = dendrogram(Z, no_plot=True); order = dn["leaves"]
-    fig = plt.figure(figsize=(20, max(10, n * 0.22)))
-    gs = fig.add_gridspec(1, 4, width_ratios=[0.12, 0.52, 0.16, 0.20], wspace=0.04)
-    axd = fig.add_subplot(gs[0]); axh = fig.add_subplot(gs[1])
-    axb = fig.add_subplot(gs[2]); axc = fig.add_subplot(gs[3])
+    fig = plt.figure(figsize=(16, max(10, n * 0.20)))
+    gs = fig.add_gridspec(1, 3, width_ratios=[0.14, 0.66, 0.20], wspace=0.02)
+    axd = fig.add_subplot(gs[0]); axh = fig.add_subplot(gs[1]); axb = fig.add_subplot(gs[2])
 
     dendrogram(Z, orientation="left", ax=axd, no_labels=True, link_color_func=lambda k: "#555")
     axd.set_xticks([]); axd.set_yticks([]); [s.set_visible(False) for s in axd.spines.values()]
     axd.set_ylim(0, 10 * n)
 
     Ro = R[np.ix_(order, order)]
-    im = axh.imshow(Ro, aspect="auto", origin="lower", cmap="RdYlBu_r",
-                    vmin=np.nanpercentile(Ro, 2), vmax=1.0)
+    im = axh.imshow(Ro, aspect="auto", origin="lower", cmap="RdYlBu_r", vmin=vmin, vmax=1.0)
     axh.set_xticks(range(n)); axh.set_xticklabels([tfs[i].upper() for i in order], rotation=90, fontsize=5)
-    axh.set_yticks([])
-    cax = fig.add_axes([0.05, 0.12, 0.012, 0.16])       # dedicated colorbar (bottom-left, no overlap)
-    fig.colorbar(im, cax=cax, label="Pearson r")
+    axh.yaxis.tick_right(); axh.set_yticks(range(n))
+    axh.set_yticklabels([tfs[i].upper() for i in order], fontsize=5)
+    cax = fig.add_axes([0.04, 0.12, 0.012, 0.18])       # colorbar, far left (matches reference)
+    fig.colorbar(im, cax=cax, ticks=[vmin, 0.7, 0.8, 0.9, 1.0])
 
     y = np.arange(n)
     cnt = np.array([cells.get(tfs[i].lower(), 1) for i in order], float)
     cmap = plt.get_cmap("tab10")
     axb.barh(y, np.maximum(cnt, 1), color=[cmap(clust[i] % 10) for i in order], height=0.8)
     axb.set_xscale("log"); axb.set_ylim(-0.5, n - 0.5)
-    axb.set_yticks(range(n)); axb.set_yticklabels([tfs[i].upper() for i in order], fontsize=5)
-    axb.tick_params(length=0); axb.set_xlabel("Number of cells")
+    axb.set_yticks([]); axb.tick_params(length=0); axb.set_xlabel("Number of cells")
     for s in ("top", "right", "left"):
         axb.spines[s].set_visible(False)
 
-    # per-cluster ChromHMM composition (stacked)
-    clusters = sorted(comp)
-    scored = sorted(range(len(states)), key=lambda k: STATE_ORDER.index(core(states[k]))
-                    if core(states[k]) in STATE_ORDER else 99)
-    for ci, c in enumerate(clusters):
-        bottom = 0.0
-        for k in scored:
-            v = comp[c][k]
-            axc.bar(ci, v, bottom=bottom, width=0.7,
-                    color=STATE_COLORS.get(core(states[k]), "#999999"))
-            bottom += v
-    axc.set_xticks(range(len(clusters))); axc.set_xticklabels([f"Cluster{c}" for c in clusters])
-    axc.set_ylabel("Proportion of states (mean RPKM)"); axc.set_ylim(0, 1)
-    axc.set_title("ChromHMM state composition across TF clusters", fontsize=9)
-    handles = [Patch(color=STATE_COLORS.get(s, "#999"), label=s) for s in STATE_ORDER
-               if any(core(st) == s for st in states)]
-    axc.legend(handles=handles, fontsize=6, bbox_to_anchor=(1.02, 1), loc="upper left", title="ChromHMM State")
-
-    fig.suptitle("TF chromHMM18 RPKM  Pearson correlation", fontsize=13)
     fig.savefig(out_dir / "chromhmm_rpkm_figure.png", dpi=150, bbox_inches="tight")
     plt.close(fig)
     print(f"[plot] wrote {out_dir/'chromhmm_rpkm_figure.png'}")
