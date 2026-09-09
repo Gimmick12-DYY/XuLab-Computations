@@ -42,8 +42,10 @@ else
   DOMAINS_BED="${DOMAINS_BED:-${XULAB}/hic/work/compartments/compartments_25000.domains.bed}"
 fi
 PER_ARM="${PER_ARM:-9}"                   # classes per arm; total units = 2*PER_ARM
-MATRIX_DIR="${MATRIX_DIR:-${TFC}/work/compartment_rpkm_${UNIT}}"
-RESULTS="${RESULTS:-${TFC}/results_compartment_rpkm_${UNIT}}"
+SMOOTH="${SMOOTH:-2}"                     # absorb sandwiched flips of <= N bins (0 = raw calls)
+TAG="${TAG:-${UNIT}$([[ "${SMOOTH}" != "0" ]] && echo "_sm${SMOOTH}")}"
+MATRIX_DIR="${MATRIX_DIR:-${TFC}/work/compartment_rpkm_${TAG}}"
+RESULTS="${RESULTS:-${TFC}/results_compartment_rpkm_${TAG}}"
 SOURCE="${SOURCE:-raw}"                   # raw (mm) | imputed
 TRANSFORM="${TRANSFORM:-rpkm}"            # rpkm | log (log1p of the RPKM matrix)
 N_CLUSTERS="${N_CLUSTERS:-3}"
@@ -54,6 +56,20 @@ CONDA_ENV="${CONDA_ENV:-tf_complex}"
 source "$(conda info --base)/etc/profile.d/conda.sh"
 conda activate "${CONDA_ENV}"
 mkdir -p "${MATRIX_DIR}" "${RESULTS}"
+
+# Optional: absorb short sandwiched compartment flips before anything else. 48.5% of
+# the raw 25 kb domains are a single bin and most of those sit between two
+# opposite-label neighbours -- eigenvector flicker, not 25 kb compartments.
+if [[ "${SMOOTH}" != "0" ]]; then
+  SM="${MATRIX_DIR}/compartments_smoothed.bed"
+  if [[ "${REBUILD}" == "1" || ! -s "${SM}" ]]; then
+    echo "[$(date)] smooth compartments (absorb sandwiched runs <= ${SMOOTH} bins)"
+    python "${TFC}/scripts/smooth_compartments.py" \
+      --ab-bed "${AB_BED}" --min-bins "${SMOOTH}" --out "${SM}"
+  fi
+  AB_BED="${SM}"
+  DOMAINS_BED="${SM%.bed}.domains.bed"
+fi
 
 if [[ "${UNIT}" == "class" ]]; then
   [[ -s "${AB_BED}" ]] || { echo "missing compartments: ${AB_BED} (run hic step 05)" >&2; exit 1; }

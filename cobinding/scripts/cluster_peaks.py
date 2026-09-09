@@ -128,6 +128,10 @@ def main() -> int:
     ap.add_argument("--share", type=int, default=2,
                     help="cliques merge into a module when they share >= this many regions (default 2)")
     ap.add_argument("--plot", action="store_true")
+    ap.add_argument("--net-min-comp", type=int, default=1,
+                    help="network figure: smallest component to draw (1 = the whole graph)")
+    ap.add_argument("--net-big", type=int, default=10,
+                    help="network figure: components with >= this many regions get their own colour")
     args = ap.parse_args()
 
     annot_path = args.annot or Path(str(args.edges).replace(".peak_edges.tsv", ".peak_annot.tsv"))
@@ -221,11 +225,13 @@ def main() -> int:
     print(f"[done] {multi} multi-clique modules; outputs under {args.out_dir}")
 
     if args.plot:
-        _plot(G, cliques, mods, types, genes, args.out_dir, args.out_dir.name)
+        _plot(G, cliques, mods, types, genes, args.out_dir, args.out_dir.name,
+              args.net_min_comp, args.net_big)
     return 0
 
 
-def _plot(G, cliques, mods, types, genes, out_dir: Path, tf: str) -> None:
+def _plot(G, cliques, mods, types, genes, out_dir: Path, tf: str,
+          net_min_comp: int = 1, net_big: int = 10) -> None:
     try:
         import matplotlib
         matplotlib.use("Agg")
@@ -240,7 +246,7 @@ def _plot(G, cliques, mods, types, genes, out_dir: Path, tf: str) -> None:
         ax.hist(sizes, bins=range(min(sizes), max(sizes) + 2))
         ax.set_xlabel(xl); ax.set_ylabel("count"); ax.set_title(f"{tf} {xl}")
         fig.tight_layout(); fig.savefig(out_dir / f"{name}.png", dpi=150); plt.close(fig)
-    _plot_network(G, cliques, mods, types, genes, out_dir, tf)
+    _plot_network(G, cliques, mods, types, genes, out_dir, tf, net_min_comp, net_big)
     _plot_chromosomes(mods, genes, out_dir, tf)
     print(f"[plot] wrote {out_dir/'clique_sizes.png'}, {out_dir/'module_sizes.png'}, "
           f"{out_dir/'tf_peak_network.png'}, {out_dir/'clique_chromosomes.png'}")
@@ -379,57 +385,64 @@ def _plot_chromosomes(mods, genes, out_dir: Path, tf: str) -> None:
     plt.close(fig)
 
 
-def _pack_components(H, seed: int = 2026, gap: float = 3.15):
-    """Layout each connected component locally, then tile them on a grid."""
+def _component_layout(sub, seed: int = 2026):
+    """Force-directed coordinates for one component, unit-normalized. igraph if present."""
     import numpy as np
 
-    comps = sorted(nx.connected_components(H), key=len, reverse=True)
-    n = len(comps)
-    cols = max(1, int(np.ceil(np.sqrt(n * 1.2))))
-    pos: dict = {}
-    centroids: list[tuple[set, tuple[float, float], int]] = []
-    for i, comp in enumerate(comps):
-        sub = H.subgraph(comp)
-        if len(comp) == 1:
-            local = {next(iter(comp)): (0.0, 0.0)}
-        elif len(comp) <= 6:
-            local = nx.circular_layout(sub, scale=0.85)
-        else:
-            local = nx.spring_layout(sub, seed=seed, weight="coaccess",
-                                     k=1.3 / max(len(comp) ** 0.5, 1.0))
-            xy = np.array(list(local.values()))
-            xy -= xy.mean(axis=0)
-            m = float(np.abs(xy).max()) or 1.0
-            xy = xy / m * 0.9
-            local = {nd: tuple(xy[j]) for j, nd in enumerate(local)}
-        row, col = divmod(i, cols)
-        ox, oy = col * gap, -row * gap
-        for nd, xy in local.items():
-            pos[nd] = (float(xy[0]) + ox, float(xy[1]) + oy)
-        centroids.append((comp, (ox, oy), len(comp)))
-    return pos, centroids
+    nodes = list(sub)
+    n = len(nodes)
+    if n == 1:
+        return {nodes[0]: (0.0, 0.0)}
+    if n == 2:
+        return {nodes[0]: (-1.0, 0.0), nodes[1]: (1.0, 0.0)}
+    xy = None
+    try:
+        import igraph as ig
+        idx = {v: i for i, v in enumerate(nodes)}
+        g = ig.Graph(n=n, edges=[(idx[u], idx[v]) for u, v in sub.edges()])
+        xy = np.asarray(g.layout_fruchterman_reingold(niter=400 if n < 400 else 200).coords, float)
+    except Exception:                                    # noqa: BLE001 - fall back to networkx
+        loc = (nx.circular_layout(sub) if n <= 6 else
+               nx.spring_layout(sub, seed=seed, k=1.3 / max(n ** 0.5, 1.0)))
+        xy = np.array([loc[v] for v in nodes], float)
+    xy = xy - xy.mean(axis=0)
+    m = float(np.abs(xy).max()) or 1.0
+    xy = xy / m                                          # radius 1 before scaling
+    return {v: (float(xy[i, 0]), float(xy[i, 1])) for i, v in enumerate(nodes)}
 
 
-def _draw_region_graph(ax, H, pos, types, color_of, size_of,
-                       edge_alpha: float = 0.55) -> None:
-    if H.number_of_nodes() == 0:
-        return
-    widths = [0.6 + 2.6 * float(H[u][v].get("coaccess", 0.05)) for u, v in H.edges()]
-    nx.draw_networkx_edges(H, pos, ax=ax, width=widths, alpha=edge_alpha, edge_color="#444444")
-    prox = [n for n in H if "proximal" in types.get(n, ())]
-    dist = [n for n in H if n not in prox]
-    if prox:
-        nx.draw_networkx_nodes(
-            H, pos, nodelist=prox, node_shape="o", ax=ax,
-            node_color=[color_of(n) for n in prox],
-            node_size=[size_of(n) for n in prox],
-            edgecolors="0.15", linewidths=0.5)
-    if dist:
-        nx.draw_networkx_nodes(
-            H, pos, nodelist=dist, node_shape="s", ax=ax,
-            node_color=[color_of(n) for n in dist],
-            node_size=[size_of(n) for n in dist],
-            edgecolors="0.15", linewidths=0.5)
+def _pack_discs(radii, pad: float = 0.45):
+    """Greedy spiral packing of discs, largest first -> centres. Big clusters land in
+    the middle and the many two-node pairs form the surrounding halo."""
+    import numpy as np
+
+    order = sorted(range(len(radii)), key=lambda i: -radii[i])
+    cx = np.empty(len(radii)); cy = np.empty(len(radii))
+    px, py, pr = [], [], []                              # already-placed discs
+    r_start = 0.0
+    for k, i in enumerate(order):
+        r = radii[i]
+        if not px:
+            cx[i] = cy[i] = 0.0
+            px.append(0.0); py.append(0.0); pr.append(r)
+            continue
+        ax_, ay_, ar_ = np.array(px), np.array(py), np.array(pr)
+        R = max(r_start, 0.0)
+        step = max(r * 0.7, 0.35)
+        placed = False
+        while not placed:
+            ntheta = max(8, int(2 * np.pi * R / max(step, 1e-6)))
+            th = (np.arange(ntheta) / ntheta * 2 * np.pi + 0.61803 * k) % (2 * np.pi)
+            for t in th:
+                x, y = R * np.cos(t), R * np.sin(t)
+                if np.all((x - ax_) ** 2 + (y - ay_) ** 2 >= (ar_ + r + pad) ** 2):
+                    cx[i], cy[i] = x, y
+                    px.append(x); py.append(y); pr.append(r)
+                    r_start = max(0.0, R - 3 * r)        # next disc starts near this ring
+                    placed = True
+                    break
+            R += step
+    return cx, cy
 
 
 def _comp_label(comp, genes) -> str:
@@ -441,95 +454,99 @@ def _comp_label(comp, genes) -> str:
     return next(iter(chroms)) if len(chroms) == 1 else f"{len(comp)} regions"
 
 
-def _plot_network(G, cliques, mods, types, genes, out_dir: Path, tf: str) -> None:
-    """One node per region; only clique/module members; edges = co-accessibility."""
+def _plot_network(G, cliques, mods, types, genes, out_dir: Path, tf: str,
+                  min_comp: int = 1, big: int = 10) -> None:
+    """THE WHOLE GRAPH on one canvas: one node per region, every edge drawn.
+
+    Each connected component is force-laid-out on its own (a force layout cannot
+    position mutually disconnected parts, since they only ever repel), then the
+    components are disc-packed largest-first, so multi-region clusters sit in the
+    middle and the many two-node pairs form the surrounding halo.
+    Components with >= `big` regions get their own colour; smaller ones stay slate.
+    """
+    import numpy as np
     import matplotlib.pyplot as plt
+    from matplotlib.collections import LineCollection
     from matplotlib.lines import Line2D
 
-    clique_regs = set().union(*cliques) if cliques else set()
-    if not clique_regs:
-        print("[plot] no clique regions; skip network"); return
-    H = G.subgraph(clique_regs).copy()
-    H.remove_nodes_from(list(nx.isolates(H)))
-    if H.number_of_nodes() == 0:
-        print("[plot] clique subgraph empty; skip network"); return
+    comps = sorted(nx.connected_components(G), key=len, reverse=True)
+    comps = [c for c in comps if len(c) >= min_comp]
+    if not comps:
+        print("[plot] no components; skip network"); return
+    keep = set().union(*comps)
+    H = G.subgraph(keep)
+    n_pair = sum(1 for c in comps if len(c) == 2)
 
-    reg2mod: dict[str, int] = {}
-    for i, (regs, nsrc) in enumerate(mods):
-        for r in regs:
-            prev = reg2mod.get(r)
-            if prev is None:
-                reg2mod[r] = i
-            else:
-                pr, pn = mods[prev]
-                if (nsrc, len(regs)) > (pn, len(pr)):
-                    reg2mod[r] = i
+    # local force layout per component, scaled so node density is comparable
+    radii, locals_ = [], []
+    for c in comps:
+        loc = _component_layout(H.subgraph(c))
+        r = 0.5 + 0.62 * len(c) ** 0.5
+        radii.append(r)
+        locals_.append(loc)
+    cx, cy = _pack_discs(radii)
+    pos = {}
+    for i, loc in enumerate(locals_):
+        for v, (x, y) in loc.items():
+            pos[v] = (x * radii[i] * 0.82 + cx[i], y * radii[i] * 0.82 + cy[i])
 
-    tab = plt.cm.tab20.colors
-    multi_ids = [i for i, (_, nsrc) in enumerate(mods) if nsrc > 1]
-    multi_color = {mid: tab[j % len(tab)] for j, mid in enumerate(multi_ids)}
-    single_col = (0.62, 0.66, 0.72)
-    multi_regs = {r for r, mid in reg2mod.items() if mid in multi_color}
+    deg = dict(H.degree())
+    palette = ["#f5793a", "#4fd1a5", "#e8433f", "#63d345", "#b344e8", "#33b5e5",
+               "#f0c419", "#ff7ab6", "#8ad4ff", "#c0f24a", "#ff9f5a", "#6ee7d0"]
+    slate, halo, hub = "#7f8794", "#5b74d1", "#ffc61e"
+    col, size = {}, {}
+    big_i = 0
+    for c, r in zip(comps, radii):
+        if len(c) >= big:
+            base = palette[big_i % len(palette)]; big_i += 1
+        elif len(c) > 2:
+            base = slate
+        else:
+            base = halo
+        dmax = max(deg[v] for v in c)
+        for v in c:
+            is_hub = len(c) >= big and deg[v] == dmax and dmax >= 3
+            col[v] = hub if is_hub else base
+            size[v] = (95 if is_hub else 10 + 7 * deg[v]) if len(c) >= big else \
+                      (9 if len(c) == 2 else 12)
 
-    def color_of(n):
-        mid = reg2mod.get(n)
-        if mid is None:
-            return single_col
-        return multi_color.get(mid, single_col)
+    fig, ax = plt.subplots(figsize=(19, 19), facecolor="#23272e")
+    ax.set_facecolor("#23272e")
+    seg = [(pos[u], pos[v]) for u, v in H.edges()]
+    ax.add_collection(LineCollection(seg, colors="#9aa2ae", linewidths=0.35,
+                                     alpha=0.55, zorder=1))
+    nodes = list(H)
+    xy = np.array([pos[v] for v in nodes])
+    ax.scatter(xy[:, 0], xy[:, 1], s=[size[v] for v in nodes],
+               c=[col[v] for v in nodes], linewidths=0, zorder=2)
+    ax.set_aspect("equal"); ax.axis("off")
+    ax.autoscale_view()
 
-    n_clique = Counter(r for c in cliques for r in c)
-    multi_comps, single_comps = [], []
-    for comp in nx.connected_components(H):
-        (multi_comps if any(n in multi_regs for n in comp) else single_comps).append(comp)
-    H_multi = H.subgraph(set().union(*multi_comps) if multi_comps else []).copy()
-    H_single = H.subgraph(set().union(*single_comps) if single_comps else []).copy()
-    pos_m, cents_m = _pack_components(H_multi, gap=3.6)
-    pos_s, _ = _pack_components(H_single, gap=2.55)
-
-    fig, axes = plt.subplots(
-        2, 1, figsize=(16, 15),
-        gridspec_kw={"height_ratios": [1.15, 1.55]})
-    ax_m, ax_s = axes
-    _draw_region_graph(ax_m, H_multi, pos_m, types, color_of,
-                       size_of=lambda n: 200 + 40 * max(n_clique.get(n, 1) - 1, 0))
-    for comp, (ox, oy), nsz in cents_m:
-        if nsz < 4 and not any(mods[reg2mod[r]][1] > 1 for r in comp if r in reg2mod):
-            continue
-        ax_m.text(ox, oy - 1.45, _comp_label(comp, genes), ha="center", va="top",
-                  fontsize=8.5, color="#222222", clip_on=False)
-    ax_m.set_title(
-        f"Multi-clique modules  ({H_multi.number_of_nodes()} regions, "
-        f"{H_multi.number_of_edges()} links, {len(multi_ids)} modules)",
-        fontsize=12, loc="left", pad=6)
-    ax_m.axis("off")
-
-    _draw_region_graph(ax_s, H_single, pos_s, types, color_of,
-                       size_of=lambda n: 55, edge_alpha=0.45)
-    ax_s.set_title(
-        f"Single cliques  ({H_single.number_of_nodes()} regions, "
-        f"{H_single.number_of_edges()} links, {len(single_comps)} triangles/K4s)",
-        fontsize=12, loc="left", pad=6)
-    ax_s.axis("off")
-
-    fig.suptitle(
-        f"{tf} co-binding regions in cliques/modules\n"
-        f"nodes = peaks · edges = co-accessibility · "
-        f"{H.number_of_nodes()} regions in {len(cliques)} cliques / {len(mods)} modules · "
-        f"isolated pairs omitted",
-        fontsize=14, y=0.995)
-    fig.legend(handles=[
-        Line2D([0], [0], marker="o", color="none", markerfacecolor=single_col,
-               markeredgecolor="0.15", markersize=8, label="proximal region"),
-        Line2D([0], [0], marker="s", color="none", markerfacecolor=single_col,
-               markeredgecolor="0.15", markersize=7, label="distal region"),
-        Line2D([0], [0], marker="o", color="none", markerfacecolor=tab[0],
-               markeredgecolor="0.15", markersize=8, label="multi-clique module"),
-        Line2D([0], [0], marker="o", color="none", markerfacecolor=single_col,
-               markeredgecolor="0.15", markersize=8, label="single clique"),
-    ], loc="lower center", ncol=4, frameon=False, fontsize=9, bbox_to_anchor=(0.5, -0.01))
-    fig.tight_layout(rect=(0, 0.02, 1, 0.96))
-    fig.savefig(out_dir / "tf_peak_network.png", dpi=160, bbox_inches="tight")
+    n_big = sum(1 for c in comps if len(c) >= big)
+    ax.set_title(
+        f"{tf} co-binding region network — every region, every pair\n"
+        f"{H.number_of_nodes():,} regions · {H.number_of_edges():,} co-accessibility edges · "
+        f"{len(comps):,} connected components (largest {len(comps[0])})\n"
+        f"{n_big} components ≥{big} regions (coloured) · {n_pair:,} isolated pairs "
+        f"({100*2*n_pair/max(H.number_of_nodes(),1):.0f}% of regions, blue halo)",
+        fontsize=15, color="#e8eaed", loc="left", pad=14)
+    leg = ax.legend(handles=[
+        Line2D([0], [0], marker="o", color="none", markerfacecolor=hub,
+               markersize=11, label="cluster hub (highest degree)"),
+        Line2D([0], [0], marker="o", color="none", markerfacecolor=palette[1],
+               markersize=8, label=f"component ≥{big} regions"),
+        Line2D([0], [0], marker="o", color="none", markerfacecolor=slate,
+               markersize=7, label=f"component 3–{big-1} regions"),
+        Line2D([0], [0], marker="o", color="none", markerfacecolor=halo,
+               markersize=6, label="isolated pair"),
+    ], loc="lower right", frameon=False, fontsize=11, labelcolor="#e8eaed")
+    for t in leg.get_texts():
+        t.set_color("#e8eaed")
+    fig.savefig(out_dir / "tf_peak_network.png", dpi=170, bbox_inches="tight",
+                facecolor="#23272e")
     plt.close(fig)
+    print(f"[plot] network: {H.number_of_nodes():,} regions, {H.number_of_edges():,} edges, "
+          f"{len(comps):,} components")
 
 
 if __name__ == "__main__":
