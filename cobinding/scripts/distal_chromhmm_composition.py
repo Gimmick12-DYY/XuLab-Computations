@@ -204,9 +204,20 @@ def _plot(tf, npair, br, order, n, out_dir: Path) -> None:
                        for b in order if br.get(b, 0)],
               loc="upper left", bbox_to_anchor=(0, -0.25), ncol=4,
               frameon=False, fontsize=9.5)
-    fig.text(0.005, -0.52, "Broad classes: all Tss* = promoter; all Enh* = enhancer; "
-             "state assigned by maximum bp overlap.\nHEK293T, hg38, ChromHMM 18-state. "
-             "Unassigned denotes segmentation gaps.", fontsize=8, color="#666")
+    fig.text(
+        0.005, -1.02,
+        "Broad classes: all Tss* = promoter; all Enh* = enhancer; state assigned by maximum bp "
+        "overlap.  HEK293T, hg38, ChromHMM 18-state.  Unassigned denotes segmentation gaps.\n"
+        "\n"
+        "The large promoter share is expected, not an artefact. \"Distal\" is a distance-to-"
+        "annotated-TSS call; \"Promoter\" is a chromatin signature (H3K4me3), and the two disagree\n"
+        "wherever H3K4me3 sits away from an annotated gene. 24.3% of ALL distal peaks in the "
+        "universe are promoter-state before any linking, so co-accessibility adds little\n"
+        "(27.1% linked vs 20.9% unlinked = 1.30x). These are not promoter spillover: median "
+        "26.6 kb from the nearest proximal peak (11% within 2 kb), sitting in small discrete\n"
+        "islands (median Tss* segment 1.0 kb vs 33.8 kb for quiescent), and 17% are bivalent "
+        "(TssBiv) — i.e. unannotated/alternative promoters, lncRNA/eRNA TSSs or H3K4me3+ enhancers.",
+        fontsize=7.4, color="#666", linespacing=1.5)
     out = out_dir / "distal_chromhmm_composition.png"
     fig.savefig(out, dpi=170, bbox_inches="tight", facecolor="white")
     plt.close(fig)

@@ -84,6 +84,31 @@ Filters edges (FDR ≤ `QVAL`), builds the peak graph, and writes to `results/<t
   regions that anchor higher-order coordination; `k-core` ranks embeddedness.
 - Module genomic spans tie naturally into the Hi-C **A/B compartment** work.
 
+### 3. `distal_chromhmm_composition.py` — what chromatin are the distal partners in?
+Reduces `.pdc` to unique proximal–distal **peak pairs** (the raw file repeats a pair
+once per annotated gene, so 22,396 rows → **8,374 pairs** over 6,477 distinct distal
+regions), labels each pair by the ChromHMM-18 state covering the most bp of its
+**distal** endpoint, and collapses the 18 states into 7 broad classes →
+`distal_chromhmm_composition.tsv` + `.png`. On RBBP4: Quiescent 32.7%, Promoter 30.7%,
+Enhancer 19.1%, Transcribed 11.6%, Polycomb 3.9%, Het/repeats 1.5%, Unassigned 0.6%.
+
+Percentages are only interpretable against how much genome each state covers —
+promoter is **19× enriched** and enhancer **7×**, while quiescent, the largest slice,
+is actually **2.4× depleted** (78.4% of the genome, 32.7% of partners).
+
+> **Why so many "distal" regions look like promoters (30.7%) — expected, not a bug.**
+> `distal` is a *distance-to-annotated-TSS* call; `Promoter` is a *chromatin signature*
+> (H3K4me3). They disagree wherever H3K4me3 sits away from an annotated gene.
+> **24.3% of ALL distal peaks in the universe are already promoter-state before any
+> linking**, so co-accessibility contributes little (27.1% linked vs 20.9% unlinked =
+> 1.30×). It is not promoter spillover: these sit a median **26.6 kb** from the nearest
+> proximal peak (only 11% within 2 kb) in small discrete islands (median Tss\* segment
+> **1.0 kb**, vs 33.8 kb for quiescent), and 17% are bivalent `TssBiv`. So they are
+> unannotated/alternative promoters, lncRNA/eRNA TSSs, or H3K4me3-marked enhancers.
+> Sanity check that the labelling itself is sound: no peak carries both labels, and
+> **proximal endpoints are 94.0% promoter**. Separating "unannotated promoter" from
+> "H3K4me3+ enhancer" needs a real GENCODE TSS annotation, which is not in `data/`.
+
 ## Notes
 
 - **Need the `.sel` file for cliques.** With `.pdc` alone the graph is bipartite
