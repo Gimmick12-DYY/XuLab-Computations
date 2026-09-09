@@ -2,15 +2,22 @@
 # -----------------------------------------------------------------------------
 # build_compartment_matrix.py
 #
-# Compartment-unit TF read matrix for the A/B co-binding correlation. The UNIT is
-# an A/B compartment DOMAIN (a contiguous A or B segment from the Hi-C calls). For
-# each TF we sum its raw pseudobulk reads (unified/work/<tf>/mm) into each domain.
+# Compartment-unit TF RPKM matrix for the A/B co-binding correlation -- the same
+# recipe validated on ChromHMM-18 (build_chromhmm_matrix.py), with the UNIT swapped
+# from a chromatin state to an A/B compartment DOMAIN (a contiguous A or B segment
+# from the Hi-C calls). For each TF we sum its raw pseudobulk reads
+# (unified/work/<tf>/mm) into each domain, then:
+#     RPKM(domain) = reads / (domain_bp / 1e3) / (TF_total_reads / 1e6)
+# RPKM divides out domain LENGTH (the size confound that made every TF pair look
+# co-bound) AND per-TF library depth (the cell-count/complexity confound) at once.
+# Domains are variable length, so the /kb term is what does the real work here;
+# with --unit bin (uniform 25 kb) RPKM reduces to plain CPM.
 #
-#   output = (domains x TFs) read-count matrix  ->  correlate TFs ACROSS domains
-#   (A-A = over A domains, B-B = over B domains) in compartment_correlation.py.
+#   output = (domains x TFs) RPKM matrix  ->  correlate TFs ACROSS domains
+#   (A-A = over A domains, B-B = over B domains) in compartment_rpkm_correlation.py.
 #
 # Output (--out-dir):
-#   compartment_matrix.npz   scipy CSC float, domains x TFs (raw read counts)
+#   compartment_matrix.npz   scipy CSC float, domains x TFs (RPKM, or counts)
 #   domains.tsv              chrom start end compartment bp   (unit order)
 #   tfs.txt                  TF column order
 # -----------------------------------------------------------------------------
@@ -85,6 +92,9 @@ def main() -> int:
                          "domain = merged contiguous A/B segments (Mb-scale)")
     ap.add_argument("--out-dir", type=Path, required=True)
     ap.add_argument("--source", choices=["raw", "imputed"], default="raw")
+    ap.add_argument("--transform", choices=["rpkm", "count"], default="rpkm",
+                    help="rpkm (default) = reads/kb/million, removes the domain-size and "
+                         "per-TF depth confounds together; count = raw reads")
     ap.add_argument("--tfs", nargs="*", default=None)
     args = ap.parse_args()
 
@@ -92,8 +102,11 @@ def main() -> int:
     domains = load_domains(args.domains_bed, args.unit)
     didx = domain_index(domains)
     nD = len(domains)
+    bp = np.array([e - s for _, s, e, _ in domains], dtype=np.float64)
+    bp[bp <= 0] = 1.0
     print(f"[domains] {nD:,} units "
-          f"(A={sum(d[3]=='A' for d in domains):,} B={sum(d[3]=='B' for d in domains):,})", flush=True)
+          f"(A={sum(d[3]=='A' for d in domains):,} B={sum(d[3]=='B' for d in domains):,}) "
+          f"median {int(np.median(bp)):,} bp; transform={args.transform}", flush=True)
 
     tfs = args.tfs or discover_tfs(args.work_root, sub, "matrix.mtx.gz" if sub == "mm" else "matrix_csr.npz")
     if not tfs:
@@ -117,8 +130,12 @@ def main() -> int:
             k = np.searchsorted(starts, s, side="right") - 1     # domain whose start <= bin start
             if k >= 0 and s < ends[k]:
                 acc[gidx[k]] += v
+        n_hit, total = int((acc > 0).sum()), acc.sum()
+        if args.transform == "rpkm":
+            libM = total / 1e6
+            acc = acc / (bp / 1e3) / (libM if libM > 0 else 1.0)
         cols.append(sp.csc_matrix(acc.reshape(-1, 1))); used.append(tf)
-        print(f"[{len(used)}] {tf}: {int((acc>0).sum())}/{nD} domains with reads, total={acc.sum():.0f}", flush=True)
+        print(f"[{len(used)}] {tf}: {n_hit}/{nD} domains with reads, total={total:.0f}", flush=True)
 
     if not used:
         raise SystemExit("no TF matrices loaded")

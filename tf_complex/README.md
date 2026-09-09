@@ -76,6 +76,15 @@ python tf_complex/scripts/summarize_complex_motifs.py \
 #    ...same for the A-A and B-B complexes (SCOPE restricts fg+bg to that compartment):
 #    SCOPE=A sbatch tf_complex/slurm/03_complex_motifs.sbatch   # then --array over complex_beds_A/
 #    SCOPE=B sbatch tf_complex/slurm/03_complex_motifs.sbatch   # results in complex_motifs_{A,B}/
+
+# 4. RPKM-over-annotation correlation (independent of the peak track above):
+#    correlate TFs by their RPKM profile across ChromHMM-18 states
+sbatch tf_complex/slurm/04_chromhmm_rpkm.sbatch                # -> results_chromhmm/
+
+# 5. same recipe, unit = A/B compartment domain instead of a chromatin state
+sbatch tf_complex/slurm/05_compartment_rpkm.sbatch             # -> results_compartment_rpkm_domain/
+#   UNIT=bin sbatch tf_complex/slurm/05_compartment_rpkm.sbatch     # 25 kb bins (RPKM == CPM)
+#   REBUILD=0 sbatch tf_complex/slurm/05_compartment_rpkm.sbatch    # reuse the matrix
 ```
 
 ### 1. `call_raw_peaks.py` — per-TF raw peaks

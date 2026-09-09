@@ -22,6 +22,7 @@ import numpy as np
 import scipy.sparse as sp
 from scipy.cluster.hierarchy import dendrogram, fcluster, linkage
 from scipy.spatial.distance import squareform
+from scipy.stats import kruskal
 
 # standard Roadmap 18-state colours (keyed on the core state name)
 STATE_COLORS = {
@@ -41,12 +42,45 @@ def core(state):
 
 
 def load_cells(path):
+    """Accept either a TF,count table or the per-cell TF1000cells.meta.csv."""
+    if not path or not Path(path).is_file():
+        return {}
+    with open(path) as fh:
+        rows = list(csv.reader(fh))
+    if not rows:
+        return {}
+    hdr = [h.strip() for h in rows[0]]
+    if "TF" in hdr:                       # per-cell metadata -> count cells per TF
+        i = hdr.index("TF")
+        cc = {}
+        for r in rows[1:]:
+            if len(r) > i and r[i].strip():
+                tf = r[i].strip().lower()
+                cc[tf] = cc.get(tf, 0) + 1
+        return cc
     cc = {}
-    if path and Path(path).is_file():
-        for r in csv.reader(open(path)):
-            if len(r) >= 2 and r[1].strip().isdigit():
-                cc[r[0].strip().lower()] = int(r[1])
+    for r in rows:                        # already a TF,count table
+        if len(r) >= 2 and r[1].strip().isdigit():
+            cc[r[0].strip().lower()] = int(r[1])
     return cc
+
+
+def state_stars(M, clust):
+    """Kruskal-Wallis across TF clusters on each state's per-TF RPKM proportion."""
+    tot = M.sum(axis=0, keepdims=True)
+    tot[tot == 0] = 1.0
+    P = M / tot
+    groups = [np.flatnonzero(clust == c) for c in sorted(set(clust))]
+    stars, pvals = [], []
+    for k in range(P.shape[0]):
+        vals = [P[k, g] for g in groups if g.size > 1]
+        try:
+            p = float(kruskal(*vals)[1]) if len(vals) >= 2 else 1.0
+        except ValueError:                # identical values in every group
+            p = 1.0
+        pvals.append(p)
+        stars.append("***" if p < 1e-3 else "**" if p < 1e-2 else "*" if p < 0.05 else "")
+    return stars, pvals
 
 
 def main() -> int:
@@ -88,6 +122,7 @@ def main() -> int:
             f.write(f"{t}\t{c}\n")
 
     # per-cluster ChromHMM composition (mean RPKM across cluster's TFs, normalized)
+    stars, pvals = state_stars(M, clust)
     comp = {}
     with (args.out_dir / "state_composition.tsv").open("w") as f:
         f.write("cluster\t" + "\t".join(states) + "\n")
@@ -96,26 +131,46 @@ def main() -> int:
             prop = m / (m.sum() if m.sum() else 1.0)
             comp[c] = prop
             f.write(f"Cluster{c}\t" + "\t".join(f"{v:.5f}" for v in prop) + "\n")
+        f.write("p_kruskal\t" + "\t".join(f"{p:.3g}" for p in pvals) + "\n")
 
     cells = load_cells(args.cell_meta)
-    _plot(R, tfs, states, Z, clust, comp, cells, args.out_dir)
+    print(f"[cells] {len(cells)} TFs in {args.cell_meta}; "
+          f"{sum(1 for t in tfs if t.lower() in cells)}/{n_tf} matched")
+    _plot(R, tfs, states, Z, clust, comp, cells, args.out_dir, stars=stars)
     print(f"[done] {n_tf} TFs, {len(states)} states, {args.n_clusters} clusters -> {args.out_dir}")
     return 0
 
 
-def _plot(R, tfs, states, Z, clust, comp, cells, out_dir, vmin=0.65):
-    """Replicate the reference: dendrogram | TFxTF heatmap (RdYlBu_r, 0.65-1) | cell-count bars."""
+def _plot(R, tfs, states, Z, clust, comp, cells, out_dir, stars=None, vmin=0.65):
+    """Reference layout: dendrogram | TFxTF heatmap (RdYlBu_r, 0.65-1) | cell-count bars |
+    stacked ChromHMM state composition per TF cluster."""
     try:
         import matplotlib
         matplotlib.use("Agg")
         import matplotlib.pyplot as plt
+        from matplotlib.patches import Patch
     except Exception as e:  # noqa: BLE001
         print(f"[plot] skipped: {e}"); return
     n = len(tfs)
+    stars = stars or [""] * len(states)
     dn = dendrogram(Z, no_plot=True); order = dn["leaves"]
-    fig = plt.figure(figsize=(16, max(10, n * 0.20)))
-    gs = fig.add_gridspec(1, 3, width_ratios=[0.14, 0.66, 0.20], wspace=0.02)
-    axd = fig.add_subplot(gs[0]); axh = fig.add_subplot(gs[1]); axb = fig.add_subplot(gs[2])
+    fig = plt.figure(figsize=(20, max(9, n * 0.135)))
+    # Explicit geometry: the dendrogram must butt against the heatmap, while the
+    # heatmap->bars gap has to hold two columns of TF labels.
+    axd = fig.add_axes([0.130, 0.10, 0.085, 0.84])
+    axh = fig.add_axes([0.215, 0.10, 0.345, 0.84])
+    axb = fig.add_axes([0.620, 0.10, 0.130, 0.84])
+    axc = fig.add_axes([0.805, 0.10, 0.115, 0.84])
+    hsv = plt.get_cmap("hsv")
+    # Cell bars: pink at top -> red at bottom (reference rainbow, no wrap).
+    # ChromHMM states: salmon TssA -> rose Quies, one hue per state.
+    def hsv_span(n, h0, h1):
+        if n <= 1:
+            return [hsv(h0)]
+        return [hsv(h0 + (h1 - h0) * i / (n - 1)) for i in range(n)]
+    bar_cols = hsv_span(n, 0.02, 0.92)   # red at bottom (y=0) -> pink at top
+
+    fig.text(0.015, 0.80, "TF\nchromHMM18\nrpkm ratio\npearson cor", fontsize=15, va="top")
 
     dendrogram(Z, orientation="left", ax=axd, no_labels=True, link_color_func=lambda k: "#555")
     axd.set_xticks([]); axd.set_yticks([]); [s.set_visible(False) for s in axd.spines.values()]
@@ -126,17 +181,45 @@ def _plot(R, tfs, states, Z, clust, comp, cells, out_dir, vmin=0.65):
     axh.set_xticks(range(n)); axh.set_xticklabels([tfs[i].upper() for i in order], rotation=90, fontsize=5)
     axh.yaxis.tick_right(); axh.set_yticks(range(n))
     axh.set_yticklabels([tfs[i].upper() for i in order], fontsize=5)
-    cax = fig.add_axes([0.04, 0.12, 0.012, 0.18])       # colorbar, far left (matches reference)
-    fig.colorbar(im, cax=cax, ticks=[vmin, 0.7, 0.8, 0.9, 1.0])
+    axh.set_xticks(np.arange(-0.5, n, 1), minor=True)
+    axh.set_yticks(np.arange(-0.5, n, 1), minor=True)
+    axh.grid(which="minor", color="white", linewidth=0.4)
+    axh.tick_params(which="minor", length=0); axh.tick_params(length=0)
+    cax = fig.add_axes([0.045, 0.30, 0.009, 0.22])      # colorbar, far left (matches reference)
+    fig.colorbar(im, cax=cax, ticks=[0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1.0])
 
     y = np.arange(n)
     cnt = np.array([cells.get(tfs[i].lower(), 1) for i in order], float)
-    cmap = plt.get_cmap("tab10")
-    axb.barh(y, np.maximum(cnt, 1), color=[cmap(clust[i] % 10) for i in order], height=0.8)
+    axb.barh(y, np.maximum(cnt, 1), color=bar_cols, height=0.8)
     axb.set_xscale("log"); axb.set_ylim(-0.5, n - 0.5)
-    axb.set_yticks([]); axb.tick_params(length=0); axb.set_xlabel("Number of cells")
+    axb.set_yticks(range(n)); axb.set_yticklabels([tfs[i].upper() for i in order], fontsize=5)
+    axb.tick_params(length=0); axb.set_xlabel("Number of cells")
     for s in ("top", "right", "left"):
         axb.spines[s].set_visible(False)
+
+    # stacked ChromHMM composition per cluster, canonical state order (TssA on top)
+    idx = sorted(range(len(states)), key=lambda k: STATE_ORDER.index(core(states[k]))
+                 if core(states[k]) in STATE_ORDER else 99)
+    state_cols = hsv_span(len(idx), 0.02, 0.90)
+    scol = {k: state_cols[p] for p, k in enumerate(idx)}
+    clusters = sorted(comp)
+    for ci, c in enumerate(clusters):
+        bottom = 0.0
+        for k in reversed(idx):
+            axc.bar(ci, comp[c][k], bottom=bottom, width=0.55, color=scol[k])
+            bottom += comp[c][k]
+    axc.set_xticks(range(len(clusters)))
+    axc.set_xticklabels([f"Cluster{c}" for c in clusters], fontsize=8)
+    axc.set_xlim(-0.6, len(clusters) - 0.4)
+    axc.set_xlabel("TF Cluster", fontsize=9); axc.set_ylim(0, 1)
+    axc.set_yticks([0, .25, .5, .75, 1.0]); axc.set_yticklabels(["0%", "25%", "50%", "75%", "100%"])
+    axc.set_ylabel("Proportion of States (Based on Mean RPKM)", fontsize=9)
+    axc.set_title("ChromHMM State Composition\nAcross TF Clusters", fontsize=10)
+    for s in ("top", "right"):
+        axc.spines[s].set_visible(False)
+    handles = [Patch(color=scol[k], label=f"{core(states[k])}{stars[k]}") for k in idx]
+    axc.legend(handles=handles, fontsize=6, bbox_to_anchor=(1.06, 0.96), loc="upper left",
+               title="ChromHMM State\n(* p<0.05)", title_fontsize=7, frameon=False)
 
     fig.savefig(out_dir / "chromhmm_rpkm_figure.png", dpi=150, bbox_inches="tight")
     plt.close(fig)
