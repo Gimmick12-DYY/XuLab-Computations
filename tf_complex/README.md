@@ -156,6 +156,23 @@ how many reads land in each unit.
   attenuates *r* in proportion to depth. Mean *r* then tracks cell count at ρ = **+0.98**
   — the same artifact that sank the earlier `tf_fraction`/`domain_fraction` attempts
   (a per-TF fraction is Pearson scale-invariant, so it never removed anything).
+
+  RPKM's two terms fail differently on this unit, and neither is a fix:
+
+  | normalization, same 22,215 domains | median *r* | ρ(mean *r*, n_cells) |
+  |---|---|---|
+  | raw counts | +0.980 | +0.354 |
+  | reads/kb (length only) | +0.481 | +0.975 |
+  | full RPKM | +0.481 | +0.975 |
+
+  `/1e6` is a per-column constant → **provably no effect on Pearson** (identical rows).
+  `/kb` does work — it removes the domain-size confound that otherwise correlates every
+  TF with every other (median r 0.98 → 0.48) — but that only *unmasks* the depth
+  confound beneath it. **Downsampling proves it is depth, not biology:** cut the deepest
+  TFs to a 1,060-cell read budget, leaving their binding untouched, and they fall from
+  the top of the heatmap to the bottom — rbbp4 +0.645→+0.347, nfya +0.667→+0.311,
+  sox4 +0.663→+0.278. No rescaling of rows/columns can add reads, so the only lever is
+  pooling into larger units — which runs into the saturation below.
 - **Per-class fails from saturation.** Pooling into 18 equal-occupancy eigenvector
   classes removes the noise artifact (ρ drops to +0.38), but then **PC1 = 99.4 % of the
   variance**: every TF traces the same shallow monotone A→B ramp (panel-mean RPKM
