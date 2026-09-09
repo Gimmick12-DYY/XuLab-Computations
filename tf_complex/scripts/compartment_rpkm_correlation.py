@@ -12,7 +12,15 @@
 # There is no state-composition panel -- compartments carry only an A/B label, and
 # that split is expressed instead by running the whole thing per SCOPE.
 #
-# Scopes: genome (all units), A (A-only units = A-A co-binding), B (B-only = B-B).
+# Two unit layouts are accepted, auto-detected from --matrix-dir:
+#   * CLASS units (chromhmm_matrix.npz + states.tsv, from build_compartment_classes.py
+#     -> build_chromhmm_matrix.py): 2n eigenvector-strength classes pooled genome-wide.
+#     This is the layout that behaves -- see build_compartment_classes.py for why.
+#     Scope: genome only (the A/B split is already an axis of the units).
+#   * DOMAIN/BIN units (compartment_matrix.npz + domains.tsv, from
+#     build_compartment_matrix.py): one unit per compartment domain or 25 kb bin.
+#     Scopes: genome, A (A-A co-binding), B (B-B). Depth-confounded at this
+#     granularity; kept for comparison, not for interpretation.
 #
 # Output (--out-dir), one set per scope:
 #   tf_similarity_<scope>.tsv, tf_clusters_<scope>.tsv, compartment_rpkm_<scope>.png
@@ -77,13 +85,22 @@ def main() -> int:
                     help="heatmap colour floor; default = 2nd percentile of the scope")
     args = ap.parse_args()
 
-    M = np.asarray(sp.load_npz(args.matrix_dir / "compartment_matrix.npz").todense())  # units x TFs
     tfs = [t.strip() for t in (args.matrix_dir / "tfs.txt").read_text().split() if t.strip()]
-    rows = [ln.rstrip("\n").split("\t") for ln in open(args.matrix_dir / "domains.tsv")]
-    labs = np.array([r[3].strip() for r in rows], dtype="<U1")
+    npz_cls = args.matrix_dir / "chromhmm_matrix.npz"
+    if npz_cls.is_file():                     # eigenvector-strength classes, genome scope only
+        M = np.asarray(sp.load_npz(npz_cls).todense())
+        names = [ln.split("\t")[0].strip() for ln in
+                 open(args.matrix_dir / "states.tsv") if ln.strip()]
+        labs = np.array([n[0] for n in names], dtype="<U1")
+        unit_kind, scopes = "class", ("genome",)
+    else:                                     # one unit per domain / 25 kb bin
+        M = np.asarray(sp.load_npz(args.matrix_dir / "compartment_matrix.npz").todense())
+        rows = [ln.rstrip("\n").split("\t") for ln in open(args.matrix_dir / "domains.tsv")]
+        labs = np.array([r[3].strip() for r in rows], dtype="<U1")
+        unit_kind, scopes = "domain", ("genome", "A", "B")
     n_tf, nD = len(tfs), M.shape[0]
-    print(f"[matrix] {nD:,} compartment units x {n_tf} TFs (A={int((labs=='A').sum()):,} "
-          f"B={int((labs=='B').sum()):,})", flush=True)
+    print(f"[matrix] {nD:,} compartment {unit_kind} units x {n_tf} TFs "
+          f"(A={int((labs=='A').sum()):,} B={int((labs=='B').sum()):,})", flush=True)
 
     X = np.log1p(M) if args.transform == "log" else M
     keep = np.asarray(M.sum(axis=1)).ravel() > args.min_reads
@@ -92,9 +109,10 @@ def main() -> int:
           f"{sum(1 for t in tfs if t.lower() in cells)}/{n_tf} matched", flush=True)
     args.out_dir.mkdir(parents=True, exist_ok=True)
 
-    for scope, mask in (("genome", np.ones(nD, bool)), ("A", labs == "A"), ("B", labs == "B")):
-        idx = np.flatnonzero(mask & keep)
-        if idx.size < 10:
+    masks = {"genome": np.ones(nD, bool), "A": labs == "A", "B": labs == "B"}
+    for scope in scopes:
+        idx = np.flatnonzero(masks[scope] & keep)
+        if idx.size < 3:
             print(f"[{scope}] only {idx.size} units; skipping", flush=True); continue
         R = np.nan_to_num(np.corrcoef(X[idx], rowvar=False))
         write_matrix(args.out_dir / f"tf_similarity_{scope}.tsv", R, tfs)

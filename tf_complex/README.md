@@ -37,7 +37,8 @@ The `[genome] coverage check:` log line reports the low-peak-TF block median (ne
 (which complex is A- vs B-biased), **not** as the axis that defines co-binding:
 every TF binds active chromatin, so every TF is A-leaning and A/B cannot
 discriminate complexes. This is why the earlier "A/B compartment correlation"
-framing did not work.
+framing did not work — and step 5 below now shows it quantitatively, using the
+same RPKM recipe that succeeds on ChromHMM-18.
 
 ### Why RAW binding, not imputed
 The imputed matrices are **open-chromatin masked**, which forces every TF into the
@@ -129,6 +130,44 @@ member is the DNA-binding anchor) or `SHARED_COMMON` (one motif dominates) →
 HOMER hg38, HOCOMOCO meme). `SCOPE=A|B` runs the same test on the compartment-specific
 complexes with fg+bg restricted to that compartment (does an A-A complex share a motif
 *within A*?), writing to `complex_beds_{A,B}/` + `complex_motifs_{A,B}/`.
+
+### 5. RPKM-over-annotation correlation — `04_chromhmm_rpkm.sbatch` / `05_compartment_rpkm.sbatch`
+An independent view that skips peak calling: correlate TFs by their **RPKM profile
+across a genome-wide annotation**. `RPKM = reads / (unit_kb) / (TF_total/1e6)` divides
+out unit LENGTH and per-TF DEPTH at once. `04` uses the 18 ChromHMM states
+(`results_chromhmm/`, validated — reproduces the published ChromHMM-18 figure);
+`05` swaps in compartments (`build_compartment_classes.py` → the *same*
+`build_chromhmm_matrix.py` → `compartment_rpkm_correlation.py`). Same 
+dendrogram + heatmap + cell-count-bar figure, minus the state-composition panel.
+
+**Unit granularity is the whole ballgame, and RPKM does not fix it.** Pearson is
+scale-invariant, so the `/1e6` term does nothing for the correlation; what matters is
+how many reads land in each unit.
+
+| unit | n units | off-diag median r | spearman(mean r, n_cells) | verdict |
+|------|---------|-------------------|---------------------------|---------|
+| ChromHMM-18 state | 18 | +0.93 | **+0.22** | clean, discriminates |
+| compartment class (E1 quantile) | 18 | +0.993 | +0.38 | clean but **saturated** |
+| compartment domain | 22,215 | +0.47 | **+0.98** | pure depth artifact |
+| A / B only | 2 | — | — | degenerate (r ≡ ±1) |
+
+- **Per-domain fails from noise.** A 1,060-cell TF spreads ~70 k reads over 22 k
+  domains (~3 reads each), so its profile is mostly Poisson noise, and noise
+  attenuates *r* in proportion to depth. Mean *r* then tracks cell count at ρ = **+0.98**
+  — the same artifact that sank the earlier `tf_fraction`/`domain_fraction` attempts
+  (a per-TF fraction is Pearson scale-invariant, so it never removed anything).
+- **Per-class fails from saturation.** Pooling into 18 equal-occupancy eigenvector
+  classes removes the noise artifact (ρ drops to +0.38), but then **PC1 = 99.4 % of the
+  variance**: every TF traces the same shallow monotone A→B ramp (panel-mean RPKM
+  0.24 at strong-B → 0.56 at strong-A, a 2.3× swing), so all off-diagonal *r* fall in
+  a 0.041-wide band around 0.99.
+
+**Conclusion: compartment strength is a one-dimensional axis, so it yields one number
+per TF (its A/B lean) rather than a discriminating profile.** ChromHMM works because
+its 18 states are *qualitatively* distinct (TssA vs Enh vs Het vs ZNF/Rpts), giving each
+TF a multi-dimensional fingerprint. This is the quantitative version of the
+"A/B is an annotation, not the co-binding axis" point above — use `tf_compartment.tsv`
+(step 3) for A/B lean, and the peak track (steps 2–4) to define complexes.
 
 ## Knobs (env vars)
 
