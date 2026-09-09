@@ -469,10 +469,12 @@ def _plot_network(G, cliques, mods, types, genes, out_dir: Path, tf: str,
     from matplotlib.collections import LineCollection
     from matplotlib.lines import Line2D
 
-    comps = sorted(nx.connected_components(G), key=len, reverse=True)
-    comps = [c for c in comps if len(c) >= min_comp]
+    allc = sorted(nx.connected_components(G), key=len, reverse=True)
+    comps = [c for c in allc if len(c) >= min_comp]
     if not comps:
         print("[plot] no components; skip network"); return
+    drop = [c for c in allc if len(c) < min_comp]
+    n_drop_c, n_drop_r = len(drop), sum(len(c) for c in drop)
     keep = set().union(*comps)
     H = G.subgraph(keep)
     n_pair = sum(1 for c in comps if len(c) == 2)
@@ -523,23 +525,29 @@ def _plot_network(G, cliques, mods, types, genes, out_dir: Path, tf: str,
     ax.autoscale_view()
 
     n_big = sum(1 for c in comps if len(c) >= big)
+    n_mid = sum(1 for c in comps if 2 < len(c) < big)
+    tail = (f"{n_pair:,} isolated pairs (blue halo)" if n_pair else
+            f"{n_drop_c:,} components <{min_comp} regions hidden "
+            f"({n_drop_r:,} regions, {100*n_drop_r/G.number_of_nodes():.0f}% of the graph)")
     ax.set_title(
-        f"{tf} co-binding region network — every region, every pair\n"
+        f"{tf} co-binding region network — every edge drawn\n"
         f"{H.number_of_nodes():,} regions · {H.number_of_edges():,} co-accessibility edges · "
         f"{len(comps):,} connected components (largest {len(comps[0])})\n"
-        f"{n_big} components ≥{big} regions (coloured) · {n_pair:,} isolated pairs "
-        f"({100*2*n_pair/max(H.number_of_nodes(),1):.0f}% of regions, blue halo)",
+        f"{n_big} components ≥{big} regions (coloured) · {n_mid:,} of 3–{big-1} (grey) · {tail}",
         fontsize=15, color="#e8eaed", loc="left", pad=14)
-    leg = ax.legend(handles=[
+    handles = [
         Line2D([0], [0], marker="o", color="none", markerfacecolor=hub,
                markersize=11, label="cluster hub (highest degree)"),
         Line2D([0], [0], marker="o", color="none", markerfacecolor=palette[1],
                markersize=8, label=f"component ≥{big} regions"),
         Line2D([0], [0], marker="o", color="none", markerfacecolor=slate,
                markersize=7, label=f"component 3–{big-1} regions"),
-        Line2D([0], [0], marker="o", color="none", markerfacecolor=halo,
-               markersize=6, label="isolated pair"),
-    ], loc="lower right", frameon=False, fontsize=11, labelcolor="#e8eaed")
+    ]
+    if n_pair:
+        handles.append(Line2D([0], [0], marker="o", color="none", markerfacecolor=halo,
+                              markersize=6, label="isolated pair"))
+    leg = ax.legend(handles=handles, loc="lower right", frameon=False,
+                    fontsize=11, labelcolor="#e8eaed")
     for t in leg.get_texts():
         t.set_color("#e8eaed")
     fig.savefig(out_dir / "tf_peak_network.png", dpi=170, bbox_inches="tight",

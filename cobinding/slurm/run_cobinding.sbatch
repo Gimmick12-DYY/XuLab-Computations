@@ -41,6 +41,9 @@ COACCESS_MIN="${COACCESS_MIN:-0.0}"
 MIN_SUPPORT="${MIN_SUPPORT:-1}"
 MIN_CLIQUE="${MIN_CLIQUE:-3}"
 SHARE="${SHARE:-2}"           # cliques merge into a module when sharing >= SHARE regions
+NET_MIN_COMP="${NET_MIN_COMP:-3}"   # network figure: drop components smaller than this
+                                    # (3 = hide the isolated pairs; 1 = draw the whole graph)
+NET_BIG="${NET_BIG:-10}"            # components >= this many regions get their own colour
 
 CONDA_ENV="${CONDA_ENV:-cobinding}"
 source "$(conda info --base)/etc/profile.d/conda.sh"
@@ -62,5 +65,6 @@ echo "[$(date)] cluster_peaks TF=${TF} (q<${QVAL} coaccess>=${COACCESS_MIN} supp
 python "${COB}/scripts/cluster_peaks.py" \
   --edges "${EDGES}" --out-dir "${RESULTS}/${TF}" \
   --qval "${QVAL}" --coaccess-min "${COACCESS_MIN}" --min-support "${MIN_SUPPORT}" \
-  --min-clique "${MIN_CLIQUE}" --share "${SHARE}" --plot
+  --min-clique "${MIN_CLIQUE}" --share "${SHARE}" --plot \
+  --net-min-comp "${NET_MIN_COMP}" --net-big "${NET_BIG}"
 echo "[$(date)] done -> ${RESULTS}/${TF}"
