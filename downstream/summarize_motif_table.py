@@ -9,7 +9,9 @@
 #
 #   HOMER value = P-value of the TF's own motif in knownResults.txt (col 3)
 #   AME   value = adj_p-value of the TF's own motif in ame.tsv (col adj_p-value)
-#   NA = TF's own motif absent (not in that DB / not called); blank = condition not run.
+#   F  = target motif not found in results (run completed, TF is in that library)
+#   NA = TF not present in that library (HOMER / HOCOMOCO)
+#   blank = condition not run
 #
 # Each condition = a root dir whose <tf>/ has homer_<bg>/ + ame_<bg>/. Point --*-root at
 # the peaks tree (downstream/motif) and/or a bins tree; genome vs OCR come from _<bg>.
@@ -78,24 +80,65 @@ def ame_own(cdir, tf):
     return f"{best:.2E}" if best is not None else "NA"
 
 
-def cond_pvals(root, tf, bg):
-    """(AME, HOMER) own-motif p for one condition = root/<tf>/{ame_<bg>, homer_<bg>}."""
+def _cond_dirs(base: Path, kind: str, bg: str):
+    """Prefer kind_bg (e.g. ame_genome). Legacy kind/ only for genome bg, never OCR."""
+    tagged = base / f"{kind}_{bg}"
+    if tagged.exists():
+        return tagged
+    if bg == "genome":
+        legacy = base / kind
+        if legacy.exists():
+            return legacy
+    return None
+
+
+def cond_pvals(root, tf, bg, in_ame: bool, in_homer: bool):
+    """(AME, HOMER) coded cells for one condition."""
     if root is None:
         return "", ""
     base = Path(root) / tf
-    ame = ame_own(base / f"ame_{bg}", tf) if (base / f"ame_{bg}").exists() else \
-        ame_own(base / "ame", tf)
-    homer = homer_own(base / f"homer_{bg}", tf) if (base / f"homer_{bg}").exists() else \
-        homer_own(base / "homer", tf)
+    ad = _cond_dirs(base, "ame", bg)
+    hd = _cond_dirs(base, "homer", bg)
+    ame = _code(ame_own(ad, tf) if ad else "", in_ame, ad is not None and (
+        (ad / "ame.tsv").is_file() or (ad / tf / "ame.tsv").is_file()))
+    homer = _code(homer_own(hd, tf) if hd else "", in_homer,
+                  hd is not None and (hd / "knownResults.txt").is_file())
     return ame, homer
 
 
+def _code(raw: str, in_lib: bool, ran: bool) -> str:
+    if not ran:
+        return ""
+    if not in_lib:
+        return "NA"
+    if raw in ("", "NA"):
+        return "F"
+    return raw
+
+
 def load_cells(path):
+    """Accept TF,count or per-cell TF1000cells.meta.csv (count rows per TF)."""
     cc = {}
-    if path and Path(path).is_file():
-        for r in csv.reader(open(path)):
-            if len(r) >= 2 and r[1].strip().isdigit():
-                cc[r[0].strip().lower()] = int(r[1])
+    if not path or not Path(path).is_file():
+        return cc
+    with open(path) as fh:
+        rd = csv.reader(fh)
+        rows = list(rd)
+    if not rows:
+        return cc
+    hdr = [h.strip() for h in rows[0]]
+    if "TF" in hdr:
+        i = hdr.index("TF")
+        for r in rows[1:]:
+            if len(r) <= i:
+                continue
+            tf = r[i].strip().lower()
+            if tf:
+                cc[tf] = cc.get(tf, 0) + 1
+        return cc
+    for r in rows:
+        if len(r) >= 2 and r[1].strip().isdigit():
+            cc[r[0].strip().lower()] = int(r[1])
     return cc
 
 
@@ -146,14 +189,17 @@ def main() -> int:
     rows = [hdr]
     for tf in tfs:
         t = tf.lower()
-        rap, rhp = cond_pvals(args.raw_peaks_root, tf, "genome")   # raw has one bg (genome-style)
-        rab, rhb = cond_pvals(args.raw_bins_root, tf, "genome")
-        gap, ghp = cond_pvals(args.imp_peaks_root, tf, "genome")
-        gab, ghb = cond_pvals(args.imp_bins_root, tf, "genome")
-        oap, ohp = cond_pvals(args.imp_peaks_root, tf, "ocr")
-        oab, ohb = cond_pvals(args.imp_bins_root, tf, "ocr")
-        hdb = "yes" if man.get(t, ("no",))[0].lower() == "yes" else ""
-        hoco = man.get(t, ("", ""))[1] if t in man else ""
+        hm, hoco_raw = man.get(t, ("no", "Missing"))
+        in_homer = hm.lower() == "yes"
+        in_ame = hoco_raw.lower() not in ("", "missing")
+        rap, rhp = cond_pvals(args.raw_peaks_root, tf, "genome", in_ame, in_homer)
+        rab, rhb = cond_pvals(args.raw_bins_root, tf, "genome", in_ame, in_homer)
+        gap, ghp = cond_pvals(args.imp_peaks_root, tf, "genome", in_ame, in_homer)
+        gab, ghb = cond_pvals(args.imp_bins_root, tf, "genome", in_ame, in_homer)
+        oap, ohp = cond_pvals(args.imp_peaks_root, tf, "ocr", in_ame, in_homer)
+        oab, ohb = cond_pvals(args.imp_bins_root, tf, "ocr", in_ame, in_homer)
+        hdb = tf.upper() if in_homer else "#N/A"
+        hoco = hoco_raw if in_ame else "NA"
         rows.append([tf.upper(), str(cells.get(t, "")),
                      rap, rhp, rab, rhb, gap, ghp, gab, ghb, oap, ohp, oab, ohb, hdb, hoco])
 
