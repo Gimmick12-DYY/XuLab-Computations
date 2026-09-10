@@ -21,7 +21,10 @@
 # Background comparison (BG_MODE, same peaks, different control -> coexisting dirs
 # homer_{genome,ocr}/ + ame_{genome,ocr}/):
 #   BG_MODE=genome TFS="nrf1 ctcf e2f3" sbatch --array=0-2 downstream/slurm/motif_enrichment.sbatch
-#   BG_MODE=ocr    TFS="nrf1 ctcf e2f3" sbatch --array=0-2 downstream/slurm/motif_enrichment.sbatch
+#   BG_MODE=ocr FORCE_HOMER=1 SKIP_AME=1 TFS="ctcf e2f3 nrf1 maz" \
+#     sbatch --array=0-3 downstream/slurm/motif_enrichment.sbatch
+# HOMER OCR extras (practicalTips): -cpg (CpG leftover after GC match) + -olen 3
+# (kills Maz/poly-G junk). Override: HOMER_OCR_EXTRA=""  or FORCE_HOMER=1 to rerun.
 #
 # ALL panel TFs (HOMER+AME for every TF, manifest bypassed):
 #   N=$(ALL_TFS=1 LIST=1 bash downstream/slurm/motif_enrichment.sbatch | grep -vc '^#')
@@ -112,6 +115,8 @@ else
     echo "[skip] ${TF}: no reference motif" >&2; exit 0
   fi
 fi
+[[ "${SKIP_AME:-0}" == "1" ]] && RUN_AME=0
+[[ "${SKIP_HOMER:-0}" == "1" ]] && RUN_HOMER=0
 
 # ---- paths / knobs ---------------------------------------------------------
 IMPUTE_DIR="${IMPUTE_DIR:-${ROOT_DIR}/unified/work/${TF}/impute}"
@@ -184,6 +189,10 @@ source "$(conda info --base)/etc/profile.d/conda.sh"
 conda activate "${CONDA_ENV}"
 [[ -n "${HOMER_MODULE:-}" ]] && module load ${HOMER_MODULE}
 [[ -n "${MEME_MODULE:-}" ]] && module load ${MEME_MODULE}
+HOMER_BIN="${HOMER_BIN:-/nas/longleaf/rhel9/apps/homer/5.1/bin}"
+[[ -x "${HOMER_BIN}/findMotifsGenome.pl" ]] && export PATH="${HOMER_BIN}:${PATH}"
+MEME_BIN="${MEME_BIN:-/nas/longleaf/rhel9/apps/meme/5.5.7/bin}"
+[[ -x "${MEME_BIN}/ame" ]] && export PATH="${MEME_BIN}:${PATH}"
 
 [[ "${REGION}" == "peaks" ]] && { command -v macs3 >/dev/null 2>&1 || { echo "ERROR: macs3 not on PATH in env ${CONDA_ENV}" >&2; exit 1; }; }
 if (( RUN_HOMER == 1 )); then
@@ -269,15 +278,31 @@ fi
 echo "[$(date)] ${TF}: ${N_PEAKS} peaks -> enrichment"
 
 # ---- 2. HOMER de novo + known motif enrichment -----------------------------
+# FORCE_HOMER=1 deletes existing homerResults.html so OCR/genome is re-run.
 if (( RUN_HOMER == 1 )); then
+  if [[ "${FORCE_HOMER:-0}" == "1" ]]; then
+    echo "[$(date)] ${TF}: FORCE_HOMER=1 -> clearing ${HOMER_OUT}"
+    rm -rf "${HOMER_OUT}"
+  fi
   if [[ ! -s "${HOMER_OUT}/homerResults.html" ]]; then
     echo "[$(date)] ${TF}: HOMER findMotifsGenome.pl (bg=${BG_MODE:-legacy})"
     if [[ "${HOMER_BG}" == "1" && -s "${BG_BED}" ]]; then
-      # Custom -bg: the foreground MACS peaks (~275bp) and the OCR background (~1kb bins)
-      # MUST be equalized in width. With -size given the wider background inflates every
-      # motif's background%, so the TF's own (long, GC-rich) motif looks DEPLETED -> P=1.0
-      # (a length artifact, NOT real depletion). -size <N> re-centers BOTH fg and bg to N bp.
+      # Custom -bg (practicalTips: "genomic positions to be used as background").
+      # Equalize width: OCR bins are ~1 kb vs MACS peaks ~275 bp. -size 200 recenters
+      # BOTH (same as HOMER's default fragment size). Without this the wider bg
+      # inflates every motif's background% and the TF's own motif looks depleted.
+      # Composition (practicalTips): after GC matching, autonorm still shows a CpG
+      # leftover (CTCF OCR: CG 4.86% target vs 3.33% bg, weight 1.46) and the top
+      # known hit is Maz GGGGGGGG — "low complexity / simple-repeat" junk. HOMER
+      # says: -cpg when CpG% is the real bias; -olen when -nlen doesn't kill
+      # poly-G/repeats. Override with HOMER_OCR_EXTRA="" to drop them.
       HOMER_ARGS=(-p "${THREADS}" -size "${HOMER_BG_SIZE:-200}" -bg "${BG_BED}")
+      # default extras; set HOMER_OCR_EXTRA="" to disable
+      HOMER_OCR_EXTRA="${HOMER_OCR_EXTRA--cpg -olen 3}"
+      if [[ -n "${HOMER_OCR_EXTRA}" ]]; then
+        # shellcheck disable=SC2206
+        HOMER_ARGS+=(${HOMER_OCR_EXTRA})
+      fi
     else
       HOMER_ARGS=(-p "${THREADS}" -size given -useNewBg)
     fi
