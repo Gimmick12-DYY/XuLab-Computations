@@ -305,21 +305,30 @@ if (( RUN_AME == 1 )); then
   fi
   tofa "${PEAK_SRC}" "${PEAK_FA}"
 
-  # --scoring max = best single motif match per sequence. AME's DEFAULT (avg) averages
-  # the PWM score over every position, which dilutes a focal TF motif (e.g. one 19bp CTCF
-  # hit in a 275bp peak) to nothing and instead surfaces broad GC-rich motifs -- this is
-  # why default AME misses CTCF/NRF1 (and why they were NA in the reference table). 'max'
-  # discriminates on the strongest hit, the right scoring for punctate TF motifs.
-  AME_SCORING="${AME_SCORING:-max}"
+  # --scoring avg (AME default). We briefly used --scoring max to catch punctate TF
+  # motifs, but against an OCR --control that is GC-poorer than the imputed peaks
+  # (fg GC~0.57 vs OCR bg GC~0.47) max invents enrichment for ANY GC-rich PWM
+  # (NRF1 1e-305, E2F3 1e-221, CTCFL 1e-147) while HOMER on the same peaks correctly
+  # reports the TF's own motif as depleted (P=1). avg + GC-matched control below
+  # make AME agree with HOMER. Override with AME_SCORING=max if needed.
+  AME_SCORING="${AME_SCORING:-avg}"
   AME_ARGS=(--oc "${AME_DIR}/${TF}" --scoring "${AME_SCORING}")
   if [[ "${AME_CONTROL}" == "1" && -s "${BG_BED}" ]]; then
+    BG_FA_RAW="${AME_DIR}/seq/${TF}.background.raw.fa"
     BG_FA="${AME_DIR}/seq/${TF}.background.fa"
+    PEAK_FA_MATCHED="${AME_DIR}/seq/${TF}.peaks.gc.fa"
     BG_WIN="${AME_DIR}/seq/${TF}.background_win.bed"; resize_bed "${BG_BED}" > "${BG_WIN}"
     if command -v bed2fasta >/dev/null 2>&1; then
-      bed2fasta -o "${BG_FA}" "${BG_WIN}" "${HG38_FA}"
+      bed2fasta -o "${BG_FA_RAW}" "${BG_WIN}" "${HG38_FA}"
     else
-      bedtools getfasta -fi "${HG38_FA}" -bed "${BG_WIN}" -fo "${BG_FA}"
+      bedtools getfasta -fi "${HG38_FA}" -bed "${BG_WIN}" -fo "${BG_FA_RAW}"
     fi
+    # Balanced GC match (no replacement): subsample fg+bg to the same n per GC
+    # bin. Upsampling the smaller OCR set with replacement was re-inflating AME.
+    python "${DOWN_DIR}/scripts/gc_match_fasta.py" \
+      --fg "${PEAK_FA}" --bg "${BG_FA_RAW}" \
+      --out-fg "${PEAK_FA_MATCHED}" --out-bg "${BG_FA}"
+    PEAK_FA="${PEAK_FA_MATCHED}"
     AME_ARGS+=(--control "${BG_FA}")
   fi
   echo "[$(date)] ${TF}: AME (HOCOMOCO v11 full, scoring=${AME_SCORING})"

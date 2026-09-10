@@ -35,26 +35,96 @@ def tok(name):
     return re.split(r"[(/_.]", name.strip())[0].lower()
 
 
+# HOCOMOCO / HOMER sometimes ship the TF under an alias (CTCFL = BORIS is the
+# CTCF-like paralog; we still accept it as a hit for CTCF when no CTCF_HUMAN row
+# is present). Key = query TF (lowercase) -> acceptable motif-token set.
+_ALIASES = {
+    "ctcf": {"ctcf", "ctcfl"},
+}
+
+
+def _tokens_for(tf: str) -> set[str]:
+    t = tf.lower()
+    return _ALIASES.get(t, {t})
+
+
+def _p_key(raw: str):
+    """Sort key for p-value strings; survives float64 underflow (e.g. HOMER 1e-394)."""
+    s = (raw or "").strip().lower()
+    if not s:
+        return None
+    try:
+        v = float(s)
+    except ValueError:
+        return None
+    if v > 0:
+        return v
+    # Underflowed to 0.0 — compare by exponent (more negative = smaller p).
+    if "e" in s:
+        try:
+            return (0.0, float(s.split("e")[1]))   # tuple sorts after any positive float? No.
+        except ValueError:
+            return None
+    return 0.0
+
+
+def _fmt_p(raw: str) -> str | None:
+    """Format without losing exponents below ~1e-308."""
+    s = (raw or "").strip()
+    if not s:
+        return None
+    sl = s.lower()
+    try:
+        v = float(s)
+    except ValueError:
+        return None
+    if v > 0:
+        return f"{v:.2E}"
+    if "e" in sl:                              # underflowed, e.g. 1e-394
+        mant, _, exp = sl.partition("e")
+        try:
+            return f"{float(mant):.2f}E{int(exp)}"
+        except ValueError:
+            return s.upper()
+    return "0.00E+00"
+
+
+def _better(raw_a, raw_b) -> bool:
+    """True if raw_a is a smaller p than raw_b (or b is missing)."""
+    if raw_b is None:
+        return True
+    sa, sb = raw_a.strip().lower(), raw_b.strip().lower()
+    fa, fb = float(sa), float(sb)
+    if fa > 0 and fb > 0:
+        return fa < fb
+    # At least one underflowed: compare exponents (smaller/more-neg wins).
+    def exp(s, v):
+        if v > 0:
+            return __import__("math").log10(v)
+        if "e" in s:
+            return float(s.split("e")[1])
+        return float("-inf")
+    return exp(sa, fa) < exp(sb, fb)
+
+
 def homer_own(cdir, tf):
     """P-value (col 3) of the TF's own motif in knownResults.txt, or 'NA'."""
     f = cdir / "knownResults.txt"
     if not f.is_file():
         return ""
+    want = _tokens_for(tf)
     best = None
     with open(f) as fh:
         next(fh, None)
         for ln in fh:
             p = ln.rstrip("\n").split("\t")
-            if len(p) < 3:
+            if len(p) < 3 or tok(p[0]) not in want:
                 continue
-            if tok(p[0]) == tf.lower():
-                try:
-                    v = float(p[2])
-                except ValueError:
-                    continue
-                if best is None or v < best:
-                    best = v
-    return f"{best:.2E}" if best is not None else "NA"
+            if _p_key(p[2]) is None:
+                continue
+            if _better(p[2], best):
+                best = p[2]
+    return _fmt_p(best) if best is not None else "NA"
 
 
 def ame_own(cdir, tf):
@@ -64,20 +134,21 @@ def ame_own(cdir, tf):
         f = cdir / tf / "ame.tsv"           # ame_<bg>/<tf>/ame.tsv
     if not f.is_file():
         return ""
+    want = _tokens_for(tf)
     best = None
     with open(f) as fh:
         for r in csv.DictReader(fh, delimiter="\t"):
             if not (r.get("rank", "").strip().isdigit()):
                 continue
             mid = r.get("motif_ID", "") or r.get("motif_alt_ID", "")
-            if tok(mid) == tf.lower():
-                try:
-                    v = float(r.get("adj_p-value", "nan"))
-                except (ValueError, TypeError):
-                    continue
-                if best is None or v < best:
-                    best = v
-    return f"{best:.2E}" if best is not None else "NA"
+            if tok(mid) not in want:
+                continue
+            raw = (r.get("adj_p-value") or "").strip()
+            if _p_key(raw) is None:
+                continue
+            if _better(raw, best):
+                best = raw
+    return _fmt_p(best) if best is not None else "NA"
 
 
 def _cond_dirs(base: Path, kind: str, bg: str):
