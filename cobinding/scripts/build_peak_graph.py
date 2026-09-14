@@ -31,6 +31,15 @@ _COORD = re.compile(r"^(chr[0-9A-Za-z]+)[:_](\d+)[-_](\d+)$")
 _TYPES = {"proximal", "distal"}
 
 
+def pair_distance_bp(p1: str, p2: str) -> int | None:
+    m1, m2 = _COORD.match(p1), _COORD.match(p2)
+    if not m1 or not m2 or m1.group(1) != m2.group(1):
+        return None
+    mid1 = (int(m1.group(2)) + int(m1.group(3))) // 2
+    mid2 = (int(m2.group(2)) + int(m2.group(3))) // 2
+    return abs(mid1 - mid2)
+
+
 def norm_coord(tok: str) -> str | None:
     m = _COORD.match(tok)
     return f"{m.group(1)}:{m.group(2)}-{m.group(3)}" if m else None
@@ -95,10 +104,21 @@ def main() -> int:
     ap.add_argument("--out-dir", type=Path, required=True)
     ap.add_argument("--q-keep", type=float, default=1.0,
                     help="retain links with q < this at build time (default 1.0 = keep all)")
+    ap.add_argument("--max-dist", type=int, default=1_000_000,
+                    help="drop trans pairs and cis pairs farther than this (default 1 Mb). 0 = off.")
     args = ap.parse_args()
 
+    # fitConns on disk use the TF token as written (RBBP4); also try uppercase
     pattern = str(args.data_dir / args.glob.replace("{tf}", args.tf))
     files = sorted(Path(p) for p in glob.glob(pattern))
+    if not files and args.tf != args.tf.upper():
+        pattern = str(args.data_dir / args.glob.replace("{tf}", args.tf.upper()))
+        files = sorted(Path(p) for p in glob.glob(pattern))
+    if not files and args.tf != args.tf.lower():
+        alt = str(args.data_dir / args.glob.replace("{tf}", args.tf.lower()))
+        files = sorted(Path(p) for p in glob.glob(alt))
+        if files:
+            pattern = alt
     if not files:
         raise SystemExit(f"no files matching {pattern}")
     print(f"[input] {len(files)} file(s): " + ", ".join(f.name for f in files), flush=True)
@@ -120,6 +140,10 @@ def main() -> int:
                 p1, p2, ca, pv, q, t1, t2, a1, a2 = r
                 if p1 == p2:
                     continue
+                if args.max_dist and args.max_dist > 0:
+                    d = pair_distance_bp(p1, p2)
+                    if d is None or d > args.max_dist:
+                        continue
                 if q is not None and (q != q or q >= args.q_keep):
                     continue
                 n_kept += 1

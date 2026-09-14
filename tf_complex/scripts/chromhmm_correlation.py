@@ -23,6 +23,7 @@ import scipy.sparse as sp
 from scipy.cluster.hierarchy import dendrogram, fcluster, linkage
 from scipy.spatial.distance import squareform
 from scipy.stats import kruskal
+from sklearn.metrics import silhouette_score
 
 # standard Roadmap 18-state colours (keyed on the core state name)
 STATE_COLORS = {
@@ -38,7 +39,9 @@ STATE_ORDER = ["TssA", "TssFlnk", "TssFlnkU", "TssFlnkD", "Tx", "TxWk", "EnhG1",
 
 
 def core(state):
-    return state.split("_", 1)[1] if "_" in state and state.split("_")[0].isdigit() else state
+    """Parent ChromHMM name: '1_TssA.q3' / 'TssA.q3' / 'TssA' -> 'TssA'."""
+    s = state.split(".q")[0]
+    return s.split("_", 1)[1] if "_" in s and s.split("_")[0].isdigit() else s
 
 
 def load_cells(path):
@@ -63,6 +66,21 @@ def load_cells(path):
         if len(r) >= 2 and r[1].strip().isdigit():
             cc[r[0].strip().lower()] = int(r[1])
     return cc
+
+
+def choose_k(D, Z, k_max=12):
+    """Pick k in 2..k_max that maximizes silhouette on the 1-r distance matrix."""
+    scores = []
+    best_k, best_s = 2, -1.0
+    for k in range(2, k_max + 1):
+        lab = fcluster(Z, t=k, criterion="maxclust")
+        if len(set(lab)) < 2:
+            continue
+        s = float(silhouette_score(D, lab, metric="precomputed"))
+        scores.append((k, s))
+        if s > best_s:
+            best_k, best_s = k, s
+    return best_k, scores
 
 
 def state_stars(M, clust):
@@ -90,7 +108,11 @@ def main() -> int:
     ap.add_argument("--out-dir", type=Path, required=True)
     ap.add_argument("--cell-meta", type=Path,
                     default=Path(__file__).resolve().parents[2] / "data" / "TF1000cells.meta.csv")
-    ap.add_argument("--n-clusters", type=int, default=3)
+    ap.add_argument("--n-clusters", type=int, default=0,
+                    help="cut the dendrogram into this many groups. "
+                         "0 = choose k by max silhouette on 1-r (k=2..k_max)")
+    ap.add_argument("--k-max", type=int, default=12,
+                    help="upper k to try when --n-clusters 0")
     ap.add_argument("--transform", choices=["rpkm", "log", "ratio"], default="rpkm",
                     help="rpkm (default) | log = log1p(rpkm) | ratio = rpkm / mean-across-states")
     args = ap.parse_args()
@@ -115,7 +137,12 @@ def main() -> int:
     # cluster TFs
     D = 1 - R; D = (D + D.T) / 2; np.fill_diagonal(D, 0); D[D < 0] = 0
     Z = linkage(squareform(D, checks=False), method="average")
-    clust = fcluster(Z, t=args.n_clusters, criterion="maxclust")
+    k = args.n_clusters
+    if k <= 0:
+        k, scores = choose_k(D, Z, k_max=min(args.k_max, n_tf - 1))
+        print("[k] silhouette " + "  ".join(f"{kk}:{s:+.3f}" for kk, s in scores)
+              + f"  -> k={k}", flush=True)
+    clust = fcluster(Z, t=k, criterion="maxclust")
     with (args.out_dir / "tf_clusters.tsv").open("w") as f:
         f.write("tf\tcluster\n")
         for t, c in zip(tfs, clust):
@@ -137,7 +164,7 @@ def main() -> int:
     print(f"[cells] {len(cells)} TFs in {args.cell_meta}; "
           f"{sum(1 for t in tfs if t.lower() in cells)}/{n_tf} matched")
     _plot(R, tfs, states, Z, clust, comp, cells, args.out_dir, stars=stars)
-    print(f"[done] {n_tf} TFs, {len(states)} states, {args.n_clusters} clusters -> {args.out_dir}")
+    print(f"[done] {n_tf} TFs, {len(states)} states, {len(set(clust))} clusters -> {args.out_dir}")
     return 0
 
 
@@ -170,7 +197,11 @@ def _plot(R, tfs, states, Z, clust, comp, cells, out_dir, stars=None, vmin=0.65)
         return [hsv(h0 + (h1 - h0) * i / (n - 1)) for i in range(n)]
     bar_cols = hsv_span(n, 0.02, 0.92)   # red at bottom (y=0) -> pink at top
 
-    fig.text(0.015, 0.80, "TF\nchromHMM18\nrpkm ratio\npearson cor", fontsize=15, va="top")
+    tag = "chromHMM18"
+    if any(".q" in s for s in states):
+        nq = max((int(s.rsplit(".q", 1)[1]) for s in states if ".q" in s), default=5)
+        tag = f"chromHMM18×{nq}"
+    fig.text(0.015, 0.80, f"TF\n{tag}\nrpkm ratio\npearson cor", fontsize=15, va="top")
 
     dendrogram(Z, orientation="left", ax=axd, no_labels=True, link_color_func=lambda k: "#555")
     axd.set_xticks([]); axd.set_yticks([]); [s.set_visible(False) for s in axd.spines.values()]
@@ -197,17 +228,23 @@ def _plot(R, tfs, states, Z, clust, comp, cells, out_dir, stars=None, vmin=0.65)
     for s in ("top", "right", "left"):
         axb.spines[s].set_visible(False)
 
-    # stacked ChromHMM composition per cluster, canonical state order (TssA on top)
-    idx = sorted(range(len(states)), key=lambda k: STATE_ORDER.index(core(states[k]))
-                 if core(states[k]) in STATE_ORDER else 99)
-    state_cols = hsv_span(len(idx), 0.02, 0.90)
-    scol = {k: state_cols[p] for p, k in enumerate(idx)}
+    # stacked composition by parent ChromHMM state (TssA on top). Subclasses
+    # (.q1..qN) are summed so the legend stays 18 colors when units are 90.
+    parents = []
+    for k, st in enumerate(states):
+        p = core(st)
+        if p not in parents:
+            parents.append(p)
+    parents.sort(key=lambda p: STATE_ORDER.index(p) if p in STATE_ORDER else 99)
+    state_cols = hsv_span(len(parents), 0.02, 0.90)
+    pcol = {p: state_cols[i] for i, p in enumerate(parents)}
     clusters = sorted(comp)
     for ci, c in enumerate(clusters):
         bottom = 0.0
-        for k in reversed(idx):
-            axc.bar(ci, comp[c][k], bottom=bottom, width=0.55, color=scol[k])
-            bottom += comp[c][k]
+        for p in reversed(parents):
+            v = sum(float(comp[c][k]) for k, st in enumerate(states) if core(st) == p)
+            axc.bar(ci, v, bottom=bottom, width=0.55, color=pcol[p])
+            bottom += v
     axc.set_xticks(range(len(clusters)))
     axc.set_xticklabels([f"Cluster{c}" for c in clusters], fontsize=8)
     axc.set_xlim(-0.6, len(clusters) - 0.4)
@@ -217,7 +254,13 @@ def _plot(R, tfs, states, Z, clust, comp, cells, out_dir, stars=None, vmin=0.65)
     axc.set_title("ChromHMM State Composition\nAcross TF Clusters", fontsize=10)
     for s in ("top", "right"):
         axc.spines[s].set_visible(False)
-    handles = [Patch(color=scol[k], label=f"{core(states[k])}{stars[k]}") for k in idx]
+    # one star per parent: any subclass significant
+    pstar = {}
+    for k, st in enumerate(states):
+        p = core(st)
+        if stars[k] and (p not in pstar or stars[k] > pstar[p]):
+            pstar[p] = stars[k]
+    handles = [Patch(color=pcol[p], label=f"{p}{pstar.get(p, '')}") for p in parents]
     axc.legend(handles=handles, fontsize=6, bbox_to_anchor=(1.06, 0.96), loc="upper left",
                title="ChromHMM State\n(* p<0.05)", title_fontsize=7, frameon=False)
 

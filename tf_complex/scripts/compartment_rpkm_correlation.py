@@ -23,7 +23,12 @@
 #     granularity; kept for comparison, not for interpretation.
 #
 # Output (--out-dir), one set per scope:
-#   tf_similarity_<scope>.tsv, tf_clusters_<scope>.tsv, compartment_rpkm_<scope>.png
+#   tf_similarity_<scope>.tsv   raw Pearson r (input TF order) — use this for numbers
+#   tf_clusters_<scope>.tsv     average-linkage clusters on d = 1-r (raw Pearson)
+#   compartment_rpkm_<scope>.png
+# Heatmap colours default to a global empirical percentile of the unique
+# off-diagonal r's (visualization only). Clustering always uses raw 1-r.
+# Plotting lives in plot_correlation_matrix.py.
 # -----------------------------------------------------------------------------
 from __future__ import annotations
 
@@ -33,8 +38,13 @@ from pathlib import Path
 
 import numpy as np
 import scipy.sparse as sp
-from scipy.cluster.hierarchy import dendrogram, fcluster, linkage
-from scipy.spatial.distance import squareform
+from scipy.cluster.hierarchy import fcluster
+
+from plot_correlation_matrix import (
+    linkage_from_pearson,
+    load_similarity_tsv,
+    plot_correlation_matrix,
+)
 
 
 def load_cells(path):
@@ -71,7 +81,7 @@ def write_matrix(path, M, labels):
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--matrix-dir", type=Path, required=True,
+    ap.add_argument("--matrix-dir", type=Path, default=None,
                     help="build_compartment_matrix.py --transform rpkm output")
     ap.add_argument("--out-dir", type=Path, required=True)
     ap.add_argument("--cell-meta", type=Path,
@@ -81,9 +91,23 @@ def main() -> int:
                     help="rpkm (default, matrix used as built) | log = log1p(rpkm)")
     ap.add_argument("--min-reads", type=float, default=0.0,
                     help="drop units whose summed signal across TFs is <= this")
+    ap.add_argument("--min-bp", type=int, default=0,
+                    help="drop domains shorter than this (bp). 0 = keep all. "
+                         "Only applies to domain/bin matrices.")
     ap.add_argument("--vmin", type=float, default=None,
-                    help="heatmap colour floor; default = 2nd percentile of the scope")
+                    help="heatmap colour floor for --color r|clip; "
+                         "default = 2nd percentile (r) or 0.92 (clip)")
+    ap.add_argument("--color", choices=["percentile", "r", "clip"], default="percentile",
+                    help="heatmap colours: global off-diagonal percentile of r "
+                         "(default, visualization only); raw r; or raw r clipped "
+                         "to [--vmin, 1]. Clustering always uses raw 1-r.")
+    ap.add_argument("--replot-dir", type=Path, default=None,
+                    help="skip matrix build: load tf_similarity_<scope>.tsv from this dir and replot")
     args = ap.parse_args()
+    if args.replot_dir is not None:
+        return _replot_from_similarity(args)
+    if args.matrix_dir is None:
+        raise SystemExit("--matrix-dir is required unless --replot-dir is set")
 
     tfs = [t.strip() for t in (args.matrix_dir / "tfs.txt").read_text().split() if t.strip()]
     npz_cls = args.matrix_dir / "chromhmm_matrix.npz"
@@ -93,17 +117,25 @@ def main() -> int:
                  open(args.matrix_dir / "states.tsv") if ln.strip()]
         labs = np.array([n[0] for n in names], dtype="<U1")
         unit_kind, scopes = "class", ("genome",)
+        size_ok = np.ones(M.shape[0], bool)
     else:                                     # one unit per domain / 25 kb bin
         M = np.asarray(sp.load_npz(args.matrix_dir / "compartment_matrix.npz").todense())
         rows = [ln.rstrip("\n").split("\t") for ln in open(args.matrix_dir / "domains.tsv")]
         labs = np.array([r[3].strip() for r in rows], dtype="<U1")
+        bp = np.array([int(r[4]) if len(r) > 4 else 0 for r in rows], dtype=np.int64)
         unit_kind, scopes = "domain", ("genome", "A", "B")
+        if args.min_bp > 0:
+            size_ok = bp >= args.min_bp
+            print(f"[min-bp] keep {int(size_ok.sum()):,}/{len(bp):,} domains ≥ {args.min_bp:,} bp "
+                  f"({bp[size_ok].sum()/1e6:.0f} Mb)", flush=True)
+        else:
+            size_ok = np.ones(len(bp), bool)
     n_tf, nD = len(tfs), M.shape[0]
     print(f"[matrix] {nD:,} compartment {unit_kind} units x {n_tf} TFs "
           f"(A={int((labs=='A').sum()):,} B={int((labs=='B').sum()):,})", flush=True)
 
     X = np.log1p(M) if args.transform == "log" else M
-    keep = np.asarray(M.sum(axis=1)).ravel() > args.min_reads
+    keep = (np.asarray(M.sum(axis=1)).ravel() > args.min_reads) & size_ok
     cells = load_cells(args.cell_meta)
     print(f"[cells] {len(cells)} TFs in {args.cell_meta}; "
           f"{sum(1 for t in tfs if t.lower() in cells)}/{n_tf} matched", flush=True)
@@ -120,68 +152,60 @@ def main() -> int:
         print(f"[{scope}] {idx.size:,} units  off-diag median={np.median(off):+.3f} "
               f"p95={np.percentile(off, 95):+.3f} max={off.max():+.3f}", flush=True)
 
-        D = 1 - R; D = (D + D.T) / 2; np.fill_diagonal(D, 0); D[D < 0] = 0
-        Z = linkage(squareform(D, checks=False), method="average")
+        Z = linkage_from_pearson(R)
         clust = fcluster(Z, t=args.n_clusters, criterion="maxclust")
         with (args.out_dir / f"tf_clusters_{scope}.tsv").open("w") as f:
             f.write("tf\tcluster\n")
             for t, c in zip(tfs, clust):
                 f.write(f"{t}\t{c}\n")
-        _plot(R, tfs, Z, cells, args.out_dir / f"compartment_rpkm_{scope}.png", scope,
-              vmin=args.vmin if args.vmin is not None else float(np.percentile(R, 2)))
+        _draw(R, tfs, cells, args, scope, Z)
     print(f"[done] -> {args.out_dir}")
     return 0
 
 
-def _plot(R, tfs, Z, cells, out_png, scope, vmin=0.65):
-    """dendrogram | TF x TF heatmap (RdYlBu_r) | cell-count bars -- ChromHMM layout
-    without the state-composition panel."""
-    try:
-        import matplotlib
-        matplotlib.use("Agg")
-        import matplotlib.pyplot as plt
-    except Exception as e:  # noqa: BLE001
-        print(f"[plot] skipped: {e}"); return
-    n = len(tfs)
-    dn = dendrogram(Z, no_plot=True); order = dn["leaves"]
-    fig = plt.figure(figsize=(15, max(9, n * 0.135)))
-    # Dendrogram butts against the heatmap; the heatmap->bars gap holds two label columns.
-    axd = fig.add_axes([0.175, 0.10, 0.110, 0.84])
-    axh = fig.add_axes([0.285, 0.10, 0.450, 0.84])
-    axb = fig.add_axes([0.815, 0.10, 0.165, 0.84])
-    hsv = plt.get_cmap("hsv")
-    bar_cols = [hsv(0.02 + 0.90 * i / max(n - 1, 1)) for i in range(n)]  # red bottom -> pink top
+def _title(color: str, scope: str) -> str:
+    if color == "percentile":
+        return f"TF compartment\nRPKM\nPearson r\npercentile\n({scope})"
+    return f"TF compartment\nRPKM\npearson cor\n({scope})"
 
-    fig.text(0.020, 0.80, f"TF compartment\nRPKM\npearson cor\n({scope})", fontsize=15, va="top")
 
-    dendrogram(Z, orientation="left", ax=axd, no_labels=True, link_color_func=lambda k: "#555")
-    axd.set_xticks([]); axd.set_yticks([]); [s.set_visible(False) for s in axd.spines.values()]
-    axd.set_ylim(0, 10 * n)
+def _draw(R, tfs, cells, args, scope, Z=None):
+    if Z is None:
+        Z = linkage_from_pearson(R)
+    plot_correlation_matrix(
+        R, tfs, args.out_dir / f"compartment_rpkm_{scope}.png",
+        cells=cells, color=args.color, vmin=args.vmin, Z=Z,
+        title=_title(args.color, scope), write_tsv=True,
+    )
+    plot_correlation_matrix(
+        R, tfs, args.out_dir / f"compartment_rpkm_{scope}_r.png",
+        cells=cells, color="r", vmin=args.vmin, Z=Z,
+        title=_title("r", scope), write_tsv=True,
+    )
+    plot_correlation_matrix(
+        R, tfs, args.out_dir / f"tf_similarity_{scope}.png",
+        cells=cells, color="r", vmin=args.vmin, Z=Z,
+        title=_title("r", scope), write_tsv=False,
+    )
 
-    Ro = R[np.ix_(order, order)]
-    im = axh.imshow(Ro, aspect="auto", origin="lower", cmap="RdYlBu_r", vmin=vmin, vmax=1.0)
-    axh.set_xticks(range(n)); axh.set_xticklabels([tfs[i].upper() for i in order], rotation=90, fontsize=5)
-    axh.yaxis.tick_right(); axh.set_yticks(range(n))
-    axh.set_yticklabels([tfs[i].upper() for i in order], fontsize=5)
-    axh.set_xticks(np.arange(-0.5, n, 1), minor=True)
-    axh.set_yticks(np.arange(-0.5, n, 1), minor=True)
-    axh.grid(which="minor", color="white", linewidth=0.4)
-    axh.tick_params(which="minor", length=0); axh.tick_params(length=0)
-    cax = fig.add_axes([0.060, 0.30, 0.012, 0.22])
-    fig.colorbar(im, cax=cax)
 
-    y = np.arange(n)
-    cnt = np.array([cells.get(tfs[i].lower(), 1) for i in order], float)
-    axb.barh(y, np.maximum(cnt, 1), color=bar_cols, height=0.8)
-    axb.set_xscale("log"); axb.set_ylim(-0.5, n - 0.5)
-    axb.set_yticks(range(n)); axb.set_yticklabels([tfs[i].upper() for i in order], fontsize=5)
-    axb.tick_params(length=0); axb.set_xlabel("Number of cells")
-    for s in ("top", "right", "left"):
-        axb.spines[s].set_visible(False)
-
-    fig.savefig(out_png, dpi=150, bbox_inches="tight")
-    plt.close(fig)
-    print(f"[plot] wrote {out_png}")
+def _replot_from_similarity(args) -> int:
+    src = args.replot_dir
+    cells = load_cells(args.cell_meta)
+    args.out_dir.mkdir(parents=True, exist_ok=True)
+    found = False
+    for scope in ("genome", "A", "B"):
+        p = src / f"tf_similarity_{scope}.tsv"
+        if not p.is_file():
+            continue
+        found = True
+        tfs, R = load_similarity_tsv(p)
+        _draw(R, tfs, cells, args, scope)
+        print(f"[{scope}] replotted {len(tfs)} TFs from {p}", flush=True)
+    if not found:
+        raise SystemExit(f"no tf_similarity_*.tsv in {src}")
+    print(f"[done] -> {args.out_dir}")
+    return 0
 
 
 if __name__ == "__main__":

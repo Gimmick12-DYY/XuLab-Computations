@@ -48,6 +48,16 @@ HG38_LEN = {
 CHROMS_23 = [f"chr{i}" for i in range(1, 23)] + ["chrX"]
 
 
+def pair_distance_bp(p1: str, p2: str) -> int | None:
+    """Mid-to-mid distance if same chromosome, else None (trans / unparsable)."""
+    m1, m2 = _COORD.match(p1), _COORD.match(p2)
+    if not m1 or not m2 or m1.group(1) != m2.group(1):
+        return None
+    mid1 = (int(m1.group(2)) + int(m1.group(3))) // 2
+    mid2 = (int(m2.group(2)) + int(m2.group(3))) // 2
+    return abs(mid1 - mid2)
+
+
 def span(peaks) -> tuple[str, int]:
     by_chrom = defaultdict(lambda: [10**12, 0])
     for p in peaks:
@@ -132,6 +142,9 @@ def main() -> int:
                     help="network figure: smallest component to draw (1 = the whole graph)")
     ap.add_argument("--net-big", type=int, default=10,
                     help="network figure: components with >= this many regions get their own colour")
+    ap.add_argument("--max-dist", type=int, default=1_000_000,
+                    help="keep cis pairs with mid-to-mid distance <= this many bp "
+                         "(default 1000000 = Cicero 1 Mb window). 0 = no distance filter.")
     args = ap.parse_args()
 
     annot_path = args.annot or Path(str(args.edges).replace(".peak_edges.tsv", ".peak_annot.tsv"))
@@ -146,8 +159,14 @@ def main() -> int:
     n0 = len(df)
     df = df[(df["qval"] <= args.qval) & (df["coaccess"] >= args.coaccess_min)
             & (df["n_links"] >= args.min_support)]
+    if args.max_dist and args.max_dist > 0:
+        keep = []
+        for a, b in zip(df["peak1"], df["peak2"]):
+            d = pair_distance_bp(str(a), str(b))
+            keep.append(d is not None and d <= args.max_dist)
+        df = df.iloc[[i for i, ok in enumerate(keep) if ok]]
     print(f"[filter] {n0:,} -> {len(df):,} edges (FDR<={args.qval}, coaccess>={args.coaccess_min}, "
-          f"support>={args.min_support})", flush=True)
+          f"support>={args.min_support}, max_dist={args.max_dist or 'off'})", flush=True)
     if df.empty:
         raise SystemExit("no edges pass filters; loosen thresholds")
 
@@ -221,7 +240,7 @@ def main() -> int:
         fh.write(f"multi_clique_modules(n_source>1)\t{multi}\n")
         fh.write(f"largest_module\t{len(mods[0][0]) if mods else 0}\n")
         fh.write(f"filters\tFDR<={args.qval} coaccess>={args.coaccess_min} support>={args.min_support} "
-                 f"min_clique={args.min_clique} share={args.share}\n")
+                 f"min_clique={args.min_clique} share={args.share} max_dist={args.max_dist}\n")
     print(f"[done] {multi} multi-clique modules; outputs under {args.out_dir}")
 
     if args.plot:
@@ -247,9 +266,16 @@ def _plot(G, cliques, mods, types, genes, out_dir: Path, tf: str,
         ax.set_xlabel(xl); ax.set_ylabel("count"); ax.set_title(f"{tf} {xl}")
         fig.tight_layout(); fig.savefig(out_dir / f"{name}.png", dpi=150); plt.close(fig)
     _plot_network(G, cliques, mods, types, genes, out_dir, tf, net_min_comp, net_big)
+    _plot_network(G, cliques, mods, types, genes, out_dir, tf, max(net_big, 10), net_big,
+                  clique_contrast=True, out_name="tf_peak_network_clusters.png",
+                  node_sep=0.42)
+    _plot_network(G, cliques, mods, types, genes, out_dir, tf, max(net_big, 10), net_big,
+                  clique_contrast=True, color_cliques=True,
+                  out_name="tf_peak_network_cliques.png", node_sep=0.42)
     _plot_chromosomes(mods, genes, out_dir, tf)
     print(f"[plot] wrote {out_dir/'clique_sizes.png'}, {out_dir/'module_sizes.png'}, "
-          f"{out_dir/'tf_peak_network.png'}, {out_dir/'clique_chromosomes.png'}")
+          f"{out_dir/'tf_peak_network.png'}, {out_dir/'tf_peak_network_clusters.png'}, "
+          f"{out_dir/'tf_peak_network_cliques.png'}, {out_dir/'clique_chromosomes.png'}")
 
 
 def _locus(regs) -> tuple[str, int, int] | None:
@@ -266,6 +292,24 @@ def _locus(regs) -> tuple[str, int, int] | None:
         return None
     c, (s, e) = next(iter(by.items()))
     return c, s, e
+
+
+def _cluster_ann(comp, genes) -> tuple[str, str, str, int, int]:
+    """(short label, chrom, start, end) for a connected component."""
+    loc = _locus(comp)
+    g = _gene_short(comp, genes)
+    if loc:
+        chrom, s, e = loc
+    else:
+        chroms = sorted({r.split(":")[0] for r in comp})
+        chrom, s, e = (chroms[0] if len(chroms) == 1 else f"{len(chroms)}chroms"), 0, 0
+    if g:
+        lab = f"{g}\n{chrom}  {len(comp)} reg"
+    elif s or e:
+        lab = f"{chrom}:{s/1e6:.1f}-{e/1e6:.1f} Mb\n{len(comp)} reg"
+    else:
+        lab = f"{chrom}\n{len(comp)} reg"
+    return lab, chrom, s, e
 
 
 def _gene_short(regs, genes) -> str:
@@ -304,7 +348,6 @@ def _plot_chromosomes(mods, genes, out_dir: Path, tf: str) -> None:
     for b in big:
         by_chr[b["chrom"]].append(b)
 
-    # dodge overlapping spans within a chromosome
     lanes: dict[str, dict[int, int]] = {}
     n_lanes: dict[str, int] = {}
     for chrom, items in by_chr.items():
@@ -344,14 +387,12 @@ def _plot_chromosomes(mods, genes, out_dir: Path, tf: str) -> None:
             li = lanes[chrom][b["i"]]
             yoff = (li - (nl - 1) / 2.0) * 0.22
             x0, x1 = b["start"] / 1e6, b["end"] / 1e6
-            # span can be <1 Mb; keep a visible minimum width
             w = max(x1 - x0, 0.55)
             color = tab[b["i"] % len(tab)] if b["nsrc"] > 1 else (0.35, 0.42, 0.55)
             ax.add_patch(Rectangle(
                 (x0, y + yoff - 0.11), w, 0.22,
                 facecolor=color, edgecolor="0.15", linewidth=0.5, zorder=3,
                 alpha=0.92 if b["nsrc"] > 1 else 0.75))
-            # individual peaks as ticks
             for p in b["regs"]:
                 m = _COORD.match(p)
                 if m:
@@ -411,6 +452,34 @@ def _component_layout(sub, seed: int = 2026):
     return {v: (float(xy[i, 0]), float(xy[i, 1])) for i, v in enumerate(nodes)}
 
 
+def _spread_local(loc, min_d: float = 0.38, iters: int = 60):
+    """Push nodes apart until nearest-neighbour distance is at least `min_d`.
+    Does NOT re-normalize, so the component grows and the extra space is kept."""
+    import numpy as np
+
+    nodes = list(loc)
+    if len(nodes) < 2:
+        return loc
+    xy = np.array([loc[v] for v in nodes], float)
+    for _ in range(iters):
+        delta = xy[:, None, :] - xy[None, :, :]
+        dist = np.linalg.norm(delta, axis=2)
+        np.fill_diagonal(dist, np.inf)
+        too = dist < min_d
+        if not too.any():
+            break
+        push = np.zeros_like(xy)
+        for i in range(len(xy)):
+            js = np.flatnonzero(too[i])
+            if not js.size:
+                continue
+            vec, d = delta[i, js], dist[i, js][:, None]
+            push[i] += ((min_d - d) * vec / np.maximum(d, 1e-9)).sum(axis=0)
+        xy += 0.4 * push
+    xy -= xy.mean(axis=0)
+    return {v: (float(xy[i, 0]), float(xy[i, 1])) for i, v in enumerate(nodes)}
+
+
 def _pack_discs(radii, pad: float = 0.45):
     """Greedy spiral packing of discs, largest first -> centres. Big clusters land in
     the middle and the many two-node pairs form the surrounding halo."""
@@ -454,15 +523,68 @@ def _comp_label(comp, genes) -> str:
     return next(iter(chroms)) if len(chroms) == 1 else f"{len(comp)} regions"
 
 
-def _plot_network(G, cliques, mods, types, genes, out_dir: Path, tf: str,
-                  min_comp: int = 1, big: int = 10) -> None:
-    """THE WHOLE GRAPH on one canvas: one node per region, every edge drawn.
+def _clique_colors(cliques, keep):
+    """One distinct hue per clique that touches `keep`. Overlapping cliques are
+    placed far apart on the hue wheel so they cannot look like the same colour."""
+    import matplotlib.pyplot as plt
 
-    Each connected component is force-laid-out on its own (a force layout cannot
-    position mutually disconnected parts, since they only ever repel), then the
-    components are disc-packed largest-first, so multi-region clusters sit in the
-    middle and the many two-node pairs form the surrounding halo.
-    Components with >= `big` regions get their own colour; smaller ones stay slate.
+    live = [c for c in cliques if c & keep]
+    n = len(live)
+    if not n:
+        return live, {}
+    # unique hues, golden-ratio stepped so neighbours on the list are not neighbours on the wheel
+    step = 0.61803398875
+    hues = [(0.02 + i * step) % 0.92 for i in range(n)]
+    hit = defaultdict(list)
+    for i, c in enumerate(live):
+        for r in c:
+            hit[r].append(i)
+    # if two overlapping cliques landed close in hue, swap one to the farthest free slot
+    for ids in hit.values():
+        for i, j in combinations(ids, 2):
+            if min(abs(hues[i] - hues[j]), 0.92 - abs(hues[i] - hues[j])) < 0.08:
+                hues[j] = (hues[i] + 0.5) % 0.92
+    hsv = plt.cm.hsv
+    return live, {i: hsv(hues[i]) for i in range(n)}
+
+
+def _label_center_clusters(ax, comps, radii, cx, cy, genes, ink, out_dir,
+                           min_n: int = 10, top: int = 24) -> int:
+    """Label the largest components (packed into the centre) and write a TSV."""
+    rows = []
+    n_lab = 0
+    for i, comp in enumerate(comps):
+        if len(comp) < min_n:
+            continue
+        lab, chrom, s, e = _cluster_ann(comp, genes)
+        genes_s = _gene_short(comp, genes) or "."
+        rows.append((i + 1, len(comp), chrom, s, e, genes_s.replace("\n", " ")))
+        if n_lab < top:
+            ax.text(cx[i], cy[i] + radii[i] + 0.12, lab,
+                    ha="center", va="bottom", fontsize=6.5, color=ink,
+                    zorder=6, linespacing=1.15,
+                    bbox=dict(boxstyle="round,pad=0.15", facecolor="white",
+                              edgecolor="none", alpha=0.75))
+            n_lab += 1
+    tsv = out_dir / "cluster_annotations.tsv"
+    with tsv.open("w") as fh:
+        fh.write("rank\tn_regions\tchrom\tstart\tend\tgenes\n")
+        for r in rows:
+            fh.write("\t".join(map(str, r)) + "\n")
+    print(f"[plot] labelled {n_lab} centre clusters; {len(rows)} ≥{min_n} in {tsv.name}")
+    return n_lab
+
+
+def _plot_network(G, cliques, mods, types, genes, out_dir: Path, tf: str,
+                  min_comp: int = 1, big: int = 10, clique_contrast: bool = False,
+                  out_name: str = "tf_peak_network.png", node_sep: float = 0.0,
+                  color_cliques: bool = False) -> None:
+    """One canvas, one node per region, every edge drawn.
+
+    Each connected component is force-laid-out on its own, then disc-packed
+    largest-first. Default colouring: components >= `big` get their own colour.
+    `clique_contrast=True` (the clusters figure): clique cores are bold black,
+    every surrounding pair is light grey, on a light background so the cores pop.
     """
     import numpy as np
     import matplotlib.pyplot as plt
@@ -479,82 +601,185 @@ def _plot_network(G, cliques, mods, types, genes, out_dir: Path, tf: str,
     H = G.subgraph(keep)
     n_pair = sum(1 for c in comps if len(c) == 2)
 
-    # local force layout per component, scaled so node density is comparable
+    # local force layout per component; node_sep > 0 pushes dots apart (clusters figure)
     radii, locals_ = [], []
     for c in comps:
         loc = _component_layout(H.subgraph(c))
-        r = 0.5 + 0.62 * len(c) ** 0.5
+        if node_sep > 0:
+            loc = _spread_local(loc, min_d=node_sep)
+            r = max((x * x + y * y) ** 0.5 for x, y in loc.values()) + node_sep * 0.8
+        else:
+            r = 0.5 + 0.62 * len(c) ** 0.5
         radii.append(r)
         locals_.append(loc)
-    cx, cy = _pack_discs(radii)
+    cx, cy = _pack_discs(radii, pad=0.85 if node_sep > 0 else 0.45)
     pos = {}
+    fill = 1.0 if node_sep > 0 else 0.82
     for i, loc in enumerate(locals_):
         for v, (x, y) in loc.items():
-            pos[v] = (x * radii[i] * 0.82 + cx[i], y * radii[i] * 0.82 + cy[i])
+            pos[v] = (x * fill + cx[i], y * fill + cy[i]) if node_sep > 0 else \
+                     (x * radii[i] * fill + cx[i], y * radii[i] * fill + cy[i])
 
-    deg = dict(H.degree())
-    palette = ["#f5793a", "#4fd1a5", "#e8433f", "#63d345", "#b344e8", "#33b5e5",
-               "#f0c419", "#ff7ab6", "#8ad4ff", "#c0f24a", "#ff9f5a", "#6ee7d0"]
-    slate, halo, hub = "#7f8794", "#5b74d1", "#ffc61e"
-    col, size = {}, {}
-    big_i = 0
-    for c, r in zip(comps, radii):
-        if len(c) >= big:
-            base = palette[big_i % len(palette)]; big_i += 1
-        elif len(c) > 2:
-            base = slate
+    clique_nodes = set().union(*cliques) if cliques else set()
+    clique_edges = set()
+    for c in cliques:
+        for a, b in combinations(c, 2):
+            if H.has_edge(a, b):
+                clique_edges.add(frozenset((a, b)))
+
+    fig_bg = "#f7f7f5" if clique_contrast else "#23272e"
+    side = 24 if node_sep > 0 else 19
+    fig, ax = plt.subplots(figsize=(side, side), facecolor=fig_bg)
+    ax.set_facecolor(fig_bg)
+
+    if clique_contrast:
+        grey, black = "#c8ccd2", "#111111"
+        rest_e = [(pos[u], pos[v]) for u, v in H.edges()
+                  if frozenset((u, v)) not in clique_edges]
+        if rest_e:
+            ax.add_collection(LineCollection(rest_e, colors=grey, linewidths=0.6,
+                                             alpha=0.9, zorder=1))
+        rest_n = [n for n in H if n not in clique_nodes]
+        cliq_n = [n for n in H if n in clique_nodes]
+        if rest_n:
+            xy = np.array([pos[v] for v in rest_n])
+            ax.scatter(xy[:, 0], xy[:, 1], s=16, c=grey, linewidths=0, zorder=2)
+        n_cliq_comp = sum(1 for c in comps if any(v in clique_nodes for v in c))
+        ink = "#222222"
+        if color_cliques:
+            live, cmap = _clique_colors(cliques, keep)
+            # largest clique wins when a region/edge is shared
+            node_col, ncl = {}, Counter()
+            for i, c in sorted(enumerate(live), key=lambda kv: len(kv[1])):
+                for r in c:
+                    if r in keep:
+                        node_col[r] = cmap[i]
+                        ncl[r] += 1
+            for i, c in enumerate(live):
+                segs = [(pos[a], pos[b]) for a, b in combinations(c, 2)
+                        if H.has_edge(a, b) and a in pos and b in pos]
+                if segs:
+                    ax.add_collection(LineCollection(segs, colors=[cmap[i]],
+                                                     linewidths=2.3, alpha=1.0, zorder=3))
+            if cliq_n:
+                xy = np.array([pos[v] for v in cliq_n])
+                hinge = [ncl.get(v, 1) > 1 for v in cliq_n]
+                ax.scatter(xy[:, 0], xy[:, 1], s=28,
+                           c=[node_col.get(v, black) for v in cliq_n],
+                           linewidths=[0.9 if h else 0 for h in hinge],
+                           edgecolors=["#111" if h else "none" for h in hinge],
+                           zorder=4)
+            n_hinge = sum(1 for v in cliq_n if ncl.get(v, 1) > 1)
+            n_lab = _label_center_clusters(ax, comps, radii, cx, cy, genes, ink,
+                                           out_dir, min_n=big)
+            ax.set_title(
+                f"{tf} co-binding clusters — each clique its own colour\n"
+                f"{H.number_of_nodes():,} regions · {H.number_of_edges():,} edges · "
+                f"{len(comps):,} components ≥{min_comp} (largest {len(comps[0])})\n"
+                f"{len(live)} cliques coloured · {len(cliq_n):,} clique regions · "
+                f"{n_hinge} hinge regions (black outline, in >1 clique) · "
+                f"labels = {n_lab} largest clusters (gene + chrom)",
+                fontsize=15, color=ink, loc="left", pad=14)
+            handles = [
+                Line2D([0], [0], color="#e8433f", lw=2.4, label="one clique"),
+                Line2D([0], [0], color="#33b5e5", lw=2.4, label="another clique"),
+                Line2D([0], [0], marker="o", color="none", markerfacecolor="#eda320",
+                       markeredgecolor="#111", markeredgewidth=0.8, markersize=8,
+                       label="hinge (shared by ≥2 cliques)"),
+                Line2D([0], [0], color=grey, lw=1.2, label="surrounding pair"),
+            ]
         else:
-            base = halo
-        dmax = max(deg[v] for v in c)
-        for v in c:
-            is_hub = len(c) >= big and deg[v] == dmax and dmax >= 3
-            col[v] = hub if is_hub else base
-            size[v] = (95 if is_hub else 10 + 7 * deg[v]) if len(c) >= big else \
-                      (9 if len(c) == 2 else 12)
+            cliq_e = [(pos[u], pos[v]) for u, v in H.edges()
+                      if frozenset((u, v)) in clique_edges]
+            if cliq_e:
+                ax.add_collection(LineCollection(cliq_e, colors=black, linewidths=2.3,
+                                                 alpha=1.0, zorder=3))
+            if cliq_n:
+                xy = np.array([pos[v] for v in cliq_n])
+                ax.scatter(xy[:, 0], xy[:, 1], s=26, c=black, linewidths=0, zorder=4)
+            ax.set_title(
+                f"{tf} co-binding clusters — cliques in black, surrounding pairs in grey\n"
+                f"{H.number_of_nodes():,} regions · {H.number_of_edges():,} edges · "
+                f"{len(comps):,} components ≥{min_comp} "
+                f"(largest {len(comps[0])})\n"
+                f"{len(cliq_n):,} regions / {len(cliq_e):,} edges in a clique (bold black) · "
+                f"{n_cliq_comp} components contain a clique · "
+                f"{n_drop_c:,} smaller components hidden",
+                fontsize=15, color=ink, loc="left", pad=14)
+            handles = [
+                Line2D([0], [0], color=black, lw=2.4, label="clique (every pair linked)"),
+                Line2D([0], [0], marker="o", color="none", markerfacecolor=black,
+                       markersize=8, label="clique region"),
+                Line2D([0], [0], color=grey, lw=1.2, label="surrounding pair"),
+                Line2D([0], [0], marker="o", color="none", markerfacecolor=grey,
+                       markersize=6, label="non-clique region"),
+            ]
+    else:
+        deg = dict(H.degree())
+        palette = ["#f5793a", "#4fd1a5", "#e8433f", "#63d345", "#b344e8", "#33b5e5",
+                   "#f0c419", "#ff7ab6", "#8ad4ff", "#c0f24a", "#ff9f5a", "#6ee7d0"]
+        slate, halo, hub = "#7f8794", "#5b74d1", "#ffc61e"
+        col, size = {}, {}
+        big_i = 0
+        for c, r in zip(comps, radii):
+            if len(c) >= big:
+                base = palette[big_i % len(palette)]; big_i += 1
+            elif len(c) > 2:
+                base = slate
+            else:
+                base = halo
+            dmax = max(deg[v] for v in c)
+            for v in c:
+                is_hub = len(c) >= big and deg[v] == dmax and dmax >= 3
+                col[v] = hub if is_hub else base
+                size[v] = (95 if is_hub else 10 + 7 * deg[v]) if len(c) >= big else \
+                          (9 if len(c) == 2 else 12)
+        seg = [(pos[u], pos[v]) for u, v in H.edges()]
+        ax.add_collection(LineCollection(seg, colors="#9aa2ae", linewidths=0.35,
+                                         alpha=0.55, zorder=1))
+        nodes = list(H)
+        xy = np.array([pos[v] for v in nodes])
+        ax.scatter(xy[:, 0], xy[:, 1], s=[size[v] for v in nodes],
+                   c=[col[v] for v in nodes], linewidths=0, zorder=2)
+        n_big = sum(1 for c in comps if len(c) >= big)
+        n_mid = sum(1 for c in comps if 2 < len(c) < big)
+        tail = (f"{n_pair:,} isolated pairs (blue halo)" if n_pair else
+                f"{n_drop_c:,} components <{min_comp} regions hidden "
+                f"({n_drop_r:,} regions, {100*n_drop_r/G.number_of_nodes():.0f}% of the graph)")
+        ink = "#e8eaed"
+        ax.set_title(
+            f"{tf} co-binding region network — every edge drawn\n"
+            f"{H.number_of_nodes():,} regions · {H.number_of_edges():,} co-accessibility edges · "
+            f"{len(comps):,} connected components (largest {len(comps[0])})\n"
+            f"{n_big} components ≥{big} regions (coloured) · {n_mid:,} of 3–{big-1} (grey) · {tail}",
+            fontsize=15, color=ink, loc="left", pad=14)
+        handles = [
+            Line2D([0], [0], marker="o", color="none", markerfacecolor=hub,
+                   markersize=11, label="cluster hub (highest degree)"),
+            Line2D([0], [0], marker="o", color="none", markerfacecolor=palette[1],
+                   markersize=8, label=f"component ≥{big} regions"),
+            Line2D([0], [0], marker="o", color="none", markerfacecolor=slate,
+                   markersize=7, label=f"component 3–{big-1} regions"),
+        ]
+        if n_pair:
+            handles.append(Line2D([0], [0], marker="o", color="none", markerfacecolor=halo,
+                                  markersize=6, label="isolated pair"))
 
-    fig, ax = plt.subplots(figsize=(19, 19), facecolor="#23272e")
-    ax.set_facecolor("#23272e")
-    seg = [(pos[u], pos[v]) for u, v in H.edges()]
-    ax.add_collection(LineCollection(seg, colors="#9aa2ae", linewidths=0.35,
-                                     alpha=0.55, zorder=1))
-    nodes = list(H)
-    xy = np.array([pos[v] for v in nodes])
-    ax.scatter(xy[:, 0], xy[:, 1], s=[size[v] for v in nodes],
-               c=[col[v] for v in nodes], linewidths=0, zorder=2)
     ax.set_aspect("equal"); ax.axis("off")
     ax.autoscale_view()
-
-    n_big = sum(1 for c in comps if len(c) >= big)
-    n_mid = sum(1 for c in comps if 2 < len(c) < big)
-    tail = (f"{n_pair:,} isolated pairs (blue halo)" if n_pair else
-            f"{n_drop_c:,} components <{min_comp} regions hidden "
-            f"({n_drop_r:,} regions, {100*n_drop_r/G.number_of_nodes():.0f}% of the graph)")
-    ax.set_title(
-        f"{tf} co-binding region network — every edge drawn\n"
-        f"{H.number_of_nodes():,} regions · {H.number_of_edges():,} co-accessibility edges · "
-        f"{len(comps):,} connected components (largest {len(comps[0])})\n"
-        f"{n_big} components ≥{big} regions (coloured) · {n_mid:,} of 3–{big-1} (grey) · {tail}",
-        fontsize=15, color="#e8eaed", loc="left", pad=14)
-    handles = [
-        Line2D([0], [0], marker="o", color="none", markerfacecolor=hub,
-               markersize=11, label="cluster hub (highest degree)"),
-        Line2D([0], [0], marker="o", color="none", markerfacecolor=palette[1],
-               markersize=8, label=f"component ≥{big} regions"),
-        Line2D([0], [0], marker="o", color="none", markerfacecolor=slate,
-               markersize=7, label=f"component 3–{big-1} regions"),
-    ]
-    if n_pair:
-        handles.append(Line2D([0], [0], marker="o", color="none", markerfacecolor=halo,
-                              markersize=6, label="isolated pair"))
     leg = ax.legend(handles=handles, loc="lower right", frameon=False,
-                    fontsize=11, labelcolor="#e8eaed")
+                    fontsize=11, labelcolor=ink)
     for t in leg.get_texts():
-        t.set_color("#e8eaed")
-    fig.savefig(out_dir / "tf_peak_network.png", dpi=170, bbox_inches="tight",
-                facecolor="#23272e")
+        t.set_color(ink)
+    out_png = out_dir / out_name
+    fig.savefig(out_png, dpi=170, bbox_inches="tight", facecolor=fig_bg)
+    # Vector sibling for Illustrator / Inkscape editing (same stem, .svg).
+    out_svg = out_png.with_suffix(".svg")
+    fig.savefig(out_svg, format="svg", bbox_inches="tight", facecolor=fig_bg)
     plt.close(fig)
-    print(f"[plot] network: {H.number_of_nodes():,} regions, {H.number_of_edges():,} edges, "
-          f"{len(comps):,} components")
+    tag = " (per-clique colour)" if color_cliques else (" (clique contrast)" if clique_contrast else "")
+    print(f"[plot] {out_name} + {out_svg.name}: {H.number_of_nodes():,} regions, "
+          f"{H.number_of_edges():,} edges, {len(comps):,} components{tag}")
 
 
 if __name__ == "__main__":

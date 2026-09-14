@@ -7,26 +7,17 @@
 #SBATCH --time=6:00:00
 #SBATCH --mail-type=FAIL
 #
-# "TF compartment rpkm pearson cor": the validated ChromHMM-18 RPKM workflow
-# (04_chromhmm_rpkm.sbatch) with the unit swapped from a chromatin state to a
-# compartment unit. Cell-count bars are kept; there is no state-composition panel.
+# TF compartment RPKM Pearson: one unit = one (smoothed) A/B compartment domain.
+# RPKM(domain) = reads / (domain_kb) / (TF_total/1e6). Pearson correlates TFs
+# across those domain RPKM profiles. Cell-count bars are kept; no ChromHMM panel.
 #
-# UNIT=class (default) is the one to trust: 2x9 eigenvector-strength compartment
-# classes pooled genome-wide, matching ChromHMM-18's dimensionality and reads/unit,
-# built by build_compartment_classes.py and then the *same* build_chromhmm_matrix.py.
-# UNIT=domain|bin puts one unit per compartment domain / 25 kb bin; at that
-# granularity shallow TFs are Poisson-dominated and mean r tracks cell count at
-# rho=+0.98 (vs +0.22 for ChromHMM-18), so those runs are for comparison only.
+# UNIT=domain (default): each smoothed compartment participates in the correlation.
+# UNIT=class: 18 E1-quantile pools (ChromHMM analog) — NOT the intended analysis.
+# UNIT=bin: one unit per 25 kb bin.
 #
-#   1. build_compartment_classes.py      A/B + E1 -> 18 compartment-class BED   [class]
-#      build_chromhmm_matrix.py          reads -> (classes x TFs) RPKM          [class]
-#      build_compartment_matrix.py       reads -> (domains x TFs) RPKM          [domain|bin]
-#   2. compartment_rpkm_correlation.py   Pearson TF x TF, cluster, heatmap + cell bars
-#
-#   sbatch tf_complex/slurm/05_compartment_rpkm.sbatch
-#   PER_ARM=5 sbatch tf_complex/slurm/05_compartment_rpkm.sbatch      # 10 classes instead of 18
-#   UNIT=domain sbatch tf_complex/slurm/05_compartment_rpkm.sbatch    # per-domain (confounded)
-#   UNIT=bin sbatch tf_complex/slurm/05_compartment_rpkm.sbatch       # 25 kb bins (RPKM == CPM)
+#   sbatch tf_complex/slurm/05_compartment_rpkm.sbatch               # domain + SMOOTH=2
+#   SMOOTH=0 sbatch tf_complex/slurm/05_compartment_rpkm.sbatch       # raw unsmoothed domains
+#   UNIT=class sbatch tf_complex/slurm/05_compartment_rpkm.sbatch     # 18 E1 classes
 #   REBUILD=0 sbatch tf_complex/slurm/05_compartment_rpkm.sbatch      # reuse the matrix
 #
 set -euo pipefail
@@ -34,7 +25,7 @@ set -euo pipefail
 XULAB="${XULAB:-/work/users/d/y/dyy12/XuLab}"
 TFC="${XULAB}/tf_complex"
 WORK_ROOT="${WORK_ROOT:-${XULAB}/unified/work}"
-UNIT="${UNIT:-class}"                     # class (E1-strength classes, recommended) | domain | bin
+UNIT="${UNIT:-domain}"                    # domain (one unit per compartment) | class | bin
 AB_BED="${AB_BED:-${XULAB}/hic/work/compartments/compartments_25000.AB.bed}"
 if [[ "${UNIT}" == "bin" ]]; then
   DOMAINS_BED="${DOMAINS_BED:-${AB_BED}}"
@@ -43,7 +34,8 @@ else
 fi
 PER_ARM="${PER_ARM:-9}"                   # classes per arm; total units = 2*PER_ARM
 SMOOTH="${SMOOTH:-2}"                     # absorb sandwiched flips of <= N bins (0 = raw calls)
-TAG="${TAG:-${UNIT}$([[ "${SMOOTH}" != "0" ]] && echo "_sm${SMOOTH}")}"
+MIN_BP="${MIN_BP:-0}"                     # drop domains shorter than this (0 = keep all)
+TAG="${TAG:-${UNIT}$([[ "${SMOOTH}" != "0" ]] && echo "_sm${SMOOTH}")$([[ "${MIN_BP}" != "0" ]] && echo "_${MIN_BP}bp")}"
 MATRIX_DIR="${MATRIX_DIR:-${TFC}/work/compartment_rpkm_${TAG}}"
 RESULTS="${RESULTS:-${TFC}/results_compartment_rpkm_${TAG}}"
 SOURCE="${SOURCE:-raw}"                   # raw (mm) | imputed
@@ -97,5 +89,6 @@ fi
 echo "[$(date)] correlate + plot (transform=${TRANSFORM}, k=${N_CLUSTERS})"
 python "${TFC}/scripts/compartment_rpkm_correlation.py" \
   --matrix-dir "${MATRIX_DIR}" --out-dir "${RESULTS}" \
-  --transform "${TRANSFORM}" --n-clusters "${N_CLUSTERS}" --cell-meta "${CELL_META}"
+  --transform "${TRANSFORM}" --n-clusters "${N_CLUSTERS}" --cell-meta "${CELL_META}" \
+  --min-bp "${MIN_BP}"
 echo "[$(date)] done -> ${RESULTS}"

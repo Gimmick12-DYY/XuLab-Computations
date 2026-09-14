@@ -4,4 +4,4 @@ cliques(>= 3)	355  sizes={3: 344, 4: 11}
 overlap_modules	326  sizes={3: 294, 4: 25, 5: 7}
 multi_clique_modules(n_source>1)	25
 largest_module	5
-filters	FDR<=0.05 coaccess>=0.0 support>=1 min_clique=3 share=2
+filters	FDR<=0.05 coaccess>=0.0 support>=1 min_clique=3 share=2 max_dist=1000000
