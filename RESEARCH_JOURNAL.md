@@ -25,6 +25,34 @@ cluster is the usual cause of "unchanged output."
 
 ## Log (newest first)
 
+### 2026-09-23 — Cicero co-binding: add the missing significance (fitConns pval/qval)
+- **Context:** Our co-binding cliques looked far less significant than the lab
+  colleague's `fitConns` workbook. Root cause found in our own code: Cicero's
+  `run_cicero()` emits **only** a `coaccess` score (regularized partial
+  correlation, [-1,1]) — **no p-value / FDR**. `cicero_conns_to_edges.py`
+  hardcoded `qval=0`, so downstream `q<=0.05` clique filtering was meaningless on
+  any TF we ran ourselves. We only matched the reference on RBBP4 because we
+  *inherited* the colleague's q-values from their fitConns file. The genuine
+  Ren-lab Cicero papers (mouse cerebrum *Nature* 2021; human brain *Science* 2023)
+  also just threshold the coaccess score — the per-pair significance is an add-on.
+- **Diagnosis:** Reverse-engineered the fitConns `pval` from the reference RBBP4
+  data — it's a **correlation-significance test on the coaccess score** (t-test /
+  Fisher-z) with effective n ≈ number of cells/metacells (calibrated n≈8,531 for
+  RBBP4, ~10k cells), then BH-adjusted. It's a smooth function of `coaccess`
+  alone → rules out any permutation or distance-decay null.
+- **Change:** `03_run_cicero.R` now records `n_metacell` in `cicero_info.tsv`;
+  `cicero_conns_to_edges.py` computes a two-sided t-test (`df=n_eff-2`) on each
+  pair's coaccess + BH `qval` (new `--effective-n`, default `metacell`, read from
+  the sibling info file). `cluster_peaks.py` now filters on real FDR. Kept it in
+  the co-binding path only — the Cicero **imputation** path is retired, untouched.
+- **Outcome / caveat:** Model is exact at the q≈0.05 cutoff and the 2.22e-16 floor,
+  within ~1 order of magnitude in the mid-range (reference likely uses a per-pair
+  n we don't get from `run_cicero`'s output). Good enough for a first pass; refine
+  to per-pair n if needed. **To try:** run our own Cicero on a TF (generates
+  `n_metacell`), check the `significance: n_eff=… FDR<=0.05: X/Y` log line.
+- **Files:** `Cicero/scripts/03_run_cicero.R`,
+  `cobinding/scripts/cicero_conns_to_edges.py`.
+
 ### 2026-09-13 — Start of this research journal
 - **Context:** Project has grown across many pipelines and several subtle,
   hard-won methods decisions; needed a single reviewable record of major updates.

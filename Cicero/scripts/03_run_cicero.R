@@ -107,6 +107,7 @@ writeLines(
   c(
     sprintf("n_peaks\t%d",     nrow(cds)),
     sprintf("n_cells\t%d",     ncol(cds)),
+    sprintf("n_metacell\t%d",  ncol(cicero_cds)),  # sample size for the coaccess correlation test
     sprintf("k_metacell\t%d",  k_metacell),
     sprintf("window_bp\t%d",   window_bp),
     sprintf("sample_num\t%d",  sample_num),
