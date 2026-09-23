@@ -7,11 +7,12 @@
 # from a chromatin state to an A/B compartment DOMAIN (a contiguous A or B segment
 # from the Hi-C calls). For each TF we sum its raw pseudobulk reads
 # (unified/work/<tf>/mm) into each domain, then:
-#     RPKM(domain) = reads / (domain_bp / 1e3) / (TF_total_reads / 1e6)
-# RPKM divides out domain LENGTH (the size confound that made every TF pair look
-# co-bound) AND per-TF library depth (the cell-count/complexity confound) at once.
-# Domains are variable length, so the /kb term is what does the real work here;
-# with --unit bin (uniform 25 kb) RPKM reduces to plain CPM.
+#     RPKM(domain)     = reads / (domain_bp / 1e3) / (TF_total_reads / 1e6)
+#     per_cell(domain) = reads / (domain_bp / 1e3) / n_cells
+# n_cells comes from the TF1000 metadata (one row per cell), not from the read
+# total. Both depth terms are one positive number per TF. Pearson correlates
+# the shape of each TF's profile, so swapping reads for cells does not change
+# the TF x TF correlation; the /kb term does, because domain length varies.
 #
 #   output = (domains x TFs) RPKM matrix  ->  correlate TFs ACROSS domains
 #   (A-A = over A domains, B-B = over B domains) in compartment_rpkm_correlation.py.
@@ -24,6 +25,7 @@
 from __future__ import annotations
 
 import argparse
+import csv
 import sys
 from pathlib import Path
 
@@ -80,6 +82,28 @@ def discover_tfs(work_root, sub, matfile):
                   if d.is_dir() and (d / sub / matfile).is_file())
 
 
+def load_cell_counts(path: Path) -> dict[str, int]:
+    """Count cells per TF from TF1000cells.meta.csv (column TF), or a TF,count table."""
+    with open(path) as fh:
+        rows = list(csv.reader(fh))
+    if not rows:
+        return {}
+    hdr = [h.strip() for h in rows[0]]
+    if "TF" in hdr:
+        i = hdr.index("TF")
+        cc: dict[str, int] = {}
+        for r in rows[1:]:
+            if len(r) > i and r[i].strip():
+                tf = r[i].strip().lower()
+                cc[tf] = cc.get(tf, 0) + 1
+        return cc
+    cc = {}
+    for r in rows:
+        if len(r) >= 2 and r[1].strip().isdigit():
+            cc[r[0].strip().lower()] = int(r[1])
+    return cc
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -96,11 +120,18 @@ def main() -> int:
                     help="imputed only: subtract consensus accessibility before RPKM")
     ap.add_argument("--consensus-npy", type=Path, default=None)
     ap.add_argument("--consensus-scale", type=float, default=1.0)
-    ap.add_argument("--transform", choices=["rpkm", "count"], default="rpkm",
-                    help="rpkm (default) = reads/kb/million, removes the domain-size and "
-                         "per-TF depth confounds together; count = raw reads")
+    ap.add_argument("--transform", choices=["rpkm", "per_cell", "count"], default="rpkm",
+                    help="rpkm = reads/kb/(total_reads/1e6); "
+                         "per_cell = reads/kb/n_cells from --cell-meta; "
+                         "count = raw reads")
+    ap.add_argument("--cell-meta", type=Path,
+                    default=Path(__file__).resolve().parents[2] / "data" / "TF1000cells.meta.csv",
+                    help="per-cell metadata; n_cells per TF is the per_cell denominator")
     ap.add_argument("--tfs", nargs="*", default=None)
     args = ap.parse_args()
+    cell_counts = load_cell_counts(args.cell_meta) if args.transform == "per_cell" else {}
+    if args.transform == "per_cell" and not cell_counts:
+        raise SystemExit(f"--transform per_cell needs cell counts in {args.cell_meta}")
 
     sub = "mm" if args.source == "raw" else "impute"
     if args.residualize:
@@ -152,11 +183,20 @@ def main() -> int:
             if k >= 0 and s < ends[k]:
                 acc[gidx[k]] += v
         n_hit, total = int((acc > 0).sum()), acc.sum()
+        depth_note = ""
         if args.transform == "rpkm":
             libM = total / 1e6
             acc = acc / (bp / 1e3) / (libM if libM > 0 else 1.0)
+            depth_note = f" lib_reads={total:.0f}"
+        elif args.transform == "per_cell":
+            n_meta = cell_counts.get(tf.lower())
+            if not n_meta:
+                raise SystemExit(f"{tf}: no cell count in {args.cell_meta}")
+            acc = acc / (bp / 1e3) / float(n_meta)
+            depth_note = f" n_cells={n_meta} (matrix columns={ncells})"
         cols.append(sp.csc_matrix(acc.reshape(-1, 1))); used.append(tf)
-        print(f"[{len(used)}] {tf}: {n_hit}/{nD} domains with reads, total={total:.0f}", flush=True)
+        print(f"[{len(used)}] {tf}: {n_hit}/{nD} domains with reads, total={total:.0f}{depth_note}",
+              flush=True)
 
     if not used:
         raise SystemExit("no TF matrices loaded")
@@ -164,6 +204,7 @@ def main() -> int:
     args.out_dir.mkdir(parents=True, exist_ok=True)
     sp.save_npz(args.out_dir / "compartment_matrix.npz", M)
     (args.out_dir / "tfs.txt").write_text("\n".join(used) + "\n")
+    (args.out_dir / "norm.txt").write_text(args.transform + "\n")
     with (args.out_dir / "domains.tsv").open("w") as f:
         for c, s, e, lab in domains:
             f.write(f"{c}\t{s}\t{e}\t{lab}\t{e-s}\n")

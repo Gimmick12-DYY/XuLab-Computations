@@ -7,9 +7,11 @@
 #SBATCH --time=6:00:00
 #SBATCH --mail-type=FAIL
 #
-# TF compartment RPKM Pearson: one unit = one (smoothed) A/B compartment domain.
-# RPKM(domain) = reads / (domain_kb) / (TF_total/1e6). Pearson correlates TFs
-# across those domain RPKM profiles. Cell-count bars are kept; no ChromHMM panel.
+# TF compartment Pearson on A/B domains. No ChromHMM.
+# TRANSFORM=rpkm     reads / domain_kb / (TF_total_reads/1e6)
+# TRANSFORM=per_cell reads / domain_kb / n_cells   (n_cells from TF1000 metadata)
+# Pearson is unchanged by swapping those two per-TF constants. The /kb term
+# is the one that changes the correlation. Cell-count bars are kept.
 #
 # UNIT=domain (default): each smoothed compartment participates in the correlation.
 # UNIT=class: 18 E1-quantile pools (ChromHMM analog) — NOT the intended analysis.
@@ -36,10 +38,12 @@ PER_ARM="${PER_ARM:-9}"                   # classes per arm; total units = 2*PER
 SMOOTH="${SMOOTH:-2}"                     # absorb sandwiched flips of <= N bins (0 = raw calls)
 MIN_BP="${MIN_BP:-0}"                     # drop domains shorter than this (0 = keep all)
 TAG="${TAG:-${UNIT}$([[ "${SMOOTH}" != "0" ]] && echo "_sm${SMOOTH}")$([[ "${MIN_BP}" != "0" ]] && echo "_${MIN_BP}bp")}"
-MATRIX_DIR="${MATRIX_DIR:-${TFC}/work/compartment_rpkm_${TAG}}"
-RESULTS="${RESULTS:-${TFC}/results_compartment_rpkm_${TAG}}"
+TRANSFORM="${TRANSFORM:-rpkm}"            # rpkm | per_cell | log (log1p after the matrix is built)
+NORM="${NORM:-${TRANSFORM}}"
+if [[ "${NORM}" == "log" ]]; then NORM="rpkm"; fi
+MATRIX_DIR="${MATRIX_DIR:-${TFC}/work/compartment_${NORM}_${TAG}}"
+RESULTS="${RESULTS:-${TFC}/results_compartment_${NORM}_${TAG}}"
 SOURCE="${SOURCE:-raw}"                   # raw (mm) | imputed
-TRANSFORM="${TRANSFORM:-rpkm}"            # rpkm | log (log1p of the RPKM matrix)
 N_CLUSTERS="${N_CLUSTERS:-3}"
 CELL_META="${CELL_META:-${XULAB}/data/TF1000cells.meta.csv}"
 REBUILD="${REBUILD:-1}"
@@ -79,16 +83,19 @@ if [[ "${UNIT}" == "class" ]]; then
 else
   [[ -s "${DOMAINS_BED}" ]] || { echo "missing compartments: ${DOMAINS_BED} (run hic step 05)" >&2; exit 1; }
   if [[ "${REBUILD}" == "1" || ! -s "${MATRIX_DIR}/compartment_matrix.npz" ]]; then
-    echo "[$(date)] build compartment RPKM matrix (unit=${UNIT}, source=${SOURCE})"
+    echo "[$(date)] build compartment matrix (unit=${UNIT}, source=${SOURCE}, norm=${NORM})"
     python "${TFC}/scripts/build_compartment_matrix.py" \
       --work-root "${WORK_ROOT}" --domains-bed "${DOMAINS_BED}" --unit "${UNIT}" \
-      --out-dir "${MATRIX_DIR}" --source "${SOURCE}" --transform rpkm
+      --out-dir "${MATRIX_DIR}" --source "${SOURCE}" --transform "${NORM}" \
+      --cell-meta "${CELL_META}"
   fi
 fi
 
-echo "[$(date)] correlate + plot (transform=${TRANSFORM}, k=${N_CLUSTERS})"
+PLOT_TRANSFORM="rpkm"
+if [[ "${TRANSFORM}" == "log" ]]; then PLOT_TRANSFORM="log"; fi
+echo "[$(date)] correlate + plot (norm=${NORM}, plot=${PLOT_TRANSFORM}, k=${N_CLUSTERS})"
 python "${TFC}/scripts/compartment_rpkm_correlation.py" \
   --matrix-dir "${MATRIX_DIR}" --out-dir "${RESULTS}" \
-  --transform "${TRANSFORM}" --n-clusters "${N_CLUSTERS}" --cell-meta "${CELL_META}" \
+  --transform "${PLOT_TRANSFORM}" --n-clusters "${N_CLUSTERS}" --cell-meta "${CELL_META}" \
   --min-bp "${MIN_BP}"
 echo "[$(date)] done -> ${RESULTS}"

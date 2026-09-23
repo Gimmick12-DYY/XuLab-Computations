@@ -42,6 +42,9 @@ cobinding/work/
 cobinding/results/
 chip_gse103651/
 
+# Outbound share packs (copies/symlinks of data/)
+share/
+
 # Downstream caches & regenerable eval outputs (keep scripts/slurm tracked)
 downstream/cache/
 downstream/bins/
