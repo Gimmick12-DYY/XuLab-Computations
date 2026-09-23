@@ -93,9 +93,13 @@ fi
 
 PLOT_TRANSFORM="rpkm"
 if [[ "${TRANSFORM}" == "log" ]]; then PLOT_TRANSFORM="log"; fi
-echo "[$(date)] correlate + plot (norm=${NORM}, plot=${PLOT_TRANSFORM}, k=${N_CLUSTERS})"
+SPQN="${SPQN:-0}"                          # 1 = Spatial Quantile Normalization on the TF x TF corr
+SPQN_ARGS=()
+[[ "${SPQN}" == "1" ]] && SPQN_ARGS+=(--spqn --spqn-ngroup "${SPQN_NGROUP:-10}" \
+  --spqn-w "${SPQN_W:-20}" --spqn-ref-frac "${SPQN_REF_FRAC:-0.8}")
+echo "[$(date)] correlate + plot (norm=${NORM}, plot=${PLOT_TRANSFORM}, k=${N_CLUSTERS}, spqn=${SPQN})"
 python "${TFC}/scripts/compartment_rpkm_correlation.py" \
   --matrix-dir "${MATRIX_DIR}" --out-dir "${RESULTS}" \
   --transform "${PLOT_TRANSFORM}" --n-clusters "${N_CLUSTERS}" --cell-meta "${CELL_META}" \
-  --min-bp "${MIN_BP}"
+  --min-bp "${MIN_BP}" "${SPQN_ARGS[@]}"
 echo "[$(date)] done -> ${RESULTS}"

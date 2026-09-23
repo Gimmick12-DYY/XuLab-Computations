@@ -78,6 +78,58 @@ def write_matrix(path, M, labels):
             f.write(lab + "\t" + "\t".join(f"{M[i, j]:.4f}" for j in range(len(labels))) + "\n")
 
 
+def spqn(R, feat_mean, n_group=10, w=20, ref_frac=0.8):
+    """Spatial Quantile Normalization (Wang, Hicks & Hansen 2022, PLoS Comput Biol).
+    Mirrors tf_complexes.spqn. Removes the mean-correlation bias -- correlations
+    inflated for high-signal features (here: high cell-count TFs). Order features by
+    feat_mean; partition R into an n_group x n_group grid of DISJOINT submatrices X_ij,
+    each embedded in a larger OVERLAPPING window Y_ij (size w) for a stable local
+    distribution; quantile-normalize each bin to a high-signal REFERENCE bin. Returns
+    the corrected (symmetric, diag=1) matrix in the original TF order.
+    NOTE: SpQN is designed for thousands of features; with ~78 TFs the bins are coarse."""
+    n = R.shape[0]
+    w = min(w, n)
+    n_group = max(2, min(n_group, n - w + 1))
+    order = np.argsort(feat_mean)                          # ascending signal
+    Ro = R[np.ix_(order, order)].astype(float)
+    dstep = (n - w) / (n_group - 1) if n_group > 1 else 0
+    ystart = [int(round(k * dstep)) for k in range(n_group)]   # overlapping Y windows
+    xbnd = np.linspace(0, n, n_group + 1).astype(int)          # disjoint X partition
+
+    def yvals(i, j):
+        sub = Ro[ystart[i]:ystart[i] + w, ystart[j]:ystart[j] + w]
+        mask = ~np.eye(*sub.shape, dtype=bool) if ystart[i] == ystart[j] else np.ones(sub.shape, bool)
+        return np.sort(sub[mask].ravel())
+
+    r = int(round(ref_frac * (n_group - 1)))
+    ref = yvals(r, r)
+    refq = np.linspace(0, 1, len(ref)) if len(ref) else np.array([0.0, 1.0])
+    out = Ro.copy()
+    for i in range(n_group):
+        for j in range(n_group):
+            Ys = yvals(i, j)
+            if len(Ys) == 0:
+                continue
+            xi, xj = slice(xbnd[i], xbnd[i + 1]), slice(xbnd[j], xbnd[j + 1])
+            block = Ro[xi, xj]
+            q = np.searchsorted(Ys, block.ravel(), side="right") / len(Ys)   # CDF within Y
+            out[xi, xj] = np.interp(q, refq, ref).reshape(block.shape)
+    out = (out + out.T) / 2.0
+    inv = np.argsort(order)
+    out = out[np.ix_(inv, inv)]                            # back to original TF order
+    np.fill_diagonal(out, 1.0)
+    return out
+
+
+def _confound(R, depth):
+    """corr(per-TF depth, per-TF mean off-diagonal correlation) -- the complexity bias."""
+    n = R.shape[0]
+    off = R.copy(); np.fill_diagonal(off, np.nan)
+    mean_corr = np.nanmean(off, axis=1)
+    ok = np.isfinite(mean_corr) & np.isfinite(depth)
+    return float(np.corrcoef(depth[ok], mean_corr[ok])[0, 1]) if ok.sum() > 2 else float("nan")
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -103,6 +155,15 @@ def main() -> int:
                          "to [--vmin, 1]. Clustering always uses raw 1-r.")
     ap.add_argument("--replot-dir", type=Path, default=None,
                     help="skip matrix build: load tf_similarity_<scope>.tsv from this dir and replot")
+    ap.add_argument("--spqn", action="store_true",
+                    help="Spatial Quantile Normalization (Wang/Hicks/Hansen 2022): remove the "
+                         "cell-count/complexity bias from the TF x TF correlation. Orders TFs by "
+                         "cell count, quantile-normalizes correlation bins to a high-count reference. "
+                         "Writes spqn_similarity_<scope>.tsv; clusters + plots the corrected matrix.")
+    ap.add_argument("--spqn-ngroup", type=int, default=10, help="SpQN: number of cell-count bins")
+    ap.add_argument("--spqn-w", type=int, default=20, help="SpQN: overlapping window size (TFs)")
+    ap.add_argument("--spqn-ref-frac", type=float, default=0.8,
+                    help="SpQN: reference bin position (fraction toward high cell count)")
     args = ap.parse_args()
     if args.replot_dir is not None:
         return _replot_from_similarity(args)
@@ -151,6 +212,20 @@ def main() -> int:
         off = R[~np.eye(n_tf, dtype=bool)]
         print(f"[{scope}] {idx.size:,} units  off-diag median={np.median(off):+.3f} "
               f"p95={np.percentile(off, 95):+.3f} max={off.max():+.3f}", flush=True)
+
+        if args.spqn:
+            depth = np.array([cells.get(t.lower(), 0) for t in tfs], float)  # cell-count covariate
+            if (depth > 0).sum() < 3:
+                print(f"[{scope}] SpQN skipped: <3 TFs with cell counts in {args.cell_meta}", flush=True)
+            else:
+                Rn = spqn(R, depth, args.spqn_ngroup, args.spqn_w, args.spqn_ref_frac)
+                write_matrix(args.out_dir / f"spqn_similarity_{scope}.tsv", Rn, tfs)
+                offn = Rn[~np.eye(n_tf, dtype=bool)]
+                print(f"[{scope}] SpQN: confound corr(cells, mean_corr) "
+                      f"{_confound(R, depth):+.3f} -> {_confound(Rn, depth):+.3f}; "
+                      f"off-diag median {np.median(off):+.3f} -> {np.median(offn):+.3f} "
+                      f"(n_group={args.spqn_ngroup}, w={args.spqn_w})", flush=True)
+                R = Rn   # cluster + plot the SpQN-corrected matrix
 
         Z = linkage_from_pearson(R)
         clust = fcluster(Z, t=args.n_clusters, criterion="maxclust")

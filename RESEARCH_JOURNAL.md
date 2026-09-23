@@ -25,6 +25,31 @@ cluster is the usual cause of "unchanged output."
 
 ## Log (newest first)
 
+### 2026-09-23 — Compartment correlation: cell-count normalization is a no-op; wired SpQN (with caveat)
+- **Context:** The A/B-compartment TF×TF correlation has a complexity bias — TFs
+  with more cells correlate with each other. PI suggested normalizing by cell count.
+- **Finding:** Dividing each TF by its cell count is a **per-TF scalar → Pearson
+  scale-invariant → no-op** (the new `per_cell` transform gives a byte-identical
+  matrix to RPKM; same as CPM). The bias is not magnitude but **differential
+  measurement noise**: low-cell TFs have noisy profiles → attenuated correlations;
+  high-cell TFs are clean → correlate strongly with each other. Scaling can't touch
+  signal-to-noise. Real fixes: equalize cells by **downsampling**, or **SpQN**.
+- **Change:** Wired **SpQN** (Wang/Hicks/Hansen 2022) into
+  `compartment_rpkm_correlation.py` (`--spqn`, reuses the vetted `tf_complexes.spqn`,
+  covariate = per-TF cell count) + `_confound` diagnostic (`corr(cells, mean_corr)`
+  before/after) + `SPQN=1` sbatch knob. Writes `spqn_similarity_<scope>.tsv`;
+  clusters/plots the corrected matrix.
+- **Caveat (validated on synthetic):** at ~78 TFs SpQN is coarse and its
+  level-to-reference mechanism raised the off-diag median (+0.65→+0.85) while only
+  partly cutting the confound (+0.66→+0.48) and **flattening a planted complex**
+  (gap 0.18→0.04). So it may make the matrix uniformly red and wash out NuRD/PRC2
+  rather than surface them. **Judge on real data via the diagnostic + whether
+  NuRD (rbbp4/rbbp7/mbd3) and PRC2 (ezh2/mtf2) stand above background;** if not,
+  fall back to downsample-to-equal-cells. Separate confound (all TFs prefer active
+  compartments) still needs a per-domain enrichment ratio.
+- **Files:** `tf_complex/scripts/compartment_rpkm_correlation.py`,
+  `tf_complex/slurm/05_compartment_rpkm.sbatch`.
+
 ### 2026-09-23 — Cicero co-binding: run on the fragment-called peak matrix (the real fix)
 - **Context:** After adding significance (below), a validation run still barely
   matched the lab gold — pair Jaccard 0.028, ~7k regions/5k edges vs gold ~20k/17k.
