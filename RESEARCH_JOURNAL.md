@@ -25,6 +25,56 @@ cluster is the usual cause of "unchanged output."
 
 ## Log (newest first)
 
+### 2026-09-23 — SpQN result: complexity confound removed + new candidate complexes (for motif confirmation)
+- **Status:** SpQN on the A/B-compartment TF×TF correlation **removed the cell-count
+  confound.** On the delivered genome-scope matrix, `corr(cells, mean_corr) = +0.00`
+  (linear) / `+0.09` (vs log10 cells) ≈ 0. Concrete proof: RBBP4 (181,396 cells)
+  mean-corr **0.44** vs HOXC4 (1,023 cells) **0.58** — the deepest TF is *less* sticky
+  than a shallow one, so the "deep-TF rich club" is gone. (Still want the pre-SpQN
+  `+X` from the `05_compartment_rpkm` `.out` `confound` line to headline the delta.)
+- **Data analyzed:** `compartment_counts_genome.tsv` = the SpQN-corrected TF×TF matrix,
+  **percentile-transformed** (off-diag quantiles uniform `[.05,.25,.50,.75,.95]`), 79 TFs.
+  Values below are mean pairwise **percentile** of Pearson r (background median = 0.50;
+  ≥0.90 = strong co-occupancy). Method: Bron–Kerbosch cliques + reciprocal-best-partner
+  pairs + per-module mean-percentile scoring.
+
+- **Validation (positive controls):**
+  - PRC2 `EZH2+MTF2` = **0.98** ✓
+  - Cohesin/insulator `CTCF+STAG2` = **0.93** ✓
+  - NuRD core `RBBP4+RBBP7+MBD3` = **0.60** ✗ — NuRD does NOT co-occupy at compartment
+    scale (expected; NuRD is peak-scale → check via the Cicero/cobinding track).
+
+- **NEW candidate complexes/modules (ranked; to confirm by motif co-enrichment):**
+  1. **G9a/GLP H3K9-methylation** — `WIZ + ZNF644` = **0.98** (mutual best partners).
+     Both are documented G9a–GLP (EHMT2/EHMT1) components → strongest, literature-backed
+     de-novo hit.
+  2. **Repressive-chromatin super-module** — `WIZ + ZNF644 + MTF2 + SMARCA1` = **0.99**
+     (H3K9 + H3K27/PRC2 + ISWI remodeling co-occupying the same territory).
+  3. **CTCF-independent boundary** — `MAZ + ZNF143` = **0.98**, while `MAZ+ZNF143+CTCF`
+     = **0.40** (CTCF does NOT join → matches MAZ-as-CTCF-independent-boundary reports).
+  4. **Metabolic** — `FOXK1 + MLX` = **0.99** (extends to SREBF2 = 0.89). MLX↔MondoA/ChREBP,
+     FOXK1 glycolysis regulator.
+  5. **Basal/NC2 repressor** — `DR1 + POGK + ZNF746` = **0.98** (DR1 = NC2β).
+  6. **NuRD/DREAM-adjacent pairs** — `RBBP7 + ZNF703` = 0.98 (ZNF703 recruits NuRD);
+     `E2F3 + RBBP4` = 0.998 (RbAp48 in Rb–E2F/DREAM).
+  - Other strong reciprocal pairs to sanity-check: `SRCAP–MLX` 0.998, `NFYA–AKAP8L` 0.984,
+    `MBD3–ZNF777` 0.962, `NME2–NFYA` 0.959, `SOX4–TRAFD1` 0.996.
+
+- **Caveats (state in any writeup):** compartment-scale co-occupancy = shared large-scale
+  territory, **not** proof of physical interaction; some high pairs are shared-territory
+  coincidence (e.g. `RBBP4–XPA` 1.00). The **A/B-activity confound** still shapes the big
+  blocks — trust the *within-block tight pairs above*, not the blocks. SpQN can over-flatten
+  at n=78; validation complexes surviving is the reassurance.
+
+- **NEXT (cluster agent):** confirm the ranked modules by **motif co-enrichment** — do the
+  paired TFs' motifs co-occur in the same regions above background? Prioritize the two clean
+  literature-backed hits **WIZ+ZNF644 (G9a/GLP)** and **MAZ+ZNF143 (CTCF-independent
+  boundary)**. Cross-check all strong pairs against CORUM/BioGRID (annotated vs novel), and
+  against the peak-level Cicero/cobinding results (esp. NuRD, which should appear there but
+  not here). Motif pipeline: `downstream/slurm/motif_enrichment.sbatch` (AME `--scoring avg`).
+- **Files/inputs:** `compartment_counts_genome.tsv`, `data/TF1000cells.meta.csv`,
+  `tf_complex/scripts/compartment_rpkm_correlation.py` (`--spqn`).
+
 ### 2026-09-23 — Compartment correlation: cell-count normalization is a no-op; wired SpQN (with caveat)
 - **Context:** The A/B-compartment TF×TF correlation has a complexity bias — TFs
   with more cells correlate with each other. PI suggested normalizing by cell count.
