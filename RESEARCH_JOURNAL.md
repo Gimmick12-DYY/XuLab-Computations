@@ -25,6 +25,45 @@ cluster is the usual cause of "unchanged output."
 
 ## Log (newest first)
 
+### 2026-09-23 — Cicero co-binding: run on the fragment-called peak matrix (the real fix)
+- **Context:** After adding significance (below), a validation run still barely
+  matched the lab gold — pair Jaccard 0.028, ~7k regions/5k edges vs gold ~20k/17k.
+  Significance was **orthogonal**; the real problem was the **input peak universe**.
+- **Diagnosis chain:**
+  - Our cobinding Cicero was fed peaks from `call_raw_peaks.py`, which calls MACS on
+    the **1 kb-bin** pseudobulk (synthetic fragments at bin midpoints). That quantizes
+    peaks to a 1 kb grid → **0 exact coordinate matches** with the lab's fragment
+    peaks, and ~⅓ as many sites.
+  - The lab's gold peaks are variable-width fragment MACS peaks (min 150, median 262).
+    Resolution itself is *not* the blocker: gold peaks collapse onto 1 kb bins nearly
+    losslessly (19,199 bins, 0.6% pairs lost) — so a bin-level analysis *could*
+    recover ~99%; the gap was sensitivity/wrong sites, not the 1 kb grid.
+  - We do **not** have raw fragments. But the colleague sent a **fragment-called peak
+    matrix**, `data/TF1000cells.pmat.mtx.rds` (237,450 peaks × 885,203 cells, all TFs
+    pooled, mean width 412 bp) — the correct universe we'd been ignoring.
+- **Change:** New `cobinding/scripts/export_pmat_tf_mm.R` subsets the pmat to a TF's
+  cells (barcodes from `unified/work/<tf>/mm/barcodes.tsv.gz`), filters
+  `min-cells-per-peak`, and writes the `mm/{matrix,regions,barcodes}` trio that
+  `02_build_cds.R` consumes. `run_cicero_cobinding.sbatch` now calls it instead of
+  `export_tf_cicero_mm.py` (1 kb-bin path); added `PMAT`, `MIN_CELLS_PER_PEAK`,
+  `MIN_PEAKS_PER_CELL`, and `IGNORE_FITCONNS=1` (force the pmat path on RBBP4 to
+  compare vs gold). Validated the exporter end-to-end locally (valid mm, 100% barcode
+  match, filters applied).
+- **Open items / caveats:**
+  - **pmat vs gold peak universe barely overlaps** (0 exact, 12% ≥1 bp, 7.8%
+    center-in) — likely a **genome-build mismatch** (fitConns hg19 vs pmat hg38?) or
+    the fitConns used a *separate* RBBP4-specific peak set. So a pmat run won't
+    bit-for-bit reproduce fitConns; validate by network quality/significance, or get
+    the colleague's exact inputs. **Next: liftOver test to settle the build question.**
+  - Barcode-format match between `unified` mm and the pmat is asserted at runtime
+    (fails loud) but unverified until a cluster run.
+  - Cell-count parity unresolved: RBBP4 = 181,396 pmat cells vs a *back-calculated*
+    (assumption-laden, possibly wrong) lab n≈8.5k. Not treating 8.5k as fact.
+  - Non-fitConns path still keeps all edges at cluster time (`CLUSTER_QVAL=1`); wiring
+    the new FDR into that filter is a deliberate follow-up.
+- **Files:** `cobinding/scripts/export_pmat_tf_mm.R` (new),
+  `cobinding/slurm/run_cicero_cobinding.sbatch`.
+
 ### 2026-09-23 — Cicero co-binding: add the missing significance (fitConns pval/qval)
 - **Context:** Our co-binding cliques looked far less significant than the lab
   colleague's `fitConns` workbook. Root cause found in our own code: Cicero's

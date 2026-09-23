@@ -27,6 +27,13 @@ PEAKS_IMP="${PEAKS_IMP:-${XULAB}/tf_complex/work/peaks_imputed}"
 PEAKS_RAW="${PEAKS_RAW:-${XULAB}/tf_complex/work/peaks}"
 CHROMHMM="${CHROMHMM:-${DATA_DIR}/HEK293T_chromHMM18.bed.gz}"
 CFG="${CFG:-${COB}/configs/cicero_1mb.yaml}"
+# Fragment-called peak matrix (peaks x cells, all TFs) from the colleague. Cicero
+# runs on THIS (correct, fragment-resolution) universe, subset to the TF's cells --
+# not the 1 kb-bin synthetic peaks that export_tf_cicero_mm.py used to build.
+PMAT="${PMAT:-${DATA_DIR}/TF1000cells.pmat.mtx.rds}"
+MIN_CELLS_PER_PEAK="${MIN_CELLS_PER_PEAK:-2}"
+MIN_PEAKS_PER_CELL="${MIN_PEAKS_PER_CELL:-0}"
+IGNORE_FITCONNS="${IGNORE_FITCONNS:-0}"   # 1 = run our pmat Cicero even if lab fitConns exist (validate vs gold)
 
 QVAL="${QVAL:-0.05}"
 COACCESS_MIN="${COACCESS_MIN:-0.05}"
@@ -72,7 +79,7 @@ done
 
 source "$(conda info --base)/etc/profile.d/conda.sh"
 
-if [[ "${HAVE_FIT}" == "1" ]]; then
+if [[ "${HAVE_FIT}" == "1" && "${IGNORE_FITCONNS}" != "1" ]]; then
   echo "[$(date)] ${TF}: using lab Cicero fitConns (not re-running Cicero)"
   conda activate "${PY_ENV}"
   GLOB='TF.{tf}.fitConns.res.*'
@@ -89,23 +96,17 @@ else
   if [[ "${REBUILD_CICERO}" != "1" && -s "${CONNS}" ]]; then
     echo "[$(date)] reuse ${CONNS}"
   else
-    PEAKS=""
-    if [[ -s "${PEAKS_RAW}/${tf}.bed" ]]; then
-      PEAKS="${PEAKS_RAW}/${tf}.bed"
-    elif [[ -s "${PEAKS_IMP}/${tf}.bed" ]]; then
-      PEAKS="${PEAKS_IMP}/${tf}.bed"
-    else
-      echo "no peaks for ${tf}" >&2; exit 0
+    [[ -s "${PMAT}" ]] || { echo "no pmat: ${PMAT}" >&2; exit 0; }
+    BARCODES="${UNIFIED}/${tf}/mm/barcodes.tsv.gz"
+    if [[ ! -s "${BARCODES}" ]]; then
+      echo "no per-TF barcodes for ${tf} at ${BARCODES}" >&2; exit 0
     fi
-    MM="${UNIFIED}/${tf}/mm"
-    if [[ ! -f "${MM}/matrix.mtx.gz" ]]; then
-      echo "no raw mm for ${tf}" >&2; exit 0
-    fi
-    echo "[$(date)] export peak mm for Cicero  peaks=${PEAKS}"
-    conda activate "${PY_ENV}"
-    python "${COB}/scripts/export_tf_cicero_mm.py" \
-      --tf "${TF}" --peaks "${PEAKS}" --mm-dir "${MM}" \
-      --out-mm "${CWD}/mm" --max-peaks "${MAX_PEAKS}"
+    echo "[$(date)] subset fragment-called pmat to ${TF} cells -> Cicero mm"
+    conda activate "${CICERO_ENV}"     # R/Matrix to read the pmat RDS + write mm
+    Rscript "${COB}/scripts/export_pmat_tf_mm.R" \
+      --pmat "${PMAT}" --barcodes "${BARCODES}" --out-mm "${CWD}/mm" \
+      --min-cells-per-peak "${MIN_CELLS_PER_PEAK}" \
+      --min-peaks-per-cell "${MIN_PEAKS_PER_CELL}"
 
     echo "[$(date)] Cicero CDS + run_cicero window=${MAX_DIST}"
     conda activate "${CICERO_ENV}"
