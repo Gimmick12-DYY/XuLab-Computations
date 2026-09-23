@@ -26,6 +26,14 @@ CHUNK_SIZE="${CHUNK_SIZE:-1500000}"      # read pairs per mapping chunk (runHiC 
 # Compartment calling (cooltools eigs-cis).
 COMPARTMENT_RES="${COMPARTMENT_RES:-25000}"    # 25 kb bins for A/B compartments (deep library)
 
+# Peakachu loop calling (pretrained high-confidence models on ICE-balanced cooler).
+LOOP_RES="${LOOP_RES:-10000}"                  # 10 kb is the Peakachu default
+LOOP_THRESH="${LOOP_THRESH:-0.95}"             # pool probability cutoff
+LOOP_WEIGHT="${LOOP_WEIGHT:-weight}"           # ICE column; set to raw for unnormalized
+LOOP_DEPTH_RES="${LOOP_DEPTH_RES:-1000000}"    # 1 Mb cooler used by `peakachu depth`
+PEAKACHU_MODEL="${PEAKACHU_MODEL:-}"           # optional: skip depth + download
+CTCF_PEAKS="${CTCF_PEAKS:-${XULAB}/data/CTCF_majority2of3.bed}"
+
 THREADS="${THREADS:-${SLURM_CPUS_PER_TASK:-16}}"
 
 CONDA_ENV="${CONDA_ENV:-/work/users/d/y/dyy12/conda/envs/hic}"

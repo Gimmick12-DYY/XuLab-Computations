@@ -1,0 +1,13 @@
+# Cicero for cobinding: 1 Mb windows on per-TF peaks (not the genome-wide
+# CTCF-bin imputation Cicero). paths.work_dir is overwritten per array task.
+paths:
+  work_dir: /work/users/d/y/dyy12/XuLab/cobinding/work/_placeholder
+
+cicero:
+  min_cells_per_peak: 2
+  num_dim: 50
+  k_metacell: 50
+  window_bp: 1000000
+  sample_num: 100
+  max_cells: 0
+  random_seed: 555

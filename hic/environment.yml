@@ -21,3 +21,4 @@ dependencies:
   - pip
   - pip:
       - runHiC          # XiaoTaoWang/HiC_pipeline (PyPI)
+      - peakachu        # chromatin loops (pretrained high-confidence models)

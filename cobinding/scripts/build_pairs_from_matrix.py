@@ -2,7 +2,13 @@
 # -----------------------------------------------------------------------------
 # build_pairs_from_matrix.py
 #
-# For a TF that has no Cicero fitConns file: take its called peaks, keep cis
+# For a TF that has no Cicero fitConns file.
+#
+# NOT the default cobinding path. Pearson of imputed cell vectors inside 1 Mb
+# is not Cicero: with ~10k cells, BH FDR keeps almost every positive r and
+# produces giant cliques (e.g. TRAFD1 405k edges vs RBBP4 Cicero 11k).
+# Run cobinding/slurm/run_cicero_cobinding.sbatch instead (real run_cicero,
+# 1 Mb window, then the same plots).
 # pairs whose midpoints are <= --max-dist (default 1 Mb — the Cicero window),
 # score each pair by Pearson correlation of the TF's per-cell signal at the
 # overlapping matrix bins, and BH-adjust. Writes the same peak_edges /

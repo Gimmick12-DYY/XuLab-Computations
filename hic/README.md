@@ -1,9 +1,11 @@
-# HEK293T Hi-C → A/B compartments
+# HEK293T Hi-C → A/B compartments + Peakachu loops
 
 Process the matched HEK293T **Hi-C** to **hg38** from raw reads (there was only an
-hg18 matrix), then call **A/B compartments** — the input for the planned
-co-binding analysis. Uses **runHiC** ([XiaoTaoWang/HiC_pipeline](https://github.com/XiaoTaoWang/HiC_pipeline))
-for mapping→filtering→binning(+ICE), then **cooltools** for compartments.
+hg18 matrix), then call **A/B compartments** and **chromatin loops** — the inputs
+for the planned co-binding analysis. Uses **runHiC**
+([XiaoTaoWang/HiC_pipeline](https://github.com/XiaoTaoWang/HiC_pipeline)) for
+mapping→filtering→binning(+ICE), **cooltools** for compartments, and
+**Peakachu** ([tariks/peakachu](https://github.com/tariks/peakachu)) for loops.
 
 ## Dataset
 
@@ -51,6 +53,10 @@ sbatch hic/slurm/05_classify_compartments.sbatch
 COBIND_TF=RBBP4 sbatch hic/slurm/05_classify_compartments.sbatch   # peaks + modules
 REGIONS=/work/.../cobinding/results/RBBP4/nodes.tsv LABEL=RBBP4_peaks \
   sbatch hic/slurm/05_classify_compartments.sbatch
+
+# 7. Peakachu loops @ 10 kb (depth -> high-confidence model -> score_genome -> pool)
+sbatch hic/slurm/06_peakachu_loops.sbatch
+#   LOOP_RES=25000 LOOP_THRESH=0.9 sbatch hic/slurm/06_peakachu_loops.sbatch
 ```
 
 ### `datasets.tsv` (runHiC metadata)
@@ -101,6 +107,37 @@ resolution automatically. Outputs under `work/compartments/`:
 This is the A/B-compartment **co-binding** analysis: run it on RBBP4's co-binding
 modules and on each TF's peaks to get their A/B preference, then feed the
 correlation / motif / complex steps.
+
+## Chromatin loops (Peakachu)
+
+`06_peakachu_loops.sbatch` is the official Peakachu v2 path on the ICE-balanced
+`.mcool`:
+
+1. `peakachu depth` on the 1 Mb cooler → pick the matching pretrained
+   **high-confidence** model (read-depth table in the Peakachu README).
+2. `peakachu score_genome -r 10000 --clr-weight-name weight` at **10 kb**
+   (`LOOP_RES`; 5 kb / 25 kb also exist in this mcool).
+3. `peakachu pool -t 0.95` (`LOOP_THRESH`) to collapse per-pixel scores to
+   non-redundant loops.
+4. `analyze_loops.py` annotates each loop with A/B (from step 6) and overlap
+   with `data/CTCF_majority2of3.bed`.
+
+Outputs under `work/loops/`:
+
+- `peakachu_depth.txt` — cis-contact count + suggested model
+- `models/high-confidence.<depth>.10kb.w6.pkl` — cached pretrained model
+- `peakachu_10000.scores.bedpe` — per-pixel probabilities
+- `peakachu_10000.loops.0.95.bedpe` — pooled loops (Juicebox / HiGlass 2D)
+- `peakachu_10000.loops.0.95.annotated.tsv` — A/B pair + CTCF at each anchor
+- `peakachu_10000.loops.0.95.summary.tsv` — counts, span, AA/AB/BB enrichment
+- `peakachu_10000.loops.0.95.anchors.bed` — both anchors for IGV
+
+`LOOP_WEIGHT=raw` if you ever score an unbalanced matrix. Override the model
+with `PEAKACHU_MODEL=/path/to.pkl` to skip depth + download.
+
+`06` invokes Peakachu through `scripts/run_peakachu.py`, which loads the
+pretrained forests on the current sklearn (the published pickles were dumped
+with sklearn < 1.3).
 
 ## Outputs & tracking
 

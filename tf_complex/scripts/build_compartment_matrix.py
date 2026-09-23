@@ -92,6 +92,10 @@ def main() -> int:
                          "domain = merged contiguous A/B segments (Mb-scale)")
     ap.add_argument("--out-dir", type=Path, required=True)
     ap.add_argument("--source", choices=["raw", "imputed"], default="raw")
+    ap.add_argument("--residualize", action="store_true",
+                    help="imputed only: subtract consensus accessibility before RPKM")
+    ap.add_argument("--consensus-npy", type=Path, default=None)
+    ap.add_argument("--consensus-scale", type=float, default=1.0)
     ap.add_argument("--transform", choices=["rpkm", "count"], default="rpkm",
                     help="rpkm (default) = reads/kb/million, removes the domain-size and "
                          "per-TF depth confounds together; count = raw reads")
@@ -99,6 +103,15 @@ def main() -> int:
     args = ap.parse_args()
 
     sub = "mm" if args.source == "raw" else "impute"
+    if args.residualize:
+        if args.source != "imputed":
+            raise SystemExit("--residualize requires --source imputed")
+        if args.consensus_npy is None or not args.consensus_npy.is_file():
+            raise SystemExit("--residualize needs an existing --consensus-npy")
+        cons = np.load(args.consensus_npy)
+        print(f"[consensus] {cons.shape[0]} bins from {args.consensus_npy}", flush=True)
+    else:
+        cons = None
     domains = load_domains(args.domains_bed, args.unit)
     didx = domain_index(domains)
     nD = len(domains)
@@ -118,6 +131,14 @@ def main() -> int:
         if not (d / "matrix.mtx.gz").is_file() and not (d / "matrix_csr.npz").is_file():
             print(f"[skip] {tf}: no {sub} matrix", file=sys.stderr); continue
         signal, regions, kind, ncells = load_per_bin_signal(d)
+        if cons is not None:
+            if cons.shape[0] != signal.shape[0]:
+                raise SystemExit(
+                    f"{tf}: consensus bins {cons.shape[0]} != signal {signal.shape[0]}")
+            tot = float(signal.sum())
+            signal = np.clip(signal - args.consensus_scale * cons * tot, 0.0, None)
+            kept = float(signal.sum()) / tot if tot > 0 else 0.0
+            print(f"  residual kept {100 * kept:.1f}% of counts", flush=True)
         acc = np.zeros(nD, dtype=np.float64)
         for i, r in enumerate(regions):
             v = signal[i]

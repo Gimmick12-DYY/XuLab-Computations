@@ -23,7 +23,6 @@ import scipy.sparse as sp
 from scipy.cluster.hierarchy import dendrogram, fcluster, linkage
 from scipy.spatial.distance import squareform
 from scipy.stats import kruskal
-from sklearn.metrics import silhouette_score
 
 # standard Roadmap 18-state colours (keyed on the core state name)
 STATE_COLORS = {
@@ -68,6 +67,31 @@ def load_cells(path):
     return cc
 
 
+def silhouette_precomputed(D, labels):
+    """Mean silhouette on a precomputed n×n distance matrix (sklearn-compatible)."""
+    labels = np.asarray(labels)
+    n = len(labels)
+    if n < 2 or len(set(labels)) < 2:
+        return -1.0
+    svals = []
+    for i in range(n):
+        same = labels == labels[i]
+        same[i] = False
+        if not same.any():
+            continue
+        a = float(D[i, same].mean())
+        b = np.inf
+        for c in set(labels) - {labels[i]}:
+            other = labels == c
+            if other.any():
+                b = min(b, float(D[i, other].mean()))
+        if not np.isfinite(b):
+            continue
+        denom = max(a, b)
+        svals.append(0.0 if denom == 0 else (b - a) / denom)
+    return float(np.mean(svals)) if svals else -1.0
+
+
 def choose_k(D, Z, k_max=12):
     """Pick k in 2..k_max that maximizes silhouette on the 1-r distance matrix."""
     scores = []
@@ -76,7 +100,7 @@ def choose_k(D, Z, k_max=12):
         lab = fcluster(Z, t=k, criterion="maxclust")
         if len(set(lab)) < 2:
             continue
-        s = float(silhouette_score(D, lab, metric="precomputed"))
+        s = silhouette_precomputed(D, lab)
         scores.append((k, s))
         if s > best_s:
             best_k, best_s = k, s
@@ -115,6 +139,10 @@ def main() -> int:
                     help="upper k to try when --n-clusters 0")
     ap.add_argument("--transform", choices=["rpkm", "log", "ratio"], default="rpkm",
                     help="rpkm (default) | log = log1p(rpkm) | ratio = rpkm / mean-across-states")
+    ap.add_argument("--vmin", default="0.65",
+                    help="heatmap floor (default 0.65). 'auto' = 2nd percentile of off-diagonal r.")
+    ap.add_argument("--tag", default="",
+                    help="override left-side label (default chromHMM18 or chromHMM18×N)")
     args = ap.parse_args()
 
     M = np.asarray(sp.load_npz(args.matrix_dir / "chromhmm_matrix.npz").todense())  # states x TFs
@@ -163,12 +191,21 @@ def main() -> int:
     cells = load_cells(args.cell_meta)
     print(f"[cells] {len(cells)} TFs in {args.cell_meta}; "
           f"{sum(1 for t in tfs if t.lower() in cells)}/{n_tf} matched")
-    _plot(R, tfs, states, Z, clust, comp, cells, args.out_dir, stars=stars)
+    if str(args.vmin).lower() == "auto":
+        off = R[np.triu_indices(n_tf, 1)]
+        vmin = float(np.quantile(off, 0.02))
+        vmin = min(vmin, 0.65)
+    else:
+        vmin = float(args.vmin)
+    print(f"[scale] vmin={vmin:.3f} vmax=1.0", flush=True)
+    _plot(R, tfs, states, Z, clust, comp, cells, args.out_dir, stars=stars,
+          vmin=vmin, tag=args.tag or None)
     print(f"[done] {n_tf} TFs, {len(states)} states, {len(set(clust))} clusters -> {args.out_dir}")
     return 0
 
 
-def _plot(R, tfs, states, Z, clust, comp, cells, out_dir, stars=None, vmin=0.65):
+def _plot(R, tfs, states, Z, clust, comp, cells, out_dir, stars=None, vmin=0.65,
+          tag=None):
     """Reference layout: dendrogram | TFxTF heatmap (RdYlBu_r, 0.65-1) | cell-count bars |
     stacked ChromHMM state composition per TF cluster."""
     try:
@@ -197,10 +234,11 @@ def _plot(R, tfs, states, Z, clust, comp, cells, out_dir, stars=None, vmin=0.65)
         return [hsv(h0 + (h1 - h0) * i / (n - 1)) for i in range(n)]
     bar_cols = hsv_span(n, 0.02, 0.92)   # red at bottom (y=0) -> pink at top
 
-    tag = "chromHMM18"
-    if any(".q" in s for s in states):
-        nq = max((int(s.rsplit(".q", 1)[1]) for s in states if ".q" in s), default=5)
-        tag = f"chromHMM18×{nq}"
+    if not tag:
+        tag = "chromHMM18"
+        if any(".q" in s for s in states):
+            nq = max((int(s.rsplit(".q", 1)[1]) for s in states if ".q" in s), default=5)
+            tag = f"chromHMM18×{nq}"
     fig.text(0.015, 0.80, f"TF\n{tag}\nrpkm ratio\npearson cor", fontsize=15, va="top")
 
     dendrogram(Z, orientation="left", ax=axd, no_labels=True, link_color_func=lambda k: "#555")
@@ -217,7 +255,8 @@ def _plot(R, tfs, states, Z, clust, comp, cells, out_dir, stars=None, vmin=0.65)
     axh.grid(which="minor", color="white", linewidth=0.4)
     axh.tick_params(which="minor", length=0); axh.tick_params(length=0)
     cax = fig.add_axes([0.045, 0.30, 0.009, 0.22])      # colorbar, far left (matches reference)
-    fig.colorbar(im, cax=cax, ticks=[0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1.0])
+    ticks = np.linspace(vmin, 1.0, 8)
+    fig.colorbar(im, cax=cax, ticks=ticks)
 
     y = np.arange(n)
     cnt = np.array([cells.get(tfs[i].lower(), 1) for i in order], float)

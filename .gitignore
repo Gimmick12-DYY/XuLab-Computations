@@ -40,6 +40,7 @@ tf_complex/ref/
 # Co-binding: keep scripts/slurm, drop the aggregated edge list + cluster outputs
 cobinding/work/
 cobinding/results/
+chip_gse103651/
 
 # Downstream caches & regenerable eval outputs (keep scripts/slurm tracked)
 downstream/cache/

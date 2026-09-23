@@ -109,6 +109,17 @@ if (min_cells > 0L) {
 # ---- Binarise (Cicero treats peaks as binary accessible/inaccessible) -------
 mat <- as(mat > 0, "dgCMatrix") * 1
 
+# ---- Drop empty cells (Monocle3 estimate_size_factors aborts on colSums==0) --
+# Peak-subset HiTAG matrices leave many cells with zero reads. Genome-wide
+# bin matrices are usually fine; this is a no-op when every cell has signal.
+keep_cells <- Matrix::colSums(mat) > 0
+n_drop_cells <- sum(!keep_cells)
+if (n_drop_cells > 0) {
+  message(sprintf("[02] Dropping %d / %d cells with zero reads",
+                  n_drop_cells, length(keep_cells)))
+  mat <- mat[, keep_cells, drop = FALSE]
+}
+
 # ---- Optional cell subsample (memory) ---------------------------------------
 max_cells <- as.integer(cfg$cicero$max_cells %||% 0L)
 if (max_cells > 0L && ncol(mat) > max_cells) {
