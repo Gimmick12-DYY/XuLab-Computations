@@ -25,6 +25,33 @@ cluster is the usual cause of "unchanged output."
 
 ## Log (newest first)
 
+### 2026-09-24 — Enrichment-ratio RESULT: real complexes separated; several earlier "hits" were activity artifacts
+- **Ran** `CORR_TRANSFORM=enrichment` (domain units, results_compartment_enrichment_domain_sm2).
+  Baseline collapsed: off-diag **median +0.85 → −0.02** (min −0.66, p95 +0.32); confound
+  `corr(log10 cells, mean_corr)` = +0.13. Heatmap = ~0 (blue) background with discrete red
+  co-occupancy blocks — a real discriminator vs the old all-red activity matrix.
+- **CONFIRMED complexes (score = mean pairwise enrichment-r above ~0 background):**
+  - PRC2 `EZH2/MTF2` = **+0.67** (cleanest, strongest) ⭐
+  - boundary `MAZ/ZNF143` = **+0.35** (and `+CTCF` = −0.10 → CTCF-independent) ⭐
+  - cohesin `CTCF/STAG2` = **+0.28**
+  - NuRD `RBBP4/RBBP7/MBD3` = **+0.26** — **rescued** (the activity baseline had masked it)
+- **CORRECTION — earlier percentile-based "hits" were shared-territory/activity artifacts,
+  they COLLAPSE under enrichment:** `WIZ/ZNF644` (G9a) +0.03, `FOXK1/MLX` +0.04,
+  `DR1/POGK/ZNF746` +0.07, repressive super-module +0.07. **Do NOT motif-confirm these as
+  complexes** — supersedes the 2026-09-23 shortlist.
+- **Dominant emergent module (caveat):** a large `RBBP4/XPA/E2F3/DDIT3/RBBP7/CTCF/SAFB/ZNF703`
+  clique (mean +0.65; RBBP4-XPA +0.91, E2F3-RBBP4 +0.88) — an RbAp48/DREAM/architecture hub.
+  BUT these are the **highest-cell TFs**, and the confound is +0.13 (nonzero), so this may
+  carry **residual complexity bias**. Rule it out before claiming: rerun
+  `CORR_TRANSFORM=enrichment SPQN=1` (enrichment kills the activity baseline, SpQN the
+  residual cell-count effect) and/or check at peak scale.
+- **New candidate modules to look at:** `HOXB9/NME2` (+0.69), `MBD3/NME2/HOXB9/DR1` (+0.54),
+  `CHAMP1/ZBTB43/ZBTB7A` (+0.42).
+- **NEXT (cluster agent):** motif-confirm the CONFIRMED list (PRC2, MAZ/ZNF143, cohesin,
+  NuRD) — not the collapsed ones; then re-score after `enrichment + SpQN` to settle the
+  high-cell RBBP4/XPA/E2F3 hub. Data: `tf_similarity_genome.tsv` in the results dir.
+- **Files/inputs:** `results_compartment_enrichment_domain_sm2/tf_similarity_{genome,A,B}.tsv`.
+
 ### 2026-09-24 — Compartment matrix is activity-dominated, not cell-count-confounded; add enrichment-ratio transform
 - **Context:** The raw compartment TF×TF matrix (RPKM, colored by raw Pearson r,
   vmin 0.80) shows a solid all-red top block that *looked* like the complexity confound.
