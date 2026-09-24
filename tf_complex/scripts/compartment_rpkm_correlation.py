@@ -139,8 +139,13 @@ def main() -> int:
     ap.add_argument("--cell-meta", type=Path,
                     default=Path(__file__).resolve().parents[2] / "data" / "TF1000cells.meta.csv")
     ap.add_argument("--n-clusters", type=int, default=3)
-    ap.add_argument("--transform", choices=["rpkm", "log"], default="rpkm",
-                    help="rpkm (default, matrix used as built) | log = log1p(rpkm)")
+    ap.add_argument("--transform", choices=["rpkm", "log", "enrichment"], default="rpkm",
+                    help="rpkm (default, matrix used as built) | log = log1p(rpkm) | "
+                         "enrichment = each domain / its across-TF mean (obs/expected). "
+                         "Removes the shared A/B-activity baseline (every TF prefers active "
+                         "domains) so TF-specific deviation -- where complexes live -- drives "
+                         "the correlation. This is a per-DOMAIN op, so it changes Pearson "
+                         "(unlike per-TF rpkm/per_cell, which are scale-invariant no-ops).")
     ap.add_argument("--min-reads", type=float, default=0.0,
                     help="drop units whose summed signal across TFs is <= this")
     ap.add_argument("--min-bp", type=int, default=0,
@@ -195,7 +200,14 @@ def main() -> int:
     print(f"[matrix] {nD:,} compartment {unit_kind} units x {n_tf} TFs "
           f"(A={int((labs=='A').sum()):,} B={int((labs=='B').sum()):,})", flush=True)
 
-    X = np.log1p(M) if args.transform == "log" else M
+    if args.transform == "log":
+        X = np.log1p(M)
+    elif args.transform == "enrichment":
+        mu = M.mean(axis=1, keepdims=True)          # per-domain mean across TFs (expected)
+        mu[mu == 0] = 1.0
+        X = M / mu                                   # observed / expected enrichment
+    else:
+        X = M
     keep = (np.asarray(M.sum(axis=1)).ravel() > args.min_reads) & size_ok
     cells = load_cells(args.cell_meta)
     print(f"[cells] {len(cells)} TFs in {args.cell_meta}; "

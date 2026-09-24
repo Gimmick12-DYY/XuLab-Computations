@@ -25,7 +25,43 @@ cluster is the usual cause of "unchanged output."
 
 ## Log (newest first)
 
+### 2026-09-24 — Compartment matrix is activity-dominated, not cell-count-confounded; add enrichment-ratio transform
+- **Context:** The raw compartment TF×TF matrix (RPKM, colored by raw Pearson r,
+  vmin 0.80) shows a solid all-red top block that *looked* like the complexity confound.
+- **Finding — it is NOT the cell-count confound.** `corr(cells, mean_corr) ≈ 0` and the
+  red block is **depth-mixed** (RBBP4 181k cells sits with SETDB1/ZNF503/ZNF606 ~1k, all
+  ~0.97). The slab is the **A/B compartment-activity baseline**: every TF puts more reads
+  in active A domains → all TFs correlate ~0.9 via that shared shape. Compartment-scale
+  aggregation makes even 1k-cell TFs well-measured, so depth doesn't drive the correlations
+  here. The "cleaner" percentile-colored plots differ from the raw-r plot **only by coloring**
+  (rank-spread hides the high baseline), not by real de-confounding.
+- **Correction to the entry below:** the "SpQN removed the confound (→0)" reading measured
+  the file `compartment_counts_genome.tsv`, which is the **RAW** matrix (already `corr≈0`).
+  SpQN did **not** do the de-confounding at compartment scale — it's ~a no-op there because
+  there was little cell-count bias to begin with. SpQN's real value is at **peak scale**
+  (the original `tf_complexes` all-red rich-club), where features are sparse/noisy.
+  RPKM/per_cell (per-TF) and SpQN (cell-count) all leave the activity baseline untouched.
+- **Change:** added a per-domain **enrichment ratio** (observed/expected): each domain ÷ its
+  across-TF mean, subtracting the shared activity baseline so each TF's *deviation* (where
+  complexes live) drives Pearson. It is a per-DOMAIN op → it actually changes the correlation
+  (unlike the per-TF no-ops). `compartment_rpkm_correlation.py --transform enrichment`;
+  sbatch `CORR_TRANSFORM=enrichment` (build NORM stays rpkm).
+- **Validation (synthetic: activity baseline + planted complex):** raw median **+0.85**,
+  complex−background gap **+0.02** → enrichment median **0.00**, gap **+0.50**. Baseline
+  removed, complex separates cleanly.
+- **Complexes still valid:** PRC2, cohesin, WIZ+ZNF644, MAZ+ZNF143, etc. are real
+  co-occupancy (visible in raw too) — just not "SpQN-revealed."
+- **Next:** run `CORR_TRANSFORM=enrichment`; check whether modules tighten / new ones emerge
+  above a now-zero baseline; keep SpQN for the peak-level analysis.
+- **Files:** `tf_complex/scripts/compartment_rpkm_correlation.py`,
+  `tf_complex/slurm/05_compartment_rpkm.sbatch`.
+
 ### 2026-09-23 — SpQN result: complexity confound removed + new candidate complexes (for motif confirmation)
+> **CORRECTED 2026-09-24 (see entry above):** the matrix measured here was the RAW compartment
+> matrix (already `corr(cells,mean_corr)≈0`). SpQN did **not** do the de-confounding — the
+> compartment matrix is *activity*-dominated, not cell-count-confounded. The candidate
+> complexes below remain valid (real co-occupancy); ignore the causal claim that SpQN
+> revealed them.
 - **Status:** SpQN on the A/B-compartment TF×TF correlation **removed the cell-count
   confound.** On the delivered genome-scope matrix, `corr(cells, mean_corr) = +0.00`
   (linear) / `+0.09` (vs log10 cells) ≈ 0. Concrete proof: RBBP4 (181,396 cells)
