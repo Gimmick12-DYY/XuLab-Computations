@@ -27,11 +27,16 @@ CHUNK_SIZE="${CHUNK_SIZE:-1500000}"      # read pairs per mapping chunk (runHiC 
 COMPARTMENT_RES="${COMPARTMENT_RES:-25000}"    # 25 kb bins for A/B compartments (deep library)
 
 # Peakachu loop calling (pretrained high-confidence models on ICE-balanced cooler).
-LOOP_RES="${LOOP_RES:-10000}"                  # 10 kb is the Peakachu default
-LOOP_THRESH="${LOOP_THRESH:-0.95}"             # pool probability cutoff
+# Official Hi-C models exist at 5 / 10 / 25 kb. 0.95 is high-confidence and too
+# strict for a first pass on this library (~1k loops); start loose (0.5).
+LOOP_RES="${LOOP_RES:-10000}"                  # 5000 | 10000 | 25000 (this mcool)
+LOOP_THRESH="${LOOP_THRESH:-0.5}"              # primary pool cutoff (Peakachu default 0.9)
+LOOP_THRESHES="${LOOP_THRESHES:-0.5,0.7,0.9}"  # score once, pool each
+LOOP_MIN_PROB="${LOOP_MIN_PROB:-0.5}"          # score_genome --minimum-prob (floor 0.5)
 LOOP_WEIGHT="${LOOP_WEIGHT:-weight}"           # ICE column; set to raw for unnormalized
 LOOP_DEPTH_RES="${LOOP_DEPTH_RES:-1000000}"    # 1 Mb cooler used by `peakachu depth`
 PEAKACHU_MODEL="${PEAKACHU_MODEL:-}"           # optional: skip depth + download
+FORCE_SCORE="${FORCE_SCORE:-0}"                # 1 = re-run score_genome even if scores exist
 CTCF_PEAKS="${CTCF_PEAKS:-${XULAB}/data/CTCF_majority2of3.bed}"
 
 THREADS="${THREADS:-${SLURM_CPUS_PER_TASK:-16}}"

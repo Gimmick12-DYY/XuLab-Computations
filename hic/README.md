@@ -54,9 +54,10 @@ COBIND_TF=RBBP4 sbatch hic/slurm/05_classify_compartments.sbatch   # peaks + mod
 REGIONS=/work/.../cobinding/results/RBBP4/nodes.tsv LABEL=RBBP4_peaks \
   sbatch hic/slurm/05_classify_compartments.sbatch
 
-# 7. Peakachu loops @ 10 kb (depth -> high-confidence model -> score_genome -> pool)
-sbatch hic/slurm/06_peakachu_loops.sbatch
-#   LOOP_RES=25000 LOOP_THRESH=0.9 sbatch hic/slurm/06_peakachu_loops.sbatch
+# 7. Peakachu loops @ 5 kb and 10 kb (loose pool 0.5; also writes 0.7 / 0.9)
+LOOP_RES=5000 sbatch hic/slurm/06_peakachu_loops.sbatch
+LOOP_RES=10000 sbatch hic/slurm/06_peakachu_loops.sbatch
+#   LOOP_THRESH=0.9 LOOP_THRESHES=0.9 sbatch hic/slurm/06_peakachu_loops.sbatch
 ```
 
 ### `datasets.tsv` (runHiC metadata)
@@ -115,10 +116,13 @@ correlation / motif / complex steps.
 
 1. `peakachu depth` on the 1 Mb cooler → pick the matching pretrained
    **high-confidence** model (read-depth table in the Peakachu README).
-2. `peakachu score_genome -r 10000 --clr-weight-name weight` at **10 kb**
-   (`LOOP_RES`; 5 kb / 25 kb also exist in this mcool).
-3. `peakachu pool -t 0.95` (`LOOP_THRESH`) to collapse per-pixel scores to
-   non-redundant loops.
+2. `peakachu score_genome --clr-weight-name weight` at **`LOOP_RES`**
+   (this mcool has **5 / 10 / 25 kb**; Peakachu’s official Hi-C models are
+   those three only — there is no 1 kb Hi-C model, and this cooler’s finest
+   bin is 5 kb).
+3. `peakachu pool` at **`LOOP_THRESH=0.5`** (loose first pass; Peakachu’s
+   example used 0.9–0.95 and gave ~1k loops here). The same scores are also
+   pooled at 0.7 and 0.9 (`LOOP_THRESHES`).
 4. `analyze_loops.py` annotates each loop with A/B (from step 6) and overlap
    with `data/CTCF_majority2of3.bed`.
 
@@ -126,11 +130,11 @@ Outputs under `work/loops/`:
 
 - `peakachu_depth.txt` — cis-contact count + suggested model
 - `models/high-confidence.<depth>.10kb.w6.pkl` — cached pretrained model
-- `peakachu_10000.scores.bedpe` — per-pixel probabilities
-- `peakachu_10000.loops.0.95.bedpe` — pooled loops (Juicebox / HiGlass 2D)
-- `peakachu_10000.loops.0.95.annotated.tsv` — A/B pair + CTCF at each anchor
-- `peakachu_10000.loops.0.95.summary.tsv` — counts, span, AA/AB/BB enrichment
-- `peakachu_10000.loops.0.95.anchors.bed` — both anchors for IGV
+- `peakachu_<res>.scores.bedpe` — per-pixel probabilities
+- `peakachu_<res>.loops.<t>.bedpe` — pooled loops (Juicebox / HiGlass 2D)
+- `peakachu_<res>.loops.<t>.annotated.tsv` — A/B pair + CTCF at each anchor
+- `peakachu_<res>.loops.<t>.summary.tsv` — counts, span, AA/AB/BB enrichment
+- `peakachu_<res>.loops.<t>.anchors.bed` — both anchors for IGV
 
 `LOOP_WEIGHT=raw` if you ever score an unbalanced matrix. Override the model
 with `PEAKACHU_MODEL=/path/to.pkl` to skip depth + download.
