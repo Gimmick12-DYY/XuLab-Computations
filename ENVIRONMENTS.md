@@ -11,14 +11,14 @@ redundant ones have been merged.
 | Env | Build from | Python | Covers |
 |-----|-----------|--------|--------|
 | **cistopic** | `cisTopic/environment.yml` | 3.11 | cisTopic, scBasset_cisTopic(_PUscOpen) cascades, **all of `downstream/`** (peak_coverage, prepare_pos_neg_bins desert mode, build_peak_matrix, compare/sensitivity/bigwig, ...). Universal CPU analysis env: R + Bioconductor + numpy/scipy + **macs3 + bedtools + samtools**. |
-| **scbasset** | `scBasset/environment.yml` | 3.10 | scBasset **and** scBasset_TF (TensorFlow GPU + R + samtools). |
+| **scbasset** | `imputation_legacy/scBasset/environment.yml` | 3.10 | scBasset **and** scBasset_TF (TensorFlow GPU + R + samtools). |
 | **unified** | `unified/environment.yml` | 3.11 | unified model (PyTorch GPU). Kept lean and isolated. |
-| **puscopen** | `PUscOpen/environment.yml` | 3.10 | PUscOpen and scBasset_PUscOpen (PU classifier + scOpen NMF + heavy Bioconductor). |
-| **magic** | `MAGIC/environment.yml` | 3.10 | MAGIC (magic-impute). |
-| **scopen** | `scOpen/environment.yml` | 3.9 | scOpen (hard 3.9 pin). |
-| **borzoi** | `Borzoi/environment.yml` | 3.11 | Borzoi (torch + borzoi-pytorch). |
-| **fits** | `FITS/environment.yml` | 3.11 | FITS (clones FITSpython into the env). |
-| **cicero** | `Cicero/environment.yml` | 3.10 | Cicero (R 4.4 + monocle3). |
+| **puscopen** | `imputation_legacy/PUscOpen/environment.yml` | 3.10 | PUscOpen and scBasset_PUscOpen (PU classifier + scOpen NMF + heavy Bioconductor). |
+| **magic** | `imputation_legacy/MAGIC/environment.yml` | 3.10 | MAGIC (magic-impute). |
+| **scopen** | `imputation_legacy/scOpen/environment.yml` | 3.9 | scOpen (hard 3.9 pin). |
+| **borzoi** | `imputation_legacy/Borzoi/environment.yml` | 3.11 | Borzoi (torch + borzoi-pytorch). |
+| **fits** | `imputation_legacy/FITS/environment.yml` | 3.11 | FITS (clones FITSpython into the env). |
+| **cicero** | `cobinding/cicero/environment.yml` | 3.10 | Cicero co-binding runner (R 4.4 + monocle3). The imputation-era copy is `imputation_legacy/Cicero/environment.yml`. |
 
 ## Merges already done
 
@@ -26,7 +26,7 @@ redundant ones have been merged.
   so the entire `downstream/` stack runs in one env (no more "tool X not on PATH").
 - **`scbasset_tf` -> `scbasset`** — the two env files were identical.
 
-The merged-away `data_prep/environment.yml` and `scBasset_TF/environment.yml` are
+The merged-away `data_prep/environment.yml` and `imputation_legacy/scBasset_TF/environment.yml` are
 kept as signpost stubs. Every sbatch's `CONDA_ENV` default was repointed.
 
 ## Could be merged later (need a cluster test-solve first)
@@ -42,7 +42,7 @@ kept as signpost stubs. Every sbatch's `CONDA_ENV` default was repointed.
 
 ```bash
 conda env create -f cisTopic/environment.yml     # cistopic  (analysis + downstream)
-conda env create -f scBasset/environment.yml     # scbasset  (+ scBasset_TF)
+conda env create -f imputation_legacy/scBasset/environment.yml     # scbasset  (+ scBasset_TF)
 conda env create -f unified/environment.yml      # unified
 # ...others only if you run those pipelines
 ```

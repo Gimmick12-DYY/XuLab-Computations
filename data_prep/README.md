@@ -15,7 +15,7 @@ Builds the `.rds` files that the imputation pipelines consume at
    `chr:start-end` rownames and barcode colnames.
 
 No blacklist filter, no chromosome whitelist, no peak/cell QC thresholds.
-Downstream pipelines (e.g. `scBasset_TF/scripts/02_prepare_seqs.py`) apply
+Downstream pipelines (e.g. `imputation_legacy/scBasset_TF/scripts/02_prepare_seqs.py`) apply
 their own chrom + blacklist + N-content filtering, so doing it here too
 would be redundant.
 
@@ -76,7 +76,7 @@ Final stdout block:
 Point a config at the output RDS:
 
 ```yaml
-# scBasset_TF/configs/alltf_peak.yaml (or a new ctcf_peak.yaml)
+# imputation_legacy/scBasset_TF/configs/alltf_peak.yaml (or a new ctcf_peak.yaml)
 paths:
   input_rds: /path/to/data/CTCF_peak_matrix.rds
 run:

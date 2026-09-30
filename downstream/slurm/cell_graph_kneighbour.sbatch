@@ -46,7 +46,7 @@ DOWN_DIR="${ROOT_DIR}/downstream"
 cd "${ROOT_DIR}"
 
 MM_DIR="${MM_DIR:-${ROOT_DIR}/cisTopic/scripts/cistopic_ctcf/mm}"
-EMBEDDINGS="${EMBEDDINGS:-${ROOT_DIR}/scOpen/work/ctcf/impute}"
+EMBEDDINGS="${EMBEDDINGS:-${ROOT_DIR}/imputation_legacy/scOpen/work/ctcf/impute}"
 OUT_DIR="${OUT_DIR:-${ROOT_DIR}/downstream/cell_kgraph}"
 OUT_NAME="${OUT_NAME:-cell_kgraph}"
 K="${K:-20}"

@@ -18,7 +18,7 @@
 #   RAW_MM_DIR        default: ${ROOT_DIR}/data/mm   (RDS → mm export lands here)
 #   EXPORT_RAW_MM     if 1 and matrix.mtx.gz missing under RAW_MM_DIR, run R export (default: 1)
 #   CISTOPIC_IMPUTE   default: ${ROOT_DIR}/cisTopic/scripts/cistopic_ctcf/impute
-#   PUSCOPEN_IMPUTE   default: ${ROOT_DIR}/PUscOpen/work/ctcf/impute
+#   PUSCOPEN_IMPUTE   default: ${ROOT_DIR}/imputation_legacy/PUscOpen/work/ctcf/impute
 #   TRACKS_DIR        default: ${ROOT_DIR}/downstream/tracks/igv_ctcf
 #   CHROM_SIZES, AGGREGATE, CHUNK_COLS, CHUNK_ROWS, PIP_EXTRAS  (same as imputed_to_bigwig.sbatch)
 #   R_MODULE          optional: e.g. R/4.4.0 — loaded if Rscript is missing after conda activate
@@ -69,7 +69,7 @@ RAW_RDS="${RAW_RDS:-${ROOT_DIR}/data/CTCF_bin1000_mtx.rds}"
 RAW_MM_DIR="${RAW_MM_DIR:-${ROOT_DIR}/data/mm}"
 EXPORT_RAW_MM="${EXPORT_RAW_MM:-1}"
 CISTOPIC_IMPUTE="${CISTOPIC_IMPUTE:-${ROOT_DIR}/cisTopic/scripts/cistopic_ctcf/impute}"
-PUSCOPEN_IMPUTE="${PUSCOPEN_IMPUTE:-${ROOT_DIR}/PUscOpen/work/ctcf/impute}"
+PUSCOPEN_IMPUTE="${PUSCOPEN_IMPUTE:-${ROOT_DIR}/imputation_legacy/PUscOpen/work/ctcf/impute}"
 TRACKS_DIR="${TRACKS_DIR:-${ROOT_DIR}/downstream/tracks/igv_ctcf}"
 
 TRANSFORM_RAW="${TRANSFORM_RAW:-none}"

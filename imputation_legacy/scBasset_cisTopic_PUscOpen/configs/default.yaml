@@ -1,0 +1,32 @@
+# -----------------------------------------------------------------------------
+# scBasset+cisTopic (backbone) + scBasset+PUscOpen (enhancer)
+#
+#     out[r, c] = cis[r, c] * (1 + w)   if cis[r, c] > 0 AND pus[r, c] > 0
+#               = cis[r, c]              if cis[r, c] > 0 AND pus[r, c] = 0
+#               = 0                      if cis[r, c] = 0
+#
+# Every (bin, cell) entry in scbasset_cistopic survives. Pus only modulates
+# the cis values at overlapping entries (multiplies by 1+w). Pus-only
+# entries are dropped.
+#
+# HARD invariant enforced at runtime: out.nnz == cis.nnz.
+# -----------------------------------------------------------------------------
+
+sources:
+  scbasset_cistopic_impute_dir: /work/users/d/y/dyy12/XuLab/imputation_legacy/scBasset_cisTopic/work/ctcf/impute
+  # SPARSE scbasset_puscopen (top_k:50000) -- the cascade enhancer must be a
+  # selective sharpener, not the dense (top_k:500000) standalone matrix. The
+  # dense one (.../work/ctcf/impute) still feeds the standalone benchmark row;
+  # this sparse one (.../work/ctcf_sparse/impute) is built via configs/sparse.yaml.
+  scbasset_puscopen_impute_dir: /work/users/d/y/dyy12/XuLab/imputation_legacy/scBasset_PUscOpen/work/ctcf_sparse/impute
+
+combine:
+  # Multiplicative boost amplitude at cis ∩ pus entries.
+  #   1.0 (default) -> overlap entries have 2x the cis value
+  #   2.0          -> overlap entries have 3x the cis value
+  #   5.0          -> overlap entries have 6x the cis value
+  #   0            -> disables the enhancer (output == cis exactly)
+  enhancer_weight: 1.0
+
+paths:
+  work_dir: /work/users/d/y/dyy12/XuLab/imputation_legacy/scBasset_cisTopic_PUscOpen/work/ctcf

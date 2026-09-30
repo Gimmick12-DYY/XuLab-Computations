@@ -12,14 +12,14 @@ points at each pipeline's native impute output (`<pipeline>/work/ctcf/impute/`):
 | label | default impute dir |
 |---|---|
 | cisTopic | `cisTopic/scripts/cistopic_ctcf/impute` |
-| FITS | `FITS/work/ctcf/impute` |
-| scOpen | `scOpen/work/ctcf/impute` |
-| MAGIC | `MAGIC/work/ctcf/impute` |
-| PUscOpen | `PUscOpen/work/ctcf/impute` |
-| cicero | `Cicero/work/ctcf/impute` |
-| scbasset | `scBasset/work/ctcf/impute` |
-| scbasset_puscopen | `scBasset_PUscOpen/work/ctcf/impute` |
-| scbasset_cistopic | `scBasset_cisTopic/work/ctcf/impute` |
+| FITS | `imputation_legacy/FITS/work/ctcf/impute` |
+| scOpen | `imputation_legacy/scOpen/work/ctcf/impute` |
+| MAGIC | `imputation_legacy/MAGIC/work/ctcf/impute` |
+| PUscOpen | `imputation_legacy/PUscOpen/work/ctcf/impute` |
+| cicero | `imputation_legacy/Cicero/work/ctcf/impute` |
+| scbasset | `imputation_legacy/scBasset/work/ctcf/impute` |
+| scbasset_puscopen | `imputation_legacy/scBasset_PUscOpen/work/ctcf/impute` |
+| scbasset_cistopic | `imputation_legacy/scBasset_cisTopic/work/ctcf/impute` |
 
 Cicero, scBasset, and the two scBasset cascades write full-mm `matrix_csr.npz`
 + `regions.tsv` (same schema as PUscOpen), so they plug into every comparator
@@ -170,14 +170,14 @@ python downstream/compare_pos_neg.py \
   --out-dir  /work/.../downstream/pos_neg \
   --input raw=/work/.../cistopic_ctcf/mm \
   --input cisTopic=/work/.../cistopic_ctcf/impute \
-  --input FITS=/work/.../FITS/work/ctcf/impute \
-  --input scOpen=/work/.../scOpen/work/ctcf/impute \
-  --input MAGIC=/work/.../MAGIC/work/ctcf/impute \
-  --input PUscOpen=/work/.../PUscOpen/work/ctcf/impute \
-  --input cicero=/work/.../Cicero/work/ctcf/impute \
-  --input scbasset=/work/.../scBasset/work/ctcf/impute \
-  --input scbasset_puscopen=/work/.../scBasset_PUscOpen/work/ctcf/impute \
-  --input scbasset_cistopic=/work/.../scBasset_cisTopic/work/ctcf/impute
+  --input FITS=/work/.../imputation_legacy/FITS/work/ctcf/impute \
+  --input scOpen=/work/.../imputation_legacy/scOpen/work/ctcf/impute \
+  --input MAGIC=/work/.../imputation_legacy/MAGIC/work/ctcf/impute \
+  --input PUscOpen=/work/.../imputation_legacy/PUscOpen/work/ctcf/impute \
+  --input cicero=/work/.../imputation_legacy/Cicero/work/ctcf/impute \
+  --input scbasset=/work/.../imputation_legacy/scBasset/work/ctcf/impute \
+  --input scbasset_puscopen=/work/.../imputation_legacy/scBasset_PUscOpen/work/ctcf/impute \
+  --input scbasset_cistopic=/work/.../imputation_legacy/scBasset_cisTopic/work/ctcf/impute
 ```
 
 Ten-pipeline SLURM (outputs under `downstream/pos_neg_all10/`):
@@ -201,7 +201,7 @@ SLURM:
 sbatch --export=ALL,\
 BINS_TSV=/work/.../downstream/bins/pos_neg_bins.tsv,\
 OUT_DIR=/work/.../downstream/pos_neg,\
-INPUTS="raw=/work/.../cistopic_ctcf/mm cisTopic=/work/.../cistopic_ctcf/impute FITS=/work/.../FITS/work/ctcf/impute scOpen=/work/.../scOpen/work/ctcf/impute MAGIC=/work/.../MAGIC/work/ctcf/impute PUscOpen=/work/.../PUscOpen/work/ctcf/impute cicero=/work/.../Cicero/work/ctcf/impute scbasset=/work/.../scBasset/work/ctcf/impute scbasset_puscopen=/work/.../scBasset_PUscOpen/work/ctcf/impute scbasset_cistopic=/work/.../scBasset_cisTopic/work/ctcf/impute" \
+INPUTS="raw=/work/.../cistopic_ctcf/mm cisTopic=/work/.../cistopic_ctcf/impute FITS=/work/.../imputation_legacy/FITS/work/ctcf/impute scOpen=/work/.../imputation_legacy/scOpen/work/ctcf/impute MAGIC=/work/.../imputation_legacy/MAGIC/work/ctcf/impute PUscOpen=/work/.../imputation_legacy/PUscOpen/work/ctcf/impute cicero=/work/.../imputation_legacy/Cicero/work/ctcf/impute scbasset=/work/.../imputation_legacy/scBasset/work/ctcf/impute scbasset_puscopen=/work/.../imputation_legacy/scBasset_PUscOpen/work/ctcf/impute scbasset_cistopic=/work/.../imputation_legacy/scBasset_cisTopic/work/ctcf/impute" \
   downstream/slurm/compare_pos_neg.sbatch
 ```
 
@@ -282,9 +282,9 @@ python downstream/sensitivity_specificity.py \
   --mm-dir   /work/.../cistopic_ctcf/mm \
   --out-dir  /work/.../downstream/sensitivity_specificity \
   --input cisTopic=/work/.../cistopic_ctcf/impute \
-  --input FITS=/work/.../FITS/work/ctcf/impute \
-  --input scOpen=/work/.../scOpen/work/ctcf/impute \
-  --input MAGIC=/work/.../MAGIC/work/ctcf/impute
+  --input FITS=/work/.../imputation_legacy/FITS/work/ctcf/impute \
+  --input scOpen=/work/.../imputation_legacy/scOpen/work/ctcf/impute \
+  --input MAGIC=/work/.../imputation_legacy/MAGIC/work/ctcf/impute
 ```
 
 Outputs (under `--out-dir`):
@@ -311,7 +311,7 @@ SLURM:
 sbatch --export=ALL,\
 MM_DIR=/work/.../cistopic_ctcf/mm,\
 OUT_DIR=/work/.../downstream/sensitivity_specificity,\
-INPUTS="cisTopic=/work/.../cistopic_ctcf/impute FITS=/work/.../FITS/work/ctcf/impute scOpen=/work/.../scOpen/work/ctcf/impute MAGIC=/work/.../MAGIC/work/ctcf/impute PUscOpen=/work/.../PUscOpen/work/ctcf/impute cicero=/work/.../Cicero/work/ctcf/impute scbasset=/work/.../scBasset/work/ctcf/impute scbasset_puscopen=/work/.../scBasset_PUscOpen/work/ctcf/impute scbasset_cistopic=/work/.../scBasset_cisTopic/work/ctcf/impute" \
+INPUTS="cisTopic=/work/.../cistopic_ctcf/impute FITS=/work/.../imputation_legacy/FITS/work/ctcf/impute scOpen=/work/.../imputation_legacy/scOpen/work/ctcf/impute MAGIC=/work/.../imputation_legacy/MAGIC/work/ctcf/impute PUscOpen=/work/.../imputation_legacy/PUscOpen/work/ctcf/impute cicero=/work/.../imputation_legacy/Cicero/work/ctcf/impute scbasset=/work/.../imputation_legacy/scBasset/work/ctcf/impute scbasset_puscopen=/work/.../imputation_legacy/scBasset_PUscOpen/work/ctcf/impute scbasset_cistopic=/work/.../imputation_legacy/scBasset_cisTopic/work/ctcf/impute" \
   downstream/slurm/sensitivity_specificity.sbatch
 ```
 
@@ -363,9 +363,9 @@ python downstream/bin_sensitivity_specificity.py \
   --out-dir  /work/.../downstream/bin_sensitivity_specificity \
   --input raw=/work/.../mm \
   --input cisTopic=/work/.../cistopic_ctcf/impute \
-  --input FITS=/work/.../FITS/work/ctcf/impute \
-  --input scOpen=/work/.../scOpen/work/ctcf/impute \
-  --input MAGIC=/work/.../MAGIC/work/ctcf/impute
+  --input FITS=/work/.../imputation_legacy/FITS/work/ctcf/impute \
+  --input scOpen=/work/.../imputation_legacy/scOpen/work/ctcf/impute \
+  --input MAGIC=/work/.../imputation_legacy/MAGIC/work/ctcf/impute
 ```
 
 Per pipeline (and per view: `full` + `modeled`) the script reports
@@ -448,10 +448,10 @@ python downstream/umi_distribution.py \
   --out-dir /work/.../downstream/umi_distribution \
   --input raw=/work/.../mm \
   --input cisTopic=/work/.../cistopic_ctcf/impute \
-  --input FITS=/work/.../FITS/work/ctcf/impute \
-  --input scOpen=/work/.../scOpen/work/ctcf/impute \
-  --input MAGIC=/work/.../MAGIC/work/ctcf/impute \
-  --input PUscOpen=/work/.../PUscOpen/work/ctcf/impute
+  --input FITS=/work/.../imputation_legacy/FITS/work/ctcf/impute \
+  --input scOpen=/work/.../imputation_legacy/scOpen/work/ctcf/impute \
+  --input MAGIC=/work/.../imputation_legacy/MAGIC/work/ctcf/impute \
+  --input PUscOpen=/work/.../imputation_legacy/PUscOpen/work/ctcf/impute
 ```
 
 Outputs (under `--out-dir`):
@@ -512,10 +512,10 @@ python downstream/raw_vs_imputed_diff.py \
   --out-dir  /work/.../downstream/raw_vs_imputed_diff \
   --thresholds 0,0.001,0.01,0.05,0.1,0.5,1.0 \
   --input cisTopic=/work/.../cistopic_ctcf/impute \
-  --input FITS=/work/.../FITS/work/ctcf/impute \
-  --input scOpen=/work/.../scOpen/work/ctcf/impute \
-  --input MAGIC=/work/.../MAGIC/work/ctcf/impute \
-  --input PUscOpen=/work/.../PUscOpen/work/ctcf/impute
+  --input FITS=/work/.../imputation_legacy/FITS/work/ctcf/impute \
+  --input scOpen=/work/.../imputation_legacy/scOpen/work/ctcf/impute \
+  --input MAGIC=/work/.../imputation_legacy/MAGIC/work/ctcf/impute \
+  --input PUscOpen=/work/.../imputation_legacy/PUscOpen/work/ctcf/impute
 ```
 
 Outputs (under `--out-dir`):
@@ -587,10 +587,10 @@ python downstream/complexity_gain.py \
   --out-dir  /work/.../downstream/complexity_gain \
   --threshold-mode sparsity_match \
   --input cisTopic=/work/.../cistopic_ctcf/impute \
-  --input FITS=/work/.../FITS/work/ctcf/impute \
-  --input scOpen=/work/.../scOpen/work/ctcf/impute \
-  --input MAGIC=/work/.../MAGIC/work/ctcf/impute \
-  --input PUscOpen=/work/.../PUscOpen/work/ctcf/impute
+  --input FITS=/work/.../imputation_legacy/FITS/work/ctcf/impute \
+  --input scOpen=/work/.../imputation_legacy/scOpen/work/ctcf/impute \
+  --input MAGIC=/work/.../imputation_legacy/MAGIC/work/ctcf/impute \
+  --input PUscOpen=/work/.../imputation_legacy/PUscOpen/work/ctcf/impute
 ```
 
 Outputs (under `--out-dir`):
@@ -640,7 +640,7 @@ sbatch --export=ALL,THRESHOLD_MODE=quantile:0.99 downstream/slurm/complexity_gai
 ## Motif-aware propagation (CTCF motif BED)
 
 The bin-axis propagation step inside `cisTopic/scripts/05_impute.py` and
-`PUscOpen/scripts/06_impute.py` accepts an optional `target_bed` knob that
+`imputation_legacy/PUscOpen/scripts/06_impute.py` accepts an optional `target_bed` knob that
 restricts new-bin discovery to bins overlapping the supplied BED. Pointing
 this at a CTCF motif BED makes propagation **motif-aware**: only bins where
 biology says CTCF could plausibly bind get filled in.
@@ -654,7 +654,7 @@ bash downstream/fetch_ctcf_motif_bed.sh
 # -> downstream/cache/CTCF_motif_hg38.bed
 ```
 
-Both `cisTopic/scripts/05_impute.py` and `PUscOpen/scripts/06_impute.py`
+Both `cisTopic/scripts/05_impute.py` and `imputation_legacy/PUscOpen/scripts/06_impute.py`
 **auto-detect this file when `impute.propagate.target_bed` is null** (which
 is the default). The next 05 / 06 run will use it transparently. To disable,
 explicitly set `impute.propagate.target_bed: false` (or any string that
@@ -702,7 +702,7 @@ bins that cell `c` never observed but enough of its neighbours did.
 ```bash
 python downstream/cell_graph_kneighbour.py \
   --mm-dir     /work/.../mm \
-  --embeddings /work/.../scOpen/work/ctcf/impute     # auto-loads H from factors.npz \
+  --embeddings /work/.../imputation_legacy/scOpen/work/ctcf/impute     # auto-loads H from factors.npz \
   --out-dir    /work/.../downstream/cell_kgraph \
   --k 20 --min-neighbours 3 --weight 1.0 --metric cosine
 ```

@@ -29,12 +29,12 @@
 # Examples:
 #   sbatch downstream/slurm/imputed_to_bigwig.sbatch
 #   INPUT_DIR=/path/to/impute OUTPUT_BW=/path/to/out.bw sbatch downstream/slurm/imputed_to_bigwig.sbatch
-#   sbatch --export=ALL,INPUT_DIR=${HOME}/XuLab/MAGIC/work/ctcf/impute,OUTPUT_BW=${HOME}/tracks/magic.bw \\
+#   sbatch --export=ALL,INPUT_DIR=${HOME}/XuLab/imputation_legacy/MAGIC/work/ctcf/impute,OUTPUT_BW=${HOME}/tracks/magic.bw \\
 #          downstream/slurm/imputed_to_bigwig.sbatch
-#   sbatch --export=ALL,INPUT_DIR=${HOME}/XuLab/scBasset/work/ctcf/impute, \\
-#          OUTPUT_BW=${HOME}/XuLab/scBasset/work/ctcf/bigwig/scbasset_ctcf_mean.bw, \\
+#   sbatch --export=ALL,INPUT_DIR=${HOME}/XuLab/imputation_legacy/scBasset/work/ctcf/impute, \\
+#          OUTPUT_BW=${HOME}/XuLab/imputation_legacy/scBasset/work/ctcf/bigwig/scbasset_ctcf_mean.bw, \\
 #          AGGREGATE=mean,NORMALIZE=p99 downstream/slurm/imputed_to_bigwig.sbatch
-#   sbatch --export=ALL,INPUT_DIR=${HOME}/XuLab/scBasset_PUscOpen/work/ctcf/impute, \\
+#   sbatch --export=ALL,INPUT_DIR=${HOME}/XuLab/imputation_legacy/scBasset_PUscOpen/work/ctcf/impute, \\
 #          OUTPUT_BW=${HOME}/XuLab/downstream/tracks/igv_ctcf/ctcf_scbasset_puscopen_mean.bw, \\
 #          AGGREGATE=mean,NORMALIZE=p99,CHUNK_ROWS=5000 downstream/slurm/imputed_to_bigwig.sbatch
 #   sbatch downstream/slurm/igv_ctcf_scbasset_tracks.sbatch   # all three scBasset-family .bw
@@ -67,7 +67,7 @@ CHUNK_ROWS="${CHUNK_ROWS:-10000}"
 PIP_EXTRAS="${PIP_EXTRAS:-1}"
 
 # Defaults: PUscOpen CTCF impute (override INPUT_DIR / OUTPUT_BW)
-INPUT_DIR="${INPUT_DIR:-${ROOT_DIR}/PUscOpen/work/ctcf/impute}"
+INPUT_DIR="${INPUT_DIR:-${ROOT_DIR}/imputation_legacy/PUscOpen/work/ctcf/impute}"
 OUTPUT_BW="${OUTPUT_BW:-${ROOT_DIR}/downstream/tracks/PUscOpen_ctcf_${AGGREGATE}.bw}"
 
 if [[ -f /etc/profile.d/modules.sh ]]; then

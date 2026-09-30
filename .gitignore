@@ -8,17 +8,8 @@ cisTopic/scripts/cistopic_ctcf/select
 cisTopic/scripts/cistopic_ctcf/tmp_mallet
 cisTopic/scripts/cistopic_ctcf/impute
 Mallet-202108/
-FITS/work/
-scOpen/work/
-MAGIC/work/
-PUscOpen/work/
-scBasset/work/
-Cicero/work/
-scBasset_cisTopic/work/
-scBasset_PUscOpen/work/
-scBasset_cisTopic_PUscOpen/work/
-scBasset_TF/work/
-Borzoi/work/
+# Retired bake-off imputers live under imputation_legacy/; keep their work trees out of git.
+imputation_legacy/*/work/
 unified/work/
 atac_omniatac/
 .venv_deeptools/

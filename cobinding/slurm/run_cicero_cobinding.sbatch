@@ -18,7 +18,8 @@ set -euo pipefail
 
 XULAB="${XULAB:-/work/users/d/y/dyy12/XuLab}"
 COB="${XULAB}/cobinding"
-CICERO_ROOT="${CICERO_ROOT:-${XULAB}/Cicero}"
+# Cobinding's own Cicero runner (CDS + run_cicero). The imputation tree is imputation_legacy/Cicero.
+CICERO_ROOT="${CICERO_ROOT:-${COB}/cicero}"
 DATA_DIR="${DATA_DIR:-${XULAB}/data}"
 WORK="${COB_WORK:-${COB}/work}"
 RESULTS="${COB_RESULTS:-${COB}/results}"
