@@ -76,8 +76,11 @@ python "${DOWN_DIR}/scripts/rank_motifs_by_performance.py" \
 
 # ---- 4. Step 2: flag artifacts (TOMTOM vs HOCOMOCO v12 + Codebook) -----------
 # shortlist = high AUROC AND pass==True (not a CTCF/NFY/YY1/SP-KLF/ETS contaminant,
-# not TE-clustered). REPEAT_BED/INSTANCES_BED optional (needs RepeatMasker).
+# not TE-clustered). TE check auto-enables when the UCSC rmsk BED is present
+# (downstream/scripts/fetch_hg38_rmsk_bed.sh) AND INSTANCES_BED (FIMO) is given.
 MOTIF_DB="${MOTIF_DB:-${DOWN_DIR}/cache/motifdb/merged_human_motifs.meme}"
+REPEAT_BED="${REPEAT_BED:-${DOWN_DIR}/cache/hg38.rmsk.bed.gz}"
+[[ -s "${REPEAT_BED}" ]] || REPEAT_BED=""
 if [[ -s "${MOTIF_DB}" ]]; then
   tomtom -no-ssc -oc "${OUT}/tomtom" -verbosity 1 -min-overlap 5 -dist pearson -thresh 0.1 \
     "${CAND}" "${MOTIF_DB}" || echo "[warn] tomtom failed for ${TF}" >&2
