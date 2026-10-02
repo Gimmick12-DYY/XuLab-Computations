@@ -25,6 +25,22 @@ cluster is the usual cause of "unchanged output."
 
 ## Log (newest first)
 
+### 2026-10-02 — Got the Codebook data (Zenodo 15667805); wired its motifs + artifact set
+- Paper: Hughes/Codebook Consortium, "An expanded codebook of human TF DNA-binding
+  specificity" (Nature 2026, s41586-026-10798-9); data on Zenodo 10.5281/zenodo.15667805,
+  browser mex.autosome.org (same autosome.org group as HOCOMOCO v12).
+- Built `scripts/fetch_codebook.sh` (Zenodo fetcher) + `scripts/ppm_to_meme.py` (.ppm/.pcm ->
+  MEME). Produces: `codebook_artifacts.meme` (37 empirical artifact motifs: poly-G, Alu/repeat,
+  CAC/GGAA, NFI, self-annealing -- the "use their set" from the slide, ready MEME) and
+  `codebook_top1.meme` (204 curated motifs, 1 per TF) for the v12+Codebook re-annotation DB.
+- Step 1 now complete (DB build; MoSBAT still the optional upgrade over tomtom-pearson).
+- Step 2 upgraded: `flag_motif_artifacts.py --artifact-tomtom` flags de-novo motifs matching
+  the Codebook artifact set (caught a GGAGGG self-annealing motif that name-regex missed);
+  `rank_motifs.sbatch` runs TOMTOM vs both the merged DB and the artifact DB.
+- CHS=1 pulls MEX.CHS.tar (1.4 GB ChIP-seq peaks) for Step 4; GHT-SELEX on zenodo 8327970.
+- Files: `downstream/scripts/{fetch_codebook.sh,ppm_to_meme.py,flag_motif_artifacts.py}`,
+  `downstream/slurm/rank_motifs.sbatch`, `downstream/NOVEL_MOTIF_FINDING.md`.
+
 ### 2026-10-02 — Novel Motif Finding Step 2: contaminant artifact filter built
 - `scripts/flag_motif_artifacts.py` flags de-novo motifs whose best TOMTOM match (vs
   HOCOMOCO v12 + Codebook) is an open-chromatin contaminant family (CTCF/NFY/YY1/SP-KLF/ETS;

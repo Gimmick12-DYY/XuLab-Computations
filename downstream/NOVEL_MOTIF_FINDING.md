@@ -6,30 +6,39 @@ raw "unknown"/novel de-novo motifs into **validated, TF-assigned** motifs.
 
 Status legend: ✅ built · 🟡 partial/needs data · ⬜ not started.
 
-## Step 1 — Re-annotate HOMER "unknown" motifs  🟡
-- Switch HOCOMOCO v11 → **v12 + Codebook** (CisBP 3.1 / Zenodo). Build the merged DB
-  that TOMTOM already consumes (`cache/motifdb/merged_human_motifs.meme`):
-  - ✅ `scripts/merge_meme_db.py` — merge several MEME DBs, tag by source.
-    ```
-    python downstream/scripts/merge_meme_db.py \
-      --in HOCOMOCOv12_H12CORE_meme_format.meme=h12 codebook_cisbp3.1.meme=cdbk \
-      --out downstream/cache/motifdb/merged_human_motifs.meme
-    ```
-  - ⬜ download helpers: HOCOMOCO v12 (hocomoco12.autosome.org, MEME export) +
-    Codebook motifs (Zenodo/CisBP 3.1). **Need URLs confirmed.**
-- Compare by **affinity correlation (MoSBAT)** instead of HOMER/TOMTOM default. Current
-  de-novo uses `tomtom -dist pearson` (reasonable proxy). ⬜ MoSBAT is the upgrade.
+## Data sources (confirmed)
+- **HOCOMOCO v12** — hocomoco12.autosome.org (MEME export). *You have this.*
+- **Codebook / MEX** (Hughes et al., *Nature* 2026, "An expanded codebook…") —
+  Zenodo **10.5281/zenodo.15667805**, browser mex.autosome.org. ✅ `scripts/fetch_codebook.sh`
+  pulls: `MEX_artifacts_formatted.tgz` (37 artifact motifs, MEME), `MEX_top1.zip` (1 curated
+  motif/TF, 204 TFs, `.ppm`), `metadata_complete_motif.zip`. ChIP-seq peaks = `MEX.CHS.tar`
+  (`CHS=1`); GHT-SELEX = zenodo 8327970; raw SRA PRJEB78913/76622/61115.
+
+## Step 1 — Re-annotate HOMER "unknown" motifs  ✅ (MoSBAT ⬜)
+- ✅ `scripts/fetch_codebook.sh` → `codebook_top1.meme`; ✅ `scripts/ppm_to_meme.py` converts
+  Codebook `.ppm/.pcm` → MEME (TF = leading token). ✅ `scripts/merge_meme_db.py` builds the
+  v12+Codebook DB that TOMTOM consumes:
+  ```
+  bash downstream/scripts/fetch_codebook.sh
+  python downstream/scripts/merge_meme_db.py \
+    --in HOCOMOCOv12_H12CORE_meme_format.meme=h12 \
+         downstream/cache/motifdb/codebook_top1.meme=cdbk \
+    --out downstream/cache/motifdb/merged_human_motifs.meme
+  ```
+- ⬜ MoSBAT (affinity correlation) as the upgrade over `tomtom -dist pearson`.
 - Expectation: many "novel" motifs map to Codebook TFs (C2H2-ZNF, CXXC, AT-hook, BED-zf).
 
-## Step 2 — Filter artifacts  🟡
-- ✅ Contaminant filter: `scripts/flag_motif_artifacts.py` flags de-novo motifs whose best
-  TOMTOM match (vs v12+Codebook) is CTCF/NFY/YY1/SP-KLF/ETS (`--families` accepts the
-  Codebook set verbatim). Joins onto the Step-3 table → `pass` column; shortlist =
-  **high AUROC AND pass**. Wired into `rank_motifs.sbatch` (step 4 of the script).
-- 🟡 **GC + width-matched shuffled background**: emit_bins_bed.py gives OCR-matched bg;
-  HOMER `-useNewBg`. ⬜ add explicit GC+width-matched shuffle for the scoring/enrichment.
-- 🟡 Repeat/TE clustering: logic in `flag_motif_artifacts.py` (`--repeat-bed` +
-  `--instances-bed` → `te_clustered`); ⬜ needs a RepeatMasker BED (not yet available).
+## Step 2 — Filter artifacts  ✅ (GC-bg ⬜, TE needs instances)
+- ✅ **Codebook artifact set** (their empirical one): `fetch_codebook.sh` →
+  `codebook_artifacts.meme`; `flag_motif_artifacts.py --artifact-tomtom` flags any de-novo
+  motif matching it (poly-G, Alu/repeat, CAC/GGAA, NFI, self-annealing, …). Plus the
+  name-regex contaminant fallback (CTCF/NFY/YY1/SP-KLF/ETS, `--families` overrides). Joins the
+  Step-3 table → `pass` (= not contaminant, not Codebook-artifact, not TE-clustered).
+  Shortlist = **high AUROC AND pass**. Wired into `rank_motifs.sbatch`.
+- ✅ RepeatMasker: `scripts/fetch_hg38_rmsk_bed.sh` (UCSC hg38 rmsk → BED); auto-used when
+  present. 🟡 TE flag also needs `INSTANCES_BED` (FIMO motif hits) — not yet generated.
+- 🟡 **GC + width-matched shuffled background**: emit_bins_bed gives OCR-matched bg; ⬜ add
+  explicit GC+width-matched shuffle.
 
 ## Step 3 — Rank by PERFORMANCE, not information content  ✅
 - ✅ `scripts/rank_motifs_by_performance.py` — per motif, best PWM log-odds per sequence

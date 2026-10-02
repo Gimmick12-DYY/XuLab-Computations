@@ -108,6 +108,9 @@ def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--tomtom", type=Path, required=True, help="tomtom.tsv: de-novo vs v12+Codebook")
+    ap.add_argument("--artifact-tomtom", type=Path, default=None,
+                    help="tomtom.tsv: de-novo vs Codebook artifact set (codebook_artifacts.meme). "
+                         "Any match q<=max-q flags the motif (their empirical artifact set).")
     ap.add_argument("--ranked", type=Path, default=None, help="Step-3 ranked_motifs.tsv to annotate")
     ap.add_argument("--out", type=Path, required=True)
     ap.add_argument("--max-q", type=float, default=0.05,
@@ -130,6 +133,7 @@ def main() -> int:
                     pats[fam.strip()] = rx.strip()
 
     best = best_tomtom(args.tomtom)
+    art_best = best_tomtom(args.artifact_tomtom) if args.artifact_tomtom and args.artifact_tomtom.is_file() else {}
     te = (repeat_overlap_frac(args.instances_bed, args.repeat_bed)
           if args.repeat_bed and args.instances_bed else {})
 
@@ -139,9 +143,13 @@ def main() -> int:
         te_f = te.get(mid, float("nan"))
         te_flag = (te_f == te_f) and te_f >= args.te_frac
         contam = fam is not None
-        return tgt, q, fam or "", contam, te_f, te_flag, (not contam and not te_flag)
+        at, aq = art_best.get(mid, ("", float("nan")))
+        cb_art = bool(at) and aq == aq and aq <= args.max_q      # matches Codebook artifact set
+        ok = not contam and not te_flag and not cb_art
+        return tgt, q, fam or "", contam, cb_art, at, te_f, te_flag, ok
 
-    extra = ["tomtom_best", "tomtom_q", "family", "is_contaminant", "te_frac", "te_clustered", "pass"]
+    extra = ["tomtom_best", "tomtom_q", "family", "is_contaminant", "codebook_artifact",
+             "artifact_match", "te_frac", "te_clustered", "pass"]
     args.out.parent.mkdir(parents=True, exist_ok=True)
     n_pass = n_contam = 0
     if args.ranked and args.ranked.is_file():
@@ -150,18 +158,19 @@ def main() -> int:
         with args.out.open("w") as f:
             f.write("\t".join(hdr + extra) + "\n")
             for r in rows:
-                tgt, q, fam, contam, te_f, te_flag, ok = annotate(r[mi])
-                n_pass += ok; n_contam += contam
-                f.write("\t".join(r + [tgt, f"{q:.3g}", fam, str(contam),
-                                       f"{te_f:.3g}", str(te_flag), str(ok)]) + "\n")
+                tgt, q, fam, contam, cb_art, at, te_f, te_flag, ok = annotate(r[mi])
+                n_pass += ok; n_contam += (contam or cb_art)
+                f.write("\t".join(r + [tgt, f"{q:.3g}", fam, str(contam), str(cb_art),
+                                       at, f"{te_f:.3g}", str(te_flag), str(ok)]) + "\n")
     else:
         with args.out.open("w") as f:
             f.write("motif_id\t" + "\t".join(extra) + "\n")
-            for mid in best:
-                tgt, q, fam, contam, te_f, te_flag, ok = annotate(mid)
-                n_pass += ok; n_contam += contam
-                f.write(f"{mid}\t{tgt}\t{q:.3g}\t{fam}\t{contam}\t{te_f:.3g}\t{te_flag}\t{ok}\n")
-    print(f"[flag] contaminant={n_contam} pass={n_pass} -> {args.out}", flush=True)
+            for mid in sorted(set(best) | set(art_best)):
+                tgt, q, fam, contam, cb_art, at, te_f, te_flag, ok = annotate(mid)
+                n_pass += ok; n_contam += (contam or cb_art)
+                f.write(f"{mid}\t{tgt}\t{q:.3g}\t{fam}\t{contam}\t{cb_art}\t{at}\t"
+                        f"{te_f:.3g}\t{te_flag}\t{ok}\n")
+    print(f"[flag] contaminant/artifact={n_contam} pass={n_pass} -> {args.out}", flush=True)
     return 0
 
 
