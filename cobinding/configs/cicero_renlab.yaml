@@ -1,0 +1,27 @@
+# Cicero for cobinding, matched to the Ren-lab pipeline that produced the
+# colleague's RBBP4.perm.fitConns.* (data path .../Cell1000/cicero/).
+# Source: Zu 2023 Nature & Li 2021 Nature; code yal054/snATACutils
+#   bin/snapATAC.runCicero.R + bin/snapATAC.runCicero.shuf.R.
+#
+# Ren-lab settings reproduced here:
+#   - downsample to 1000 cells (set.seed(2020))        -> max_cells 1000
+#   - make_cicero_cds(k = 10)                           -> k_metacell 10
+#   - run_cicero default window (500 kb)                -> window_bp 500000
+#   - preprocess_cds(method="LSI") default dims         -> num_dim 50
+#   - set.seed(2020) throughout                         -> random_seed 2020
+# Significance (their perm.fitConns): null = `genbsp` random bootstrap matrix
+#   (matched nnz) -> Gaussian(mu, sd) on null coaccess -> upper-tail p -> BH FDR.
+#
+# paths.work_dir is overwritten per array task by the sbatch (--work-dir).
+paths:
+  work_dir: /work/users/d/y/dyy12/XuLab/cobinding/work/_placeholder
+
+cicero:
+  min_cells_per_peak: 2
+  num_dim: 50
+  k_metacell: 10          # Ren-lab make_cicero_cds(k=10)
+  window_bp: 500000       # Ren-lab run_cicero default window
+  sample_num: 100
+  max_cells: 1000         # Ren-lab downsample to 1000 cells (set.seed(2020))
+  random_seed: 2020       # Ren-lab set.seed(2020)
+  shuffle: none           # real run; the sbatch runs the null via --shuffle genbsp

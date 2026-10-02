@@ -25,6 +25,35 @@ cluster is the usual cause of "unchanged output."
 
 ## Log (newest first)
 
+### 2026-10-02 — Found the actual Ren-lab Cicero pipeline; aligned our params (explains the score gap)
+- **Source:** Zu 2023 Nature & Li 2021 Nature (Songpeng Zu / Yang Eric Li; **Kangli Wang**
+  co-author = our colleague). Code: `github.com/yal054/snATACutils`,
+  `bin/snapATAC.runCicero.R` (real) + `bin/snapATAC.runCicero.shuf.R` (nulls).
+- **Why our coaccess didn't match his (Spearman 0.13–0.30) — parameter mismatch, not just
+  intrinsic noise:**
+  | param | Ren-lab | ours (was) |
+  |---|---|---|
+  | cells | **downsample to 1000** (seed 2020) | ALL (RBBP4 163k) |
+  | `make_cicero_cds(k=)` | **10** | 50 |
+  | `run_cicero` window | **500 kb** (default) | 1 Mb |
+  | seed | **2020** | 555 |
+  | p-value null | **`perm`=genBsp random bootstrap** (+row/col/both shuf) → Gaussian(μ,σ) → upper-tail p → BH | colshuf only |
+  Confirmed by the colleague's data path `.../Cell1000/cicero/` and `RBBP4.perm.fitConns.*`.
+  Corrects my earlier `n≈8500` (that assumed a correlation t-test; the real significance is
+  the **shuffle Gaussian** on the genBsp null, so `n` never entered).
+- **Change — align to Ren-lab:** new `cobinding/configs/cicero_renlab.yaml`
+  (max_cells 1000, k_metacell 10, window_bp 500000, seed 2020); `03_run_cicero.R` gains the
+  `genbsp` null (exact `genBsp`: random bootstrap, matched nnz, double `set.seed`);
+  `run_cicero_cobinding.sbatch` now defaults `CFG=cicero_renlab.yaml` + `SHUFFLE_MODE=genbsp`.
+- **Next:** rerun RBBP4 `IGNORE_FITCONNS=1 REBUILD_CICERO=1` on the renlab config, then
+  `compare_raw_cicero_conns.R` vs his `RBBP4.conns.rds` — Spearman should rise well above
+  0.13–0.30 now that cells/k/window/null match. Exact bit-match still limited by which 1000
+  cells + UMAP seed, but the significance FRAMEWORK and param set now mirror his.
+- **Also available in snATACutils (not yet used):** `run.predictGenePeakCorrJoint.R`
+  (gene–peak correlation), `generate_ccans` (CCANs) — relevant if we extend beyond pairs.
+- **Files:** `cobinding/configs/cicero_renlab.yaml`, `cobinding/cicero/scripts/03_run_cicero.R`,
+  `cobinding/slurm/run_cicero_cobinding.sbatch`.
+
 ### 2026-10-02 — Cicero replication: wire the Ren-lab shuffle null into the main pipeline (exact match only from his table)
 - **Question:** can we replicate the colleague's RBBP4 pairs AND p-values exactly?
 - **Answer:** **Exact replication only from HIS table** (`RBBP4.perm.fitConns.res.txt`

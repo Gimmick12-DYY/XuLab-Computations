@@ -120,6 +120,19 @@ set_counts <- function(cds, mat) {
   cds
 }
 
+# Ren-lab perm null (yal054/snATACutils snapATAC.runCicero.shuf.R::genBsp): a random
+# bootstrap matrix with the same shape + nnz as counts, destroying ALL structure. This
+# is the null behind the colleague's RBBP4.perm.fitConns.*. set.seed is called before
+# BOTH samples (matching genBsp exactly, so i and j share the RNG draw).
+genbsp_matrix <- function(mat, seed) {
+  a <- nrow(mat); b <- ncol(mat); n <- length(mat@x)
+  set.seed(seed); i <- sample.int(a, n, replace = TRUE)
+  set.seed(seed); j <- sample.int(b, n, replace = TRUE)
+  m <- Matrix::sparseMatrix(i = i, j = j, x = rep(1, n), dims = c(a, b))
+  dimnames(m) <- dimnames(mat)
+  as(m, "dgCMatrix")
+}
+
 if (shuffle %in% c("umap")) {
   message("[03] permuting UMAP coordinates across cells (not the Ren Lab null)")
   umap_shuf <- umap[sample.int(nrow(umap)), , drop = FALSE]
@@ -132,6 +145,12 @@ if (shuffle %in% c("umap")) {
 } else if (shuffle %in% c("rowshuf", "rows")) {
   message("[03] rowShuf: permuting cells independently for each peak")
   cds <- set_counts(cds, Matrix::t(shuffle_ccres_in_cells(Matrix::t(get_counts(cds)))))
+  cds <- estimate_size_factors(cds)
+} else if (shuffle %in% c("genbsp", "bootstrap")) {
+  # Ren-lab perm null (snapATAC.runCicero.shuf.R genBsp): random bootstrap matrix,
+  # same shape + nnz, all structure destroyed -> matches the colleague's perm.fitConns.
+  message("[03] genbsp: Ren-lab perm null (random bootstrap matrix, matched nnz)")
+  cds <- set_counts(cds, genbsp_matrix(get_counts(cds), cfg$cicero$random_seed %||% 2020L))
   cds <- estimate_size_factors(cds)
 } else if (shuffle %in% c("perm")) {
   # Permute peak accessibility *profiles* across genomic loci; coordinates stay put.

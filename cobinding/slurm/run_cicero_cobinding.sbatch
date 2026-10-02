@@ -27,7 +27,7 @@ UNIFIED="${UNIFIED:-${XULAB}/unified/work}"
 PEAKS_IMP="${PEAKS_IMP:-${XULAB}/tf_complex/work/peaks_imputed}"
 PEAKS_RAW="${PEAKS_RAW:-${XULAB}/tf_complex/work/peaks}"
 CHROMHMM="${CHROMHMM:-${DATA_DIR}/HEK293T_chromHMM18.bed.gz}"
-CFG="${CFG:-${COB}/configs/cicero_1mb.yaml}"
+CFG="${CFG:-${COB}/configs/cicero_renlab.yaml}"   # Ren-lab params: 1000 cells, k=10, 500kb
 # Fragment-called peak matrix (peaks x cells, all TFs) from the colleague. Cicero
 # runs on THIS (correct, fragment-resolution) universe, subset to the TF's cells --
 # not the 1 kb-bin synthetic peaks that export_tf_cicero_mm.py used to build.
@@ -49,7 +49,7 @@ REBUILD_CICERO="${REBUILD_CICERO:-0}"
 # (Li 2021/Zu 2023) -- permute peaks per cell, refit Cicero, fit Gaussian to the
 # null coaccess, test real scores (BH FDR). ttest = coaccess correlation t-test.
 SIG_METHOD="${SIG_METHOD:-shuffle}"
-SHUFFLE_MODE="${SHUFFLE_MODE:-colshuf}"
+SHUFFLE_MODE="${SHUFFLE_MODE:-genbsp}"   # Ren-lab perm null (matches colleague's perm.fitConns)
 
 PY_ENV="${PY_ENV:-${XULAB}/../conda/envs/cobinding}"
 [[ -x "${PY_ENV}/bin/python" ]] || PY_ENV="/work/users/d/y/dyy12/conda/envs/cobinding"
