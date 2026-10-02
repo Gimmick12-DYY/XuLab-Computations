@@ -1,0 +1,14 @@
+# Cicero on the lab RBBP4-specific pmat (53,825 peaks x 181,396 cells).
+# min_cells_per_peak=1 keeps nearly the same peak universe as RBBP4.conns.rds
+# (53,772 / 53,825). Do not use for other TFs.
+paths:
+  work_dir: /work/users/d/y/dyy12/XuLab/cobinding/work/_placeholder
+
+cicero:
+  min_cells_per_peak: 1
+  num_dim: 50
+  k_metacell: 50
+  window_bp: 1000000
+  sample_num: 100
+  max_cells: 0
+  random_seed: 555

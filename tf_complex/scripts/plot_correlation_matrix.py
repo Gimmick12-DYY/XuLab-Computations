@@ -86,15 +86,23 @@ def global_percentile(R: np.ndarray) -> np.ndarray:
     return Q
 
 
-def color_matrix(R: np.ndarray, mode: str = "percentile", vmin: float | None = None):
+def color_matrix(
+    R: np.ndarray,
+    mode: str = "percentile",
+    vmin: float | None = None,
+    vmax: float | None = None,
+):
     """Return (values to paint, vmin, vmax, colorbar label). Does not touch clustering."""
     if mode == "percentile":
         return global_percentile(R), 0.0, 1.0, "Percentile of\nTF–TF Pearson r"
     if mode == "clip":
         lo = 0.92 if vmin is None else float(vmin)
-        return R, lo, 1.0, f"pearson r\n(clip {lo:.2f}–1)"
+        hi = 1.0 if vmax is None else float(vmax)
+        return R, lo, hi, f"pearson r\n(clip {lo:.2f}–{hi:.2f})"
     lo = float(np.percentile(R, 2)) if vmin is None else float(vmin)
-    return R, lo, 1.0, "pearson cor"
+    hi = 1.0 if vmax is None else float(vmax)
+    lab = "pearson cor" if vmax is None else f"pearson r\n({lo:.2f}–{hi:.2f})"
+    return R, lo, hi, lab
 
 
 def write_ordered_tsv(path: Path, M: np.ndarray, labels: list[str], order: list[int]) -> Path:
@@ -118,6 +126,7 @@ def plot_correlation_matrix(
     cells: dict[str, int] | None = None,
     color: str = "percentile",
     vmin: float | None = None,
+    vmax: float | None = None,
     title: str = "",
     Z=None,
     cmap: str = "RdYlBu_r",
@@ -141,7 +150,7 @@ def plot_correlation_matrix(
         Z = linkage_from_pearson(R, optimize_leaves=optimize_leaves)
     order = dendrogram(Z, no_plot=True)["leaves"]
     names = [labels[i].upper() for i in order]
-    P, vmin, vmax, cbar_lab = color_matrix(R, color, vmin)
+    P, vmin, vmax, cbar_lab = color_matrix(R, color, vmin, vmax)
 
     heat_in = n * cell_in
     dend_in, gap_in, bar_in = 1.7, 1.35, 3.4

@@ -1,0 +1,13 @@
+# Same lab RBBP4 pmat as cicero_1mb_labpmat.yaml, but k=25 so make_cicero_cds
+# should emit more metacells (k=50 gave 4,606; gold p-value n_eff ~8.5k).
+paths:
+  work_dir: /work/users/d/y/dyy12/XuLab/cobinding/work/_placeholder
+
+cicero:
+  min_cells_per_peak: 1
+  num_dim: 50
+  k_metacell: 25
+  window_bp: 1000000
+  sample_num: 100
+  max_cells: 0
+  random_seed: 555

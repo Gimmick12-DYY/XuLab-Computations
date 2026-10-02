@@ -29,13 +29,13 @@ suppressPackageStartupMessages({
 
 opt <- parse_args(OptionParser(option_list = list(
   make_option("--pmat", type = "character", help = "peaks x cells RDS (dgCMatrix)"),
-  make_option("--barcodes", type = "character",
-              help = "one TF-cell barcode per line (plain or .gz)"),
+  make_option("--barcodes", type = "character", default = NULL,
+              help = "one TF-cell barcode per line (plain or .gz); omit to keep all columns"),
   make_option("--out-mm", type = "character", help = "output mm/ dir"),
   make_option("--min-cells-per-peak", type = "integer", default = 2L),
   make_option("--min-peaks-per-cell", type = "integer", default = 0L)
 )))
-for (r in c("pmat", "barcodes", "out-mm"))
+for (r in c("pmat", "out-mm"))
   if (is.null(opt[[r]])) stop("--", r, " is required")
 
 read_lines_maybe_gz <- function(path) {
@@ -48,18 +48,23 @@ message(sprintf("[pmat] reading %s", opt$pmat))
 pm <- readRDS(opt$pmat)
 if (!is(pm, "CsparseMatrix")) pm <- as(pm, "CsparseMatrix")
 
-want <- read_lines_maybe_gz(opt$barcodes)
-want <- want[nzchar(want)]
-common <- intersect(colnames(pm), want)
-message(sprintf("[pmat] %d peaks x %d cells; TF barcodes=%d matched=%d (%.1f%%)",
-                nrow(pm), ncol(pm), length(want), length(common),
-                100 * length(common) / max(length(want), 1)))
-if (length(common) < 50L)
-  stop("too few matched barcodes (", length(common), "). Barcode formats differ?\n",
-       "  pmat ex: ", paste(head(colnames(pm), 2), collapse = " | "), "\n",
-       "  want ex: ", paste(head(want, 2), collapse = " | "))
-
-sub <- pm[, common, drop = FALSE]
+if (is.null(opt$barcodes) || !nzchar(opt$barcodes)) {
+  sub <- pm
+  message(sprintf("[pmat] %d peaks x %d cells (all columns; no barcode subset)",
+                  nrow(pm), ncol(pm)))
+} else {
+  want <- read_lines_maybe_gz(opt$barcodes)
+  want <- want[nzchar(want)]
+  common <- intersect(colnames(pm), want)
+  message(sprintf("[pmat] %d peaks x %d cells; TF barcodes=%d matched=%d (%.1f%%)",
+                  nrow(pm), ncol(pm), length(want), length(common),
+                  100 * length(common) / max(length(want), 1)))
+  if (length(common) < 50L)
+    stop("too few matched barcodes (", length(common), "). Barcode formats differ?\n",
+         "  pmat ex: ", paste(head(colnames(pm), 2), collapse = " | "), "\n",
+         "  want ex: ", paste(head(want, 2), collapse = " | "))
+  sub <- pm[, common, drop = FALSE]
+}
 
 # filter peaks (>= min cells), then optionally cells (>= min peaks)
 peak_keep <- Matrix::rowSums(sub > 0) >= opt$`min-cells-per-peak`

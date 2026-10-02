@@ -60,9 +60,89 @@ umap <- SingleCellExperiment::reducedDims(cds)[["UMAP"]]
 if (is.null(umap)) stop("CDS has no UMAP reduction; re-run 02_build_cds.R.")
 
 k_metacell <- as.integer(cfg$cicero$k_metacell %||% 50L)
+max_iter <- as.integer(cfg$cicero$metacell_max_iter %||% 5000L)
+shuffle <- tolower(as.character(cfg$cicero$shuffle %||% "none"))
 set.seed(cfg$cicero$random_seed %||% 555L)
-message(sprintf("[03] make_cicero_cds(k = %d) on %d cells", k_metacell, ncol(cds)))
+
+# Stock cicero::make_cicero_cds caps neighborhood sampling at `it < 5000`,
+# which yields ~4.6k metacells on this RBBP4 CDS. Lab shuffle p-values imply ~8.5k.
+# Do not mutate the language object in place (body[[i]] <- ...); that corrupts
+# later `<-` calls ("incorrect number of arguments to <-").
+if (max_iter != 5000L) {
+  f <- cicero::make_cicero_cds
+  txt <- paste(deparse(body(f), width.cutoff = 500L), collapse = "\n")
+  if (!grepl("it < 5000", txt, fixed = TRUE))
+    stop("make_cicero_cds body no longer contains 'it < 5000'; cannot raise the cap")
+  txt <- gsub("it < 5000", sprintf("it < %d", max_iter), txt, fixed = TRUE)
+  body(f) <- parse(text = txt)[[1]]
+  make_cicero_cds <- f
+  message(sprintf("[03] patched make_cicero_cds iteration cap 5000 -> %d", max_iter))
+}
+
+# Ren Lab null (Li 2021 Nature; Zu 2023 Nature): Cicero scores have no p-values.
+# Shuffle the peak-by-cell matrix, rerun Cicero, fit a Gaussian to the null
+# coaccess, then test the REAL scores against that null (BH FDR).
+# Keep the real UMAP so metacell neighborhoods stay the same.
+shuffle_ccres_in_cells <- function(mat) {
+  mat <- as(mat, "dgCMatrix")
+  n <- nrow(mat)
+  dp <- diff(mat@p)
+  new_i <- integer(length(mat@i))
+  idx <- 1L
+  for (j in seq_len(ncol(mat))) {
+    nz <- dp[j]
+    if (nz > 0L) {
+      rows <- sort(sample.int(n, nz) - 1L)
+      new_i[idx:(idx + nz - 1L)] <- rows
+      idx <- idx + nz
+    }
+  }
+  mat@i <- new_i
+  mat
+}
+
+get_counts <- function(cds) {
+  m <- tryCatch(SingleCellExperiment::counts(cds), error = function(e) NULL)
+  if (is.null(m)) m <- SummarizedExperiment::assay(cds, 1)
+  as(m, "dgCMatrix")
+}
+
+set_counts <- function(cds, mat) {
+  dimnames(mat) <- list(rownames(cds), colnames(cds))
+  an <- SummarizedExperiment::assayNames(cds)
+  SummarizedExperiment::assay(cds, an[[1]]) <- mat
+  if ("counts" %in% an)
+    SingleCellExperiment::counts(cds) <- mat
+  cds
+}
+
+if (shuffle %in% c("umap")) {
+  message("[03] permuting UMAP coordinates across cells (not the Ren Lab null)")
+  umap_shuf <- umap[sample.int(nrow(umap)), , drop = FALSE]
+  rownames(umap_shuf) <- rownames(umap)
+  umap <- umap_shuf
+} else if (shuffle %in% c("colshuf", "cols")) {
+  # Zu 2023: shuffle cCRE columns of the cell-by-cCRE matrix (peaks within each cell).
+  message("[03] colShuf: permuting accessible peaks independently in each cell")
+  cds <- set_counts(cds, shuffle_ccres_in_cells(get_counts(cds)))
+} else if (shuffle %in% c("rowshuf", "rows")) {
+  message("[03] rowShuf: permuting cells independently for each peak")
+  cds <- set_counts(cds, Matrix::t(shuffle_ccres_in_cells(Matrix::t(get_counts(cds)))))
+  cds <- estimate_size_factors(cds)
+} else if (shuffle %in% c("perm")) {
+  # Permute peak accessibility *profiles* across genomic loci; coordinates stay put.
+  message("[03] perm: permuting peak count-vectors across genomic coordinates")
+  mat <- get_counts(cds)
+  rn <- rownames(mat)
+  mat <- mat[sample.int(nrow(mat)), , drop = FALSE]
+  rownames(mat) <- rn
+  cds <- set_counts(cds, mat)
+}
+
+message(sprintf("[03] make_cicero_cds(k = %d, max_iter = %d, shuffle = %s) on %d cells",
+                k_metacell, max_iter, shuffle, ncol(cds)))
 cicero_cds <- make_cicero_cds(cds, reduced_coordinates = umap, k = k_metacell)
+message(sprintf("[03] n_metacell = %d", ncol(cicero_cds)))
 
 # ---- Per-chromosome length from peak names ----------------------------------
 peak_names <- rownames(cds)
@@ -110,6 +190,8 @@ writeLines(
     sprintf("n_cells\t%d",     ncol(cds)),
     sprintf("n_metacell\t%d",  ncol(cicero_cds)),  # sample size for the coaccess correlation test
     sprintf("k_metacell\t%d",  k_metacell),
+    sprintf("metacell_max_iter\t%d", max_iter),
+    sprintf("shuffle\t%s",     shuffle),
     sprintf("window_bp\t%d",   window_bp),
     sprintf("sample_num\t%d",  sample_num),
     sprintf("n_links\t%d",     nrow(conns)),
@@ -117,5 +199,29 @@ writeLines(
   ),
   con = file.path(out_dir, "cicero_info.tsv")
 )
+
+if (shuffle != "none" && nrow(conns) > 1L) {
+  x <- conns$coaccess[is.finite(conns$coaccess)]
+  if (requireNamespace("fitdistrplus", quietly = TRUE)) {
+    ft <- fitdistrplus::fitdist(x, "norm")
+    mu <- unname(ft$estimate[["mean"]])
+    sig <- unname(ft$estimate[["sd"]])
+    message("[03] fitdistrplus Gaussian MLE on shuffled coaccess")
+  } else {
+    mu <- mean(x)
+    sig <- sqrt(mean((x - mu)^2))  # MLE (same as fitdistrplus for norm)
+    message("[03] fitdistrplus not installed; using Gaussian MLE mean/sd")
+  }
+  para_path <- file.path(out_dir, "shuffle.para.txt")
+  write.table(
+    data.frame(
+      group = "RBBP4", metaCol = "TF",
+      meanShuf = mu, stdShuf = sig,
+      stringsAsFactors = FALSE
+    ),
+    file = para_path, sep = "\t", quote = FALSE, row.names = FALSE
+  )
+  message(sprintf("[03] Wrote shuffle para (mu=%.6g sd=%.6g) to %s", mu, sig, para_path))
+}
 
 message(sprintf("[03] Wrote %d co-accessibility links to %s", nrow(conns), out_path))

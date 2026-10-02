@@ -1,0 +1,15 @@
+# Wang gold used RBBP4.perm.fitConns.para.txt. Null: permute peak
+# accessibility profiles across genomic coordinates, rerun Cicero.
+paths:
+  work_dir: /work/users/d/y/dyy12/XuLab/cobinding/work/_placeholder
+
+cicero:
+  min_cells_per_peak: 1
+  num_dim: 50
+  k_metacell: 50
+  metacell_max_iter: 20000
+  window_bp: 1000000
+  sample_num: 100
+  max_cells: 0
+  random_seed: 555
+  shuffle: perm

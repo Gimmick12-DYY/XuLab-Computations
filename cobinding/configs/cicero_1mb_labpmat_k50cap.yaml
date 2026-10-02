@@ -1,0 +1,16 @@
+# Same lab RBBP4 pmat CDS as cicero_1mb_labpmat.yaml. k=50 with the
+# make_cicero_cds sampling cap lifted so metacell n can rise toward the
+# ~8.5k implied by the lab shuffle p-values (stock cap 5000 -> ~4606).
+paths:
+  work_dir: /work/users/d/y/dyy12/XuLab/cobinding/work/_placeholder
+
+cicero:
+  min_cells_per_peak: 1
+  num_dim: 50
+  k_metacell: 50
+  metacell_max_iter: 20000
+  window_bp: 1000000
+  sample_num: 100
+  max_cells: 0
+  random_seed: 555
+  shuffle: none

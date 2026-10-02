@@ -6,12 +6,13 @@
 # Dedups Peak1/Peak2 as an unordered pair (Cicero emits both orientations);
 # keeps max coaccess; drops trans / > --max-dist / coaccess < --coaccess-min.
 #
-# Significance (reproduces the lab fitConns pval/qval that run_cicero does NOT
-# emit): treat each pair's coaccess as a correlation r and test r != 0 with a
-# two-sided t-test, df = n_eff - 2, where n_eff = the Cicero metacell count
-# (from the sibling cicero_info.tsv; --effective-n overrides). BH-adjust the
-# p-values across all kept pairs -> qval. This matches the reference fitConns:
-# calibrating n from the p=0.05 pair reproduces its pvals (RBBP4 n_eff ~8.5k).
+# Significance (--pval-method):
+#   ttest      (default) two-sided correlation t-test, df = n_eff - 2, then BH.
+#              n_eff = Cicero metacell count (cicero_info.tsv / --effective-n).
+#   shuffle    one-sided Gaussian upper tail using a shuffle-null mean/sd
+#              (lab RBBP4.perm.fitConns.para.txt: p = 1-Phi((coaccess-mu)/sd)),
+#              then BH across all unique pairs kept after distance filters.
+#   precomputed use p / FDR columns already in the input table (lab fitConns.res).
 # -----------------------------------------------------------------------------
 from __future__ import annotations
 
@@ -23,6 +24,7 @@ from collections import defaultdict
 from pathlib import Path
 
 import numpy as np
+from scipy.special import erfc
 from scipy.stats import t as t_dist
 
 _SCRIPTS = Path(__file__).resolve().parent
@@ -105,34 +107,76 @@ def coaccess_significance(coaccess: np.ndarray, n_eff: int):
     return pv, bh_qvalues(pv)
 
 
+def parse_shuffle_para(path: Path) -> tuple[float, float]:
+    """Read lab-style shuffle para (columns meanShuf, stdShuf)."""
+    lines = [ln for ln in path.read_text().splitlines() if ln.strip()]
+    if len(lines) < 2:
+        raise SystemExit(f"shuffle para needs header + row: {path}")
+    hdr = lines[0].split("\t")
+    row = lines[1].split("\t")
+    d = {h.strip(): v for h, v in zip(hdr, row)}
+    if "meanShuf" not in d or "stdShuf" not in d:
+        raise SystemExit(f"{path} missing meanShuf/stdShuf (got {list(d)})")
+    return float(d["meanShuf"]), float(d["stdShuf"])
+
+
+def gaussian_upper_p(coaccess: np.ndarray, mu: float, sd: float) -> np.ndarray:
+    """One-sided Gaussian upper tail: 1-Phi((x-mu)/sd). Matches lab perm p."""
+    z = (np.asarray(coaccess, dtype=float) - mu) / max(float(sd), 1e-18)
+    return 0.5 * erfc(z / np.sqrt(2.0))
+
+
+def col_idx(header: list[str], *names: str) -> int | None:
+    lower = {h.strip().lower(): i for i, h in enumerate(header)}
+    for n in names:
+        if n.lower() in lower:
+            return lower[n.lower()]
+    return None
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--tf", required=True)
-    ap.add_argument("--conns", type=Path, required=True, help="cicero/coaccess.tsv.gz")
+    ap.add_argument("--conns", type=Path, required=True,
+                    help="cicero/coaccess.tsv.gz or lab fitConns.res.txt")
     ap.add_argument("--out-dir", type=Path, required=True)
     ap.add_argument("--chromhmm", type=Path, default=None)
     ap.add_argument("--max-dist", type=int, default=1_000_000)
     ap.add_argument("--coaccess-min", type=float, default=0.05,
                     help="Pliner et al. recommended Cicero cutoff")
+    ap.add_argument("--max-p", type=float, default=1.0,
+                    help="drop pairs with pval > this after significance (1 = keep all)")
+    ap.add_argument("--pval-method", choices=("ttest", "shuffle", "precomputed"),
+                    default="ttest")
+    ap.add_argument("--shuffle-para", type=Path, default=None,
+                    help="lab-style para.txt (meanShuf, stdShuf) for --pval-method shuffle")
+    ap.add_argument("--shuffle-mu", type=float, default=None)
+    ap.add_argument("--shuffle-sd", type=float, default=None)
     ap.add_argument("--effective-n", default="metacell",
                     help="sample size for the coaccess correlation test: an integer, "
                          "or 'metacell'/'cells' (read from sibling cicero_info.tsv)")
+    ap.add_argument("--sel", type=Path, default=None,
+                    help="optional lab .sel file: report unique-pair overlap")
     args = ap.parse_args()
 
     opener = gzip.open if str(args.conns).endswith(".gz") else open
-    edges: dict[frozenset, float] = {}
+    # key -> (coaccess, p_pre, q_pre); precomputed p/q kept from the max-coaccess row
+    edges: dict[frozenset, tuple[float, float | None, float | None]] = {}
     n_in = n_na = n_self = n_far = n_low = 0
     with opener(args.conns, "rt") as fh:
-        header = fh.readline()
+        header = fh.readline().rstrip("\n").split("\t")
+        i_ca = col_idx(header, "coaccess") or 2
+        i_p = col_idx(header, "p", "pval", "pvalue")
+        i_q = col_idx(header, "fdr", "qval", "q")
         for ln in fh:
             n_in += 1
             p = ln.rstrip("\n").split("\t")
-            if len(p) < 3:
+            if len(p) <= max(i_ca, 1):
                 continue
             a, b = to_colon(p[0]), to_colon(p[1])
             try:
-                ca = float(p[2])
+                ca = float(p[i_ca])
             except ValueError:
                 n_na += 1
                 continue
@@ -142,33 +186,97 @@ def main() -> int:
             if ca != ca:  # NaN
                 n_na += 1
                 continue
-            if ca < args.coaccess_min:
+            if args.coaccess_min and ca < args.coaccess_min:
                 n_low += 1
                 continue
             d = dist_bp(a, b)
             if d is None or (args.max_dist and d > args.max_dist):
                 n_far += 1
                 continue
+            pre_p = pre_q = None
+            if i_p is not None and i_p < len(p):
+                try:
+                    pre_p = float(p[i_p])
+                except ValueError:
+                    pre_p = None
+            if i_q is not None and i_q < len(p):
+                try:
+                    pre_q = float(p[i_q])
+                except ValueError:
+                    pre_q = None
             key = frozenset((a, b))
             prev = edges.get(key)
-            if prev is None or ca > prev:
-                edges[key] = ca
+            if prev is None or ca > prev[0]:
+                edges[key] = (ca, pre_p, pre_q)
     print(f"[{args.tf}] cicero rows={n_in:,} kept_unique={len(edges):,}  "
           f"na={n_na:,} self={n_self:,} low={n_low:,} far/trans={n_far:,}", flush=True)
     if not edges:
         raise SystemExit("no Cicero pairs survived filters")
 
-    # ---- significance: coaccess-as-correlation t-test + BH (reproduce fitConns) --
-    n_eff = resolve_n(args.effective_n, read_info(args.conns))
     ekeys = list(edges.keys())
-    pv, qv = coaccess_significance(np.array([edges[k] for k in ekeys]), n_eff)
-    sig = {k: (float(pv[i]), float(qv[i])) for i, k in enumerate(ekeys)}
-    if n_eff > 2:
-        print(f"[{args.tf}] significance: n_eff={n_eff:,} (df={n_eff - 2:,}); "
+    ca_arr = np.array([edges[k][0] for k in ekeys], dtype=float)
+    method = args.pval_method
+    if method == "precomputed":
+        pv = np.array([np.nan if edges[k][1] is None else edges[k][1] for k in ekeys])
+        qv = np.array([np.nan if edges[k][2] is None else edges[k][2] for k in ekeys])
+        if np.isnan(pv).all():
+            raise SystemExit("--pval-method precomputed but no p/FDR columns in --conns")
+        if np.isnan(qv).all():
+            qv = bh_qvalues(np.nan_to_num(pv, nan=1.0))
+        print(f"[{args.tf}] significance: precomputed p/FDR; "
+              f"FDR<=0.05: {int((qv <= 0.05).sum()):,}/{len(ekeys):,} pairs", flush=True)
+    elif method == "shuffle":
+        if args.shuffle_para is not None:
+            mu, sd = parse_shuffle_para(args.shuffle_para)
+        elif args.shuffle_mu is not None and args.shuffle_sd is not None:
+            mu, sd = float(args.shuffle_mu), float(args.shuffle_sd)
+        else:
+            raise SystemExit("shuffle p-values need --shuffle-para or --shuffle-mu/--shuffle-sd")
+        pv = gaussian_upper_p(ca_arr, mu, sd)
+        qv = bh_qvalues(pv)
+        print(f"[{args.tf}] significance: shuffle Gaussian mu={mu:.6g} sd={sd:.6g}; "
               f"FDR<=0.05: {int((qv <= 0.05).sum()):,}/{len(ekeys):,} pairs", flush=True)
     else:
-        print(f"[{args.tf}] WARNING: no effective n (cicero_info.tsv lacks n_metacell/"
-              f"n_cells) -> pval=nan, qval=0. Pass --effective-n <int>.", flush=True)
+        n_eff = resolve_n(args.effective_n, read_info(args.conns))
+        pv, qv = coaccess_significance(ca_arr, n_eff)
+        if n_eff > 2:
+            print(f"[{args.tf}] significance: n_eff={n_eff:,} (df={n_eff - 2:,}); "
+                  f"FDR<=0.05: {int((qv <= 0.05).sum()):,}/{len(ekeys):,} pairs", flush=True)
+        else:
+            print(f"[{args.tf}] WARNING: no effective n (cicero_info.tsv lacks n_metacell/"
+                  f"n_cells) -> pval=nan, qval=0. Pass --effective-n <int>.", flush=True)
+
+    if args.max_p < 1.0:
+        keep = pv <= args.max_p
+        n_drop_p = int((~keep).sum())
+        ekeys = [k for k, ok in zip(ekeys, keep) if ok]
+        pv, qv = pv[keep], qv[keep]
+        print(f"[{args.tf}] max-p={args.max_p}: dropped {n_drop_p:,}, kept {len(ekeys):,}",
+              flush=True)
+        if not ekeys:
+            raise SystemExit("no pairs survived --max-p")
+
+    sig = {k: (float(pv[i]), float(qv[i])) for i, k in enumerate(ekeys)}
+    ca_map = {k: edges[k][0] for k in ekeys}
+
+    if args.sel is not None and args.sel.is_file():
+        sel_pairs: set[frozenset] = set()
+        with args.sel.open() as sf:
+            for ln in sf:
+                toks = ln.rstrip("\n").split("\t")
+                coords = [to_colon(t) for t in toks]
+                coords = [c for c in coords if c]
+                uniq = []
+                for c in coords:
+                    if c not in uniq:
+                        uniq.append(c)
+                if len(uniq) >= 2:
+                    sel_pairs.add(frozenset(uniq[:2]))
+        ours = set(ekeys)
+        n_int = len(ours & sel_pairs)
+        print(f"[{args.tf}] vs .sel unique pairs: sel={len(sel_pairs):,} ours={len(ours):,} "
+              f"intersection={n_int:,} recovered_of_sel={n_int / len(sel_pairs) if sel_pairs else 0:.4f}",
+              flush=True)
 
     hmm = load_chromhmm(args.chromhmm) if args.chromhmm and args.chromhmm.is_file() else {}
     types: dict[str, set] = defaultdict(set)
@@ -181,7 +289,8 @@ def main() -> int:
     n_pdc = 0
     with edges_path.open("w") as eh, pdc_path.open("w") as ph:
         eh.write("peak1\tpeak2\tcoaccess\tpval\tqval\ttype1\ttype2\tn_links\n")
-        for key, ca in edges.items():
+        for key in ekeys:
+            ca = ca_map[key]
             a, b = sorted(key)
             sa = chromhmm_state(a, hmm) if hmm else None
             sb = chromhmm_state(b, hmm) if hmm else None
@@ -209,7 +318,7 @@ def main() -> int:
         for pk in sorted(n_edges):
             out.write(f"{pk}\t{','.join(sorted(types[pk])) or '.'}\t.\t"
                       f"{','.join(sorted(states[pk])) or '.'}\t{n_edges[pk]}\n")
-    print(f"[done] edges={len(edges):,} pdc={n_pdc:,} peaks={len(n_edges):,}")
+    print(f"[done] edges={len(ekeys):,} pdc={n_pdc:,} peaks={len(n_edges):,}")
     print(f"[done] wrote {edges_path}")
     return 0
 
