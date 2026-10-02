@@ -25,6 +25,26 @@ cluster is the usual cause of "unchanged output."
 
 ## Log (newest first)
 
+### 2026-10-02 — Novel Motif Finding for unknown TFs: start module (Step 3 = perf ranking built)
+- **Goal:** turn raw de-novo "unknown" motifs (from `motif_denovo_pmat.sbatch`: HOMER +
+  STREME + TOMTOM for ~45 motif-less TFs) into validated, TF-assigned motifs via a 5-step
+  plan. Roadmap in `downstream/NOVEL_MOTIF_FINDING.md`.
+- **Built — Step 3 (the centerpiece): rank motifs by PERFORMANCE, not information content.**
+  `scripts/rank_motifs_by_performance.py` scores every pos/neg sequence by a motif's best
+  PWM log-odds (both strands) → **AUROC + AUPRC**, and reports info content so a low-IC
+  "flat" motif with high AUROC is visible. Validated on synthetic (real AUROC 1.0, flat 0.5).
+  `slurm/rank_motifs.sbatch` runs it per TF: scoring set = the TF's binding BINS (independent
+  of the pmat PEAKS used for discovery → held-out-ish), candidates = HOMER de-novo + STREME.
+- **Built — Step 1 helper:** `scripts/merge_meme_db.py` merges MEME DBs (tag by source) to
+  rebuild `cache/motifdb/merged_human_motifs.meme` as **HOCOMOCO v12 + Codebook** (replacing
+  v11) for TOMTOM re-annotation. Still need: v12/Codebook download URLs; MoSBAT (affinity)
+  as the upgrade over TOMTOM pearson.
+- **Not yet (need external data):** Step 2 contaminant filter (CTCF/NFY/YY1/SP-KLF/ETS +
+  RepeatMasker), Step 4 triple-overlap (Codebook ChIP/GHT-SELEX peaks), Step 5 orphan→TF
+  assignment (chromVAR/MARA + TF expression + phyloP, 175 motif-less TFs).
+- **Files:** `downstream/scripts/{rank_motifs_by_performance.py,merge_meme_db.py}`,
+  `downstream/slurm/rank_motifs.sbatch`, `downstream/NOVEL_MOTIF_FINDING.md`.
+
 ### 2026-10-02 — Found the actual Ren-lab Cicero pipeline; aligned our params (explains the score gap)
 - **Source:** Zu 2023 Nature & Li 2021 Nature (Songpeng Zu / Yang Eric Li; **Kangli Wang**
   co-author = our colleague). Code: `github.com/yal054/snATACutils`,
