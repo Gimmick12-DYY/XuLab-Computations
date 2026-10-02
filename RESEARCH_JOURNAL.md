@@ -25,6 +25,33 @@ cluster is the usual cause of "unchanged output."
 
 ## Log (newest first)
 
+### 2026-10-02 — Cicero replication: wire the Ren-lab shuffle null into the main pipeline (exact match only from his table)
+- **Question:** can we replicate the colleague's RBBP4 pairs AND p-values exactly?
+- **Answer:** **Exact replication only from HIS table** (`RBBP4.perm.fitConns.res.txt`
+  coaccess + `*.para.txt` meanShuf/stdShuf), not by rerunning Cicero. Already wired:
+  `run_rbbp4_labconns.sbatch` + `cicero_conns_to_edges.py --pval-method {precomputed,shuffle}`
+  reproduce his 17,450 `.sel` / 11,342 FDR≤0.05 / 355 cliques. Cicero itself emits no
+  p-values; his **permutation (shuffle) null** does, and we matched it.
+- **Why not from our own run_cicero:** same pmat gives ~96% of his candidate pairs but the
+  **coaccess ranking disagrees (Spearman ~0.13–0.30)**. Cicero coaccess is set by the
+  **metacell aggregation** (LSI→UMAP embedding + kNN sampling in `make_cicero_cds`), which is
+  not reproducible without his exact embedding/seed — likely intrinsic (two seeds of our own
+  run would also disagree). So a p-value filter on *our* Cicero will not return his `.sel`.
+  Diagnostic to confirm intrinsic-ness: run our Cicero twice with different seeds, Spearman
+  the coaccess (`compare_raw_cicero_conns.R`).
+- **What we CAN do for all TFs (not just RBBP4):** apply his significance **methodology** to
+  our own Cicero. The infra existed (`03_run_cicero.R` shuffle modes colshuf/rowshuf/perm →
+  Gaussian `shuffle.para.txt`; patched `make_cicero_cds` cap → ~8.5k metacells) but the main
+  per-TF pipeline defaulted to the t-test. **Change:** `03_run_cicero.R` now takes `--shuffle`
+  (non-'none' writes to `cicero_shuf/`); `run_cicero_cobinding.sbatch` runs the real + shuffle
+  Cicero and sets `SIG_METHOD=shuffle` (colshuf null → Gaussian p → BH, filter FDR≤0.05) by
+  default, so every TF gets Ren-lab-style significance. `SIG_METHOD=ttest` keeps the old path.
+- **Bottom line:** his EXACT RBBP4 numbers → from his table; his METHOD (shuffle null + BH) →
+  now applied to our Cicero for all TFs. Bit-matching his per-pair scores is out of reach.
+- **Files:** `cobinding/cicero/scripts/03_run_cicero.R`,
+  `cobinding/slurm/run_cicero_cobinding.sbatch` (+ existing `run_rbbp4_labconns.sbatch`,
+  `cicero_conns_to_edges.py`, `compare_raw_cicero_conns.R`).
+
 ### 2026-09-24 — Enrichment-ratio RESULT: real complexes separated; several earlier "hits" were activity artifacts
 - **Ran** `CORR_TRANSFORM=enrichment` (domain units, results_compartment_enrichment_domain_sm2).
   Baseline collapsed: off-diag **median +0.85 → −0.02** (min −0.66, p95 +0.32); confound

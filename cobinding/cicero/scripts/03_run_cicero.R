@@ -35,7 +35,9 @@ suppressPackageStartupMessages({
 option_list <- list(
   make_option("--config",   type = "character", help = "Path to YAML config"),
   make_option("--work-dir", type = "character", default = NULL,
-              help = "Override paths.work_dir from the config")
+              help = "Override paths.work_dir from the config"),
+  make_option("--shuffle",  type = "character", default = NULL,
+              help = "Override cicero.shuffle (none|colshuf|rowshuf|umap|perm); non-'none' writes to <work>/cicero_shuf/ + shuffle.para.txt (Ren-lab null).")
 )
 opt <- parse_args(OptionParser(option_list = option_list))
 if (is.null(opt$config)) stop("--config is required")
@@ -46,7 +48,10 @@ work_dir <- normalizePath(
   mustWork = FALSE
 )
 cds_dir <- file.path(work_dir, "cds")
-out_dir <- file.path(work_dir, "cicero")
+# shuffle (CLI overrides config). Real run -> <work>/cicero; null run -> <work>/cicero_shuf
+# so both share the one cds (same UMAP metacell neighborhoods) without clobbering.
+shuffle <- tolower(as.character(opt$shuffle %||% cfg$cicero$shuffle %||% "none"))
+out_dir <- file.path(work_dir, if (shuffle %in% c("none", "")) "cicero" else "cicero_shuf")
 dir.create(out_dir, showWarnings = FALSE, recursive = TRUE)
 
 cds_path <- file.path(cds_dir, "cds.rds")
@@ -61,7 +66,6 @@ if (is.null(umap)) stop("CDS has no UMAP reduction; re-run 02_build_cds.R.")
 
 k_metacell <- as.integer(cfg$cicero$k_metacell %||% 50L)
 max_iter <- as.integer(cfg$cicero$metacell_max_iter %||% 5000L)
-shuffle <- tolower(as.character(cfg$cicero$shuffle %||% "none"))
 set.seed(cfg$cicero$random_seed %||% 555L)
 
 # Stock cicero::make_cicero_cds caps neighborhood sampling at `it < 5000`,
@@ -215,7 +219,7 @@ if (shuffle != "none" && nrow(conns) > 1L) {
   para_path <- file.path(out_dir, "shuffle.para.txt")
   write.table(
     data.frame(
-      group = "RBBP4", metaCol = "TF",
+      group = basename(dirname(work_dir)), metaCol = "TF",
       meanShuf = mu, stdShuf = sig,
       stringsAsFactors = FALSE
     ),

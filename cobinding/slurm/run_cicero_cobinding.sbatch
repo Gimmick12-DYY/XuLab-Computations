@@ -45,6 +45,11 @@ SHARE="${SHARE:-2}"
 NET_MIN_COMP="${NET_MIN_COMP:-3}"
 NET_BIG="${NET_BIG:-10}"
 REBUILD_CICERO="${REBUILD_CICERO:-0}"
+# Significance for our own Cicero (no lab fitConns): shuffle = Ren-lab null
+# (Li 2021/Zu 2023) -- permute peaks per cell, refit Cicero, fit Gaussian to the
+# null coaccess, test real scores (BH FDR). ttest = coaccess correlation t-test.
+SIG_METHOD="${SIG_METHOD:-shuffle}"
+SHUFFLE_MODE="${SHUFFLE_MODE:-colshuf}"
 
 PY_ENV="${PY_ENV:-${XULAB}/../conda/envs/cobinding}"
 [[ -x "${PY_ENV}/bin/python" ]] || PY_ENV="/work/users/d/y/dyy12/conda/envs/cobinding"
@@ -116,17 +121,28 @@ else
     Rscript scripts/check_env.R
     Rscript scripts/02_build_cds.R --config "${CFG}" --work-dir "${CWD}"
     Rscript scripts/03_run_cicero.R --config "${CFG}" --work-dir "${CWD}"
+    if [[ "${SIG_METHOD}" == "shuffle" ]]; then
+      echo "[$(date)] Cicero shuffle null (${SHUFFLE_MODE}) -> cicero_shuf/shuffle.para.txt"
+      Rscript scripts/03_run_cicero.R --config "${CFG}" --work-dir "${CWD}" --shuffle "${SHUFFLE_MODE}"
+    fi
     cd "${XULAB}"
   fi
-  echo "[$(date)] Cicero conns -> cobinding edges (dedup unordered pairs)"
+  echo "[$(date)] Cicero conns -> cobinding edges (sig=${SIG_METHOD})"
   conda activate "${PY_ENV}"
+  SIG_ARGS=(); COMIN="${COACCESS_MIN}"
+  if [[ "${SIG_METHOD}" == "shuffle" ]]; then
+    SHUF_PARA="${CWD}/cicero_shuf/shuffle.para.txt"
+    [[ -s "${SHUF_PARA}" ]] || { echo "missing shuffle para ${SHUF_PARA}; rerun with REBUILD_CICERO=1" >&2; exit 1; }
+    SIG_ARGS=(--pval-method shuffle --shuffle-para "${SHUF_PARA}")
+    COMIN=-1; CLUSTER_QVAL="${QVAL}"     # BH over all pairs vs null; filter on real FDR
+  else
+    CLUSTER_QVAL=1                        # ttest path: coaccess-filtered, keep all in graph
+  fi
   python "${COB}/scripts/cicero_conns_to_edges.py" \
     --tf "${TF}" --conns "${CONNS}" --out-dir "${WORK}" \
     --chromhmm "${CHROMHMM}" --max-dist "${MAX_DIST}" \
-    --coaccess-min "${COACCESS_MIN}"
+    --coaccess-min "${COMIN}" "${SIG_ARGS[@]}"
   PDC="${WORK}/${TF}.generated.pdc"
-  # pairs already score-filtered; keep all in the graph
-  CLUSTER_QVAL=1
   CLUSTER_COMIN=0
 fi
 
