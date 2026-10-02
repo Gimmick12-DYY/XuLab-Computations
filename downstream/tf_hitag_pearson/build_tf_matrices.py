@@ -199,8 +199,10 @@ def tracks_for(tf: str) -> list[tuple[str, Path | None, str]]:
         ("Chromnitron_pred2", SA / tf / "processed" / "data.bigwig", "bw"),
         (
             BULK_LABEL[tf],
-            bulk_bw if bulk_bw.exists() else bulk_bam,
-            "bw" if bulk_bw.exists() else "bam",
+            bulk_bw
+            if bulk_bw.exists()
+            else (OUT / "NFYA_bulk_bedcov.tsv" if (OUT / "NFYA_bulk_bedcov.tsv").exists() else bulk_bam),
+            "bw" if bulk_bw.exists() else ("counts" if (OUT / "NFYA_bulk_bedcov.tsv").exists() else "bam"),
         ),
         ("HiTAG_weight", TAG / "mtx2bw" / f"{tf}_HiTAG_weighted_smooth.bw", "bw"),
         ("HiTAG_macs2", TAG / "bw" / f"TF.{tf}" / f"TF.{tf}_treat_pileup.srt.bw", "bw"),
@@ -230,6 +232,10 @@ def run_tf(tf: str, chroms, starts, ends) -> None:
         print(f"  score {lab} {path.name}")
         if kind == "bam":
             v = score_bam_counts(path, BINS, chroms.size)
+        elif kind == "counts":
+            v = np.loadtxt(path, dtype=float)
+            if v.size != chroms.size:
+                raise RuntimeError(f"{path} has {v.size} rows, expected {chroms.size}")
         else:
             v = score_bw(path, chroms, starts, ends)
         print(f"    finite={np.isfinite(v).sum():,}  max={np.nanmax(v):.4g}")

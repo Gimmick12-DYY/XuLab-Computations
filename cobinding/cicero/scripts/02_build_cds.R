@@ -155,7 +155,9 @@ cds <- new_cell_data_set(
 )
 
 num_dim <- as.integer(cfg$cicero$num_dim %||% 50L)
-message(sprintf("[02] preprocess_cds(method='LSI', num_dim=%d)", num_dim))
+seed <- as.integer(cfg$cicero$random_seed %||% 555L)
+set.seed(seed)
+message(sprintf("[02] preprocess_cds(method='LSI', num_dim=%d) seed=%d", num_dim, seed))
 cds <- detect_genes(cds)
 cds <- estimate_size_factors(cds)
 cds <- preprocess_cds(cds, method = "LSI", num_dim = num_dim)
@@ -181,6 +183,7 @@ writeLines(
     sprintf("n_cells_in\t%d", ncol(mat)),
     sprintf("min_cells_per_peak\t%d", min_cells),
     sprintf("num_dim\t%d", num_dim),
+    sprintf("random_seed\t%d", seed),
     sprintf("cds_path\t%s", file.path(cds_dir, "cds.rds"))
   ),
   con = file.path(cds_dir, "cds_info.tsv")

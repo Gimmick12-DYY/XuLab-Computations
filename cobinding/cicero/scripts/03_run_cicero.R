@@ -37,7 +37,7 @@ option_list <- list(
   make_option("--work-dir", type = "character", default = NULL,
               help = "Override paths.work_dir from the config"),
   make_option("--shuffle",  type = "character", default = NULL,
-              help = "Override cicero.shuffle (none|colshuf|rowshuf|umap|perm); non-'none' writes to <work>/cicero_shuf/ + shuffle.para.txt (Ren-lab null).")
+              help = "Override cicero.shuffle (none|colshuf|rowshuf|umap|perm|genbsp); non-'none' writes to <work>/cicero_shuf/ + shuffle.para.txt (Ren-lab null).")
 )
 opt <- parse_args(OptionParser(option_list = option_list))
 if (is.null(opt$config)) stop("--config is required")
@@ -66,7 +66,9 @@ if (is.null(umap)) stop("CDS has no UMAP reduction; re-run 02_build_cds.R.")
 
 k_metacell <- as.integer(cfg$cicero$k_metacell %||% 50L)
 max_iter <- as.integer(cfg$cicero$metacell_max_iter %||% 5000L)
-set.seed(cfg$cicero$random_seed %||% 555L)
+num_dim <- as.integer(cfg$cicero$num_dim %||% 50L)
+seed <- as.integer(cfg$cicero$random_seed %||% 555L)
+set.seed(seed)
 
 # Stock cicero::make_cicero_cds caps neighborhood sampling at `it < 5000`,
 # which yields ~4.6k metacells on this RBBP4 CDS. Lab shuffle p-values imply ~8.5k.
@@ -86,7 +88,8 @@ if (max_iter != 5000L) {
 # Ren Lab null (Li 2021 Nature; Zu 2023 Nature): Cicero scores have no p-values.
 # Shuffle the peak-by-cell matrix, rerun Cicero, fit a Gaussian to the null
 # coaccess, then test the REAL scores against that null (BH FDR).
-# Keep the real UMAP so metacell neighborhoods stay the same.
+# snapATAC.runCicero.shuf.R rebuilds LSI+UMAP on the shuffled matrix (it does
+# not keep the real embedding). Count-shuffle modes below do the same.
 shuffle_ccres_in_cells <- function(mat) {
   mat <- as(mat, "dgCMatrix")
   n <- nrow(mat)
@@ -130,9 +133,43 @@ genbsp_matrix <- function(mat, seed) {
   set.seed(seed); j <- sample.int(b, n, replace = TRUE)
   m <- Matrix::sparseMatrix(i = i, j = j, x = rep(1, n), dims = c(a, b))
   dimnames(m) <- dimnames(mat)
-  as(m, "dgCMatrix")
+  # duplicate (i,j) draws are summed; make_atac_cds(binarize=TRUE) would clip to 1
+  as(m > 0, "dgCMatrix") * 1
 }
 
+# snapATAC.runCicero.shuf.R: make_atac_cds -> LSI -> UMAP on the *shuffled* matrix.
+fresh_cds_from_mat <- function(mat, seed, num_dim) {
+  mat <- as(mat > 0, "dgCMatrix") * 1
+  keep <- Matrix::colSums(mat) > 0
+  if (any(!keep)) {
+    message(sprintf("[03] dropped %d empty cells after shuffle", sum(!keep)))
+    mat <- mat[, keep, drop = FALSE]
+  }
+  peak_meta <- data.frame(
+    site_name = rownames(mat),
+    gene_short_name = rownames(mat),
+    row.names = rownames(mat),
+    stringsAsFactors = FALSE
+  )
+  cell_meta <- data.frame(
+    cell = colnames(mat),
+    row.names = colnames(mat),
+    stringsAsFactors = FALSE
+  )
+  cds <- new_cell_data_set(
+    expression_data = mat,
+    cell_metadata = cell_meta,
+    gene_metadata = peak_meta
+  )
+  set.seed(seed)
+  cds <- detect_genes(cds)
+  cds <- estimate_size_factors(cds)
+  cds <- preprocess_cds(cds, method = "LSI", num_dim = num_dim)
+  cds <- reduce_dimension(cds, reduction_method = "UMAP", preprocess_method = "LSI")
+  cds
+}
+
+rebuild_umap <- FALSE
 if (shuffle %in% c("umap")) {
   message("[03] permuting UMAP coordinates across cells (not the Ren Lab null)")
   umap_shuf <- umap[sample.int(nrow(umap)), , drop = FALSE]
@@ -142,24 +179,34 @@ if (shuffle %in% c("umap")) {
   # Zu 2023: shuffle cCRE columns of the cell-by-cCRE matrix (peaks within each cell).
   message("[03] colShuf: permuting accessible peaks independently in each cell")
   cds <- set_counts(cds, shuffle_ccres_in_cells(get_counts(cds)))
+  rebuild_umap <- TRUE
 } else if (shuffle %in% c("rowshuf", "rows")) {
   message("[03] rowShuf: permuting cells independently for each peak")
   cds <- set_counts(cds, Matrix::t(shuffle_ccres_in_cells(Matrix::t(get_counts(cds)))))
-  cds <- estimate_size_factors(cds)
+  rebuild_umap <- TRUE
 } else if (shuffle %in% c("genbsp", "bootstrap")) {
   # Ren-lab perm null (snapATAC.runCicero.shuf.R genBsp): random bootstrap matrix,
   # same shape + nnz, all structure destroyed -> matches the colleague's perm.fitConns.
   message("[03] genbsp: Ren-lab perm null (random bootstrap matrix, matched nnz)")
-  cds <- set_counts(cds, genbsp_matrix(get_counts(cds), cfg$cicero$random_seed %||% 2020L))
-  cds <- estimate_size_factors(cds)
+  cds <- set_counts(cds, genbsp_matrix(get_counts(cds), seed))
+  rebuild_umap <- TRUE
 } else if (shuffle %in% c("perm")) {
   # Permute peak accessibility *profiles* across genomic loci; coordinates stay put.
+  # (snATACutils colShuf on cells-x-peaks SnapATAC pmat is this orientation.)
   message("[03] perm: permuting peak count-vectors across genomic coordinates")
   mat <- get_counts(cds)
   rn <- rownames(mat)
   mat <- mat[sample.int(nrow(mat)), , drop = FALSE]
   rownames(mat) <- rn
   cds <- set_counts(cds, mat)
+  rebuild_umap <- TRUE
+}
+
+if (rebuild_umap) {
+  message("[03] rebuilding LSI+UMAP on shuffled counts (Ren-lab shuffle script)")
+  cds <- fresh_cds_from_mat(get_counts(cds), seed, num_dim)
+  umap <- SingleCellExperiment::reducedDims(cds)[["UMAP"]]
+  if (is.null(umap)) stop("shuffle CDS has no UMAP after rebuild")
 }
 
 message(sprintf("[03] make_cicero_cds(k = %d, max_iter = %d, shuffle = %s) on %d cells",
@@ -215,6 +262,7 @@ writeLines(
     sprintf("k_metacell\t%d",  k_metacell),
     sprintf("metacell_max_iter\t%d", max_iter),
     sprintf("shuffle\t%s",     shuffle),
+    sprintf("random_seed\t%d", seed),
     sprintf("window_bp\t%d",   window_bp),
     sprintf("sample_num\t%d",  sample_num),
     sprintf("n_links\t%d",     nrow(conns)),
