@@ -73,4 +73,22 @@ echo "[$(date)] ${TF}: rank motifs by performance"
 python "${DOWN_DIR}/scripts/rank_motifs_by_performance.py" \
   --motifs "${CAND}" --pos-fa "${OUT}/pos.fa" --neg-fa "${OUT}/neg.fa" \
   --out "${OUT}/${tf}.ranked_motifs.tsv"
-echo "[$(date)] done ${TF} -> ${OUT}/${tf}.ranked_motifs.tsv"
+
+# ---- 4. Step 2: flag artifacts (TOMTOM vs HOCOMOCO v12 + Codebook) -----------
+# shortlist = high AUROC AND pass==True (not a CTCF/NFY/YY1/SP-KLF/ETS contaminant,
+# not TE-clustered). REPEAT_BED/INSTANCES_BED optional (needs RepeatMasker).
+MOTIF_DB="${MOTIF_DB:-${DOWN_DIR}/cache/motifdb/merged_human_motifs.meme}"
+if [[ -s "${MOTIF_DB}" ]]; then
+  tomtom -no-ssc -oc "${OUT}/tomtom" -verbosity 1 -min-overlap 5 -dist pearson -thresh 0.1 \
+    "${CAND}" "${MOTIF_DB}" || echo "[warn] tomtom failed for ${TF}" >&2
+  if [[ -s "${OUT}/tomtom/tomtom.tsv" ]]; then
+    python "${DOWN_DIR}/scripts/flag_motif_artifacts.py" \
+      --tomtom "${OUT}/tomtom/tomtom.tsv" --ranked "${OUT}/${tf}.ranked_motifs.tsv" \
+      --out "${OUT}/${tf}.ranked_annotated.tsv" \
+      ${FAMILIES:+--families "${FAMILIES}"} \
+      ${REPEAT_BED:+--repeat-bed "${REPEAT_BED}"} ${INSTANCES_BED:+--instances-bed "${INSTANCES_BED}"}
+  fi
+else
+  echo "[warn] no MOTIF_DB (${MOTIF_DB}); skip Step-2 flagging (build via merge_meme_db.py)" >&2
+fi
+echo "[$(date)] done ${TF} -> ${OUT}/${tf}.ranked_annotated.tsv"

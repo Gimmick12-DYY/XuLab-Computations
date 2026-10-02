@@ -25,6 +25,16 @@ cluster is the usual cause of "unchanged output."
 
 ## Log (newest first)
 
+### 2026-10-02 — Novel Motif Finding Step 2: contaminant artifact filter built
+- `scripts/flag_motif_artifacts.py` flags de-novo motifs whose best TOMTOM match (vs
+  HOCOMOCO v12 + Codebook) is an open-chromatin contaminant family (CTCF/NFY/YY1/SP-KLF/ETS;
+  `--families` takes the Codebook set verbatim). Joins onto the Step-3 ranked table and adds
+  a `pass` column -> shortlist = high AUROC AND pass. Optional TE/repeat check via
+  `--repeat-bed`+`--instances-bed` (needs RepeatMasker, not yet available). Wired into
+  `rank_motifs.sbatch` (TOMTOM candidates vs merged DB -> flag -> ranked_annotated.tsv).
+  Validated on synthetic: CTCF/SP1 matches flagged out despite high AUROC; novel Codebook
+  ZNF passes. User has HOCOMOCO v12 + Codebook available (for merge_meme_db.py).
+
 ### 2026-10-02 — Novel Motif Finding for unknown TFs: start module (Step 3 = perf ranking built)
 - **Goal:** turn raw de-novo "unknown" motifs (from `motif_denovo_pmat.sbatch`: HOMER +
   STREME + TOMTOM for ~45 motif-less TFs) into validated, TF-assigned motifs via a 5-step

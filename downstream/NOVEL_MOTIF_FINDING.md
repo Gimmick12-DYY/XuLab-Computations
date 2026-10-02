@@ -22,12 +22,14 @@ Status legend: ✅ built · 🟡 partial/needs data · ⬜ not started.
 - Expectation: many "novel" motifs map to Codebook TFs (C2H2-ZNF, CXXC, AT-hook, BED-zf).
 
 ## Step 2 — Filter artifacts  🟡
-- ⬜ Contaminant filter: drop motifs matching CTCF/NFY/YY1/SP-KLF/ETS (open-chromatin
-  background regardless of target). Use the Codebook contaminant set (download).
+- ✅ Contaminant filter: `scripts/flag_motif_artifacts.py` flags de-novo motifs whose best
+  TOMTOM match (vs v12+Codebook) is CTCF/NFY/YY1/SP-KLF/ETS (`--families` accepts the
+  Codebook set verbatim). Joins onto the Step-3 table → `pass` column; shortlist =
+  **high AUROC AND pass**. Wired into `rank_motifs.sbatch` (step 4 of the script).
 - 🟡 **GC + width-matched shuffled background**: emit_bins_bed.py gives OCR-matched bg;
   HOMER `-useNewBg`. ⬜ add explicit GC+width-matched shuffle for the scoring/enrichment.
-- ⬜ Repeat/TE clustering check: intersect motif instances with RepeatMasker; flag motifs
-  whose hits pile up in a single repeat family.
+- 🟡 Repeat/TE clustering: logic in `flag_motif_artifacts.py` (`--repeat-bed` +
+  `--instances-bed` → `te_clustered`); ⬜ needs a RepeatMasker BED (not yet available).
 
 ## Step 3 — Rank by PERFORMANCE, not information content  ✅
 - ✅ `scripts/rank_motifs_by_performance.py` — per motif, best PWM log-odds per sequence
