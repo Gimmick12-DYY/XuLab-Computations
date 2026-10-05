@@ -31,6 +31,8 @@ opt <- parse_args(OptionParser(option_list = list(
   make_option("--pmat", type = "character", help = "peaks x cells RDS (dgCMatrix)"),
   make_option("--barcodes", type = "character", default = NULL,
               help = "one TF-cell barcode per line (plain or .gz); omit to keep all columns"),
+  make_option("--regions", type = "character", default = NULL,
+              help = "optional: one peak region (colon chr:start-end) per line; subset peaks to these (two-stage Cicero on called-pair peaks)"),
   make_option("--out-mm", type = "character", help = "output mm/ dir"),
   make_option("--min-cells-per-peak", type = "integer", default = 2L),
   make_option("--min-peaks-per-cell", type = "integer", default = 0L)
@@ -66,6 +68,20 @@ if (is.null(opt$barcodes) || !nzchar(opt$barcodes)) {
   sub <- pm[, common, drop = FALSE]
 }
 
+# optional: restrict to a given peak set (two-stage Cicero on the called-pair peaks)
+if (!is.null(opt$regions) && nzchar(opt$regions)) {
+  want_r <- read_lines_maybe_gz(opt$regions)
+  want_r <- want_r[nzchar(want_r)]
+  common_r <- intersect(rownames(sub), want_r)
+  message(sprintf("[pmat] region subset: requested=%d matched=%d of %d pmat peaks",
+                  length(want_r), length(common_r), nrow(sub)))
+  if (length(common_r) < 20L)
+    stop("too few matched regions (", length(common_r), "); check colon form chr:start-end\n",
+         "  pmat ex: ", paste(head(rownames(sub), 2), collapse = " | "), "\n",
+         "  want ex: ", paste(head(want_r, 2), collapse = " | "))
+  sub <- sub[common_r, , drop = FALSE]
+}
+
 # filter peaks (>= min cells), then optionally cells (>= min peaks)
 peak_keep <- Matrix::rowSums(sub > 0) >= opt$`min-cells-per-peak`
 sub <- sub[peak_keep, , drop = FALSE]
@@ -76,7 +92,7 @@ if (opt$`min-peaks-per-cell` > 0L) {
 message(sprintf("[pmat] kept %d peaks x %d cells (nnz=%d) after min-cells/peak=%d, min-peaks/cell=%d",
                 nrow(sub), ncol(sub), length(sub@x),
                 opt$`min-cells-per-peak`, opt$`min-peaks-per-cell`))
-if (nrow(sub) < 100L || ncol(sub) < 50L)
+if (nrow(sub) < 20L || ncol(sub) < 50L)
   stop("subset too small after filtering (peaks=", nrow(sub), ", cells=", ncol(sub), ")")
 
 out <- opt$`out-mm`

@@ -25,6 +25,27 @@ cluster is the usual cause of "unchanged output."
 
 ## Log (newest first)
 
+### 2026-10-05 — Cicero co-binding: two-stage reproducibility filter (vs Hi-C loops)
+- **Motivation:** single-round Cicero coordinated-binding pairs barely overlap the Hi-C
+  Peakachu loops (`hic/scripts/compare_loops_to_cicero_pairs.py`), suggesting many pairs may
+  be spurious. Test reality by **reproducibility**: re-run Cicero RESTRICTED to the peaks in
+  round-1's called pairs, call pairs again, keep only pairs significant in BOTH rounds.
+- **Built (opt-in, NON-destructive — round-1 outputs untouched):**
+  - `scripts/extract_pairs_peaks.py` — unique peaks from a q-filtered peak_edges.tsv.
+  - `export_pmat_tf_mm.R` — new `--regions` to subset the pmat to those peaks (additive; no
+    effect on existing calls).
+  - `scripts/intersect_pair_edges.py` — round1 ∩ round2 unordered pairs → reproducible set
+    (+ round-2 coaccess/qval), prints Jaccard / % of round1.
+  - `slurm/run_cicero_two_stage.sbatch` — orchestrates: extract pair-peaks → restricted mm →
+    Cicero round 2 (+ genbsp null, same shuffle-Gaussian significance) → intersect → cluster.
+    Writes only `work/<TF>/cicero_stage2/` + `results/<TF>/stage2/`. Optional `LOOP_CORE/MID/
+    LOOSE` runs the loop-overlap compare on round1 vs reproducible to show if it improves.
+- **Run:** round 1 first (`run_cicero_cobinding.sbatch`), then
+  `TF=RBBP4 sbatch cobinding/slurm/run_cicero_two_stage.sbatch`.
+- **Files:** `cobinding/scripts/{extract_pairs_peaks.py,intersect_pair_edges.py,export_pmat_tf_mm.R}`,
+  `cobinding/slurm/run_cicero_two_stage.sbatch`.
+
+
 ### 2026-10-02 — Got the Codebook data (Zenodo 15667805); wired its motifs + artifact set
 - Paper: Hughes/Codebook Consortium, "An expanded codebook of human TF DNA-binding
   specificity" (Nature 2026, s41586-026-10798-9); data on Zenodo 10.5281/zenodo.15667805,
