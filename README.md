@@ -4,6 +4,7 @@
 
 1. **Paired-Tag / paired multimodal** — preprocessing and mapping scripts, `reachtools`, reference files, downstream R workflows, and pileup utilities.
 2. **cisTopic** — a standalone pipeline for **single-cell TF / accessibility matrices** using [pycisTopic](https://github.com/aertslab/pycisTopic): export from `.rds`, LDA with MALLET, model selection, and imputation (`theta` / `phi` or full `P(r|c)`).
+3. **unified** — a single-architecture PyTorch imputer for sparse TF / chromatin matrices: Basset-style sequence encoder, multi-scale bin-context conv, learnable cell bank, and a gated bilinear head, trained jointly (focal + ranking loss). Share pack (code only): [`share/unified_imputation_pipeline.zip`](share/unified_imputation_pipeline.zip).
 
 Additional pipelines may live alongside this tree over time.
 
@@ -30,6 +31,12 @@ Additional pipelines may live alongside this tree over time.
 | [`cisTopic/slurm/`](cisTopic/slurm/) | SLURM templates to submit each cisTopic stage and chained dependencies |
 | [`cisTopic/scripts/cistopic_ctcf/`](cisTopic/scripts/cistopic_ctcf/) | Example working directory with generated run outputs (`mm`, `obj`, `models`, `select`, `impute`, `downstream`, `eval`) |
 | [`Mallet-202108/`](Mallet-202108/) | Local MALLET distribution used by cisTopic (`paths.mallet_path`) |
+| [`unified/README.md`](unified/README.md) | Full unified docs: model structure, required inputs, config, manual/SLURM run |
+| [`unified/environment.yml`](unified/environment.yml) | Conda env **`unified`** (Python 3.11 + PyTorch + einops) |
+| [`unified/configs/`](unified/configs/) | `default.yaml` + per-TF overlays (`paths`, `model`, `train`, `impute`) |
+| [`unified/scripts/`](unified/scripts/) | `00_ingest` → `01_train` → `02_impute` (+ `02b` remask, `03` RDS export); `_model.py` |
+| [`unified/slurm/`](unified/slurm/) | Full-pipeline and multi-TF SLURM drivers (edit paths/partitions for your cluster) |
+| [`share/unified_imputation_pipeline.zip`](share/unified_imputation_pipeline.zip) | Share pack: code + configs only — **no** FASTA, BEDs, matrices, or `work/` |
 
 Folder names `shellscrips` and `refereces` match the upstream Paired-Tag layout.
 
@@ -49,11 +56,19 @@ conda env create -f cisTopic/environment.yml
 conda activate cistopic
 ```
 
+**unified** (PyTorch imputer; keep isolated from cisTopic):
+
+```bash
+conda env create -f unified/environment.yml
+conda activate unified
+```
+
 Notes:
 - `pycisTopic` is installed from GitHub in `cisTopic/environment.yml` (not from PyPI).
 - `paths.mallet_path` in `cisTopic/configs/default.yaml` must point to a real MALLET binary, e.g. `Mallet-202108/bin/mallet`.
+- The unified share zip does **not** include a genome FASTA or ATAC/blacklist BEDs. Recipients set `paths.genome_fa`, supply `mm/` (Matrix Market + regions + barcodes), and should set `impute.open_chromatin_bed: null` unless they provide their own open-chromatin BED.
 
-See [`cisTopic/README.md`](cisTopic/README.md) for full setup details.
+See [`cisTopic/README.md`](cisTopic/README.md) and especially [`unified/README.md`](unified/README.md) for architecture and end-to-end instructions. Also [`ENVIRONMENTS.md`](ENVIRONMENTS.md).
 
 ## Paired-Tag quick workflow
 
@@ -84,6 +99,31 @@ This writes AUROC/AUPRC benchmarking outputs under `<work_dir>/eval/`:
 You can also run strict held-out mode by first creating a masked matrix with `--prepare-holdout`, then retraining and scoring with `--holdout-split` (see script header in `cisTopic/scripts/07_eval_heldout.py`).
 
 Run locally or chain SLURM jobs under [`cisTopic/slurm/`](cisTopic/slurm/). Full steps, storage notes, and citations are in [`cisTopic/README.md`](cisTopic/README.md).
+
+## unified quick pointer
+
+**Model (one jointly trained net):** DNA window → SequenceEncoder (`D=64`) → BinContext (dilations 1/4/16 along chrom bins) → bilinear cell bank `p_rc` × GateMLP `g_rc` → \(\hat y = g\cdot p\). Trained with focal BCE + uniform negatives + pairwise ranking; optional RC augmentation. Open-chromatin BED filtering is **post-hoc and optional**, not part of the network.
+
+**You provide:** (1) sparse counts as `mm/{matrix.mtx.gz, regions, barcodes}`, (2) indexed genome FASTA matching contig names, (3) optional blacklist / open-chromatin BEDs. The zip ships none of these.
+
+```bash
+unzip share/unified_imputation_pipeline.zip -d /path/to/dest
+cd /path/to/dest/unified
+
+conda env create -f environment.yml && conda activate unified
+
+# Edit configs/default.yaml:
+#   paths.work_dir, paths.genome_fa
+#   impute.open_chromatin_bed: null   # unless you supply a BED
+# Place Matrix Market files under $work_dir/mm/
+
+python scripts/00_ingest.py --config configs/default.yaml
+python scripts/01_train.py  --config configs/default.yaml   # GPU
+python scripts/02_impute.py --config configs/default.yaml   # GPU
+# outputs: $work_dir/impute/{matrix_csr.npz, regions.tsv, barcodes.tsv, meta.json}
+```
+
+Full submodule dimensions, loss details, work-dir layout, and SLURM notes: [`unified/README.md`](unified/README.md).
 
 ## License and attribution
 
