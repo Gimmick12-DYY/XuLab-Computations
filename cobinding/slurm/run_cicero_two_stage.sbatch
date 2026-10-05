@@ -17,6 +17,11 @@
 #   work/<TF>/cicero_stage2/   and   results/<TF>/stage2/.
 # Requires round 1 first (run_cicero_cobinding.sbatch -> work/<TF>.peak_edges.tsv).
 #
+# RBBP4: do NOT use TF1000cells.pmat (different peak IDs). Use the lab TF-specific
+# matrix whose rownames are the MACS peaks in
+#   /vast/som/xujie_lab/TAGATG-293T/bigwig/peaks/TF.RBBP4_peaks.q005.rmdup.tssUpDn1k.bed
+#   (pmat: .../TAGATG-293T/combined/Cell1000/pmat/seurat/RBBP4.pmat.mtx.rds).
+#
 #   TF=RBBP4 sbatch cobinding/slurm/run_cicero_two_stage.sbatch
 set -euo pipefail
 
@@ -29,7 +34,10 @@ RESULTS="${COB_RESULTS:-${COB}/results}"
 UNIFIED="${UNIFIED:-${XULAB}/unified/work}"
 CHROMHMM="${CHROMHMM:-${DATA_DIR}/HEK293T_chromHMM18.bed.gz}"
 CFG="${CFG:-${COB}/configs/cicero_renlab.yaml}"
-PMAT="${PMAT:-${DATA_DIR}/TF1000cells.pmat.mtx.rds}"
+# default is the pooled TF1000cells pmat; RBBP4 overrides to the lab TF pmat below
+PMAT="${PMAT:-}"
+LAB_RBBP4_PMAT_SRC="${LAB_RBBP4_PMAT_SRC:-/vast/som/xujie_lab/TAGATG-293T/combined/Cell1000/pmat/seurat/RBBP4.pmat.mtx.rds}"
+LAB_RBBP4_PEAKS="${LAB_RBBP4_PEAKS:-/vast/som/xujie_lab/TAGATG-293T/bigwig/peaks/TF.RBBP4_peaks.q005.rmdup.tssUpDn1k.bed}"
 SHUFFLE_MODE="${SHUFFLE_MODE:-genbsp}"
 QVAL="${QVAL:-0.05}"
 MAX_DIST="${MAX_DIST:-1000000}"
@@ -52,8 +60,24 @@ TF="${TF_ARR[$IDX]}"; tf="$(echo "${TF}" | tr '[:upper:]' '[:lower:]')"
 
 EDGES1="${WORK}/${TF}.peak_edges.tsv"
 [[ -s "${EDGES1}" ]] || { echo "no round-1 edges ${EDGES1}; run round 1 first" >&2; exit 1; }
-BARCODES="${UNIFIED}/${tf}/mm/barcodes.tsv.gz"
-[[ -s "${BARCODES}" ]] || { echo "no barcodes ${BARCODES}" >&2; exit 1; }
+
+# Peak matrix: RBBP4 uses lab TF-specific pmat (exact MACS peak IDs). Other TFs
+# still use pooled TF1000cells + barcode subset unless PMAT is overridden.
+BARCODE_ARGS=()
+if [[ "${TF}" == "RBBP4" ]]; then
+  PMAT="${PMAT:-${DATA_DIR}/RBBP4.pmat.mtx.rds}"
+  if [[ ! -s "${PMAT}" ]]; then
+    [[ -s "${LAB_RBBP4_PMAT_SRC}" ]] || { echo "lab RBBP4 pmat missing: ${LAB_RBBP4_PMAT_SRC}" >&2; exit 1; }
+    echo "[$(date)] copy lab RBBP4.pmat -> ${PMAT} (vast share not modified)"
+    cp -n "${LAB_RBBP4_PMAT_SRC}" "${PMAT}"
+  fi
+  echo "[$(date)] RBBP4 peaks (read-only): ${LAB_RBBP4_PEAKS}"
+else
+  PMAT="${PMAT:-${DATA_DIR}/TF1000cells.pmat.mtx.rds}"
+  BARCODES="${UNIFIED}/${tf}/mm/barcodes.tsv.gz"
+  [[ -s "${BARCODES}" ]] || { echo "no barcodes ${BARCODES}" >&2; exit 1; }
+  BARCODE_ARGS=(--barcodes "${BARCODES}")
+fi
 [[ -s "${PMAT}" ]] || { echo "no pmat ${PMAT}" >&2; exit 1; }
 
 CWD2="${WORK}/${TF}/cicero_stage2"
@@ -61,7 +85,7 @@ RES2="${RESULTS}/${TF}/stage2"
 CONNS2="${CWD2}/cicero/coaccess.tsv.gz"
 EDGES2="${CWD2}/${TF}.peak_edges.tsv"
 mkdir -p "${CWD2}" "${RES2}"
-echo "[$(date)] TF=${TF} two-stage; round1=${EDGES1}"
+echo "[$(date)] TF=${TF} two-stage; round1=${EDGES1}; pmat=${PMAT}"
 
 # ---- 1. peaks from round-1 called pairs (q<=QVAL) ---------------------------
 conda activate "${PY_ENV}"
@@ -72,7 +96,7 @@ python "${COB}/scripts/extract_pairs_peaks.py" \
 if [[ "${REBUILD}" == "1" || ! -s "${CONNS2}" ]]; then
   conda activate "${CICERO_ENV}"
   Rscript "${COB}/scripts/export_pmat_tf_mm.R" \
-    --pmat "${PMAT}" --barcodes "${BARCODES}" --regions "${CWD2}/stage1_peaks.txt" \
+    --pmat "${PMAT}" "${BARCODE_ARGS[@]}" --regions "${CWD2}/stage1_peaks.txt" \
     --out-mm "${CWD2}/mm" --min-cells-per-peak 1
   module unload r 2>/dev/null || true
   cd "${CICERO_ROOT}"

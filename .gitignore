@@ -55,6 +55,8 @@ downstream/tracks/
 downstream/plots/
 downstream/__pycache__/
 
+sc_TF_share/
+
 .DS_Store
 *.pyc
 *.pkl
