@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --job-name=denovo_pmat
+#SBATCH --job-name=denovo_imp
 #SBATCH --output=%x-%A_%a.out
 #SBATCH --error=%x-%A_%a.err
 #SBATCH --cpus-per-task=8
@@ -7,18 +7,21 @@
 #SBATCH --time=12:00:00
 #SBATCH --mail-type=FAIL
 #
-# De novo motif discovery on original pmat peaks (median ~339 bp) for the
-# 45 TFs with no Homer/HOCOMOCO motif. HOMER + STREME + TOMTOM vs merged DB.
+# De novo motif discovery on imputed MACS3 peaks for the 45 TFs with no
+# Homer/HOCOMOCO motif. Same steps as motif_denovo_pmat.sbatch:
+# HOMER + STREME + TOMTOM vs merged DB.
 #
-#   TFS="rbbp4 xpa ..." sbatch --array=0-44 downstream/slurm/motif_denovo_pmat.sbatch
+#   sbatch --array=0-44 motif_analysis/slurm/motif_denovo_imputed.sbatch
+#   TFS="rbbp4 xpa" sbatch --array=0-1 motif_analysis/slurm/motif_denovo_imputed.sbatch
 #
-# Expects <OUT_ROOT>/<tf>/<tf>.pmat_peaks.bed from extract_pmat_peaks.R
-# (or extracts on the fly if the BED is missing).
+# Reuses <motif/>/<tf>/<tf>.imputed_peaks.bed when present (top N_FG by
+# signal). Otherwise calls peaks via call_imputed_peaks.py.
 
 set -euo pipefail
 
 ROOT_DIR="${ROOT_DIR:-/work/users/d/y/dyy12/XuLab}"
-DOWN_DIR="${ROOT_DIR}/downstream"
+MOTIF_DIR="${MOTIF_DIR:-${ROOT_DIR}/motif_analysis}"
+DOWN_DIR="${DOWN_DIR:-${ROOT_DIR}/downstream}"  # shared: call_imputed_peaks, hg38.fa, HOCOMOCOv11
 cd "${ROOT_DIR}"
 
 UNKNOWN_TFS="${UNKNOWN_TFS:-rbbp4 xpa rbbp7 znf507 nme2 mbd3 znf703 glyr1 safb mtf2 hoxb9 flywch1 dr1 pa2g4 znf512b znf644 znf367 ezh2 srcap stag2 wiz znf777 znf746 champ1 pogk thap6 zufsp dnmt1 znf512 zbtb43 adnp trafd1 zbtb40 sox12 akap8l znf581 neurod4 nr1d2 hp1 znf606 znf79 pcgf6 znf503 setdb1 hoxc4}"
@@ -39,14 +42,18 @@ IDX="${SLURM_ARRAY_TASK_ID:-0}"
 (( IDX >= 0 && IDX < ${#TF_ARR[@]} )) || { echo "array index ${IDX} out of range (n=${#TF_ARR[@]})" >&2; exit 1; }
 TF="${TF_ARR[$IDX]}"
 
-OUT_ROOT="${OUT_ROOT:-${DOWN_DIR}/motif_pmat}"
+OUT_ROOT="${OUT_ROOT:-${MOTIF_DIR}/motif_imputed}"
 OUT="${OUT_ROOT}/${TF}"
-BED="${OUT}/${TF}.pmat_peaks.bed"
+BED="${OUT}/${TF}.imputed_peaks.bed"
+SRC_BED="${SRC_BED:-${MOTIF_DIR}/motif/${TF}/${TF}.imputed_peaks.bed}"
+IMPUTE_DIR="${IMPUTE_DIR:-${ROOT_DIR}/unified/work/${TF}/impute}"
 HG38_FA="${HG38_FA:-${DOWN_DIR}/cache/hg38.fa}"
 HOMER_GENOME="${HOMER_GENOME:-hg38}"
-MOTIF_DB="${MOTIF_DB:-${DOWN_DIR}/cache/motifdb/merged_human_motifs.meme}"
+MOTIF_DB="${MOTIF_DB:-${MOTIF_DIR}/cache/motifdb/merged_human_motifs.meme}"
 THREADS="${SLURM_CPUS_PER_TASK:-8}"
 MIN_PEAKS="${MIN_PEAKS:-50}"
+N_FG="${N_FG:-20000}"
+MACS_Q="${MACS_Q:-0.05}"
 
 CONDA_ENV="${CONDA_ENV:-data_prep}"
 source "$(conda info --base)/etc/profile.d/conda.sh"
@@ -58,13 +65,32 @@ MEME_BIN="${MEME_BIN:-/nas/longleaf/rhel9/apps/meme/5.5.7/bin}"
 
 mkdir -p "${OUT}"
 if [[ ! -s "${BED}" ]]; then
-  echo "[$(date)] ${TF}: extracting pmat peaks"
-  export PATH="/nas/longleaf/rhel9/apps/r/4.4.0/bin:${PATH}"
-  Rscript "${DOWN_DIR}/scripts/extract_pmat_peaks.R" \
-    --out-root "${OUT_ROOT}" --tfs "${TF}" --min-cells 2 --n-fg 20000
+  if [[ -s "${SRC_BED}" ]]; then
+    echo "[$(date)] ${TF}: taking top ${N_FG} imputed peaks from ${SRC_BED}"
+    sort -k5,5nr "${SRC_BED}" | awk -v n="${N_FG}" 'NR<=n' > "${BED}"
+  else
+    echo "[$(date)] ${TF}: calling imputed peaks (MACS3 q<${MACS_Q})"
+    PEAK_WORK="${OUT}/peaks"
+    mkdir -p "${PEAK_WORK}"
+    set +e
+    python "${DOWN_DIR}/call_imputed_peaks.py" \
+      --impute-dir "${IMPUTE_DIR}" --tf "${TF}" \
+      --out-bed "${OUT}/${TF}.imputed_peaks.all.bed" --out-dir "${PEAK_WORK}" \
+      --macs-q "${MACS_Q}" --min-peaks "${MIN_PEAKS}"
+    rc=$?
+    set -e
+    if (( rc == 3 )); then
+      echo "[skip] ${TF}: fewer than ${MIN_PEAKS} imputed peaks" >&2
+      echo "${TF}" >> "${OUT_ROOT}/skipped_insufficient_peaks.txt"
+      exit 0
+    elif (( rc != 0 )); then
+      exit "${rc}"
+    fi
+    sort -k5,5nr "${OUT}/${TF}.imputed_peaks.all.bed" | awk -v n="${N_FG}" 'NR<=n' > "${BED}"
+  fi
 fi
 if [[ ! -s "${BED}" ]]; then
-  echo "[skip] ${TF}: no pmat peak BED" >&2
+  echo "[skip] ${TF}: no imputed peak BED" >&2
   echo "${TF}" >> "${OUT_ROOT}/skipped_no_peaks.txt"
   exit 0
 fi
@@ -74,7 +100,7 @@ if (( N_PEAKS < MIN_PEAKS )); then
   echo "${TF}" >> "${OUT_ROOT}/skipped_insufficient_peaks.txt"
   exit 0
 fi
-echo "[$(date)] ${TF}: ${N_PEAKS} pmat peaks"
+echo "[$(date)] ${TF}: ${N_PEAKS} imputed peaks"
 
 if [[ "${FORCE_HOMER:-0}" == "1" ]]; then rm -rf "${OUT}/homer"; fi
 if [[ ! -s "${OUT}/homer/homerResults.html" ]]; then
@@ -102,7 +128,7 @@ if [[ -s "${MOTIF_DB}" ]]; then
       || echo "[warn] tomtom(streme) failed" >&2
   fi
   if [[ -s "${OUT}/homer/homerMotifs.all.motifs" && ! -s "${OUT}/tomtom/homer/tomtom.tsv" ]]; then
-    python "${DOWN_DIR}/scripts/homer_motifs_to_meme.py" \
+    python "${MOTIF_DIR}/scripts/homer_motifs_to_meme.py" \
       --homer "${OUT}/homer/homerMotifs.all.motifs" \
       --out "${OUT}/tomtom/homer_denovo.meme"
     tomtom -no-ssc -oc "${OUT}/tomtom/homer" -verbosity 1 -min-overlap 5 \

@@ -8,7 +8,7 @@
 #
 #   python merge_meme_db.py \
 #     --in HOCOMOCOv12_H12CORE_meme_format.meme=h12 codebook_cisbp3.1.meme=cdbk \
-#     --out downstream/cache/motifdb/merged_human_motifs.meme
+#     --out motif_analysis/cache/motifdb/merged_human_motifs.meme
 #
 # Motif IDs become "<tag>|<original_id>" (dedup within tag). The output header is a
 # single MEME v4 preamble; background is taken from the first file that declares one.

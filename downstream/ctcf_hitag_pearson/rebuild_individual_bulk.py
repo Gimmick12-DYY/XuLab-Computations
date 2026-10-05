@@ -38,9 +38,9 @@ def main() -> None:
     agg = np.load(OUT / "imputed_aggregate_10kb.npz")["score"].astype(float)
     imputed_log = np.log1p(np.clip(z["imputed"].astype(float), 0, None))
     agg_log = np.log1p(np.clip(agg, 0, None))
+    # Chromnitron = SA replicate (former pred_2); eLife/pred_1 dropped.
     labels = [
-        "Chromnitron_pred1",
-        "Chromnitron_pred2",
+        "Chromnitron",
         "ENCODE",
         "GSE103651",
         "293Tcon1",
@@ -51,7 +51,6 @@ def main() -> None:
         "Imputed_aggregate_log1p",
     ]
     cols = [
-        z["Chromnitron_pred1"].astype(float),
         z["Chromnitron_pred2"].astype(float),
         bulk[:, 0],
         bulk[:, 1],

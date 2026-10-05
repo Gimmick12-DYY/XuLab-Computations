@@ -10,7 +10,7 @@ masked imputed** TF calls. One SLURM array task per TF; efficient by constructio
 unified/work/<tf>/impute/matrix_csr.npz
         │  call_imputed_peaks.py  (pseudobulk -> MACS3 q<0.05 -> narrowPeak)
         ▼
-downstream/motif/<tf>/<tf>.imputed_peaks.bed          (+ <tf>.background.bed)
+motif_analysis/motif/<tf>/<tf>.imputed_peaks.bed          (+ <tf>.background.bed)
         │
         ├── HOMER  findMotifsGenome.pl <bed> hg38 homer/ -useNewBg -p 8 -size given
         └── AME    bed2fasta <bed> hg38.fa -> ame(<peaks.fa>, HOCOMOCO.meme)
@@ -55,11 +55,11 @@ proportional-to-accessibility washes to ~0. Peaks are then called on that residu
 Build the consensus once (default `--normalize fraction`):
 
 ```bash
-python downstream/build_consensus_accessibility.py \
-  --out-npy downstream/motif/consensus_accessibility.npy      # all impute dirs, rank-normalized
+python motif_analysis/scripts/build_consensus_accessibility.py \
+  --out-npy motif_analysis/motif/consensus_accessibility.npy      # all impute dirs, rank-normalized
 ```
 
-Outputs go to a **separate tree** (`downstream/motif_tfspec/`) so they never mix
+Outputs go to a **separate tree** (`motif_analysis/motif_tfspec/`) so they never mix
 with the plain run. If a TF has little signal above consensus it falls under
 `MIN_PEAKS` and is skipped — that is the honest "no TF-specific signal" outcome.
 
@@ -72,7 +72,7 @@ with the plain run. If a TF has little signal above consensus it falls under
 ## Reference-gated by manifest
 
 Motif enrichment only makes sense where the TF has a reference motif, so the run
-is driven by `downstream/motif_reference_manifest.tsv`. The rule is fixed:
+is driven by `motif_analysis/motif_reference_manifest.tsv`. The rule is fixed:
 
 - **HOMER** runs for a TF when `homer = yes`.
 - **AME** runs for a TF when `hocomoco_full` is present (HOCOMOCO v11 **full**).
@@ -85,25 +85,25 @@ every study TF (incl. the panel: ctcf, maz, …).
 
 ```bash
 # 1. see eligible TFs (HOMER-yes OR HOCOMOCO-full) and get the array size
-LIST=1 bash downstream/slurm/motif_enrichment.sbatch
-N=$(LIST=1 bash downstream/slurm/motif_enrichment.sbatch | grep -vc '^#')
+LIST=1 bash motif_analysis/slurm/motif_enrichment.sbatch
+N=$(LIST=1 bash motif_analysis/slurm/motif_enrichment.sbatch | grep -vc '^#')
 
 # 2. submit; each TF runs only the pipeline(s) it has a reference for
-sbatch --array=0-$((N-1)) downstream/slurm/motif_enrichment.sbatch
+sbatch --array=0-$((N-1)) motif_analysis/slurm/motif_enrichment.sbatch
 
 # explicit subset (still gated by the manifest)
-TFS="mef2a znf143" sbatch --array=0-1 downstream/slurm/motif_enrichment.sbatch
+TFS="mef2a znf143" sbatch --array=0-1 motif_analysis/slurm/motif_enrichment.sbatch
 
 # TF-specific (consensus-subtracted) peaks -> motif_tfspec/
-python downstream/build_consensus_accessibility.py --out-npy downstream/motif/consensus_accessibility.npy
-TF_SPECIFIC=1 sbatch --array=0-$((N-1)) downstream/slurm/motif_enrichment.sbatch
+python motif_analysis/scripts/build_consensus_accessibility.py --out-npy motif_analysis/motif/consensus_accessibility.npy
+TF_SPECIFIC=1 sbatch --array=0-$((N-1)) motif_analysis/slurm/motif_enrichment.sbatch
 ```
 
 ### Key env knobs (all optional)
 
 | Var | Default | Meaning |
 |-----|---------|---------|
-| `MANIFEST` | `downstream/motif_reference_manifest.tsv` | per-TF reference availability |
+| `MANIFEST` | `motif_analysis/motif_reference_manifest.tsv` | per-TF reference availability |
 | `TFS` | manifest-eligible | explicit TF list (still gated by the manifest) |
 | `CONDA_ENV` | `data_prep` | env with macs3 + numpy/scipy (peak calling) |
 | `HOMER_MODULE` / `MEME_MODULE` | unset | `module load` args for HOMER / MEME |
@@ -132,5 +132,5 @@ TF_SPECIFIC=1 sbatch --array=0-$((N-1)) downstream/slurm/motif_enrichment.sbatch
 - HOMER preparses the genome on first use. For large parallel arrays, warm it by
   running one TF first, or set a shared `-preparsedDir`, to avoid concurrent
   preparse writes.
-- Outputs under `downstream/motif/` are gitignored (regenerable); the scripts are
+- Outputs under `motif_analysis/motif/` are gitignored (regenerable); the scripts are
   tracked.

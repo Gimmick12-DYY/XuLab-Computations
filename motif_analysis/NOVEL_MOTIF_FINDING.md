@@ -19,11 +19,11 @@ Status legend: ✅ built · 🟡 partial/needs data · ⬜ not started.
   Codebook `.ppm/.pcm` → MEME (TF = leading token). ✅ `scripts/merge_meme_db.py` builds the
   v12+Codebook DB that TOMTOM consumes:
   ```
-  bash downstream/scripts/fetch_codebook.sh
-  python downstream/scripts/merge_meme_db.py \
+  bash motif_analysis/scripts/fetch_codebook.sh
+  python motif_analysis/scripts/merge_meme_db.py \
     --in HOCOMOCOv12_H12CORE_meme_format.meme=h12 \
-         downstream/cache/motifdb/codebook_top1.meme=cdbk \
-    --out downstream/cache/motifdb/merged_human_motifs.meme
+         motif_analysis/cache/motifdb/codebook_top1.meme=cdbk \
+    --out motif_analysis/cache/motifdb/merged_human_motifs.meme
   ```
 - ⬜ MoSBAT (affinity correlation) as the upgrade over `tomtom -dist pearson`.
 - Expectation: many "novel" motifs map to Codebook TFs (C2H2-ZNF, CXXC, AT-hook, BED-zf).

@@ -43,7 +43,6 @@ downstream/bins_*/
 downstream/bin_coverage_*/
 downstream/peak_coverage_*/
 downstream/compare_pos_neg_*/
-downstream/motif*/
 downstream/slide_tables/
 downstream/pos_neg_all*/
 downstream/sensitivity_specificity/
@@ -54,6 +53,11 @@ downstream/umi_distribution/
 downstream/tracks/
 downstream/plots/
 downstream/__pycache__/
+
+# Motif analysis: keep scripts/slurm/docs/manifests; drop large result trees + DBs
+motif_analysis/motif*/
+motif_analysis/cache/
+motif_analysis/**/__pycache__/
 
 sc_TF_share/
 

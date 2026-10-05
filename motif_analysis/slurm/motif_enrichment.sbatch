@@ -8,27 +8,27 @@
 #SBATCH --mail-type=FAIL
 #
 # Per-TF motif enrichment on the (open-chromatin-masked) imputed calls, run only
-# where the TF has a reference motif (downstream/motif_reference_manifest.tsv):
+# where the TF has a reference motif (motif_analysis/motif_reference_manifest.tsv):
 #   HOMER runs when  homer = yes
 #   AME   runs when  hocomoco_full is present (HOCOMOCO v11 FULL, mono human)
 # TFs with neither are skipped; a TF with only one reference runs only that step.
 #
 # See eligible TFs and array size, then submit:
-#   LIST=1 bash downstream/slurm/motif_enrichment.sbatch
-#   N=$(LIST=1 bash downstream/slurm/motif_enrichment.sbatch | grep -vc '^#')
-#   sbatch --array=0-$((N-1)) downstream/slurm/motif_enrichment.sbatch
+#   LIST=1 bash motif_analysis/slurm/motif_enrichment.sbatch
+#   N=$(LIST=1 bash motif_analysis/slurm/motif_enrichment.sbatch | grep -vc '^#')
+#   sbatch --array=0-$((N-1)) motif_analysis/slurm/motif_enrichment.sbatch
 #
 # Background comparison (BG_MODE, same peaks, different control -> coexisting dirs
 # homer_{genome,ocr}/ + ame_{genome,ocr}/):
-#   BG_MODE=genome TFS="nrf1 ctcf e2f3" sbatch --array=0-2 downstream/slurm/motif_enrichment.sbatch
+#   BG_MODE=genome TFS="nrf1 ctcf e2f3" sbatch --array=0-2 motif_analysis/slurm/motif_enrichment.sbatch
 #   BG_MODE=ocr FORCE_HOMER=1 SKIP_AME=1 TFS="ctcf e2f3 nrf1 maz" \
-#     sbatch --array=0-3 downstream/slurm/motif_enrichment.sbatch
+#     sbatch --array=0-3 motif_analysis/slurm/motif_enrichment.sbatch
 # HOMER OCR extras (practicalTips): -cpg (CpG leftover after GC match) + -olen 3
 # (kills Maz/poly-G junk). Override: HOMER_OCR_EXTRA=""  or FORCE_HOMER=1 to rerun.
 #
 # ALL panel TFs (HOMER+AME for every TF, manifest bypassed):
-#   N=$(ALL_TFS=1 LIST=1 bash downstream/slurm/motif_enrichment.sbatch | grep -vc '^#')
-#   ALL_TFS=1 sbatch --array=0-$((N-1)) downstream/slurm/motif_enrichment.sbatch
+#   N=$(ALL_TFS=1 LIST=1 bash motif_analysis/slurm/motif_enrichment.sbatch | grep -vc '^#')
+#   ALL_TFS=1 sbatch --array=0-$((N-1)) motif_analysis/slurm/motif_enrichment.sbatch
 #
 # Peaks are called at MACS3 q<0.05 on the imputed pseudobulk (call_imputed_peaks.py,
 # reusing peak_coverage.py -- the project peak-calling standard), then HOMER + AME.
@@ -46,10 +46,11 @@
 set -euo pipefail
 
 ROOT_DIR="${ROOT_DIR:-/work/users/d/y/dyy12/XuLab}"
-DOWN_DIR="${ROOT_DIR}/downstream"
+MOTIF_DIR="${MOTIF_DIR:-${ROOT_DIR}/motif_analysis}"
+DOWN_DIR="${DOWN_DIR:-${ROOT_DIR}/downstream}"  # shared: call_imputed_peaks, hg38.fa, HOCOMOCOv11
 cd "${ROOT_DIR}"
 
-MANIFEST="${MANIFEST:-${DOWN_DIR}/motif_reference_manifest.tsv}"
+MANIFEST="${MANIFEST:-${MOTIF_DIR}/motif_reference_manifest.tsv}"
 [[ -s "${MANIFEST}" ]] || { echo "manifest not found: ${MANIFEST}" >&2; exit 1; }
 
 # TFs with any reference: HOMER (col2=yes) OR HOCOMOCO full (col4 present).
@@ -125,7 +126,7 @@ IMPUTE_DIR="${IMPUTE_DIR:-${ROOT_DIR}/unified/work/${TF}/impute}"
 # shared accessibility consensus, isolating TF-specific signal. Separate output
 # tree (motif_tfspec) so it never collides with the plain (accessibility) run.
 TF_SPECIFIC="${TF_SPECIFIC:-0}"
-CONSENSUS_NPY="${CONSENSUS_NPY:-${DOWN_DIR}/motif/consensus_accessibility.npy}"
+CONSENSUS_NPY="${CONSENSUS_NPY:-${MOTIF_DIR}/motif/consensus_accessibility.npy}"
 CONSENSUS_NORMALIZE="${CONSENSUS_NORMALIZE:-fraction}"  # count-preserving (callable peaks)
 CONSENSUS_SCALE="${CONSENSUS_SCALE:-1.0}"               # <1 softer / more peaks, >1 stricter
 # REGION=peaks (default, MACS3-called peaks) | bins (the TF's top binding BINS taken
@@ -133,11 +134,11 @@ CONSENSUS_SCALE="${CONSENSUS_SCALE:-1.0}"               # <1 softer / more peaks
 REGION="${REGION:-peaks}"
 TOP_N_BINS="${TOP_N_BINS:-20000}"        # REGION=bins: top-N bins by signal
 if [[ "${TF_SPECIFIC}" == "1" ]]; then
-  OUT_ROOT="${OUT_ROOT:-${DOWN_DIR}/motif_tfspec}"
+  OUT_ROOT="${OUT_ROOT:-${MOTIF_DIR}/motif_tfspec}"
 elif [[ "${REGION}" == "bins" ]]; then
-  OUT_ROOT="${OUT_ROOT:-${DOWN_DIR}/motif_bins}"
+  OUT_ROOT="${OUT_ROOT:-${MOTIF_DIR}/motif_bins}"
 else
-  OUT_ROOT="${OUT_ROOT:-${DOWN_DIR}/motif}"
+  OUT_ROOT="${OUT_ROOT:-${MOTIF_DIR}/motif}"
 fi
 OUT="${OUT_ROOT}/${TF}"
 HG38_FA="${HG38_FA:-${DOWN_DIR}/cache/hg38.fa}"
@@ -209,7 +210,7 @@ echo "[$(date)] TF=${TF} run_homer=${RUN_HOMER} run_ame=${RUN_AME} tf_specific=$
 CONSENSUS_ARGS=()
 if [[ "${TF_SPECIFIC}" == "1" ]]; then
   [[ -s "${CONSENSUS_NPY}" ]] || { echo "ERROR: TF_SPECIFIC=1 but consensus missing: ${CONSENSUS_NPY}
-  build once: python ${DOWN_DIR}/build_consensus_accessibility.py --out-npy ${CONSENSUS_NPY}" >&2; exit 1; }
+  build once: python ${MOTIF_DIR}/scripts/build_consensus_accessibility.py --out-npy ${CONSENSUS_NPY}" >&2; exit 1; }
   CONSENSUS_ARGS=(--consensus-npy "${CONSENSUS_NPY}" --consensus-normalize "${CONSENSUS_NORMALIZE}" --consensus-scale "${CONSENSUS_SCALE}")
 fi
 
@@ -227,7 +228,7 @@ if [[ "${REGION}" == "bins" ]]; then
   if [[ ! -s "${BED}" ]]; then
     echo "[$(date)] ${TF}: emitting top-${TOP_N_BINS} BINS"
     set +e
-    python "${DOWN_DIR}/emit_bins_bed.py" \
+    python "${MOTIF_DIR}/scripts/emit_bins_bed.py" \
       --matrix-dir "${IMPUTE_DIR}" --tf "${TF}" \
       --out-bed "${BED}" --top-n "${TOP_N_BINS}" --min-peaks "${MIN_PEAKS}" \
       --open-bed "${OPEN_BED}" --bg-out "${BG_BED}"
@@ -350,7 +351,7 @@ if (( RUN_AME == 1 )); then
     fi
     # Balanced GC match (no replacement): subsample fg+bg to the same n per GC
     # bin. Upsampling the smaller OCR set with replacement was re-inflating AME.
-    python "${DOWN_DIR}/scripts/gc_match_fasta.py" \
+    python "${MOTIF_DIR}/scripts/gc_match_fasta.py" \
       --fg "${PEAK_FA}" --bg "${BG_FA_RAW}" \
       --out-fg "${PEAK_FA_MATCHED}" --out-bg "${BG_FA}"
     PEAK_FA="${PEAK_FA_MATCHED}"

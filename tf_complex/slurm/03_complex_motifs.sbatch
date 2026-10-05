@@ -10,7 +10,7 @@
 # Step 3 (checklist step 4): shared-motif test per candidate complex. Build each
 # complex's co-bound BED + union-peak background (build_complex_beds.py), then
 # HOMER de novo + AME (HOCOMOCO v11 full) -- same commands/caches as
-# downstream/slurm/motif_enrichment.sbatch. Array = one complex per task.
+# motif_analysis/slurm/motif_enrichment.sbatch. Array = one complex per task.
 #
 #   # after tf_complexes.py wrote candidate_complexes.tsv:
 #   sbatch tf_complex/slurm/03_complex_motifs.sbatch                 # builds BEDs on task 0 too

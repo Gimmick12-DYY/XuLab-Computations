@@ -25,34 +25,35 @@
 #   5. SEA: known-motif enrichment vs the same matched background
 #
 # Submit:
-#   N=$(LIST=1 bash downstream/slurm/motif_denovo_specific.sbatch | grep -vc '^#')
-#   sbatch --array=0-$((N-1)) downstream/slurm/motif_denovo_specific.sbatch
+#   N=$(LIST=1 bash motif_analysis/slurm/motif_denovo_specific.sbatch | grep -vc '^#')
+#   sbatch --array=0-$((N-1)) motif_analysis/slurm/motif_denovo_specific.sbatch
 # One TF:
-#   TFS="rbbp4" sbatch --array=0-0 downstream/slurm/motif_denovo_specific.sbatch
+#   TFS="rbbp4" sbatch --array=0-0 motif_analysis/slurm/motif_denovo_specific.sbatch
 #
-# Outputs under downstream/motif_specific/<tf>/: regions/, homer/, streme/,
+# Outputs under motif_analysis/motif_specific/<tf>/: regions/, homer/, streme/,
 #   tomtom/, sea/.
 
 set -euo pipefail
 
 ROOT_DIR="${ROOT_DIR:-/work/users/d/y/dyy12/XuLab}"
-DOWN_DIR="${ROOT_DIR}/downstream"
+MOTIF_DIR="${MOTIF_DIR:-${ROOT_DIR}/motif_analysis}"
+DOWN_DIR="${DOWN_DIR:-${ROOT_DIR}/downstream}"  # shared: call_imputed_peaks, hg38.fa, HOCOMOCOv11
 cd "${ROOT_DIR}"
 
 # Prefer the original peak-level panel (median ~339 bp MACS peaks from
 # TF1000cells.pmat.mtx.rds). Fall back to the 1 kb imputed panel if the
 # peak panel has not been built yet.
 if [[ -z "${PANEL_NPZ:-}" ]]; then
-  if [[ -s "${DOWN_DIR}/motif/pmat_panel.npz" ]]; then
-    PANEL_NPZ="${DOWN_DIR}/motif/pmat_panel.npz"
+  if [[ -s "${MOTIF_DIR}/motif/pmat_panel.npz" ]]; then
+    PANEL_NPZ="${MOTIF_DIR}/motif/pmat_panel.npz"
   else
-    PANEL_NPZ="${DOWN_DIR}/motif/panel_prevalence.npz"
+    PANEL_NPZ="${MOTIF_DIR}/motif/panel_prevalence.npz"
   fi
 fi
-OUT_ROOT="${OUT_ROOT:-${DOWN_DIR}/motif_specific}"
+OUT_ROOT="${OUT_ROOT:-${MOTIF_DIR}/motif_specific}"
 HG38_FA="${HG38_FA:-${DOWN_DIR}/cache/hg38.fa}"
 HOMER_GENOME="${HOMER_GENOME:-hg38}"
-MOTIF_DB="${MOTIF_DB:-${DOWN_DIR}/cache/motifdb/merged_human_motifs.meme}"
+MOTIF_DB="${MOTIF_DB:-${MOTIF_DIR}/cache/motifdb/merged_human_motifs.meme}"
 THREADS="${SLURM_CPUS_PER_TASK:-8}"
 
 N_FG="${N_FG:-20000}"
@@ -99,7 +100,7 @@ MEME_BIN="${MEME_BIN:-/nas/longleaf/rhel9/apps/meme/5.5.7/bin}"
 [[ -x "${MEME_BIN}/streme" ]] && export PATH="${MEME_BIN}:${PATH}"
 
 [[ -s "${PANEL_NPZ}" ]] || { echo "ERROR: panel matrix missing: ${PANEL_NPZ}
-  build it first: sbatch downstream/slurm/build_panel_matrix.sbatch" >&2; exit 1; }
+  build it first: sbatch motif_analysis/slurm/build_panel_matrix.sbatch" >&2; exit 1; }
 
 echo "[$(date)] TF=${TF}"
 
@@ -131,7 +132,7 @@ FG="${REG}/${TF}.specific_fg.bed"
 BG="${REG}/${TF}.specific_bg.bed"
 if [[ "${FORCE_REGIONS:-0}" == "1" || ! -s "${FG}" ]]; then
   set +e
-  python "${DOWN_DIR}/scripts/tf_specific_regions.py" \
+  python "${MOTIF_DIR}/scripts/tf_specific_regions.py" \
     --panel-npz "${PANEL_NPZ}" --tf "${TF}" --out-dir "${REG}" \
     --n-fg "${N_FG}" --bg-ratio "${BG_RATIO}" "${EXCL_ARGS[@]+"${EXCL_ARGS[@]}"}"
   rc=$?; set -e
@@ -177,7 +178,7 @@ if [[ -s "${MOTIF_DB}" ]]; then
       || echo "[warn] tomtom(streme) failed for ${TF}" >&2
   fi
   if [[ -s "${OUT}/homer/homerMotifs.all.motifs" ]]; then
-    python "${DOWN_DIR}/scripts/homer_motifs_to_meme.py" \
+    python "${MOTIF_DIR}/scripts/homer_motifs_to_meme.py" \
       --homer "${OUT}/homer/homerMotifs.all.motifs" \
       --out "${OUT}/tomtom/homer_denovo.meme"
     tomtom -no-ssc -oc "${OUT}/tomtom/homer" -verbosity 1 -min-overlap 5 \

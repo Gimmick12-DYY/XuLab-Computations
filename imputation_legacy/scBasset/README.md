@@ -175,7 +175,7 @@ python downstream/compare_pos_neg.py \
 
 This is item **4** of the "discover new bins" roadmap.
 
-1. **Motif-aware propagation** — `downstream/fetch_ctcf_motif_bed.sh`
+1. **Motif-aware propagation** — `motif_analysis/scripts/fetch_ctcf_motif_bed.sh`
    feeds `cisTopic/05_impute.py` and `PUscOpen/06_impute.py` via
    auto-detected `target_bed`.
 2. **Cell-graph kNN propagation** — `downstream/cell_graph_kneighbour.py`

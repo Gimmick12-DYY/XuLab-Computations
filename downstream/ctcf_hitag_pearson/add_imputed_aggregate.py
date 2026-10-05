@@ -132,8 +132,7 @@ def main() -> None:
     bulk = np.nanmean(np.vstack([zscore(bulk3[:, j]) for j in range(3)]), axis=0)
 
     labels = [
-        "Chromnitron_pred1",
-        "Chromnitron_pred2",
+        "Chromnitron",
         "Consensus_bulk",
         "HiTAG_weight",
         "HiTAG_macs2",
@@ -142,8 +141,7 @@ def main() -> None:
         "Imputed_aggregate",
     ]
     cols = {
-        "Chromnitron_pred1": z["Chromnitron_pred1"].astype(float),
-        "Chromnitron_pred2": z["Chromnitron_pred2"].astype(float),
+        "Chromnitron": z["Chromnitron_pred2"].astype(float),
         "Consensus_bulk": bulk,
         "HiTAG_weight": z["HiTAG_weight"].astype(float),
         "HiTAG_macs2": z["HiTAG_macs2"].astype(float),

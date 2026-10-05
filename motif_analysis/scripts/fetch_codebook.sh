@@ -11,12 +11,13 @@
 #
 # Optional: CHS=1 also pulls MEX.CHS.tar (1.4 GB ChIP-seq peaks, Step 4).
 #
-#   bash downstream/scripts/fetch_codebook.sh
+#   bash motif_analysis/scripts/fetch_codebook.sh
 # -----------------------------------------------------------------------------
 set -euo pipefail
 
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-CACHE="${CACHE:-${HERE}/../cache}"
+ROOT="${ROOT:-$(cd "${HERE}/../.." && pwd)}"
+CACHE="${CACHE:-${ROOT}/motif_analysis/cache}"
 DB="${CACHE}/motifdb"; RAW="${CACHE}/codebook_raw"
 Z="https://zenodo.org/records/15667805/files"
 mkdir -p "${DB}" "${RAW}"

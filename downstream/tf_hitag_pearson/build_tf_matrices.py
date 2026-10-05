@@ -20,7 +20,6 @@ ROOT = Path("/work/users/d/y/dyy12/XuLab")
 OUT = ROOT / "downstream" / "tf_hitag_pearson"
 BINS = ROOT / "downstream" / "ctcf_hitag_pearson" / "bins_10kb.bed"
 TAG = Path("/vast/som/xujie_lab/TAGATG-293T/bigwig")
-ELIFE = Path("/users/x/u/xujie/HEK293T_elife")
 SA = Path("/users/x/u/xujie/HEK293T_SA")
 SMOOTH_BINS = 5
 
@@ -195,8 +194,8 @@ def tracks_for(tf: str) -> list[tuple[str, Path | None, str]]:
         "ZNF282": ROOT / "data" / "ZNF282_HEK293.bam",
     }.get(tf)
     rows: list[tuple[str, Path | None, str]] = [
-        ("Chromnitron_pred1", ELIFE / tf / "processed" / "data.bigwig", "bw"),
-        ("Chromnitron_pred2", SA / tf / "processed" / "data.bigwig", "bw"),
+        # Chromnitron = SA replicate (former pred_2); eLife/pred_1 dropped.
+        ("Chromnitron", SA / tf / "processed" / "data.bigwig", "bw"),
         (
             BULK_LABEL[tf],
             bulk_bw
@@ -257,7 +256,7 @@ def run_tf(tf: str, chroms, starts, ends) -> None:
         plot_matrix(tsv, OUT / f"{stem}.png", f"{tf}  {method.capitalize()} r, 10 kb bins", f"{method.capitalize()} r")
         if "Imputed_log1p" in labels:
             ii = labels.index("Imputed_log1p")
-            for lab in ("HiTAG_macs2", "HiTAG_aggregate", BULK_LABEL[tf], "Chromnitron_pred1", "Chromnitron_pred2"):
+            for lab in ("HiTAG_macs2", "HiTAG_aggregate", BULK_LABEL[tf], "Chromnitron"):
                 if lab in labels:
                     print(f"  {method} Imputed_log1p vs {lab}: {R[ii, labels.index(lab)]:.3f}")
 

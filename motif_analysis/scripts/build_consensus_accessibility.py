@@ -29,7 +29,9 @@ from pathlib import Path
 
 import numpy as np
 
-_DOWN = Path(__file__).resolve().parent
+_SCRIPTS = Path(__file__).resolve().parent
+_ROOT = _SCRIPTS.parents[1]
+_DOWN = _ROOT / "downstream"
 if str(_DOWN) not in sys.path:
     sys.path.insert(0, str(_DOWN))
 from peak_coverage import load_per_bin_signal, normalize_per_bin_signal  # noqa: E402

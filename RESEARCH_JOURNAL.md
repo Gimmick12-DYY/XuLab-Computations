@@ -59,8 +59,8 @@ cluster is the usual cause of "unchanged output."
   the Codebook artifact set (caught a GGAGGG self-annealing motif that name-regex missed);
   `rank_motifs.sbatch` runs TOMTOM vs both the merged DB and the artifact DB.
 - CHS=1 pulls MEX.CHS.tar (1.4 GB ChIP-seq peaks) for Step 4; GHT-SELEX on zenodo 8327970.
-- Files: `downstream/scripts/{fetch_codebook.sh,ppm_to_meme.py,flag_motif_artifacts.py}`,
-  `downstream/slurm/rank_motifs.sbatch`, `downstream/NOVEL_MOTIF_FINDING.md`.
+- Files: `motif_analysis/scripts/{fetch_codebook.sh,ppm_to_meme.py,flag_motif_artifacts.py}`,
+  `motif_analysis/slurm/rank_motifs.sbatch`, `motif_analysis/NOVEL_MOTIF_FINDING.md`.
 
 ### 2026-10-02 — Novel Motif Finding Step 2: contaminant artifact filter built
 - `scripts/flag_motif_artifacts.py` flags de-novo motifs whose best TOMTOM match (vs
@@ -75,7 +75,7 @@ cluster is the usual cause of "unchanged output."
 ### 2026-10-02 — Novel Motif Finding for unknown TFs: start module (Step 3 = perf ranking built)
 - **Goal:** turn raw de-novo "unknown" motifs (from `motif_denovo_pmat.sbatch`: HOMER +
   STREME + TOMTOM for ~45 motif-less TFs) into validated, TF-assigned motifs via a 5-step
-  plan. Roadmap in `downstream/NOVEL_MOTIF_FINDING.md`.
+  plan. Roadmap in `motif_analysis/NOVEL_MOTIF_FINDING.md`.
 - **Built — Step 3 (the centerpiece): rank motifs by PERFORMANCE, not information content.**
   `scripts/rank_motifs_by_performance.py` scores every pos/neg sequence by a motif's best
   PWM log-odds (both strands) → **AUROC + AUPRC**, and reports info content so a low-IC
@@ -89,8 +89,8 @@ cluster is the usual cause of "unchanged output."
 - **Not yet (need external data):** Step 2 contaminant filter (CTCF/NFY/YY1/SP-KLF/ETS +
   RepeatMasker), Step 4 triple-overlap (Codebook ChIP/GHT-SELEX peaks), Step 5 orphan→TF
   assignment (chromVAR/MARA + TF expression + phyloP, 175 motif-less TFs).
-- **Files:** `downstream/scripts/{rank_motifs_by_performance.py,merge_meme_db.py}`,
-  `downstream/slurm/rank_motifs.sbatch`, `downstream/NOVEL_MOTIF_FINDING.md`.
+- **Files:** `motif_analysis/scripts/{rank_motifs_by_performance.py,merge_meme_db.py}`,
+  `motif_analysis/slurm/rank_motifs.sbatch`, `motif_analysis/NOVEL_MOTIF_FINDING.md`.
 
 ### 2026-10-02 — Found the actual Ren-lab Cicero pipeline; aligned our params (explains the score gap)
 - **Source:** Zu 2023 Nature & Li 2021 Nature (Songpeng Zu / Yang Eric Li; **Kangli Wang**
@@ -257,7 +257,7 @@ cluster is the usual cause of "unchanged output."
   literature-backed hits **WIZ+ZNF644 (G9a/GLP)** and **MAZ+ZNF143 (CTCF-independent
   boundary)**. Cross-check all strong pairs against CORUM/BioGRID (annotated vs novel), and
   against the peak-level Cicero/cobinding results (esp. NuRD, which should appear there but
-  not here). Motif pipeline: `downstream/slurm/motif_enrichment.sbatch` (AME `--scoring avg`).
+  not here). Motif pipeline: `motif_analysis/slurm/motif_enrichment.sbatch` (AME `--scoring avg`).
 - **Files/inputs:** `compartment_counts_genome.tsv`, `data/TF1000cells.meta.csv`,
   `tf_complex/scripts/compartment_rpkm_correlation.py` (`--spqn`).
 
@@ -407,8 +407,8 @@ cluster is the usual cause of "unchanged output."
     accessibility, not TF specificity.
   - Consensus subtraction (`TF_SPECIFIC=1`) partially recovers some motifs
     (NRF1 q≈0.025, HOXD10, FOXK1, HOXA5).
-- **Files:** `downstream/slurm/motif_enrichment.sbatch`,
-  `downstream/summarize_motif_table.py`, `downstream/emit_bins_bed.py`.
+- **Files:** `motif_analysis/slurm/motif_enrichment.sbatch`,
+  `motif_analysis/summarize_motif_table.py`, `motif_analysis/scripts/emit_bins_bed.py`.
 - **Memory:** `imputed-peaks-accessibility-wash.md`.
 
 ### 2026-09-04 — TF co-occupancy correlation confound (CPM / fraction is a Pearson no-op)

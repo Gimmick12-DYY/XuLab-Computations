@@ -26,7 +26,7 @@ args <- commandArgs(trailingOnly = TRUE)
 opt <- list(
   matrix = "/work/users/d/y/dyy12/XuLab/data/TF1000cells.pmat.mtx.rds",
   meta   = "/work/users/d/y/dyy12/XuLab/data/TF1000cells.meta.csv",
-  out    = "/work/users/d/y/dyy12/XuLab/downstream/motif/pmat_panel"
+  out    = "/work/users/d/y/dyy12/XuLab/motif_analysis/motif/pmat_panel"
 )
 i <- 1L
 while (i <= length(args)) {

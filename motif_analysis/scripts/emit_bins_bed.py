@@ -20,12 +20,14 @@ from pathlib import Path
 
 import numpy as np
 
-_DOWN = Path(__file__).resolve().parent
+_SCRIPTS = Path(__file__).resolve().parent
+_ROOT = _SCRIPTS.parents[1]
+_DOWN = _ROOT / "downstream"
 if str(_DOWN) not in sys.path:
     sys.path.insert(0, str(_DOWN))
 from peak_coverage import load_per_bin_signal  # noqa: E402
 
-_UNIFIED = _DOWN.parent / "unified" / "scripts"
+_UNIFIED = _ROOT / "unified" / "scripts"
 if str(_UNIFIED) not in sys.path:
     sys.path.insert(0, str(_UNIFIED))
 from _regions import bins_overlap_bed, load_bed_intervals, parse_region_names  # noqa: E402

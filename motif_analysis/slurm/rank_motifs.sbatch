@@ -14,11 +14,12 @@
 # de-novo discovery, so it is an out-of-representation held-out set). Candidate
 # motifs = HOMER de-novo (-> MEME) + STREME, from motif_denovo_pmat.sbatch.
 #
-#   TFS="rbbp4 znf507 ..." sbatch --array=0-N downstream/slurm/rank_motifs.sbatch
+#   TFS="rbbp4 znf507 ..." sbatch --array=0-N motif_analysis/slurm/rank_motifs.sbatch
 set -euo pipefail
 
 ROOT_DIR="${ROOT_DIR:-/work/users/d/y/dyy12/XuLab}"
-DOWN_DIR="${ROOT_DIR}/downstream"
+MOTIF_DIR="${MOTIF_DIR:-${ROOT_DIR}/motif_analysis}"
+DOWN_DIR="${DOWN_DIR:-${ROOT_DIR}/downstream}"  # shared: call_imputed_peaks, hg38.fa, HOCOMOCOv11
 cd "${ROOT_DIR}"
 
 if [[ -n "${TFS:-}" ]]; then read -r -a TF_ARR <<< "${TFS}"; else
@@ -27,9 +28,9 @@ IDX="${SLURM_ARRAY_TASK_ID:-0}"
 (( IDX >= 0 && IDX < ${#TF_ARR[@]} )) || { echo "idx ${IDX} OOR (n=${#TF_ARR[@]})" >&2; exit 1; }
 TF="${TF_ARR[$IDX]}"; tf="$(echo "${TF}" | tr '[:upper:]' '[:lower:]')"
 
-DENOVO_ROOT="${DENOVO_ROOT:-${DOWN_DIR}/motif_pmat}"
+DENOVO_ROOT="${DENOVO_ROOT:-${MOTIF_DIR}/motif_pmat}"
 DN="${DENOVO_ROOT}/${tf}"
-OUT="${OUT_ROOT:-${DOWN_DIR}/motif_ranked}/${tf}"
+OUT="${OUT_ROOT:-${MOTIF_DIR}/motif_ranked}/${tf}"
 HG38_FA="${HG38_FA:-${DOWN_DIR}/cache/hg38.fa}"
 TOP_N_BINS="${TOP_N_BINS:-10000}"
 MATRIX_DIR="${MATRIX_DIR:-${ROOT_DIR}/unified/work/${tf}/mm}"   # TF binding bins (raw)
@@ -45,7 +46,7 @@ MEME_BIN="${MEME_BIN:-/nas/longleaf/rhel9/apps/meme/5.5.7/bin}"
 POS_BED="${OUT}/${tf}.pos.bed"; NEG_BED="${OUT}/${tf}.neg.bed"
 if [[ ! -s "${POS_BED}" || ! -s "${NEG_BED}" ]]; then
   echo "[$(date)] ${TF}: emit pos/neg bins (top-${TOP_N_BINS})"
-  python "${DOWN_DIR}/emit_bins_bed.py" \
+  python "${MOTIF_DIR}/scripts/emit_bins_bed.py" \
     --matrix-dir "${MATRIX_DIR}" --tf "${tf}" --top-n "${TOP_N_BINS}" \
     --out-bed "${POS_BED}" --bg-out "${NEG_BED}" --open-bed "${OPEN_BED}" ${EMIT_EXTRA:-}
 fi
@@ -58,7 +59,7 @@ tofa "${NEG_BED}" "${OUT}/neg.fa"
 # ---- 2. assemble candidate motifs: HOMER de-novo (-> MEME) + STREME ----------
 CAND="${OUT}/candidates.meme"; : > "${CAND}"
 if [[ -s "${DN}/homer/homerMotifs.all.motifs" ]]; then
-  python "${DOWN_DIR}/scripts/homer_motifs_to_meme.py" \
+  python "${MOTIF_DIR}/scripts/homer_motifs_to_meme.py" \
     --homer "${DN}/homer/homerMotifs.all.motifs" --out "${OUT}/homer_denovo.meme"
   cat "${OUT}/homer_denovo.meme" >> "${CAND}"
 fi
@@ -70,17 +71,17 @@ fi
 
 # ---- 3. rank by held-out AUROC/AUPRC ----------------------------------------
 echo "[$(date)] ${TF}: rank motifs by performance"
-python "${DOWN_DIR}/scripts/rank_motifs_by_performance.py" \
+python "${MOTIF_DIR}/scripts/rank_motifs_by_performance.py" \
   --motifs "${CAND}" --pos-fa "${OUT}/pos.fa" --neg-fa "${OUT}/neg.fa" \
   --out "${OUT}/${tf}.ranked_motifs.tsv"
 
 # ---- 4. Step 2: flag artifacts (TOMTOM vs HOCOMOCO v12 + Codebook) -----------
 # shortlist = high AUROC AND pass==True (not a CTCF/NFY/YY1/SP-KLF/ETS contaminant,
 # not TE-clustered). TE check auto-enables when the UCSC rmsk BED is present
-# (downstream/scripts/fetch_hg38_rmsk_bed.sh) AND INSTANCES_BED (FIMO) is given.
-MOTIF_DB="${MOTIF_DB:-${DOWN_DIR}/cache/motifdb/merged_human_motifs.meme}"
-ARTIFACT_DB="${ARTIFACT_DB:-${DOWN_DIR}/cache/motifdb/codebook_artifacts.meme}"  # fetch_codebook.sh
-REPEAT_BED="${REPEAT_BED:-${DOWN_DIR}/cache/hg38.rmsk.bed.gz}"
+# (motif_analysis/scripts/fetch_hg38_rmsk_bed.sh) AND INSTANCES_BED (FIMO) is given.
+MOTIF_DB="${MOTIF_DB:-${MOTIF_DIR}/cache/motifdb/merged_human_motifs.meme}"
+ARTIFACT_DB="${ARTIFACT_DB:-${MOTIF_DIR}/cache/motifdb/codebook_artifacts.meme}"  # fetch_codebook.sh
+REPEAT_BED="${REPEAT_BED:-${MOTIF_DIR}/cache/hg38.rmsk.bed.gz}"
 [[ -s "${REPEAT_BED}" ]] || REPEAT_BED=""
 if [[ -s "${MOTIF_DB}" ]]; then
   tomtom -no-ssc -oc "${OUT}/tomtom" -verbosity 1 -min-overlap 5 -dist pearson -thresh 0.1 \
@@ -92,7 +93,7 @@ if [[ -s "${MOTIF_DB}" ]]; then
     [[ -s "${OUT}/tomtom_artifacts/tomtom.tsv" ]] && ART_TT="${OUT}/tomtom_artifacts/tomtom.tsv"
   fi
   if [[ -s "${OUT}/tomtom/tomtom.tsv" ]]; then
-    python "${DOWN_DIR}/scripts/flag_motif_artifacts.py" \
+    python "${MOTIF_DIR}/scripts/flag_motif_artifacts.py" \
       --tomtom "${OUT}/tomtom/tomtom.tsv" --ranked "${OUT}/${tf}.ranked_motifs.tsv" \
       --out "${OUT}/${tf}.ranked_annotated.tsv" \
       ${ART_TT:+--artifact-tomtom "${ART_TT}"} \

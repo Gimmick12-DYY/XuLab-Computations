@@ -650,7 +650,7 @@ sites for hg38 from the [JASPAR TFBS mirror](https://mencius.uio.no/JASPAR/JASPA
 and caches a 3-column BED at `downstream/cache/CTCF_motif_hg38.bed`.
 
 ```bash
-bash downstream/fetch_ctcf_motif_bed.sh
+bash motif_analysis/scripts/fetch_ctcf_motif_bed.sh
 # -> downstream/cache/CTCF_motif_hg38.bed
 ```
 

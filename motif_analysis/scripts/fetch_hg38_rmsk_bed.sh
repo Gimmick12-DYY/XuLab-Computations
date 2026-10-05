@@ -5,9 +5,9 @@
 # Download UCSC hg38 RepeatMasker (rmsk table) and convert to a sorted BED:
 #   chrom  start  end  repName;repClass;repFamily  .  strand
 # Run on a host with outbound UCSC access (e.g. Longleaf). Output default:
-#   downstream/cache/hg38.rmsk.bed.gz   (-> set REPEAT_BED to this in rank_motifs.sbatch)
+#   motif_analysis/cache/hg38.rmsk.bed.gz   (-> set REPEAT_BED to this in rank_motifs.sbatch)
 #
-#   bash downstream/scripts/fetch_hg38_rmsk_bed.sh [OUT.bed.gz]
+#   bash motif_analysis/scripts/fetch_hg38_rmsk_bed.sh [OUT.bed.gz]
 # -----------------------------------------------------------------------------
 set -euo pipefail
 

@@ -16,11 +16,11 @@
 # Each condition = a root dir whose <tf>/ has homer_<bg>/ + ame_<bg>/. Point --*-root at
 # the peaks tree (downstream/motif) and/or a bins tree; genome vs OCR come from _<bg>.
 #
-#   python downstream/summarize_motif_table.py \
-#     --imp-peaks-root downstream/motif --imp-bins-root downstream/motif_bins \
+#   python motif_analysis/summarize_motif_table.py \
+#     --imp-peaks-root downstream/motif --imp-bins-root motif_analysis/motif_bins \
 #     --raw-peaks-root downstream/motif_raw \
-#     --manifest downstream/motif_reference_manifest.tsv \
-#     --cell-meta data/TF1000cells.meta.csv --out downstream/motif_recovery_table.tsv
+#     --manifest motif_analysis/motif_reference_manifest.tsv \
+#     --cell-meta data/TF1000cells.meta.csv --out motif_analysis/motif_recovery_table.tsv
 # -----------------------------------------------------------------------------
 from __future__ import annotations
 

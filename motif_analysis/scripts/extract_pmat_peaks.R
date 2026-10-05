@@ -8,7 +8,7 @@ args <- commandArgs(trailingOnly = TRUE)
 opt <- list(
   matrix = "/work/users/d/y/dyy12/XuLab/data/TF1000cells.pmat.mtx.rds",
   meta   = "/work/users/d/y/dyy12/XuLab/data/TF1000cells.meta.csv",
-  out    = "/work/users/d/y/dyy12/XuLab/downstream/motif_pmat",
+  out    = "/work/users/d/y/dyy12/XuLab/motif_analysis/motif_pmat",
   min_cells = 2L,
   n_fg = 20000L,
   tfs = NULL
