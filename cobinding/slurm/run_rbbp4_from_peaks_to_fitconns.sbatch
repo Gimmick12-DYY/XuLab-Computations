@@ -57,14 +57,18 @@ export TMPDIR="${WORK}/tmp"
 source "$(conda info --base)/etc/profile.d/conda.sh"
 
 PMAT="${WORK}/RBBP4.pmat.from_peaks.h5ad"
+DATASET_LOCAL="${WORK}/RBBP4.dataset.local.h5ads"
 CONNS="${WORK}/cicero/coaccess.tsv.gz"
 NULL_PARA="${WORK}/cicero_shuf/shuffle.para.txt"
 FITCONNS="${WORK}/RBBP4.perm.fitConns.res.txt.gz"
 
 if [[ "${REBUILD_PMAT}" == "1" || ! -s "${PMAT}" ]]; then
   echo "[$(date)] stage 1: peak BED + selected fragments -> peak matrix"
+  # read_dataset(..., adata_files_update=) rewrites stale component links.
+  # Work on a local metadata copy; never modify the lab's /vast source.
+  cp -f "${DATASET}" "${DATASET_LOCAL}"
   "${SNAP_ENV}/bin/python" "${COB}/scripts/rebuild_rbbp4_peak_matrix.py" \
-    --dataset "${DATASET}" \
+    --dataset "${DATASET_LOCAL}" \
     --anndata-dir "${ANNDATA_DIR}" \
     --peaks "${PEAKS}" \
     --out-h5ad "${PMAT}" \

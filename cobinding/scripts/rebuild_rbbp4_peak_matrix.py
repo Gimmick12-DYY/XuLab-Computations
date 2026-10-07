@@ -42,7 +42,7 @@ def main() -> int:
     dataset = snap.read_dataset(
         str(args.dataset),
         adata_files_update=str(args.anndata_dir),
-        mode="r",
+        mode="r+",
     )
     try:
         peak_mat = snap.pp.make_peak_matrix(
@@ -55,7 +55,9 @@ def main() -> int:
     finally:
         dataset.close()
 
-    x = sp.csr_matrix(mem.X)
+    # scipy.io.mmwrite labels uint matrices as "unsigned-integer", which
+    # Matrix::readMM does not support. Counts are binary/small, so int32 is safe.
+    x = sp.csr_matrix(mem.X).astype(np.int32)
     print(f"[pmat] rebuilt cells={x.shape[0]:,} peaks={x.shape[1]:,} nnz={x.nnz:,}",
           flush=True)
 

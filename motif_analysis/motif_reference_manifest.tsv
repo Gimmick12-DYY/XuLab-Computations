@@ -11,6 +11,7 @@
 # Extend this file with the remaining study TFs (incl. the panel: ctcf, maz, ...).
 #
 # tf	homer	hocomoco_core	hocomoco_full
+# Codebook top1 (Hughes 2026) adds PWMs for: flywch1, glyr1, mbd3, pogk, zbtb40, znf367, znf503, znf507, znf606, znf703, znf746 (see TF1000cells_motifs.xlsx Codebook columns). Enrichment gate still HOMER/HOCOMOCO.
 adnp	no	Missing	Missing
 mef2d	yes	A	A
 hoxa5	no	Missing	D
