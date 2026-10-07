@@ -28,6 +28,9 @@ Shared utilities that stay in `downstream/`:
 
 ## Quick start
 
+**All motif compute (HOMER, TOMTOM, ranking, HTML rebuild) must run via Slurm on
+compute nodes — do not run these on the login node.**
+
 ```bash
 # Known + de-novo enrichment on imputed peaks
 LIST=1 bash motif_analysis/slurm/motif_enrichment.sbatch
@@ -37,7 +40,10 @@ sbatch --array=0-$((N-1)) motif_analysis/slurm/motif_enrichment.sbatch
 # De-novo on pmat peaks (unknown TFs)
 sbatch --array=0-44 motif_analysis/slurm/motif_denovo_pmat.sbatch
 
-# Codebook (Zenodo) + merge into TOMTOM DB
+# Rematch denovo vs Codebook + rebuild giant HTML tables
+sbatch motif_analysis/slurm/rebuild_denovo_codebook_html.sbatch
+
+# Codebook (Zenodo) fetch is lightweight I/O; merge is local CPU:
 bash motif_analysis/scripts/fetch_codebook.sh
 python motif_analysis/scripts/merge_meme_db.py \
   --in motif_analysis/cache/motifdb/H12CORE_meme_format.meme=h12 \

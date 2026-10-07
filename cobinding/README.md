@@ -33,6 +33,43 @@ REBUILD=0 QVAL=0.01 sbatch cobinding/slurm/run_cobinding.sbatch   # re-cluster o
 # full-network only (skip .pdc): GLOB='TF.{tf}.fitConns.res.sel'
 ```
 
+### Exact RBBP4 fitConns reconstruction
+
+`run_rbbp4_exact_fitconns.sbatch` reconstructs Wang's fitConns from the
+upstream raw Cicero object, rather than reading his final
+`RBBP4.perm.fitConns.res.txt`:
+
+```bash
+sbatch cobinding/slurm/run_rbbp4_exact_fitconns.sbatch
+```
+
+It exports `RBBP4.conns.rds`, applies Wang's permutation-Gaussian null and BH
+FDR, writes the complete scored fitConns table, and keeps the published
+`p <= 0.05` selected pairs. This gives 17,450 selected pairs, 11,342 at
+FDR <= 0.05, and 355 cliques (pair Jaccard 1.0 versus gold).
+
+Exact reconstruction requires the original `RBBP4.conns.rds`, because Cicero's
+coaccess values depend on the realized LSI/UMAP/metacells. Re-running Cicero
+from the pmat reproduces about 97% of the candidate-pair universe but not the
+per-pair coaccess scores.
+
+### RBBP4 peak file → fitConns reproduction
+
+The fully upstream validation starts from the 53,825-interval RBBP4 narrowPeak
+file and the 181,396-cell backed fragment dataset under `TAGATG-293T`:
+
+```bash
+env_job=$(sbatch --parsable cobinding/slurm/00_setup_snapatac2.sbatch)
+sbatch --dependency=afterok:${env_job} \
+  cobinding/slurm/run_rbbp4_from_peaks_to_fitconns.sbatch
+```
+
+Stages are peak matrix reconstruction (validated element-for-element against
+Wang's saved matrix), LSI/UMAP, real Cicero (`k=10`, 1 Mb, seed 2020), Ren-lab
+genBsp null, fitConns p/FDR, pair selection, and clique reconstruction. Outputs
+are isolated under `cobinding/work/RBBP4_from_peaks/` and
+`cobinding/results/RBBP4_from_peaks/`; `/vast/som/xujie_lab` is read-only.
+
 ### 1. `build_peak_graph.py` — peak graph (run once per TF)
 Globs the TF's connection files, normalizes coordinates, dedups peak-pair edges
 (max coaccess, min q). Writes `work/<tf>.peak_edges.tsv`

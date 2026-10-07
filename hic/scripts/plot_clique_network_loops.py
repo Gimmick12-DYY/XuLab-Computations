@@ -18,7 +18,9 @@ import cluster_peaks as CP  # noqa: E402
 EDGES = ROOT / "cobinding/work/RBBP4.peak_edges.tsv"
 CLIQUES = ROOT / "cobinding/results/RBBP4/cliques.tsv"
 NODES = ROOT / "cobinding/results/RBBP4/nodes.tsv"
-LOOP_PAIRS = ROOT / "hic/work/loops/union_5k_10k_0.7/RBBP4_pairs_as_loops.0.7.pad10kb.tsv"
+# Span containment: both peaks inside the same Peakachu loop interval.
+# (both-anchors table kept as RBBP4_pairs_as_loops.0.7.pad10kb.tsv — only 25 pink edges)
+LOOP_PAIRS = ROOT / "hic/work/loops/union_5k_10k_0.7/RBBP4_pairs_in_loop_span.0.7.pad10kb.tsv"
 OUT = ROOT / "hic/work/loops/union_5k_10k_0.7"
 
 
@@ -218,7 +220,7 @@ def plot_network(G, cliques, genes, loops, comps, out_png: Path, title: str, sub
     handles = [
         Line2D([0], [0], color="#e8433f", lw=2.4, label="cobinding clique"),
         Line2D([0], [0], color=grey, lw=1.2, label="surrounding pair"),
-        Line2D([0], [0], color="#FF1493", lw=3.2, label="clique edge that is a loop"),
+        Line2D([0], [0], color="#FF1493", lw=3.2, label="clique edge inside a loop span"),
         Line2D([0], [0], color="#F5C518", lw=2.6, label="Peakachu loop 5 kb"),
         Line2D([0], [0], color="#1A6B8A", lw=2.6, linestyle="--", label="Peakachu loop 10 kb"),
         Line2D([0], [0], marker="o", color="none", markerfacecolor="none",
@@ -260,14 +262,15 @@ def main() -> None:
         G, cliques, genes, loops, comps10,
         OUT / "tf_peak_network_cliques_loops.png",
         "RBBP4 co-binding clusters with Peakachu loops (5 kb ∪ 10 kb, 0.7, ±10 kb)",
-        f"Pink = clique edge that is also a loop. Gold/teal bows = other Peakachu loops. "
+        f"Pink = clique edge whose peaks both sit inside one loop span. "
+        f"Gold/teal bows = other Peakachu-overlapping pairs. "
         f"{len(comps10)} components ≥10 shown.",
     )
     plot_network(
         G, cliques, genes, loops, comps_loop,
         OUT / "tf_peak_network_loop_components.png",
-        "Only components that contain a Peakachu loop edge",
-        f"{len(comps_loop)} components · pink = clique edge that is a loop · "
+        "Only components that contain a Peakachu loop-span edge",
+        f"{len(comps_loop)} components · pink = clique edge inside a loop span · "
         f"5 kb gold, 10 kb dashed teal",
         label=False,
     )

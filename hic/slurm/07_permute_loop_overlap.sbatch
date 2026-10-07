@@ -1,21 +1,22 @@
 #!/bin/bash
-#SBATCH --job-name=loop_perm
-#SBATCH --output=loop_perm-%A_%a.out
-#SBATCH --error=loop_perm-%A_%a.err
+#SBATCH --job-name=loop_perm_sc
+#SBATCH --output=loop_perm_sc-%A_%a.out
+#SBATCH --error=loop_perm_sc-%A_%a.err
 #SBATCH --cpus-per-task=1
 #SBATCH --mem=16G
-#SBATCH --time=16:00:00
+#SBATCH --time=12:00:00
 #SBATCH --mail-type=FAIL
 #
-# 100,000 genome-wide shuffles of the locked 5 kb ∪ 10 kb, cutoff 0.7 tests.
-# Submit as an 16-task array (8 shards × ±10 kb and ±20 kb), then a merge job:
+# 100,000 SAME-CHROMOSOME shuffles (no genome swipe). Tests:
+#   all_pairs_both_anchors, clique_edges_355_as_loop, clique_edges_191_as_loop
+# Locked setup: 5 kb ∪ 10 kb Peakachu @ 0.7, ±10 kb and ±20 kb.
 #
 #   jid=$(sbatch --parsable --array=0-15 hic/slurm/07_permute_loop_overlap.sbatch)
 #   RUN=merge sbatch --parsable --dependency=afterok:${jid} \
-#     hic/slurm/07_permute_loop_overlap.sbatch
+#     --job-name=loop_perm_sc_merge hic/slurm/07_permute_loop_overlap.sbatch
 #
-# Each shard runs 12,500 independent shuffles (seed + shard). Upper-tail
-# p = (1 + #{null >= obs}) / (1 + 100000).
+# Each shard: 12,500 independent shuffles. Writes *samechrom* tables (does not
+# overwrite the earlier genomewide results).
 
 set -euo pipefail
 source "${XULAB:-/work/users/d/y/dyy12/XuLab}/hic/scripts/lib.sh"
@@ -36,13 +37,14 @@ COMMON=(
   --chrom-sizes "${CHROMSIZES}"
   --cutoff "${CUTOFF}"
   --seed "${SEED}"
+  --same-chrom
   --out-dir "${OUT}"
 )
 
 if [[ "${RUN:-perm}" == "merge" ]]; then
   for SLOP in 10000 20000; do
-    echo "[$(date)] merge slop=${SLOP}"
-    "${COMMON[@]}" --merge --n-shards "${N_SHARDS}" --slop "${SLOP}"
+    echo "[$(date)] merge samechrom slop=${SLOP}"
+    "${COMMON[@]}" --merge --n-shards "${N_SHARDS}" --slop "${SLOP}" --same-chrom
   done
   exit 0
 fi
@@ -56,7 +58,7 @@ else
   SHARD=$((TID - N_SHARDS))
 fi
 
-echo "[$(date)] shard=${SHARD}/${N_SHARDS} slop=${SLOP} per_shard=${PER_SHARD}"
+echo "[$(date)] samechrom shard=${SHARD}/${N_SHARDS} slop=${SLOP} per_shard=${PER_SHARD}"
 "${COMMON[@]}" \
   --slop "${SLOP}" \
   --n-perm "${PER_SHARD}" \

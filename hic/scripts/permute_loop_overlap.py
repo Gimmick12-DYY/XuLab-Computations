@@ -1,9 +1,12 @@
 #!/usr/bin/env python3
-"""Observed ±20 kb loop overlap and same-chromosome permutation p-values.
+"""Observed loop overlap and same-chromosome (or genome-wide) permutation p-values.
 
 Null: keep each pair's (or clique's) peak widths and relative spacing, place
-the constellation at a random start on the same chromosome. One-sided p =
-(1 + n_perm with rate >= observed) / (1 + n_perm).
+the constellation at a random start. Default for this project is same-
+chromosome. One-sided p = (1 + n_perm with rate >= observed) / (1 + n_perm).
+
+Tests (only): both anchors of the same loop for all pairs, 355-clique edges,
+and 191-clique edges.
 """
 from __future__ import annotations
 
@@ -300,13 +303,18 @@ def write_report(out_dir, pad, cutoff, seed, tag, null, meta) -> int:
     n_perm = int(null.shape[0])
     names = [str(x) for x in meta["names"]]
     tails = [str(x) for x in meta["tails"]]
+    if tag == "samechrom":
+        null_desc = ("null: uniform random start on the ORIGINAL chromosome; "
+                     "keep peak widths and relative spacing")
+    else:
+        null_desc = ("null: uniform random start on chr1–22,X (weighted by usable "
+                     "chrom length); keep peak widths and relative spacing; "
+                     "chromosome can change")
     print(f"cutoff={cutoff}  pad={pad}  n_perm={n_perm}  seed={seed}  null={tag}")
     lines = [
         f"cutoff={cutoff} pad={pad} n_perm={n_perm} seed={seed} null={tag}",
-        "null: uniform random start on chr1–22,X (weighted by usable chrom length); "
-        "keep peak widths and relative spacing; chromosome can change",
+        null_desc,
         "upper tail: p = (1 + count(null >= obs)) / (1 + n_perm)",
-        "lower tail: p = (1 + count(null <= obs)) / (1 + n_perm)   [clique_span_0_loops]",
         "",
         f"{'test':<36}{'obs':>8}{'n':>8}{'pct':>8}{'null_mean':>10}{'null_95':>10}"
         f"{'p':>12}{'tail':>8}{'5kb':>8}{'10kb':>8}",
@@ -376,14 +384,17 @@ def main() -> int:
     ap.add_argument("--n-shards", type=int, default=1)
     ap.add_argument("--merge", action="store_true",
                     help="combine shard npz files already in --out-dir into the report")
-    ap.add_argument("--genome-wide", action="store_true", default=True,
-                    help="place blocks uniformly across chr1–22,X (default)")
-    ap.add_argument("--same-chrom", action="store_true",
-                    help="restrict relocation to the original chromosome")
+    ap.add_argument("--genome-wide", action="store_true", default=False,
+                    help="place blocks uniformly across chr1–22,X")
+    ap.add_argument("--same-chrom", action="store_true", default=True,
+                    help="restrict relocation to the original chromosome (default)")
     ap.add_argument("--out-dir", type=Path, required=True)
     args = ap.parse_args()
     if args.merge:
         return merge_shards(args)
+    # --genome-wide wins if both are set
+    if args.genome_wide:
+        args.same_chrom = False
     args.out_dir.mkdir(parents=True, exist_ok=True)
 
     chrom_len = load_chrom_sizes(args.chrom_sizes)
@@ -402,9 +413,6 @@ def main() -> int:
     obs_355 = tally_clique_edges(edges_all, fine, ix5, coarse, ix10, slop)
     obs_191 = tally_clique_edges(edges_191, fine, ix5, coarse, ix10, slop)
 
-    span_ix = build_span_index(fine, coarse)
-    obs_span = tally_span(cliques, span_ix, slop)
-
     pad = f"pad{slop // 1000}kb"
     gw = not args.same_chrom
     tag = "genomewide" if gw else "samechrom"
@@ -419,7 +427,7 @@ def main() -> int:
     # Independent stream per shard so array tasks do not repeat shuffles.
     rng = np.random.default_rng(args.seed + args.shard * 1_000_003)
     n_perm = args.n_perm
-    null = np.empty((n_perm, 9), dtype=np.float64)
+    null = np.empty((n_perm, 3), dtype=np.float64)
     step = 500 if n_perm >= 2000 else 50
     for i in range(n_perm):
         pp = permute_pairs(pairs, chrom_len, rng, genome_wide=gw)
@@ -430,41 +438,25 @@ def main() -> int:
         c191 = permute_cliques(cliques, chrom_len, rng, live_ids, genome_wide=gw)
         t191 = tally_clique_edges(clique_edges(c191, live_ids), fine, ix5, coarse, ix10, slop,
                                   store_hits=False)
-        ts = tally_span(c355, span_ix, slop)
-        null[i] = (tp["frac_both"], tp["frac_one"], tp["frac_hub"],
-                   t355["frac_both"], t191["frac_both"],
-                   ts["f0"], ts["f1"], ts["f2"], ts["f3"])
+        null[i] = (tp["frac_both"], t355["frac_both"], t191["frac_both"])
         if (i + 1) % step == 0:
             print(f"[perm] shard {args.shard}/{args.n_shards}  {i+1}/{n_perm}", flush=True)
 
     meta = {
         "names": np.array([
             "all_pairs_both_anchors",
-            "all_pairs_at_least_1_anchor",
-            "all_pairs_both_peaks_any_anchor",
             "clique_edges_355_as_loop",
             "clique_edges_191_as_loop",
-            "clique_span_0_loops",
-            "clique_span_ge1",
-            "clique_span_ge2",
-            "clique_span_ge3",
         ]),
-        "tails": np.array(["upper", "upper", "upper", "upper", "upper",
-                           "lower", "upper", "upper", "upper"]),
+        "tails": np.array(["upper", "upper", "upper"]),
         "obs_k": np.array([
-            obs_pairs["both"], obs_pairs["one"], obs_pairs["hub"],
-            obs_355["both"], obs_191["both"],
-            obs_span["n0"], obs_span["g1"], obs_span["g2"], obs_span["g3"],
+            obs_pairs["both"], obs_355["both"], obs_191["both"],
         ], dtype=np.int64),
         "obs_n": np.array([
-            obs_pairs["n"], obs_pairs["n"], obs_pairs["n"],
-            obs_355["n"], obs_191["n"],
-            obs_span["n"], obs_span["n"], obs_span["n"], obs_span["n"],
+            obs_pairs["n"], obs_355["n"], obs_191["n"],
         ], dtype=np.int64),
-        "n5": np.array([obs_pairs["n5"], -1, -1, obs_355["n5"], obs_191["n5"],
-                        -1, -1, -1, -1], dtype=np.int64),
-        "n10": np.array([obs_pairs["n10"], -1, -1, obs_355["n10"], obs_191["n10"],
-                         -1, -1, -1, -1], dtype=np.int64),
+        "n5": np.array([obs_pairs["n5"], obs_355["n5"], obs_191["n5"]], dtype=np.int64),
+        "n10": np.array([obs_pairs["n10"], obs_355["n10"], obs_191["n10"]], dtype=np.int64),
         "note_191": np.array([obs_191["n_cliq_hit"], obs_191["n_cliq"]], dtype=np.int64),
         "note_355": np.array([obs_355["n_cliq_hit"], obs_355["n_cliq"]], dtype=np.int64),
     }

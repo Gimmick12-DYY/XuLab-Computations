@@ -33,6 +33,23 @@ get "metadata_complete_motif.zip"
 tar xzf "${RAW}/MEX_artifacts_formatted.tgz" -C "${RAW}"
 ART=$(find "${RAW}" -name "MEX-ARTIFACTS_meme_format.meme" | head -1)
 cp "${ART}" "${DB}/codebook_artifacts.meme"
+# Zenodo export sometimes leaves "w= " blank; fill widths from matrix row counts.
+python - "${DB}/codebook_artifacts.meme" <<'PY'
+import re, sys
+from pathlib import Path
+p = Path(sys.argv[1]); lines = p.read_text().splitlines(); out=[]
+i=0
+while i < len(lines):
+    ln = lines[i]
+    m = re.match(r"(letter-probability matrix: alength= 4 )w=\s*(nsites=.*)", ln)
+    if m:
+        j=i+1; rows=0
+        while j < len(lines) and re.match(r"^[\d.eE+\-\s\t]+$", lines[j].strip()) and lines[j].strip():
+            rows += 1; j += 1
+        ln = f"{m.group(1)}w= {rows} {m.group(2)}"
+    out.append(ln); i += 1
+p.write_text("\n".join(out)+"\n")
+PY
 echo "[codebook] -> ${DB}/codebook_artifacts.meme ($(grep -c '^MOTIF' "${DB}/codebook_artifacts.meme") motifs)"
 
 # 2. curated Codebook motifs (1 per TF) -> MEME

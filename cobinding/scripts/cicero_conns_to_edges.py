@@ -158,6 +158,9 @@ def main() -> int:
                          "or 'metacell'/'cells' (read from sibling cicero_info.tsv)")
     ap.add_argument("--sel", type=Path, default=None,
                     help="optional lab .sel file: report unique-pair overlap")
+    ap.add_argument("--scored-all-out", type=Path, default=None,
+                    help="optional Wang-style fitConns table for every unique pair "
+                         "before --max-p filtering (Peak1 Peak2 coaccess nlog10p FDR p)")
     args = ap.parse_args()
 
     opener = gzip.open if str(args.conns).endswith(".gz") else open
@@ -245,6 +248,20 @@ def main() -> int:
         else:
             print(f"[{args.tf}] WARNING: no effective n (cicero_info.tsv lacks n_metacell/"
                   f"n_cells) -> pval=nan, qval=0. Pass --effective-n <int>.", flush=True)
+
+    if args.scored_all_out is not None:
+        args.scored_all_out.parent.mkdir(parents=True, exist_ok=True)
+        opener_out = gzip.open if str(args.scored_all_out).endswith(".gz") else open
+        with opener_out(args.scored_all_out, "wt") as out:
+            out.write("Peak1\tPeak2\tcoaccess\tnlog10p\tFDR\tp\n")
+            for key, ca, p_, q_ in zip(ekeys, ca_arr, pv, qv):
+                a, b = sorted(key)
+                a_us = a.replace(":", "_").replace("-", "_")
+                b_us = b.replace(":", "_").replace("-", "_")
+                nlog10p = np.inf if float(p_) == 0.0 else -np.log10(float(p_))
+                out.write(f"{a_us}\t{b_us}\t{ca:.15g}\t{nlog10p:.15g}\t"
+                          f"{float(q_):.15g}\t{float(p_):.15g}\n")
+        print(f"[{args.tf}] wrote all scored fitConns -> {args.scored_all_out}", flush=True)
 
     if args.max_p < 1.0:
         keep = pv <= args.max_p

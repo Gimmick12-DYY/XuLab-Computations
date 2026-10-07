@@ -150,10 +150,18 @@ def main() -> int:
     annot_path = args.annot or Path(str(args.edges).replace(".peak_edges.tsv", ".peak_annot.tsv"))
     types: dict[str, set] = {}; genes: dict[str, set] = {}; states: dict[str, set] = {}
     if annot_path.is_file():
-        for r in pd.read_csv(annot_path, sep="\t").itertuples(index=False):
-            types[r.peak] = set(str(r.types).split(",")) if r.types != "." else set()
-            genes[r.peak] = set(str(r.genes).split(",")) if r.genes != "." else set()
-            states[r.peak] = set(str(r.states).split(",")) if r.states != "." else set()
+        adf = pd.read_csv(annot_path, sep="\t")
+        # reproducible_pairs.tsv etc. are edge tables (type1/type2), not peak annot
+        if "peak" in adf.columns and "types" in adf.columns:
+            for r in adf.itertuples(index=False):
+                types[r.peak] = set(str(r.types).split(",")) if r.types != "." else set()
+                genes[r.peak] = (set(str(r.genes).split(","))
+                                 if "genes" in adf.columns and r.genes != "." else set())
+                states[r.peak] = (set(str(r.states).split(","))
+                                  if "states" in adf.columns and r.states != "." else set())
+        else:
+            print(f"[annot] skip {annot_path.name}: not a peak_annot table "
+                  f"(need columns peak,types)", flush=True)
 
     df = pd.read_csv(args.edges, sep="\t")
     n0 = len(df)

@@ -107,21 +107,27 @@ if [[ "${REBUILD}" == "1" || ! -s "${CONNS2}" ]]; then
   cd "${XULAB}"
 fi
 
-# ---- 3. call pairs round 2 (same shuffle-Gaussian significance) -------------
+# ---- 3. call ALL pairs round 2 (kept for reference) -------------------------
 conda activate "${PY_ENV}"
 python "${COB}/scripts/cicero_conns_to_edges.py" \
   --tf "${TF}" --conns "${CONNS2}" --out-dir "${CWD2}" \
   --chromhmm "${CHROMHMM}" --max-dist "${MAX_DIST}" --coaccess-min -1 \
   --pval-method shuffle --shuffle-para "${CWD2}/cicero_shuf/shuffle.para.txt"
 
-# ---- 4. reproducible pairs = round1 INTERSECT round2 ------------------------
+# ---- 4. re-score the ALREADY-CALLED gold/round1 pairs in round-2 conns ------
+# BH FDR among gold pairs only (not among every new peak-peak call).
+SCORED="${RES2}/${TF}.gold_scored_round2.tsv"
 REPRO="${RES2}/${TF}.reproducible_pairs.tsv"
-python "${COB}/scripts/intersect_pair_edges.py" \
-  --a "${EDGES1}" --b "${EDGES2}" --qval "${QVAL}" --out "${REPRO}" | tee "${RES2}/intersect.txt"
+python "${COB}/scripts/score_gold_pairs_round2.py" \
+  --edges "${EDGES1}" --qval "${QVAL}" \
+  --conns "${CONNS2}" \
+  --shuffle-para "${CWD2}/cicero_shuf/shuffle.para.txt" \
+  --out "${SCORED}" --fdr "${QVAL}" | tee "${RES2}/intersect.txt"
+cp -f "${RES2}/${TF}.gold_scored_round2.fdr${QVAL}.tsv" "${REPRO}"
 
-# ---- 5. cluster on the reproducible set -------------------------------------
+# ---- 5. cluster on the reproduced gold pairs --------------------------------
 python "${COB}/scripts/cluster_peaks.py" \
-  --edges "${REPRO}" --out-dir "${RES2}" \
+  --edges "${REPRO}" --annot "${CWD2}/${TF}.peak_annot.tsv" --out-dir "${RES2}" \
   --qval 1 --coaccess-min 0 --min-support 1 \
   --min-clique "${MIN_CLIQUE}" --share "${SHARE}" --plot \
   --net-min-comp "${NET_MIN_COMP}" --net-big "${NET_BIG}" --max-dist "${MAX_DIST}"
