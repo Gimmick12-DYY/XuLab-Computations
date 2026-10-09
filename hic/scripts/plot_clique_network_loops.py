@@ -2,6 +2,7 @@
 """Overlay Peakachu loops on the RBBP4 clique network (does not touch gold results)."""
 from __future__ import annotations
 
+import argparse
 import sys
 from collections import Counter, defaultdict
 from itertools import combinations
@@ -220,7 +221,7 @@ def plot_network(G, cliques, genes, loops, comps, out_png: Path, title: str, sub
     handles = [
         Line2D([0], [0], color="#e8433f", lw=2.4, label="cobinding clique"),
         Line2D([0], [0], color=grey, lw=1.2, label="surrounding pair"),
-        Line2D([0], [0], color="#FF1493", lw=3.2, label="clique edge inside a loop span"),
+        Line2D([0], [0], color="#FF1493", lw=3.2, label="loop-supported clique edge"),
         Line2D([0], [0], color="#F5C518", lw=2.6, label="Peakachu loop 5 kb"),
         Line2D([0], [0], color="#1A6B8A", lw=2.6, linestyle="--", label="Peakachu loop 10 kb"),
         Line2D([0], [0], marker="o", color="none", markerfacecolor="none",
@@ -240,6 +241,19 @@ def plot_network(G, cliques, genes, loops, comps, out_png: Path, title: str, sub
 
 
 def main() -> None:
+    global EDGES, CLIQUES, NODES, LOOP_PAIRS, OUT
+    ap = argparse.ArgumentParser(description=__doc__)
+    ap.add_argument("--edges", type=Path, default=EDGES)
+    ap.add_argument("--cliques", type=Path, default=CLIQUES)
+    ap.add_argument("--nodes", type=Path, default=NODES)
+    ap.add_argument("--loop-pairs", type=Path, default=LOOP_PAIRS)
+    ap.add_argument("--out-dir", type=Path, default=OUT)
+    ap.add_argument("--title", default="RBBP4 co-binding clusters with Peakachu loops")
+    ap.add_argument("--subtitle",
+                    default="Pink = loop-supported clique edge; gold/teal = other loop-supported pairs.")
+    args = ap.parse_args()
+    EDGES, CLIQUES, NODES = args.edges, args.cliques, args.nodes
+    LOOP_PAIRS, OUT = args.loop_pairs, args.out_dir
     OUT.mkdir(parents=True, exist_ok=True)
     G = load_graph()
     cliques = load_cliques()
@@ -261,16 +275,14 @@ def main() -> None:
     plot_network(
         G, cliques, genes, loops, comps10,
         OUT / "tf_peak_network_cliques_loops.png",
-        "RBBP4 co-binding clusters with Peakachu loops (5 kb ∪ 10 kb, 0.7, ±10 kb)",
-        f"Pink = clique edge whose peaks both sit inside one loop span. "
-        f"Gold/teal bows = other Peakachu-overlapping pairs. "
-        f"{len(comps10)} components ≥10 shown.",
+        args.title,
+        f"{args.subtitle} {len(comps10)} components ≥10 shown.",
     )
     plot_network(
         G, cliques, genes, loops, comps_loop,
         OUT / "tf_peak_network_loop_components.png",
         "Only components that contain a Peakachu loop-span edge",
-        f"{len(comps_loop)} components · pink = clique edge inside a loop span · "
+        f"{len(comps_loop)} components · pink = loop-supported clique edge · "
         f"5 kb gold, 10 kb dashed teal",
         label=False,
     )

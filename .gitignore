@@ -36,7 +36,9 @@ chip_gse103651/
 # Outbound share packs (copies/symlinks of data/)
 share/
 
-# Downstream caches & regenerable eval outputs (keep scripts/slurm tracked)
+# Downstream caches & regenerable eval outputs (keep scripts/slurm tracked).
+# Result trees now live under eval/ and archive/. The root patterns stay so a
+# script that still writes the old paths does not get committed.
 downstream/cache/
 downstream/bins/
 downstream/bins_*/
@@ -44,6 +46,19 @@ downstream/bin_coverage_*/
 downstream/peak_coverage_*/
 downstream/compare_pos_neg_*/
 downstream/slide_tables/
+downstream/eval/bins/*
+!downstream/eval/bins/bins_nfya_final
+!downstream/eval/bins/bins_zbtb7a_final
+!downstream/eval/bins/bins_znf777_final
+downstream/eval/bin_coverage/
+downstream/eval/peak_coverage/
+downstream/eval/compare_pos_neg/
+downstream/eval/slide_tables/
+downstream/archive/pre_union/
+downstream/archive/pearson_10kb/**
+!downstream/archive/pearson_10kb/**/
+!downstream/archive/pearson_10kb/**/*.py
+downstream/tf_hitag_pearson/bin1k/
 downstream/pos_neg_all*/
 downstream/sensitivity_specificity/
 downstream/bin_sensitivity_specificity/
