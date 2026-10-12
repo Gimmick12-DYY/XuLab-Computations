@@ -25,6 +25,84 @@ cluster is the usual cause of "unchanged output."
 
 ## Log (newest first)
 
+### 2026-10-12 — Housekeeping: TSV results out of git
+- `.gitignore` now ignores `*.tsv` / `*.tsv.gz` (except `metadata/*.tsv` and `*_manifest.tsv`).
+  TSVs already tracked stay tracked until removed with `git rm --cached`.
+
+### 2026-10-09 — Cicero "Our Run" rolled out to the panel; 2 Mb window confirms RBBP4 loop enrichment
+- **Panel run:** `slurm/run_ourrun_tf.sbatch` (array over `configs/ourrun_tfs.txt`, 78 TFs,
+  RBBP4 excluded since its run exists) applies the RBBP4 "Our Run" settings (entry below) to
+  every TF. Peak matrix is built per TF from the lab's MACS2 narrowPeak (q<=0.05) + fragment
+  BED (`scripts/build_tf_peak_mm_from_macs2.py`; `build_tf_peak_mm.py` = generic variant), then
+  Cicero 1 Mb → p<=0.05 on the RBBP4 Gaussian null (`RBBP4.perm.fitConns.para.txt`) → FDR<=0.05
+  cliques → loop metrics + permutation. Outputs `work/ourrun_k50/<TF>/`, `results/ourrun_k50/<TF>/`.
+- **Status (array 4433127, as of 2026-10-12):** 67/78 tasks finished; selected pairs per TF
+  median ~1.1k, max ~135k; 7 tasks logged errors → check `logs/ourrun-4433127_*.err` and
+  resubmit those indices. Using RBBP4's null for every TF is a shortcut; a per-TF null is the
+  stricter follow-up.
+- **RBBP4 2 Mb second search:** `run_rbbp4_window2mb.sbatch` reruns Cicero at a 2 Mb window
+  (same k=50 / cap 10k / seed 555) and keeps pairs selected in BOTH windows (12,433 edges,
+  359 cliques at FDR<=0.05). `run_rbbp4_w2mb_metrics.sbatch` scores them against Peakachu loops.
+- **Loop-overlap slide table** (`hic/scripts/fill_slide_loop_table.py`, `run_rbbp4_slide_perm.sbatch`):
+  locked loop definition ±30 kb, score>=0.5 (5 kb + 10 kb loops), optional drop of spans <=25 kb,
+  500-draw same-chromosome permutation (cliques shifted as one block). Both-windows RBBP4 result:
+  pair loop rate **16.0% vs null 9.4%**, cliques with >=1 loop-supported edge **43.5% vs 25.1%**,
+  all edges supported **3.1% vs 0.8%** (all p=0.002, 0/500 null draws >= observed). With spans
+  <=25 kb dropped: 16.1% of pairs, 40.8% of cliques with >=1 supported edge. The pairs are
+  loop-enriched ~1.7× over a position-shuffled null even though most pairs are not loops.
+- **Files:** `cobinding/slurm/{run_ourrun_tf,run_rbbp4_window2mb,run_rbbp4_w2mb_metrics,run_rbbp4_slide_perm}.sbatch`,
+  `cobinding/scripts/build_tf_peak_mm{,_from_macs2}.py`, `cobinding/configs/ourrun_tfs.txt`,
+  `hic/scripts/{fill_slide_loop_table,plot_cicero_loop_cliques,plot_pairs_vs_loops_chromosomes}.py`.
+
+### 2026-10-07 — RBBP4 Cicero parameter sweep: k=50 / cap 10k / seed 555 chosen as "Our Run"
+- **Context:** on the exact RBBP4 peak matrix/CDS, sweep the aggregation knobs (k, metacell
+  iteration cap, seed; 1 Mb window, p<=0.05 shuffle null) and compare each to Dr. Wang's gold
+  (17,450 pairs; 11,342 FDR<=0.05 edges; 355 cliques). `slurm/run_rbbp4_parameter_sweep.sbatch`.
+- **Result (selected pairs / cliques; Spearman of coaccess on shared pairs):**
+
+  | k | cap | seed | pairs | cliques | gold-FDR recovered | Spearman |
+  |---|---|---|---|---|---|---|
+  | 40 | 10k | 555 | 17,839 | 277 | 12.7% | 0.33 |
+  | 50 | 8k | 555 | 19,839 | 379 | 13.6% | 0.33 |
+  | **50** | **10k** | **555** | **20,613** | **359** | **14.3%** | **0.31** |
+  | 50 | 12k | 555 | 5,332 | 66 | 5.6% | 0.29 |
+  | 50 | 15k | 555 | 19,694 | 325 | 14.4% | 0.29 |
+  | 50 | 10k | 2020 | 18,563 | 308 | 13.4% | 0.33 |
+  | 60 | 10k | 555 | 22,671 | 497 | 15.1% | 0.30 |
+  | 75 | 10k | 555 | 24,835 | 654 | 15.9% | 0.28 |
+
+- **Outcome:** k=50 / cap 10k / seed 555 matches the gold network's SIZE best (359 vs 355
+  cliques, largest module 6 vs 5) and became the "Our Run". Pair-level agreement stays low at
+  every setting (Jaccard ~0.06, Spearman ~0.3): the counts can be matched, the exact pairs
+  cannot, consistent with metacell sampling being intrinsically unstable. Higher k inflates
+  cliques. The cap=12k point is an unexplained outlier (5k pairs); rerun before trusting it.
+- **Files:** `cobinding/slurm/run_rbbp4_parameter_sweep.sbatch`; results in
+  `cobinding/results/RBBP4_sweep_k*_i*_s*/compare_to_gold.txt`.
+
+### 2026-10-07 — Codebook motifs rescue 11 previously motif-less TFs
+- **Change:** AME (`--scoring avg`) of each TF's peaks/bins against `codebook_top1.meme`
+  (`motif_analysis/slurm/motif_enrichment_codebook.sbatch`, array 0-10; genome/OCR backgrounds,
+  peaks and bins). `scripts/fill_codebook_known_sheet.py` writes the own-motif adj. p into the
+  Codebook-only rows of `TF1000cells_motifs.xlsx`.
+- **Outcome:** 11 TFs moved from "unknown" to "known motif": ZNF507, MBD3, ZNF703, GLYR1,
+  FLYWCH1, ZNF367, ZNF746, POGK, ZBTB40, ZNF606, ZNF503. Shrinks the set for the novel-motif
+  module (Steps 4-5).
+- **Commits:** `2d1d6a9`, `3ddd900`.
+
+### 2026-10-05 → 10-09 — 10 kb Raw / Imputed / Chromnitron / Bulk Pearson per TF
+- **Context:** per-TF genome-wide check of how the imputed aggregate relates to the raw
+  aggregate, the Chromnitron sequence prediction (`HEK293T_SA`) and bulk ChIP.
+- **Change:** `downstream/tf_hitag_pearson/build_aggregate_matrix.py` (10 kb bins, SLURM array
+  `tf_aggregate_pearson.sbatch`) → `build_bin10kb_matrices.py` assembles per-TF 4×4 matrices
+  plus raw-vs-imputed (all TFs) and imputed-vs-pred (TFs with a Chromnitron track; 36 lack one,
+  `bin10kb/tfs_without_pred.txt`). `apply_spqn_imputed_pred.py` applies the compartment-style
+  SpQN (cell-count covariate) to imputed-vs-pred, diagonal kept as the matched Pearson.
+  1 kb variant in `build_bin1k_correlations.py` (plot layout enlarged). Old per-TF result
+  files under `ctcf_hitag_pearson/` and `tf_hitag_pearson/` were removed from git (`8743036`).
+- **Example (CTCF):** Raw–Imputed r=0.71; Pred–Bulk 0.67; Raw/Imputed vs Bulk ~0.37 and vs
+  Pred ~0.30. Imputation tracks its own raw input far more than the external references.
+- **Files:** `downstream/tf_hitag_pearson/*.py`, `downstream/slurm/tf_{aggregate_pearson,pearson_bin1k}.sbatch`.
+
 ### 2026-10-05 — Cicero co-binding: two-stage reproducibility filter (vs Hi-C loops)
 - **Motivation:** single-round Cicero coordinated-binding pairs barely overlap the Hi-C
   Peakachu loops (`hic/scripts/compare_loops_to_cicero_pairs.py`), suggesting many pairs may

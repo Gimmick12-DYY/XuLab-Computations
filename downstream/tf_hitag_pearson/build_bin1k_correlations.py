@@ -205,19 +205,20 @@ def write_tsv(path: Path, rows: list[str], cols: list[str], R: np.ndarray) -> No
 def plot_matrix(path: Path, rows: list[str], cols: list[str], R: np.ndarray, title: str, numbers: bool) -> None:
     n, m = R.shape
     # Large cells so names and values stay readable when the PNG is opened.
-    cell = 1.15 if n <= 6 else 0.55
-    fig_w = m * cell + 3.2
-    fig_h = n * cell + 2.4
+    # Extra width on the left so the first letter of a y label is not clipped.
+    cell = 1.6 if n <= 6 else 0.62
+    fig_w = m * cell + 4.6
+    fig_h = n * cell + 2.8
     fig, ax = plt.subplots(figsize=(fig_w, fig_h))
     im = ax.imshow(R, cmap="YlOrRd", vmin=0.0, vmax=1.0, origin="upper", aspect="equal", interpolation="nearest")
-    lab_fs = 22 if n <= 6 else 16
-    num_fs = 20 if n <= 6 else 11
+    lab_fs = 28 if n <= 6 else 18
+    num_fs = 26 if n <= 6 else 12
     ax.set_xticks(range(m))
     ax.set_yticks(range(n))
     ax.set_xticklabels(cols, rotation=40, ha="right", fontsize=lab_fs)
     ax.set_yticklabels(rows, fontsize=lab_fs)
-    ax.tick_params(length=0, pad=6)
-    ax.set_title(title, fontsize=lab_fs + 2, pad=12)
+    ax.tick_params(length=0, pad=10)
+    ax.set_title(title, fontsize=lab_fs + 2, pad=16)
     if numbers:
         for i in range(n):
             for j in range(m):
@@ -226,11 +227,11 @@ def plot_matrix(path: Path, rows: list[str], cols: list[str], R: np.ndarray, tit
                     continue
                 ax.text(j, i, f"{v:.2f}", ha="center", va="center", fontsize=num_fs,
                         color=("white" if v >= 0.65 else "black"))
-    cb = fig.colorbar(im, ax=ax, fraction=0.046, pad=0.02)
+    cb = fig.colorbar(im, ax=ax, fraction=0.046, pad=0.04)
     cb.set_label("Pearson r", fontsize=lab_fs)
-    cb.ax.tick_params(labelsize=lab_fs - 2)
+    cb.ax.tick_params(labelsize=max(lab_fs - 4, 12))
     fig.tight_layout()
-    fig.savefig(path, dpi=120)
+    fig.savefig(path, dpi=140, bbox_inches="tight", pad_inches=0.45)
     plt.close(fig)
     print(f"wrote {path}", flush=True)
 
@@ -276,7 +277,7 @@ def main() -> int:
     write_tsv(OUT / "raw_vs_imputed_pearson.tsv", raw_labs, imp_labs, R_ri)
     plot_matrix(
         OUT / "raw_vs_imputed_pearson.png", raw_labs, imp_labs, R_ri,
-        "Raw (HiTAG aggregate) vs Imputed aggregate\nPearson r, 1 kb bins",
+        "Raw vs Imputed",
         numbers=True,
     )
     summarize("raw_vs_imputed", raw_labs, R_ri)
@@ -289,7 +290,7 @@ def main() -> int:
     write_tsv(OUT / "imputed_vs_pred_pearson.tsv", chrom_labs, chrom_labs, R_ip)
     plot_matrix(
         OUT / "imputed_vs_pred_pearson.png", chrom_labs, chrom_labs, R_ip,
-        "Imputed aggregate vs Pred (Chromnitron)\nPearson r, 1 kb bins",
+        "Imputed vs Pred",
         numbers=True,
     )
     summarize("imputed_vs_pred", chrom_labs, R_ip)
@@ -309,7 +310,7 @@ def main() -> int:
         M = np.column_stack(cols)
         R = pairwise(M, M)
         write_tsv(OUT / f"{tf}_pearson.tsv", labels, labels, R)
-        plot_matrix(OUT / f"{tf}_pearson.png", labels, labels, R, f"{tf}  Pearson r, 1 kb bins", numbers=True)
+        plot_matrix(OUT / f"{tf}_pearson.png", labels, labels, R, tf, numbers=True)
     print(f"[done] {OUT}", flush=True)
     print(f"TFs without Pred ({len(no_pred)}), left out of imputed-vs-pred: {', '.join(no_pred)}", flush=True)
     return 0

@@ -85,3 +85,10 @@ sc_TF_share/
 *.pdf
 *.png
 *.bw
+
+# Result tables: keep TSV outputs out of git. Files already tracked stay tracked
+# until removed with `git rm --cached`. Small input metadata / manifests are allowed.
+*.tsv
+*.tsv.gz
+!**/metadata/*.tsv
+!*_manifest.tsv
