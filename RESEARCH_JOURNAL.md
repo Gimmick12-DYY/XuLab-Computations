@@ -25,6 +25,279 @@ cluster is the usual cause of "unchanged output."
 
 ## Log (newest first)
 
+### 2026-11-02 — AF3 check of the Boltz hits; R1 TF-TF network frozen; R2 targets propagated
+- **Context:** the Boltz-2 screen (below) gave 71 strong pairs, but several were construct- or
+  seed-dependent. Before freezing the TF-TF layer, the 38 Boltz hits worth keeping were re-folded
+  with the Longleaf AlphaFold3 install (module `container/alphafold/3.0.1`, UNC central weights,
+  full-length UniProt canonical sequences, 5 seeds).
+- **Change:** `complex_screen/af3_local/`. Controls first: EZH2-SUZ12 strong 5/5 seeds (ipTM 0.71,
+  ipSAE 0.77); RBBP7-SRCAP none (needed a 128 GB rerun). Then the 38 pairs (20 strong/changed +
+  18 complex_weak).
+- **Outcome:** AF3 strong 4, weak 8, none 26 → Boltz over-calls. Strong: MLX-SREBF2 (ipTM 0.45,
+  ipSAE 0.57, 5/5; the only pair strong in Boltz trimmed + Boltz full-length + AF3), NEUROD4-SREBF2
+  (NEUROD4 not expressed), HOXC4-RBBP4 (3/5), MTF2-RBBP4 (1/5). AF3 supports none of the complex
+  edges (DR1-THAP6 none despite Boltz full-length strong 3/3; RBBP4-RBBP7 none, paralogs).
+  EZH2-MTF2 dimer: no contact (ipSAE 0); EZH2-SUZ12-MTF2 trimer: SUZ12-MTF2 0.42/0.39 5/5, EZH2-MTF2
+  0/5, i.e. bridged by SUZ12. Superposition checks: MLX-SREBF2 on MYC-MAX (PDB 1NKP) Cα RMSD 0.95 Å
+  over 110 residues (supports the bHLH-ZIP fold, not the partnership); MTF2 on SUZ12 sits on a
+  different surface from its paralog PHF19 in PDB 6NQ3 (2/20 contact residues shared) → AF3
+  interface likely wrong despite confidence.
+- **Freeze rulings:** Boltz-only/trimmed-only edges → weight 0; AF3-strong MLX-SREBF2, HOXC4-RBBP4,
+  MTF2-RBBP4 = physical-only w 0.5; NEUROD4 edges w 0 (not expressed); DR1-THAP6 → complex_weak
+  (af3_none); DR1-HOXC9 → co-localized; Boltz "none" on known pairs = no information.
+- **Frozen R1** (`regulatome/r1_tftf/r1_final_classes.py --freeze` → `r1_tftf/v2_final/`,
+  `frozen_manifest.sha256`, 205 files, sha256 `735357ff…593f`): complex 4 (EZH2-MTF2, WIZ-ZNF644,
+  PCGF6-RBBP4, RBBP4-RBBP7), DNA-guided 1 (FOXK1-MLX), complex_weak 20, physical-only structure 60,
+  physical-only DNA 2, physical-only weak 97, co-localized 231, STAG2-wrap 11, none 2,655;
+  30 pairs carry weight > 0.
+- **Propagation** (`regulatome/r2_targets/propagation/`): 17/79 TFs gain targets (median 934 genes;
+  sparse gainers CHAMP1 EPAS1 FOXK1 HOXC4 HOXC9 MSX2 PCGF6 SREBF2 THAP6). Locally supported 17%
+  overall, but module members are circular by construction (22-35%) and pair-transferred lists
+  only 7-9% vs ~5% chance.
+- **After the freeze:** user asked whether this much cis-regulation is too little → a third
+  transfer class "cis-coordinated" (Cicero excess + a second co-binding metric ≥ 0.90; loop-supported
+  w 0.5, plain w 0.25) was approved for a re-freeze (manifest v2). The re-freeze is PARKED:
+  `r2_targets/r2_cis_v2.py` fails because 61/79 TFs lack rows in the shared-edge matrix (treat as
+  zero shared edges on restart). Ablation arms (promoter-only, imputed residual, blend) are built in
+  `regulatome/m4_validation/arms/` but not hashed. v1 manifest untouched.
+- **Rule kept:** X-Atlas/Orion Perturb-seq is used only to compare against the frozen output; no KD
+  file has been read. Validation plan (stream 223 HF parquet batches, 74 testable TFs) waits for
+  manifest v2.
+
+### 2026-11-01 → 11-02 — Composite-motif test for complex pairs: not detectable at sc depth
+- **Context:** PI asked for a novel-complex example supported by correlation + shared motif + AF3.
+  Earlier layer-3 pilots were negative, so a rank-free "reverse" test was designed: define elements
+  by sequence, then measure the pair's co-binding residual.
+- **Change:** `complex_screen/composite_motif/`. Calibration on CTCF (union-ATAC elements with vs
+  without MA0139.2). Pair test = composite (motif A + B ≤ 50 bp) vs single-motif elements within
+  expected-read bins, bootstrap CI, pass needs product AND min residual. Pairs: FOXK1-MLX
+  (pre-registered CAP-SELEX config), MLX-SREBF2, DR1-THAP6 (THAP1 proxy), WIZ-ZNF644; negative
+  control RBBP7-SRCAP. Last exploratory run: trend of co-binding residual over composite-score
+  deciles (`trend_exploratory/`).
+- **Outcome:** CTCF fails the pre-specified 1e-4 test; passes only post hoc with read-bin matching
+  and dose response (1e-5 1.07×, 1e-6 1.16×, 1e-7 1.20×), and shows no monotone trend. No pair
+  passes: MLX-SREBF2 only 15 composite elements (product 0.80, CI 0.37-1.21); FOXK1-MLX 0 elements;
+  THAP1 proxy 0 hits; WIZ/ZNF644 have no usable PWM (Schmitges 2016 / CIS-BP unreachable). The
+  negative control "passes" at the same 15 elements → small-n CIs untrustworthy.
+- **Decision:** motif work stopped. Our reads give an honest negative (low power, does not rule
+  out complexes); the motif leg for the PI cites CAP-SELEX / literature. EZH2-MTF2 CpG test
+  (`complex_screen/jie_motif/`, MTF2 EH domain binds CpG): co-bound CpG o/e 0.46 = matched, ratio
+  0.99 → negative.
+
+### 2026-11-01 → 11-02 — PI requests: complex count table, worked complexes, Hi-C clique triangle
+- **Counts** (`complex_screen/complex_counts/`, normalized all-elements ChromHMM SpQN percentile):
+  known 13 (STRING/CORUM + literature pairs ZNF512B-RBBP4, ChAHP, WIZ-ZNF644), 3 recovered at
+  pct ≥ 0.90 (MAZ-ZNF143 0.97, EZH2-MTF2 0.96, WIZ-ZNF644 0.94); recently revealed = CAP-SELEX
+  pairs only (FOXK1-MLX, MLX-MSX2, HOXD10-SREBF2); novel AF3-supported 2 (MLX-SREBF2, HOXC4-RBBP4).
+  NuRD fails on the corrected matrix (0.50): the old "NuRD confirmed" came from RBBP4-RBBP7
+  paralog correlation (MBD3 pairs 0.34-0.66).
+- **Examples:** known = EZH2-MTF2 (corrected pct enh/repr/Polycomb 0.93/0.94/0.96, within local
+  cluster 0.77/0.84/0.90); novel = MLX-SREBF2 (0.78/0.44/0.81; local 0.56/0.44/0.73; the raw
+  repressive signal was accessibility). MLX-SREBF2 was tested in CAP-SELEX and NOT called; no
+  co-binding edge. Raw Wang-style ChromHMM correlations are > 0.9 for nearly all pairs and their two
+  blocks are exactly the 25/54 library split → only corrected values are reported.
+- **Clique triangle** (`results_3d_model/clique_triangle/`, Mac): 1,903/49,823 cliques contain a
+  loop-edge triangle; with ±20 kb anchor shift, min dot/donut ≥ 1.5 in 89 vs 13 null. Chosen ETS2
+  clique on chr1 (ACBD6 promoter / distal / LINC01732), dot/donut 2.21/2.26/2.18 at 10 kb. 66% of
+  triangles are ETS2 cliques.
+
+### 2026-11-01 — R2 direct targets for all 79 TFs; Boltz full-length retests
+- **Change:** `regulatome/r2_targets/`. S(q,g) = Σ_e residual binding × power-law ABC × (1 + κ·Cicero),
+  κ = 0/1. Direct list = top 1,000 genes by S (κ = 1 primary). Propagation sources = the specific
+  TFs plus module pools (NuRD = MBD3 only; WIZ/ZNF644 broad-domain group = DR1 THAP6 CHAMP1 WIZ
+  ZNF644 SRCAP; PRC2 core = EZH2 MTF2 PCGF6, flagged not_PRC2_enriched). Every source drops genes
+  in the ATAC-only top 1,000 (`sources_atacfiltered/`).
+- **Outcome:** tiers 7 specific / 33 accessibility-limited / 39 undetermined. List size tracks depth
+  (specific median 7,998 genes with S > 0; undetermined 348; SETDB1 1; ZNF503 0) → use ranks. Top-500
+  overlap with the ATAC-only list 4-33 (chance ~13) vs 114-205 uncorrected. κ barely matters
+  (κ0/κ1 top-1,000 share 998-1,000). ZNF777 capped to 202 genes (shallow_source).
+- **Bug:** RBBP4's Cicero output lives in `RBBP4_sweep_k50_i10000_s555`; fixed in R2. The Gate 1 v2
+  RBBP4 raw+Cicero arm was probably skipped (noted in `gate1/v2_1/README.md`; ABC tier unaffected).
+- **Boltz full-length retest of 6 trimmed-only complex edges (seeds 1-3):** DR1-THAP6 strong 3/3;
+  DDIT3-XPA and DR1-HOXC9 seed-unstable; CBX1-ZNF507, DR1-ZNF746, ZNF143-ZNF512 lost.
+
+### 2026-10-30 — Binned Gate 1, PRC2 library checks, repressive matrices: no Polycomb-shaped PRC2
+- **Context:** ATAC-based ABC units discard reads in closed domains, so repressors (EZH2: 67
+  scoreable genes) could be invisible at gene level.
+- **Gate 1 v3 binned** (`regulatome/gate1/v3_binned/`; 10 kb, 50 kb, ReprPC domains, gene body
+  ±10 kb; expected from panel + GC + mappability, no ATAC): binning does not expand the tier.
+  Passes 10 kb 7 (E4F1 MBD3 MLX NFYA NME2 RBBP4 SOX4), 50 kb / gene body 3 (E4F1 RBBP4 SOX4), ReprPC 3
+  (E4F1 MLX RBBP4); all ≥ 12k cells. Robust core RBBP4, E4F1; ZNF507 and ZNF777 fail every unit.
+- **EZH2:** not shallow (3,970 cells, 258 reads/cell) but reproducible-not-specific; reads 10.0%
+  active / 3.9% ReprPC / 86.1% other = panel median. ENCODE SUZ12 HEK293T peaks (ENCSR090ZDO):
+  EZH2 rank 60/79, MTF2 50, PCGF6 57 (RBBP4 8, RBBP7 4). HOX clusters: PRC2 libraries 0.75-0.88× panel
+  (`regulatome/hox_check/`). → PRC2 libraries carry a weak uniform accessibility signal, no PRC2
+  occupancy. **Decision (user):** PRC2 stays a complex node on the TF-TF layer; its gene edges are
+  flagged "not_PRC2_enriched".
+- **Modules:** WIZ/ZNF644 broad-domain group (DR1 THAP6 CHAMP1 WIZ ZNF644 SRCAP, ± EZH2/MTF2) ranks 1-3
+  of 21 vs depth+library-matched random pools on every unit → real module (do not call it
+  PRC2-adjacent). Low-depth repressive set (SETDB1 NEUROD4 SOX12 ZNF79 ZNF606 ZNF777 ZNF581) and ChAHP
+  (ADNP/HP1/CHAMP1, `regulatome/chahp_test/`) are NOT modules; HP1/ADNP libraries mildly H3K9me3-enriched.
+- **Repressive ChromHMM matrices** (`regulatome/repressive_chromhmm_matrix/`, corrected version
+  `repressive_chromhmm_corrected/`, same pipeline as the enhancer-element matrices): PRC2 EZH2-MTF2
+  recovered on repressive elements (0.91-0.97) but equally on enhancers → not repressive-specific;
+  repressive-only block = 16 low-library TFs (artifact). Repressor-subset matrix in
+  `regulatome/repressor_matrix/`.
+
+### 2026-10-30 — Worked example: HOXB8-RBPJ fails; MAZ-ZNF143 chosen
+- HOXB8-RBPJ: SpQN pct 0.21-0.27; Boltz contact via the disordered HOXB8 N-terminus (61/87 contact
+  residues at pLDDT 39) → rejected. **Decision (user):** MAZ-ZNF143 is the worked example (Pearson
+  0.99/0.97, SpQN 0.99/0.97, pair-level module pass; no Boltz interface); MLX-SREBF2 kept as
+  "promising, unconfirmed".
+- All-pairs distal co-binding (`complex_screen/pilot_pairs/cobind_allpairs/`): raw obs/exp is
+  depth-confounded (rho -0.82 with set size; median pair 3.6×) → report depth-matched percentiles
+  (MAZ-ZNF143 79th, MLX-SREBF2 52nd, CTCF-STAG2 98th, RBBP7-SRCAP 20th).
+
+### 2026-10-29 — Gate 1 v2/v2.1: a TF-level tier of 7; PRC2 and NuRD as module nodes; layer 3 negative
+- **Context:** Gate 1 v1 passes (36/79) included shallow TFs such as NEUROD4 (not expressed).
+- **v2** (`gate1/v2/`; GC + mappability covariates, single-donor null): 0/79 pass. Two causes: the
+  single-donor null measures other TFs' biology, and at near-zero counts log((obs+.5)/(exp+.5)) is a
+  covariate function, so shallow profiles reproduce and resemble each other (ZNF503 best-other for
+  60/79).
+- **v2.1** (user choice; `gate1/v2_1/`): v1 reproducibility AND deep-TF specificity margin > 0,
+  count-aware residual (expected ≥ 5 per half). **Tier (frozen for design): RBBP4, NFYA, SOX4,
+  ZNF507, MLX, E4F1, ZNF777.** EZH2, MBD3, XPA out (underpowered). CTCF and MAZ fail. Caveat: the
+  tier overlaps the old deep "promoter hub" set.
+- **Modules:** with RBBP4/7 removed, PRC2 core (EZH2 MTF2 PCGF6) and NuRD (MBD3) are distinct
+  (+0.056/+0.066, 20/20, CGI-independent) → two module nodes. MAZ-ZNF143, HP1/ChAHP, MEF2, cohesin,
+  G9a-WIZ, HES1-RBPJ = TF-TF edges only. leiden_1 (HOX/ZIC/SREBF2 group) = low-library, provisional.
+- **Library batch:** 25 TFs put ~24.5% of reads in elements vs 16-19% for the other 54, with identical
+  class profiles; this matches ChromHMM "Block A" → Block A is a library/batch split, not a complex.
+- **Layer 3 pilot** (`complex_screen/pilot_pairs/layer3_v2/`; residual-selected distal elements, GC ×
+  CpG-matched background, 20 shuffles): CTCF motif 45.8% vs 43.2% background, below all shuffles; no
+  partner motif or spacing in any pair. → motif layer NEGATIVE at sc depth; Fig 4 motif evidence must
+  come from CAP-SELEX + bulk.
+- **Figures:** palette Option C "Continuity" adopted for all paper figures
+  (`/mnt/project-files/palette/regulome_palette.py`, `rp.use("C")`).
+
+### 2026-10-27 → 11-01 — Boltz-2 structure screen of all 3,081 panel TF pairs
+- **Context:** PI's three-layer complex search for Fig 4: structure → correlation → motif. No AF3
+  weights at the time → Boltz-2 2.2.1 (`envs/boltz`, `XuLab/complex_screen/`).
+- **Calibration** (`regulatome/ppi_pilot/`, `complex_screen/calib/`): 8 known complexes vs 7 random
+  pairs, ipTM/ipSAE AUROC 1.00; strong = ipSAE ≥ 0.3 & ipTM ≥ 0.4, weak = ipSAE ≥ 0.1. DNA-bound check:
+  MYC-MAX (1NKP) 5/5 correct (1.2 Å); HOXB13 dimer (8BYX) top model wrong (13.6 Å) at ipTM 0.97 →
+  confidence does not catch DNA placement errors.
+- **Screen:** 3,081 heterodimers (+ homodimers), disordered regions trimmed (AFDB pLDDT ≥ 50), chains
+  ≤ ~1,000 aa; array 7099032, low-memory settings. Final: strong 71, weak 108, none 2,902.
+- **Artifacts found:** STAG2 hits = "STAG2-wrap" (semi-disordered partners wrap the HEAT surface /
+  CES pocket; own class, no weight). hub_partner flag (ZUP1, STAG2, RBBP4, SREBF2, MSX2, MLX, ZNF746,
+  ZNF282, EZH2, ZNF367): 58/71 strong hits involve one. MTF2-RBBP4 = trimming artifact.
+- **Full-length rerun of 14 strong non-STAG2 hits** (`complex_screen/fulllength_check/`): robust 2,
+  changed interface 5 (MLX-SREBF2 stays strong), construct-dependent/lost 7.
+- **CAP-SELEX** (Xie 2025, supp. tables in `complex_screen/cap_selex/`): 19/79 panel TFs screened,
+  95 panel pairs tested, 3 called (FOXK1-MLX, MLX-MSX2, HOXD10-SREBF2), no composite motif among them.
+  The 92 negatives are annotation only (DBD-only in vitro), never a null.
+- **R1 co-binding view:** STRING physical pairs sit at median pct 0.42-0.62 (known complexes are not
+  typically at the top); cross-library pairs are lost (1/17) → complex edges come from structure +
+  STRING; co-binding alone gives the "co-localized" class.
+
+### 2026-10-26 → 10-28 — Regulome: target set, universe, binding layer fails, ABC wiring
+- **Context (user, 2026-10-26):** main target = a TF regulatory network, the **Regulome**, from
+  complex co-binding, Cicero networks and motifs, validated against X-Atlas/Orion HEK293T CRISPRi
+  Perturb-seq. **Hard rule (2026-10-28):** Perturb-seq is only a final comparison; it never builds,
+  selects, tunes or filters the model. Motifs = validation layer only.
+- **Phase 1** (`regulatome/phase1/`): 74/79 TFs have significant on-target KD (fail EPAS1, NEUROD4,
+  SRCAP, ZBTB40, ZNF606); data are on FigShare (350 GB h5ad) and HF `Xaira-Therapeutics/X-Atlas-Orion`
+  (223 parquet batches). Paused until the network is frozen.
+- **M0 universe** (`regulatome/m0_universe/`, GENCODE v46 in `data/gencode_v46/`): 159,965 active
+  elements (≥ 2 kb tiled to ~1 kb); `elements_v2.bed` adds repressive classes (396,014 elements,
+  362.9 Mb).
+- **M1 binding FAILS sanity** (`regulatome/m1_binding/`): raw obs/exp median AUROC 0.49 vs 7 bulk ChIP
+  (ATAC alone 0.87); most TFs have < 1 read per element. Repressive classes are below background for
+  all TFs; no PRC2→Polycomb or HP1/SETDB1→heterochromatin signal. → element-level binding cannot come
+  from our reads for most TFs; TF-specific signal exists only in aggregate for deep/motif TFs.
+- **M2 ABC** (`regulatome/m2_abc/`, ABC v1.1.2, ATAC-only activity, power-law contact primary; WT
+  GSE216399 Hi-C arm supplementary): 104,071 links over 19,807 genes, median 4/gene, distance median
+  14.8 kb; Hi-C arm Jaccard 0.93.
+- **Design** (doc "Regulome unified model design"): two-resolution Regulome (TF-level edges only for
+  TFs passing an internal split-half specificity gate; others through modules), TF-TF backbone with
+  co-binding and physical views, R2 target score, validation read once after freeze.
+- **Gate 1 v1** (`regulatome/gate1/`): 36/79 pass raw × ABC, but all 16 TFs with ≥ 9.1k cells pass
+  (depth-limited) and NEUROD4 passes → superseded by v2/v2.1 (2026-10-29). Imputed split-half leaks
+  (one model per TF trained on all its cells) → imputed reported as "pass_not_independent".
+
+### 2026-10-26 → 11-02 — 3D view of the chr16p11.2 hub and other Hi-C examples
+- **Models** (`results_3d_model/`): PASTIS PM2 on WT Hi-C (10 kb) → Brackley-style TF-binding polymers
+  (OpenMM) → hybrid with Hi-C loop restraints → Hi-C-first + TF model (last variant, user decision).
+  Cicero edges are 3-10× closer than distance-matched pairs but ~1.0× vs bound, distance/class-matched
+  pairs → no pair-specific effect. Hub figures (loop-edge "flower", 18 loop-edges) are illustration only.
+- **Direct Hi-C test** (`results_3d_model/hic_hub_test/`): hub promoter bins 1.43× mutual contact vs
+  TF-matched chr16 promoters (p = 0.001), but only 1.08× vs TF-rich bins in the same 1.8 Mb window.
+- **SE candidate** (ROSE on ENCODE HEK293 H3K27ac, 342 calls, `results_3d_model/se_hub/`):
+  chr19 SE_0027 1.76× vs matched (p = 0.004), but a dot test finds a clear dot for only 5/12 partners
+  (3 none, 4 untestable) → modest example; re-screen vs keep vs drop awaits the user. 293T H3K27ac
+  (GSE246314) only partly reproduces the call.
+
+### 2026-10-21 → 10-28 — Cicero hubs, Hi-C loop support and complex co-binding re-check
+- **Hubs:** promoter concentration of multi-TF hubs is a real feature (user + PI); Hi-C validates
+  pairs but is not used as a filter. Exon-only signal at highly expressed genes (SERPINH1, DNAJB1,
+  BRD4, RPS3) is a suspected cDNA-carryover / hyper-ChIPable artifact → use promoter/distal examples.
+  Main example: chr16p11.2 promoter hub. TF × TF Jaccard shows blocks B1-B3; depth-matched top-1,000
+  pairs keep only B2/B3 (cell-count bias). Browser tracks stay on raw coverage.
+- **Complex co-binding:** per-domain enrichment correction confirms PRC2 (EZH2-MTF2), MAZ-ZNF143 and
+  cohesin; NuRD does not hold (its +0.26 came from RBBP4-RBBP7). Slides use Pearson only.
+- **Hi-C:** WT HEK293T map GSE216399, Peakachu loops at 0.7. Cicero: step 1 + 25 kb drop only.
+
+### 2026-10-15 → 10-23 — Genome build, benchmarks, CTCF false positives, housekeeping
+- **pmat is hg19** (re-verified, `results_293T_analysis/pmat_genome_check/VERDICT.txt`):
+  `data/TF1000cells.pmat.mtx.rds` is hg19, everything else hg38; use
+  `results_293T_analysis/tf_network_chrombert/inputs/pmat_bins_hg38.bed`. `run_cicero_cobinding.sbatch`
+  and `run_cicero_two_stage.sbatch` default to the hg19 pmat. ChromBERT-style encoding dropped.
+- **Chromnitron** (Bo Xia preprint; xujie's 43-TF predictions): imputed vs predicted shows no
+  diagonal under any normalization (shared ATAC-driven component). AUROC vs bulk: imputed 0.89, raw
+  0.64, ATAC alone 0.90 → imputed ≈ ATAC. Imputed vs raw AUPRC for the 7 TFs with bulk ChIP.
+- **CTCF promoter false positives** (`ctcf_promoter_fp/`): the reported promoter-only set is empty in
+  our data at ≥ 10 reads; best filter = require the CTCF motif (MA0139.2; AUPRC in ATAC bins 0.65 →
+  0.73). CTCF is kept but not showcased (shallow; technique may impair CTCF).
+- **Motifs:** raw Codebook run for the 11 rescued TFs with union-ATAC background
+  (`motif_analysis/motif_raw_codebook/`, job 6083940).
+- **Housekeeping:** `xujie_lab/293T_analysis` emptied; still-used outputs moved to
+  `XuLab/results_293T_analysis/` and 19 scripts repointed. Lab share `data_share/293T_TF` (537 files,
+  md5-verified) replaces the old Globus share. Fragment beds = single-end 5' ends, not Tn5-shifted,
+  not deduplicated (~2.6% dups).
+
+### 2026-10-25 — De novo on lab hg38 MACS2 peaks fails its controls: sc peaks carry no own-motif signal
+- **Context:** the pmat de novo runs were invalid (Sep: hg19 coordinates on hg38 sequence) or
+  accessibility-dominated (Oct 16 hg38-lifted rerun: AP-1/IRF/NRF1 bests, only GC/CpG-like
+  candidates). Next route: de novo on the lab's hg38 MACS2 calls
+  (`/vast/som/xujie_lab/TAGATG-293T/bigwig/macs2/`, p<0.01, no control).
+- **Change:** `motif_analysis/denovo_macs2/`. Sites = summits with p<=1e-5, chr1-22/X, minus
+  ENCODE blacklist, RefSeq coding exons/3'UTRs (cDNA carryover) and sites covered by strong
+  peaks of >50% of the 79 TFs; top 5k per split, summit +/-50 bp. Discovery on odd chr + X
+  (HOMER `-cpg` vs the TF's union-ATAC background, STREME vs GC-matched ATAC); candidates ranked
+  by AUROC on held-out even chr (GC-matched pos/neg), TOMTOM vs HOCOMOCO v12 + Codebook + JASPAR,
+  Codebook artifact flag. 34 still-motif-less TFs + CTCF/NRF1/NFYA/ZNF143/MAZ controls.
+- **Outcome:** controls failed: own motif in the top 3 for 0/5 (NFYA rank 6; NRF1 94; MAZ 80;
+  CTCF and ZNF143 never recovered). Every TF's best held-out AUROC was 0.55-0.63; top hits were
+  Alu fragments (GCCTCAGCCTCC, TGGGATTACA) and SP/KLF GC motifs. Only "novel" candidates:
+  4 GC/CpG-like motifs for RBBP4. The shared-site filter removed almost nothing (strong summits
+  are covered by 1.7-7 TFs on average), so the accessibility wash is not the cause.
+- **Diagnostic (`diag_controls.sh`, `out/diag/diag.tsv`):** own known motif, held-out AUROC vs
+  GC-matched open chromatin. Bulk CTCF majority-2-of-3 peaks: **0.72** (evaluation works). sc
+  MACS2 sites, whatever the selection (strict / top 2k by p / top 2k by fold / +/-250 bp):
+  CTCF 0.39-0.47, NRF1 0.49-0.50, ZNF143 0.51-0.52, MAZ 0.48-0.50, NFYA 0.55-0.64. sc sites are
+  13-25% Alu vs 2% for bulk CTCF.
+- **Audit, all 49 TFs with a database motif (2026-10-26, `audit_own_motifs.sh`, `out/audit/`):**
+  best own-motif AUROC on the strict sc sites is 0.44-0.55 vs open chromatin and 0.48-0.56 vs
+  GC-matched random genome; only NFYA reaches 0.55-0.56. Bulk CTCF scores 0.72 / 0.78 the same way.
+  The sc MACS2 sites carry no own-motif signal for any panel TF, not just the controls.
+- **Artifact drop (2026-10-26, `audit_artifact_drop.sh`, `out/audit/artdrop/`):** removing sites that
+  overlap an Alu or carry a FIMO hit (p<1e-5) to the 18 non-endogenous Codebook artifact motifs
+  (NFI/SP-KLF/ETS/NR kept), from both foreground and backgrounds, changes nothing: own-motif AUROC
+  0.49-0.55 vs genome, 0.43-0.55 vs open chromatin (NFYA best); bulk CTCF 0.77/0.72. Artifact
+  motifs hit almost no sites (71 of 1.45M); Alu overlap removed 6-14%.
+- **Dedup re-call (2026-10-28, `recall_dedup.sbatch`, `out_dedup/`):** 5 controls re-called with macs3, lab
+  settings, reads deduplicated per cell (chrom + 5' end + strand + barcode). Dedup removes only 1-3% of reads
+  (25% inside the old CTCF strong sites); CTCF strong summits 4.3k -> 2.5k. Own-motif AUROC unchanged:
+  vs open chromatin CTCF 0.48, NRF1 0.49, ZNF143 0.51, MAZ 0.52, NFYA 0.55; vs genome 0.50-0.56;
+  bulk CTCF 0.73/0.78. Duplicates are not the cause; not extended to the panel.
+- **Decision:** the lab sc MACS2 peaks do not localise to TF motifs for most TFs, so no de novo
+  candidate from them is taken forward. Next: score every known-motif TF's own motif the same
+  way to find which TFs carry motif signal, and revisit the motif enrichment setup (Codebook
+  artifact handling, controlled peak calls) before more de novo work.
+- **Files:** `motif_analysis/denovo_macs2/{prep_sites.py,prep_sites.sbatch,run_denovo.sbatch,summarize.py,summarize.sbatch,submit_all.sh,diag_controls.sh,tfs.txt}`;
+  results `motif_analysis/denovo_macs2/out/{summary.tsv,novel_candidates.tsv,sites/site_counts.tsv,diag/diag.tsv}`.
+
 ### 2026-10-12 — Housekeeping: TSV results out of git
 - `.gitignore` now ignores `*.tsv` / `*.tsv.gz` (except `metadata/*.tsv` and `*_manifest.tsv`).
   TSVs already tracked stay tracked until removed with `git rm --cached`.
