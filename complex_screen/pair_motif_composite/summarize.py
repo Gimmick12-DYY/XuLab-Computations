@@ -98,16 +98,17 @@ if __name__ == "__main__":
         for p in pairs:
             T = pd.read_csv(f"{O}/candidates/{p}/candidates.tsv", sep="\t") if os.path.getsize(f"{O}/candidates/{p}/candidates.tsv") > 1 else pd.DataFrame()
             pb = perm_best(p); V = val(p); allc.append(T)
-            own = [m for m in OWN.get(p, []) if len(T) and m in set(T.motif)]
+            short = lambda n: str(n).split("/")[0]
+            own = [m for m in OWN.get(p, []) if len(T) and m in set(T[T.source == "homer_known"].motif.map(short))]
             show = T.assign(score=T[["log10p_vsA", "log10p_vsB"]].max(1)).sort_values("score").head(5) if len(T) else T
             if not len(show): rows.append(dict(pair=p, candidate="none", own_motifs=";".join(OWN.get(p, [])), gate_pass=False if OWN.get(p) else np.nan, n_perm=len(pb)))
             for _, r in show.iterrows():
                 key = r.motif if r.source == "homer_known" else r.motif.split("|")[0]
-                vk = next((k for k in V if k == r.motif or str(k).startswith(key)), None); jid = JASPAR_OWN.get(r.motif, "")
+                vk = next((k for k in V if k == r.motif or str(k).startswith(key)), None); jid = JASPAR_OWN.get(short(r.motif), "")
                 obs = max(r.log10p_vsA, r.log10p_vsB)
                 rows.append(dict(pair=p, candidate=r.motif, source=r.source, fold_vsA=round(r.fold_vsA, 2), fold_vsB=round(r.fold_vsB, 2), log10p_vsA=round(r.log10p_vsA, 1), log10p_vsB=round(r.log10p_vsB, 1),
                                  centrimo_log10p=centrimo(p, jid), spamo_top=spamo(p, jid), n_perm=len(pb), perm_p=(1 + np.sum(pb <= obs)) / (1 + len(pb)) if len(pb) else np.nan,
                                  val_log2fc=round(V[vk][0], 2) if vk else np.nan, val_log10p=round(V[vk][1], 1) if vk else np.nan,
-                                 validated=bool(vk and V[vk][0] > 0.75 and V[vk][1] < -2), own_motif=r.motif in OWN.get(p, []), gate_pass=bool(own) if OWN.get(p) else np.nan))
+                                 validated=bool(vk and V[vk][0] > 0.75 and V[vk][1] < -2), own_motif=r.source == "homer_known" and short(r.motif) in OWN.get(p, []), gate_pass=bool(own) if OWN.get(p) else np.nan))
         G = pd.DataFrame(rows); G.to_csv(f"{O}/gate_summary.tsv", sep="\t", index=False)
         pd.concat([t for t in allc if len(t)] or [pd.DataFrame()]).to_csv(f"{O}/candidates_all.tsv", sep="\t", index=False); print(G.to_string())
