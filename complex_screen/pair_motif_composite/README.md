@@ -22,8 +22,11 @@ Question: do bins bound by both TFs of a pair carry a motif that neither TF's ow
 
 ## Calls (`summarize.py`)
 - Candidate: present in both the vs-A and vs-B runs. Known motifs must be the same HOMER motif; de novo motifs must have column-Pearson similarity >= 0.6 (HOMER-style, padded alignment). Fold >= 1.5 over each single pool and p <= 1e-5 in both runs.
-- Gate pass: the gate pair's own known motif is a candidate (CTCF; MAZ and/or ZNF143; NFY; E2F3).
-- Permutation p: (1 + #perms whose best candidate p <= observed) / 51.
+- Two pass levels per pair (`gate_summary.tsv`):
+  - Shared: TF A's own HOMER known motif is enriched in the pair pool vs B-only (fold >= 1.5, p <= 1e-5), or B's own motif vs A-only. This is the gate criterion: CTCF vs STAG2-only; MAZ vs ZNF143-only and/or ZNF143 vs MAZ-only; NFY vs ZNF644-only; E2F3 vs HES1-only. Vs own-only the own motif is expected to be flat.
+  - Composite: the candidate rule above, validated on the even chromosomes. This is the CAP-SELEX-type rule and is not expected for the gate pairs.
+- The own-motif fold vs input is also reported. It is flagged `input_weak` when the matched input pool fell >10% short or its GC differs from the pair pool by >0.02.
+- Permutation p, per level: (1 + #perms whose best motif p at that level <= observed) / 51.
 - Validation: log2FC > 0.75 and P < 0.01 on the even chromosomes.
 
 Outputs (`pools/`, `results/`, `candidates/`, `ref/`, `db/`, `logs/`, `preparsed/`, tables) are not tracked.

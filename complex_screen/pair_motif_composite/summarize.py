@@ -4,10 +4,23 @@
 # Candidate rule (discovery chromosomes): motif present in pair-vs-A-only and pair-vs-B-only HOMER runs (known: same motif; de novo: HOMER-style
 # similarity >= 0.6), fold >= 1.5 over each single pool and p <= 1e-5 in both. STREME motifs with SEA (pair vs A-only + B-only) p <= 1e-5 and
 # enrichment >= 1.5 are carried to validation as a MEME-side list. Validation (even chromosomes + X, pair vs singles): log2FC > 0.75 and P < 0.01.
+# Two pass levels per pair in gate_summary.tsv:
+#   shared    = TF A's own HOMER known motif enriched in the pair pool vs B-only (fold >= 1.5, p <= 1e-5), or B's own motif vs A-only (gate criterion)
+#   composite = the candidate rule above (fold >= 1.5 over BOTH single pools, p <= 1e-5 in both; not expected for the gate pairs)
+# Each level has its own permutation null (best motif at that level in each permutation). vs-input fold is reported and flagged weak
+# where the GC x CpG-matched input pool fell short (>10% short or GC gap > 0.02).
 import os, sys, re, glob, math
 import numpy as np, pandas as pd
 O = "/work/users/d/y/dyy12/XuLab/complex_screen/pair_motif_composite"; FOLD = 1.5; LOGP = -5; SIM = 0.6; NPERM = 50
 OWN = {"CTCF-STAG2": ["CTCF(Zf)"], "MAZ-ZNF143": ["Maz(Zf)", "ZNF143|STAF(Zf)"], "NFYA-ZNF644": ["NFY(CCAAT)"], "E2F3-HES1": ["E2F3(E2F)"], "RBBP7-SRCAP": []}
+HOMER_KNOWN = "/nas/longleaf/rhel9/apps/homer/5.1/data/knownTFs/vertebrates/known.motifs"
+TF_OWN = {"CTCF": ["CTCF(Zf)"], "MAZ": ["Maz(Zf)"], "ZNF143": ["ZNF143|STAF(Zf)"], "NFYA": ["NFY(CCAAT)"], "E2F3": ["E2F3(E2F)"], "SREBF2": ["Srebp2(bHLH)"],
+          "DDIT3": ["Chop(bZIP)"], "EPAS1": ["HIF2a(bHLH)"], "RELA": ["NFkB-p65(RHD)", "NFkB-p65-Rel(RHD)"], "RBPJ": ["Rbpj1(?)"], "ETS2": ["ETS(ETS)"]}
+def short(n): return str(n).split("/")[0]
+def own_of(tf):
+    if tf in TF_OWN: return TF_OWN[tf]
+    names = {short(b.split("\t")[1]) for b in open(HOMER_KNOWN).read().split(">")[1:]}
+    return sorted(n for n in names if re.split(r"[(|]", n)[0].upper() == tf)
 JASPAR_OWN = {"CTCF(Zf)": "MA0139.2", "Maz(Zf)": "MA1522.2", "ZNF143|STAF(Zf)": "MA0088.2", "NFY(CCAAT)": "MA0060.4", "E2F3(E2F)": "MA0469.4"}
 def known(f):
     if not os.path.exists(f): return None
@@ -42,7 +55,8 @@ def candidates(pair):
                 rows.append(dict(pair=pair, source="homer_known", motif=n, fold_vsA=a.fold, fold_vsB=b.fold, log10p_vsA=a.log10p, log10p_vsB=b.log10p,
                                  fold_vsInput=kI.loc[n].fold if kI is not None else np.nan, log10p_vsInput=kI.loc[n].log10p if kI is not None else np.nan))
         allk = open("/nas/longleaf/rhel9/apps/homer/5.1/data/knownTFs/vertebrates/known.motifs").read().split(">")[1:]
-        keep = {r["motif"] for r in rows}; hm += [">" + b.strip() for b in allk if b.split("\t")[1] in keep]
+        a_, b_ = pair.split("-"); ownset = set(own_of(a_) + own_of(b_))
+        keep = {r["motif"] for r in rows}; hm += [">" + b.strip() for b in allk if b.split("\t")[1] in keep or short(b.split("\t")[1]) in ownset]
     dA = [m for f in sorted(glob.glob(f"{R}/homer_vsA/L*/homerMotifs.all.motifs")) for m in denovo(f)]
     dB = [m for f in sorted(glob.glob(f"{R}/homer_vsB/L*/homerMotifs.all.motifs")) for m in denovo(f)]
     for x in dA:
@@ -62,14 +76,17 @@ def candidates(pair):
         if mm: open(f"{C}/meme.meme", "w").write(hdr + "".join(mm))
     open(f"{C}/homer.motifs", "w").write("\n".join(hm) + ("\n" if hm else ""))
     T = pd.DataFrame(rows); T.to_csv(f"{C}/candidates.tsv", sep="\t", index=False); return T
-def perm_best(pair):
-    best = []
+def perm_best(pair, ownA=(), ownB=()):
+    # per permutation: best composite p (fold >= 1.5 vs both) and best shared p (A own vs B-only, B own vs A-only, fold >= 1.5)
+    best = []; sh = []
     for d in sorted(glob.glob(f"{O}/results/{pair}/perm/*")):
         kA, kB = known(f"{d}/vsA/knownResults.txt"), known(f"{d}/vsB/knownResults.txt")
         if kA is None or kB is None: continue
         j = kA.join(kB, lsuffix="A", rsuffix="B", how="inner"); j = j[(j.foldA >= FOLD) & (j.foldB >= FOLD)]
         best.append(np.max([j.log10pA.values, j.log10pB.values], 0).min() if len(j) else 0.0)
-    return np.array(best)
+        s = [kB.loc[n].log10p for n in kB.index if short(n) in ownA and kB.loc[n].fold >= FOLD] + [kA.loc[n].log10p for n in kA.index if short(n) in ownB and kA.loc[n].fold >= FOLD]
+        sh.append(min(s) if s else 0.0)
+    return np.array(best), np.array(sh)
 def val(pair):
     out = {}; k = known(f"{O}/results/{pair}/val_homer/knownResults.txt")
     if k is not None:
@@ -94,21 +111,40 @@ if __name__ == "__main__":
     if stage == "candidates":
         for p in pairs: T = candidates(p); print(p, len(T), "candidates")
     else:
-        rows = []; allc = []
+        PS = pd.read_csv(f"{O}/pool_sizes.tsv", sep="\t").set_index("pair"); rows = []; allc = []
+        def look(k, motifs):
+            if k is None: return (np.nan, np.nan, "")
+            h = [n for n in k.index if short(n) in motifs]
+            if not h: return (np.nan, np.nan, "")
+            n = min(h, key=lambda n: k.loc[n].log10p); return (round(k.loc[n].fold, 2), round(k.loc[n].log10p, 1), short(n))
         for p in pairs:
-            T = pd.read_csv(f"{O}/candidates/{p}/candidates.tsv", sep="\t") if os.path.getsize(f"{O}/candidates/{p}/candidates.tsv") > 1 else pd.DataFrame()
-            pb = perm_best(p); V = val(p); allc.append(T)
-            short = lambda n: str(n).split("/")[0]
-            own = [m for m in OWN.get(p, []) if len(T) and m in set(T[T.source == "homer_known"].motif.map(short))]
-            show = T.assign(score=T[["log10p_vsA", "log10p_vsB"]].max(1)).sort_values("score").head(5) if len(T) else T
-            if not len(show): rows.append(dict(pair=p, candidate="none", own_motifs=";".join(OWN.get(p, [])), gate_pass=False if OWN.get(p) else np.nan, n_perm=len(pb)))
-            for _, r in show.iterrows():
-                key = r.motif if r.source == "homer_known" else r.motif.split("|")[0]
-                vk = next((k for k in V if k == r.motif or str(k).startswith(key)), None); jid = JASPAR_OWN.get(short(r.motif), "")
-                obs = max(r.log10p_vsA, r.log10p_vsB)
-                rows.append(dict(pair=p, candidate=r.motif, source=r.source, fold_vsA=round(r.fold_vsA, 2), fold_vsB=round(r.fold_vsB, 2), log10p_vsA=round(r.log10p_vsA, 1), log10p_vsB=round(r.log10p_vsB, 1),
-                                 centrimo_log10p=centrimo(p, jid), spamo_top=spamo(p, jid), n_perm=len(pb), perm_p=(1 + np.sum(pb <= obs)) / (1 + len(pb)) if len(pb) else np.nan,
-                                 val_log2fc=round(V[vk][0], 2) if vk else np.nan, val_log10p=round(V[vk][1], 1) if vk else np.nan,
-                                 validated=bool(vk and V[vk][0] > 0.75 and V[vk][1] < -2), own_motif=r.source == "homer_known" and short(r.motif) in OWN.get(p, []), gate_pass=bool(own) if OWN.get(p) else np.nan))
+            a, b = p.split("-"); R = f"{O}/results/{p}"; oa, ob = own_of(a), own_of(b)
+            kA, kB, kI = (known(f"{R}/homer_{c}/known/knownResults.txt") for c in ["vsA", "vsB", "vsInput"])
+            f = f"{O}/candidates/{p}/candidates.tsv"; T = pd.read_csv(f, sep="\t") if os.path.getsize(f) > 1 else pd.DataFrame(); allc.append(T)
+            pb, ps = perm_best(p, oa, ob); V = val(p); ps_ = PS.loc[p]
+            weak = bool(ps_.disc_input_short > 0.1 * 2 * ps_.disc_pair or abs(ps_.disc_gc_pair - ps_.disc_gc_input) > 0.02)
+            A_vsB, A_vsA, A_vsI = look(kB, oa), look(kA, oa), look(kI, oa); B_vsA, B_vsB, B_vsI = look(kA, ob), look(kB, ob), look(kI, ob)
+            shA = A_vsB[0] >= FOLD and A_vsB[1] <= LOGP; shB = B_vsA[0] >= FOLD and B_vsA[1] <= LOGP
+            obs_sh = np.nanmin([x[1] for x, ok_ in [(A_vsB, A_vsB[0] >= FOLD), (B_vsA, B_vsA[0] >= FOLD)] if ok_] or [np.nan])
+            vs = lambda m: next((V[k] for k in V if short(k) == m), (np.nan, np.nan))
+            r = dict(pair=p, category=ps_.category, n_pair=ps_.disc_pair,
+                     own_A=A_vsB[2] or "none", A_fold_vs_partner_only=A_vsB[0], A_log10p_vs_partner_only=A_vsB[1], A_fold_vs_own_only=A_vsA[0], A_fold_vs_input=A_vsI[0],
+                     own_B=B_vsA[2] or "none", B_fold_vs_partner_only=B_vsA[0], B_log10p_vs_partner_only=B_vsA[1], B_fold_vs_own_only=B_vsB[0], B_fold_vs_input=B_vsI[0],
+                     shared_pass=bool(shA or shB), shared_perm_p=(1 + np.sum(ps <= obs_sh)) / (1 + len(ps)) if len(ps) and not np.isnan(obs_sh) else np.nan,
+                     own_A_val_log2fc=round(vs(A_vsB[2])[0], 2), own_B_val_log2fc=round(vs(B_vsA[2])[0], 2), input_weak=weak)
+            if len(T):
+                c = T.assign(score=T[["log10p_vsA", "log10p_vsB"]].max(1)).sort_values("score").iloc[0]
+                key = c.motif if c.source == "homer_known" else c.motif.split("|")[0]
+                vk = next((k for k in V if k == c.motif or str(k).startswith(key)), None)
+                r.update(composite_n=len(T), composite_best=c.motif if c.source == "homer_denovo" else short(c.motif), composite_source=c.source,
+                         comp_fold_vsA=round(c.fold_vsA, 2), comp_fold_vsB=round(c.fold_vsB, 2), comp_log10p=round(c.score, 1), comp_fold_vsInput=round(c.get("fold_vsInput", np.nan), 2),
+                         composite_perm_p=(1 + np.sum(pb <= c.score)) / (1 + len(pb)) if len(pb) else np.nan,
+                         comp_val_log2fc=round(V[vk][0], 2) if vk else np.nan, comp_val_log10p=round(V[vk][1], 1) if vk else np.nan,
+                         composite_validated=bool(vk and V[vk][0] > 0.75 and V[vk][1] < -2))
+            else: r.update(composite_n=0, composite_best="none")
+            r["composite_pass"] = bool(r["composite_n"] > 0 and r.get("composite_validated", False))
+            jid = JASPAR_OWN.get(r["own_A"], "") or JASPAR_OWN.get(r["own_B"], "")
+            r.update(centrimo_own_log10p=centrimo(p, jid), spamo_top=" | ".join(x for x in [spamo(p, j) for j in ([JASPAR_OWN.get(r["own_A"])] + [JASPAR_OWN.get(r["own_B"])]) if j] if x))
+            r["gate_pass"] = r["shared_pass"] if p in OWN and OWN[p] else np.nan; rows.append(r)
         G = pd.DataFrame(rows); G.to_csv(f"{O}/gate_summary.tsv", sep="\t", index=False)
         pd.concat([t for t in allc if len(t)] or [pd.DataFrame()]).to_csv(f"{O}/candidates_all.tsv", sep="\t", index=False); print(G.to_string())
