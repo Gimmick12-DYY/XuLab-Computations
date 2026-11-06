@@ -1,0 +1,18 @@
+GROUPS=[
+ ("prc2","PRC2",["ezh2","mtf2"]),
+ ("cohesin","Cohesin–CTCF",["ctcf","stag2"]),
+ ("nurd","NuRD",["rbbp4","rbbp7","mbd3"]),
+ ("maz","MAZ–ZNF143 boundary",["maz","znf143"]),
+ ("g9a","G9a/GLP (WIZ–ZNF644)",["wiz","znf644"]),
+ ("nfy","NF-Y / MLX / SREBF2",["nfya","mlx","srebf2"]),
+ ("mef2","MEF2 heterodimer",["mef2a","mef2d"]),
+ ("znf512","ZNF512 paralogs",["znf512","znf512b"]),
+ ("pcgf6","PRC1.6 / HP1",["pcgf6","hp1"]),
+ ("chahp","ChAHP",["adnp","hp1"]),
+ ("hox","Posterior HOX",["hoxa10","hoxb9","hoxc9","hoxd10"]),
+ ("prc2adj","PRC2-adjacent repressive module",["mtf2","ezh2","dr1","thap6","champ1","wiz","znf644","srcap"]),
+ ("stag2trio","Cohesin-linked STAG2 / ZNF581 / DNMT1",["stag2","znf581","dnmt1"]),
+ ("lowdepth","Low-depth repressive group",["neurod4","setdb1","znf79","sox12","zbtb43","znf777"]),
+ ("rbbp4hub","RBBP4 / E2F3 / XPA hub",["rbbp4","rbbp7","e2f3","xpa","ddit3","znf703"]),
+ ("nfyahub","NFYA / SOX4 hub",["nfya","sox4","mlx","mbd3"]),
+]
