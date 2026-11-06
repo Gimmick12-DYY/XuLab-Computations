@@ -13,3 +13,7 @@ Do NOT read Perturb-seq anywhere. The second Perturb-seq comparison is a later, 
 - Halves: Gate 1 v2.1 does 20 random splits per TF and saves no split. The script uses its first split (same seed rule, seed 20261029 + TF index, first permutation), with expected per half = mu x half reads / TF reads, as in v2.1.
 - Elements and links: active elements (promoter, distal_active, bivalent) and power-law ABC links at 0.02 mapped to them, exactly as Gate 1 v2.1 and R2 do; the number of mapped links is printed.
 - Direct top 1,000 = regulatome/r2_targets/top1000/<TF>.tsv (R2's frozen list). ATAC-only top 1,000 = top 1,000 genes by S_atac in regulatome/r2_targets/per_tf/<TF>.tsv.gz.
+
+## Confirmed in the design thread (2026-11-06, before the run)
+- Expected reads: keep the Gate 1 v2.1 Poisson GLM expectation unchanged; "pooled-panel accessibility scaled to TF depth" in the spec was shorthand for it.
+- Halves: the first Gate 1 v2.1 split (seed 20261029 + TF index), with the per-half expectation scaled by that half's reads.
