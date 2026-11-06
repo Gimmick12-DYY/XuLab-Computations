@@ -1,0 +1,8 @@
+pools/
+results/
+candidates/
+ref/
+db/
+logs/
+preparsed/
+*.tsv
