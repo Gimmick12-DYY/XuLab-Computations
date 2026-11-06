@@ -49,3 +49,5 @@ clique locations carry biological meaning?
   Same-size windows on random active ChromHMM segments: 63/35/8/2% (>=1/2/5/10 TFs; p<0.005). Density-matched per node:
   clique nodes 1.2x more often in SEs (MH log2OR 0.28, p 2e-8; 33/52 TFs up). 28 SEs have clique excess z>2 (top
   SE_02_195100034 chr19:1.41 Mb, 20 TFs vs 10 expected). Outputs results_se/, results_go/.
+
+- se_density_null.py: SE windows matched on network-peak count (338 SEs, 1,000 draws): no enrichment; mean clique TFs/SE 3.56 vs 3.96 (p enrich 1.00, deplet 0.001); >=5 TFs 0.287 vs 0.317. Page: se_clique_capture.html.

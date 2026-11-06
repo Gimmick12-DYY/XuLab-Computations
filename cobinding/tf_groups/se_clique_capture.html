@@ -1,0 +1,123 @@
+<title>Super-enhancer clique capture</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,500;8..60,600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400&display=swap">
+<style>
+/* Layout: single reading column, one comparison chart, then tables and method notes. Palette C: observed = ink, null = grey. */
+:root{
+  --bg:#FBFBFA; --surface:#FFFFFF; --ink:#1A1A1A; --ink2:#4D4D4D; --muted:#7A7A7A; --rule:#E3E3E3; --null:#9A9A9A; --nullband:#E3E3E3; --active:#7A9CCB; --flag:#B83A2E;
+  --display:"Source Serif 4", Georgia, serif; --body:"IBM Plex Sans", "Helvetica Neue", Arial, sans-serif; --mono:"IBM Plex Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#151617;--surface:#1D1F21;--ink:#ECECEC;--ink2:#C4C4C4;--muted:#9A9A9A;--rule:#33363A;--null:#8A8A8A;--nullband:#3A3D41;--active:#8FB0DA;--flag:#E07A6E;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#151617;--surface:#1D1F21;--ink:#ECECEC;--ink2:#C4C4C4;--muted:#9A9A9A;--rule:#33363A;--null:#8A8A8A;--nullband:#3A3D41;--active:#8FB0DA;--flag:#E07A6E;color-scheme:dark}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.55}
+.wrap{max-width:760px;margin:0 auto;padding-block:40px 64px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:28px}
+.eyebrow{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+h1{font-family:var(--display);font-weight:600;font-size:30px;line-height:1.2;margin:4px 0 0;text-wrap:balance}
+h2{font-family:var(--display);font-weight:600;font-size:20px;margin:0;text-wrap:balance}
+p{margin:0;max-width:65ch}
+.answer{font-size:17px;color:var(--ink)}
+.answer strong{font-weight:600}
+section{display:flex;flex-direction:column;gap:12px}
+.chart{background:var(--surface);border:1px solid var(--rule);border-radius:6px;padding:16px;position:relative}
+.legend{display:flex;flex-wrap:wrap;gap:16px;font-size:13px;color:var(--ink2)}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.sw{display:inline-block;width:12px;height:12px;border-radius:50%}
+svg text{font-family:var(--body);fill:var(--ink2);font-size:12px}
+svg .num{font-family:var(--mono);font-size:11px;fill:var(--muted)}
+.tip{position:absolute;pointer-events:none;background:var(--surface);border:1px solid var(--rule);border-radius:4px;padding:6px 8px;font-size:12px;color:var(--ink);box-shadow:0 2px 8px rgba(0,0,0,.12);white-space:nowrap}
+.tbl{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:13.5px;font-variant-numeric:tabular-nums}
+th,td{text-align:right;padding:6px 10px;border-bottom:1px solid var(--rule)}
+th:first-child,td:first-child{text-align:left}
+th{font-weight:500;color:var(--muted);font-size:12px;letter-spacing:.03em}
+td.p{font-family:var(--mono);font-size:12.5px}
+td.sig{color:var(--flag);font-weight:600}
+ul{margin:0;padding-left:20px;max-width:65ch;display:flex;flex-direction:column;gap:6px}
+code{font-family:var(--mono);font-size:12.5px;background:var(--nullband);padding:1px 4px;border-radius:3px;overflow-wrap:anywhere}
+.foot{font-size:13px;color:var(--muted)}
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Coordinated binding network · SEdb SE_02_1951 (HEK293T, hg38)</div>
+    <h1>Do co-binding cliques prefer super-enhancers?</h1>
+  </header>
+
+  <p class="answer"><strong>No, not beyond peak density.</strong> 87% of the 342 SEs contain a clique region, and 28% contain cliques from 5 or more TFs. That is far above same-size windows placed on random active chromatin (8%). It disappears when the comparison windows hold the same number of network peaks as each SE: SEs then have slightly <em>fewer</em> clique TFs than expected (3.56 vs 3.96 per SE, one-sided p for enrichment = 1.00, for depletion = 0.001).</p>
+
+  <section>
+    <h2>Observed vs two nulls</h2>
+    <p>Fraction of SEs holding clique regions from at least <i>k</i> TFs. The grey band is the 95% range of 1,000 density-matched null sets.</p>
+    <div class="chart" id="chart">
+      <div class="legend" aria-hidden="true">
+        <span><i class="sw" style="background:var(--ink)"></i>Observed SEs</span>
+        <span><i class="sw" style="background:var(--null)"></i>Density-matched null (mean, 95% band)</span>
+        <span><i class="sw" style="background:transparent;border:2px solid var(--active)"></i>Active-chromatin null, not density-matched</span>
+      </div>
+      <svg id="svg" viewBox="0 0 700 250" width="100%" role="img" aria-label="Dot plot comparing observed super-enhancer clique capture with two nulls"></svg>
+      <div class="tip" id="tip" hidden></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Numbers and p-values</h2>
+    <div class="tbl">
+    <table>
+      <thead><tr><th>Statistic</th><th>Observed</th><th>Active-chromatin null</th><th>p (enrich.)</th><th>Density-matched null [95%]</th><th>p (enrich.)</th><th>p (deplet.)</th></tr></thead>
+      <tbody>
+        <tr><td>SEs with clique, ≥1 TF</td><td>0.882</td><td>0.634</td><td class="p sig">&lt;0.005</td><td>0.909 [0.879–0.935]</td><td class="p">0.97</td><td class="p sig">0.044</td></tr>
+        <tr><td>≥2 TFs</td><td>0.681</td><td>0.354</td><td class="p sig">&lt;0.005</td><td>0.725 [0.686–0.763]</td><td class="p">0.99</td><td class="p sig">0.014</td></tr>
+        <tr><td>≥5 TFs</td><td>0.287</td><td>0.084</td><td class="p sig">&lt;0.005</td><td>0.317 [0.284–0.349]</td><td class="p">0.97</td><td class="p sig">0.046</td></tr>
+        <tr><td>≥10 TFs</td><td>0.077</td><td>0.021</td><td class="p sig">&lt;0.005</td><td>0.085 [0.065–0.107]</td><td class="p">0.82</td><td class="p">0.26</td></tr>
+        <tr><td>Mean clique TFs per SE</td><td>3.56</td><td>–</td><td class="p">–</td><td>3.96 [3.75–4.16]</td><td class="p">1.00</td><td class="p sig">0.001</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <p class="foot">Density-matched null: 338 SEs on chr1–22/X, 1,000 draws, p = (#null at or beyond observed + 1)/1,001, one-sided. Active-chromatin null: 342 SEs, 200 draws, so the smallest possible p is 1/201.</p>
+  </section>
+
+  <section>
+    <h2>How the nulls were built</h2>
+    <ul>
+      <li><b>Active-chromatin null.</b> Each SE is moved, keeping its size and chromosome, to a window centred on a random TssA, EnhA or EnhG ChromHMM segment. This controls for "active chromatin" but not for how many peaks the window holds.</li>
+      <li><b>Density-matched null.</b> Each SE is matched to non-SE windows of the same size whose network-peak count (summed over all TFs' Cicero network nodes) is within ±10% of the SE's. Windows come from the same chromosome when at least 50 matches exist (290 SEs) and genome-wide otherwise (48). Matching worked: mean peak count 17.4 in SEs vs 17.1 in null windows.</li>
+      <li><b>Per-peak check.</b> Within each TF and local peak-density decile, a clique peak is 1.21× more likely than a non-clique peak to sit in an SE (Mantel–Haenszel, p = 2×10⁻⁸). The direction is inconsistent across TFs (33 of 52 up, sign test p = 0.07). At the level of whole SEs, the density-matched window test above is the more direct test, and it is negative.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>What this means</h2>
+    <p>Cliques need several co-accessible peaks within 1 Mb, so they form wherever peaks are dense. SEs are dense peak clusters, which explains the high capture. Once density is equal, SEs are not special clique sites. The same holds for the other annotations: GO of clique target genes against each TF's own network genes is empty (1 of 39 TFs), and the promoter, enhancer and A-compartment preferences shrink to about 1.05–1.1× after density matching.</p>
+  </section>
+
+  <p class="foot">Scripts: <code>cobinding/tf_groups/scripts/se_lookup.py</code>, <code>se_capture_null.py</code>, <code>se_density_null.py</code> (Longleaf XuLab). Tables: <code>cobinding/tf_groups/results_se/</code>. Cliques: 1st-step Our Run k50 Cicero, FDR ≤ 0.05 edges, size ≥ 3, 68 TFs.</p>
+</div>
+
+<script>
+(function(){
+  const rows=[
+    {k:"≥1 TF",obs:0.882,act:0.634,nm:0.909,lo:0.879,hi:0.935,p:"0.97 / 0.044"},
+    {k:"≥2 TFs",obs:0.681,act:0.354,nm:0.725,lo:0.686,hi:0.763,p:"0.99 / 0.014"},
+    {k:"≥5 TFs",obs:0.287,act:0.084,nm:0.317,lo:0.284,hi:0.349,p:"0.97 / 0.046"},
+    {k:"≥10 TFs",obs:0.077,act:0.021,nm:0.085,lo:0.065,hi:0.107,p:"0.82 / 0.26"}
+  ];
+  const svg=document.getElementById("svg"),tip=document.getElementById("tip"),box=document.getElementById("chart");
+  const L=90,R=670,T=24,rowH=48,x=v=>L+v*(R-L),NS="http://www.w3.org/2000/svg";
+  const el=(n,a,p)=>{const e=document.createElementNS(NS,n);for(const k in a)e.setAttribute(k,a[k]);(p||svg).appendChild(e);return e};
+  [0,0.25,0.5,0.75,1].forEach(v=>{el("line",{x1:x(v),x2:x(v),y1:T-8,y2:T+rowH*rows.length-8,stroke:"var(--rule)","stroke-width":1});
+    const t=el("text",{x:x(v),y:T+rowH*rows.length+10,"text-anchor":"middle",class:"num"});t.textContent=v.toFixed(2)});
+  const ax=el("text",{x:(L+R)/2,y:T+rowH*rows.length+28,"text-anchor":"middle"});ax.textContent="Fraction of SEs";
+  rows.forEach((r,i)=>{
+    const y=T+i*rowH+12,g=el("g",{});
+    const lab=el("text",{x:L-12,y:y+4,"text-anchor":"end"},g);lab.textContent=r.k;
+    el("rect",{x:x(r.lo),y:y-7,width:x(r.hi)-x(r.lo),height:14,rx:3,fill:"var(--nullband)"},g);
+    el("line",{x1:x(r.nm),x2:x(r.nm),y1:y-9,y2:y+9,stroke:"var(--null)","stroke-width":2},g);
+    el("circle",{cx:x(r.act),cy:y,r:5,fill:"var(--surface)",stroke:"var(--active)","stroke-width":2},g);
+    el("circle",{cx:x(r.obs),cy:y,r:5,fill:"var(--ink)",stroke:"var(--surface)","stroke-width":2},g);
+    const hit=el("rect",{x:L,y:y-rowH/2+4,width:R-L,height:rowH-8,fill:"transparent"},g);
+    const show=ev=>{tip.hidden=false;tip.innerHTML=`<b>${r.k}</b><br>Observed ${r.obs.toFixed(3)}<br>Density-matched ${r.nm.toFixed(3)} [${r.lo.toFixed(3)}–${r.hi.toFixed(3)}]<br>Active-chromatin ${r.act.toFixed(3)}<br>p enrich./deplet. ${r.p}`;
+      const b=box.getBoundingClientRect();let px=ev.clientX-b.left+12;if(px>b.width-200)px=ev.clientX-b.left-200;tip.style.left=px+"px";tip.style.top=(ev.clientY-b.top+12)+"px"};
+    hit.addEventListener("mousemove",show);hit.addEventListener("mouseleave",()=>tip.hidden=true);
+  });
+})();
+</script>
