@@ -25,6 +25,14 @@ cluster is the usual cause of "unchanged output."
 
 ## Log (newest first)
 
+### 2026-11-06 — TF groups by shared co-binding pairs/cliques; clique location
+- **Context:** Ask whether groups of TFs share Cicero pairs/cliques beyond depth, and where cliques sit.
+- **Change:** cobinding/tf_groups/: degree-preserving (curveball) null keeping TF depth, pair popularity and library
+  stratum; Leiden groups; STRING/CAP-SELEX/ChromHMM/GO tests vs depth-matched random groups; clique-vs-node location
+  with local-density matching; WT Hi-C compartments at 100 kb; GO files in data/go.
+- **Result:** Sharing structure = library quality + depth; core vanishes at top-1,000 depth matching; no STRING/CAP-SELEX
+  signal; clique chromatin preferences mostly explained by local node density. See cobinding/tf_groups/README.md.
+
 ### 2026-11-02 — AF3 check of the Boltz hits; R1 TF-TF network frozen; R2 targets propagated
 - **Context:** the Boltz-2 screen (below) gave 71 strong pairs, but several were construct- or
   seed-dependent. Before freezing the TF-TF layer, the 38 Boltz hits worth keeping were re-folded
