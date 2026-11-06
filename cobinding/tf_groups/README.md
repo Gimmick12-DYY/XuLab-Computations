@@ -51,3 +51,5 @@ clique locations carry biological meaning?
   SE_02_195100034 chr19:1.41 Mb, 20 TFs vs 10 expected). Outputs results_se/, results_go/.
 
 - se_density_null.py: SE windows matched on network-peak count (338 SEs, 1,000 draws): no enrichment; mean clique TFs/SE 3.56 vs 3.96 (p enrich 1.00, deplet 0.001); >=5 TFs 0.287 vs 0.317. Page: se_clique_capture.html.
+
+- se_capture_genome_null.py (capture claim): vs random same-size genome windows, any network peak 0.99 vs 0.76, clique >=2 TFs 0.68 vs 0.19, >=5 TFs 0.29 vs 0.026 (11x), all p=0.001; 60/68 TFs p<0.05 individually.

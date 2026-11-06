@@ -8,24 +8,25 @@ from pathlib import Path
 P = rp.use(); D, OUT = Path(sys.argv[1]), Path(sys.argv[2]); OUT.mkdir(parents=True, exist_ok=True)
 plt.rcParams.update({"font.size": 9, "xtick.labelsize": 8, "ytick.labelsize": 9, "axes.labelsize": 9, "legend.fontsize": 8})
 ink, grey, band, blue = P.neutral.ink, P.neutral.mid, P.neutral.pale, P.evidence.cicero_only
-# (1) SE capture
-dm = pd.read_csv(D / "results_se/se_density_matched_null.tsv", sep="\t", index_col=0)
+# (1) SE capture: observed vs random genome windows (primary) and active-chromatin windows
+gn = pd.read_csv(D / "results_se/se_capture_vs_genome_null.tsv", sep="\t", index_col=0)
 ac = pd.read_csv(D / "results_se/se_capture_vs_active_null.tsv", sep="\t", index_col=0)
-ks = [1, 2, 5, 10]; lab = ["≥1 TF", "≥2 TFs", "≥5 TFs", "≥10 TFs"]
-fig, ax = plt.subplots(figsize=(6.4, 3.4))
-for i, k in enumerate(ks):
-    r = dm.loc[f"frac_SE_clique_ge{k}TF"]; a = ac.loc[f"clique_ge{k}TF"]; y = len(ks) - 1 - i
-    ax.barh(y, r.null_hi95 - r.null_lo95, left=r.null_lo95, height=0.42, color=band, lw=0)
-    ax.plot([r.null_mean] * 2, [y - .25, y + .25], color=grey, lw=2)
-    ax.scatter(a.null_mean, y, s=46, facecolor="white", edgecolor=blue, lw=1.6, zorder=3)
-    ax.scatter(r.observed, y, s=46, color=ink, zorder=4)
-    ax.text(1.02, y, f"p = {r.p_one_sided:.2f}", va="center", fontsize=8, color=P.neutral.dark, transform=ax.get_yaxis_transform())
-ax.set_yticks(range(len(ks))); ax.set_yticklabels(lab[::-1]); ax.set_xlim(0, 1); ax.set_xlabel("Fraction of super-enhancers with clique regions")
-ax.text(1.02, len(ks) - 0.35, "density-matched\np (enrichment)", fontsize=7, color=P.neutral.mid, transform=ax.get_yaxis_transform(), va="bottom")
-h = [plt.Line2D([], [], marker="o", ls="", color=ink, label="Observed SEs (SEdb, n = 338)"),
-     plt.Line2D([], [], marker="o", ls="", mfc="white", mec=blue, mew=1.6, label="Active-chromatin windows"),
-     plt.Line2D([], [], color=grey, lw=2, label="Peak-density-matched windows (mean)"),
-     matplotlib.patches.Patch(color=band, label="Density-matched 95% range")]
+ac = ac.rename(index={"clique_ge1TF":"clique_ge1TF"})
+keys = ["any_network_peak", "clique_ge1TF", "clique_ge2TF", "clique_ge5TF", "clique_ge10TF"]
+lab = ["Any network peak", "Clique, ≥1 TF", "Clique, ≥2 TFs", "Clique, ≥5 TFs", "Clique, ≥10 TFs"]
+fig, ax = plt.subplots(figsize=(6.6, 3.6))
+for i, k in enumerate(keys):
+    r = gn.loc[k]; y = len(keys) - 1 - i
+    ax.plot([r.null_mean, r.observed], [y, y], color=P.neutral.light, lw=1.2, zorder=1)
+    ax.scatter(r.null_mean, y, s=50, facecolor="white", edgecolor=grey, lw=1.6, zorder=3)
+    if k in ac.index: ax.scatter(ac.loc[k].null_mean, y, s=34, marker="D", facecolor="white", edgecolor=blue, lw=1.4, zorder=2)
+    ax.scatter(r.observed, y, s=50, color=ink, zorder=4)
+    ax.text(1.02, y, f"{r.fold:.1f}×", va="center", fontsize=8, color=P.neutral.dark, transform=ax.get_yaxis_transform())
+ax.text(1.02, len(keys) - 0.45, "fold vs\nrandom", fontsize=7, color=P.neutral.mid, transform=ax.get_yaxis_transform(), va="bottom")
+ax.set_yticks(range(len(keys))); ax.set_yticklabels(lab[::-1]); ax.set_xlim(0, 1); ax.set_xlabel("Fraction of super-enhancers captured")
+h = [plt.Line2D([], [], marker="o", ls="", color=ink, label="SEdb HEK293T SEs (n = 338)"),
+     plt.Line2D([], [], marker="o", ls="", mfc="white", mec=grey, mew=1.6, label="Random genome windows, same size"),
+     plt.Line2D([], [], marker="D", ls="", mfc="white", mec=blue, mew=1.4, label="Windows on active chromatin")]
 ax.legend(handles=h, loc="lower right", frameon=False)
 fig.tight_layout(); fig.savefig(OUT / "fig_se_capture_nulls.png", dpi=300); plt.close(fig)
 # (2) density

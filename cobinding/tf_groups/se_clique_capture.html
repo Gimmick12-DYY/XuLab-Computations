@@ -43,7 +43,8 @@ code{font-family:var(--mono);font-size:12.5px;background:var(--nullband);padding
     <h1>Do co-binding cliques prefer super-enhancers?</h1>
   </header>
 
-  <p class="answer"><strong>No, not beyond peak density.</strong> 87% of the 342 SEs contain a clique region, and 28% contain cliques from 5 or more TFs. That is far above same-size windows placed on random active chromatin (8%). It disappears when the comparison windows hold the same number of network peaks as each SE: SEs then have slightly <em>fewer</em> clique TFs than expected (3.56 vs 3.96 per SE, one-sided p for enrichment = 1.00, for depletion = 0.001).</p>
+  <p class="answer"><strong>Capture: yes.</strong> Against 1,000 sets of random same-size genome windows, 99% of SEs carry a network peak (vs 76%), 68% carry cliques from ≥2 TFs (vs 19%, 3.6×) and 29% from ≥5 TFs (vs 2.6%, 11×), all p = 0.001. 60 of 68 TFs individually hit SEs more than random (median 5.6×).</p>
+  <p class="answer"><strong>Enrichment beyond peak density: no.</strong> 87% of the 342 SEs contain a clique region, and 28% contain cliques from 5 or more TFs. That is far above same-size windows placed on random active chromatin (8%). It disappears when the comparison windows hold the same number of network peaks as each SE: SEs then have slightly <em>fewer</em> clique TFs than expected (3.56 vs 3.96 per SE, one-sided p for enrichment = 1.00, for depletion = 0.001).</p>
 
   <section>
     <h2>Observed vs two nulls</h2>
