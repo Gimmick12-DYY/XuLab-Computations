@@ -31,7 +31,9 @@ R2B = f"{X}/regulatome/r2b_residual_v5"; LAB = "second comparison, after the fir
 def r2b(t):
     f = f"{R2B}/per_tf/{t}.tsv"
     if not os.path.exists(f): return []
-    d = pd.read_csv(f, sep="\t"); d = d[d["pass"]].sort_values("X", ascending=False).head(1000); return list(d.gene)
+    d = pd.read_csv(f, sep="\t")
+    if d.empty: return []
+    d = d[d["pass"].astype(bool)].sort_values("X", ascending=False).head(1000); return list(d.gene)
 B3 = pd.read_csv(f"{M4}/b3b4/per_tf_effects.tsv", sep="\t"); B3d = B3[B3.tier.str.startswith("direct-")].set_index(["arm", "tf"]).effect
 PT_, ceil_rows = [], []
 for a in ARMS:
