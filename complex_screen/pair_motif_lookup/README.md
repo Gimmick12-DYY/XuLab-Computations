@@ -37,3 +37,7 @@ The Longleaf copy is in `complex_screen/pair_motif_lookup/`. The 250 MB full loo
 - `motif_panel_frequency.tsv`: every motif with its pass count per set.
 - `pair_motif_lookup.tsv`: one row per (pair, set, motif) where the motif passes in both TFs. It is 250 MB. Two subsets: `_candidates.tsv` (the 115 AF3-run and gate pairs) and `_pair_specific.tsv`.
 - `pair_verdict.tsv`: per pair and set, the verdict, n_shared, n_specific and top specific motifs. It also carries the AF3 tier, the R1 class, STRING, CAP-SELEX and the Pearson percentile columns.
+
+## Cross-TF percentile lookup on imputed sets (`imputed_percentile_lookup.py`, negative)
+- Rule: per imputed set (B peaks HOMER/AME +/- OCR bg, C bins HOMER/AME), rank all TFs by motif -log10 p (absent = p 1); a motif is shared-enriched for pair A-B if both TFs are at or above the 90th cross-TF percentile for that motif. Outputs: `pair_shared_percentile_summary.tsv`, `*_tf_counts.tsv`.
+- Result: the gates fail. On imputed peaks the CTCF motif is strongest in NFYA, SOX4 and RBBP4, and CTCF itself ranks 26/78, so the percentile rule does not recover CTCF-STAG2 and gives no pair calls.
