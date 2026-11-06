@@ -1,0 +1,4 @@
+# R3: graded empirical-Bayes Regulome (Stage B, manifest v6)
+Spec and implementation notes: SPEC.md. Code: r3_eb.py (Python, modes fit and validate) and r3_ash.R (ashr 2.2.63, module r/4.5.0); run by r3_fit.sbatch, then r3_validate.sbatch (afterok).
+Outputs: elements/<TF>.tsv.gz (scored elements: y, mu, h, beta, psd, lfsr, call 1/-1/0), genes/<TF>.tsv (S_B, S_ABC, list rule, rank), modules/ (the same for the three modules), tf_summary.tsv (phi, HOT coef and SE, pi0, tau, n_supporting, n_list, median lfsr, depth label), validation/ (depth thinning and curve, split-half PPC, AUPR vs bulk ChIP, HPA, HOT stratification, ATAC-only baseline).
+manifest_v6.sha256 covers every file here (outputs and scripts) except logs and is written last; the code refuses to run once it exists. Manifests v1-v5 and m4_validation (b3b4, b5) are untouched. No Perturb-seq data is read.
