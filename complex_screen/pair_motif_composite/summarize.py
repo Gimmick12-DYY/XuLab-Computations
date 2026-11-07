@@ -136,14 +136,23 @@ if __name__ == "__main__":
             if len(T):
                 c = T.assign(score=T[["log10p_vsA", "log10p_vsB"]].max(1)).sort_values("score").iloc[0]
                 key = c.motif if c.source == "homer_known" else c.motif.split("|")[0]
-                vk = next((k for k in V if k == c.motif or str(k).startswith(key)), None)
+                vkey = lambda m, src: m if src == "homer_known" else m.split("|")[0]
+                VC = {(k.split("-", 1)[1] if re.match(r"^\d+-", str(k)) else k): v for k, v in V.items()}  # HOMER renames de novo motifs "<n>-<consensus>"
+                vk = key if key in VC else (c.motif if c.motif in VC else None); V = VC
+                nval = sum(1 for _, x in T.iterrows() if vkey(x.motif, x.source) in VC and VC[vkey(x.motif, x.source)][0] > 0.75 and VC[vkey(x.motif, x.source)][1] < -2)
+                sv = f"{O}/results/{p}/val_sea/sea.tsv"; nst = nsv = 0
+                if os.path.exists(sv):
+                    s_ = pd.read_csv(sv, sep="\t", comment="#"); nst = len(s_); nsv = int(((np.log2((s_["TP%"] + .01) / (s_["FP%"] + .01)) > 0.75) & (s_.LOG_PVALUE / math.log(10) < -2)).sum())
+                r.update(composite_n_validated=nval, streme_n=nst, streme_n_validated=nsv)
                 r.update(composite_n=len(T), composite_best=c.motif if c.source == "homer_denovo" else short(c.motif), composite_source=c.source,
                          comp_fold_vsA=round(c.fold_vsA, 2), comp_fold_vsB=round(c.fold_vsB, 2), comp_log10p=round(c.score, 1), comp_fold_vsInput=round(c.get("fold_vsInput", np.nan), 2),
                          composite_perm_p=(1 + np.sum(pb <= c.score)) / (1 + len(pb)) if len(pb) else np.nan,
                          comp_val_log2fc=round(V[vk][0], 2) if vk else np.nan, comp_val_log10p=round(V[vk][1], 1) if vk else np.nan,
                          composite_validated=bool(vk and V[vk][0] > 0.75 and V[vk][1] < -2))
             else: r.update(composite_n=0, composite_best="none")
-            r["composite_pass"] = bool(r["composite_n"] > 0 and r.get("composite_validated", False))
+            r["composite_pass"] = bool(r.get("composite_n_validated", 0) > 0)
+            # composite_perm_p compares a de novo best p with a known-only permutation null; it is not comparable and is left out
+            r.pop("composite_perm_p", None)
             jid = JASPAR_OWN.get(r["own_A"], "") or JASPAR_OWN.get(r["own_B"], "")
             r.update(centrimo_own_log10p=centrimo(p, jid), spamo_top=" | ".join(x for x in [spamo(p, j) for j in ([JASPAR_OWN.get(r["own_A"])] + [JASPAR_OWN.get(r["own_B"])]) if j] if x))
             r["gate_pass"] = r["shared_pass"] if p in OWN and OWN[p] else np.nan; rows.append(r)
