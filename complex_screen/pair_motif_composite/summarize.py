@@ -26,7 +26,8 @@ def known(f):
     if not os.path.exists(f): return None
     k = pd.read_csv(f, sep="\t"); k.columns = ["name", "cons", "p", "lnp", "q", "nt", "pt", "nb", "pb"] + list(k.columns[9:])
     pt = k.pt.astype(str).str.rstrip("%").astype(float); pb = k.pb.astype(str).str.rstrip("%").astype(float)
-    return pd.DataFrame(dict(name=k.name, log10p=k.lnp / math.log(10), fold=(pt + 0.01) / (pb + 0.01), pt=pt, pb=pb)).set_index("name")
+    d = pd.DataFrame(dict(name=k.name, log10p=k.lnp / math.log(10), fold=(pt + 0.01) / (pb + 0.01), pt=pt, pb=pb)).sort_values("log10p")
+    return d[~d.name.duplicated()].set_index("name")  # HOMER's library repeats a few names; keep the best row
 def denovo(f):
     out = []
     if not os.path.exists(f): return out
