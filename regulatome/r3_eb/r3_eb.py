@@ -169,7 +169,7 @@ if mode == "validate":
     HP, HO, AT = [], [], []
     for t in units:
         el = pd.read_csv(f"{O}/elements/{t}.tsv.gz", sep="\t"); beta = np.zeros(nE); lfsr = np.ones(nE); m_ = Ea.eid.isin(el.eid).values; beta[m_] = el.beta.values; lfsr[m_] = el.lfsr.values
-        T = pd.read_csv(f"{O}/genes/{t}.tsv", sep="\t"); L = T[T.listed].head(1000); x = T.set_index("gene").S_B.reindex(nt.index).dropna(); r = spearmanr(x, nt.reindex(x.index))[0] if len(x) > 10 else np.nan
+        T = pd.read_csv(f"{O}/genes/{t}.tsv", sep="\t"); T["listed"] = T.listed.astype(bool); L = T[T.listed].head(1000); x = T.set_index("gene").S_B.reindex(nt.index).dropna(); r = spearmanr(x, nt.reindex(x.index))[0] if len(x) > 10 else np.nan
         HP.append(dict(tf=t, n_genes=len(x), spearman_SB_nTPM=r, median_nTPM_list=float(nt.reindex(L.gene).median()) if len(L) else np.nan, median_nTPM_universe=float(nt.reindex(genes).median())))
         h = h_loo(t); sup = (beta > 0) & (lfsr <= .1); sc = Ea.eid.isin(el.eid).values; T2 = gene_table(beta, lfsr, excl=h >= 20); L2 = T2[T2.listed].head(1000); a_, b_ = set(L.gene), set(L2.gene)
         HO.append(dict(tf=t, share_supporting_hot20=float((h[sup] >= 20).mean()) if sup.any() else np.nan, share_scored_hot20=float((h[sc] >= 20).mean()), n_list=len(L), n_list_without_hot=len(L2), jaccard_without_hot=len(a_ & b_) / len(a_ | b_) if a_ | b_ else np.nan))
