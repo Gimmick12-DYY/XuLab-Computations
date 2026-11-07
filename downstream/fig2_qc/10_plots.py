@@ -55,6 +55,8 @@ def heat(ax, M, cmap, vmin, vmax, fmt="{:.2f}", box=True, xl=TFS, yl=TFS):
     for i in range(M.shape[0]):
         for j in range(M.shape[1]):
             v = M[i, j]
+            if not np.isfinite(v):
+                continue
             mid = (vmin + vmax) / 2
             dark = abs(v - mid) > 0.35 * (vmax - vmin) if cmap.name.endswith("div") else v > vmin + 0.6 * (vmax - vmin)
             ax.text(j, i, fmt.format(v), ha="center", va="center", fontsize=5, color="white" if dark else INK)
@@ -93,7 +95,7 @@ save(fig, "fig2_ref_overlap")
 # 2. plain vs controlled matrices
 arms = [("raw_dm", "sc raw (depth-matched)"), ("imputed", "sc imputed")]
 summ = pd.read_csv(OUT / "summary_diagonal.tsv", sep="\t")
-fig, axs = plt.subplots(2, 2, figsize=(5.2, 5.0))
+fig, axs = plt.subplots(2, 2, figsize=(5.6, 6.4), layout="constrained")
 for r, (arm, alab) in enumerate(arms):
     for c, (pat, clab) in enumerate(((a.plain, "Plain (all peaks, ATAC bins)"), (a.ctrl, a.ctrl_label))):
         M = pd.read_csv(OUT / pat.format(arm=arm), sep="\t", index_col=0).values
@@ -103,7 +105,7 @@ for r, (arm, alab) in enumerate(arms):
         axs[r, c].set_title(f"{alab}\n{clab}\ndiag−off {dm:+.3f}, own best {own}/{NT}", fontsize=6)
         axs[r, c].set_xlabel("Bulk reference")
         axs[r, c].set_ylabel("sc track")
-fig.colorbar(im, ax=axs, fraction=0.03, pad=0.02, label="AUROC")
+fig.colorbar(im, ax=axs, fraction=0.03, pad=0.02, label="AUROC", shrink=0.5)
 save(fig, "fig2_matrix_plain_vs_ctrl")
 
 # 3. T4 pseudo-TF null
@@ -139,12 +141,12 @@ for tag in a.pb:
     z = np.load(f)
     R, labs, Zl = z["R"], list(z["labs"]), z["Z"]
     n = len(labs)
-    fig = plt.figure(figsize=(3.2, 3.0))
-    axd = fig.add_axes([0.25, 0.80, 0.55, 0.13])
+    fig = plt.figure(figsize=(3.4, 3.4))
+    axd = fig.add_axes([0.27, 0.78, 0.53, 0.11])
     d = dendrogram(Zl, ax=axd, no_labels=True, color_threshold=0, above_threshold_color=INK)
     axd.axis("off")
     o = d["leaves"]
-    axh = fig.add_axes([0.25, 0.12, 0.55, 0.68])
+    axh = fig.add_axes([0.27, 0.22, 0.53, 0.56])
     lo = max(-1, np.floor(R[np.triu_indices(n, 1)].min() * 10) / 10)
     im = axh.imshow(R[np.ix_(o, o)], cmap=P.div_cmap(), vmin=-1 if lo < 0 else -1, vmax=1, aspect="auto")
     ol = [labs[i].replace("bulk_", "Bulk ").replace("sc_", "sc ") for i in o]
@@ -153,7 +155,7 @@ for tag in a.pb:
     for t in axh.get_xticklabels() + axh.get_yticklabels():
         t.set_color(INK if t.get_text().startswith("Bulk") else P.arms.raw if "imputed" not in tag else P.arms.imputed)
     axh.tick_params(length=0)
-    cax = fig.add_axes([0.83, 0.12, 0.03, 0.3])
+    cax = fig.add_axes([0.83, 0.22, 0.025, 0.25])
     fig.colorbar(im, cax=cax, label="Pearson r")
     k = n // 2
     blk = R[k:, :k]

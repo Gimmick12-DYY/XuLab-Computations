@@ -69,6 +69,7 @@ def anchor_table(tf):
 
 for tf in PA_TFS:
     A = anchor_table(tf)
+    A = A[A[0].isin(list(off))].reset_index(drop=True)
     own = np.array([count(tf, c, p - 250, p + 250) for c, p in zip(A[0], A[1])])
     top = np.argsort(-own)[:200]
     chosen = []

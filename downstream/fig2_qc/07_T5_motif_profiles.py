@@ -46,9 +46,7 @@ def anchors(tf):
     fa = od / f"T5_regions_{tf}.fa"
     fasta = sh("bedtools", "getfasta", "-fi", str(FASTA), "-bed", str(bed), "-name")
     # keep only the plain rN name: FIMO parses chr:start-end headers into genomic coordinates
-    fa.write_text("".join(l.split("::")[0] + "
-" if l.startswith(">") else l + "
-" for l in fasta.splitlines()))
+    fa.write_text("".join((l.split("::")[0] if l.startswith(">") else l) + "\n" for l in fasta.splitlines()))
     txt = sh("fimo", "--text", "--thresh", str(thr), "--motif", motif, str(MEME_DB), str(fa))
     h = pd.read_csv(pd.io.common.StringIO(txt), sep="\t")
     h = h.sort_values("p-value").drop_duplicates("sequence_name")
