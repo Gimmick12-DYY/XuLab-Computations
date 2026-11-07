@@ -54,7 +54,7 @@ def run_ash(d):
     r = subprocess.run(["Rscript", f"{R3}/r3_ash.R", d, str(CORES)], capture_output=True, text=True); print(r.stdout.strip(), r.stderr.strip()[-500:], flush=True); assert r.returncode == 0
 def read_ash(d, unit):
     o = pd.read_csv(f"{d}/out/{unit}.tsv", sep="\t"); g = pd.read_csv(f"{d}/out/{unit}.g.tsv", sep="\t").iloc[0]
-    beta = np.zeros(nE); psd = np.zeros(nE); lfsr = np.ones(nE); ix = o.eid.values; beta[ix] = o.beta.values; psd[ix] = o.psd.values; lfsr[ix] = o.lfsr.values
+    beta = np.zeros(nE); psd = np.zeros(nE); lfsr = np.ones(nE); ix = o.eid.values.astype(np.int64); beta[ix] = o.beta.values; psd[ix] = o.psd.values; lfsr[ix] = o.lfsr.values
     return beta, psd, lfsr, float(g.pi0), float(g.tau)
 # ---------- element-gene pairs: <= 100 kb; > 20 kb only with an ABC link or a Hi-C loop (Peakachu 0.7, 5 kb and 10 kb) to the promoter ----------
 A = pd.read_csv(f"{X}/regulatome/m2_abc/results/Predictions_powerlaw/EnhancerPredictionsFull_thr0.02.tsv", sep="\t", usecols=["chr", "start", "end", "TargetGene", "TargetGeneTSS", "ABC.Score"])
