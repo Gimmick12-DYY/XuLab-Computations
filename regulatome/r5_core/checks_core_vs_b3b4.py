@@ -4,7 +4,8 @@
 import os
 import numpy as np, pandas as pd
 X = "/work/users/d/y/dyy12/XuLab"; R = f"{X}/regulatome/r5_core"; R2 = f"{X}/regulatome/r2_targets"; B = f"{X}/regulatome/m4_validation/b3b4"
-S = pd.read_csv(f"{R}/tf_summary.tsv", sep="\t").set_index("tf"); n_cells = pd.read_csv(f"{R2}/r2_summary.tsv", sep="\t").set_index("tf").n_cells
+S = pd.read_csv(f"{R}/tf_summary.tsv", sep="\t").set_index("tf")
+n_cells = pd.Series({t: len(np.load(f"{X}/regulatome/gate1/cellmats/{t}.cells.npz")["reads"]) for t in S.index})  # cells per TF in the Gate 1 cellmats (r2_summary n_cells is -1 for many TFs)
 Ab = pd.read_csv(f"{B}/ablation_per_tf.tsv", sep="\t"); Pt = pd.read_csv(f"{B}/per_tf_effects.tsv", sep="\t"); Pt = Pt[Pt.tier.str.startswith("direct-")]
 ab = lambda arm, lad, t: Ab[(Ab.arm == arm) & (Ab.ladder == lad) & (Ab.tf == t)].effect.squeeze() if ((Ab.arm == arm) & (Ab.ladder == lad) & (Ab.tf == t)).any() else np.nan
 pt = lambda arm, t, col: Pt[(Pt.arm == arm) & (Pt.tf == t)][col].squeeze() if ((Pt.arm == arm) & (Pt.tf == t)).any() else np.nan
