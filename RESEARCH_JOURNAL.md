@@ -25,6 +25,12 @@ cluster is the usual cause of "unchanged output."
 
 ## Log (newest first)
 
+### 2026-11-09 — Regulome gene layer tuned against Perturb-seq; held-out FAIL; manifest v8 frozen
+- **Context:** B6 (third declared Perturb-seq read) showed the binding × ABC core beats accessibility-only but loses to binding-only on Arm 2. Yuyang lifted the validation-only rule: the HEK293T X-Atlas/Orion knockdowns become a development benchmark. B7 (HCT116 confirmation) was staged but dropped before any download or read.
+- **Change:** regulatome/m6_improve/. TF-level split split_v1.tsv (52 development / 24 held-out, ceiling-stratified, NRF1 in development), sealed before any grid result. Grids 1–6 on development TFs only; objective changed after grid 2 to ceiling-weighted own-vs-other-KD specificity, with element-count, pooled other-TF and ATAC controls (SPEC.md); learned model (model1) and element-level pooled normalisation (grid5) tried. Network borrowing across TFs (SPEC_NETWORK.md, net1b): kNN5 / dense co-binding + complex edges vs uniform pooling and degree-preserving swap, fixed and reliability α.
+- **Outcome:** ABC weighting is harmful to the gene score; ATAC × ABC scores below random genes; a plain ±100 kb distance window matches the linked-element machinery (dev lead over ABC-sum about +0.4, not over element count). The raw B6 effect is mostly generic responsiveness (no-binding controls score as high). Network borrowing: co-binding and complex edges carry no detectable shared knockdown response vs uniform pooling and the degree-preserving shuffle; weak TFs do not gain. Held-out single scoring (job 8702375, commits 20fde83, 46bae6f): FAIL, the pre-declared null — win100k Arm 2 Wspec −0.14 [−0.75, 0.51], margin over element count −0.34 [−0.88, 0.20]; controls score higher. Frozen as manifest v8 (regulatome/r6_v8/): binding-only over ABC links (B6 list e), 79 TFs; window variant not adopted; held-out set spent. Methods: benchmark-tuned on 52 TFs, not confirmed on 24 held out.
+- **Files:** regulatome/m6_improve/ (SPEC.md, SPEC_NETWORK.md, split_v1.tsv, grid1–6, model1, net1b, heldout_v1, heldout_result.md), regulatome/r6_v8/.
+
 ### 2026-11-06 — TF groups by shared co-binding pairs/cliques; clique location
 - **Context:** Ask whether groups of TFs share Cicero pairs/cliques beyond depth, and where cliques sit.
 - **Change:** cobinding/tf_groups/: degree-preserving (curveball) null keeping TF depth, pair popularity and library
