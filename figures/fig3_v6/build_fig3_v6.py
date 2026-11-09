@@ -68,13 +68,13 @@ def network_legend(x, y):
     out.append("</g>"); return "\n".join(out)
 
 
-B = {st: content_box(st) for st in ["a_network", "b_class_bars", "c1_pairs_loop_support", "c2_module_loop_coverage",
+B = {st: content_box(st) for st in ["a_network", "b_class_bars", "c_module_loop_support",
                                      "d1_se_browser", "d2_se_edge_table", "e1_se_rosette", "e2_se_flower"]}
 mm = lambda st: (B[st][2] / PT, B[st][3] / PT)    # native content size, mm
 parts, y, report = [], 0.0, []
 
 # row 1: a network | its legend | b class bars (same height)
-H1 = 56.0; LEGW = 36.0
+H1 = float(os.environ.get("H1", 56)); LEGW = 36.0
 wa = H1 * mm("a_network")[0] / mm("a_network")[1]; sb = H1 / mm("b_class_bars")[1]; wb = mm("b_class_bars")[0] * sb
 if wa + LEGW + wb + 2 * G > W: sb = (W - wa - LEGW - 2 * G) / mm("b_class_bars")[0]; wb = W - wa - LEGW - 2 * G
 parts.append(inline("a_network", "a", 0, y, wa, H1, B["a_network"])); parts.append(network_legend(wa + G, y + H1 - 5 * 2.45 - 1))
@@ -91,7 +91,10 @@ def pair_row(l, s1, s2, letters, max_h=None):
     parts.append(inline(s1, letters[0], 0, y, w1, h1, B[s1])); parts.append(inline(s2, letters[1], x2, y, w2, h2, B[s2]))
     report.append((l, s)); y += max(h1, h2) + G
 
-pair_row("c", "c1_pairs_loop_support", "c2_module_loop_coverage", ("c", ""))
+sc = min(W / mm("c_module_loop_support")[0], float(os.environ.get("H_C", 999)) / mm("c_module_loop_support")[1])   # panel c: module loop coverage + module-edge null, full width (height-capped)
+parts.append(inline("c_module_loop_support", "c", 0, y, mm("c_module_loop_support")[0] * sc, mm("c_module_loop_support")[1] * sc, B["c_module_loop_support"]))
+print(f"panel c {mm('c_module_loop_support')[0] * sc:.1f} x {mm('c_module_loop_support')[1] * sc:.1f} mm")
+report.append(("c", sc)); y += mm("c_module_loop_support")[1] * sc + G
 pair_row("d", "d1_se_browser", "d2_se_edge_table", ("d", ""), max_h=float(os.environ.get("H_D", 55)))
 pair_row("e", "e1_se_rosette", "e2_se_flower", ("e", ""))
 PAGE_H = y - G

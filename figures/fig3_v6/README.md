@@ -13,8 +13,8 @@ Outputs: `Fig3_v6.svg`, `Fig3_v6.pdf`, `Fig3_v6_preview.png` (300 dpi), `panels/
 |---|---|---|---|
 | a network | 169 "Coordinated binding", left picture (ad3eaef6, exact match) | Longleaf `hic/work_wt293t/loops/union_5k_10k_0.7/RBBP4_sweep_k50_i10000_s555_pad30kb/publication_plots_v2/tf_peak_network_cliques_loops.svg` (from `hic/scripts/plot_clique_network_loops_v2.py`, `cobinding/slurm/run_rbbp4_loop_plots_wt293t_v2.sbatch`) | `src/approved_tf_peak_network_cliques_loops.svg` -> `panels/a_network.svg` |
 | b genomic class bars | 11 "Fig 3c" (bars of 02069735, figC_genomic_annotation_chromhmm_paletteC); same data as S1C slide 60 (e6dc7798 = `hub_figures/basic/descriptive/figC1_class_bars.png`) | `figures_paletteC/figC1_class_bars_paletteC.svg` (from `hub_figures/basic/descriptive/plot_figC_split_paletteC.py`) | `panels/b_class_bars.svg` |
-| c Hi-C support, left | 15 "Hi-C Validation", left (7d7a2e64) | `figures_paletteC/figD1_pairs_loop_support_paletteC.svg` (`plot_s1d_split_paletteC.py`) | `panels/c1_pairs_loop_support.svg` |
-| c Hi-C support, right | 15, right (515f24d6) | `figures_paletteC/figD2_cliques_loop_coverage_paletteC.svg` (same script) | `panels/c2_module_loop_coverage.svg` |
+| c module Hi-C support | 15, right (515f24d6) + new null panel | `figures_paletteC/figD2_cliques_loop_coverage_paletteC.svg` (`plot_s1d_split_paletteC.py`); right: module-edge observed vs own 10,000-shuffle null drawn with the D1 null code | `panels/c_module_loop_support.svg` |
+| supplementary (out of Fig 3) | 15, left (7d7a2e64) | `figures_paletteC/figD1_pairs_loop_support_paletteC.svg` | `supplementary/S_pairs_loop_support.svg/.pdf/.png` |
 | d SE browser | 21 "4E-H11", left (11c4ef61) | `results_3d_model/se_sedb/figure_gold/browser_final.svg` (`se_sedb/scripts/28_browser_gold.py`) | `panels/d1_se_browser.svg` |
 | d SE edge table | 21, right (87822a32) | `results_3d_model/se_sedb/figure_gold/browser_side_final.svg` (same script) | `panels/d2_se_edge_table.svg` |
 | e SE 3D rosette | 22 "3D Structure of the super-enhancer hub" (0c7c77be) | `results_3d_model/se_sedb/figure_rosette_own_beads/se_rosette.svg` (`se_sedb/scripts/47_rosette_own_beads.py`) | `panels/e1_se_rosette.svg` |
@@ -42,10 +42,17 @@ Slide 169's right picture is a zoom of the same network; slide 60's bars are the
 - D1, D2 and the class bars were re-run from their original scripts at their original sizes with only the wording changes
   (`b_hic_support_v6.py`, `e_class_bars_v6.py`); the class-bar percentages and n's match the slides.
 
+## Panel c update (2026-11-09, user)
+
+The pairs chart (D1) left Fig 3 for the supplement. Panel c = D2 (module loop-edge coverage) plus, at its right, observed vs own
+null for module edges >25 kb (null column 1 of the S1D 10,000-shuffle npz; TFs with >=100 module edges; BH over those 40 TFs):
+35 of 40 TFs q < 0.05, median observed 21.7% (same as v4's module null). Filled dot = q < 0.05, open = n.s., n/a = <100 edges.
+Table: `panels_src/b2_module_edge_null.tsv`.
+
 ## Scales and legibility
 
-The approved figures were drawn for slides, so they are scaled down to share one page: a 0.13, b 0.84, c 0.73, d 0.37,
-e 0.28 (rows share one scale). Smallest printed text: c about 3.7 pt (TF names), d 4.4 pt (12 pt labels; table footnote ~3.5 pt),
+The approved figures were drawn for slides, so they are scaled down to share one page: a 0.12, b 0.83, c 0.75, d 0.35,
+e 0.28 (rows share one scale). Smallest printed text: c about 3.7 pt (bar % labels; TF names 4.1 pt), d 4.2 pt (12 pt labels; table footnote ~3.5 pt),
 e about 3 pt (flower labels, legends), network coordinate labels about 1 pt (vector, zoomable). The chr16p11.2 hub (f) does not
 fit at a readable size and is left out.
 

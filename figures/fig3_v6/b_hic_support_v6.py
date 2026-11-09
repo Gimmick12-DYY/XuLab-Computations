@@ -1,5 +1,5 @@
 """Fig 3 v6 panel b: the approved S1D palette C figures D1 (pairs with Hi-C loop support + observed vs own 10,000-shuffle null) and
-D2 (per-TF loop-edge coverage), deck slide 15; re-run from hub_figures/basic/descriptive/plot_s1d_split_paletteC.py, same data and
+D2 (per-TF loop-edge coverage), deck slide 15; D2 now carries an observed-vs-own-null panel for module edges at its right (user 2026-11-09), drawn with the D1 null code; re-run from hub_figures/basic/descriptive/plot_s1d_split_paletteC.py, same data and
 style. v6 changes: wording only ("clique" -> "higher-order co-binding module" / "module edge") and the figure size set to the panel
 size on the Fig 3 page (fonts stay 5-7 pt); PDF written next to the SVG.
   python b_hic_support_v6.py <outdir> [D1 w h mm] [D2 w h mm]"""
@@ -66,7 +66,9 @@ C["stratum"] = np.select([C.loop_edges == 0, cv <= .25, cv <= .5, cv <= .75, cv 
 Pt = C.groupby(["tf", "stratum"]).size().unstack(fill_value=0).reindex(columns=labs, fill_value=0)
 Pt = Pt[Pt.sum(1) >= 20]; Pt = Pt.loc[Pt.sum(1).sort_values().index]
 cap = 2500
-fig, ax = plt.subplots(figsize=(SZ[2] * MM, (SZ[3] or 2.6 * len(Pt) + 18) * MM))
+fig = plt.figure(figsize=(SZ[2] * MM, (SZ[3] or 2.6 * len(Pt) + 18) * MM))
+gs = fig.add_gridspec(1, 2, width_ratios=[1.45, 1], wspace=0.04)    # v6 (user 2026-11-09): module-edge permutation panel at the right
+ax = fig.add_subplot(gs[0]); b = fig.add_subplot(gs[1], sharey=ax)
 y = np.arange(len(Pt)); left = np.zeros(len(Pt))
 scale = np.minimum(1.0, cap / Pt.sum(1).values)      # bars longer than the axis are shrunk to it (marked //), keeping proportions
 for l, c in zip(labs, cols):
@@ -80,5 +82,36 @@ for i, (t, s_) in enumerate(zip(tot, sup)):
 ax.set_xlim(0, cap * 1.32); ax.set_yticks(y); ax.set_yticklabels(Pt.index, fontsize=5.5)
 ax.set_xlabel("higher-order co-binding modules (with ≥1 edge >25 kb)"); ax.legend(title="share of module edges on a 0.7 loop", loc="lower right", title_fontsize=6)
 ax.set_title("Modules by Hi-C loop-edge coverage (% = modules with ≥1 loop edge)", loc="left")
+# right: observed vs own null for MODULE EDGES >25 kb, drawn with the D1 right-half code (null column 1 = edges)
+MIN_E = 100
+from statsmodels.stats.multitest import multipletests
+E = T.loc[[t for t in Pt.index if t in T.index and T.edges[t] >= MIN_E]].copy()
+E["q"] = multipletests(E.edge_p, method="fdr_bh")[1]
+x1 = 12
+for i, tf in enumerate(Pt.index):
+    if tf not in E.index:
+        b.text(x1 + 0.3, i, "n/a", va="center", fontsize=4.5, color=N.mid); continue
+    v = null[tf][:, 1] * 100
+    lo, q1, md, q3, hi = np.percentile(v, [2.5, 25, 50, 75, 97.5])
+    b.plot([lo, hi], [i, i], color=N.mid, lw=0.7, solid_capstyle="butt")
+    b.add_patch(plt.Rectangle((q1, i - 0.28), q3 - q1, 0.56, color=N.light, lw=0))
+    b.plot([md, md], [i - 0.28, i + 0.28], color=N.dark, lw=0.7)
+    b.plot([md, E.edge_obs[tf] * 100], [i, i], color=N.light, lw=0.6, zorder=1)
+    sig = E.q[tf] < 0.05
+    b.scatter([E.edge_obs[tf] * 100], [i], s=7, color=N.ink if sig else "white", edgecolors=N.ink, linewidths=0 if sig else 0.5, zorder=3)
+b.scatter([], [], s=7, color=N.ink, label="observed (BH q < 0.05)")
+b.scatter([], [], s=7, color="white", edgecolors=N.ink, linewidths=0.5, label="observed, n.s.")
+b.add_patch(plt.Rectangle((0, 0), 0, 0, color=N.light, label="own shuffle null: box = IQR, line = median, whiskers = 95%"))
+b.legend(loc="upper center", bbox_to_anchor=(0.2, -0.075), ncol=3)
+hi_x = max(E.edge_obs.max() * 100, max(np.percentile(null[t][:, 1] * 100, 97.5) for t in E.index)) + 1.5
+b.set_xlim(x1, hi_x); b.set_xlabel("% of module edges >25 kb on a loop")
+b.set_title("Observed vs own null (10,000 shuffles)", loc="left")
+b.xaxis.grid(True, color=N.faint, lw=0.5); b.set_axisbelow(True)
+b.tick_params(axis="y", left=False, labelleft=False); b.spines["left"].set_visible(False)
+ax.set_ylim(-0.7, len(Pt) - 0.3)
+nsig = int((E.q < 0.05).sum())
+fig.text(0.99, -0.035, f"Null: TFs with ≥{MIN_E} module edges >25 kb (n/a = fewer); same-chromosome shuffles keep each edge's spacing; {nsig} of {len(E)} TFs BH q < 0.05", ha="right", fontsize=5.5, color=N.dark)
+E.assign(null_med=[np.median(null[t][:, 1]) for t in E.index])[["edges", "edge_obs", "null_med", "edge_p", "q"]].to_csv(OUT / "b2_module_edge_null.tsv", sep="\t")
+print(f"module-edge null: {nsig} of {len(E)} TFs q < 0.05; median obs {E.edge_obs.median():.3f}")
 for ext in ("svg", "pdf", "png"): fig.savefig(OUT / f"b2_module_loop_coverage.{ext}", bbox_inches="tight")
 plt.close(fig)

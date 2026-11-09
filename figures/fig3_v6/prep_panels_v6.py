@@ -3,7 +3,8 @@
                   tf_peak_network_cliques_loops.svg (slide 169; copied to src/). Glyph-path text -> live Arial text; title dropped;
                   legend dropped here and redrawn at readable size by build_fig3_v6.py with the v6 wording (same handles).
   b  class bars <- panels_src/e_class_bars.svg (e_class_bars_v6.py: approved figC1_class_bars_paletteC, wording only)
-  c1 / c2       <- panels_src/b1_pairs_loop_support.svg, b2_module_loop_coverage.svg (b_hic_support_v6.py: approved D1/D2 palette C)
+  c             <- panels_src/b2_module_loop_coverage.svg (b_hic_support_v6.py: approved D2 + module-edge null panel at its right)
+  supplementary/S_pairs_loop_support.* <- panels_src/b1_pairs_loop_support.* (approved D1, v6 wording; out of Fig 3)
   d1 / d2       <- results_3d_model/se_sedb/figure_gold/browser_final.svg (title dropped) + browser_side_final.svg (unchanged)
   e1            <- results_3d_model/se_sedb/figure_rosette_own_beads/se_rosette.svg (title dropped)
   e2            <- panels_src/flower_v6.svg (flower_v6.py: approved flower, petals outward)
@@ -29,8 +30,11 @@ s = s.replace("fill: #f7f7f5", "fill: #ffffff")   # slide background tint -> whi
 assert "clique" not in re.sub(r"<!--.*?-->", "", s, flags=re.S).lower().replace("cliques_loops", "")
 (P / "a_network.svg").write_text(s)
 shutil.copy(SRC / "e_class_bars.svg", P / "b_class_bars.svg")
-shutil.copy(SRC / "b1_pairs_loop_support.svg", P / "c1_pairs_loop_support.svg")
-shutil.copy(SRC / "b2_module_loop_coverage.svg", P / "c2_module_loop_coverage.svg")
+for f in P.glob("c1_*.svg"): f.unlink()   # v6 (user 2026-11-09): pairs chart moved to supplementary/
+SUP = H / "supplementary"; SUP.mkdir(exist_ok=True)
+for e in ("svg", "pdf", "png"): shutil.copy(SRC / f"b1_pairs_loop_support.{e}", SUP / f"S_pairs_loop_support.{e}")
+for f in P.glob("c2_*.svg"): f.unlink()
+shutil.copy(SRC / "b2_module_loop_coverage.svg", P / "c_module_loop_support.svg")
 (P / "d1_se_browser.svg").write_text(set_live_text((SE / "figure_gold/browser_final.svg").read_text(), drop=("TF binding and Hi-C at the super-enhancer*",)))
 shutil.copy(SE / "figure_gold/browser_side_final.svg", P / "d2_se_edge_table.svg")
 (P / "e1_se_rosette.svg").write_text(set_live_text((SE / "figure_rosette_own_beads/se_rosette.svg").read_text(), drop=("Most-closed structure*",)))
