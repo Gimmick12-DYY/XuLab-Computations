@@ -18,7 +18,7 @@ for t in S.index:
                      spearman_S_atac=S.spearman_S_Satac[t], spearman_S_pool=S.spearman_S_Spool[t], splithalf_jaccard=S.jaccard_split_half_top1000[t],
                      jaccard_core_vs_rawABC_arm=len(core & arm) / len(core | arm),
                      arm1_rawABC_effect=ab("arm1", "raw_direct", t), arm2_rawABC_effect=ab("arm2", "raw_direct", t),
-                     arm1_direct_effect_vs_atac_null=pt("arm1", t, "effect_atac"), arm2_direct_effect_vs_atac_null=pt("arm2", t, "effect_atac"),
+                     arm1_atac_only_null_effect=pt("arm1", t, "effect_atac"), arm2_atac_only_null_effect=pt("arm2", t, "effect_atac"),
                      arm1_promoter_only_effect=ab("arm1", "promoter_only", t), arm2_promoter_only_effect=ab("arm2", "promoter_only", t), n_cells=n_cells.get(t, np.nan)))
 T = pd.DataFrame(rows); T.to_csv(f"{R}/checks/per_tf_core_vs_b3b4.tsv", sep="\t", index=False, float_format="%.4g", na_rep="NA")
 j = T.jaccard_core_vs_rawABC_arm; print("jaccard core vs raw_direct arm: median", round(j.median(), 3), "range", round(j.min(), 3), round(j.max(), 3)); print(T.nsmallest(5, "jaccard_core_vs_rawABC_arm")[["tf", "jaccard_core_vs_rawABC_arm", "genes_S_pos", "n_cells"]].to_string(index=False))
