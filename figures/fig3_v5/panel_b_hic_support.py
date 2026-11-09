@@ -20,7 +20,7 @@ T["q1"] = [np.percentile(null[t], 25) for t in T.index]; T["q3"] = [np.percentil
 assert np.allclose(T.med, T.edge_null_med * 100)
 T = T.assign(d=T.obs - T.med).sort_values("d", ascending=False)
 
-W, H = 91.0, 45.0; X0, X1, Y0, Y1 = 7.0, 90.8, 11.5, 40.0
+W, H = 91.0, 45.0; X0, X1, Y0, Y1 = 8.0, 90.8, 11.5, 40.0
 fig = fig_mm(W, H); ax = mm_axes(fig, W, H, X0, Y0, X1 - X0, Y1 - Y0)
 x = np.arange(len(T))
 ax.bar(x, T.med, width=0.62, color=PALE, lw=0, zorder=1)
