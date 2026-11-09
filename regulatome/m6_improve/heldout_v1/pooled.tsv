@@ -1,0 +1,57 @@
+arm	metric	variant	n_tfs	mean	ci	vs_abc_linked	vs_abc_linked_ci	npos_vs_abc
+arm1	z_own	abc_borrow_knn5_arel@1000	10	0.52	[-0.2, 1.291]	0.096	[-0.401, 0.577]	6.0
+arm1	z_own	abc_raw@1000	10	0.424	[-0.209, 1.077]	0.0	[0.0, 0.0]	0.0
+arm1	z_own	win100k_CTRL_atac@1000	10	0.76	[0.137, 1.281]	0.337	[-0.745, 1.306]	7.0
+arm1	z_own	win100k_CTRL_n_elem@1000	10	0.399	[-0.179, 0.902]	-0.024	[-0.57, 0.57]	4.0
+arm1	z_own	win100k_CTRL_pool@1000	10	0.632	[0.187, 1.032]	0.209	[-0.39, 0.818]	6.0
+arm1	z_own	win100k_borrow_knn5_arel@1000	10	0.722	[0.158, 1.331]	0.298	[-0.468, 1.058]	6.0
+arm1	z_own	win100k_raw@1000	10	0.539	[0.024, 1.106]	0.115	[-0.608, 0.825]	5.0
+arm1	z_off_mean	abc_borrow_knn5_arel@1000	10	0.514	[0.399, 0.626]	0.045	[-0.072, 0.158]	6.0
+arm1	z_off_mean	abc_raw@1000	10	0.469	[0.283, 0.671]	0.0	[0.0, 0.0]	0.0
+arm1	z_off_mean	win100k_CTRL_atac@1000	10	0.751	[0.693, 0.819]	0.282	[0.033, 0.516]	8.0
+arm1	z_off_mean	win100k_CTRL_n_elem@1000	10	0.407	[0.351, 0.468]	-0.062	[-0.29, 0.143]	4.0
+arm1	z_off_mean	win100k_CTRL_pool@1000	10	0.659	[0.606, 0.704]	0.19	[-0.046, 0.415]	8.0
+arm1	z_off_mean	win100k_borrow_knn5_arel@1000	10	0.599	[0.466, 0.74]	0.13	[-0.116, 0.375]	6.0
+arm1	z_off_mean	win100k_raw@1000	10	0.613	[0.462, 0.761]	0.144	[-0.115, 0.385]	6.0
+arm1	specificity	abc_borrow_knn5_arel@1000	10	0.006	[-0.697, 0.761]	0.051	[-0.527, 0.59]	6.0
+arm1	specificity	abc_raw@1000	10	-0.045	[-0.718, 0.646]	0.0	[0.0, 0.0]	0.0
+arm1	specificity	win100k_CTRL_atac@1000	10	0.01	[-0.678, 0.599]	0.055	[-1.164, 1.144]	7.0
+arm1	specificity	win100k_CTRL_n_elem@1000	10	-0.007	[-0.628, 0.556]	0.038	[-0.595, 0.738]	5.0
+arm1	specificity	win100k_CTRL_pool@1000	10	-0.026	[-0.52, 0.416]	0.019	[-0.726, 0.777]	5.0
+arm1	specificity	win100k_borrow_knn5_arel@1000	10	0.123	[-0.492, 0.786]	0.168	[-0.745, 1.081]	6.0
+arm1	specificity	win100k_raw@1000	10	-0.075	[-0.638, 0.531]	-0.029	[-0.847, 0.819]	5.0
+arm1	median_own_rank	abc_borrow_knn5_arel@1000	10	5.5	top10%: 0.1			
+arm1	median_own_rank	abc_raw@1000	10	6.5	top10%: 0.0			
+arm1	median_own_rank	win100k_CTRL_atac@1000	10	5.5	top10%: 0.1			
+arm1	median_own_rank	win100k_CTRL_n_elem@1000	10	5.5	top10%: 0.1			
+arm1	median_own_rank	win100k_CTRL_pool@1000	10	5.5	top10%: 0.1			
+arm1	median_own_rank	win100k_borrow_knn5_arel@1000	10	6.5	top10%: 0.2			
+arm1	median_own_rank	win100k_raw@1000	10	6.5	top10%: 0.1			
+arm2	z_own	abc_borrow_knn5_arel@1000	24	0.407	[-0.063, 0.866]	0.082	[-0.222, 0.395]	11.0
+arm2	z_own	abc_raw@1000	24	0.326	[-0.107, 0.758]	0.0	[0.0, 0.0]	0.0
+arm2	z_own	win100k_CTRL_atac@1000	24	0.854	[0.225, 1.434]	0.529	[-0.045, 1.025]	18.0
+arm2	z_own	win100k_CTRL_n_elem@1000	24	0.797	[0.402, 1.209]	0.471	[0.041, 0.884]	18.0
+arm2	z_own	win100k_CTRL_pool@1000	24	0.903	[0.371, 1.458]	0.577	[0.104, 0.994]	19.0
+arm2	z_own	win100k_borrow_knn5_arel@1000	24	0.671	[0.156, 1.164]	0.345	[-0.089, 0.738]	17.0
+arm2	z_own	win100k_raw@1000	24	0.612	[0.039, 1.142]	0.286	[-0.182, 0.708]	16.0
+arm2	z_off_mean	abc_borrow_knn5_arel@1000	24	0.448	[0.385, 0.509]	0.027	[-0.031, 0.088]	12.0
+arm2	z_off_mean	abc_raw@1000	24	0.421	[0.339, 0.502]	0.0	[0.0, 0.0]	0.0
+arm2	z_off_mean	win100k_CTRL_atac@1000	24	0.847	[0.823, 0.874]	0.426	[0.341, 0.514]	23.0
+arm2	z_off_mean	win100k_CTRL_n_elem@1000	24	0.774	[0.756, 0.792]	0.354	[0.27, 0.441]	23.0
+arm2	z_off_mean	win100k_CTRL_pool@1000	24	0.892	[0.869, 0.915]	0.471	[0.383, 0.56]	24.0
+arm2	z_off_mean	win100k_borrow_knn5_arel@1000	24	0.891	[0.845, 0.936]	0.471	[0.384, 0.553]	23.0
+arm2	z_off_mean	win100k_raw@1000	24	0.845	[0.789, 0.898]	0.424	[0.344, 0.502]	24.0
+arm2	specificity	abc_borrow_knn5_arel@1000	24	-0.04	[-0.497, 0.405]	0.055	[-0.257, 0.386]	11.0
+arm2	specificity	abc_raw@1000	24	-0.095	[-0.527, 0.333]	0.0	[0.0, 0.0]	0.0
+arm2	specificity	win100k_CTRL_atac@1000	24	0.007	[-0.645, 0.605]	0.102	[-0.488, 0.614]	15.0
+arm2	specificity	win100k_CTRL_n_elem@1000	24	0.023	[-0.383, 0.451]	0.118	[-0.303, 0.507]	14.0
+arm2	specificity	win100k_CTRL_pool@1000	24	0.01	[-0.543, 0.585]	0.106	[-0.368, 0.537]	16.0
+arm2	specificity	win100k_borrow_knn5_arel@1000	24	-0.22	[-0.774, 0.32]	-0.125	[-0.565, 0.261]	12.0
+arm2	specificity	win100k_raw@1000	24	-0.234	[-0.83, 0.338]	-0.139	[-0.609, 0.269]	12.0
+arm2	median_own_rank	abc_borrow_knn5_arel@1000	24	14.0	top10%: 0.125			
+arm2	median_own_rank	abc_raw@1000	24	14.5	top10%: 0.125			
+arm2	median_own_rank	win100k_CTRL_atac@1000	24	12.5	top10%: 0.083			
+arm2	median_own_rank	win100k_CTRL_n_elem@1000	24	12.5	top10%: 0.083			
+arm2	median_own_rank	win100k_CTRL_pool@1000	24	12.5	top10%: 0.083			
+arm2	median_own_rank	win100k_borrow_knn5_arel@1000	24	13.0	top10%: 0.042			
+arm2	median_own_rank	win100k_raw@1000	24	13.0	top10%: 0.042			
