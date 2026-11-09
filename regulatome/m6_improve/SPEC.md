@@ -17,3 +17,15 @@ Addendum 1 (2026-11-09 ~20:50, before grid6 results): Held-out scoring, one run.
 - One run, one table, committed with the sha of the dev table the candidate was chosen from.
 - Freeze decision rule: adopt the window rule if its held-out Arm 2 weighted specificity exceeds both ABC-sum and the element-count control (point estimates, even if CIs overlap); otherwise keep binding-only over ABC links (B6 list e) and state the window variant was not confirmed.
 - Methods wording either way: benchmark-tuned on 52 TFs, confirmed on 24 held out.
+
+Addendum 2 (2026-11-09 ~21:00, after grid6 dev results, before net1b results and before any held-out scoring):
+
+1. Named gene-score candidate: win100k raw @1000. Grid6 win100k resid exceeds raw by 0.03 Wspec, far inside the ~±0.2 Monte Carlo noise, and raw was the standing default before grid6.
+
+2. Margin rule (symmetric, applies to all later choices): a challenger replaces the standing default only if it beats it by more than the Monte Carlo noise of the run. Under this rule the switch clause of Addendum 1 does not fire.
+
+3. NRF1 is in development, so the 24 held-out TFs contain no NRF1. The held-out number is therefore an NRF1-free estimate, and it is the one we publish.
+
+4. Pre-declared expectation: on dev without NRF1, win100k raw's margin over the element-count control was +0.11 [-0.24, 0.43], and ATAC ranked first. The expected held-out result is NO confirmed improvement. A null will be reported as the predicted result.
+
+5. Held-out pass condition (final; no additions later): Arm 2, win100k raw, ceiling-weighted specificity CI excluding 0 AND its margin over the element-count control with CI excluding 0. Everything else in the table is descriptive: ABC-sum, the three controls, Arm 1, own-KD rank, B6 effect, top-5% OR and borrowing candidates. None of these can turn a fail into a pass.
