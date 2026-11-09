@@ -2,7 +2,7 @@
 re-run from se_sedb/scripts/42_chord_tf.py (flower part only, same inputs, colours, TF pies, labels and legend).
 v6 changes: partner-partner edges are drawn as petals that bulge OUTWARD from the ring (teardrop cubic Bezier leaving each end between
 the radial and the bisector direction, tip on the bisector at Rg*(1.15 + 0.30*gap/pi)), like tf_polymer_hicfirst/figure_loopedges_flower_v3/loopedges_schematic; SE edges stay radial
-spokes; ring made smaller (Rg 2.05 -> 1.85) and partner labels moved out past the petals; slide title removed.
+spokes; partner nodes plain (light grey fill, type outline), TF pies and their legend removed; ring made smaller (Rg 2.05 -> 1.85) and partner labels moved out past the petals; slide title removed.
   python flower_v6.py --sim <dir holding traj182.npz> --conf 9102 --out <dir>"""
 
 import argparse, glob, json
@@ -42,9 +42,7 @@ if True:
     tips = []
     for r in P.itertuples():
         q = pt(str(r.key)); tf_ = set(B.tfs[r.own_bead].split(",")) - {""}; tl_ = [t_ for t_ in PT if t_ in tf_]; no_ = len(tf_ - set(PT)); tot_ = len(tl_) + no_; st_ = 90.0; PR.append(dict(coordinates=REG[r.keyn], bin_10kb=r.keyn, bead=r.own_bead, node_bead_old=r.bead, label=r.label, cls=r.cls, n_tfs=tot_, named=",".join(tl_), n_other=no_, all_tfs=",".join(sorted(tf_))))
-        ax.add_patch(Circle(q, PIE, fc="white", ec="none", zorder=6))   # same wedges as the chr16 figures: one per named TF, then one grey wedge sized by the other TFs
-        for t_ in tl_ + (["other"] if no_ else []):
-            w_ = 360.0 * (no_ if t_ == "other" else 1) / tot_; ax.add_patch(Wedge(q, PIE, st_, st_ + w_, color=PC.get(t_, "#BDBDBD"), lw=0, zorder=6.1)); st_ += w_
+        ax.add_patch(Circle(q, PIE, fc="#F2F2F2", ec="none", zorder=6))   # v6: plain node, no TF pie (user, 2026-11-09)
         ax.add_patch(Circle(q, PIE, fc="none", ec=RING[r.cls], lw=1.5, zorder=6.2))
         if r.cls != "other": tips.append((q[0], q[1], r.label, r.cls, ang[str(r.key)]))
     ax.add_patch(RegularPolygon((cx, cy), 6, radius=0.34, fc="#FFC20A", ec="#5A4500", lw=1.6, zorder=7)); ax.text(cx, cy, "SE", ha="center", va="center", fontweight="bold", color="#2B2100", zorder=8, fontsize=13)
@@ -63,11 +61,8 @@ if True:
             m = H.ek == k; ax.plot([lx, lx + 0.28], [y, y], color=EC[k], lw=lw_, solid_capstyle="butt"); ax.text(lx + 0.38, y, EN[k], va="center"); ax.text(lx + 3.0, y, f"{int((m & (H.on_loop == 1)).sum())} + {int((m & (H.on_loop == 0)).sum())}", va="center", ha="right"); y -= 0.29
         y -= 0.08
     ax.plot([lx, lx + 0.28], [y, y], color="#555555", lw=1.6); ax.text(lx + 0.38, y, f"on a Hi-C loop ({int((H.on_loop == 1).sum())})", va="center"); y -= 0.29; ax.plot([lx, lx + 0.28], [y, y], color="#555555", lw=1.2, ls=(0, (2.5, 2))); ax.text(lx + 0.38, y, f"Cicero only ({int((H.on_loop == 0).sum())})", va="center"); y -= 0.31
-    for x_, c_, n_ in ((lx, "#0072B2", "promoter"), (lx + 1.2, "#D55E00", "enhancer"), (lx + 2.4, "#8C8C8C", "other")): ax.add_patch(Circle((x_ + 0.09, y), 0.08, fc="white", ec=c_, lw=1.5)); ax.text(x_ + 0.23, y, n_, va="center")
-    y -= 0.32; ax.text(lx, y, "TF peaks at the element (pie wedges)", fontweight="bold", va="center"); y -= 0.26
-    items = [(PC[t_], t_) for t_ in PT if t_ in seen] + [("#BDBDBD", "other TFs")]
-    for k, (c_, l_) in enumerate(items):
-        xx, yy_ = lx + 0.09 + (k % 3) * 1.2, y - (k // 3) * 0.24; ax.add_patch(Circle((xx, yy_), 0.07, color=c_, lw=0)); ax.text(xx + 0.13, yy_, l_, va="center", fontstyle="italic" if l_ in PT else "normal")
-    y = y - ((len(items) - 1) // 3) * 0.24 - 0.2; ax.text(lx, y, "Clockwise in genomic order from chr19:0.51 Mb.", va="top", color="#444444", fontsize=11)
+    for x_, c_, n_ in ((lx, "#0072B2", "promoter"), (lx + 1.2, "#D55E00", "enhancer"), (lx + 2.4, "#8C8C8C", "other")): ax.add_patch(Circle((x_ + 0.09, y), 0.08, fc="#F2F2F2", ec=c_, lw=1.5)); ax.text(x_ + 0.23, y, n_, va="center")
+    y -= 0.12
+    y -= 0.2; ax.text(lx, y, "Clockwise in genomic order from chr19:0.51 Mb.", va="top", color="#444444", fontsize=11)
     for e in ("svg", "pdf"): fig.savefig(OUT / f"flower_v6.{e}", dpi=600, transparent=True)
     fig.savefig(OUT / "flower_v6.png", dpi=300, facecolor="white"); fig.savefig(OUT / "flower_v6_check.png", dpi=144, facecolor="white")
