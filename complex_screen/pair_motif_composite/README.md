@@ -30,3 +30,9 @@ Question: do bins bound by both TFs of a pair carry a motif that neither TF's ow
 - Validation: log2FC > 0.75 and P < 0.01 on the even chromosomes.
 
 Outputs (`pools/`, `results/`, `candidates/`, `ref/`, `db/`, `logs/`, `preparsed/`, tables) are not tracked.
+
+## gc_matched/ (variant, 2026-11-09)
+- Gate, negative and 20 random pairs only. `gc_match.py` subsamples the existing pools so that pair, A-only, B-only and input match within strata: GC (0.025 steps) x CpG o/e (quintiles) x promoter/distal (a GENCODE v46 basic transcript TSS within the 1 kb bin +/- 1 kb).
+- Per stratum, m = min(n_pair, n_Aonly, n_Bonly) bins are kept from each of those three pools, and up to m input bins.
+- Permutations shuffle labels within the same strata. Before/after composition is in `gc_matched/matching.tsv`.
+- Same commands as above, run with `BASE=$PWD/gc_matched` (run_pair.sbatch, tasks.py, chain.sbatch and summarize.py all read BASE).
