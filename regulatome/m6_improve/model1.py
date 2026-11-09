@@ -1,0 +1,112 @@
+# M6 model 1 (development TFs only): learned gene score with generic responsiveness regressed out. Target (Arm 2) = |R_t(g)| minus the mean |R(g)| over
+# the other dev KDs; features = log1p of the TF's own binding in TSS windows / decays / ABC links, element count, pooled other-TF binding, NTC mean.
+# 5 leave-TFs-out folds (seed 20261109); each test TF's top-N genes by prediction are scored with the grid 3 specificity metric on both arms,
+# next to simple rules recomputed in the same run. Writes model1/per_tf.tsv. Grid 4 header follows.
+# M6 grid 4 (development TFs only): tune TSS window / distance decay and list size against ceiling-weighted specificity (grid3 metric).
+# Controls kept for every window: element count (no binding) and pooled other-TF binding. Reference: ABC-linked sum. Grid 3 header follows.
+# M6 grid 3 (development TFs only): TF-specificity metric. Each dev TF list is scored under its own KD and under every other dev KD;
+# specificity = own z minus mean off-KD z (same-panel KDs excluded). Variants = grid 2 + window element-count and pooled-other-TF controls.
+# M6 grid 1: which TF->gene scoring rule tracks the HEK293T knockdown response best? Development benchmark (Perturb-seq used for tuning).
+# Variants differ only in how each TF's raw binding (Gate 1 cellmats, CPM per active element) is turned into a gene score over ABC-linked elements
+# (m2_abc EnhancerPredictionsFull_thr0.02). Each TF's top-N genes are scored with the B6 effect (b3b4 score(): mean |R| vs 1,000 expression-matched
+# random sets, / SD) and the top-5% responder Fisher OR, on both arms of kd_response/out_v2. Writes grid1/per_tf.tsv, grid1/pooled.tsv.
+import os, sys
+import numpy as np, pandas as pd, scipy.sparse as sp
+from scipy import stats
+X = "/work/users/d/y/dyy12/XuLab"; M4 = f"{X}/regulatome/m4_validation"; G1 = f"{X}/regulatome/gate1/cellmats"; O = f"{X}/regulatome/m6_improve/model1"; os.makedirs(O, exist_ok=True)
+SEED = 20261109; NR = 1000; NB = 10000; ARMS = {"arm1": "arm1_high_knockdown", "arm2": "arm2_all_cell"}; ALIAS = {"CBX1": "HP1", "CBX3": "HP1", "CBX5": "HP1", "ZUP1": "ZUFSP"}; panel = lambda t: ALIAS.get(t, t)
+E = pd.read_csv(f"{X}/regulatome/m0_universe/elements_v2.bed", sep="\t", header=None, names=["chrom", "start", "end", "eid", "type", "pid", "ptype", "cls"])
+act = E.cls.isin(["promoter", "distal_active", "bivalent"]).values; Ea = E[act].reset_index(drop=True)
+A = pd.read_csv(f"{X}/regulatome/m2_abc/results/Predictions_powerlaw/EnhancerPredictionsFull_thr0.02.tsv", sep="\t", usecols=["chr", "start", "end", "TargetGene", "ABC.Score", "distance", "isSelfPromoter"])
+coord = {f"{c}:{s}-{e}": i for i, (c, s, e) in enumerate(zip(Ea.chrom, Ea.start, Ea.end))}; A["e"] = (A.chr + ":" + A.start.astype(str) + "-" + A.end.astype(str)).map(coord).astype(int)
+atac = np.load(f"{X}/regulatome/m1_binding/v2/counts/atac_counts.npz")["atac"][np.flatnonzero(act)].astype(float); atac_cpm = atac / atac.sum() * 1e6
+tfs = [l.strip() for l in open(f"{X}/regulatome/m1_binding/v2/tfs.txt") if l.strip()]
+A["sq"] = np.sqrt(A["ABC.Score"]); A["dk"] = np.exp(-A.distance.abs() / 5e4); prom = A.isSelfPromoter.astype(str).str.lower().eq("true")
+
+Sp = pd.read_csv(f"{X}/regulatome/m6_improve/split_v1.tsv", sep="\t"); DEV = set(Sp.tf[Sp.set == "development"])
+tfs_dev = [t for t in tfs if panel(t) in DEV]; print("dev TFs", len(tfs_dev), flush=True)
+def cpm_of(t, kind):
+    y = np.asarray(sp.load_npz(f"{G1}/{t}.{kind}.npz").sum(0)).ravel(); return y / max(y.sum(), 1e-12) * 1e6
+RAW = {t: cpm_of(t, "raw") for t in tfs}; TOT = np.sum([RAW[t] for t in tfs], axis=0)
+# distance windows (no ABC): elements with midpoint within W of the gene TSS (genes and TSS from the ABC table)
+Gt = A.drop_duplicates("TargetGene")[["chr", "TargetGene"]].copy(); tss = pd.read_csv(f"{X}/regulatome/m2_abc/results/Predictions_powerlaw/EnhancerPredictionsFull_thr0.02.tsv", sep="\t", usecols=["TargetGene", "TargetGeneTSS"]).drop_duplicates("TargetGene").set_index("TargetGene").TargetGeneTSS
+Gt["tss"] = Gt.TargetGene.map(tss).values; mid = ((Ea.start + Ea.end) // 2).values
+WIN = {}
+for W in (25000, 50000, 100000, 200000):
+    gi_, ei_ = [], []
+    for ch, G in Gt.groupby("chr"):
+        ix = np.flatnonzero(Ea.chrom.values == ch); o = np.argsort(mid[ix]); ix = ix[o]; m = mid[ix]
+        lo = np.searchsorted(m, G.tss.values - W); hi = np.searchsorted(m, G.tss.values + W, side="right")
+        for g, a_, b_ in zip(G.TargetGene.values, lo, hi): gi_ += [g] * (b_ - a_); ei_ += list(ix[a_:b_])
+    WIN[W] = (np.array(gi_), np.array(ei_, int))
+nlink = A.groupby("TargetGene").size().astype(float)
+DIST = {}
+for W, (gg, ee) in WIN.items():
+    DIST[W] = np.abs(mid[ee] - Gt.set_index("TargetGene").tss.reindex(gg).values)
+from sklearn.ensemble import HistGradientBoostingRegressor
+from sklearn.linear_model import Ridge
+DIST = {W: np.abs(mid[ee] - Gt.set_index("TargetGene").tss.reindex(gg).values) for W, (gg, ee) in WIN.items()}
+def feats(t):
+    c = RAW[t]; loo = TOT - c; e = A.e.values; g = A.TargetGene.values; F = {"abc_linked_sum": pd.Series(c[e]).groupby(g).sum(), "abc_n_links": A.groupby("TargetGene").size().astype(float)}
+    for W, (gg, ee) in WIN.items():
+        k = f"win{W // 1000}k"; F[f"{k}_sum"] = pd.Series(c[ee]).groupby(gg).sum(); F[f"{k}_n_elem"] = pd.Series(np.ones(len(ee))).groupby(gg).sum(); F[f"{k}_pool"] = pd.Series(loo[ee]).groupby(gg).sum()
+    gg, ee = WIN[200000]; d = DIST[200000]
+    for L_ in (10000, 25000, 50000, 100000): F[f"decay{L_ // 1000}k_sum"] = pd.Series(c[ee] * np.exp(-d / L_)).groupby(gg).sum()
+    return pd.DataFrame(F).fillna(0)
+FE = {panel(t): np.log1p(feats(t)) for t in tfs_dev}; print("features", list(next(iter(FE.values())).columns), flush=True)
+REF = {"abc_linked_sum": "abc_linked_sum", "win50k_sum": "win50k_sum", "win100k_sum": "win100k_sum", "CTRL_win50k_n_elem": "win50k_n_elem", "CTRL_win50k_pool": "win50k_pool"}
+def loadR(a):  # b3b4.py load() (no replicate part)
+    d = np.load(f"{M4}/kd_response/out_v2/{ARMS[a]}/kd_response.npz", allow_pickle=True); q = pd.read_csv(f"{M4}/kd_response/out_v2/{ARMS[a]}/guide_qc.tsv", sep="\t"); u = d["units"].tolist(); ui = {x: k for k, x in enumerate(u)}; uni = d["ntc_detect"] >= .1; g = d["genes"][uni]; Z = d["z"][:, uni].astype(float); kp = q[q.kept == 1]; prim = kp[kp.kind.isin(["all", "construct"])]; tf_ = sorted(prim.tf.unique())
+    P_ = np.vstack([np.nanmean(Z[[ui[x] for x in prim.unit[prim.tf == t]]], axis=0) for t in tf_]); P_ = np.nan_to_num(P_); Rr = P_ - P_.mean(0); Rr = Rr - Rr.mean(1, keepdims=True)
+    pts = sorted({panel(t) for t in tf_} & DEV); Rp = np.vstack([Rr[[i for i, t in enumerate(tf_) if panel(t) == p]].mean(0) for p in pts])
+    return dict(g=g, gi={x: k for k, x in enumerate(g)}, A=np.abs(Rp).astype(np.float32), pts=pts, pi={p: k for k, p in enumerate(pts)}, mean=d["ntc_mean"][uni].astype(float))
+D2 = loadR("arm2"); genes = pd.Index(D2["g"]); ntcm = pd.Series(np.log1p(D2["mean"]), index=genes)
+def rows_for(p):
+    F = FE[p].reindex(genes).fillna(0); F["ntc_mean"] = ntcm.values; return F
+fold_tfs = sorted(set(FE) & set(D2["pts"])); rng0 = np.random.default_rng(20261109); perm = rng0.permutation(fold_tfs); FOLD = {p: i % 5 for i, p in enumerate(perm)}
+LISTS = {}
+for f in range(5):
+    tr = [p for p in fold_tfs if FOLD[p] != f]; te = [p for p in fold_tfs if FOLD[p] == f]
+    Xtr, ytr = [], []
+    for p in tr:
+        k = D2["pi"][p]; off = np.delete(D2["A"], k, axis=0).mean(0); Xtr.append(rows_for(p)); ytr.append(D2["A"][k] - off)
+    Xtr = pd.concat(Xtr); ytr = np.concatenate(ytr); cols = list(Xtr.columns)
+    hgb = HistGradientBoostingRegressor(max_iter=200, max_depth=4, learning_rate=0.05, min_samples_leaf=200, random_state=0).fit(Xtr.values, ytr)
+    mu, sd = Xtr.mean(), Xtr.std().replace(0, 1); rid = Ridge(alpha=10.0).fit(((Xtr - mu) / sd).values, ytr)
+    for p in te:
+        Xp = rows_for(p)[cols]; ph = pd.Series(hgb.predict(Xp.values), index=genes); pr = pd.Series(rid.predict(((Xp - mu) / sd).values), index=genes)
+        L = {}
+        for n in (250, 500, 1000): L[f"model_hgb@{n}"] = list(ph.sort_values(ascending=False, kind="stable").index[:n]); L[f"model_ridge@{n}"] = list(pr.sort_values(ascending=False, kind="stable").index[:n])
+        Fp = FE[p]
+        for nm, col in REF.items():
+            s_ = Fp[col][Fp[col] > 0].sort_values(ascending=False, kind="stable"); L[f"{nm}@1000"] = list(s_.index[:1000])
+        LISTS[p] = L
+    print("fold", f, "train TFs", len(tr), "test TFs", len(te), "ridge coef", dict(zip(cols, np.round(rid.coef_, 4))), flush=True)
+SC = LISTS
+rows = []
+for a in ARMS:
+    D = load(a); rng = np.random.default_rng(SEED + (a == "arm2")); g, gi, Rr, tf_ = D["g"], D["gi"], D["R"], D["tfs"]
+    pts = sorted({panel(t) for t in tf_} & DEV); Rp = np.vstack([Rr[[i for i, t in enumerate(tf_) if panel(t) == p]].mean(0) for p in pts]); Ap = np.abs(Rp).astype(np.float32); pi = {p: k for k, p in enumerate(pts)}
+    bins = pd.qcut(D["mean"], 20, labels=False, duplicates="drop"); BG = [np.flatnonzero(bins == b) for b in range(bins.max() + 1)]
+    for p in pts:
+        if p not in SC: continue
+        for v, genes in SC[p].items():
+            ix = np.array(sorted({gi[x] for x in genes if x in gi}), int)
+            if len(ix) < 50: continue
+            cnt = np.bincount(bins[ix], minlength=len(BG)); rs = np.hstack([BG[b][rng.integers(0, len(BG[b]), (200, c))] for b, c in enumerate(cnt) if c])
+            obs = Ap[:, ix].mean(1); rm = np.stack([Ap[k][rs].mean(1) for k in range(len(pts))]); z = (obs - rm.mean(1)) / rm.std(1)
+            own = z[pi[p]]; off = np.delete(z, pi[p])
+            rows.append(dict(arm=a, tf=p, variant=v, n=len(ix), z_own=own, z_off_mean=off.mean(), specificity=own - off.mean(), own_rank=int((z > own).sum() + 1), n_kd=len(pts)))
+    print(a, "done", flush=True)
+P = pd.DataFrame(rows); P.to_csv(f"{O}/per_tf.tsv", sep="\t", index=False, float_format="%.4g")
+S = []; rng = np.random.default_rng(SEED + 7)
+for a, G in P.groupby("arm"):
+    for col in ("z_own", "z_off_mean", "specificity"):
+        W = G.pivot(index="tf", columns="variant", values=col).dropna()
+        for v in W.columns:
+            b = bstat(W[v], rng); d = bstat(W[v] - W["abc_linked_sum@1000"], rng)
+            S.append(dict(arm=a, metric=col, variant=v, n_tfs=b["n"], mean=b["mean"], ci=f"[{b['ci_lo']}, {b['ci_hi']}]", vs_abc_linked=d["mean"], vs_abc_linked_ci=f"[{d['ci_lo']}, {d['ci_hi']}]", npos_vs_abc=d["n_pos"]))
+    R1 = G.pivot(index="tf", columns="variant", values="own_rank"); S += [dict(arm=a, metric="median_own_rank", variant=v, n_tfs=int(R1[v].notna().sum()), mean=float(R1[v].median()), ci=f"top10%: {round((R1[v] <= max(1, int(.1 * G.n_kd.iloc[0]))).mean(), 3)}") for v in R1.columns]
+S = pd.DataFrame(S); S.to_csv(f"{O}/pooled.tsv", sep="\t", index=False)
+pd.set_option("display.width", 250); pd.set_option("display.max_rows", 300)
+for m in ("specificity", "z_own", "z_off_mean", "median_own_rank"): print(S[S.metric == m].sort_values(["arm", "mean"], ascending=[True, m == "median_own_rank"]).to_string(index=False))
