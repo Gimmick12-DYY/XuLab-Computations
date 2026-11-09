@@ -1,4 +1,4 @@
-"""Fig 3c v5 (179 x 44 mm): super-enhancer example, SEdb SE_02_195100173 (HEK293T, chr19:1,248,039-1,254,347).
+"""Fig 3c v5 (179 x 41 mm): super-enhancer example, SEdb SE_02_195100173 (HEK293T, chr19:1,248,039-1,254,347).
 Tracks: raw balanced Hi-C (10 kb, log10, 45 degrees, short), Peakachu 0.7 loops (5 kb U 10 kb, grey), the 31 Cicero
 edges from the SE to its partners (red solid = on a Hi-C loop, blue dashed = Cicero only; partner-partner edges left out),
 partner ticks (black promoter, orange enhancer, light grey other), the 5 TFs with the highest CPM over the SE among the
@@ -28,13 +28,13 @@ for t, d in Tc.groupby("tf"):
 top = sorted(cov, key=lambda t: -cov[t][seb].sum())[:5]
 print("CPM over the SE:", {t: round(cov[t][seb].sum(), 1) for t in sorted(cov, key=lambda t: -cov[t][seb].sum())}, "-> top 5", top)
 
-W, H = 179.0, 44.0; X0, AW = 13.0, 146.0
+W, H = 179.0, 41.0; X0, AW = 13.0, 146.0
 fig = fig_mm(W, H)
 def band(a): a.axvspan((SE0 - 2500) / 1e6, (SE1 + 2500) / 1e6, color=SEBAND, lw=0, zorder=0)
 def lab(a, t, **kw): a.text(-0.006, 0.5, t, transform=a.transAxes, ha="right", va="center", fontsize=FS, **kw)
 y = H - 0.6
 # Hi-C
-hh = 6.0; y -= hh; ax = mm_axes(fig, W, H, X0, y, AW, hh); ymax = hh / AW * (L1 - L0) / 1e3
+hh = 5.0; y -= hh; ax = mm_axes(fig, W, H, X0, y, AW, hh); ymax = hh / AW * (L1 - L0) / 1e3
 M = np.load(R0 / "model/inputs/hic_10kb.npz")["ice"]; n = M.shape[0]; Z = np.log10(np.nan_to_num(M) + 1e-5)
 xs = L0 + np.arange(n + 1) * 10000; XX, YY = np.meshgrid(xs, xs, indexing="ij"); Zm = np.ma.masked_where(np.tril(np.ones_like(Z), -1) > 0, Z)
 ax.pcolormesh((XX + YY) / 2e6, (YY - XX) / 2e3, Zm, cmap=P.seq_cmap(), vmin=np.nanpercentile(Z, 50), vmax=np.nanpercentile(Z, 99.5), shading="flat", rasterized=True, lw=0, antialiased=False)
@@ -52,7 +52,7 @@ for a_, b_ in loops:
     q = np.linspace(a_, b_, 40) * 0.01; ax1.plot(q, -min(1, (b_ - a_) / 90) * np.sin(np.pi * (q - q[0]) / (q[-1] - q[0])), color=GREY, lw=0.3)
 lab(ax1, "Loops")
 # SE edges
-y -= 7.4; ax2 = mm_axes(fig, W, H, X0, y, AW, 7.2); band(ax2); ax2.set_xlim(*XL); ax2.set_ylim(0, 1.05); ax2.set_axis_off()
+y -= 6.8; ax2 = mm_axes(fig, W, H, X0, y, AW, 6.6); band(ax2); ax2.set_xlim(*XL); ax2.set_ylim(0, 1.05); ax2.set_axis_off()
 sx = (SE0 + SE1) / 2e6
 for r in SEd.sort_values("on_loop").itertuples():
     a_, b_ = sorted((sx, r.pos / 1e6)); q = np.linspace(a_, b_, 80); h_ = min(1.0, 0.15 + 0.85 * (b_ - a_) / 0.75)
@@ -64,7 +64,7 @@ y -= 1.9; axp = mm_axes(fig, W, H, X0, y, AW, 1.7); band(axp); axp.set_xlim(*XL)
 for r in E.itertuples(): axp.add_line(Line2D([r.pos / 1e6] * 2, [0.05, 0.95], color=TCOL[r.cls], lw=0.9, solid_capstyle="butt"))
 lab(axp, "Partners")
 # TF coverage
-hub = sorted(set(np.r_[(E.pos.values - L0) // 2000, seb].tolist())); rh = 2.4; y -= 0.4
+hub = sorted(set(np.r_[(E.pos.values - L0) // 2000, seb].tolist())); rh = 2.2; y -= 0.4
 for t in top:
     y -= rh; a_ = mm_axes(fig, W, H, X0, y + 0.2, AW, rh - 0.2); h = cov[t]; lim = max(h[hub].max(), np.percentile(h, 99.5)); band(a_)
     a_.fill_between(ed[:-1], 0, np.minimum(h, lim), step="post", color=TRACK, lw=0, zorder=2); a_.set_xlim(*XL); a_.set_ylim(0, lim)
@@ -97,7 +97,7 @@ ax4.set_xticks(np.arange(0.6, 2.3, 0.2), [f"{v:.1f}" for v in np.arange(0.6, 2.3
 ax4.set_xlabel("chr19 (Mb)", labelpad=1, fontsize=FS); lab(ax4, "Genes")
 # compact key, right column
 lg = fig.add_axes([0, 0, 1, 1]); lg.set_xlim(0, W); lg.set_ylim(0, H); lg.set_axis_off(); lg.patch.set_alpha(0)
-lx = X0 + AW + 2.5; yy = H - 8.5
+lx = X0 + AW + 2.5; yy = H - 7.5
 lg.add_line(Line2D([lx, lx + 3.5], [yy, yy], color=RED, lw=0.9)); lg.text(lx + 4.5, yy, "Hi-C loop", fontsize=FS, va="center"); yy -= 2.6
 lg.add_line(Line2D([lx, lx + 3.5], [yy, yy], color=BLUE, lw=0.7, ls=(0, (2.2, 1.6)))); lg.text(lx + 4.5, yy, "Cicero only", fontsize=FS, va="center"); yy -= 3.2
 for c_, nm in ((PROM, "Promoter"), (ENH, "Enhancer")):

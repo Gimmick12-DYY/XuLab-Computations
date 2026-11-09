@@ -3,7 +3,7 @@ SVG: each panel's matplotlib SVG is inlined as <g id="panel_x" transform="transl
 kept live, Arial), with its bold 8 pt panel letter inside the group. PDF: the panel PDFs are placed on one page with pypdf
 (TrueType fonts stay embedded, text is not outlined). PNG: 300 dpi preview rendered from the PDF with pdftoppm.
 Usage: python build_fig3_v5.py [outdir]   (default: figures/fig3_v5/)
-Grid: row 1 a | f, then b, c, d full width; 4 mm gutters. Panel e (chr16 hub) is not on the page."""
+Grid: row 1 a | f, row 2 b | e (genomic class by number of TFs), then c and d full width; 4 mm gutters."""
 import re, subprocess, sys
 from pathlib import Path
 from pypdf import PdfReader, PdfWriter, Transformation
@@ -13,11 +13,12 @@ OUT = Path(sys.argv[1]) if len(sys.argv) > 1 else HERE; OUT.mkdir(parents=True, 
 PT = 72 / 25.4
 PAGE_W, PAGE_H = 183.0, 247.0
 # letter, panel file stem, (x, y) of the top-left corner in mm from the page's top-left, (w, h) in mm
-LAYOUT = [("a", "fig3a_network", (2, 3), (64, 98)),
-          ("f", "fig3f_tf_groups", (70, 3), (111, 98)),
-          ("b", "fig3b_hic_support", (2, 105), (179, 34)),
-          ("c", "fig3c_se_browser", (2, 143), (179, 44)),
-          ("d", "fig3d_se_hub_3d_flower", (2, 191), (179, 55))]
+LAYOUT = [("a", "fig3a_network", (2, 2), (64, 98)),
+          ("f", "fig3f_tf_groups", (70, 2), (111, 98)),
+          ("b", "fig3b_hic_support", (2, 104), (91, 45)),
+          ("e", "fig3e_class_bars", (97, 104), (84, 45)),
+          ("c", "fig3c_se_browser", (2, 153), (179, 41)),
+          ("d", "fig3d_se_hub_3d_flower", (2, 198), (179, 48))]
 LETTER_DX, LETTER_DY = -1.6, 2.6   # letter baseline offset from the panel corner, mm
 
 
