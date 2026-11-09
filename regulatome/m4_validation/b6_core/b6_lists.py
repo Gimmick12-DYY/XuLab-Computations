@@ -6,7 +6,7 @@ import os, subprocess
 import numpy as np, pandas as pd, scipy.sparse as sp
 X = "/work/users/d/y/dyy12/XuLab"; R5 = f"{X}/regulatome/r5_core"; O = f"{X}/regulatome/m4_validation/b6_core"; G = f"{X}/regulatome/gate1/cellmats"
 assert not os.path.exists(f"{O}/manifest_b6.sha256"), "manifest_b6 exists; B6 outputs are frozen"
-v = subprocess.run("sha256sum manifest_v7.sha256 && sha256sum -c --quiet manifest_v7.sha256", shell=True, cwd=R5, capture_output=True, text=True)
+v = subprocess.run("sha256sum regulatome/r5_core/manifest_v7.sha256 && sha256sum -c --quiet regulatome/r5_core/manifest_v7.sha256", shell=True, cwd=X, capture_output=True, text=True)  # manifest paths are relative to XuLab
 assert v.returncode == 0 and v.stdout.startswith("b89b483bba64b4e54cd39ed4f116510528702e3d35ebd9b282b7fe01f45f76ac"), "manifest v7 check failed: " + v.stdout + v.stderr
 print("manifest v7 verified", v.stdout.split()[0], flush=True); os.makedirs(f"{O}/lists", exist_ok=True)
 E = pd.read_csv(f"{X}/regulatome/m0_universe/elements_v2.bed", sep="\t", header=None, names=["chrom", "start", "end", "eid", "type", "pid", "ptype", "cls"])
