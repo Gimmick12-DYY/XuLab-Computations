@@ -11,7 +11,7 @@
 # where the GC x CpG-matched input pool fell short (>10% short or GC gap > 0.02).
 import os, sys, re, glob, math
 import numpy as np, pandas as pd
-O = "/work/users/d/y/dyy12/XuLab/complex_screen/pair_motif_composite"; FOLD = 1.5; LOGP = -5; SIM = 0.6; NPERM = 50
+O = os.environ.get("BASE", "/work/users/d/y/dyy12/XuLab/complex_screen/pair_motif_composite"); FOLD = 1.5; LOGP = -5; SIM = 0.6; NPERM = 50
 OWN = {"CTCF-STAG2": ["CTCF(Zf)"], "MAZ-ZNF143": ["Maz(Zf)", "ZNF143|STAF(Zf)"], "NFYA-ZNF644": ["NFY(CCAAT)"], "E2F3-HES1": ["E2F3(E2F)"], "RBBP7-SRCAP": []}
 HOMER_KNOWN = "/nas/longleaf/rhel9/apps/homer/5.1/data/knownTFs/vertebrates/known.motifs"
 TF_OWN = {"CTCF": ["CTCF(Zf)"], "MAZ": ["Maz(Zf)"], "ZNF143": ["ZNF143|STAF(Zf)"], "NFYA": ["NFY(CCAAT)"], "E2F3": ["E2F3(E2F)"], "SREBF2": ["Srebp2(bHLH)"],

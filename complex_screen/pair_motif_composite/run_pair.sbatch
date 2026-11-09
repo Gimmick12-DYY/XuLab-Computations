@@ -10,10 +10,11 @@
 #SBATCH -o /work/users/d/y/dyy12/XuLab/complex_screen/pair_motif_composite/logs/%x_%A_%a.out
 set -euo pipefail
 O=/work/users/d/y/dyy12/XuLab/complex_screen/pair_motif_composite
-TASKS=${1:-$O/tasks_gate.tsv}
+B=${BASE:-$O}   # BASE = variant folder holding pools/, results/, candidates/ (e.g. $O/gc_matched); db/ and preparsed/ stay in $O
+TASKS=${1:-$B/tasks_gate.tsv}
 module load homer/5.1 meme/5.5.7 >/dev/null 2>&1
 read -r PAIR MODE ARG < <(awk -v n=$((SLURM_ARRAY_TASK_ID + 1)) 'NR==n' "$TASKS")
-D=$O/pools/$PAIR/disc; R=$O/results/$PAIR; mkdir -p $R $O/preparsed
+D=$B/pools/$PAIR/disc; R=$B/results/$PAIR; mkdir -p $R $O/preparsed
 DB=$O/db/known.meme
 echo "$PAIR $MODE $ARG $(date)"
 homer() { findMotifsGenome.pl "$1" hg38 "$2" -size given -bg "$3" -p 1 -preparsedDir $O/preparsed "${@:4}"; }
@@ -33,13 +34,13 @@ case $MODE in
     tomtom -no-ssc -verbosity 1 -oc $R/tomtom_streme -min-overlap 5 -dist pearson -evalue -thresh 1 $R/streme/streme.txt $DB ;;
   perm)
     for K in ${ARG//,/ }; do
-      P=$O/pools/$PAIR/perm/$K
+      P=$B/pools/$PAIR/perm/$K
       homer $P/pair.bed $R/perm/$K/vsA $P/Aonly.bed -nomotif
       homer $P/pair.bed $R/perm/$K/vsB $P/Bonly.bed -nomotif
       rm -rf $R/perm/$K/vs?/knownResults $R/perm/$K/vs?/*.html
     done ;;
   validate)
-    V=$O/pools/$PAIR/val; C=$O/candidates/$PAIR
+    V=$B/pools/$PAIR/val; C=$B/candidates/$PAIR
     [ -s $C/homer.motifs ] && homer $V/pair.bed $R/val_homer $V/singles.bed -nomotif -mknown $C/homer.motifs -nlen 0
     [ -s $C/meme.meme ] && sea --verbosity 1 --oc $R/val_sea --p $V/pair.fa --n $V/singles.fa --m $C/meme.meme --thresh 1
     true ;;
