@@ -33,8 +33,8 @@ Slide 169's right picture is a zoom of the same network; slide 60's bars are the
   higher-order co-binding modules").
 - Slide-style titles removed: network title/subtitle, SE browser title, rosette title ("Most-closed structure ..."). Axis titles kept.
 - SE flower: partner-partner edges now bulge OUTWARD from the ring as teardrop petals (were inner chords); TF pie charts and their
-  legend removed (user, 2026-11-09): nodes are plain light-grey circles with the type outline; colours, line styles, ring colours,
-  labels and edge legend unchanged; ring radius 2.05 -> 1.85 and labels moved out past the petals so they fit.
+  legend removed (user, 2026-11-09): nodes are small solid dots in the type colour (blue promoter, vermillion enhancer, grey other);
+  original ring radius, SE hexagon, spokes, colours and solid/dashed rules; labels pushed slightly outward past the petals.
 - Network: the approved SVG has text as glyph outlines, so its text was converted to live Arial text in place (same anchors and
   sizes); its legend was redrawn beside the plot at 5 pt with the same handles. Re-running the script was tried
   (`network_v6.py`, `run_network_v6.sbatch`) but gives a different component arrangement (unseeded set order), so the approved

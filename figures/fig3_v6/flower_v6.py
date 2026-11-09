@@ -1,8 +1,9 @@
 """Fig 3 v6 panel d (right): the approved SE-hub flower (deck slide 23, results_3d_model/se_sedb/figure_chord_tf/flower_final),
-re-run from se_sedb/scripts/42_chord_tf.py (flower part only, same inputs, colours, TF pies, labels and legend).
+re-run from se_sedb/scripts/42_chord_tf.py (flower part only, same inputs, colours, labels and edge legend).
 v6 changes: partner-partner edges are drawn as petals that bulge OUTWARD from the ring (teardrop cubic Bezier leaving each end between
-the radial and the bisector direction, tip on the bisector at Rg*(1.15 + 0.30*gap/pi)), like tf_polymer_hicfirst/figure_loopedges_flower_v3/loopedges_schematic; SE edges stay radial
-spokes; partner nodes plain (light grey fill, type outline), TF pies and their legend removed; ring made smaller (Rg 2.05 -> 1.85) and partner labels moved out past the petals; slide title removed.
+the radial and the bisector direction, tip on the bisector at Rg*(1.08 + 0.18*gap/pi)), like tf_polymer_hicfirst/figure_loopedges_flower_v3/loopedges_schematic; SE edges stay radial
+spokes; partner nodes are small solid dots in the type colour (TF pies and their legend removed, user 2026-11-09); original
+ring radius (2.05); partner labels pushed slightly outward past the petals; slide title removed.
   python flower_v6.py --sim <dir holding traj182.npz> --conf 9102 --out <dir>"""
 
 import argparse, glob, json
@@ -27,33 +28,32 @@ if True:
     from matplotlib.path import Path as MP
     plt.rcParams.update({"font.family": "sans-serif", "font.sans-serif": ["Arial"], "font.size": 12, "svg.fonttype": "none", "pdf.fonttype": 42})
     # network flower (v6: no slide title; ring smaller and centred so the outward petals fit)
-    W, H_ = 13.6, 6.4; fig = plt.figure(figsize=(W, H_)); ax = fig.add_axes([0, 0, 1, 1]); ax.set_xlim(0, W); ax.set_ylim(0, H_); ax.set_axis_off(); cx, cy, Rg = 4.95, 3.2, 1.85; n = len(P); ang = {str(r.key): np.pi / 2 - 2 * np.pi * (i + 0.5) / n for i, r in P.iterrows()}; pt = lambda k: np.array([cx + Rg * np.cos(ang[k]), cy + Rg * np.sin(ang[k])])
-    PIE0 = 0.0; HPMAX = Rg * 0.45
+    W, H_ = 13.3, 6.2; fig = plt.figure(figsize=(W, H_)); ax = fig.add_axes([0, 0, 1, 1]); ax.set_xlim(0, W); ax.set_ylim(0, H_); ax.set_axis_off(); cx, cy, Rg = 4.85, 3.1, 2.05; n = len(P); ang = {str(r.key): np.pi / 2 - 2 * np.pi * (i + 0.5) / n for i, r in P.iterrows()}; pt = lambda k: np.array([cx + Rg * np.cos(ang[k]), cy + Rg * np.sin(ang[k])])
+    PIE0 = 0.0; HPMAX = Rg * 0.27
     for r in H.assign(o_=H.type.map(dict(other=0, enhancer=1, promoter=2))).sort_values(["from_se", "on_loop", "o_"]).itertuples():
         c_ = EC[r.ek]; ls = "-" if r.on_loop == 1 else (0, (2.5, 2)); al = 1 if r.on_loop == 1 else 0.8 if r.from_se else 0.55; lw = 2.6 if (r.from_se and r.on_loop == 1) else 1.2 if r.on_loop == 1 else 1.1 if r.from_se else 0.5
         if r.from_se: k = str(r.b if r.a == "SE" else r.a); q = pt(k); ax.plot([cx, q[0]], [cy, q[1]], color=c_, lw=lw, ls=ls, alpha=al, zorder=3 + r.on_loop)
         else:   # v6: partner-partner edges bulge OUTWARD from the ring as petals (was: inner chords through the centre)
             q0, q1 = pt(str(r.a)), pt(str(r.b)); t0, t1 = ang[str(r.a)], ang[str(r.b)]; dt = (t1 - t0 + np.pi) % (2 * np.pi) - np.pi; tm = t0 + dt / 2; um = np.array([np.cos(tm), np.sin(tm)]); C0 = np.array([cx, cy])
             u0, u1 = (q0 - C0) / Rg, (q1 - C0) / Rg; d0 = (u0 + um) / np.linalg.norm(u0 + um); d1 = (u1 + um) / np.linalg.norm(u1 + um); m_ = float(np.dot(d0 + d1, um))
-            rpk = Rg + Rg * (0.15 + 0.30 * abs(dt) / np.pi); Lc = (rpk - Rg * np.cos(dt / 2)) * 8 / (3 * m_)   # teardrop petal: cubic Bezier whose tip reaches rpk on the bisector
+            rpk = Rg + Rg * (0.08 + 0.18 * abs(dt) / np.pi); Lc = (rpk - Rg * np.cos(dt / 2)) * 8 / (3 * m_)   # teardrop petal: cubic Bezier whose tip reaches rpk on the bisector
             ax.add_patch(PathPatch(MP([q0, q0 + Lc * d0, q1 + Lc * d1, q1], [MP.MOVETO, MP.CURVE4, MP.CURVE4, MP.CURVE4]), fc="none", ec=c_, lw=lw, ls=ls, alpha=al, zorder=1 + r.on_loop + 0.1 * r.o_))
     from matplotlib.patches import Circle, Wedge
-    PT = ["ZNF507", "SOX4", "NFYA", "GLYR1", "NME2", "ZNF282", "ADNP", "DR1", "MTF2", "E4F1"]; PC = dict(zip(PT, ["#E69F00", "#009E73", "#F0E442", "#CC79A7", "#117733", "#DDCC77", "#44AA99", "#999933", "#AA4499", "#A6761D"])); PIE = 0.16; RING = dict(promoter="#0072B2", enhancer="#D55E00", other="#8C8C8C"); PR = []
+    PT = ["ZNF507", "SOX4", "NFYA", "GLYR1", "NME2", "ZNF282", "ADNP", "DR1", "MTF2", "E4F1"]; PC = dict(zip(PT, ["#E69F00", "#009E73", "#F0E442", "#CC79A7", "#117733", "#DDCC77", "#44AA99", "#999933", "#AA4499", "#A6761D"])); PIE = 0.075; RING = dict(promoter="#0072B2", enhancer="#D55E00", other="#8C8C8C"); PR = []
     tips = []
     for r in P.itertuples():
         q = pt(str(r.key)); tf_ = set(B.tfs[r.own_bead].split(",")) - {""}; tl_ = [t_ for t_ in PT if t_ in tf_]; no_ = len(tf_ - set(PT)); tot_ = len(tl_) + no_; st_ = 90.0; PR.append(dict(coordinates=REG[r.keyn], bin_10kb=r.keyn, bead=r.own_bead, node_bead_old=r.bead, label=r.label, cls=r.cls, n_tfs=tot_, named=",".join(tl_), n_other=no_, all_tfs=",".join(sorted(tf_))))
-        ax.add_patch(Circle(q, PIE, fc="#F2F2F2", ec="none", zorder=6))   # v6: plain node, no TF pie (user, 2026-11-09)
-        ax.add_patch(Circle(q, PIE, fc="none", ec=RING[r.cls], lw=1.5, zorder=6.2))
+        ax.add_patch(Circle(q, PIE, fc=RING[r.cls], ec="none", zorder=6.2))   # v6 (user 2026-11-09): small solid dot in the type colour, no TF pie
         if r.cls != "other": tips.append((q[0], q[1], r.label, r.cls, ang[str(r.key)]))
     ax.add_patch(RegularPolygon((cx, cy), 6, radius=0.34, fc="#FFC20A", ec="#5A4500", lw=1.6, zorder=7)); ax.text(cx, cy, "SE", ha="center", va="center", fontweight="bold", color="#2B2100", zorder=8, fontsize=13)
     for side, sub in ((1, [t for t in tips if t[0] >= cx]), (-1, [t for t in tips if t[0] < cx])):
-        sub = sorted(sub, key=lambda t: t[1]); ROUT = Rg + PIE + HPMAX + 0.12; ys_ = [cy + ROUT * np.sin(t[4]) for t in sub]; lx_ = cx + side * (ROUT + 0.45)   # v6: labels moved out past the petals
+        sub = sorted(sub, key=lambda t: t[1]); ROUT = Rg + PIE + HPMAX + 0.08; ys_ = [cy + ROUT * np.sin(t[4]) for t in sub]; lx_ = cx + side * (ROUT + 0.3)   # v6: labels pushed slightly out past the petals (ring kept)
         for _ in range(100):
             for i_ in range(1, len(ys_)):
                 if ys_[i_] < ys_[i_ - 1] + 0.3: d_ = (ys_[i_ - 1] + 0.3 - ys_[i_]) / 2; ys_[i_] += d_; ys_[i_ - 1] -= d_
         for t, ty in zip(sub, ys_): ax.plot([cx + (Rg + PIE) * np.cos(t[4]), cx + ROUT * np.cos(t[4]), lx_], [cy + (Rg + PIE) * np.sin(t[4]), cy + ROUT * np.sin(t[4]), ty], color="#AAAAAA", lw=0.5, zorder=0); ax.text(lx_ + side * 0.04, ty, t[2], ha="left" if side > 0 else "right", va="center", fontsize=10.5, fontstyle="italic", color="#D55E00" if t[3] == "enhancer" else INK)
     TB = pd.DataFrame(PR); TB.to_csv(OUT / "chord_tf_binding.tsv", sep="\t", index=False); seen = set(",".join(TB.named).split(",")) - {""}
-    lx, y = 9.75, 5.75;   # v6: legend shifted right with the wider ring
+    lx, y = 9.35, 5.6;   # v6: legend shifted right with the labels
     ax.text(lx + 3.0, y, "loop + Cicero", va="center", ha="right", fontsize=11, color="#444444")
     for hd, keys, lw_ in (("From the super-enhancer", ("se_promoter", "se_enhancer", "se_other"), 3.5), ("Between partners", ("pp_promoter", "pp_enhancer", "pp_other"), 2.2)):
         ax.text(lx, y, hd, fontweight="bold", va="center"); y -= 0.29
@@ -61,7 +61,7 @@ if True:
             m = H.ek == k; ax.plot([lx, lx + 0.28], [y, y], color=EC[k], lw=lw_, solid_capstyle="butt"); ax.text(lx + 0.38, y, EN[k], va="center"); ax.text(lx + 3.0, y, f"{int((m & (H.on_loop == 1)).sum())} + {int((m & (H.on_loop == 0)).sum())}", va="center", ha="right"); y -= 0.29
         y -= 0.08
     ax.plot([lx, lx + 0.28], [y, y], color="#555555", lw=1.6); ax.text(lx + 0.38, y, f"on a Hi-C loop ({int((H.on_loop == 1).sum())})", va="center"); y -= 0.29; ax.plot([lx, lx + 0.28], [y, y], color="#555555", lw=1.2, ls=(0, (2.5, 2))); ax.text(lx + 0.38, y, f"Cicero only ({int((H.on_loop == 0).sum())})", va="center"); y -= 0.31
-    for x_, c_, n_ in ((lx, "#0072B2", "promoter"), (lx + 1.2, "#D55E00", "enhancer"), (lx + 2.4, "#8C8C8C", "other")): ax.add_patch(Circle((x_ + 0.09, y), 0.08, fc="#F2F2F2", ec=c_, lw=1.5)); ax.text(x_ + 0.23, y, n_, va="center")
+    for x_, c_, n_ in ((lx, "#0072B2", "promoter"), (lx + 1.2, "#D55E00", "enhancer"), (lx + 2.4, "#8C8C8C", "other")): ax.add_patch(Circle((x_ + 0.09, y), 0.075, fc=c_, ec="none")); ax.text(x_ + 0.23, y, n_, va="center")
     y -= 0.12
     y -= 0.2; ax.text(lx, y, "Clockwise in genomic order from chr19:0.51 Mb.", va="top", color="#444444", fontsize=11)
     for e in ("svg", "pdf"): fig.savefig(OUT / f"flower_v6.{e}", dpi=600, transparent=True)
