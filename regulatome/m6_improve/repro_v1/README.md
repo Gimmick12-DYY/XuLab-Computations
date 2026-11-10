@@ -145,11 +145,8 @@ Absolute difference d = J_within - J_between, mean over the TFs in each tertile 
 
 (1) Low-tertile v8 (-.0133) is BELOW both floors (+.0023 perm, -.0037 count-matched). For the shallowest third, our lists agree with
 other TFs' lists more than an uninformative list does.
-(2) High-tertile v8 (+.157) against a floor of about +.01 is roughly a 15-fold margin, against an uninformative-list null with no external
-benchmark.
-Caveat: the floors sit near 0 partly by construction (Amendment 6: TF-agnostic ABC links make a permuted or count-matched list's score track
-the linked-element count, the same for every TF and both halves). The evidence is d > 0 against each TF's own draws, with its interval,
-not the ratio.
+(2) High-tertile v8 d = +.157, with an interval clear of the uninformative-list null (floor about +.01). The floors sit near 0 partly by
+construction (Amendment 6), so the evidence is d > 0 with its interval, not a ratio.
 
 ### Per-TF floor test (Amendments 7, 7b; floor_test.py; per_tf_floor_test.tsv)
 Route: the existing noisefloor_per_draw.tsv holds per-TF draws (79 x 100 x 2); nothing was rerun.
@@ -166,3 +163,10 @@ Route: the existing noisefloor_per_draw.tsv holds per-TF draws (79 x 100 x 2); n
 - Without NRF1 (d = .0006, p_perm .22, p_cm .15; it does not clear): unchanged, 38 clear / 36 called, Fisher p 3.8e-4 / 2.0e-4.
 - Reading: clearing the floor means d is above an uninformative list, not that the list is TF-specific at a useful level. 20 of the 38
   have d < .05, against the high-tertile mean of +.157.
+- The overlap with the 10 reproducible TFs is NOT independent confirmation. Those 10 were selected on split-half Jaccard, and J_within is
+  one term of d, so agreement is partly expected by construction. What is new is the boundary: 38 TFs (36 at z-FDR .05) clear a declared
+  null, against 10 picked by a threshold.
+- Column legend, per_tf_floor_test.tsv: p_perm, p_cm = exact draw p, (1 + #draws >= d) / 101; a value of .0099 means "at the 100-draw
+  resolution floor", not a smaller p. z_*, pz_*, qz_* = z against the TF's own 100 draws and its one-sided normal p (BH-adjusted in qz_*).
+  For rows with |z| > 8, pz_* is a normal-tail extrapolation, not a frequency; the exact p for those rows is at the 100-draw resolution
+  floor (.0099). shapiro_* = Shapiro-Wilk p of the TF's draws; sd_flag = draw SD < 1e-4 under either null (none).
