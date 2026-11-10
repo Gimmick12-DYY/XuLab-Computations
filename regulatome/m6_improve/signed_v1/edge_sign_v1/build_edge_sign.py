@@ -66,14 +66,15 @@ for a in ARMS:
         rnd = np.array([np.mean(rng.permutation(sv) * -z) for _ in range(1000)])
         b0 = base.get(p, 0); zall = Zdc[i][[gi[x] for x in s.index]]; const = float(np.mean(b0 * -zall)) if b0 else np.nan
         out.append(dict(DESCRIPTIVE="DESCRIPTIVE", arm=a, tf=p, split=Sp.set.get(p, "na"), baseline={1: "activator", -1: "repressor", 0: "unsigned"}[b0], n_signed_genes=len(sg), n_act=na, n_rep=nr,
-                        concordance=conc, act_minus_rep=amr, random_mean=rnd.mean(), random_sd=rnd.std(), pct_vs_random=float((rnd < conc).mean()), const_baseline_concordance=const))
+                        concordance=conc, act_minus_rep=amr, conc_act_genes=float(np.mean(-z[sv > 0])) if na else np.nan, conc_rep_genes=float(np.mean(z[sv < 0])) if nr else np.nan, random_mean=rnd.mean(), random_sd=rnd.std(), pct_vs_random=float((rnd < conc).mean()), const_baseline_concordance=const))
 C_ = pd.DataFrame(out); C_.to_csv(f"{O}/check_per_tf_DESCRIPTIVE.tsv", sep="\t", index=False, float_format="%.4g")
-PO = []; rng = np.random.default_rng(SEED)
-for excl in (False, True):
-    for (a, cls), G in pd.concat([C_.assign(cls="pooled"), C_.assign(cls=C_.baseline)])[~(excl & (pd.concat([C_, C_]).tf == "NRF1").values)].groupby(["arm", "cls"]):
+PO = []; rng = np.random.default_rng(SEED); MARK = set(REPM + ACTM)
+for excl, mk in ((False, False), (True, False), (False, True), (True, True)):
+    CC = pd.concat([C_.assign(cls="pooled"), C_.assign(cls=C_.baseline)]); keep = ~((excl & (CC.tf == "NRF1")) | (mk & CC.tf.isin(MARK)))
+    for (a, cls), G in CC[keep.values].groupby(["arm", "cls"]):
         dd = (G.concordance - G.random_mean).values; bs = dd[rng.integers(0, len(dd), (10000, len(dd)))].mean(1)
         dc_ = (G.concordance - G.const_baseline_concordance).dropna().values; bc = dc_[rng.integers(0, len(dc_), (10000, len(dc_)))].mean(1) if len(dc_) else np.array([np.nan])
-        PO.append(dict(DESCRIPTIVE="DESCRIPTIVE", nrf1="excluded" if excl else "included", arm=a, baseline_class=cls, n_tfs=len(G), mean_concordance=G.concordance.mean(), mean_random=G.random_mean.mean(),
+        PO.append(dict(DESCRIPTIVE="DESCRIPTIVE", nrf1="excluded" if excl else "included", marker_tfs="excluded" if mk else "included", arm=a, baseline_class=cls, n_tfs=len(G), mean_concordance=G.concordance.mean(), mean_random=G.random_mean.mean(),
                        model_minus_random=dd.mean(), mmr_ci=f"[{np.percentile(bs, 2.5):.4f}, {np.percentile(bs, 97.5):.4f}]", n_tfs_above_random_95=int((G.pct_vs_random >= .95).sum()),
-                       n_with_baseline=len(dc_), model_minus_constant=dc_.mean() if len(dc_) else np.nan, mmc_ci=f"[{np.nanpercentile(bc, 2.5):.4f}, {np.nanpercentile(bc, 97.5):.4f}]", median_act_minus_rep=G.act_minus_rep.median()))
+                       n_with_baseline=len(dc_), model_minus_constant=dc_.mean() if len(dc_) else np.nan, mmc_ci=f"[{np.nanpercentile(bc, 2.5):.4f}, {np.nanpercentile(bc, 97.5):.4f}]", median_act_minus_rep=G.act_minus_rep.median(), mean_conc_act_genes=G.conc_act_genes.mean(), mean_conc_rep_genes=G.conc_rep_genes.mean()))
 pd.DataFrame(PO).to_csv(f"{O}/check_pooled_DESCRIPTIVE.tsv", sep="\t", index=False, float_format="%.4g")
