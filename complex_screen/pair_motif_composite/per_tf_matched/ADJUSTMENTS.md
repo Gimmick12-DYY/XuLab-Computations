@@ -65,3 +65,19 @@ Each step lists what changed, the sanity check (own motif recovered in the per-T
 - DDIT3 null (DDIT3 with 20 random partners): NFY 0/20 and Chop 0/20 at any level. DDIT3 never shows its own motif.
 - CentriMo (bin centre +/- 100 bp): no central enrichment of NFY or Ddit3::Cebpa in the co-bound, DDIT3-only or NFYA-only pool (all E >= 0.19). Bin centres are not summits, so this check has little power.
 - Verdict: the DDIT3-NFYA shared-motif pass is NFYA's own motif carried into any NFYA co-bound pool. It is not specific to DDIT3 and is downgraded to "not specific". The shared-level random-pair null (0/20) was too easy because none of those pairs contained NFYA.
+
+## Consolidated table (novel_pairs_ranked.tsv, controls.tsv; novel_final.py)
+- Novel pairs with pct >= 0.60: 1,863. Each motif layer has its own empirical p vs 200 random pairs matched on depth and pct bin.
+- Share of pairs with empirical p <= 0.05, by tier (pct >= 0.90 / 0.80-0.90 / 0.60-0.80):
+  - raw-summit known: 5.0 / 5.9 / 5.8%
+  - reversed design: 6.3 / 6.9 / 6.6%
+  - de novo families: 2.8 / 3.0 / 2.7%
+  - >= 2 layers: 1.1 / 0.8 / 0.7%, about what independent layers give by chance (~0.9%)
+- The 16 pairs with >= 2 layers are mostly the NFY / promoter cluster (NFYA-RBBP4, NFYA-SOX4, RBBP4-SOX4, NFYA-XPA, HES1-XPA, NME2-RBBP4, MBD3-SOX4, ...). None is AF3 strong or weak.
+- AF3-strong pairs reach at most 1 layer: HES1-NR1D2, NR1D2-TBX3, RBBP4-ZIC2, DDIT3-TBX3, DDIT3-RBBP7, NR1D2-ZNF703, RBBP7-SAFB, DDIT3-RBBP4, XPA-ZIC2.
+- Controls (CTCF-STAG2, EZH2-MTF2, MAZ-ZNF143, NFYA-ZNF644, RBBP7-SRCAP): 0 layers, best empirical p 0.26-0.51.
+
+## Overall verdict (2026-11-10 morning)
+- Under every foreground tried (imputed bins, raw summits, distal-only, sequence-defined reversed design, de novo families) and at loosened thresholds, the share of novel high-correlation pairs that share motifs beyond depth- and pct-matched random pairs stays at the null rate.
+- The only reproducible own-motif signal is NFY (plus NRF1, partly HES1). The one co-bound pass (DDIT3-NFYA) is NFYA's own motif and is not partner-specific.
+- At this depth, motif enrichment cannot serve as the second evidence layer for novel pairs. The candidate ranking rests on correlation + AF3.
