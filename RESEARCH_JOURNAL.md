@@ -25,6 +25,14 @@ cluster is the usual cause of "unchanged output."
 
 ## Log (newest first)
 
+### 2026-11-10 — Fig 2 QC: sc vs bulk 6x6 shows CTCF-specific agreement only (correction)
+- **Context:** Fig 2 QC asks whether raw sc tracks match their own bulk ChIP reference better than the others for the 6 HEK293(T) references (CTCF, MAZ, ZBTB7A, ZIC2, ZNF282, ZNF777; NFYA dropped, K562). Scripts are in `downstream/fig2_qc/`, outputs in `results_293T_analysis/fig2_qc/`.
+- **Correction:** Earlier notes called the summit-group Pearson 6x6 at ZNF777 depth a "diagonal". That was overstated.
+  - Only CTCF is visibly on the diagonal (r = +0.45).
+  - The other own-reference cells are the same size as off-diagonal noise: ZIC2 +0.10, ZNF282 +0.10, ZNF777 +0.03, ZBTB7A 0.00, MAZ -0.11.
+  - The permutation test (p = 0.006 for all 6; 0.033 without CTCF; held-out chromosomes 0.015 and 0.083 without CTCF) measures a mean own-vs-other shift that CTCF drives.
+- **Decision:** Describe the panels as CTCF-specific agreement plus sc-bulk agreement at shared sites, not a panel-wide diagonal. No row or column normalisation that would manufacture a diagonal. Recommended panels were re-rendered with neutral titles (`fig2_recommended_panels.py`).
+
 ### 2026-11-10 — Regulome ABC with H3K27ac (m2b): no gain on the dev Perturb-seq benchmark
 - **Context:** Yuyang asked to bring H3K27ac into the ABC activity. We have no HEK293T histone data; ChIP-Atlas HEK293T WT H3K27ac SRX18002015/16 (GSM6672008/9) was chosen; GSE246314 is not in ChIP-Atlas.
 - **Change:** regulatome/m2b_abc_k27ac/: ENA fastq -> bowtie2 hg38, proper pairs MAPQ>=30, markdup -r (74.9M reads merged); ABC v1.1.2 rerun exactly as m2_abc power-law with --H3K27ac (activity = sqrt(ATAC x H3K27ac)); old-vs-new link comparison; m6_improve grid6 scoring on the 52 dev TFs only (held-out spent) for binding x ABC and binding-only over old and new links, with element-count / pooled / ATAC controls on each link set.
