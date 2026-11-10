@@ -81,3 +81,23 @@ Each step lists what changed, the sanity check (own motif recovered in the per-T
 - Under every foreground tried (imputed bins, raw summits, distal-only, sequence-defined reversed design, de novo families) and at loosened thresholds, the share of novel high-correlation pairs that share motifs beyond depth- and pct-matched random pairs stays at the null rate.
 - The only reproducible own-motif signal is NFY (plus NRF1, partly HES1). The one co-bound pass (DDIT3-NFYA) is NFYA's own motif and is not partner-specific.
 - At this depth, motif enrichment cannot serve as the second evidence layer for novel pairs. The candidate ranking rests on correlation + AF3.
+
+## Step 5 (2026-11-10): NFY depth-matched check (reversed/nfy_depth_matched.tsv; rev_depth_counts.py, rev_depth_z.py; jobs 8767671, 8767725)
+- Why: 9 of the 10 TFs with validated NFY enrichment in the reversed design are among the 20 deepest of 79, so the signal may be depth convergence at promoters.
+- (a) The reversed-design z was recomputed on raw reads (read starts in the 1 kb union-ATAC bins). Cells were subsampled per TF to 5,903 (the 20th-deepest TF, HOXB9) and to 3,000, with 3 seeds each and z averaged. TFs with fewer cells keep all of them. Steps as before: CPM minus the 79-TF mean, rank-normal, residual within GC x CpG x promoter strata, odd/even chromosomes.
+- (b) Each TF's NFY z is compared with the 10 TFs nearest in cell count: depth-matched z = (z - mean of the 10) / sd.
+- (c) Survive = raw strict (z_disc >= 4, z_val >= 2) at both depths AND imputed depth-matched z >= 2 on disc and val.
+- Depth dependence of NFY z (Spearman vs cell count): imputed 0.60 (p 4e-9); raw at 5,903 cells 0.43; raw at 3,000 cells 0.37.
+- Result: 0 of the 10 hits survive both.
+  - Raw strict at both depths: none, NFYA included. At the loose level (3 / 1.5) at both depths, only NFYA and ZNF507 pass.
+  - Imputed depth-matched z >= 2: none of the ten. SOX4 reaches 1.38 / 2.06 and FLYWCH1 2.06 / 1.46.
+  - ZNF507 is the only hit with a raw signal: z 5.54 / 3.38 at 5,903 cells and 3.20 / 2.93 at 3,000. NFY is its top raw motif (rank 1 of 2,427), and it passes the raw depth-matched null (3.71 / 3.16). Its imputed depth-matched z is 1.29 / 1.45, because its deep neighbours all carry imputed NFY.
+  - NFYA: NFY is rank 2 (5,903 cells) and rank 1 (3,000 cells) of 2,427 on raw reads, so the own-motif signal is real. Its imputed depth-matched z is only 0.95 / 1.20, because its deep neighbours (SOX4, XPA, RBBP7, ZNF507, E2F3, ...) all show NFY.
+- References: NRF1 raw z_disc 5.0 at both depths (rank 1), but its validation z is only 0.4-0.5. CTCF raw 1.2 / 1.0 (rank 242).
+- Verdict: the imputed NFY convergence across the ten TFs is mostly depth / promoter convergence. Only NFYA (own motif) and ZNF507 keep an NFY signal on depth-equalized raw reads. The NFYA-SOX4 / NFYA-RBBP4 / MLX-NFYA motif leads are withdrawn. NFYA-ZNF507 stays as a weak lead (raw loose at both depths, AF3 none).
+
+## Step 6 (2026-11-10): external bulk route abandoned at the user's request
+- The bulk_anchor/ route (ENCODE / ChIP-Atlas HEK293 peaks as anchors) was started: ENCODE search and one peak file per TF downloaded, no tests run.
+- User 17:45: drop it, because the study is HEK293T, not HEK293. The folder was deleted, and nothing of it was committed.
+- Coverage before the stop, for the record: HEK293 bulk exists for 6 ENCODE TFs (CTCF, MAZ, ZBTB7A, ZIC2, ZNF768, ZNF777) plus about 13 ChIP-Atlas GEO sets. 58 of 117 AF3/triple pairs had one partner covered.
+- Replaced by the threshold-free motif profile (profile/).
