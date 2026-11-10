@@ -14,10 +14,20 @@ elig = Q.n_ok.values & ~Q.blacklist.values & (Q.exonic.values <= 0.5) & (part !=
 top = {t: set(ei[np.argsort(-D[ix[t]][ei], kind="stable")[:TOP]]) for t in tfs}
 prom = np.zeros(len(Q), bool); prom[[int(x) for x in open(f"{O}/ref/promoter_bins.txt").read().split()]] = True
 cq = np.quantile(Q.cpg_oe.values[ei], [0.2, 0.4, 0.6, 0.8]); strat = (np.floor(Q.gc.values / 0.025).astype(int) * 10 + np.searchsorted(cq, Q.cpg_oe.values)) * 2 + prom
-T = pd.read_csv(f"{X}/complex_screen/triple_support_20261109/triple_support.tsv", sep="\t"); T = T[T.tier.isin(["T1", "T2"])]
-PS = pd.read_csv(f"{O}/pool_sizes.tsv", sep="\t"); PS = PS[PS.category.str.startswith("af3") | (PS.category == "named")]
+# NULLOF="FOCAL:REF,..." (with OUT=<folder>): instead, for each focal TF, 20 random partners whose discovery top-set overlap with the
+# focal TF is closest to that of FOCAL-REF (excluding REF), written to OUT. Used for the NFYA / DDIT3 partner nulls.
+if os.environ.get("NULLOF"):
+    G = os.environ["OUT"]; src = []
+    for fr in os.environ["NULLOF"].split(","):
+        f_, r_ = fr.split(":"); ov = lambda c: len([i for i in top[f_] & top[c] if part[i] == "disc"]); target = ov(r_)
+        cands = sorted((c for c in tfs if c not in (f_, r_)), key=lambda c: abs(ov(c) - target))[:20]
+        src += [(f"{f_}-{c}", f"null_{f_}_vs_{r_}(overlap {target})") for c in cands]
+else:
+    T = pd.read_csv(f"{X}/complex_screen/triple_support_20261109/triple_support.tsv", sep="\t"); T = T[T.tier.isin(["T1", "T2"])]
+    PS = pd.read_csv(f"{O}/pool_sizes.tsv", sep="\t"); PS = PS[PS.category.str.startswith("af3") | (PS.category == "named")]
+    src = list(zip(T.pair, T.tier)) + list(zip(PS.pair, PS.category))
 pairs, seen = [], {}
-for p, c in list(zip(T.pair, T.tier)) + list(zip(PS.pair, PS.category)):
+for p, c in src:
     k = tuple(sorted(p.split("-")))
     if k in seen: seen[k][2] += f";{c}"; continue
     seen[k] = [*p.split("-"), c]; pairs.append(seen[k])
@@ -51,7 +61,7 @@ for a, b, cat in pairs:
                   f"{pt}_input_short": short, f"{pt}_gc_pair": desc(keep["pair"])[1], f"{pt}_gc_input": desc(keep["input"])[1]})
         if pt == "disc":
             U = np.concatenate([keep["pair"], keep["Aonly"], keep["Bonly"]]); lab = np.repeat([2, 0, 1], [len(keep["pair"])] * 3)
-            for k in range(NPERM):
+            for k in range(NPERM if not os.environ.get("NULLOF") else 0):
                 L = lab.copy()
                 for s in np.unique(strat[U]): q = np.flatnonzero(strat[U] == s); L[q] = rng.permutation(L[q])
                 dd = f"{G}/pools/{a}-{b}/perm/{k:02d}"; os.makedirs(dd, exist_ok=True)

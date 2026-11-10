@@ -39,6 +39,9 @@ case $MODE in
       homer $P/pair.bed $R/perm/$K/vsB $P/Bonly.bed -nomotif
       rm -rf $R/perm/$K/vs?/knownResults $R/perm/$K/vs?/*.html
     done ;;
+  valknown)
+    # held-out chromosomes, known motifs only, pair vs one single pool (ARG = A or B)
+    V=$B/pools/$PAIR/val; homer $V/pair.bed $R/val_vs$ARG $V/${ARG}only.bed -nomotif ;;
   validate)
     V=$B/pools/$PAIR/val; C=$B/candidates/$PAIR
     [ -s $C/homer.motifs ] && homer $V/pair.bed $R/val_homer $V/singles.bed -nomotif -mknown $C/homer.motifs -nlen 0
