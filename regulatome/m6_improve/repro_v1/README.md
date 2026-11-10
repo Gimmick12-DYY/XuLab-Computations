@@ -165,6 +165,9 @@ Route: the existing noisefloor_per_draw.tsv holds per-TF draws (79 x 100 x 2); n
   gate, applied here per TF). TFs above the null with d < .04 are reported as above-null with a small effect and are not used for per-TF
   statements. 20 of the 38 have d >= .04 (RBBP4 through HOXB9 .042), all 20 in the high tertile (high 20, mid 0, low 0); no TF outside
   the 38 has d >= .04.
+  Nearest exclusion: ZBTB7A, d = .035 (.005 below the line). The line is not moved to include it, the same treatment as the
+  EPAS1-NEUROD4 ipTM .390 borderline in the structure screen. (HOXA10 is next, d = .0352 against ZBTB7A's .0354.)
+  d for all 79 TFs is published in per_tf_floor_test.tsv, so readers can apply their own cut.
 - Clearing is almost a pure depth ordering (high 26/27, mid 11/26, low 1/26), so this is a depth boundary with a per-TF test behind it,
   not a biological property of the named proteins.
 - NRF1 had the cleanest Perturb-seq knockdown in the panel and drives the B6 diagonal, yet d = .0006 (p_perm .22). Its list is
