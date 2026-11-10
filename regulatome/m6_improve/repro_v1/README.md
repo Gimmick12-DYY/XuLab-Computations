@@ -48,3 +48,31 @@ Run 2 partner exclusion: known partners per TF = pairs in r1_tftf/v2_final_v3/r1
    NOT RUN: cost check failed the cap. The unified imputer (unified/scripts 00_ingest -> 01_train -> 02_impute -> 02b mask) is a GPU PyTorch model; the panel took 192 GPU-h over 72 recorded jobs (median 2.25 h per TF), so 2 x 79 per-half refits are ~250-420 GPU-h (plus the same again for the control arm), far above the ~1 GPU-day / 200 CPU-h cap, and the account's GPU allocation is currently exhausted (AssocGrpGRES). A reduced version (6 TFs, 2 per depth tertile, J_between among the refit set) at ~20-30 GPU-h per arm is proposed for Yuyang's decision.
 
 Run 2b note (2026-11-10): Residual vs pool is −.031 overall but +.016 in the LOW-depth tertile — the one method so far with the correct stratification (helps shallow TFs), though inside Amendment 3's null band. Watch whether Run 2c (peak-level, pooled-neighbour) shows the same low-tertile pattern; two independent methods helping only shallow TFs would be a direction.
+
+## Amendment 4 (2026-11-10, declared before Run 2c is run): Run 2c, methods 3 and 2
+Methods 6 (pool ratio/residual) and 7 (list sizes) already ran in Run 2b and are not rerun. No equivalent-cells conversion (retracted,
+SPEC_REPRO Amendment 3). Same half splits and seeds as Run 2b (cells permuted with seed 20261029 + TF index in tfs.txt order, first half
+= n // 2, cell order = gate1 cellmats). List rule otherwise v8: ABC power-law links (m2_abc thr0.02), gene score = sum over links, top 1,000
+genes with score > 0. Baseline = v8@1000, recomputed in the same script (must reproduce Run 2b exactly; asserted).
+
+Method 3, peak-level aggregation. Peaks are called **per half**, from that half's reads only, so nothing is shared between halves
+(the full-data peak sets in tf_complex/work/peaks_tmp are not used: they are called on all cells and would leak across halves).
+- Reads: /vast/som/xujie_lab/TAGATG-293T/bigwig/fragment/TF.<TF>.bed.gz (read-only), filtered to the half's barcodes
+  (gate1 cellmats <TF>.cells.npz barcode order).
+- Caller: MACS3 (snapatac2 env) callpeak -f BED -g hs --nomodel --shift -75 --extsize 150 --keep-dup all -p 0.01; written to
+  run2c/peaks/<TF>_h<k>_peaks.narrowPeak (outputs, not committed).
+- peak_fe@1000: element score = max fold enrichment (narrowPeak col 7) of the half's peaks overlapping the element (any bp), 0 if none.
+- peak_mask@1000: element score = the half's raw CPM (as v8) where at least one of the half's peaks overlaps the element, else 0.
+Method 2, rank on pooled-neighbour bins: element score = its CPM plus the CPM of every active element on the same chromosome whose
+midpoint lies within ±k kb of its midpoint (k = 1, 2; i.e. its ±k neighbouring 1-kb bins): nbr_k1@1000, nbr_k2@1000.
+
+Scoring (as Run 2b): per TF x method, J_within, J_between (mean over the other 78 TFs' same-method same-half lists, both halves),
+J_between_partnerex (excluding run2_partners.tsv partners), diff and diff_partnerex; by depth tertile (cells-per-TF tertiles, as Run 2b)
+and overall; paired Δ vs v8@1000 (mean over TFs, 95% bootstrap CI over TFs, 10,000 resamples, seed 20261110). The low-tertile Δdiff is
+reported explicitly for every method.
+
+Null band (depth yardstick, no conversion): Run 1 within-TF diff slope .004–.058 per decade and J_within slope .24–.33 per decade, so a
+depth increase that raises J_within by ΔJ_within buys at most ΔJ_within × (0.058 / 0.24) = 0.2417·ΔJ_within in diff (generous end).
+A method counts as **beating depth** only if its mean Δdiff > 0.2417·max(ΔJ_within, 0) AND the Δdiff 95% CI excludes 0. Otherwise it
+"reproduces the depth curve" = null. Reported per tertile and overall, for diff and diff_partnerex.
+Outputs (DESCRIPTIVE): run2c_per_tf.tsv, run2c_summary.tsv, run2c/lists/. Run as one CPU dependency chain (peak array -> lists/scoring).
