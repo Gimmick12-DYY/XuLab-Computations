@@ -71,3 +71,7 @@ Best AF3 ipSAE / ipTM / seeds = the AF3 row with the highest tier, then highest 
 where the run records it).
 The Boltz note stays as its own column, `boltz_note`: on every row whose structural call includes a Boltz strong, the text "Boltz score not
 interface evidence (CIR unrelated to Boltz ipSAE/ipTM; Amendment 1.3)". Outputs: flags_v2.tsv, triple_support_flagged_v2.tsv (v1 kept).
+
+Note (2026-11-10, no tier or cut changed): two curated footnotes added to `interface_footnote` in triple_support_flagged_v2.tsv by
+footnotes_v2.py — EPAS1–NEUROD4 (borderline pair ipTM 0.390 vs 0.40 cut; 5/5 seeds strong per-seed) and RBBP4–RBBP7 (AF3 none expected:
+paralogues at the same NuRD/PRC2 position; correlation ≠ contact positive control).
