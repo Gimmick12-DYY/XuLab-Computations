@@ -152,3 +152,31 @@ with NuRD. The convergence is generic.
 This amendment is a retraction of a number already given to Yuyang on 2026-11-10 at 05:49 and withdrawn
 to him the same day. It is recorded here so that the spec cannot be read later as if the table at the
 top still stood.
+
+## Amendment 5, declared 2026-11-10 after Run 2c was read
+
+**Amendment 3's band was underspecified and is corrected here.** It said a method's difference gain must
+exceed what a depth increase of the same J_within gain would have bought. For a method that LOWERS
+J_within that comparison is degenerate: the band collapses to zero and anything positive passes. Four
+methods in Run 2b and 2c exploited that without anyone intending it, since they all raise the difference
+by lowering both components.
+
+The band therefore applies only when the method raises J_within. For a method that lowers J_within the
+comparator is not the depth curve but the noise floor, defined below.
+
+**The noise floor, which must be measured before any further method is scored.** A list carrying no
+information has J_within near zero and J_between near zero, so its difference is also near zero. Any
+method that pushes a TF's list toward noise will therefore show a difference near zero and can look like
+an improvement wherever the baseline difference is negative. The low-depth tertile is exactly that case:
+its baseline difference is -.013, and the best of the four methods reaches about +.003.
+
+Declared test, to be run before the next method: build deliberately uninformative lists at matched depth
+and matched list length, by permuting element labels within each half and by drawing elements at random
+with the element-count distribution preserved, and report J_within, J_between and the difference by
+depth tertile. If the noise floor's difference is not clearly below +.003 in the low tertile, then every
+low-tertile gain seen so far is indistinguishable from removing the signal altogether, and this whole
+line of attack is void and closes.
+
+**What is not adopted.** Peak-level aggregation costs .19 J_within in the high tertile and -.094 on the
+difference there. It is not a candidate for the frozen layer under any reading. Pooled-neighbour bins are
+null, both components rising about .04, which is the depth curve again.
