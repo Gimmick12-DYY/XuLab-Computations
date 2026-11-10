@@ -1,0 +1,8 @@
+fastq/
+bam/
+inputs/
+tmp/
+results/
+bench/
+chipatlas_bw/
+logs/

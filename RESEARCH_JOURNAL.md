@@ -25,6 +25,12 @@ cluster is the usual cause of "unchanged output."
 
 ## Log (newest first)
 
+### 2026-11-10 — Regulome ABC with H3K27ac (m2b): no gain on the dev Perturb-seq benchmark
+- **Context:** Yuyang asked to bring H3K27ac into the ABC activity. We have no HEK293T histone data; ChIP-Atlas HEK293T WT H3K27ac SRX18002015/16 (GSM6672008/9) was chosen; GSE246314 is not in ChIP-Atlas.
+- **Change:** regulatome/m2b_abc_k27ac/: ENA fastq -> bowtie2 hg38, proper pairs MAPQ>=30, markdup -r (74.9M reads merged); ABC v1.1.2 rerun exactly as m2_abc power-law with --H3K27ac (activity = sqrt(ATAC x H3K27ac)); old-vs-new link comparison; m6_improve grid6 scoring on the 52 dev TFs only (held-out spent) for binding x ABC and binding-only over old and new links, with element-count / pooled / ATAC controls on each link set.
+- **Outcome:** Signal is sound (Spearman 0.86 vs ChIP-Atlas bigWig, FRiP 0.29 in GSE246314 peaks). Links 104,071 -> 98,544 (Jaccard 0.70), shifted from distal_active to promoter elements; top non-self element changes for 27% of genes. Benchmark: new - old Wspec (Arm 2) -0.08 [-0.21, 0.06] for x ABC and +0.02 [-0.34, 0.39] for binding-only; inside Monte Carlo noise, controls as high. Standing default (binding-only over old links, list e) kept. Follow-ups (Hi-C contact, H3K27ac-only activity, thresholds) in m2b_abc_k27ac/followups/. Dev-set tuning only, not confirmed.
+- **Files:** regulatome/m2b_abc_k27ac/README.md.
+
 ### 2026-11-10 — Full-matrix, sign and edge-sign checks all null; testability diagnostic; no paired RNA
 - **Context:** After the held-out FAIL and v8 freeze (2026-11-09), Yuyang asked for a full-matrix comparison and a signed (activator/repressor) Regulome. All checks below are DESCRIPTIVE (held-out set spent).
 - **Change:** regulatome/m6_improve/: SPEC_MATRIX.md, SPEC_SIGNED.md; matrix_v1/ (matrix_compare.py, matrix_mispaired.py; Correction 1 declared before output read: mis-paired S as the double-centred primary control, uncentred element count secondary); signed_v1/ (canonical source A sign table + readout write-up, machine-built rc79 table for comparison, annotation comparison, high/medium-only scoring rule); signed_v1/edge_sign_v1/ (per-edge sign from ChromHMM state + repressive/activating co-binding, rule and Amendment 1 committed before any signed z was read); validation_programme_summary.md.

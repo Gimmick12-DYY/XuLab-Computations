@@ -1,0 +1,64 @@
+# Dev-TF benchmark (DESCRIPTIVE, development TFs only; the 24 held-out TFs in split_v1 are spent and are not scored): does H3K27ac in the ABC activity
+# change how well binding-derived gene lists track the HEK293T knockdown response? Scoring is grid6 / heldout_v1 unchanged: per-TF top-1,000 genes,
+# 1,000 expression-matched random sets per list (seed 20261109, + arm), own z (B6 effect), specificity = own minus mean off-KD z over dev KDs,
+# own-KD rank, top-5% responder logOR; kd_response/out_v2 arms; binding = Gate 1 raw cellmats, CPM over active elements (as grid6 RAW).
+# Gene scores per link set L (old = m2_abc power-law links, new = m2b ATAC x H3K27ac links):
+#   <L>X_raw   = sum over links of binding CPM x ABC.Score            (a: old, b: new)
+#   <L>S_raw   = sum over links of binding CPM (B6 list e analogue)    (c: old, d: new)
+# Controls on the same link set and the same weighting: CTRL_n_elem (1 per link), CTRL_pool (mean of the other TFs' CPM), CTRL_atac (ATAC CPM).
+# Writes m2b_abc_k27ac/bench/per_tf.tsv; summarise with bench_summary.py (ceiling-weighted specificity, with and without NRF1).
+import os
+import numpy as np, pandas as pd, scipy.sparse as sp
+X = "/work/users/d/y/dyy12/XuLab"; M4 = f"{X}/regulatome/m4_validation"; G1 = f"{X}/regulatome/gate1/cellmats"; O = f"{X}/regulatome/m2b_abc_k27ac/bench"; os.makedirs(O, exist_ok=True)
+SEED = 20261109; NR = 1000; ARMS = {"arm1": "arm1_high_knockdown", "arm2": "arm2_all_cell"}; ALIAS = {"CBX1": "HP1", "CBX3": "HP1", "CBX5": "HP1", "ZUP1": "ZUFSP"}; panel = lambda t: ALIAS.get(t, t)
+E = pd.read_csv(f"{X}/regulatome/m0_universe/elements_v2.bed", sep="\t", header=None, names=["chrom", "start", "end", "eid", "type", "pid", "ptype", "cls"])
+act = E.cls.isin(["promoter", "distal_active", "bivalent"]).values; Ea = E[act].reset_index(drop=True)
+coord = {f"{c}:{s}-{e}": i for i, (c, s, e) in enumerate(zip(Ea.chrom, Ea.start, Ea.end))}
+LS = {}
+for nm, d in (("old", f"{X}/regulatome/m2_abc"), ("new", f"{X}/regulatome/m2b_abc_k27ac")):
+    A = pd.read_csv(f"{d}/results/Predictions_powerlaw/EnhancerPredictionsFull_thr0.02.tsv", sep="\t", usecols=["chr", "start", "end", "TargetGene", "ABC.Score"])
+    A["e"] = (A.chr + ":" + A.start.astype(str) + "-" + A.end.astype(str)).map(coord); assert A.e.notna().all(), nm; A["e"] = A.e.astype(int); LS[nm] = A; print(nm, "links", len(A), flush=True)
+atac = np.load(f"{X}/regulatome/m1_binding/v2/counts/atac_counts.npz")["atac"][np.flatnonzero(act)].astype(float); atac_cpm = atac / atac.sum() * 1e6
+tfs = [l.strip() for l in open(f"{X}/regulatome/m1_binding/v2/tfs.txt") if l.strip()]
+Sp = pd.read_csv(f"{X}/regulatome/m6_improve/split_v1.tsv", sep="\t"); DEV = set(Sp.tf[Sp.set == "development"]); assert len(DEV) == 52 and not (DEV & set(Sp.tf[Sp.set == "heldout"]))
+tfs_dev = [t for t in tfs if panel(t) in DEV]; print("dev TFs", len(tfs_dev), "panel", len({panel(t) for t in tfs_dev}), flush=True)
+def cpm_of(t):
+    y = np.asarray(sp.load_npz(f"{G1}/{t}.raw.npz").sum(0)).ravel(); return y / max(y.sum(), 1e-12) * 1e6
+RAW = {t: cpm_of(t) for t in tfs}; TOT = np.sum([RAW[t] for t in tfs], axis=0); NT = len(tfs)
+def variants(t):
+    c = RAW[t]; Ev = {"raw": c, "CTRL_n_elem": np.ones_like(c), "CTRL_pool": (TOT - c) / (NT - 1), "CTRL_atac": atac_cpm}; out = {}
+    for nm, A in LS.items():
+        e, g, w = A.e.values, A.TargetGene.values, A["ABC.Score"].values
+        for k, v in Ev.items(): out[f"{nm}X_{k}"] = pd.Series(v[e] * w).groupby(g).sum(); out[f"{nm}S_{k}"] = pd.Series(v[e]).groupby(g).sum()
+    return out
+SC = {}
+for p in sorted({panel(t) for t in tfs_dev}):
+    ts = [t for t in tfs_dev if panel(t) == p]; Vs = [variants(t) for t in ts]; L = {}
+    for k in Vs[0]:
+        s = pd.concat([V[k] for V in Vs], axis=1).fillna(0).mean(1) if len(Vs) > 1 else Vs[0][k]  # HP1 paralogs averaged
+        s = s[s > 0].sort_values(ascending=False, kind="stable"); L[f"{k}@1000"] = list(s.index[:1000])
+    SC[p] = L
+print("variants", list(next(iter(SC.values())).keys()), flush=True)
+pd.DataFrame([dict(tf=p, variant=v, gene=g) for p, L in SC.items() for v, gs in L.items() if v.endswith("_raw@1000") for g in gs]).to_csv(f"{O}/lists_raw.tsv.gz", sep="\t", index=False)
+def load(a):  # b3b4.py load() (no replicate part), as grid6
+    d = np.load(f"{M4}/kd_response/out_v2/{ARMS[a]}/kd_response.npz", allow_pickle=True); q = pd.read_csv(f"{M4}/kd_response/out_v2/{ARMS[a]}/guide_qc.tsv", sep="\t"); u = d["units"].tolist(); ui = {x: k for k, x in enumerate(u)}; uni = d["ntc_detect"] >= .1; g = d["genes"][uni]; Z = d["z"][:, uni].astype(float); kp = q[q.kept == 1]; prim = kp[kp.kind.isin(["all", "construct"])]; tf_ = sorted(prim.tf.unique())
+    P_ = np.vstack([np.nanmean(Z[[ui[x] for x in prim.unit[prim.tf == t]]], axis=0) for t in tf_]); P_ = np.nan_to_num(P_); Rr = P_ - P_.mean(0); Rr = Rr - Rr.mean(1, keepdims=True)
+    return dict(g=g, gi={x: k for k, x in enumerate(g)}, R=Rr, tfs=tf_, mean=d["ntc_mean"][uni].astype(float))
+rows = []
+for a in ARMS:
+    D = load(a); rng = np.random.default_rng(SEED + (a == "arm2")); g, gi, Rr, tf_ = D["g"], D["gi"], D["R"], D["tfs"]
+    pts = sorted({panel(t) for t in tf_} & DEV); Rp = np.vstack([Rr[[i for i, t in enumerate(tf_) if panel(t) == p]].mean(0) for p in pts]); Ap = np.abs(Rp).astype(np.float32); pi = {p: k for k, p in enumerate(pts)}
+    bins = pd.qcut(D["mean"], 20, labels=False, duplicates="drop"); BG = [np.flatnonzero(bins == b) for b in range(bins.max() + 1)]
+    print(a, "dev KDs", len(pts), flush=True)
+    for p in pts:
+        if p not in SC: continue
+        for v, genes in SC[p].items():
+            ix = np.array(sorted({gi[x] for x in genes if x in gi}), int)
+            if len(ix) < 50: continue
+            cnt = np.bincount(bins[ix], minlength=len(BG)); rs = np.hstack([BG[b][rng.integers(0, len(BG[b]), (NR, c))] for b, c in enumerate(cnt) if c])
+            obs = Ap[:, ix].mean(1); rm = np.stack([Ap[k][rs].mean(1) for k in range(len(pts))]); z = (obs - rm.mean(1)) / rm.std(1)
+            own = z[pi[p]]; off = np.delete(z, pi[p]); ab = Ap[pi[p]]; ng = len(ab); resp = np.zeros(ng, bool); resp[np.argsort(-ab, kind="stable")[:int(round(ng * .05))]] = True; inl = np.zeros(ng, bool); inl[ix] = True
+            t2 = [[int((inl & resp).sum()), int((~inl & resp).sum())], [int((inl & ~resp).sum()), int((~inl & ~resp).sum())]]; lor = np.log((t2[0][0] + .5) * (t2[1][1] + .5) / ((t2[0][1] + .5) * (t2[1][0] + .5)))
+            rows.append(dict(arm=a, tf=p, variant=v, n=len(ix), z_own=own, z_off_mean=off.mean(), specificity=own - off.mean(), own_rank=int((z > own).sum() + 1), n_kd=len(pts), logor5=lor))
+    print(a, "done", flush=True)
+P = pd.DataFrame(rows); assert not (set(P.tf) - DEV); P.to_csv(f"{O}/per_tf.tsv", sep="\t", index=False, float_format="%.4g")
