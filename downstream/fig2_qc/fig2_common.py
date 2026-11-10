@@ -1,5 +1,5 @@
 """Shared paths and helpers for the Figure 2 QC (bulk ChIP agreement + specificity) scripts.
-Panel = the 6 TFs with HEK293(T) bulk ChIP (TFS).
+Panel = the 6 TFs with bulk ChIP references (TFS); our cells are HEK293T; see REF_SOURCE for each reference cell line.
 
 Frame: 1 kb bins over chr1-22, X, Y in the order of
 results_293T_analysis/ctcf_promoter_fp/counts/bin_index.tsv (same frame as raw.npz).
@@ -39,7 +39,7 @@ REF_SOURCE = {
     "NFYA": "ENCODE ENCFF765GYT (K562)",
     "ZBTB7A": "ENCODE ENCFF114DGV (HEK293)",
     "ZIC2": "ENCODE ENCFF359GIY (HEK293)",
-    "ZNF282": "GEO GSM2466515 ChIP-exo (HEK293), MACS2 re-call hg38",
+    "ZNF282": "GEO GSM2466515 HA-tag ChIP-exo (HEK293T), MACS2 re-call hg38",
     "ZNF777": "ENCODE ENCFF735CAY (HEK293)",
 }
 BAM = {

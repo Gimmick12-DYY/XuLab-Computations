@@ -29,7 +29,7 @@ cluster is the usual cause of "unchanged output."
 - 38/79 clear an uninformative-list null; 20 at d >= .04, all in the deepest third; below ~5,000 cells 0/52 reach the tier; README ee1a2df.
 
 ### 2026-11-10 — Fig 2 QC: sc vs bulk 6x6 shows CTCF-specific agreement only (correction)
-- **Context:** Fig 2 QC asks whether raw sc tracks match their own bulk ChIP reference better than the others for the 6 HEK293(T) references (CTCF, MAZ, ZBTB7A, ZIC2, ZNF282, ZNF777; NFYA dropped, K562). Scripts are in `downstream/fig2_qc/`, outputs in `results_293T_analysis/fig2_qc/`.
+- **Context:** Fig 2 QC asks whether raw sc tracks match their own bulk ChIP reference better than the others for 6 bulk references (CTCF, MAZ, ZBTB7A, ZIC2, ZNF282, ZNF777; NFYA dropped, K562). Our cells are HEK293T; the ENCODE references for MAZ, ZBTB7A, ZIC2, ZNF777 are HEK293 (eGFP-tagged), ZNF282 is HEK293T, CTCF is a 2-of-3 mix of HEK293 and HEK293T. Scripts are in `downstream/fig2_qc/`, outputs in `results_293T_analysis/fig2_qc/`.
 - **Correction:** Earlier notes called the summit-group Pearson 6x6 at ZNF777 depth a "diagonal". That was overstated.
   - Only CTCF is visibly on the diagonal (r = +0.45).
   - The other own-reference cells are the same size as off-diagonal noise: ZIC2 +0.10, ZNF282 +0.10, ZNF777 +0.03, ZBTB7A 0.00, MAZ -0.11.
