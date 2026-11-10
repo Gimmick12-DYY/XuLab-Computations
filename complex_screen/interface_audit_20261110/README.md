@@ -38,3 +38,24 @@ Where DDIT3–RBBP7 sits: its CIR, its percentile among AF3 strong calls and amo
 ## Outputs
 `audit.tsv` (one row per pair × source, with per-seed CIR), `summary.tsv` (deciles, correlations, floor, moves), `moves.tsv`.
 Not in scope (not queued): DDIT3 docking against random panel TFs.
+
+## Amendment 1 (2026-11-10, before regenerating tables)
+(1) The total-CIR floor is RETIRED. It does not discriminate: the negative control RBBP7–SRCAP scores 106, above the positive-control
+p10 of 76.5. The strong_noCIR relabel is withdrawn for every row.
+(2) Min-chain CIR ≥ 5 is a FLAG, not a gate. Rows below it keep their call and carry the footnote 'one-sided interface, peptide-scale
+(N confident residues on TF X)'. The threshold 5 is fixed and must not be tuned. Rationale: RBBP4–ZIC2, a published NuRD pair, has 8 on
+one side.
+(3) Boltz: a column 'boltz_only_no_interface_support' marks every row whose only structural support is Boltz. The reason is that Boltz
+CIR is unrelated to its own scores (ipSAE −.10, ipTM −.24; median CIR strong 38 vs weak 41). Whether to keep these rows is Yuyang's
+decision; nothing is removed here.
+
+Operational definitions (fixed with this amendment, before any flag table exists):
+- Min-chain CIR = min(CIR_a, CIR_b) of the model(s) behind the call (multi-seed: per-chain medians across seeds, as in audit.tsv);
+  X = the chain with the smaller value (ties: both named).
+- flags.tsv: every strong row of audit.tsv (AF3 and Boltz). Footnote when min-chain < 5. boltz_only = the pair (HP1 paralogs collapsed)
+  has a Boltz strong row and no AF3 strong row in any AF3 run in audit.tsv.
+- triple_support_flagged.tsv (copy of triple_support_20261109/triple_support.tsv; original untouched): the min-chain value comes from the
+  AF3 run named in af3_source (sweep_s1 → af3_s1_sweep; af3_local / af3_novel_20261103 → that run's rows, max over its score files), and
+  from af3_s5 when af3_s5_tier is strong. The footnote is attached when the row's AF3 call (af3_tier or af3_s5_tier) is strong and its
+  min-chain < 5; for a Boltz-only row, from the Boltz model. boltz_only_no_interface_support = boltz_trimmed or boltz_fulllength is strong
+  and neither af3_tier nor af3_s5_tier is strong.
