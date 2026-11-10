@@ -18,7 +18,7 @@ F["footnote"] = [note(m, t) for m, t in zip(F.minchain, F.minchain_tf)]
 F["boltz_only_no_interface_support"] = (F.tool == "Boltz") & ~F.panel.isin(af3_strong)
 F[["tool", "source", "pair", "panel", "tier", "iptm", "ipsae", "CIR", "CIR_a", "CIR_b", "minchain", "minchain_tf", "footnote",
    "boltz_only_no_interface_support", "CIR_per_seed"]].assign(DESCRIPTIVE="DESCRIPTIVE").to_csv(f"{O}/flags.tsv", sep="\t", index=False)
-T = pd.read_csv(f"{X}/triple_support_20261109/triple_support.tsv", sep="\t", keep_default_na=False); T["_k"] = T.pair.map(key)
+T = pd.read_csv(f"{X}/triple_support_20261109/triple_support.tsv", sep="\t", keep_default_na=False); T["pkey"] = T.pair.map(key)
 SRC = {"sweep_s1": lambda s: s == "af3_s1_sweep", "af3_local": lambda s: s.startswith("af3_local"), "af3_novel_20261103": lambda s: s.startswith("af3_novel")}
 def best(k, pred, tool="AF3"):
     g = A[(A.panel == k) & (A.tool == tool) & A.source.map(pred) & A.minchain.notna()]
@@ -27,12 +27,12 @@ def best(k, pred, tool="AF3"):
 mc, fn, bo = [], [], []
 for r in T.itertuples():
     s1 = r.af3_tier == "strong"; s5 = r.af3_s5_tier == "strong"; boltz = "strong" in (r.boltz_trimmed, r.boltz_fulllength)
-    m, tf = best(r._k, SRC[r.af3_source]) if r.af3_source in SRC else (np.nan, "")
-    if s5: m5, tf5 = best(r._k, lambda s: s == "af3_s5"); m, tf = (m5, tf5) if not s1 or np.isnan(m) else (m, tf)
+    m, tf = best(r.pkey, SRC[r.af3_source]) if r.af3_source in SRC else (np.nan, "")
+    if s5: m5, tf5 = best(r.pkey, lambda s: s == "af3_s5"); m, tf = (m5, tf5) if not s1 or np.isnan(m) else (m, tf)
     only = boltz and not (s1 or s5)
-    if only: m, tf = best(r._k, lambda s: s == "boltz_screen", "Boltz")
+    if only: m, tf = best(r.pkey, lambda s: s == "boltz_screen", "Boltz")
     mc.append(m); fn.append(note(m, tf) if (s1 or s5 or only) else ""); bo.append(only)
-T = T.drop(columns="_k"); T["af3_minchain_CIR"] = mc; T["interface_footnote"] = fn; T["boltz_only_no_interface_support"] = bo
+T = T.drop(columns="pkey"); T["af3_minchain_CIR"] = mc; T["interface_footnote"] = fn; T["boltz_only_no_interface_support"] = bo
 T.to_csv(f"{O}/triple_support_flagged.tsv", sep="\t", index=False)
 print("flags rows", len(F), "footnoted", (F.footnote != "").sum(), "boltz_only rows", int(F.boltz_only_no_interface_support.sum()),
       "boltz_only panel pairs", F[F.boltz_only_no_interface_support].panel.nunique())
