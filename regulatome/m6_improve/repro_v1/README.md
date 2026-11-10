@@ -186,3 +186,5 @@ Route: the existing noisefloor_per_draw.tsv holds per-TF draws (79 x 100 x 2); n
   resolution floor", not a smaller p. z_*, pz_*, qz_* = z against the TF's own 100 draws and its one-sided normal p (BH-adjusted in qz_*).
   For rows with |z| > 8, pz_* is a normal-tail extrapolation, not a frequency; the exact p for those rows is at the 100-draw resolution
   floor (.0099). shapiro_* = Shapiro-Wilk p of the TF's draws; sd_flag = draw SD < 1e-4 under either null (none).
+
+Correction (2026-11-10): the label 'antibody-quality effect' in Amendment 1 item 2 is withdrawn. The intercept spread is residual TF-level variation after depth; antibody quality was never measured or separated from expression, repertoire size, motif information or cell-cycle occupancy. See SPEC_REPRO.md Amendment 7 (spec and README amendments are numbered separately).
