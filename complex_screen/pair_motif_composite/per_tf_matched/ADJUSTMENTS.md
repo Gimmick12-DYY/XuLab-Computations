@@ -101,3 +101,23 @@ Each step lists what changed, the sanity check (own motif recovered in the per-T
 - User 17:45: drop it, because the study is HEK293T, not HEK293. The folder was deleted, and nothing of it was committed.
 - Coverage before the stop, for the record: HEK293 bulk exists for 6 ENCODE TFs (CTCF, MAZ, ZBTB7A, ZIC2, ZNF768, ZNF777) plus about 13 ChIP-Atlas GEO sets. 58 of 117 AF3/triple pairs had one partner covered.
 - Replaced by the threshold-free motif profile (profile/).
+
+## Step 7 (2026-11-10): Threshold-free motif profile (profile/; profile_pools.py, profile_fimo.sbatch, profile_score.py, profile_figs.py; jobs 8793725, 8793728, 8793807, 8793862, figure redraw 8810288)
+- Purpose: a motif layer with no pass/fail call. Pairs are ranked and shown next to depth-matched random pairs, as context only.
+- Motif set: 2,528 known + 393 de novo family representatives (2,921).
+- Peak-first: top 500 and top 2,000 raw MACS2 summits per TF (+/- 100 bp) vs matched OCR background (GC x CpG x promoter, up to 3 per summit). All chromosomes pooled.
+- Sequence-first: reversed-design z on raw reads subsampled to 5,903 and 3,000 cells, 3 seeds averaged. TFs below the target keep all their cells: 59 of 79 at 5,903 and 37 of 79 at 3,000, so depth is not fully equal.
+- Changes from the brief:
+  - Peak-first score = FIMO presence (p <= 1e-4) + two-sided Fisher, signed -log10 p, instead of HOMER known, which scores only its own library and only enrichment.
+  - De novo families are scored as motifs, so peak-first family scores reuse the raw summits the families came from (partly circular; top-5k vs top-500/2,000 of the same peaks).
+  - The top-10 list per pair holds non-generic motifs only; generic = score >= 3 in > 20 TFs (the only cutoff). It flags just 13 (peak-first 500) and 22 (sequence-first 5,903) motifs, so SP/KLF/NFY promoter motifs still reach the top-10 of deep TFs (e.g. DDIT3-RBBP4).
+- Own motif, within-TF rank of 2,921 (peak 500 / peak 2,000 / seq 5,903 / seq 3,000): NFYA 3/2/3/1, NRF1 25/7/5/3, MLX 309/255/527/900, CTCF 1235/712/128/559, HES1 564/1619/647/1310, E2F3 734/1411/700/613, ZBTB7A 494/2193/2813/2816, ZNF143 1761/1628/1144/1019, MAZ 2292/1268/2584/2629. Only NFYA and NRF1 are recovered.
+- Concordance (Spearman of motif score vectors):
+  - The two approaches measure different things: peak-first vs sequence-first rho 0.12 (peak 500 vs seq 5,903) and -0.10 (peak 500 vs seq 3,000).
+  - Raw concordance follows depth (rho with geometric-mean cells -0.30, -0.39, -0.68, -0.19). Matched percentiles remove most of it (-0.19, -0.20, -0.06, 0.05).
+- Matched-percentile medians (peak 500 / peak 2,000 / seq 5,903 / seq 3,000): AF3 strong (n 33) 0.30 / 0.42 / 0.62 / 0.66; AF3 weak (n 75) 0.66 / 0.57 / 0.66 / 0.64; AF3 none (n 1,523) 0.54 / 0.60 / 0.49 / 0.47. Share >= 0.95: all novel 5.8-6.1%; AF3 strong 9.1 / 9.1 / 15.2 / 18.2%; weak 9.3 / 8.0 / 5.3 / 5.3%.
+- Sixteen tier x method tests were uncorrected; the best are seq 3,000 strong vs none (MWU p 0.007) and weak vs none (0.003). Strong is lower than none on the peak side (peak 2,000 p 0.034), so the direction depends on the method.
+- Controls (matched percentile, same order): EZH2-MTF2 0.56 / 1.00 / 0.74 / 0.78; CTCF-STAG2 0.55 / 0.85 / 0.81 / 0.68; MAZ-ZNF143 0.28 / 0.53 / 0.43 / 0.35; NFYA-ZNF644 0.45 / 0.12 / 0.10 / 0.79; RBBP7-SRCAP negative 0.01 / 0.08 / 0.77 / 0.75. Known pairs do not separate from the negative consistently.
+- Pairs >= 0.95 in >= 3 methods among AF3-supported: DDIT3-RBBP4 only (0.95 / 0.97 / 1.00 / 0.90 reaches 3). RBBP4, RBBP7, E2F3 and ZNF703 pairs fill the top of the heatmap, so deep TFs still lead it.
+- Reading: usable as a descriptive column. It does not separate known complexes from the negative, so it should not be read as evidence for a pair.
+- Files: novel_pairs_motif_profile.tsv, all_pairs_motif_profile.tsv, pair_top_motifs_long.tsv, concordance_matrix_{peak,peak2000,seq,seqN3k}.tsv, controls.tsv, fig_concordance_af3.svg, logos/<pair>.svg (108). The AF3 column reads "not_run" for RBBP7-SRCAP; its AF3 score (none) is in af3_novel_20261103/af3_scores_srcap.tsv.
