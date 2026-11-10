@@ -1,11 +1,11 @@
 # repro_v1 noise-floor test (README Amendment 5; SPEC_REPRO Amendment 5). Uninformative lists at matched depth and list length:
 # (a) per-half element-label permutation of CPM then v8; (b) random genes matching the v8 list's linked-element-count histogram.
-# 20 draws each. Writes noisefloor_per_draw.tsv, noisefloor_summary.tsv. DESCRIPTIVE. usage: noisefloor.py
+# 100 draws each (Amendment 5 revision). DESCRIPTIVE calibration, no gate; absolute difference scale. Writes noisefloor_per_draw.tsv, noisefloor_summary.tsv. DESCRIPTIVE. usage: noisefloor.py
 import os
 import numpy as np, pandas as pd, scipy.sparse as sp
 X = "/work/users/d/y/dyy12/XuLab"; R = f"{X}/regulatome"; G1 = f"{R}/gate1/cellmats"; O = f"{R}/m6_improve/repro_v1"
 assert not os.path.exists(f"{O}/noisefloor_summary.tsv")
-tfs = [l.strip() for l in open(f"{R}/m1_binding/v2/tfs.txt") if l.strip()]; NT = len(tfs); ND = 20
+tfs = [l.strip() for l in open(f"{R}/m1_binding/v2/tfs.txt") if l.strip()]; NT = len(tfs); ND = 100
 E_ = pd.read_csv(f"{R}/m0_universe/elements_v2.bed", sep="\t", header=None, names=["chrom", "start", "end", "eid", "type", "pid", "ptype", "cls"]); Ea = E_[E_.cls.isin(["promoter", "distal_active", "bivalent"])].reset_index(drop=True)
 A = pd.read_csv(f"{R}/m2_abc/results/Predictions_powerlaw/EnhancerPredictionsFull_thr0.02.tsv", sep="\t", usecols=["chr", "start", "end", "TargetGene"])
 coord = {f"{c}:{s}-{e}": i for i, (c, s, e) in enumerate(zip(Ea.chrom, Ea.start, Ea.end))}; ae = (A.chr + ":" + A.start.astype(str) + "-" + A.end.astype(str)).map(coord).astype(int).values
@@ -57,8 +57,5 @@ for kn, G in P.groupby("kind"):
             D = H.groupby("draw")[["J_within", "J_between", "diff"]].agg(stat)
             S.append(dict(DESCRIPTIVE="DESCRIPTIVE", kind=kn, depth_tertile=tr, over_tfs=stat, n_tfs=H.tf.nunique(), n_draws=len(D),
                           **{f"{c}_{q}": v for c in D.columns for q, v in (("mean", D[c].mean()), ("lo95", np.percentile(D[c], 2.5)), ("hi95", np.percentile(D[c], 97.5)))}))
-S = pd.DataFrame(S); low = S[(S.depth_tertile == "low") & (S.over_tfs == "mean")].set_index("kind").diff_hi95
-survive = bool((low < 0.003).all() and (low < 0.013).all())
-S["decision"] = "SURVIVES" if survive else "VOID"; S["count_matched_shortfall_genes"] = nshort
-S.to_csv(f"{O}/noisefloor_summary.tsv", sep="\t", index=False, float_format="%.5f")
-print(low.to_string(), "DECISION", "SURVIVES" if survive else "VOID", "shortfall", nshort)
+S = pd.DataFrame(S); S.to_csv(f"{O}/noisefloor_summary.tsv", sep="\t", index=False, float_format="%.5f")
+print("shortfall", nshort)
