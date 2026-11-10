@@ -59,3 +59,15 @@ Operational definitions (fixed with this amendment, before any flag table exists
   from af3_s5 when af3_s5_tier is strong. The footnote is attached when the row's AF3 call (af3_tier or af3_s5_tier) is strong and its
   min-chain < 5; for a Boltz-only row, from the Boltz model. boltz_only_no_interface_support = boltz_trimmed or boltz_fulllength is strong
   and neither af3_tier nor af3_s5_tier is strong.
+
+## Amendment 2 (2026-11-10, definition change, before regenerating tables)
+`boltz_only_no_interface_support` is replaced by `af3_status` with three values:
+- `af3_not_tested`: the pair (HP1 paralogs collapsed) was never submitted to any AF3 run — the 1-seed corr ≥ 0.60 sweep, the 5-seed run
+  (seeds5/all.txt, scored or not), af3_inputs (run under af3_local), or the novel / local runs.
+- `af3_tested_not_strong`: scored by AF3 and not strong in any run; the best tier (weak or none) is recorded in `af3_best_tier`.
+- `af3_strong`: strong in at least one AF3 run.
+Submitted-but-unscored 5-seed pairs that have a scored 1-seed call take that call; none is untested by this rule.
+Best AF3 ipSAE / ipTM / seeds = the AF3 row with the highest tier, then highest ipSAE (seeds = number of seeds in that run; n_seeds_strong
+where the run records it).
+The Boltz note stays as its own column, `boltz_note`: on every row whose structural call includes a Boltz strong, the text "Boltz score not
+interface evidence (CIR unrelated to Boltz ipSAE/ipTM; Amendment 1.3)". Outputs: flags_v2.tsv, triple_support_flagged_v2.tsv (v1 kept).
