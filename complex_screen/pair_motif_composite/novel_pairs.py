@@ -10,7 +10,7 @@ import os, sys, re, glob, math
 import numpy as np, pandas as pd
 from scipy.stats import hypergeom
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__))); import summarize as S
-X = "/work/users/d/y/dyy12/XuLab"; O = os.path.dirname(os.path.abspath(__file__)); G = f"{O}/per_tf_matched"; rng = np.random.default_rng(20261110); NNULL = 200
+X = "/work/users/d/y/dyy12/XuLab"; O = os.path.dirname(os.path.abspath(__file__)); G = os.environ.get("TFBASE", f"{O}/per_tf_matched"); rng = np.random.default_rng(20261110); NNULL = 200
 LV = {"strict": (1.5, -5), "loose": (1.3, -3)}; CONTROLS = ["CTCF-STAG2", "MAZ-ZNF143", "NFYA-ZNF644", "EZH2-MTF2", "RBBP7-SRCAP"]
 tfs = sorted(os.listdir(f"{G}/results")); K, V, DN = {}, {}, {}
 for t in tfs:
