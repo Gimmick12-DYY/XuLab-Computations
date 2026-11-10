@@ -19,3 +19,15 @@ Run 1 (depth curve): the 5 deepest TFs (RBBP4 181,396; NFYA 70,292; SOX4 64,652;
    Pre-declared gate: if the median within-TF slope's CI includes 0.206, or the slopes are >= 0.10, the equivalent-cells yardstick is accepted and Run 2 may use it. If the slopes are flat (CI includes 0 and below 0.10), stop before reading Run 2 and report.
 3. Every per-depth, per-draw, per-half top list is written out (run1/lists/<TF>_N<cells>_d<draw>_h<half>.txt, gitignored), plus the full-depth half lists of the other TFs (run1/lists_full/).
 Outputs: depth_curve.tsv, depth_slopes.tsv, GATE.txt (Run 1); methods_per_tf.tsv, methods_summary.tsv (Run 2).
+
+## Run 1 result and gate (read 2026-11-10 ~01:05 local)
+GATE.txt: within-TF J_within slopes on log10(cells) 0.24-0.33 (all CIs exclude 0 and exclude 0.206; steeper), intercept spread 0.28 -> ACCEPT_YARDSTICK=True, FLAT=False. But J_between at matched depth rises almost as fast (slopes 0.24-0.28), so J_within - J_between_matched stays small (-0.008 to +0.09 up to 50k cells): most of the depth gain in self-agreement is shared signal.
+
+## Run 2 declaration (before any Run 2 output exists)
+Script repro_run2.py; panel's real depths, all 79 TFs, the r5_core-style half split (seed 20261029 + TF index), J_between = mean over the other 78 TFs' same-method lists on the same half index (secondary reference per Amendment 1), both components on every row.
+Methods run in v1: (0) v8 baseline (ABC-linked raw CPM sum, top 1,000); (4) fixed TSS windows +-50 kb and +-100 kb (elements by midpoint, raw CPM sum); (5) imputed binding (Gate 1 <TF>.imp.npz, per half, same v8 rule); (6) element-level normalisation against the pooled panel signal on the same half (mean CPM of the other 78 TFs at the element): ratio = CPM / (pool + 1) and residual = max(CPM - b x pool, 0) with b from a per-TF least-squares fit over elements, both summed over ABC links; (7) list sizes 250, 500, 2,000 for the v8 rule.
+Not run in v1 (stated): (1) r3_eb EB shrinkage, (2) pooled-neighbour bins, (3) peak-level aggregation; they need separate builds and are left for a v2 declaration.
+Rejection rule: a method that raises J_within and J_between together (both medians up vs v8, paired across TFs) is rejected regardless of J_within.
+Stratification: cells-per-TF tertiles of the 79 TFs.
+Equivalent cells: from the pooled Run 1 fit of J_within on log10(cells) (all five deep TFs), a method's median J_within gain at a TF's depth N is converted to N' / N where J(N') = J(N) + gain. Because J_between rises nearly as fast, the same conversion is also reported for J_within - J_between_matched using its pooled Run 1 fit, and flagged as ill-conditioned where that slope is near 0.
+Outputs (DESCRIPTIVE): methods_per_tf.tsv, methods_summary.tsv (median J_within, J_between, difference, paired deltas vs v8 with bootstrap CI over TFs, equivalent cells, by depth tertile and overall).
