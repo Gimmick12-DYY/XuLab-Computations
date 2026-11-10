@@ -20,4 +20,11 @@ Each step lists what changed, the sanity check (own motif recovered in the per-T
 
 ## Step 2 (fallback iii): distal-only raw summits (per_tf_raw_distal/, array 8756641)
 - The promoter stratum is dropped from the raw pools (TSS within 1 kb), so matching is preserved. 76 TFs keep >= 300 discovery windows; NFYA (272) and SOX4 (230) drop out.
-- Sanity: pending.
+- Sanity: own motif in the top 10 with p <= 1e-5 in 0 of 19 TFs. It is worse than with promoters (CTCF rank 46, MAZ 28, NRF1 307).
+- Pair scoring: there are 572 / 464 / 684 novel pairs per tier. Empirical p <= 0.05: strict 16 / 14 / 12, loose 18 / 15 / 19 (2-3%, at or below chance). Controls share nothing strict.
+- AF3 + empirical p <= 0.05: DDIT3-RBBP7 (emp 0.005; shares the CTCF/BORIS motif distally, a motif only 5 of 76 TFs pass, validated on even chromosomes in both), FOXJ3-FOXK1 (Usf2, 3 TFs), E2F3-MBD3 (KLF/Sp).
+- Verdict: distal restriction does not recover own motifs; pair-level rate stays at the null. Imputed and distal de novo tasks that had not started were cancelled to give the raw de novo runs priority.
+
+## Step 3 (fallback iv): de novo-only sharing on raw summits
+- Each TF's de novo motifs (HOMER len 8/10/12, fold >= 1.5, p <= 1e-10) are compared between the two TFs (similarity >= 0.6), with the random-pair rate from the same matched null.
+- Pending: raw de novo tasks (array 8754925).
