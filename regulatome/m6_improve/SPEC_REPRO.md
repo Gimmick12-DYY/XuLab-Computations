@@ -44,7 +44,7 @@ Subsample the deep TFs, RBBP4 at 181k cells down through NFYA, SOX4, XPA and RBB
 10k, 20k, 50k and 100k cells, five draws each, and measure J_within and J_between at every depth.
 
 This does two things. It tests whether the cross-TF relationship above is really depth rather than
-everything else that differs between TFs, by tracing the curve inside a single TF. And it converts any later result into
+antibody quality, by tracing the curve inside a single TF. And it converts any later result into
 **equivalent cells**: a method that raises J_within by 0.04 can be reported as worth so many thousand
 cells per TF, which is the number the lab actually needs for planning.
 
@@ -57,12 +57,10 @@ the same depth costs nothing and is the primary J_between for Run 1. The full-de
 secondary column and remains the right reference for Run 2.
 
 **The test is the slope, not the fitted value.** The cross-TF fit mixes depth with everything that
-differs between TFs, so its intercept averages over all 79 and each within-TF curve will sit at its own
-level. Depth is confirmed as causal if the within-TF slope is near
+differs between TFs, antibody quality most of all, so its intercept averages over 79 antibodies and each
+within-TF curve will sit at its own level. Depth is confirmed as causal if the within-TF slope is near
 0.206 per factor of ten in cells. Report a slope per TF with its interval, and the spread of intercepts
-separately, since that spread is the TF-level variation left after depth and is worth knowing on its own.
-It must not be labelled an antibody-quality effect, which this project has never measured (see
-this spec's Amendment 7).
+separately, since that spread measures the antibody-quality effect and is worth knowing on its own.
 
 If the slopes come out flat, depth is not the lever, the equivalent-cells yardstick is void and Run 2
 must not be read against it.
@@ -125,8 +123,8 @@ separately.
 
 Run 1 confirmed the causal half of the hypothesis and killed its usefulness in the same table. Within a
 single TF, J_within rises with depth exactly as the cross-TF fit said it would: slopes .239 to .329,
-median .308, every interval excluding both zero and .206. Depth is causal, the residual TF-level
-variation is the .28 spread of intercepts, and that part of Run 1 passed.
+median .308, every interval excluding both zero and .206. Depth is causal, the antibody effect is the
+.28 spread of intercepts, and that part of Run 1 passed.
 
 But matched-depth J_between rises almost as fast, slopes .24 to .28. The objective, the difference,
 therefore grows by only .004 to .058 per factor of ten in cells: NFYA +.019 at 5k and +.061 at 50k,
@@ -221,8 +219,10 @@ not the README's Amendment 7, which declares the per-TF floor test.*
 and that label is withdrawn.** It is residual TF-level variation after depth is accounted for. Antibody
 quality is one plausible contributor and this project has never measured it, nor separated it from a TF's
 expression level, the size and nature of its true binding repertoire, its motif information content, or
-the cell-cycle distribution of its occupancy. Every occurrence above is corrected to "residual TF-level
-variation".
+the cell-cycle distribution of its occupancy. The earlier text is left exactly as declared and is NOT rewritten. Every occurrence of "antibody" above,
+in the Run 1 section and in Amendments 1 and 3, is corrected by this amendment to "residual TF-level
+variation" and is to be read that way. Correcting a pre-registration by appending to it, rather than by
+editing the declared text, is the rule for this document and for the repro README alike.
 
 The same restraint applies to PA2G4, the one deep TF that fails the specificity null. It is reported as
 an unexplained exception. No mechanism is offered for it, here or in the paper.
