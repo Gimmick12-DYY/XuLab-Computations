@@ -1,5 +1,5 @@
 """Fig 3 v6 panel b: the approved S1D palette C figures D1 (pairs with Hi-C loop support + observed vs own 10,000-shuffle null) and
-D2 (per-TF loop-edge coverage), deck slide 15; D2 now carries an observed-vs-own-null panel for module edges at its right (user 2026-11-09), drawn with the D1 null code; re-run from hub_figures/basic/descriptive/plot_s1d_split_paletteC.py, same data and
+D2 (per-TF loop-edge coverage), deck slide 15; D2 now carries an observed-vs-own-null panel for module edges at its right (user 2026-11-09), drawn with the D1 null code; NULL_MODE=edge (default, Fig 3: each edge shifted on its own) or block (supplement: whole module as one block); re-run from hub_figures/basic/descriptive/plot_s1d_split_paletteC.py, same data and
 style. v6 changes: wording only ("clique" -> "higher-order co-binding module" / "module edge") and the figure size set to the panel
 size on the Fig 3 page (fonts stay 5-7 pt); PDF written next to the SVG.
   python b_hic_support_v6.py <outdir> [D1 w h mm] [D2 w h mm]"""
@@ -85,13 +85,24 @@ ax.set_title("Modules by Hi-C loop-edge coverage (% = modules with ≥1 loop edg
 # right: observed vs own null for MODULE EDGES >25 kb, drawn with the D1 right-half code (null column 1 = edges)
 MIN_E = 100
 from statsmodels.stats.multitest import multipletests
+import os
+MODE = os.environ.get("NULL_MODE", "edge")   # edge: each module edge shifted on its own (as the pairs test); block: whole module shifted as one block (S1D)
 E = T.loc[[t for t in Pt.index if t in T.index and T.edges[t] >= MIN_E]].copy()
+if MODE == "edge":   # per-edge null from figures/fig3_v6/checks/module_edge_null_check.py (10 x 1,000 shuffles per TF)
+    ND = Path(os.environ.get("EDGE_NULL_DIR", "/Users/dyy/Desktop/HEK293T-ATGTAG/fig3_v6/checks/null_per_edge"))
+    enull = {t: np.concatenate([np.load(f)["null"] for f in sorted(ND.glob(f"{t}_*.npz"))]) for t in E.index}
+    for t in E.index:
+        o = float(np.load(next(ND.glob(f"{t}_*.npz")))["obs"]); assert abs(o - E.edge_obs[t]) < 1e-12 and len(enull[t]) == 10000, t
+    E["edge_p"] = [(1 + (enull[t] >= E.edge_obs[t]).sum()) / (1 + len(enull[t])) for t in E.index]
+    nul = lambda t: enull[t]
+else:
+    nul = lambda t: null[t][:, 1]
 E["q"] = multipletests(E.edge_p, method="fdr_bh")[1]
 x1 = 12
 for i, tf in enumerate(Pt.index):
     if tf not in E.index:
         b.text(x1 + 0.3, i, "n/a", va="center", fontsize=4.5, color=N.mid); continue
-    v = null[tf][:, 1] * 100
+    v = nul(tf) * 100
     lo, q1, md, q3, hi = np.percentile(v, [2.5, 25, 50, 75, 97.5])
     b.plot([lo, hi], [i, i], color=N.mid, lw=0.7, solid_capstyle="butt")
     b.add_patch(plt.Rectangle((q1, i - 0.28), q3 - q1, 0.56, color=N.light, lw=0))
@@ -103,15 +114,18 @@ b.scatter([], [], s=7, color=N.ink, label="observed (BH q < 0.05)")
 b.scatter([], [], s=7, color="white", edgecolors=N.ink, linewidths=0.5, label="observed, n.s.")
 b.add_patch(plt.Rectangle((0, 0), 0, 0, color=N.light, label="own shuffle null: box = IQR, line = median, whiskers = 95%"))
 b.legend(loc="upper center", bbox_to_anchor=(0.2, -0.075), ncol=3)
-hi_x = max(E.edge_obs.max() * 100, max(np.percentile(null[t][:, 1] * 100, 97.5) for t in E.index)) + 1.5
+hi_x = max(E.edge_obs.max() * 100, max(np.percentile(nul(t) * 100, 97.5) for t in E.index)) + 1.5
 b.set_xlim(x1, hi_x); b.set_xlabel("% of module edges >25 kb on a loop")
 b.set_title("Observed vs own null (10,000 shuffles)", loc="left")
 b.xaxis.grid(True, color=N.faint, lw=0.5); b.set_axisbelow(True)
 b.tick_params(axis="y", left=False, labelleft=False); b.spines["left"].set_visible(False)
 ax.set_ylim(-0.7, len(Pt) - 0.3)
 nsig = int((E.q < 0.05).sum())
-fig.text(0.99, -0.035, f"Null: TFs with ≥{MIN_E} module edges >25 kb (n/a = fewer); same-chromosome shuffles keep each edge's spacing; {nsig} of {len(E)} TFs BH q < 0.05", ha="right", fontsize=5.5, color=N.dark)
-E.assign(null_med=[np.median(null[t][:, 1]) for t in E.index])[["edges", "edge_obs", "null_med", "edge_p", "q"]].to_csv(OUT / "b2_module_edge_null.tsv", sep="\t")
-print(f"module-edge null: {nsig} of {len(E)} TFs q < 0.05; median obs {E.edge_obs.median():.3f}")
-for ext in ("svg", "pdf", "png"): fig.savefig(OUT / f"b2_module_loop_coverage.{ext}", bbox_inches="tight")
+FOOT = dict(edge="same-chromosome shuffles keep each edge's spacing (each edge shifted on its own, as for pairs)",
+            block="stricter block shuffle: each whole module shifted as one block on its chromosome, keeping its layout")[MODE]
+fig.text(0.99, -0.035, f"Null: TFs with ≥{MIN_E} module edges >25 kb (n/a = fewer); {FOOT}; {nsig} of {len(E)} TFs BH q < 0.05", ha="right", fontsize=5.5, color=N.dark)
+STEM = "b2_module_loop_coverage" if MODE == "edge" else "S_module_edge_block_null"
+E.assign(null_med=[np.median(nul(t)) for t in E.index])[["edges", "edge_obs", "null_med", "edge_p", "q"]].to_csv(OUT / f"{STEM}.tsv", sep="\t")
+print(f"module-edge null ({MODE}): {nsig} of {len(E)} TFs q < 0.05; median obs {E.edge_obs.median():.3f}")
+for ext in ("svg", "pdf", "png"): fig.savefig(OUT / f"{STEM}.{ext}", bbox_inches="tight")
 plt.close(fig)

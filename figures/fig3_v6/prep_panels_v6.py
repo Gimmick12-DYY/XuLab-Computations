@@ -33,6 +33,8 @@ shutil.copy(SRC / "e_class_bars.svg", P / "b_class_bars.svg")
 for f in P.glob("c1_*.svg"): f.unlink()   # v6 (user 2026-11-09): pairs chart moved to supplementary/
 SUP = H / "supplementary"; SUP.mkdir(exist_ok=True)
 for e in ("svg", "pdf", "png"): shutil.copy(SRC / f"b1_pairs_loop_support.{e}", SUP / f"S_pairs_loop_support.{e}")
+for e in ("svg", "pdf", "png", "tsv"):   # stricter whole-module block-shuffle version of panel c (NULL_MODE=block)
+    if (SRC / f"S_module_edge_block_null.{e}").exists(): shutil.copy(SRC / f"S_module_edge_block_null.{e}", SUP / f"S_module_edge_block_null.{e}")
 for f in P.glob("c2_*.svg"): f.unlink()
 shutil.copy(SRC / "b2_module_loop_coverage.svg", P / "c_module_loop_support.svg")
 (P / "d1_se_browser.svg").write_text(set_live_text((SE / "figure_gold/browser_final.svg").read_text(), drop=("TF binding and Hi-C at the super-enhancer*",)))
