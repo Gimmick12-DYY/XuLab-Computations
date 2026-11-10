@@ -28,3 +28,19 @@ Each step lists what changed, the sanity check (own motif recovered in the per-T
 ## Step 3 (fallback iv): de novo-only sharing on raw summits
 - Each TF's de novo motifs (HOMER len 8/10/12, fold >= 1.5, p <= 1e-10) are compared between the two TFs (similarity >= 0.6), with the random-pair rate from the same matched null.
 - Pending: raw de novo tasks (array 8754925).
+
+## Step 4 (added, not in the pre-approved list): reversed design (reversed/, FIMO array 8759406)
+- Sequence defines the sets. FIMO p <= 1e-4 of 2,528 known motifs (JASPAR + HOCOMOCO v12 + Codebook + 2 CAP-SELEX) over 95,044 eligible bin centres.
+- Per TF: imputed signal (minus 79-TF mean, rank-normal) is residualized on the GC x CpG x promoter strata. z = mean residual at hit bins x sqrt(n) / sd, computed separately on discovery (odd) and validation (even + X) chromosomes.
+- Pass: strict z_disc >= 4 and z_val >= 2; loose 3 / 1.5. Motifs passing in > 20 TFs are dropped as generic.
+- Sanity: NFYA own motif z 7.8 / 6.5 (rank 20 of 2,427), NRF1 3.9 / 2.6 (rank 16), HES1 5.2 / 0.7, CTCF 2.1 / 2.2 (rank 256), MAZ 1.2, ZNF143 0.2. Tops are KLF/SP and KZFP words.
+- Pair rates (any shared / empirical p <= 0.05 vs depth- and pct-matched random pairs):
+  - novel pct >= 0.90: strict 34% / 5.2%, loose 65% / 5.0%
+  - novel 0.80-0.90: 34% / 5.7%
+  - novel 0.60-0.80: 30% / 5.0%
+  - novel < 0.60: 29% / 5.8%
+  - all pairs: 31% / 5.4%
+  So the rate is the same across correlation tiers and equals the 5% expected under the null.
+- Controls: CTCF-STAG2, MAZ-ZNF143, NFYA-ZNF644 and EZH2-MTF2 share nothing strict; the RBBP7-SRCAP negative shares 3 loose.
+- AF3-strong pairs at empirical p <= 0.05: HES1-NR1D2, NR1D2-TBX3, NR1D2-ZNF703, RBBP7-SAFB. NR1D2 passes many KZFP/repeat motifs, so these reflect a TF-wide sequence preference rather than shared grammar.
+- Verdict: at the null rate.
