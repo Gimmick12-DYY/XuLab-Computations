@@ -76,3 +76,23 @@ depth increase that raises J_within by ΔJ_within buys at most ΔJ_within × (0.
 A method counts as **beating depth** only if its mean Δdiff > 0.2417·max(ΔJ_within, 0) AND the Δdiff 95% CI excludes 0. Otherwise it
 "reproduces the depth curve" = null. Reported per tertile and overall, for diff and diff_partnerex.
 Outputs (DESCRIPTIVE): run2c_per_tf.tsv, run2c_summary.tsv, run2c/lists/. Run as one CPU dependency chain (peak array -> lists/scoring).
+
+## Amendment 5 (2026-11-10, declared before the noise-floor test is run; spec SPEC_REPRO.md Amendment 5)
+The depth band applies only to methods that raise J_within; for methods that lower it, the comparator is the noise floor. Peak-level
+aggregation is not adopted; pooled-neighbour bins are null.
+
+Noise-floor test (script noisefloor.py). Uninformative lists at matched depth and matched list length (1,000), same half splits and seeds
+as Run 2b/2c (cells permuted with seed 20261029 + TF index, first half = n // 2), 20 draws of each kind. Draw RNG seed =
+20261110 + 100000 x kind + 1000 x draw + 2 x TF index + half (kind a = 1, b = 2).
+- (a) perm: within each TF-half, shuffle the per-element CPM vector across the 159,965 active elements, then the v8 rule (sum over ABC
+  links, top 1,000 genes with score > 0).
+- (b) count-matched random genes: for each TF-half, take that half's v8 list; for each gene record its number of ABC-linked elements; draw
+  the same number of genes at random without replacement from all ABC-linked genes so that the element-count histogram is matched exactly
+  per stratum (strata: counts 1..15 exact, then 16-20, 21-30, 31-50, 51+; if a stratum runs out, the deficit is drawn from the nearest
+  stratum and logged).
+Per draw: J_within, J_between (mean over the other 78 TFs' same-kind same-draw same-half lists, both halves) and difference per TF; per
+depth tertile (Run 2b tertiles) the mean and median over TFs. Reported over the 20 draws: mean and 95% interval (2.5th-97.5th percentile
+of the 20 per-draw values).
+Pre-declared decision: the low-tertile avenue SURVIVES only if the upper 95% bound of the floor's low-tertile difference (per-draw MEAN over
+the 26 low-tertile TFs) is below +.003 for BOTH floor kinds AND below .013 (the lower CI bound of resid_pool, +.016 [.013, .020]).
+Otherwise it is VOID and closes. Outputs (DESCRIPTIVE): noisefloor_per_draw.tsv, noisefloor_summary.tsv.
