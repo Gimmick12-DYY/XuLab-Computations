@@ -150,22 +150,28 @@ construction (Amendment 6), so the evidence is d > 0 with its interval, not a ra
 
 ### Per-TF floor test (Amendments 7, 7b; floor_test.py; per_tf_floor_test.tsv)
 Route: the existing noisefloor_per_draw.tsv holds per-TF draws (79 x 100 x 2); nothing was rerun.
-- PRIMARY (exact-draw p, p_perm <= .05 AND p_cm <= .05): 38 of 79 TFs clear. By tertile: high 26, mid 11, low 1 (ZNF143).
-  All 10 reproducible TFs clear; 2x2 (clears x reproducible10) = [[10, 28], [0, 41]], Fisher p = 3.3e-4.
+- PRIMARY (exact-draw p, p_perm <= .05 AND p_cm <= .05): 38 of 79 TFs clear. By tertile: high 26/27, mid 11/26, low 1/26 (ZNF143).
+  The one high-tertile TF that does not clear is PA2G4 (Jw .166 < Jb .287). All 10 reproducible TFs clear.
   Exact-p BH (minimum p 1/101 = .0099; draw-limited, Amendment 7b): 36 TFs have q <= .05 under both nulls (minimum q .023).
 - SECONDARY (z vs own draws, BH over 79, both nulls): 36 called at FDR .05 (high 26, mid 9, low 1); POGK and TBX3 clear the primary test
-  but are not called. 2x2 = [[10, 26], [0, 43]], Fisher p = 1.8e-4. Shapiro-Wilk p < .01 for 2.5% of TFs under each null; no TF has a
-  draw SD < 1e-4.
+  but are not called. Shapiro-Wilk p < .01 for 2.5% of TFs under each null; no TF has a draw SD < 1e-4.
 - Cleared, sorted by d: RBBP4 .489, SOX4 .383, NFYA .366, XPA .329, RBBP7 .270, ZNF507 .259, NME2 .236, E2F3 .226, MBD3 .209, MLX .206,
   E4F1 .188, DDIT3 .169, ZNF703 .163, GLYR1 .127, CTCF .123, SAFB .095, MTF2 .086, DR1 .057, ZNF512B .045, HOXB9 .042, ZBTB7A .035,
   HOXA10 .035, RBPJ .031, HOXB6 .031, ZNF143 .024, MAZ .023, FLYWCH1 .023, ZNF768 .022, HES1 .022, ZNF644 .022, HOXC9 .022, WIZ .021,
   FOXC1 .018, ZIC2 .017, ZNF746 .014, SMARCA1 .012, POGK .011, TBX3 .008.
-- Without NRF1 (d = .0006, p_perm .22, p_cm .15; it does not clear): unchanged, 38 clear / 36 called, Fisher p 3.8e-4 / 2.0e-4.
-- Reading: clearing the floor means d is above an uninformative list, not that the list is TF-specific at a useful level. 20 of the 38
-  have d < .05, against the high-tertile mean of +.157.
-- The overlap with the 10 reproducible TFs is NOT independent confirmation. Those 10 were selected on split-half Jaccard, and J_within is
-  one term of d, so agreement is partly expected by construction. What is new is the boundary: 38 TFs (36 at z-FDR .05) clear a declared
-  null, against 10 picked by a threshold.
+- Without NRF1 (it does not clear): unchanged, 38 clear / 36 called.
+- The 10 were selected on split-half Jaccard, which is a term in d, so their clearing is a sanity check and not independent evidence.
+- Per-TF claims tier: d >= .04, the magnitude declared in Amendment 6 before any per-TF number existed (declared there as a low-tertile
+  gate, applied here per TF). TFs above the null with d < .04 are reported as above-null with a small effect and are not used for per-TF
+  statements. 20 of the 38 have d >= .04 (RBBP4 through HOXB9 .042), all 20 in the high tertile (high 20, mid 0, low 0); no TF outside
+  the 38 has d >= .04.
+- Clearing is almost a pure depth ordering (high 26/27, mid 11/26, low 1/26), so this is a depth boundary with a per-TF test behind it,
+  not a biological property of the named proteins.
+- NRF1 had the cleanest Perturb-seq knockdown in the panel and drives the B6 diagonal, yet d = .0006 (p_perm .22). Its list is
+  reproducible but not distinctive, because its CpG-promoter targets are shared across the panel. Reproducibility (J_within) and
+  specificity (d) are separate axes, and NRF1 separates them. This is why d, not J_within, is the objective, and it is consistent with the
+  shape of the four benchmark nulls. NRF1: low tertile (1,416 cells), J_within .144, J_between .143, d .0006, p_perm .22, p_cm .15
+  (its J_within is above the low-tertile median of .096).
 - Column legend, per_tf_floor_test.tsv: p_perm, p_cm = exact draw p, (1 + #draws >= d) / 101; a value of .0099 means "at the 100-draw
   resolution floor", not a smaller p. z_*, pz_*, qz_* = z against the TF's own 100 draws and its one-sided normal p (BH-adjusted in qz_*).
   For rows with |z| > 8, pz_* is a normal-tail extrapolation, not a frequency; the exact p for those rows is at the 100-draw resolution
