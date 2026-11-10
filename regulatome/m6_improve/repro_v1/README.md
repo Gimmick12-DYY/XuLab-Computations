@@ -132,3 +132,37 @@ noisefloor_per_draw.tsv already holds per-TF draws (79 TFs x 100 draws x 2 kinds
 - Normality check: Shapiro-Wilk p of each TF's draws per null, and the share of TFs with p < .01.
 - Any TF whose draw SD < 1e-4 (either null) is flagged (sd_flag), listed, and not called on the z test.
 - Added columns: z_perm, pz_perm, qz_perm, z_cm, pz_cm, qz_cm, shapiro_perm, shapiro_cm, sd_flag, called_fdr05.
+
+## Results (2026-11-10, noise floor job 8796692 and per-TF floor test; DESCRIPTIVE)
+Absolute difference d = J_within - J_between, mean over the TFs in each tertile (floors: mean over 100 draws [95% interval over draws]).
+
+| tertile | floor perm | floor count-matched | v8@1000 | resid_pool | ratio_pool | peak_fe | peak_mask | nbr_k1 | nbr_k2 |
+|---|---|---|---|---|---|---|---|---|---|
+| low | +.0023 [.0005, .0042] | -.0037 [-.0053, -.0023] | -.0133 | +.0029 | -.0065 | -.0040 | -.0042 | -.0192 | -.0214 |
+| mid | +.0003 [-.0022, .0027] | +.0009 [-.0009, .0026] | +.0054 | +.0106 | +.0038 | +.0171 | +.0068 | +.0057 | +.0072 |
+| high | +.0117 [.0094, .0142] | +.0071 [.0054, .0090] | +.1574 | +.0462 | +.1017 | +.0631 | +.1093 | +.1476 | +.1599 |
+| all | +.0048 [.0035, .0061] | +.0015 [.0004, .0025] | | | | | | | |
+
+(1) Low-tertile v8 (-.0133) is BELOW both floors (+.0023 perm, -.0037 count-matched). For the shallowest third, our lists agree with
+other TFs' lists more than an uninformative list does.
+(2) High-tertile v8 (+.157) against a floor of about +.01 is roughly a 15-fold margin, against an uninformative-list null with no external
+benchmark.
+Caveat: the floors sit near 0 partly by construction (Amendment 6: TF-agnostic ABC links make a permuted or count-matched list's score track
+the linked-element count, the same for every TF and both halves). The evidence is d > 0 against each TF's own draws, with its interval,
+not the ratio.
+
+### Per-TF floor test (Amendments 7, 7b; floor_test.py; per_tf_floor_test.tsv)
+Route: the existing noisefloor_per_draw.tsv holds per-TF draws (79 x 100 x 2); nothing was rerun.
+- PRIMARY (exact-draw p, p_perm <= .05 AND p_cm <= .05): 38 of 79 TFs clear. By tertile: high 26, mid 11, low 1 (ZNF143).
+  All 10 reproducible TFs clear; 2x2 (clears x reproducible10) = [[10, 28], [0, 41]], Fisher p = 3.3e-4.
+  Exact-p BH (minimum p 1/101 = .0099; draw-limited, Amendment 7b): 36 TFs have q <= .05 under both nulls (minimum q .023).
+- SECONDARY (z vs own draws, BH over 79, both nulls): 36 called at FDR .05 (high 26, mid 9, low 1); POGK and TBX3 clear the primary test
+  but are not called. 2x2 = [[10, 26], [0, 43]], Fisher p = 1.8e-4. Shapiro-Wilk p < .01 for 2.5% of TFs under each null; no TF has a
+  draw SD < 1e-4.
+- Cleared, sorted by d: RBBP4 .489, SOX4 .383, NFYA .366, XPA .329, RBBP7 .270, ZNF507 .259, NME2 .236, E2F3 .226, MBD3 .209, MLX .206,
+  E4F1 .188, DDIT3 .169, ZNF703 .163, GLYR1 .127, CTCF .123, SAFB .095, MTF2 .086, DR1 .057, ZNF512B .045, HOXB9 .042, ZBTB7A .035,
+  HOXA10 .035, RBPJ .031, HOXB6 .031, ZNF143 .024, MAZ .023, FLYWCH1 .023, ZNF768 .022, HES1 .022, ZNF644 .022, HOXC9 .022, WIZ .021,
+  FOXC1 .018, ZIC2 .017, ZNF746 .014, SMARCA1 .012, POGK .011, TBX3 .008.
+- Without NRF1 (d = .0006, p_perm .22, p_cm .15; it does not clear): unchanged, 38 clear / 36 called, Fisher p 3.8e-4 / 2.0e-4.
+- Reading: clearing the floor means d is above an uninformative list, not that the list is TF-specific at a useful level. 20 of the 38
+  have d < .05, against the high-tertile mean of +.157.
