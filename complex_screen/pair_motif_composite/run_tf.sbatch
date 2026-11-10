@@ -6,7 +6,7 @@
 #SBATCH -t 45:00
 #SBATCH -o /work/users/d/y/dyy12/XuLab/complex_screen/pair_motif_composite/per_tf_matched/logs/%x_%A_%a.out
 set -euo pipefail
-O=/work/users/d/y/dyy12/XuLab/complex_screen/pair_motif_composite; G=$O/per_tf_matched; TASKS=${1:-$G/tasks_tf.tsv}
+O=/work/users/d/y/dyy12/XuLab/complex_screen/pair_motif_composite; G=${BASE:-$O/per_tf_matched}; TASKS=${1:-$G/tasks_tf.tsv}
 module load homer/5.1 >/dev/null 2>&1
 read -r TF MODE < <(awk -v n=$((SLURM_ARRAY_TASK_ID + 1)) 'NR==n' "$TASKS")
 P=$G/pools/$TF; R=$G/results/$TF; mkdir -p $R
