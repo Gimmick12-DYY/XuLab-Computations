@@ -11,4 +11,13 @@ Each step lists what changed, the sanity check (own motif recovered in the per-T
 ## Step 1 (fallback ii): raw MACS2 summits (per_tf_raw/, array 8754925)
 - Foreground: lab MACS2 summits at p <= 1e-5, top 5,000, +/- 100 bp, blacklist / >50% exonic / N removed.
 - Background: union-ATAC bins not overlapping the TF's peaks, matched the same way.
+- Sanity: own motif in the top 10 with p <= 1e-5 in 2 of 21 TFs. NFYA (NFY rank 1, p 1e-306) and NRF1 (rank 1, p 1e-15) pass. MAZ is rank 10 (p 3e-4), CTCF rank 32 (p 2e-4, fold 1.43), DDIT3/Chop rank 65. Sp1/KLF words still top most tables.
+- Pair scoring (novel_pairs.py, TFBASE=per_tf_raw): there are 617 / 508 / 738 novel pairs in the pct >= 0.90 / 0.80-0.90 / 0.60-0.80 tiers.
+  - Empirical p <= 0.05 vs 200 depth- and pct-matched random pairs: strict 14 / 14 / 30, loose 24 / 22 / 21. That is 2-4% per tier, at or below the 5% expected by chance, so there is no excess of sharing among novel pairs.
+  - AF3 strong/weak with empirical p <= 0.05: DDIT3-RBBP7, DDIT3-RBBP4 (CRE/ATF bZIP family shared and validated on even chromosomes; 12 of 79 TFs pass CRE), XPA-ZIC2, RBBP4-ZIC2 (KLF/NRF promoter words), RBPJ-ZNF507.
+  - Controls: CTCF-STAG2 shares only Sp1; MAZ-ZNF143 and NFYA-ZNF644 share nothing at strict; RBBP7-SRCAP (negative) shares NRF1. None has empirical p < 0.37.
+- Verdict: own-motif recovery improves for deep promoter TFs, but pair-level sharing is at the null rate. DDIT3-RBBP4/7 + CRE is the only biologically coherent call (DDIT3 is bZIP), and it does not survive the across-tier null.
+
+## Step 2 (fallback iii): distal-only raw summits (per_tf_raw_distal/, array 8756641)
+- The promoter stratum is dropped from the raw pools (TSS within 1 kb), so matching is preserved. 76 TFs keep >= 300 discovery windows; NFYA (272) and SOX4 (230) drop out.
 - Sanity: pending.
