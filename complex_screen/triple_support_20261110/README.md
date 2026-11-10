@@ -7,8 +7,10 @@ four motif-profile methods (peak500, peak2000, seqN20, seqN3k), the top 3 shared
 (MTF2-RBBP4, RBBP4-RBBP7, EZH2-MTF2) are filled from `all_pairs_motif_profile.tsv` in the same folder. `source_table` records which table each row
 came from. `motif_descriptive.tsv` (v1, `build_motif_descriptive.py`) is kept unchanged, with those 3 pairs as NA and its original status wording.
 
-The motif values are description only (`motif_status` = "descriptive only; not detected in our data" on every row). They do not affect ranking,
+The motif values are description only (`motif_status` = "descriptive only; see README" on every row). They do not affect ranking,
 which stays correlation + AF3.
+
+Two comparisons. (1) Against random pairs (GC/CpG-matched test, 10 Nov), novel pairs pass at the random-pair rate: not detected in our data. (2) Against correlation-matched pairs (the profile's matched percentile), the comparison is uninformative, not negative, at high co-binding correlation. An uncontaminated negative set cannot be built where unrecognised complexes would sit.
 
 Whether this reflects depth or the absence of a shared motif has not been tested. DDIT3-RBBP4's SP/KLF/NFY hit is promoter-concentrated shared signal, not pair grammar.
 

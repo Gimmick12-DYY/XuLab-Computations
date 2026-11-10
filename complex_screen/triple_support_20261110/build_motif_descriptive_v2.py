@@ -20,7 +20,7 @@ for r in T.itertuples():
         t = top3(P.loc[k, f"top10_{m}"]) if src != "NA" else []
         x[f"top3_motifs_{m}"] = "; ".join(t) if t else "NA"; x[f"matched_pct_{m}"] = P.loc[k, f"conc_{m}_matched_pct"] if src != "NA" else "NA"
         W.update(t); WM[m].update(t); z |= "ZNF460" in t
-    x["motif_status"] = "descriptive only; not detected in our data"; rows.append(x); Z += [r.pair] if z else []
+    x["motif_status"] = "descriptive only; see README"; rows.append(x); Z += [r.pair] if z else []
 R = pd.DataFrame(rows); R.to_csv(f"{O}/motif_descriptive_v2.tsv", sep="\t", index=False)
 print(len(R), "rows; unresolved", miss, "| source", R.source_table.value_counts().to_dict())
 print("ZNF460 in any top 3:", len(Z), "of", len(R)); print("total top-3 slots", sum(W.values()), "| top 5 overall:", W.most_common(5))
