@@ -91,8 +91,19 @@ as Run 2b/2c (cells permuted with seed 20261029 + TF index, first half = n // 2)
   per stratum (strata: counts 1..15 exact, then 16-20, 21-30, 31-50, 51+; if a stratum runs out, the deficit is drawn from the nearest
   stratum and logged).
 Per draw: J_within, J_between (mean over the other 78 TFs' same-kind same-draw same-half lists, both halves) and difference per TF; per
-depth tertile (Run 2b tertiles) the mean and median over TFs. Reported over the 20 draws: mean and 95% interval (2.5th-97.5th percentile
-of the 20 per-draw values).
-Pre-declared decision: the low-tertile avenue SURVIVES only if the upper 95% bound of the floor's low-tertile difference (per-draw MEAN over
-the 26 low-tertile TFs) is below +.003 for BOTH floor kinds AND below .013 (the lower CI bound of resid_pool, +.016 [.013, .020]).
-Otherwise it is VOID and closes. Outputs (DESCRIPTIVE): noisefloor_per_draw.tsv, noisefloor_summary.tsv.
+depth tertile (Run 2b tertiles) the mean and median over TFs. Reported over the draws: mean and 95% interval (2.5th-97.5th percentile
+of the per-draw values).
+
+### Amendment 5 revision (2026-11-10, before the noise floor was read; a 20-draw job 8796629 was cancelled before writing any output)
+- The noise floor is DESCRIPTIVE calibration only, not a gate. 100 draws per floor kind (draw RNG seeds as above, draw = 0..99).
+  Reason: with panel-shared, TF-agnostic ABC links both floors sit at about 0 by construction (after permutation, scores track the
+  linked-element count, which is the same for every TF and both halves), so a floor below +.003 cannot validate anything.
+- Everything is reported on the ABSOLUTE difference scale (J_within - J_between), not as deltas.
+- The gate is magnitude, declared after Run 2c and before the floor is read: the low-depth tertile must reach an absolute difference of
+  +.04 (a third of the high tertile's +.127) for the shallow-TF avenue to stay open. The best observed is resid_pool at about +.003
+  absolute (+.016 as a delta vs v8@1000, low-tertile baseline -.013).
+
+**Closing statement (shallow-TF avenue):** CLOSED on magnitude, whatever the floor returns. No method in Run 2b or 2c brings the low-depth
+tertile within an order of magnitude of +.04 absolute (best: resid_pool ~+.003); the four low-tertile "gains" (resid_pool, ratio_pool,
+peak_fe, peak_mask) all raise the difference by lowering both components toward the uninformative level. Outputs (DESCRIPTIVE):
+noisefloor_per_draw.tsv, noisefloor_summary.tsv.
