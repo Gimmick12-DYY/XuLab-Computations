@@ -35,13 +35,13 @@ for p in [q for q in strong if "DDIT3" in q.split("_")]:
         pl = Dd.groupby("res").b.mean(); res = sorted({int(r_) for r_ in Dd.res.values[close] if pl[r_] >= 70}); U |= set(res)
         rows.append(dict(DESCRIPTIVE="DESCRIPTIVE", item="interface_seed", pair=p, seed=int(r.seed), sample=int(r.sample), ranking_score=r.ranking_score, n_iface_res=len(res), iface_res=",".join(map(str, res))))
     IF[p] = (U, seq)
-# bZIP from sequence: basic region = first window >= 60% R/K starting at or after ~90; zipper = residues to ~160 with L at heptad spacing
+# bZIP: P35638 basic region 98-125, leucine zipper 126-160 (as given); confirmed on the model sequence (169 aa; basic starts at 98-105 DQGRTRKRK,
+# zipper leucines L134/L141/L148).
 seq = next(iter(IF.values()))[1] if IF else ""
 if seq:
-    bas = [i + 1 for i in range(len(seq) - 20) if sum(c in "RK" for c in seq[i:i + 20]) >= 8]; b0 = min([b for b in bas if b >= 80], default=98)
-    Ls = [i + 1 for i, c in enumerate(seq) if c == "L" and i + 1 > b0 + 20]; z1 = max([l for l in Ls if (l - Ls[0]) % 7 == 0], default=160) if Ls else 160
-    BZ = set(range(b0, z1 + 1)); rows.append(dict(DESCRIPTIVE="DESCRIPTIVE", item="bzip_from_sequence", tf="DDIT3", seq_len=len(seq), bzip_start=b0, bzip_end=z1, bzip_seq=seq[b0 - 1:z1]))
-    for p, (U, _) in IF.items(): rows.append(dict(DESCRIPTIVE="DESCRIPTIVE", item="interface_union", pair=p, n_iface_res=len(U), n_in_bzip=len(U & BZ), frac_in_bzip=round(len(U & BZ) / max(len(U), 1), 3), iface_res=",".join(map(str, sorted(U)))))
+    BAS, ZIP = set(range(98, 126)), set(range(126, 161)); BZ = BAS | ZIP
+    rows.append(dict(DESCRIPTIVE="DESCRIPTIVE", item="bzip_declared", tf="DDIT3", seq_len=len(seq), bzip_start=98, bzip_end=160, bzip_seq=seq[97:160]))
+    for p, (U, _) in IF.items(): rows.append(dict(DESCRIPTIVE="DESCRIPTIVE", item="interface_union", pair=p, n_iface_res=len(U), n_in_basic=len(U & BAS), n_in_zipper=len(U & ZIP), n_in_bzip=len(U & BZ), frac_in_bzip=round(len(U & BZ) / max(len(U), 1), 3), iface_res=",".join(map(str, sorted(U)))))
     ks = list(IF)
     for i in range(len(ks)):
         for j in range(i + 1, len(ks)):
