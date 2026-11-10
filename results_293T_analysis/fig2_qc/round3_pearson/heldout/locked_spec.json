@@ -1,0 +1,11 @@
+{
+  "set": "preferred",
+  "fold": 2.0,
+  "top_n": 2500,
+  "groups": 50,
+  "depth": "ZNF777 (420,339 reads), seeds 11,22,33",
+  "discovery_half": "odd autosomes",
+  "test_half": "even autosomes + chrX",
+  "discovery_diag_minus_off": 0.09236260237354683,
+  "discovery_perm_p": 0.004166666666666667
+}
