@@ -172,6 +172,9 @@ Route: the existing noisefloor_per_draw.tsv holds per-TF draws (79 x 100 x 2); n
   Observed range over which specificity appears: the 20 TFs at d >= .04 have >= 5,185 cells (ZNF512B); the high/mid tertile
   boundary lies between 4,896 and 5,138 cells. These are OBSERVED in this panel, not a validated cutoff, and unlike the retracted ~22k-cells
   figure they are not extrapolated from a fit.
+  Two-sided: below the boundary (~5,000 cells), 0/52 TFs reach d >= .04 and 12/52 clear the null; above it, 20/27 reach d >= .04 and
+  26/27 clear the null. Depth is necessary, not sufficient (RBPJ, just above the boundary, clears the null at d .031 but not the tier).
+  This is a floor observed in this panel, not an estimated requirement.
 - Clearing is almost a pure depth ordering (high 26/27, mid 11/26, low 1/26), so this is a depth boundary with a per-TF test behind it,
   not a biological property of the named proteins.
 - The Perturb-seq diagonal had a single contributor, NRF1, whose knockdown was the cleanest in the panel. NRF1 lies in the shallowest
