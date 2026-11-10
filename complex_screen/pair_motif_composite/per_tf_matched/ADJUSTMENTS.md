@@ -56,3 +56,12 @@ Each step lists what changed, the sanity check (own motif recovered in the per-T
 - Lead from step 4: the NFY motif (NFYA.H12CORE, the motif with the cleanest own-TF signal) is enriched in the signal of 11 TFs, validated on even chromosomes: SOX4 z 9.4 / 8.6, ZNF507 7.8 / 5.5, NFYA 7.8 / 6.5, E2F3 7.5 / 4.9, GLYR1, FLYWCH1, HOXA10, NME2, MLX, RBBP4, HOXB9.
   - Novel correlation pairs among them: NFYA-SOX4 (pct 0.96, shares 101 strict motifs, emp p 0.005), NFYA-ZNF507 (pct 1.00, emp 0.04), NFYA-RBBP4 (0.99), MLX-NFYA (0.85). AF3 is none for all of them.
   - This fits the user's logic steps 1 and 2 (correlation, then a motif enriched in both TFs) without structural support. It could also be shared CCAAT-box promoter occupancy rather than a complex.
+
+## Track A guard on DDIT3-NFYA (nfya_null/, jobs 8764920, 8764923, 8764924)
+- DDIT3-NFYA: NFY vs DDIT3-only 2.35x, p 5e-13, held-out 1.74x (p 3e-5). NFY-only permutation p = 0.005 over 200 permutations, which is the floor. NFY vs NFYA-only is only 1.23x (held-out 1.07x).
+- NFYA-specific null (NFYA with 20 random partners matched on top-set overlap):
+  - NFY vs partner-only reaches fold >= 1.3 and p <= 1e-3 in 15/20, and fold >= 1.5 with p <= 1e-5 in 10/20; 13/20 also hold on held-out chromosomes.
+  - DDIT3-NFYA ranks 3 of 21 by fold. NFYA-ZNF512B (2.99x), NFYA-ZBTB7A (2.58x) and NFYA-FOXJ3 (2.18x) are as high or higher.
+- DDIT3 null (DDIT3 with 20 random partners): NFY 0/20 and Chop 0/20 at any level. DDIT3 never shows its own motif.
+- CentriMo (bin centre +/- 100 bp): no central enrichment of NFY or Ddit3::Cebpa in the co-bound, DDIT3-only or NFYA-only pool (all E >= 0.19). Bin centres are not summits, so this check has little power.
+- Verdict: the DDIT3-NFYA shared-motif pass is NFYA's own motif carried into any NFYA co-bound pool. It is not specific to DDIT3 and is downgraded to "not specific". The shared-level random-pair null (0/20) was too easy because none of those pairs contained NFYA.
