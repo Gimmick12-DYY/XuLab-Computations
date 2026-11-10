@@ -19,7 +19,7 @@ for t in tfs:
     k.index = [S.short(n) for n in k.index]; K[t] = k[~k.index.duplicated()]
     v = S.known(f"{G}/results/{t}/val_known/knownResults.txt")
     if v is not None: v.index = [S.short(n) for n in v.index]; V[t] = v[~v.index.duplicated()]
-    DN[t] = [m for f in sorted(glob.glob(f"{G}/results/{t}/L*/homerMotifs.all.motifs")) for m in S.denovo(f) if m["fold"] >= 1.5 and m["log10p"] <= -10]
+    DN[t] = [] if os.environ.get("NODN") else [m for f in sorted(glob.glob(f"{G}/results/{t}/L*/homerMotifs.all.motifs")) for m in S.denovo(f) if m["fold"] >= 1.5 and m["log10p"] <= -10]
 tfs = sorted(K); lib = sorted(set.intersection(*[set(K[t].index) for t in tfs])); NL = len(lib)
 P = pd.DataFrame({t: K[t].reindex(lib).log10p for t in tfs}); F = pd.DataFrame({t: K[t].reindex(lib).fold for t in tfs})
 pct = (-P).rank(axis=1, pct=True)  # cross-TF percentile of each motif's -log10 p
@@ -84,7 +84,7 @@ def build(sel):
         d = dict(pair=r.pair, pct=round(r.pct, 3), pearson_domain_pct=r.pearson_domain_pct, spqn_noquies_pct=r.spqn_noquies_pct, novel=r.novel, **af3.get(k, dict(af3_tier="not_run", af3_iptm=np.nan, af3_ipsae=np.nan, af3_source="")),
                  n_strict_A=int(passing["strict"][a].sum()), n_strict_B=int(passing["strict"][b].sum()), n_shared_strict=len(ss), n_shared_loose=len(sl), hyper_p_strict=r.hyper_p_strict, hyper_p_loose=r.hyper_p_loose,
                  emp_p_strict=e_s, emp_p_loose=e_l, null_pool=npool, shared_loose_val_even_both=";".join(val_both), shared_strict=fmt(a, b, ss), shared_loose_only=fmt(a, b, [m for m in sl if m not in ss]),
-                 denovo_shared=" ; ".join(dn_shared(a, b)[:5]), **A_.get(k, {}))
+                 denovo_shared="" if os.environ.get("NODN") else " ; ".join(dn_shared(a, b)[:5]), **A_.get(k, {}))
         out.append(d)
     return pd.DataFrame(out)
 nov = R1[R1.novel & (R1.pct >= 0.60)].copy(); nov["tier"] = np.select([nov.pct >= .9, nov.pct >= .8], ["pct>=0.90", "pct>=0.80"], "pct>=0.60")

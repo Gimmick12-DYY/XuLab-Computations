@@ -27,7 +27,7 @@ first = ["pair", "corr_tier", "pct", "pearson_domain_pct", "spqn_noquies_pct", "
 first = [c for c in first if c in T.columns]; T = T[first + [c for c in T.columns if c not in first]]
 T.to_csv(f"{O}/novel_pairs_ranked.tsv", sep="\t", index=False); CT = join(C).drop(columns="k"); CT = CT[[c for c in first if c in CT.columns] + [c for c in CT.columns if c not in first]]; CT.to_csv(f"{O}/controls.tsv", sep="\t", index=False)
 rates = T.groupby("corr_tier").apply(lambda s: pd.Series(dict(n=len(s), raw=(s[["raw_emp_strict", "raw_emp_loose"]].min(1) <= .05).mean(), reversed=(s[["rev_emp_strict", "rev_emp_loose"]].min(1) <= .05).mean(),
-                                                               denovo=(s.denovo_emp_p <= .05).mean(), two_plus_layers=(s.layers_emp_le05 >= 2).mean())), include_groups=False).round(3)
+                                                               denovo=(s.denovo_emp_p <= .05).mean(), two_plus_layers=(s.layers_emp_le05 >= 2).mean()))).round(3)
 print(rates.to_string()); print("two+ layers among all panel pairs is the null reference; per-layer null = 0.05 (two-sided union of strict/loose ~0.08)")
 pd.set_option("display.width", 250); print(T.head(20)[["pair", "corr_tier", "pct", "af3_tier", "af3_ipsae", "layers_emp_le05", "best_emp_p", "raw_n_strict", "rev_n_strict", "denovo_n_shared", "cobound_ownB", "cobound_relaxed"]].to_string())
 print(CT[["pair", "pct", "af3_tier", "layers_emp_le05", "best_emp_p", "raw_n_strict", "rev_n_strict", "denovo_n_shared"]].to_string())
