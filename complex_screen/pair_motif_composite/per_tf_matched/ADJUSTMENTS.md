@@ -44,3 +44,6 @@ Each step lists what changed, the sanity check (own motif recovered in the per-T
 - Controls: CTCF-STAG2, MAZ-ZNF143, NFYA-ZNF644 and EZH2-MTF2 share nothing strict; the RBBP7-SRCAP negative shares 3 loose.
 - AF3-strong pairs at empirical p <= 0.05: HES1-NR1D2, NR1D2-TBX3, NR1D2-ZNF703, RBBP7-SAFB. NR1D2 passes many KZFP/repeat motifs, so these reflect a TF-wide sequence preference rather than shared grammar.
 - Verdict: at the null rate.
+- Lead from step 4: the NFY motif (NFYA.H12CORE, the motif with the cleanest own-TF signal) is enriched in the signal of 11 TFs, validated on even chromosomes: SOX4 z 9.4 / 8.6, ZNF507 7.8 / 5.5, NFYA 7.8 / 6.5, E2F3 7.5 / 4.9, GLYR1, FLYWCH1, HOXA10, NME2, MLX, RBBP4, HOXB9.
+  - Novel correlation pairs among them: NFYA-SOX4 (pct 0.96, shares 101 strict motifs, emp p 0.005), NFYA-ZNF507 (pct 1.00, emp 0.04), NFYA-RBBP4 (0.99), MLX-NFYA (0.85). AF3 is none for all of them.
+  - This fits the user's logic steps 1 and 2 (correlation, then a motif enriched in both TFs) without structural support. It could also be shared CCAAT-box promoter occupancy rather than a complex.
