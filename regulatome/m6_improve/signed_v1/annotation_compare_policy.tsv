@@ -1,0 +1,30 @@
+TF	tf_canon	predicted_sign_rc79	confidence_rc79	predicted_sign_canon	confidence_canon	genuine_disagreement	policy_note
+CHAMP1	CHAMP1	repressing	low	unknown	low	False	label differs: rc79 repressing/low vs canonical unknown/low
+CTCF	CTCF	unknown	low	dual	high	False	label differs: rc79 unknown/low vs canonical dual/high
+E4F1	E4F1	dual	med	repressor	medium	False	label differs: rc79 dual/med vs canonical repressor/medium
+FOXK1	FOXK1	dual	med	repressor	medium	False	label differs: rc79 dual/med vs canonical repressor/medium
+GLYR1		activating	low			False	rc79 only (not in canonical)
+HOXA10	HOXA10	unknown	.	dual	low	False	label differs: rc79 unknown/. vs canonical dual/low
+HOXA5	HOXA5	unknown	.	dual	low	False	label differs: rc79 unknown/. vs canonical dual/low
+HOXB6	HOXB6	unknown	.	dual	low	False	label differs: rc79 unknown/. vs canonical dual/low
+HOXB8	HOXB8	unknown	.	dual	low	False	label differs: rc79 unknown/. vs canonical dual/low
+HOXB9	HOXB9	unknown	.	dual	low	False	label differs: rc79 unknown/. vs canonical dual/low
+HOXC4	HOXC4	unknown	.	dual	low	False	label differs: rc79 unknown/. vs canonical dual/low
+HOXC9	HOXC9	unknown	.	dual	low	False	label differs: rc79 unknown/. vs canonical dual/low
+HOXD10	HOXD10	unknown	.	dual	low	False	label differs: rc79 unknown/. vs canonical dual/low
+MEF2A	MEF2A	activating	high	dual	medium	False	label differs: rc79 activating/high vs canonical dual/medium
+MEF2D	MEF2D	activating	high	dual	medium	False	label differs: rc79 activating/high vs canonical dual/medium
+MLX	MLX	dual	med	activator	medium	False	label differs: rc79 dual/med vs canonical activator/medium
+PA2G4	PA2G4	unknown	.	repressor	medium	False	label differs: rc79 unknown/. vs canonical repressor/medium
+POGK	POGK	unknown	.	repressor	low	False	label differs: rc79 unknown/. vs canonical repressor/low
+SMARCA1	SMARCA1	unknown	.	dual	medium	False	label differs: rc79 unknown/. vs canonical dual/medium
+SRCAP	SRCAP	activating	med	dual	medium	False	label differs: rc79 activating/med vs canonical dual/medium
+SREBF2		activating	high			False	rc79 only (not in canonical)
+STAG2	STAG2	unknown	low	dual	high	False	label differs: rc79 unknown/low vs canonical dual/high
+ZBTB40	ZBTB40	unknown	.	repressor	low	False	label differs: rc79 unknown/. vs canonical repressor/low
+ZBTB43	ZBTB43	unknown	.	repressor	low	False	label differs: rc79 unknown/. vs canonical repressor/low
+ZBTB7A	ZBTB7A	dual	med	repressor	high	False	label differs: rc79 dual/med vs canonical repressor/high
+ZNF367		unknown	.			False	rc79 only (not in canonical)
+ZNF503	ZNF503	unknown	.	repressor	medium	False	label differs: rc79 unknown/. vs canonical repressor/medium
+ZNF606	ZNF606	unknown	.	repressor	low	False	label differs: rc79 unknown/. vs canonical repressor/low
+ZNF777	ZNF777	unknown	.	repressor	low	False	label differs: rc79 unknown/. vs canonical repressor/low

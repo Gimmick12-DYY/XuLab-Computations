@@ -1,0 +1,77 @@
+tf	evidence	predicted_sign	confidence
+ADNP	ChAHP complex with CHD4 and HP1	repressor	medium
+AKAP8L	nuclear scaffold, not a characterised sequence-specific TF	unknown	low
+CHAMP1	zinc finger, kinetochore and POGZ partner, no established transcriptional direction	unknown	low
+CTCF	insulator and architectural factor, direction depends on locus	dual	high
+DDIT3	CHOP, activates stress genes and acts as a dominant negative for C/EBP	dual	medium
+DNMT1	maintenance DNA methyltransferase	repressor	high
+DR1	NC2 beta, represses TBP-dependent initiation	repressor	high
+E2F3	cell cycle activator	activator	high
+E4F1	transcriptional repressor, p53 pathway	repressor	medium
+EPAS1	HIF2A, hypoxia response activator	activator	high
+ETS2	ETS family activator	activator	high
+EZH2	PRC2 catalytic subunit, H3K27me3	repressor	high
+FLYWCH1	FLYWCH zinc finger, poorly characterised	unknown	low
+FOXC1	forkhead activator in most reported contexts	activator	medium
+FOXJ3	forkhead, direction not established	unknown	low
+FOXK1	forkhead, represses via Sin3A	repressor	medium
+HES1	bHLH-Orange repressor via Groucho/TLE	repressor	high
+HOXA10	homeodomain, context dependent	dual	low
+HOXA5	homeodomain, context dependent	dual	low
+HOXB6	homeodomain, context dependent	dual	low
+HOXB8	homeodomain, context dependent	dual	low
+HOXB9	homeodomain, context dependent	dual	low
+HOXC4	homeodomain, context dependent	dual	low
+HOXC9	homeodomain, context dependent	dual	low
+HOXD10	homeodomain, context dependent	dual	low
+HP1	CBX1 and CBX5, H3K9me heterochromatin	repressor	high
+MAZ	Myc-associated zinc finger, promoter activator, also insulator-like	activator	medium
+MBD3	NuRD core	repressor	high
+MEF2A	activator with p300, repressor with class IIa HDACs	dual	medium
+MEF2D	activator with p300, repressor with class IIa HDACs	dual	medium
+MLX	Max-like bHLH partner of MondoA	activator	medium
+MSX2	homeodomain transcriptional repressor	repressor	medium
+MTF2	PRC2 accessory, PCL2	repressor	high
+NEUROD4	bHLH activator	activator	medium
+NFYA	CCAAT-binding activator	activator	high
+NME2	NM23-H2, activates the MYC promoter	activator	medium
+NR1D2	REV-ERB beta, represses via NCoR and HDAC3	repressor	high
+NRF1	nuclear respiratory factor 1, promoter activator	activator	high
+PA2G4	EBP1, corepressor of E2F1-regulated promoters	repressor	medium
+PCGF6	PRC1.6	repressor	high
+POGK	pogo-derived with KRAB domain, direction inferred from the domain	repressor	low
+RBBP4	NuRD, PRC2 and Sin3 core subunit	repressor	high
+RBBP7	NuRD, PRC2 and Sin3 core subunit	repressor	high
+RBPJ	repressor with corepressors, activator with Notch intracellular domain	dual	high
+RELA	NF-kB p65 activator	activator	high
+SAFB	scaffold attachment factor B, repressive	repressor	medium
+SETDB1	H3K9me3 methyltransferase	repressor	high
+SMARCA1	SNF2L ISWI remodeller, direction depends on partners	dual	medium
+SOX12	SOX group C, weak activator	activator	low
+SOX4	SOX activator	activator	medium
+SRCAP	SWR1-like, deposits H2A.Z	dual	medium
+STAG2	cohesin subunit, architectural	dual	high
+TBX3	T-box transcriptional repressor	repressor	high
+THAP6	THAP domain zinc finger, poorly characterised	unknown	low
+TRAFD1	FLN29, negative regulator of innate immune signalling, not a classical TF	unknown	low
+WIZ	zinc finger partner of the G9a/GLP methyltransferase complex	repressor	high
+XPA	nucleotide excision repair factor, not a transcription factor	unknown	low
+ZBTB40	BTB-zinc finger, direction inferred from the BTB corepressor domain	repressor	low
+ZBTB43	BTB-zinc finger, direction inferred from the BTB corepressor domain	repressor	low
+ZBTB7A	LRF/Pokemon, established repressor	repressor	high
+ZIC2	zinc finger of the cerebellum, reported both ways	dual	medium
+ZNF143	promoter-binding activator at SBS motifs	activator	high
+ZNF282	HUB1, repressor	repressor	medium
+ZNF503	NET family, Groucho-dependent repressor	repressor	medium
+ZNF507	uncharacterised	unknown	low
+ZNF512	uncharacterised	unknown	low
+ZNF512B	uncharacterised	unknown	low
+ZNF581	uncharacterised	unknown	low
+ZNF606	KRAB zinc finger, direction inferred from the domain	repressor	low
+ZNF644	partner of the G9a/GLP methyltransferase complex	repressor	medium
+ZNF703	NET family, Groucho-dependent repressor	repressor	medium
+ZNF746	PARIS, represses PGC-1 alpha	repressor	medium
+ZNF768	promoter-binding zinc finger, direction not established	unknown	low
+ZNF777	KRAB zinc finger, direction inferred from the domain	repressor	low
+ZNF79	uncharacterised	unknown	low
+ZUFSP	ZUP1 deubiquitinase, not a transcription factor	unknown	low

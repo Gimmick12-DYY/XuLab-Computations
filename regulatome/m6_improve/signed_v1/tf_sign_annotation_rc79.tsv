@@ -1,0 +1,80 @@
+TF	predicted_sign	complex_or_class	evidence	confidence
+ADNP	repressing	ChAHP	ChAHP complex with CHD4 and HP1; represses targets	med
+AKAP8L	unknown	.	no established direction (written as unknown rather than guessed)	.
+CHAMP1	repressing	HP1/POGZ	associates with POGZ and HP1	low
+CTCF	unknown	architectural	insulator / loop anchor; direction context-dependent	low
+DDIT3	dual	C/EBP family	CHOP; inhibits C/EBP dimers and activates stress targets	med
+DNMT1	repressing	DNA methylation	maintenance DNA methyltransferase	high
+DR1	repressing	NC2	NC2-beta (negative cofactor 2); inhibits TBP-dependent initiation	med
+E2F3	activating	E2F	activating E2F (E2F1-3 class); S-phase genes	high
+E4F1	dual	E4F	both activator and repressor reported	med
+EPAS1	activating	bHLH-PAS	HIF-2alpha; hypoxia-response activator	high
+ETS2	activating	ETS	ETS-family transactivator	med
+EZH2	repressing	PRC2	PRC2 catalytic subunit; H3K27me3 writer	high
+FLYWCH1	unknown	.	no established direction (written as unknown rather than guessed)	.
+FOXC1	activating	forkhead	forkhead transactivator	med
+FOXJ3	unknown	.	no established direction (written as unknown rather than guessed)	.
+FOXK1	dual	forkhead	activator and SIN3-linked repressor reported	med
+GLYR1	activating	elongation	NDF; facilitates Pol II elongation through nucleosomes	low
+HES1	repressing	bHLH repressor	Notch target; WRPW/TLE-dependent transcriptional repressor	high
+HOXA10	unknown	.	no established direction (written as unknown rather than guessed)	.
+HOXA5	unknown	.	no established direction (written as unknown rather than guessed)	.
+HOXB6	unknown	.	no established direction (written as unknown rather than guessed)	.
+HOXB8	unknown	.	no established direction (written as unknown rather than guessed)	.
+HOXB9	unknown	.	no established direction (written as unknown rather than guessed)	.
+HOXC4	unknown	.	no established direction (written as unknown rather than guessed)	.
+HOXC9	unknown	.	no established direction (written as unknown rather than guessed)	.
+HOXD10	unknown	.	no established direction (written as unknown rather than guessed)	.
+HP1	repressing	HP1 heterochromatin	CBX1/3/5 bind H3K9me3; heterochromatin silencing (CBX3 also in gene bodies)	high
+MAZ	activating	promoter activator	GC-box zinc finger activator at promoters	high
+MBD3	repressing	NuRD	NuRD core subunit (deacetylase/remodeller complex)	high
+MEF2A	activating	MADS-box	MEF2 activator	high
+MEF2D	activating	MADS-box	MEF2 activator	high
+MLX	dual	MLX network	partners MondoA/ChREBP (activating) and MAD/MNT (repressing)	med
+MSX2	repressing	homeodomain repressor	MSX homeoproteins act mainly as repressors	med
+MTF2	repressing	PRC2	PRC2.1 accessory (PCL2); recruits PRC2 to CpG islands	high
+NEUROD4	activating	bHLH activator	proneural bHLH activator	med
+NFYA	activating	NF-Y	CCAAT-box pioneer activator (NF-Y)	high
+NME2	activating	PuF	PuF; reported activator of MYC (NHE III1)	low
+NR1D2	repressing	nuclear receptor (Rev-erb)	Rev-erb beta; ligand-dependent repressor recruiting NCOR/HDAC3	high
+NRF1	activating	promoter activator	GC-rich promoter activator (mitochondrial/housekeeping genes)	high
+PA2G4	unknown	.	no established direction (written as unknown rather than guessed)	.
+PCGF6	repressing	PRC1.6	PRC1.6 subunit; H2AK119ub silencing of germline genes	high
+POGK	unknown	.	no established direction (written as unknown rather than guessed)	.
+RBBP4	repressing	NuRD/PRC2/SIN3	histone chaperone in NuRD, PRC2 and SIN3 corepressors; no DNA binding	high
+RBBP7	repressing	NuRD/PRC2/SIN3	histone chaperone in NuRD, PRC2 and SIN3 corepressors; no DNA binding	high
+RBPJ	dual	Notch	represses with corepressors; activates with Notch ICD	high
+RELA	activating	NF-kB	NF-kB p65 transactivator	high
+SAFB	repressing	SAF-B	reported corepressor (e.g. of ER signalling); nuclear matrix protein	low
+SETDB1	repressing	KAP1/SETDB1	H3K9 methyltransferase; KRAB-ZNF/TRIM28 silencing	high
+SMARCA1	unknown	.	no established direction (written as unknown rather than guessed)	.
+SOX12	activating	SOX (SoxC)	SoxC transactivator	low
+SOX4	activating	SOX (SoxC)	SoxC transactivator	med
+SRCAP	activating	SRCAP	H2A.Z deposition; CBP coactivator	med
+SREBF2	activating	bHLH-LZ	SREBP2; sterol-regulated activator	high
+STAG2	unknown	cohesin	cohesin subunit; architectural	low
+TBX3	repressing	T-box repressor	T-box transcriptional repressor	med
+THAP6	unknown	.	no established direction (written as unknown rather than guessed)	.
+TRAFD1	unknown	.	no established direction (written as unknown rather than guessed)	.
+WIZ	repressing	G9a/GLP	core of the G9a/GLP H3K9me2 complex	med
+XPA	unknown	.	no established direction (written as unknown rather than guessed)	.
+ZBTB40	unknown	.	no established direction (written as unknown rather than guessed)	.
+ZBTB43	unknown	.	no established direction (written as unknown rather than guessed)	.
+ZBTB7A	dual	BTB-ZF	LRF/Pokemon; repressor and activator in different contexts	med
+ZIC2	dual	ZIC	activator; also recruits NuRD at enhancers	med
+ZNF143	activating	promoter activator	STAF; activator of snRNA/Pol II promoters	high
+ZNF282	repressing	KRAB-ZNF	HUB1; KRAB-containing zinc finger reported as a repressor	low
+ZNF367	unknown	.	no established direction (written as unknown rather than guessed)	.
+ZNF503	unknown	.	no established direction (written as unknown rather than guessed)	.
+ZNF507	unknown	.	no established direction (written as unknown rather than guessed)	.
+ZNF512B	unknown	.	no established direction (written as unknown rather than guessed)	.
+ZNF512	unknown	.	no established direction (written as unknown rather than guessed)	.
+ZNF581	unknown	.	no established direction (written as unknown rather than guessed)	.
+ZNF606	unknown	.	no established direction (written as unknown rather than guessed)	.
+ZNF644	repressing	G9a/GLP	G9a/GLP-associated zinc finger	med
+ZNF703	repressing	corepressor	Zeppo1/NLZ1; transcriptional corepressor (Groucho/TLE-interacting)	med
+ZNF746	repressing	KRAB-ZNF	PARIS; KRAB zinc finger repressing PGC-1alpha	med
+ZNF768	unknown	.	no established direction (written as unknown rather than guessed)	.
+ZNF777	unknown	.	no established direction (written as unknown rather than guessed)	.
+ZNF79	unknown	.	no established direction (written as unknown rather than guessed)	.
+ZUFSP	unknown	.	no established direction (written as unknown rather than guessed)	.
