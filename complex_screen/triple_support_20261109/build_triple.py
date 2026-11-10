@@ -6,6 +6,7 @@ import numpy as np, pandas as pd
 X = "/work/users/d/y/dyy12/XuLab"; C = f"{X}/complex_screen"; O = f"{C}/af3_corr060_20261104"; OUT = f"{C}/triple_support_20261109"; os.makedirs(OUT, exist_ok=True)
 assert not os.path.exists(f"{OUT}/triple_support.tsv"), "output exists"
 ALIAS = {"CBX1": "HP1", "CBX3": "HP1", "CBX5": "HP1", "ZUP1": "ZUFSP"}; pn = lambda t: ALIAS.get(t.upper(), t.upper()); key = lambda a, b: tuple(sorted((pn(a), pn(b))))
+# 'reference' = structural/known reference positives forced into the universe. NOT a literature-known flag: MLX-SREBF2 is novel. Nothing downstream decides on this flag (checked 2026-11-10).
 REF = [key(*p) for p in (("EZH2", "MTF2"), ("MAZ", "ZNF143"), ("CTCF", "STAG2"), ("MLX", "SREBF2"), ("RBBP4", "RBBP7"))]
 rk = {"strong": 2, "weak": 1, "none": 0}
 # --- correlation
