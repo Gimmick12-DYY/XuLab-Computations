@@ -5,7 +5,7 @@
 # H3K27ac contrasts: newX - oldX and newS - oldS. Writes bench/summary.tsv and bench/contrasts.tsv.
 import sys
 import numpy as np, pandas as pd
-X = "/work/users/d/y/dyy12/XuLab/regulatome"; O = sys.argv[1]; REF = sys.argv[2]; CON = [tuple(c.split(":")) for c in sys.argv[3:]]
+X = "/work/users/d/y/dyy12/XuLab/regulatome"; O = sys.argv[1]; REF = sys.argv[2]; CON = [(c.split(":")[0] + w, c.split(":")[1] + w) for c in sys.argv[3:] for w in ("X", "S")]  # new:old -> newX/oldX and newS/oldS
 P = pd.read_csv(f"{O}/per_tf.tsv", sep="\t"); C = pd.read_csv(f"{X}/m4_validation/b3b4/reliability_ceilings.tsv", sep="\t")
 LAB = {"oldX_raw@1000": "a binding x ABC_old", "newX_raw@1000": "b binding x ABC_k27ac", "oldS_raw@1000": "c binding-only, old links (list e)", "newS_raw@1000": "d binding-only, new links"}
 out, con = [], []

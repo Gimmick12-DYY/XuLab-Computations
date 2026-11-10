@@ -52,4 +52,16 @@ Benchmark (`bench/summary.tsv`, `bench/contrasts.tsv`), ceiling-weighted specifi
 +0.02 [-0.34, 0.39] (NRF1 out -0.13). Arm 1 (20 TFs): same picture (x ABC -0.05, binding-only +0.15, CIs span 0). Within-link-set controls:
 element count, pooled other-TF and ATAC score as high as or higher than binding in most rows; ATAC x ABC is below 0. Top-1,000 lists overlap old vs
 new 97% (x ABC) and 72% (binding-only). Under the margin rule (Monte Carlo noise about +-0.2 Wspec) H3K27ac gives no gain; the standing default
-(binding-only over old links, list e) stays. Follow-ups in `followups/` (Hi-C contact, H3K27ac-only activity, ABC thresholds 0.01 / 0.05).
+(binding-only over old links, list e) stays. Follow-ups below.
+
+## Follow-ups (2026-11-10; `followups/`, dev-set tuning, descriptive, not confirmed)
+Jobs 8792836 (ATAC x H3K27ac + WT Hi-C 5 kb, 96,318 links), 8792837 (H3K27ac-only activity, 105,128 links), 8792838 (thresholds: old 0.01 /
+0.05 = 181,657 / 54,340 links; new 172,363 / 52,926), 8792839 (`bench_multi.py` over 9 link sets; summary re-run after a contrast-name fix).
+Link-set codes: old / new = power-law ATAC / ATAC x H3K27ac; oldhic / newhic = Hi-C 5 kb; kon = H3K27ac-only; t01 / t05 = ABC >= 0.01 / 0.05.
+Arm 2 Wspec, NRF1 in (out), binding-only (S) vs list e (oldS 0.67 / 0.38): oldt01S 0.79 (0.43), oldhicS 0.68 (0.39), newS 0.67 (0.26),
+newhicS 0.67 (0.21), newt01S 0.65 (0.38), konS 0.60 (0.29), newt05S 0.53 (0.04), oldt05S 0.44 (-0.14). x ABC (X) variants 0.23-0.32 (-0.32 to -0.25).
+Largest paired gain over list e: oldt01S +0.13 [-0.35, 0.56] (NRF1 out +0.05); all others <= +0.01. Only clear change: ABC >= 0.05 hurts
+binding-only (NRF1 out -0.52 [-0.95, -0.06]). Hi-C contact vs power-law: X -0.03, S +0.01. H3K27ac within Hi-C: X -0.02, S -0.01.
+Controls stay as high: the best Arm 2 control (pooled other-TF binding over H3K27ac-only links) is 0.65. Arm 1 (20 TFs): wide CIs,
+the same ordering (binding-only > x ABC); no variant clears the margin. Verdict under the margin rule (Monte Carlo noise about +-0.2 Wspec):
+no contact, activity or threshold choice beats list e; the limit is TF-specific signal in the binding data, not the linking.
