@@ -17,3 +17,6 @@ Pre-declared outcomes:
 (e) The accessibility-only (TF-agnostic) smoother control is deferred (needs a model change); next test only if (B).
 
 Jobs: 12 GPU tasks (perhalf.sbatch, l40-gpu/a100-gpu, gpu_access, 1 GPU, 4 CPU, 16 GB, 8 h, --nice=500 so the AF3 5-seed arrays get the account's GPU slots first), then a CPU summary afterok (perhalf_summary.py). Outputs (DESCRIPTIVE): perhalf_per_tf.tsv, perhalf_summary.tsv, OUTCOME.txt.
+
+## Amendment (2026-11-10, before any output)
+If outcome B (pass) lands, the accessibility-only neighbour-graph control is REQUIRED, not optional, and must be declared before its result is read. Reason: the motif thread found motif z scales with cell count more strongly on imputed signal (Spearman 0.60) than raw (0.43/0.37), which is consistent with imputation amplifying depth convergence.
