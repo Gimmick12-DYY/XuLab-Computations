@@ -180,3 +180,32 @@ line of attack is void and closes.
 **What is not adopted.** Peak-level aggregation costs .19 J_within in the high tertile and -.094 on the
 difference there. It is not a candidate for the frozen layer under any reading. Pooled-neighbour bins are
 null, both components rising about .04, which is the depth curve again.
+
+## Amendment 6, declared 2026-11-10 before the noise floor was run
+
+**The noise floor cannot serve as the gate, and a magnitude bar replaces it.**
+
+Two faults in the floor as first drafted. First, a unit mismatch: the +.003 of Amendment 5 is an
+absolute difference, the baseline -.013 plus the method's +.016, while resid_pool's .013 is a delta
+against v8. The two are not comparable and the comparison must be made on absolute differences, since
+the question is whether the achieved endpoint is noise.
+
+Second and fatally, both floor constructions sit at about zero by construction. The ABC link set is
+shared across the panel and carries no TF information, so after permuting element CPM within a half a
+gene's score scales with its linked-element count, which is the same for every TF and for both halves.
+J_within and J_between are then driven by the same element-count ranking and come out nearly equal, so
+the floor's difference is about zero with small variance. The random-gene floor lands at about zero from
+the other side. Both would fall below +.003 and the avenue would pass a test it was never exposed to.
+
+The floor therefore runs as descriptive calibration only, at 100 draws rather than 20, and decides
+nothing.
+
+**The gate, declared here before the floor is read.** The TFs this project is willing to make per-TF
+claims about are the reproducible ones, and the high depth tertile's difference is +.127. A shallow TF's
+list becomes useful as it approaches that level. The low tertile must reach **+.04**, a third of it, for
+this avenue to remain open. The best result obtained is +.003 absolute, +.016 as a delta against v8.
+Nothing is within a factor of four of the bar.
+
+**The avenue is therefore CLOSED on magnitude.** Raising the reproducibility of the shallow TFs' lists
+by removing background does not work and will not be pursued further. What remains open is the
+leakage-free imputation refit, which is declared separately and is the last candidate.
