@@ -27,7 +27,16 @@ Each step lists what changed, the sanity check (own motif recovered in the per-T
 
 ## Step 3 (fallback iv): de novo-only sharing on raw summits
 - Each TF's de novo motifs (HOMER len 8/10/12, fold >= 1.5, p <= 1e-10) are compared between the two TFs (similarity >= 0.6), with the random-pair rate from the same matched null.
-- Pending: raw de novo tasks (array 8754925).
+- Result (all 79 TFs): 4,844 de novo motifs form 393 families (median 6 TFs per family); 280 are non-generic (<= 10 TFs) and 364 have no Tomtom match (q < 0.05).
+- Share of pairs with any shared non-generic family / with empirical p <= 0.05:
+  - novel pct >= 0.90: 54% / 2.8%
+  - 0.80-0.90: 58% / 3.0%
+  - 0.60-0.80: 56% / 2.7%
+  - all pairs: 56% / 2.7%
+  This is below the 5% chance rate.
+- Controls: CTCF-STAG2 shares 1 family (emp 0.51), MAZ-ZNF143 2 (0.26), NFYA-ZNF644 1 (0.46), EZH2-MTF2 0, the RBBP7-SRCAP negative 1 (0.54).
+- The shared words are 8-mers that recur in 6-10 TFs (e.g. ATGGCGTG, TAGATCGA, AKTACGTT). They look like sequence-composition words of the raw single-cell peaks, not pair-specific grammar.
+- Verdict: at the null rate.
 
 ## Step 4 (added, not in the pre-approved list): reversed design (reversed/, FIMO array 8759406)
 - Sequence defines the sets. FIMO p <= 1e-4 of 2,528 known motifs (JASPAR + HOCOMOCO v12 + Codebook + 2 CAP-SELEX) over 95,044 eligible bin centres.
