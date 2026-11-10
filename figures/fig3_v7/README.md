@@ -12,7 +12,7 @@ ticks/legends 6 pt, letters 8 pt bold.
 - a `a_module_edges_v7.py`: approved D2 bars + observed-vs-own-null at its right, now the PER-EDGE shuffle (user decision
   2026-11-09: same procedure as the approved pairs null). 36 of 40 TFs BH q < 0.05. Drawn at final size; no titles/footnote.
 - b `b_class_bars_v7.py`: approved class bars at final size; no title; 2-column legend; values only on segments >=10%.
-- c `c_se_browser_v7.py`: approved SE browser (28_browser_gold.py) re-run on its own canvas with fonts preset for the 0.739x placement;
+- c `c_se_browser_v7.py`: approved SE browser (partner bands by class: light blue promoter, light orange enhancer, grey other; user 2026-11-10) (28_browser_gold.py) re-run on its own canvas with fonts preset for the 0.739x placement;
   vertically compressed (Hi-C shown to 150 kb, TF tracks 0.145 in, edge arcs 0.52 in); slide title and edge-count table removed
   (table -> supplementary, numbers in figure_legend_notes.md).
 - legend c-e `cde_legend_v7.py`: one shared legend (edge colours/styles, element classes, 3D symbols, TF peak colours) replacing the
