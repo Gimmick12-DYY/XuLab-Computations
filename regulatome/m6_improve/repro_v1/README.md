@@ -151,7 +151,8 @@ construction (Amendment 6), so the evidence is d > 0 with its interval, not a ra
 ### Per-TF floor test (Amendments 7, 7b; floor_test.py; per_tf_floor_test.tsv)
 Route: the existing noisefloor_per_draw.tsv holds per-TF draws (79 x 100 x 2); nothing was rerun.
 - PRIMARY (exact-draw p, p_perm <= .05 AND p_cm <= .05): 38 of 79 TFs clear. By tertile: high 26/27, mid 11/26, low 1/26 (ZNF143).
-  The one high-tertile TF that does not clear is PA2G4 (Jw .166 < Jb .287). All 10 reproducible TFs clear.
+  All 10 reproducible TFs clear.
+  PA2G4 is the one high-tertile TF that does not clear (Jw .166, Jb .287).
   Exact-p BH (minimum p 1/101 = .0099; draw-limited, Amendment 7b): 36 TFs have q <= .05 under both nulls (minimum q .023).
 - SECONDARY (z vs own draws, BH over 79, both nulls): 36 called at FDR .05 (high 26, mid 9, low 1); POGK and TBX3 clear the primary test
   but are not called. Shapiro-Wilk p < .01 for 2.5% of TFs under each null; no TF has a draw SD < 1e-4.
@@ -168,13 +169,16 @@ Route: the existing noisefloor_per_draw.tsv holds per-TF draws (79 x 100 x 2); n
   Nearest exclusion: ZBTB7A, d = .035 (.005 below the line). The line is not moved to include it, the same treatment as the
   EPAS1-NEUROD4 ipTM .390 borderline in the structure screen. (HOXA10 is next, d = .0352 against ZBTB7A's .0354.)
   d for all 79 TFs is published in per_tf_floor_test.tsv, so readers can apply their own cut.
+  Observed range over which specificity appears: the 20 TFs at d >= .04 have >= 5,185 cells (ZNF512B); the high/mid tertile
+  boundary lies between 4,896 and 5,138 cells. These are OBSERVED in this panel, not a validated cutoff, and unlike the retracted ~22k-cells
+  figure they are not extrapolated from a fit.
 - Clearing is almost a pure depth ordering (high 26/27, mid 11/26, low 1/26), so this is a depth boundary with a per-TF test behind it,
   not a biological property of the named proteins.
-- NRF1 had the cleanest Perturb-seq knockdown in the panel and drives the B6 diagonal, yet d = .0006 (p_perm .22). Its list is
-  reproducible but not distinctive, because its CpG-promoter targets are shared across the panel. Reproducibility (J_within) and
-  specificity (d) are separate axes, and NRF1 separates them. This is why d, not J_within, is the objective, and it is consistent with the
-  shape of the four benchmark nulls. NRF1: low tertile (1,416 cells), J_within .144, J_between .143, d .0006, p_perm .22, p_cm .15
-  (its J_within is above the low-tertile median of .096).
+- The Perturb-seq diagonal had a single contributor, NRF1, whose knockdown was the cleanest in the panel. NRF1 lies in the shallowest
+  third of the panel by cell count (1,416 cells) and its list does not clear the specificity null (Jw .144, Jb .143, d .0006). The
+  benchmark's only positive therefore came from a TF outside the set our own data can support, which is the simplest account of why it
+  did not generalise. Whether NRF1's slightly above-median Jw (low-tertile median .096) reflects its targets or its depth cannot be
+  separated here.
 - Column legend, per_tf_floor_test.tsv: p_perm, p_cm = exact draw p, (1 + #draws >= d) / 101; a value of .0099 means "at the 100-draw
   resolution floor", not a smaller p. z_*, pz_*, qz_* = z against the TF's own 100 draws and its one-sided normal p (BH-adjusted in qz_*).
   For rows with |z| > 8, pz_* is a normal-tail extrapolation, not a frequency; the exact p for those rows is at the 100-draw resolution
