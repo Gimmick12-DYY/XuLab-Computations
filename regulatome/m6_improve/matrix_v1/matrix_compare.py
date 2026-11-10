@@ -13,7 +13,7 @@ import numpy as np, pandas as pd, scipy.sparse as sp
 from scipy import stats
 X = "/work/users/d/y/dyy12/XuLab"; R = f"{X}/regulatome"; M4 = f"{R}/m4_validation"; O = f"{R}/m6_improve/matrix_v1"; G1 = f"{R}/gate1/cellmats"
 assert not os.path.exists(f"{O}/per_tf_DESCRIPTIVE.tsv"), "outputs exist"
-v = subprocess.run("sha256sum -c --quiet regulatome/r5_core/manifest_v7.sha256 && sha256sum -c --quiet regulatome/r6_v8/manifest_v8.sha256", shell=True, cwd=X, capture_output=True, text=True); assert v.returncode == 0, v.stdout + v.stderr
+v = subprocess.run("sha256sum -c --quiet regulatome/r5_core/manifest_v7.sha256 && (cd regulatome/r6_v8 && sha256sum -c --quiet manifest_v8.sha256)", shell=True, cwd=X, capture_output=True, text=True); assert v.returncode == 0, v.stdout + v.stderr
 SEED = 20261109; NB = 1000; ARMS = {"arm1": "arm1_high_knockdown", "arm2": "arm2_all_cell"}; ALIAS = {"CBX1": "HP1", "CBX3": "HP1", "CBX5": "HP1", "ZUP1": "ZUFSP"}; panel = lambda t: ALIAS.get(t, t)
 E_ = pd.read_csv(f"{R}/m0_universe/elements_v2.bed", sep="\t", header=None, names=["chrom", "start", "end", "eid", "type", "pid", "ptype", "cls"]); Ea = E_[E_.cls.isin(["promoter", "distal_active", "bivalent"])].reset_index(drop=True)
 A = pd.read_csv(f"{R}/m2_abc/results/Predictions_powerlaw/EnhancerPredictionsFull_thr0.02.tsv", sep="\t", usecols=["chr", "start", "end", "TargetGene"])
