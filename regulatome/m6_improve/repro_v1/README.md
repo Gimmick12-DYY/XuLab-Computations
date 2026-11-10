@@ -107,3 +107,28 @@ of the per-draw values).
 tertile within an order of magnitude of +.04 absolute (best: resid_pool ~+.003); the four low-tertile "gains" (resid_pool, ratio_pool,
 peak_fe, peak_mask) all raise the difference by lowering both components toward the uninformative level. Outputs (DESCRIPTIVE):
 noisefloor_per_draw.tsv, noisefloor_summary.tsv.
+
+## Amendment 7, declared before the per-TF read (2026-11-10)
+Per-TF test of the observed v8@1000 list against that TF's own uninformative-list draws (noise floor, job 8796692). Route: the existing
+noisefloor_per_draw.tsv already holds per-TF draws (79 TFs x 100 draws x 2 kinds = 15,800 rows), so nothing is rerun.
+- d = J_within - J_between of the TF's observed v8@1000 lists (run2c_per_tf.tsv, method v8@1000, identical to Run 2b), J_between = mean
+  over the other 78 TFs' same-half lists (as in the summary).
+- p_perm = (1 + #perm draws with diff >= d) / 101; p_cm likewise against the 100 count-matched draws.
+- A TF clears if p_perm <= .05 AND p_cm <= .05.
+- BH-adjusted q over the 79 TFs for each null (q_perm, q_cm). With 100 draws the minimum p is 1/101 = .0099.
+- in_reproducible10 = TF in {RBBP4, NFYA, SOX4, XPA, ZNF507, RBBP7, NME2, E2F3, MBD3, DDIT3}; overlap reported as a 2x2 with a two-sided
+  Fisher exact p; counts by depth tertile (Run 2b tertiles).
+- Without NRF1: the NRF1 row is dropped (its draws and d are unchanged), BH and the Fisher test are recomputed over 78 TFs.
+- Output per_tf_floor_test.tsv: tf, cells, tertile, Jw, Jb, d, perm_mean, perm_q95, p_perm, cm_mean, cm_q95, p_cm, q_perm, q_cm, clears,
+  in_reproducible10, plus the Amendment 7b columns.
+
+## Amendment 7b, declared before the per-TF read (2026-11-10)
+- The exact-draw p stays the PRIMARY declared test (clears = p_perm <= .05 AND p_cm <= .05).
+- Its BH correction is reported, but it is known in advance to be draw-limited. With 100 draws the minimum p is .0099, so BH can only
+  pass if about 25 or more TFs sit at the floor; 10 real TFs would give q = .078. A failure of the exact-p BH is therefore NOT evidence of
+  no signal.
+- SECONDARY test: for each TF and each null, z = (d - mean of its own 100 draws) / sd of those draws (ddof = 1), with a one-sided normal
+  p. BH over the 79 TFs on the z-based p. A TF is called at FDR .05 when z-BH q <= .05 for BOTH nulls (called_fdr05).
+- Normality check: Shapiro-Wilk p of each TF's draws per null, and the share of TFs with p < .01.
+- Any TF whose draw SD < 1e-4 (either null) is flagged (sd_flag), listed, and not called on the z test.
+- Added columns: z_perm, pz_perm, qz_perm, z_cm, pz_cm, qz_cm, shapiro_perm, shapiro_cm, sd_flag, called_fdr05.
