@@ -1,0 +1,4 @@
+# edge_sign_v3: stricter co-binding flag after v2 failed its sanity gate (DESCRIPTIVE)
+Rule declared 2026-11-10 ~00:58 local, committed BEFORE any v3 output exists. v2 (job 8752759) stopped at its pre-declared gate without reading any knockdown z: repressive flag on 54.7% of edges (> 50%), activating flag 37.4%, both 22.0%.
+Only change from v2 (../edge_sign_v2/README.md): the flag fires if E_me >= the marker's own 95th percentile of E over the active elements (was 90th) AND CPM_me >= the marker's 75th percentile of CPM over the active elements (was the median). Same enrichment definition (pool excludes the edge's TF), same marker sets with self-exclusion, everything else identical to v1/v2.
+Same pre-declared sanity gate: if either flag fires on > 50% or < 2% of edges, stop before reading any knockdown z and report. No further threshold changes are made in this version.
