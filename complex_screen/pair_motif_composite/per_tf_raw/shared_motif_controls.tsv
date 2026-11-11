@@ -1,0 +1,6 @@
+pair	novel	pct	pearson_domain_pct	spqn_noquies_pct	af3_tier	af3_iptm	af3_ipsae	n_shared_all	n_shared_nongeneric	n_heldout_all	n_heldout_nongeneric	n_heldout_novel_nongeneric	emp_p	heldout_nongeneric	heldout_generic	shared_nongeneric_not_heldout
+EZH2-MTF2	False	1.0	1.0	0.8966	not_run			17	7	2	0	0	1.0		GGCGGGGC(69TF,KLF9.H12CORE.1.P.B);AGTTGTAG(30TF,MA1573.2)	TGCTGGTA(6TF,novel);GTGTAMGA(6TF,novel);GTAGGCCA(10TF,novel);TCAAMTGG(9TF,novel);CGACTAGC(3TF,novel);TCGCTKTT(8TF,novel);GTGTGYTG(3TF,novel)
+NFYA-ZNF644	True	1.0	1.0	0.6364	none	0.15	0.0	10	1	1	0	0	1.0		CATTGGCC(59TF,MA0060.4)	TGTTGCTG(10TF,novel)
+MAZ-ZNF143	True	0.9744	0.9744	0.9744	not_run			5	0	0	0	0	1.0			
+RBBP7-SRCAP	True	0.4634	0.3659	0.4634	none	0.33	0.0	11	3	1	0	0	1.0		GCGCATGC(52TF,novel)	GCCCCCAA(9TF,novel);GGTAARCG(5TF,novel);CTAGCGMC(2TF,MA1998.2)
+CTCF-STAG2	True	0.311	0.311	0.2742	not_run			7	1	0	0	0	1.0			GGTCTTCA(7TF,novel)

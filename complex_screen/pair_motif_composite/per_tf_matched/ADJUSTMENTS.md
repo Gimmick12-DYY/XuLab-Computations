@@ -146,3 +146,22 @@ Each step lists what changed, the sanity check (own motif recovered in the per-T
 - raw_pools.py and profile_pools.py now keep only windows overlapping a union-ATAC 1 kb bin, then take the top N.
 - The old per_tf_raw tables (novel_pairs_ranked.tsv, controls.tsv, per_tf_summary.tsv) were deleted. The top-level consolidated novel_pairs_ranked.tsv / controls.tsv (Steps 1-4) are superseded and should not be cited.
 - Jobs: raw_pools 8887363, chain driver 8887365 (ids in logs_dn/chain_raw_masked_ids.txt).
+
+## Step 9 results (2026-11-11): ATAC-masked raw peaks
+- Jobs: HOMER 8888233 (345 tasks), families 8888234, profile 8888237-8888240. Held-out scan rerun as 8907490-8907492: the first scan matched no sequences because "<TF>:<id>" names were cut at ':' by FIMO; they are now "<TF>_<id>".
+- FIMO tasks 30-39 of profile array 8888238 failed only because those chunks do not exist (2,920 motifs = 30 chunks).
+- Own motif, HOMER known rank of 472 (discovery / held-out):
+  - NFYA 1 / 1, NRF1 1 / 1, CTCF 13 / 1.
+  - MAZ 16 / 67, ZNF143 71 / 283, MLX 91 / 56, ZIC2 47 / 246, FOXK1 81 / 268.
+  - E2F3, SOX4, TBX3, MEF2A, RBPJ: 169-432.
+  - Masking fixed CTCF, which was depleted before.
+- De novo: 392 families (median 4 TFs; 313 with <= 10 TFs). Only 5.8% of TF x family combinations hold on held-out chromosomes.
+- Pairs sharing >= 1 held-out non-generic family: about 1% at every correlation level (0.6-1.0%); empirical p <= 0.05: 0.3-0.6%.
+- Candidates (novel, pct >= 0.60, n 1,863): 9 at emp <= 0.05. Their words are shared by 3-10 TFs, mostly the HOXA10 / MTF2 / MLX / DDIT3 group: GAAGSTST, AATGTCCG.
+- AF3 candidates: DDIT3-MTF2 (strong; GAAGSTST, 8 TFs, novel; emp 0.03); HOXB9-RBBP4 (strong; CCGRCTWC, 4 TFs; emp 0.06). No AF3-weak pair has one.
+- Controls: no held-out non-generic family shared (CTCF-STAG2, MAZ-ZNF143, EZH2-MTF2, NFYA-ZNF644, RBBP7-SRCAP negative).
+- Profile (masked; percentile order peak 500 / peak 2,000 / seq 5,903 / seq 3,000):
+  - CTCF-STAG2 0.95 / 0.96; MAZ-ZNF143 1.00 / 0.97; RBBP7-SRCAP negative 0.82 / 0.93.
+  - AF3 strong medians 0.69 / 0.70 / 0.55 / 0.67.
+  - Own-motif ranks (of 2,920; peak 500 / 2,000): CTCF 308 / 73, MAZ 118 / 58, ZNF143 404 / 19.
+- Verdict: masking restores own motifs for CTCF / NFYA / NRF1, partly for MAZ, ZNF143 and MLX. Shared motifs that hold on held-out chromosomes are rare, and no known-complex control shares one. So the shared-motif route does not support candidate pairs. DDIT3-MTF2 is the only AF3-strong pair with a held-out shared word, and that word is found in 8 TFs.

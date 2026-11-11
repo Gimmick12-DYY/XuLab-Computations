@@ -12,7 +12,7 @@ F = pd.read_csv(f"{G}/denovo_families.tsv", sep="\t").set_index("family"); hit =
 for f in glob.glob(f"{G}/denovo_cmp/fimo/c*.tsv.gz"):
     for l in gzip.open(f, "rt"): m, s = l.rstrip("\n").split("\t"); hit.setdefault(m, set()).add(s)
 tfs = sorted(d for d in os.listdir(f"{G}/pools")); val = []
-ids = lambda f, t: [x if x.startswith("b") else f"{t}:{x}" for x in (l.split("\t")[3] for l in open(f))]
+ids = lambda f, t: [x if x.startswith("b") else f"{t}_{x}" for x in (l.split("\t")[3] for l in open(f))]
 for t in tfs:
     fg, bg = set(ids(f"{G}/pools/{t}/val/fg.bed", t)), set(ids(f"{G}/pools/{t}/val/bg.bed", t))
     for k in F.index:
