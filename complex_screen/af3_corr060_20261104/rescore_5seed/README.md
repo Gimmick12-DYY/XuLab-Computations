@@ -1,0 +1,1 @@
+- 2026-11-11: AF3 5-seed array 8667715 task 29 (JobId 8857868) moved from l40-gpu to l40-gpu,a100-gpu with scontrol, as a one-task test of the AF3 3.0.1 container on A100 (never run there before); all other tasks stay on l40-gpu.
