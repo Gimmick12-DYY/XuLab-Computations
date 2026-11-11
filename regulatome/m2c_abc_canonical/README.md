@@ -15,6 +15,11 @@ Activity sqrt(qnorm ATAC x qnorm H3K27ac): ATAC = m2_abc omniatac_merged tagAlig
 In the fixed arm hic_contact differs from powerlaw_contact on 98% of non-self links (Spearman 0.87). Values are ICE (the mcool has no KR vector) and pixels are limited to 5 Mb,
 so ABC's row-mean rescaling sees a mean row sum of about 0.82 (constant within a chromosome).
 
+## Canonical link files (reuse these)
+- Hi-C (primary): `regulatome/m2c_abc_canonical/results/HEK293T_hicfixed/Predictions/EnhancerPredictionsFull_threshold0.02_self_promoter.tsv`
+- Power-law (sensitivity): `regulatome/m2c_abc_canonical/results/HEK293T_powerlaw/Predictions/EnhancerPredictionsFull_threshold0.02_self_promoter.tsv`
+- Candidates / activity: `results/<biosample>/Neighborhoods/EnhancerList.txt`; all candidate-gene pairs: `Predictions/EnhancerPredictionsAllPutative.tsv.gz` (+ NonExpressedGenes).
+
 ## Build stats
 MACS2 peaks 634,488; candidates 142,706 (median 500 bp; 20,100 promoter elements).
 | | Hi-C 5 kb (primary) | power-law only (sensitivity) |
