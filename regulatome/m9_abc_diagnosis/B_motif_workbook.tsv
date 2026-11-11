@@ -1,0 +1,77 @@
+label	tf	hocomoco_v11_motif	n_motifs_for_tf	width	n	AME motif for peaks	Homer motif for peaks	AME motif for bins	Homer motif for bins	Imputed Data: AME motif for peaks	Imputed Data: Homer motif for peaks	Homer database	HOCOMOCOv11 database	Codebook database	Codebook candidate used
+diagnostic, benchmark already read	ADNP	none	0		1792										no
+diagnostic, benchmark already read	AKAP8L	none	0		1490										no
+diagnostic, benchmark already read	CHAMP1	none	0		2942										no
+diagnostic, benchmark already read	CTCF	CTCF_HUMAN.H11MO.0.A	1	19.0	10410		1e-39		1e-68		1e-101	CTCF	CTCF	CTCF	available
+diagnostic, benchmark already read	DDIT3	DDIT3_HUMAN.H11MO.0.D	1	10.0	22129										no
+diagnostic, benchmark already read	DNMT1	none	0		2458										no
+diagnostic, benchmark already read	DR1	none	0		5661		0.1		0.1						no
+diagnostic, benchmark already read	E2F3	E2F3_HUMAN.H11MO.0.A	1	11.0	30622	4.44e-10	1e-64		1e-85	2.47e-06	1e-70	E2F3	E2F3		no
+diagnostic, benchmark already read	E4F1	E4F1_HUMAN.H11MO.0.D	1	9.0	12061										no
+diagnostic, benchmark already read	EPAS1	EPAS1_HUMAN.H11MO.0.B	1	9.0	1046								EPAS1		no
+diagnostic, benchmark already read	ETS2	ETS2_HUMAN.H11MO.0.B	1	13.0	1637								ETS2		no
+diagnostic, benchmark already read	EZH2	none	0		3970										no
+diagnostic, benchmark already read	FLYWCH1	none	0		5824									FLYWCH1	yes
+diagnostic, benchmark already read	FOXC1	FOXC1_HUMAN.H11MO.0.C	1	15.0	4760								FOXC1		no
+diagnostic, benchmark already read	FOXJ3	FOXJ3_HUMAN.H11MO.0.A	2	13.0	2303								FOXJ3		no
+diagnostic, benchmark already read	FOXK1	FOXK1_HUMAN.H11MO.0.A	1	10.0	1202		1.0		1.0			FOXK1	FOXK1		no
+diagnostic, benchmark already read	HES1	HES1_HUMAN.H11MO.0.D	1	13.0	4325										no
+diagnostic, benchmark already read	HOXA10	HXA10_HUMAN.H11MO.0.C	1	12.0	6476		1.0		0.01						no
+diagnostic, benchmark already read	HOXA5	HXA5_HUMAN.H11MO.0.D	1	10.0	1758										no
+diagnostic, benchmark already read	HOXB6	HXB6_HUMAN.H11MO.0.D	1	13.0	5703										no
+diagnostic, benchmark already read	HOXB8	HXB8_HUMAN.H11MO.0.C	1	11.0	1980										no
+diagnostic, benchmark already read	HOXB9	none	0		5903										no
+diagnostic, benchmark already read	HOXC4	none	0		1023										no
+diagnostic, benchmark already read	HOXC9	HXC9_HUMAN.H11MO.0.C	1	10.0	3331		0.1		1.0			Hoxc9			no
+diagnostic, benchmark already read	HOXD10	none	0		1224		1.0		1.0						no
+diagnostic, benchmark already read	HP1	none	0		1243										no
+diagnostic, benchmark already read	MAZ	MAZ_HUMAN.H11MO.0.A	2	22.0	3968	1.93e-12	0.001		1e-08			Maz	MAZ		no
+diagnostic, benchmark already read	MBD3	none	0		28330									MBD3	yes
+diagnostic, benchmark already read	MEF2A	MEF2A_HUMAN.H11MO.0.A	1	13.0	1027		1.0		1.0				MEF2A		no
+diagnostic, benchmark already read	MEF2D	MEF2D_HUMAN.H11MO.0.A	1	12.0	1764		1.0					Mef2d	MEF2D		no
+diagnostic, benchmark already read	MLX	MLX_HUMAN.H11MO.0.D	1	11.0	23262										no
+diagnostic, benchmark already read	MSX2	MSX2_HUMAN.H11MO.0.D	1	7.0	1277										no
+diagnostic, benchmark already read	MTF2	none	0		8746										no
+diagnostic, benchmark already read	NEUROD4	none	0		1262										no
+diagnostic, benchmark already read	NFYA	NFYA_HUMAN.H11MO.0.A	1	14.0	70292	1.76e-14							NFYA		no
+diagnostic, benchmark already read	NME2	none	0		30095										no
+diagnostic, benchmark already read	NR1D2	none	0		1262										no
+diagnostic, benchmark already read	NRF1	NRF1_HUMAN.H11MO.0.A	1	17.0	1416		1e-22		1e-18		1e-33	NRF1	NRF1		no
+diagnostic, benchmark already read	PA2G4	none	0		5319										no
+diagnostic, benchmark already read	PCGF6	none	0		1070										no
+diagnostic, benchmark already read	POGK	none	0		2651									POGK	yes
+diagnostic, benchmark already read	RBBP4	none	0		181396										no
+diagnostic, benchmark already read	RBBP7	none	0		39619										no
+diagnostic, benchmark already read	RBPJ	SUH_HUMAN.H11MO.0.A	1	11.0	5138		1.0		0.1						no
+diagnostic, benchmark already read	RELA	TF65_HUMAN.H11MO.0.A	1	14.0	2123										no
+diagnostic, benchmark already read	SAFB	none	0		9654										no
+diagnostic, benchmark already read	SETDB1	none	0		1028										no
+diagnostic, benchmark already read	SMARCA1	none	0		3745										no
+diagnostic, benchmark already read	SOX12	none	0		1508										no
+diagnostic, benchmark already read	SOX4	SOX4_HUMAN.H11MO.0.B	1	12.0	64652		1.0	1.6e-34	1e-05			Sox4	SOX4		no
+diagnostic, benchmark already read	SRCAP	none	0		3859										no
+diagnostic, benchmark already read	STAG2	none	0		3599										no
+diagnostic, benchmark already read	TBX3	TBX3_HUMAN.H11MO.0.C	1	11.0	4391								TBX3		no
+diagnostic, benchmark already read	THAP6	none	0		2516										no
+diagnostic, benchmark already read	TRAFD1	none	0		1546										no
+diagnostic, benchmark already read	WIZ	none	0		3449										no
+diagnostic, benchmark already read	XPA	none	0		50752										no
+diagnostic, benchmark already read	ZBTB40	none	0		1535									ZBTB40	yes
+diagnostic, benchmark already read	ZBTB43	none	0		1818										no
+diagnostic, benchmark already read	ZBTB7A	ZBT7A_HUMAN.H11MO.0.A	1	9.0	7005		1.0		0.0001			ZBTB7A			no
+diagnostic, benchmark already read	ZIC2	ZIC2_HUMAN.H11MO.0.D	1	15.0	4896		1.0		1.0			Zic2			no
+diagnostic, benchmark already read	ZNF143	ZN143_HUMAN.H11MO.0.A	1	22.0	1736		1.0		1.0			ZNF143			no
+diagnostic, benchmark already read	ZNF282	ZN282_HUMAN.H11MO.0.D	1	14.0	2959										no
+diagnostic, benchmark already read	ZNF503	none	0		1050									ZNF503	yes
+diagnostic, benchmark already read	ZNF507	none	0		30870									ZNF507	yes
+diagnostic, benchmark already read	ZNF512	none	0		2122										no
+diagnostic, benchmark already read	ZNF512B	none	0		5185										no
+diagnostic, benchmark already read	ZNF581	none	0		1316										no
+diagnostic, benchmark already read	ZNF606	none	0		1235									ZNF606	yes
+diagnostic, benchmark already read	ZNF644	none	0		4749										no
+diagnostic, benchmark already read	ZNF703	none	0		21216									ZNF703	yes
+diagnostic, benchmark already read	ZNF746	none	0		3099									ZNF746	yes
+diagnostic, benchmark already read	ZNF768	ZN768_HUMAN.H11MO.0.C	1	20.0	5837		1.0		1.0			ZNF768			no
+diagnostic, benchmark already read	ZNF777	none	0		3400										no
+diagnostic, benchmark already read	ZNF79	none	0		1232										no
+diagnostic, benchmark already read	ZUFSP	none	0		2496										no

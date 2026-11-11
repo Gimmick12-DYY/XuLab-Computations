@@ -1,0 +1,10 @@
+label	source	tf	file	cell_line	score
+diagnostic, benchmark already read	bulk_chip	CTCF	/work/users/d/y/dyy12/XuLab/downstream/tracks/bulk_chipseq/CTCF_bulk_CPM.bw	HEK293	mean CPM bigWig over promoter
+diagnostic, benchmark already read	bulk_chip	MAZ	/work/users/d/y/dyy12/XuLab/downstream/tracks/bulk_chipseq/MAZ_bulk_CPM.bw	HEK293	mean CPM bigWig over promoter
+diagnostic, benchmark already read	bulk_chip	NFYA	/work/users/d/y/dyy12/XuLab/data/NFYA_K562_peaks.bed	K562	max peak signalValue over promoter (no bigWig)
+diagnostic, benchmark already read	bulk_chip	SETDB1	/work/users/d/y/dyy12/XuLab/downstream/tracks/bulk_chipseq/SETDB1_bulk_CPM.bw	HEK293	mean CPM bigWig over promoter
+diagnostic, benchmark already read	bulk_chip	ZBTB7A	/work/users/d/y/dyy12/XuLab/downstream/tracks/bulk_chipseq/ZBTB7A_bulk_CPM.bw	HEK293	mean CPM bigWig over promoter
+diagnostic, benchmark already read	bulk_chip	ZIC2	/work/users/d/y/dyy12/XuLab/downstream/tracks/bulk_chipseq/ZIC2_bulk_CPM.bw	HEK293	mean CPM bigWig over promoter
+diagnostic, benchmark already read	bulk_chip	ZNF282	/work/users/d/y/dyy12/XuLab/downstream/tracks/bulk_chipseq/ZNF282_bulk_CPM.bw	HEK293	mean CPM bigWig over promoter
+diagnostic, benchmark already read	bulk_chip	ZNF777	/work/users/d/y/dyy12/XuLab/downstream/tracks/bulk_chipseq/ZNF777_bulk_CPM.bw	HEK293	mean CPM bigWig over promoter
+diagnostic, benchmark already read	bulk_chip	CTCF_293T	/work/users/d/y/dyy12/XuLab/downstream/tracks/bulk_chipseq/CTCF_293Tcon1_pval.signal.bigwig	HEK293T	mean p-value signal bigWig over promoter
