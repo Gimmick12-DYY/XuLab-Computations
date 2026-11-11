@@ -1,5 +1,6 @@
 # Fallback (ii) for Track B: per-TF foreground from the lab's raw MACS2 summits (read-only, /vast/som/xujie_lab/TAGATG-293T/bigwig/macs2),
-# p <= 1e-5, top 5,000 by -log10 p, summit +/- 100 bp; drop windows with N, overlapping the ENCODE blacklist, or >50% exonic.
+# p <= 1e-5, summit +/- 100 bp, kept only when the window overlaps a union-ATAC 1 kb bin (2026-11-11, raw masked to open chromatin like the imputed data);
+# drop windows with N, overlapping the ENCODE blacklist, or >50% exonic; then the top 5,000 by -log10 p.
 # Background: union-ATAC bin centres (200 bp, eligible as in build_pools.py) not overlapping any of the TF's p <= 1e-5 peaks, matched per
 # stratum (GC 0.025 x CpG o/e quintile x promoter = a GENCODE TSS within 1 kb), equal counts. Odd autosomes = disc, even + chrX = val.
 # Output: per_tf_raw/pools/<TF>/{disc,val}/{fg,bg}.bed, per_tf_raw/tf_pools.tsv, per_tf_raw/tasks_tf.tsv (known + val_known first, then de novo)
@@ -20,17 +21,18 @@ for t in tfs:
     if not os.path.exists(f): continue
     pk = pd.read_csv(f, sep="\t", header=None, usecols=[0, 1, 2, 7, 9]); pk.columns = ["c", "s", "e", "lp", "summit"]; pk = pk[pk.lp >= 5]
     allp = f"{G}/tmp/{t}_allpeaks.bed"; pk[["c", "s", "e"]].to_csv(allp, sep="\t", header=False, index=False)
-    pk = pk[pk.c.map(partf) != "none"].sort_values("lp", ascending=False).head(TOP); pk["m"] = pk.s + pk.summit
+    pk = pk[pk.c.map(partf) != "none"].sort_values("lp", ascending=False); pk["m"] = pk.s + pk.summit
     w = pd.DataFrame(dict(c=pk.c, s=pk.m - 100, e=pk.m + 100, n=[f"p{i}" for i in range(len(pk))])); w = w[w.s > 0]; wf = f"{G}/tmp/{t}_win.bed"; w.to_csv(wf, sep="\t", header=False, index=False)
     bad = set(sh(f"module load bedtools >/dev/null 2>&1; bedtools intersect -u -a {wf} -b {X}/downstream/cache/hg38-blacklist.v2.bed.gz | cut -f4").split())
     ex = sh(f"module load bedtools >/dev/null 2>&1; sort -k1,1 -k2,2n {wf} | bedtools coverage -a - -b {O}/ref/exons.bed | awk '$8>0.5' | cut -f4"); bad |= set(ex.split())
     tss = set(sh(f"module load bedtools >/dev/null 2>&1; bedtools window -u -w 1000 -a {wf} -b {O}/ref/tss.bed | cut -f4").split())
     seq = dict(l.split("\t") for l in sh(f"module load bedtools >/dev/null 2>&1; bedtools getfasta -nameOnly -tab -fi {X}/downstream/cache/hg38.fa -bed {wf}").splitlines())
-    w = w[~w.n.isin(bad)].copy(); w["q"] = [seq[n.split("::")[0]].upper() if n in seq else "N" for n in w.n]; w = w[~w.q.str.contains("N")]
+    inatac = set(sh(f"module load bedtools >/dev/null 2>&1; bedtools intersect -u -a {wf} -b {O}/ref/bins1kb.bed | cut -f4").split()); n_all = len(w)
+    w = w[~w.n.isin(bad) & w.n.isin(inatac)].copy(); w["q"] = [seq[n.split("::")[0]].upper() if n in seq else "N" for n in w.n]; w = w[~w.q.str.contains("N")].head(TOP)
     gc = np.array([(q.count("G") + q.count("C")) / 200 for q in w.q]); cpg = np.array([q.count("CG") * 200 / max(q.count("C") * q.count("G"), 1) for q in w.q])
     w["st"] = (np.floor(gc / 0.025).astype(int) * 10 + np.searchsorted(cq, cpg)) * 2 + w.n.isin(tss).values; w["pt"] = w.c.map(partf)
     hit = set(int(x) for x in sh(f"module load bedtools >/dev/null 2>&1; bedtools intersect -u -a {O}/ref/bins1kb.bed -b {allp} | cut -f4").split())
-    free = np.array([i for i in ei if i not in hit]); r = dict(tf=t, n_peaks_p5=len(pd.read_csv(allp, sep="\t", header=None)) if os.path.getsize(allp) else 0)
+    free = np.array([i for i in ei if i not in hit]); r = dict(tf=t, n_windows_all=n_all, n_windows_in_atac=len(inatac), n_peaks_p5=len(pd.read_csv(allp, sep="\t", header=None)) if os.path.getsize(allp) else 0)
     for pt in ["disc", "val"]:
         ww = w[w.pt == pt]; rest = free[part[free] == pt]; fg, bg = [], []
         for s in np.unique(ww.st):

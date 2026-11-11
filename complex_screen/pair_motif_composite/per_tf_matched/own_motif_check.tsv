@@ -1,0 +1,18 @@
+tf	known_motif	known_rank	known_of	known_fold	known_log10p	val_known_motif	val_known_rank	val_known_of	val_known_fold	val_known_log10p
+CTCF	CTCF(Zf)	453.0	472.0	0.32	0.0	CTCF(Zf)	441.0	472.0	0.43	0.0
+NFYA	NFY(CCAAT)	1.0	472.0	1.76	-32.0	NFY(CCAAT)	5.0	472.0	1.82	-27.1
+NRF1	NRF(NRF)	40.0	472.0	1.35	-6.1	NRF1(NRF)	2.0	472.0	2.37	-36.5
+ZNF143	ZNF143|STAF(Zf)	300.0	472.0	0.94	-0.1	ZNF143|STAF(Zf)	156.0	472.0	1.16	-1.5
+MAZ	Maz(Zf)	58.0	472.0	1.05	-3.2	Maz(Zf)	16.0	472.0	1.11	-9.2
+E2F3	E2F3(E2F)	72.0	472.0	1.09	-3.5	E2F3(E2F)	65.0	472.0	1.1	-3.5
+SOX4	Sox4(HMG)	75.0	472.0	1.18	-2.5	Sox4(HMG)	203.0	472.0	1.0	-0.3
+MLX	Max(bHLH)	12.0	472.0	1.87	-22.8	c-Myc(bHLH)	114.0	472.0	1.12	-2.0
+RELA										
+FOXK1	FOXK1(Forkhead)	290.0	472.0	0.86	-0.0	FOXK1(Forkhead)	202.0	472.0	1.02	-0.4
+TBX3	Tbx5(T-box)	320.0	472.0	0.95	-0.0	Tbx5(T-box)	57.0	472.0	1.12	-4.7
+HES1										
+MEF2A	Mef2a(MADS)	436.0	472.0	0.65	-0.0	Mef2a(MADS)	380.0	472.0	0.71	-0.0
+SREBF2										
+ZBTB7A										
+ZIC2	Zic2(Zf)	354.0	472.0	0.86	-0.0	Zic2(Zf)	391.0	472.0	0.78	-0.0
+RBPJ	RBPJ:Ebox(?,bHLH)	75.0	472.0	1.29	-2.4	RBPJ:Ebox(?,bHLH)	256.0	472.0	0.95	-0.2

@@ -121,3 +121,28 @@ Each step lists what changed, the sanity check (own motif recovered in the per-T
 - Pairs >= 0.95 in >= 3 methods among AF3-supported: DDIT3-RBBP4 only (0.95 / 0.97 / 1.00 / 0.90 reaches 3). RBBP4, RBBP7, E2F3 and ZNF703 pairs fill the top of the heatmap, so deep TFs still lead it.
 - Reading: usable as a descriptive column. It does not separate known complexes from the negative, so it should not be read as evidence for a pair.
 - Files: novel_pairs_motif_profile.tsv, all_pairs_motif_profile.tsv, pair_top_motifs_long.tsv, concordance_matrix_{peak,peak2000,seq,seqN3k}.tsv, controls.tsv, fig_concordance_af3.svg, logos/<pair>.svg (108). The AF3 column reads "not_run" for RBBP7-SRCAP; its AF3 score (none) is in af3_novel_20261103/af3_scores_srcap.tsv.
+
+## Step 8 (2026-11-11): de novo on imputed data, all 79 TFs (user request; overwrote per_tf_matched/ in place; jobs 8841278-8841282)
+- Foreground: each TF's top 10,000 union-ATAC bins ranked on the imputed signal itself (no 79-TF mean subtraction).
+- Background: other union-ATAC bins, 3 per foreground bin, no GC/CpG/promoter matching (HOMER default GC normalization only). The user considered the matched background unfair because imputation already ends with an ATAC filter.
+- HOMER de novo (len 8/10/12) and known on odd chromosomes; families via denovo_share.py; held-out = family FIMO fold > 1 and p < 0.05 on even + X (denovo_imputed_summary.py).
+- Pools are unbalanced. Median foreground vs background: GC 0.675 vs 0.468, promoter 0.87 vs 0.26.
+- 125 families; 67 non-generic (<= 10 TFs); 113 with no Tomtom match. Twelve families appear in 57-79 TFs, all CpG words (CGGCGAAG, CGCGCGCG, ...).
+- Held-out check is uninformative: 97.6% of TF x family combinations pass, because every foreground is promoter / CpG-rich.
+- Own motif (HOMER known rank of 472, discovery / held-out): NFYA 1 / 5, NRF1 40 / 2, MLX (Max) 12, SOX4 75, RBPJ 75, CTCF 453 / 441 (depleted, fold 0.32), FOXK1 290, TBX3 320, ZIC2 354, MEF2A 436.
+- Pairs sharing >= 1 held-out non-generic family:
+  - novel pct >= 0.90: 25%; 0.80-0.90: 26%; 0.60-0.80: 27%; < 0.60: 28%; all pairs: 27%.
+  - Candidates (pct >= 0.60), by AF3 tier: strong 15% (3/20), weak 37%, none 25%.
+  - Empirical p <= 0.05 vs depth- and pct-matched random pairs: 1.8-2.7% across tiers, below the 5% expected by chance.
+- Controls:
+  - CTCF-STAG2 shares 1 non-generic family (CCCCTACG, 9 TFs, emp 0.24); NFYA-ZNF644 1 (emp 0.28).
+  - EZH2-MTF2, MAZ-ZNF143 and the RBBP7-SRCAP negative share 0.
+  - Every control shares 15-20 generic families.
+- AF3 candidates at emp p <= 0.05: HOXC4-ZUFSP (strong, GGTATCGG + GGGCTCCG, 8-10 TFs each), NR1D2-RELA (weak), HOXA5-ZNF367 (weak). All of these words are shared by 8-10 TFs.
+- Verdict: without mean subtraction or matching, imputed foregrounds are promoter / CpG sets. De novo finds CpG words shared by most TFs, and pair sharing stays at or below the random-pair rate. No candidate pair shows a pair-specific shared motif.
+
+## Step 9 (2026-11-11): raw peak analyses rerun with summit windows masked to union ATAC (user "go"; overwrites per_tf_raw/ and profile/ in place)
+- Reason: raw foregrounds had not been masked while the background is all open chromatin. Only 8-41% of top-500 summits of shallow TFs fell in union-ATAC bins (ZNF143 41/500, CTCF 205/500), against about 99% for deep TFs.
+- raw_pools.py and profile_pools.py now keep only windows overlapping a union-ATAC 1 kb bin, then take the top N.
+- The old per_tf_raw tables (novel_pairs_ranked.tsv, controls.tsv, per_tf_summary.tsv) were deleted. The top-level consolidated novel_pairs_ranked.tsv / controls.tsv (Steps 1-4) are superseded and should not be cited.
+- Jobs: raw_pools 8887363, chain driver 8887365 (ids in logs_dn/chain_raw_masked_ids.txt).

@@ -11,5 +11,6 @@ O=/work/users/d/y/dyy12/XuLab/complex_screen/pair_motif_composite; G=$O/profile;
 module load meme/5.5.7 >/dev/null 2>&1
 run() { fimo --thresh 1e-4 --text --skip-matched-sequence --max-strand --bfile $R/bins.bg $G/chunks/$C.meme "$1" 2>/dev/null | awk -F'\t' 'NR>1{print $1"\t"$3}' | sort -u | gzip > "$2"; }
 run $G/windows.fa $G/fimo/win_$C.tsv.gz
+[ -f $G/chunks/$C.meme ] || { echo no chunk; exit 0; }
 if grep -q "^MOTIF fam" $G/chunks/$C.meme; then run $R/bins.fa $G/fimo/bins_$C.tsv.gz; fi
 echo done $C

@@ -1,0 +1,9 @@
+set	n	any_shared_nongeneric	any_heldout_nongeneric	any_heldout_novel	emp_le05
+novel pct>=0.90	617	0.25	0.25	0.23	0.021
+novel 0.80-0.90	508	0.258	0.258	0.246	0.018
+novel 0.60-0.80	738	0.268	0.268	0.256	0.027
+novel <0.60	1181	0.276	0.276	0.265	0.026
+candidates AF3 strong	20	0.15	0.15	0.15	0.05
+candidates AF3 weak	52	0.365	0.365	0.346	0.038
+candidates AF3 none	1033	0.252	0.252	0.234	0.019
+all pairs	3081	0.266	0.266	0.252	0.024
