@@ -39,8 +39,8 @@ def illustrator_text(svg):   # as build_fig3_v7.py (commit 715c1a5)
     return re.sub(r"<text\b[^>]*>", one, svg)
 
 
-def module_words(s):   # wording rule: never "clique" in figure text (comments/ids untouched)
-    f = lambda m: m.group(1) + m.group(2).replace("Cliques", "Modules").replace("cliques", "modules").replace("Clique", "Module").replace("clique", "module").replace("cobinding module", "higher-order co-binding module") + m.group(3)
+def module_words(s):   # wording rules: never "clique"; "coordinated binding", never "co-binding" (user 2026-11-11); comments/ids untouched
+    f = lambda m: m.group(1) + m.group(2).replace("Cliques", "Modules").replace("cliques", "modules").replace("Clique", "Module").replace("clique", "module").replace("cobinding module", "higher-order coordinated binding module").replace("co-binding", "coordinated binding").replace("Co-binding", "Coordinated binding").replace("cobinding", "coordinated binding") + m.group(3)
     return re.sub(r"(<text\b[^>]*>)(.*?)(</text>)", f, s, flags=re.S)
 
 

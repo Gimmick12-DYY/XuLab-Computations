@@ -1,4 +1,4 @@
-"""Fig 3 panel a (schematic): what a higher-order co-binding module is, drawn as a possible rosette.
+"""Fig 3 panel a (schematic): what a higher-order coordinated binding module is, drawn as a possible rosette.
 Left: linear genome, five elements (promoters blue, enhancer vermillion) bound by TFs (small coloured ovals), joined by module edges
 (arcs, all pairs = fully connected module). Right: the same elements meeting at one hub in 3D, the chromatin between them forming
 loops (petals), TFs clustered at the hub. Illustration only, not data. Final size 120 x 62 mm, Arial 6-7 pt, Palette C-type colours;
@@ -30,8 +30,8 @@ for x, k, tl in zip(xs, kind, tfs):
         ax.add_patch(Ellipse((x - (len(tl) - 1) * 0.95 + n * 1.9, y0 + 1.95), 1.7, 1.25, fc=TF[t], ec="white", lw=0.3, zorder=4))
 txt(25, y0 - 4.2, "Linear genome", ha="center", fontsize=6.5, color="#555555")
 txt(xs[1] + 4.5, y0 + 15.5, "Module edges", ha="left", fontsize=6, color=EDGE)
-txt(2, 9.5, "Higher-order co-binding module:", fontsize=6, fontweight="bold")
-txt(2, 6.4, "≥3 regions, every pair co-bound across cells", fontsize=6)
+txt(2, 9.5, "Higher-order coordinated binding module:", fontsize=6, fontweight="bold")
+txt(2, 6.4, "≥3 regions, coordinated binding of every pair across cells", fontsize=6)
 ax.add_patch(FancyArrowPatch((50.5, 30), (59.5, 30), arrowstyle="-|>", mutation_scale=7, lw=0.8, color="#555555"))
 txt(55, 32.2, "3D", ha="center", fontsize=6, color="#555555")
 # ---------- right: rosette ----------
@@ -52,7 +52,7 @@ for i, (p, k) in enumerate(zip(pts, kinds)):
 rng = np.random.default_rng(3)
 for t, (dx, dy) in zip(["TF A", "TF B", "TF C", "TF A", "TF B", "TF C", "TF B"], [(-1.3, 0.7), (0.3, 1.4), (1.4, -0.2), (-0.4, -1.3), (-1.6, -0.9), (0.5, 0.0), (1.2, 1.2)]):
     ax.add_patch(Ellipse((cx + dx, cy + dy), 1.7, 1.25, angle=rng.uniform(0, 180), fc=TF[t], ec="white", lw=0.3, zorder=4))
-txt(cx, 8.5, "Co-bound elements meet at a hub;\nthe chromatin between them forms loops", ha="center", va="center", fontsize=6, color="#555555", linespacing=1.1)
+txt(cx, 8.5, "Elements with coordinated binding meet at a hub;\nthe chromatin between them forms loops", ha="center", va="center", fontsize=6, color="#555555", linespacing=1.1)
 txt(cx + 15.5, cy + 17.5, "Chromatin loop\n(Hi-C)", ha="left", va="center", fontsize=6, color="#555555", linespacing=1.0)
 ax.annotate("", xy=(cx + 9.6, cy + 11.6), xytext=(cx + 15.2, cy + 16.5), arrowprops=dict(arrowstyle="-", color="#9E9E9E", lw=0.5))
 txt(cx - 14.0, cy - 17.0, "TF hub", ha="right", va="center", fontsize=6, color="#555555")

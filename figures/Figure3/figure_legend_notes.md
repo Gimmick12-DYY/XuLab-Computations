@@ -1,14 +1,14 @@
 # Fig 3 figure legend (draft, panel letters of the 2026-11-11 plan)
 
-**Figure 3 | TF co-binding modules sit on Hi-C loops and assemble a super-enhancer hub.**
+**Figure 3 | TF coordinated binding modules sit on Hi-C loops and assemble a super-enhancer hub.**
 
-**a**, Schematic. Left: a higher-order co-binding module on the linear genome, ≥3 regions (promoters blue, enhancer vermillion) with every pair co-bound across single cells (module edges, red). Right: one possible 3D arrangement, a rosette in which the co-bound elements meet at a TF hub and the chromatin between them forms loops detectable by Hi-C. Illustration, not data.
+**a**, Schematic. Left: a higher-order coordinated binding module on the linear genome, ≥3 regions (promoters blue, enhancer vermillion) with coordinated binding of every pair across single cells (module edges, red). Right: one possible 3D arrangement, a rosette in which the elements with coordinated binding meet at a TF hub and the chromatin between them forms loops detectable by Hi-C. Illustration, not data.
 
-**b**, RBBP4 example. Left: RBBP4 co-binding network (components ≥10 regions); coloured edges = higher-order co-binding modules, pink = module edge on a wild-type HEK293T Hi-C loop (Peakachu 5 kb ∪ 10 kb, score ≥0.7, ±30 kb), gold = module with every edge on a loop (15). Right: genome-wide circos of RBBP4 module edges with the Peakachu loops underneath (359 modules, 1,072 co-binding edges, 328 on a loop, 27 modules with every edge on a loop).
+**b**, RBBP4 example. Left: RBBP4 coordinated binding network (components ≥10 regions); coloured edges = higher-order coordinated binding modules, pink = module edge on a wild-type HEK293T Hi-C loop (Peakachu 5 kb ∪ 10 kb, score ≥0.7, ±30 kb), gold = module with every edge on a loop (15). Right: genome-wide circos of RBBP4 module edges with the Peakachu loops underneath (359 modules, 1,072 coordinated binding edges, 328 on a loop, 27 modules with every edge on a loop).
 
 **c**, RBBP4 module edges (above each chromosome; 1,095, 337 loop-supported) and Peakachu loops (below) along all chromosomes.
 
-**d**, Higher-order co-binding modules per TF with ≥1 edge >25 kb, stacked by the share of module edges on a loop; % = modules with ≥1 loop edge (ETS2, ZNF282 cut at 2,500). Right: % of module edges >25 kb on a loop (dot) against each TF's own null of 10,000 same-chromosome shuffles that move every edge independently, keeping its spacing (box = IQR, tick = median, whisker = 95%); filled = BH q < 0.05 (36 of 40 TFs with ≥100 module edges; median 21.7% vs 15.0%), open = n.s., n/a = <100 edges.
+**d**, Higher-order coordinated binding modules per TF with ≥1 edge >25 kb, stacked by the share of module edges on a loop; % = modules with ≥1 loop edge (ETS2, ZNF282 cut at 2,500). Right: % of module edges >25 kb on a loop (dot) against each TF's own null of 10,000 same-chromosome shuffles that move every edge independently, keeping its spacing (box = IQR, tick = median, whisker = 95%); filled = BH q < 0.05 (36 of 40 TFs with ≥100 module edges; median 21.7% vs 15.0%), open = n.s., n/a = <100 edges.
 
 **e**, Genomic class (RefSeq Select promoter, TSS ±1 kb; otherwise HEK293T ChromHMM) of all Cicero peaks, all module regions and regions in modules of 1, 2, 3–4, 5–9 and ≥10 TFs.
 

@@ -1,7 +1,7 @@
 # Figure 3: panel collection (2026-11-11)
 
 One folder for Fig 3, collected for the new plan (a-j). No layout: arrange the panels yourself. Each panel has `.svg` (live Arial text,
-Illustrator-safe font attributes, cropped to content), `.pdf` and a 300 dpi `.png`. Figure text says "higher-order co-binding module"
+Illustrator-safe font attributes, cropped to content), `.pdf` and a 300 dpi `.png`. Figure text says "higher-order coordinated binding module"
 / "module edge", never "clique". Rebuild everything with `collect_figure3.py` on Longleaf (`XuLab/figures/Figure3/`).
 
 | Panel | Plan | File(s) | Source (Longleaf XuLab unless noted) | Script / commit |
