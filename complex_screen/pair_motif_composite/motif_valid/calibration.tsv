@@ -1,0 +1,5 @@
+method	n_tf_with_own	own_strict	own_loose	own_strict_tfs	positives_passed	negatives_passed	gate1	gate2	usable
+fisher	49	1	2	NRF1	0	0	False	False	False
+panel	49	1	1	NRF1	0	0	False	False	False
+centrimo	49	0	2		0	0	False	False	False
+centrimo_panel	49	0	0		0	0	False	False	False

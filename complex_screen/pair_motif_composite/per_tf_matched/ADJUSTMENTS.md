@@ -211,3 +211,21 @@ Each step lists what changed, the sanity check (own motif recovered in the per-T
   - The controls push peaks out of open chromatin rather than sharpening the sites inside it. Shallow TFs gain many peaks outside ATAC: ZNF143 45k -> 69-91k at p <= 1e-5.
 - Criteria: c1 (more own-motif passes than raw_lab) fails for all; c2 (bulk not lower) passes only raw_lab; c3 (less shared open chromatin) passes raw_tf and raw_atac. Adopt: none.
 - Verdict: keep the lab peaks. Controlling for open chromatin removes real TF signal, because real sites of CTCF, NFY and NRF1 are open, and it adds noise outside open chromatin. The imputed data gain nothing from re-calling. Nothing downstream changes (Fig 2, Fig 3, regulome untouched).
+
+## Step 12 (2026-11-11): Fig 4c motif validation (motif_valid/; mv_*.py; jobs 8923123 prep, rerun 8924429-8924431)
+- Sites: lab MACS2 summits, top 1,000 per TF in eligible union-ATAC bins. HOT, Alu and Codebook non-endogenous artifact sites removed. Background matched on GC x CpG x promoter x ATAC quintile. DB: 2,528 known motifs; 49 TFs have an own motif.
+- First pass void: FIMO cut "chr:s-e" names at ':', and centrimo has no --text. Both fixed (names chr_s_e; --oc) and rerun.
+- Methods:
+  - fisher: presence log-odds z vs background.
+  - panel: log-odds standardized across 79 TFs (depth trend removed, empirical-Bayes shrinkage).
+  - centrimo: central enrichment at summits.
+  - centrimo_panel: CentriMo score standardized across TFs.
+- Gates fixed before results. Gate 1: own motif top 10 on odd and even chromosomes for more than 3 TFs. Gate 2: >= 2 of 3 positive anchors at held-out percentile >= 0.95 and no negative.
+- Gate 1 (strict / loose of 49): fisher 1 / 2 (NRF1); panel 1 / 1 (NRF1); centrimo 0 / 2; centrimo_panel 0 / 0.
+- Own-motif ranks of 2,528 (disc / val):
+  - CTCF: centrimo 13 / 6, fisher 66 / 29, panel 81 / 3.
+  - NFYA: fisher 2 / 15, centrimo 14 / 20.
+  - MAZ: centrimo 79 / 12.
+  - Others are in the hundreds to thousands.
+- Gate 2: no positive reaches 0.95 in any method. Best are CTCF -> STAG2 fisher 0.865 and panel 0.737. NFYA -> ZNF644 reaches at most 0.63; MAZ <-> ZNF143 at most 0.49 held-out.
+- Verdict: none of the four methods passes either gate. With the most standard choices (accessibility-matched background, artifact drop, panel standardization, summit centrality), our single-cell sites do not give own-motif or known-partner motif evidence beyond NRF1 / CTCF / NFYA. Motif enrichment from these data cannot validate novel pairs. Candidate tables were written (candidates_anchor.tsv, candidates_shared.tsv) but they have no calibrated meaning.
