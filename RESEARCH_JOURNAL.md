@@ -25,6 +25,12 @@ cluster is the usual cause of "unchanged output."
 
 ## Log (newest first)
 
+### 2026-11-11 — Canonical ABC vs Perturb-seq: null; Hi-C dump bug found
+- **Context:** Yuyang asked to be sure we apply the basic literature ABC and test whether ABC-called TF targets overlap Perturb-seq responders.
+- **Change:** regulatome/m2c_abc_canonical/: audit of canonical vs m2_abc vs m2b; ABC v1.1.2 run through its own Snakemake workflow (MACS2 candidates top 150k, ATAC x H3K27ac, Hi-C + power-law arm), per-TF targets from lab MACS2 peaks (q <= 0.05), Fisher overlap with top-5% responders, matched-element and ATAC-top-N nulls. Found that m2_abc/dump_hic.sh wrote an empty value column, so every earlier Hi-C arm silently used the power-law; fixed dump and reran.
+- **Outcome:** Build: 142,706 candidates, 109,421 links (Hi-C) / 83,549 (power-law). Overlap: Arm 2, 66 TFs, Hi-C median OR 1.012, 59% > 1 (p 0.18), no better than matched null (50%, p 1.0) or ATAC top-N, BH hits 0; power-law median OR 1.042, 62% (p 0.064), BH hits NRF1 and E4F1 only. Peak-based ABC targets are not TF-specific for knockdown responders. Power-law results earlier in the project are unaffected by the bug; Hi-C follow-ups in m2b were redone (no adopted change).
+- **Files:** regulatome/m2c_abc_canonical/ (SPEC.md, AUDIT.md, README.md), regulatome/m2b_abc_k27ac/README.md.
+
 ### 2026-11-10 — Per-TF reproducibility vs an uninformative-list null (repro_v1)
 - 38/79 clear an uninformative-list null; 20 at d >= .04, all in the deepest third; below ~5,000 cells 0/52 reach the tier; README ee1a2df.
 

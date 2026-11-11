@@ -6,6 +6,7 @@
 #SBATCH --mem=16G
 #SBATCH -t 02:00:00
 #SBATCH -o /work/users/d/y/dyy12/XuLab/regulatome/m2_abc/logs/hicdump_%j.out
+# BUG (found 2026-11-11, left as run): awk $9 below is empty (the balanced value is $8), so inputs/hic5kb has no values; use regulatome/m2c_abc_canonical/dump_hic_fixed.sbatch.
 # WT HEK293T Hi-C (GSE216399) 5 kb ICE-balanced cis pixels within 5 Mb -> ABC juicebox layout chrN/chrN.KRobserved.gz (bp bp value)
 set -euo pipefail
 A=/work/users/d/y/dyy12/XuLab/regulatome/m2_abc

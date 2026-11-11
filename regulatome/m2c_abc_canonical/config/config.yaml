@@ -1,0 +1,32 @@
+# m2c canonical ABC: the repo's default config/config.yaml (v1.1.2) with only these changes, each declared in AUDIT.md:
+#   biosamplesTable / results_dir -> this folder; chrom_sizes -> m2_abc chrom_sizes.tsv (tagAlign sort order); threshold 0.02 (spec).
+biosamplesTable: "/work/users/d/y/dyy12/XuLab/regulatome/m2c_abc_canonical/config/config_biosamples.tsv"
+results_dir: "/work/users/d/y/dyy12/XuLab/regulatome/m2c_abc_canonical/results/"
+ref:
+        chrom_sizes: "/work/users/d/y/dyy12/XuLab/regulatome/m2_abc/inputs/chrom_sizes.tsv"
+        regions_blocklist: "/work/users/d/y/dyy12/XuLab/regulatome/m2_abc/abc_v1.1.2/reference/hg38/GRCh38_unified_blacklist.bed"
+        ubiquitous_genes: "/work/users/d/y/dyy12/XuLab/regulatome/m2_abc/abc_v1.1.2/reference/UbiquitouslyExpressedGenes.txt"
+        genes: "/work/users/d/y/dyy12/XuLab/regulatome/m2_abc/abc_v1.1.2/reference/hg38/CollapsedGeneBounds.hg38.bed"
+        genome_tss: "/work/users/d/y/dyy12/XuLab/regulatome/m2_abc/abc_v1.1.2/reference/hg38/CollapsedGeneBounds.hg38.TSS500bp.bed"
+        qnorm: "/work/users/d/y/dyy12/XuLab/regulatome/m2_abc/abc_v1.1.2/reference/EnhancersQNormRef.K562.txt"
+        abc_thresholds: "/work/users/d/y/dyy12/XuLab/regulatome/m2_abc/abc_v1.1.2/reference/abc_thresholds.tsv"
+params_macs:
+        pval: 0.1
+        genome_size: hs
+        threads: 10
+params_candidate:
+        peakExtendFromSummit: 250
+        nStrongestPeaks: 150000
+params_neighborhoods:
+        use_qnorm: True
+params_predict:
+        flags: "--scale_hic_using_powerlaw"
+        hic_gamma: 1.024238616787792
+        hic_scale: 5.9594510043736655
+        hic_pseudocount_distance: 5000
+params_filter_predictions:
+        score_column: 'ABC.Score'
+        threshold: 0.02
+        include_self_promoter: True
+        only_expressed_genes: False
+ABC_DIR_PATH: "/work/users/d/y/dyy12/XuLab/regulatome/m2_abc/abc_v1.1.2"

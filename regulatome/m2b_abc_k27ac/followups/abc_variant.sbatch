@@ -45,6 +45,14 @@ k27only)
   python $S/predict.py --enhancers $N/EnhancerList.txt --genes $N/GeneList.txt --outdir $O --score_column powerlaw.Score \
     --chrom_sizes $I/chrom_sizes.tsv --accessibility_feature ATAC --cellType HEK293T $PL
   filt $O 0.02 ;;
+oldhicfix|newhicfix)  # real WT Hi-C (inputs/hic5kb_fixed in m2c; the earlier hic5kb dump had empty values, see m2c dump_hic_fixed.sbatch): ATAC-only (old) or ATAC x H3K27ac (new)
+  HF=/work/users/d/y/dyy12/XuLab/regulatome/m2c_abc_canonical/inputs/hic5kb_fixed
+  if [ $MODE = oldhicfix ]; then NB=$A/results/Neighborhoods; else NB=$B/results/Neighborhoods; fi
+  O=$F/$MODE
+  python $S/predict.py --enhancers $NB/EnhancerList.txt --genes $NB/GeneList.txt --outdir $O --score_column ABC.Score \
+    --chrom_sizes $I/chrom_sizes.tsv --accessibility_feature ATAC --cellType HEK293T \
+    --hic_file $HF --hic_type juicebox --hic_resolution 5000 $PL
+  filt $O 0.02 ;;
 thr)
   for d in $A/results/Predictions_powerlaw $B/results/Predictions_powerlaw; do for t in 0.01 0.05; do filt $d $t; done; done ;;
 esac

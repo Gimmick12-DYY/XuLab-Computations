@@ -65,3 +65,7 @@ binding-only (NRF1 out -0.52 [-0.95, -0.06]). Hi-C contact vs power-law: X -0.03
 Controls stay as high: the best Arm 2 control (pooled other-TF binding over H3K27ac-only links) is 0.65. Arm 1 (20 TFs): wide CIs,
 the same ordering (binding-only > x ABC); no variant clears the margin. Verdict under the margin rule (Monte Carlo noise about +-0.2 Wspec):
 no contact, activity or threshold choice beats list e; the limit is TF-specific signal in the binding data, not the linking.
+
+## Correction (2026-11-11): the Hi-C arms above were not Hi-C
+The m2_abc Hi-C dump had an empty value column (see ../m2c_abc_canonical/AUDIT.md), so k27_hic5kb / oldhic / newhic used the power-law; the Hi-C lines of the follow-up results are invalid.
+Redone with real Hi-C (followups/oldhicfix, newhicfix, bench_hicfix; dev set, descriptive): ATAC-only Hi-C 127,187 links, ATAC x H3K27ac Hi-C 122,185 links. Arm 2 Wspec, NRF1 in (out), binding-only vs list e 0.67 (0.38): Hi-C + H3K27ac links 0.94 (0.48), +0.27 [-0.25, 0.75] (+0.09); ATAC-only Hi-C 0.61 (0.21). Arm 1: Hi-C + H3K27ac 1.59 vs 0.93, +0.66 [-0.00, 1.19] (NRF1 out +0.53). Its margin over the element-count control is +0.66 Arm 2 NRF1 in, +0.03 NRF1 out, so it does not clear the controls and is not adopted; x ABC variants remain 0.24-0.33. Dev-set tuning, not confirmed (the held-out set is spent).
