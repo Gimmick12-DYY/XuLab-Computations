@@ -11,6 +11,6 @@ read -r V T PT < <(awk -v n=$((SLURM_ARRAY_TASK_ID + 1)) 'NR==n' $R/${TASKS:-tas
 PD=${POOLS:-pools}; HD=${HOMERDIR:-homer}; P=$R/$PD/$V/$T/$PT; [ -s $P/fg.bed ] && [ -s $P/bg.bed ] || { echo "empty $V $T $PT"; exit 0; }
 [ $(wc -l < $P/fg.bed) -ge 100 ] || { echo "small $V $T $PT"; exit 0; }
 module load homer/5.1 >/dev/null 2>&1
-findMotifsGenome.pl $P/fg.bed hg38 $R/$HD/$V/$T/$PT $P/bg.bed -size given -nomotif -p 1 -preparsedDir $O/preparsed > /dev/null 2>&1
+findMotifsGenome.pl $P/fg.bed hg38 $R/$HD/$V/$T/$PT -bg $P/bg.bed -size given -nomotif -p 1 -preparsedDir $O/preparsed > /dev/null 2>&1
 rm -rf $R/$HD/$V/$T/$PT/knownResults
 echo done $V $T $PT
