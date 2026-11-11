@@ -6,7 +6,7 @@ Illustrator-safe font attributes, cropped to content), `.pdf` and a 300 dpi `.pn
 
 | Panel | Plan | File(s) | Source (Longleaf XuLab unless noted) | Script / commit |
 |---|---|---|---|---|
-| a | What coordinated binding is (schematic) | **MISSING** | to be drawn | - |
+| a | What coordinated binding is (schematic, a possible rosette) | `a_coordinated_binding_rosette` (120 x 52 mm) | illustration, not data | `a_rosette_schematic.py` |
 | b | RBBP4 example: network | `b1_rbbp4_network` | `hic/work_wt293t/loops/union_5k_10k_0.7/RBBP4_sweep_k50_i10000_s555_pad30kb/publication_plots_v2/tf_peak_network_cliques_loops.svg` (deck slide 169) | `hic/scripts/plot_clique_network_loops_v2.py`; text fix here |
 | b | RBBP4 example: Hi-C loop plot | `b2_rbbp4_hic_circos` | same folder, `RBBP4_clique_loop_edges_circos_tf_top.svg` (slide 170) | `hic/scripts/plot_clique_circos_tf_top.py` |
 | c | RBBP4 chromosome plot (module edges above, loops below) | `c_rbbp4_chromosomes_plain`, `c_rbbp4_chromosomes_highlight` | same folder, `RBBP4_clique_edges_above_loops_below_chromosomes.{plain,highlight}.svg` (slide 172) | `hic/scripts/plot_pairs_vs_loops_chromosomes_v2.py` |
@@ -22,8 +22,7 @@ Illustrator-safe font attributes, cropped to content), `.pdf` and a 300 dpi `.pn
 g, h and i are drawn on larger canvases with fonts preset for the print sizes given; place them at 100% of the SVG/PDF size.
 b, c and f are slide-sized originals (b1 444 mm, b2 311 mm, c 419 mm, f 281 mm wide): scale them down when placing.
 
-**Missing:** a (schematic of coordinated binding / a higher-order co-binding module: one TF's cells -> co-binding edges -> module;
-the same region recurring in several TFs' modules).
+**Missing:** none (a is a first draft of the schematic: linear module -> rosette in 3D).
 
 **Not certain:** "RBBP4 chromosome combined plot" (c) is taken as the chromosome-track plot (slide 172, plain and highlight versions);
 the circos (slide 170) is filed as b's Hi-C plot. Swap if you meant the other way round.
