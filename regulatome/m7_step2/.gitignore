@@ -1,0 +1,7 @@
+features/
+fits/
+logs/
+annotation/
+results/
+jobs/
+__pycache__/

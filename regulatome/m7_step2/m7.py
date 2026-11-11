@@ -21,11 +21,14 @@ def load_kd(arm):
     u = d["units"].tolist(); ui = {x: k for k, x in enumerate(u)}; uni = d["ntc_detect"] >= .1; g = d["genes"][uni].astype(str); Z = d["z"][:, uni].astype(float)
     kp = q[q.kept == 1]; prim = kp[kp.kind.isin(["all", "construct"])]; tf_ = sorted(prim.tf.unique())
     Pm = np.nan_to_num(np.vstack([np.nanmean(Z[[ui[x] for x in prim.unit[prim.tf == t]]], axis=0) for t in tf_]))  # raw per-TF z, no centring
-    pts = sorted({panel(t) for t in tf_}); Rp = np.vstack([Pm[[i for i, t in enumerate(tf_) if panel(t) == p]].mean(0) for p in pts]); gi = pd.Series(np.arange(len(g)), index=g)
+    pts = sorted({panel(t) for t in tf_}); Rp = np.vstack([Pm[[i for i, t in enumerate(tf_) if panel(t) == p]].mean(0) for p in pts]); gi = pd.Series(np.arange(len(g)), index=g); gi = gi[~gi.index.duplicated(keep="last")]  # duplicate symbols: last occurrence wins, as the dict in m6_improve load()
     Zp = np.full((len(TESTABLE), NG), np.nan); ix = gi.reindex(GENES); ok = ix.notna().values; keep = ix[ok].astype(int).values
     for p, row in zip(pts, Rp):
         if p in PTF: Zp[PTF[p], ok] = row[keep]
     return Zp, np.array([np.isfinite(Zp[i]).any() for i in range(len(TESTABLE))]), d["ntc_mean"][uni].astype(float), g
+def expr_target():
+    # per-gene mean log1p(CP10k) over NTC cells, Arm 2 >= 10% detection genes, duplicate symbols last occurrence
+    d = np.load(f"{R}/m4_validation/kd_response/out_v2/arm2_all_cell/kd_response.npz", allow_pickle=True); u = d["ntc_detect"] >= .1; s = pd.Series(d["ntc_mean"][u].astype(float), index=d["genes"][u].astype(str)); return s[~s.index.duplicated(keep="last")].reindex(GENES).values
 class Feat:
     def __init__(s, kind):
         p = f"{O}/features/{kind}_{LINK}"; s.base = np.load(f"{p}/base.npz")["base"]; s.p = p; s.c = {}
@@ -34,7 +37,7 @@ class Feat:
         if name not in s.c: s.c[name] = {k: v for k, v in np.load(f"{s.p}/{name}.npz").items()}
         return s.c[name]
 def set_mask(name, arm=None):
-    m = (GS.set == name).values
+    m = (GS.set == name).values.copy()
     if arm == "arm1": m &= GS.in_arm1.values
     elif arm == "arm2": m &= GS.in_arm2.values
     return m
@@ -155,19 +158,18 @@ def params_for(job):
 def job_key_params(job):
     cc = "real" if (job.target == "expr") or job.cond in ("real",) or str(job.cond).startswith(("pseudo", "mis")) else "base"
     if job.target == "expr": return f"expr|{job.model}|rung{int(job.rung)}"
-    return f"kd|{job.model}|{job.mode}|{cc}"
+    return f"kd|{job.model}|{job['mode']}|{cc}"
 def out_dir(job):
     r = f"{O}/fits/{job.kind}_{LINK}/{job.phase}/";
     if job.target == "expr": return f"{r}expr/{job.model}_rung{int(job.rung)}_{job.cond}" + (f"_hp{job.hp}" if job.phase == "tune" else "")
-    return f"{r}kd/{job.split}/{job.arm}_{job.centring}/{job.model}_{job.mode}_{job.cond}" + (f"_hp{job.hp}" if job.phase == "tune" else "")
+    return f"{r}kd/{job.split}/{job.arm}_{job.centring}/{job.model}_{job['mode']}_{job.cond}" + (f"_hp{job.hp}" if job.phase == "tune" else "")
 def expr_inputs_for_kd(kind, model, cond):
     if cond == "base": rung, ec = 2, "real"
     elif cond.startswith("pseudo"): rung, ec = 4, cond
     else: rung, ec = 4, "real"
     f = np.load(f"{O}/fits/{kind}_{LINK}/final/expr/{model}_rung{rung}_{ec}/oof.npz"); return f["g"], f["p"]
 def fit_expr(job, F):
-    p = params_for(job); out = out_dir(job); os.makedirs(out, exist_ok=True); d2 = np.load(f"{R}/m4_validation/kd_response/out_v2/arm2_all_cell/kd_response.npz", allow_pickle=True)
-    gn = d2["genes"].astype(str); s = pd.Series(d2["ntc_mean"].astype(float), index=gn); y = s.reindex(GENES).values
+    p = params_for(job); out = out_dir(job); os.makedirs(out, exist_ok=True); y = expr_target()
     trm = set_mask("train", "arm2") & np.isfinite(y); vm = set_mask("val", "arm2") & np.isfinite(y)
     gtr, gv = np.flatnonzero(trm), np.flatnonzero(vm); b, x = expr_x(F, job.cond, int(job.rung), gtr); bv, xv = expr_x(F, job.cond, int(job.rung), gv); Xtr = np.hstack([b] + ([x] if x is not None else [])); Xv = np.hstack([bv] + ([xv] if xv is not None else []))
     res = dict(job=job.to_dict(), params=p); chrom = GS.chromosome.values[gtr]; uchr = sorted(set(chrom), key=lambda c: (len(c), c)); fold = {c: i % 5 for i, c in enumerate(uchr)}; fo = np.array([fold[c] for c in chrom])
@@ -200,7 +202,7 @@ def fit_kd(job, F):
     trm, vm = set_mask("train", arm), set_mask("val", arm); Y = targets(Zp, trTF, job.centring, trm); tt, gg = kd_rows(trTF, trm, Zp); tv, gv = kd_rows(trTF, vm, Zp)
     bind = job.cond != "base"; b, own, pair = kd_design(F, job.cond, tt, gg, bind); bv, ownv, pairv = kd_design(F, job.cond, tv, gv, bind); y, yv = Y[tt, gg], Y[tv, gv]
     res = dict(job=job.to_dict(), params=p, n_train=int(len(y)), n_val=int(len(yv))); per_tf = by_gene; expr, exprv = None, None
-    if job.model in ("enet", "lgb") and job.mode == "both":
+    if job.model in ("enet", "lgb") and job['mode'] == "both":
         eg, ep_ = expr_inputs_for_kd(job.kind, job.model, job.cond); e_map = pd.Series(ep_, index=eg); sm = e_map.reindex(GS.index[set_mask("train", "arm2")]); m, s = float(sm.mean()), float(sm.std()); ev = pd.Series(ep_, index=eg)
         expr = ((ev.reindex(gg).values - m) / s).astype(np.float32); exprv = ((ev.reindex(gv).values - m) / s).astype(np.float32); assert np.isfinite(expr).all() and np.isfinite(exprv).all()
     if job.model == "enet":
@@ -213,8 +215,8 @@ def fit_kd(job, F):
         m = lgb.train(dict(objective="l2", learning_rate=.05, num_leaves=p["num_leaves"], min_data_in_leaf=p["min_data_in_leaf"], feature_fraction=p["feature_fraction"], bagging_fraction=.8, bagging_freq=1, lambda_l2=1.0, num_threads=int(os.environ.get("SLURM_CPUS_PER_TASK", "4")), seed=0, verbosity=-1), ds, 2000, valid_sets=[v], callbacks=[lgb.early_stopping(50, verbose=False)]); pv = m.predict(Xv); m.save_model(f"{out}/model.txt"); res["best_iter"] = m.best_iteration; res["per_tf"] = per_tf
     else:  # mlp: kd only or joint with expression on the same trunk
         k = np.hstack([own, pair]) if bind else np.zeros((len(y), 0), np.float32); kv = np.hstack([ownv, pairv]) if bind else np.zeros((len(yv), 0), np.float32); joint = None; tTr, tVv = tt, tv
-        if job.mode == "both":
-            rung = 4 if bind else 2; gtr = np.flatnonzero(set_mask("train", "arm2")); eb, ex = expr_x(F, job.cond if bind else "real", rung, gtr); yexp = np.load(f"{R}/m4_validation/kd_response/out_v2/arm2_all_cell/kd_response.npz", allow_pickle=True); s = pd.Series(yexp["ntc_mean"].astype(float), index=yexp["genes"].astype(str)).reindex(GENES).values[gtr]
+        if job['mode'] == "both":
+            rung = 4 if bind else 2; gtr = np.flatnonzero(set_mask("train", "arm2")); eb, ex = expr_x(F, job.cond if bind else "real", rung, gtr); s = expr_target()[gtr]
             ok = np.isfinite(s); sm, ss = float(s[ok].mean()), float(s[ok].std()); ex_ = ex[ok] if ex is not None else np.zeros((ok.sum(), 0), np.float32); joint = dict(b=F.base[gtr[ok]], x=ex_, y=(s[ok] - sm) / ss); res["expr_y_mean"], res["expr_y_sd"] = sm, ss
             e_x = np.zeros((1, ex_.shape[1]), np.float32); Xtr = (b, k, e_x.repeat(1, 0), tTr); Xv = (bv, kv, e_x, tVv)
         else: Xtr = (b, k, None, tTr); Xv = (bv, kv, None, tVv)
