@@ -3,7 +3,7 @@
 # and a heavy atom within 5 A of a DNA heavy atom (chains C, D), in >= 3/5 seeds. (ii) Partner retained: protein-protein chain_pair_iptm[A][B] of the
 # top sample >= .4 and A-B ipSAE (score_one.py formula, PAE cutoff 10 A, max over the seed's samples, as in the 5-seed scoring) >= .3, in >= 3/5 seeds.
 # SURVIVES = (i) and (ii); DISPLACED = (i) and not (ii); UNINFORMATIVE = not (i), or not built. Validity: RBBP4-ZIC2 must be SURVIVES, else no pair is
-# reclassified. Writes per_seed.tsv and results.tsv. usage: score_dna.py
+# reclassified. Amendment 1 pairs are reported in their own block (column block) with motif_source. Writes per_seed.tsv and results.tsv. usage: score_dna.py
 import glob, json, os, re
 import numpy as np, pandas as pd
 G = "/work/users/d/y/dyy12/XuLab/complex_screen/af3_dna_included_20261111"; S5 = "/work/users/d/y/dyy12/XuLab/complex_screen/af3_corr060_20261104"
@@ -43,7 +43,9 @@ for r in I.itertuples():
     q = pd.DataFrame([x for x in PS if x["pair"] == r.pair]); e, t = int(q.engaged.sum()), int(q.retained.sum())
     RS.append(dict(pair=r.pair, tf=r.tf, n_seeds=len(q), seeds_engaged=e, seeds_retained=t, outcome="SURVIVES" if e >= 3 and t >= 3 else ("DISPLACED" if e >= 3 else "UNINFORMATIVE"),
                    reason="", median_iptm_AB=q.iptm_AB.median(), median_ipsae_AB=q.ipsae_AB.median(), median_n_dbd_dna=q.n_dbd_dna.median()))
-R = pd.DataFrame(RS); ctl = R[R.pair == "RBBP4_ZIC2"].outcome.iloc[0] if (R.pair == "RBBP4_ZIC2").any() else "absent"
+R = pd.DataFrame(RS); m = I.set_index("pair"); R["motif_source"] = R.pair.map(m.motif_source if "motif_source" in m else pd.Series(dtype=str)).fillna("workbook HOCOMOCO v11")
+R["block"] = R.pair.map(m.amendment if "amendment" in m else pd.Series(dtype=str)).fillna("main").replace({"A1": "Amendment 1"}); R["weak_site_note"] = R.pair.map(lambda p: "weak site: DDIT3 summit rank 1,446" if p.startswith("DDIT3") and "DDIT3" in p.split("_")[0] else ("weak site: ZIC2 D-quality model" if "ZIC2" in p else ""))
+ctl = R[R.pair == "RBBP4_ZIC2"].outcome.iloc[0] if (R.pair == "RBBP4_ZIC2").any() else "absent"
 R["test_valid"] = ctl == "SURVIVES"; R["DESCRIPTIVE"] = "footnote; ranking stays correlation + AF3 5-seed"
 pd.DataFrame(PS).to_csv(f"{G}/per_seed.tsv", sep="\t", index=False); R.to_csv(f"{G}/results.tsv", sep="\t", index=False)
 print(R.to_string(index=False)); print("positive control RBBP4-ZIC2:", ctl, "-> test valid" if ctl == "SURVIVES" else "-> test INVALID: no pair is reclassified")
