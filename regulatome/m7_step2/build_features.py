@@ -63,7 +63,7 @@ def feats(Bm):
     return dict(prom=f(prom).T, dist=f(dist).T, pair=f(pair).T)  # TF x gene; pair x gene
 np.savez(f"{Out}/real.npz", **feats(B)); print("real done", flush=True)
 # pseudo-TF: each TF's element values permuted within ATAC-decile strata (matched accessibility)
-dec = pd.qcut(pd.Series(atac).rank(method="first"), 10, labels=False).values  # ATAC deciles of this element set; DEC = [np.flatnonzero(dec == k) for k in range(10)]
+dec = pd.qcut(pd.Series(atac).rank(method="first"), 10, labels=False).values; DEC = [np.flatnonzero(dec == k) for k in range(10)]
 for d in range(ND):
     Bp = B.copy()
     for i in range(NT):
