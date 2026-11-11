@@ -29,3 +29,11 @@ Ladder (same folds): A; A+R; A+R+H; A+R+H+C (no HITAG); then +B+BC; +D; +F; +G (
 Outputs: folds file, per_tf_oof.tsv, ladder.tsv, per-TF SHAP summaries by block, out-of-fold predictions per (TF, gene) with each TF's contribution to each gene (for the gene-example panel), README; copies to /Users/dyy/Desktop/HEK293T-ATGTAG/perturbseq_matrix/ml_v2/.
 
 Order: (1) commit SPEC; (2) inventories for R, H, F, G: report paths and what is missing, since data may need to be supplied; (3) build features, fit, ladder.
+
+## Amendment 1 (2026-11-11): train/test separation, written before any feature or fit
+1. The README will show, with the code line for each: the fold file by whole chromosome, committed with its sha256 before fitting; every preprocessing step (per-TF target centring, feature scaling, percentile features, imputation of missing features, hyperparameter tuning, early stopping) fitted on training folds only and applied to the held-out fold. Block B percentile-within-TF features do not use the target and are computed genome-wide; the README states this. Automated leak test: refit with the target permuted within TF inside the training folds; the out-of-fold Spearman must be about 0.
+2. Second evaluation, by TF: leave-one-TF-out over the 10 primary TFs, combined with the chromosome folds (train on 9 TFs and the training chromosomes; predict the held-out TF on the held-out chromosomes). Block E and every TF-identity-like feature (the TF's own expression, cells, depth, KD %) are dropped in one run and kept in another; both are reported, per held-out TF.
+3. RNA block leak guard: block R is computed from a random half of the NTC cells (seed 20261112) and, as a sensitivity check, from the other half; the +R rung is reported both ways. If recomputing z against only the other half of the NTC cells is cheap, that is done as the strict version; if not, the README says so.
+4. Neighbouring-gene leakage is handled by whole-chromosome folds. Bidirectional and shared-promoter genes are on the same chromosome by construction.
+5. chr3/11/17/20 were scored once in m7 and are not treated as an untouched test here; every result is "cross-validated, benchmark-developed".
+Everything else in the SPEC stands.
