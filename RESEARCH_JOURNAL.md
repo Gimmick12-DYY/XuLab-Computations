@@ -25,6 +25,12 @@ cluster is the usual cause of "unchanged output."
 
 ## Log (newest first)
 
+### 2026-11-11 — Figure 5 Step 2 Regulome model with Perturb-seq train/test separation (m7_step2): null on both targets
+- **Context:** Fit the Regulome model (elastic net, LightGBM, small network) on train and validation chromosomes only, with a declared rule (SPEC.md section 7), train-only centring, two reference predictors, and pseudo-TF and mis-paired controls. Canonical Hi-C ABC links are primary; power-law is the sensitivity arm.
+- **Change:** regulatome/m7_step2/: chromosome gene split and 5 TF folds, committed with sha256; features for raw and imputed binding on both link sets; 3,108 fits; freeze 203c542 (Amendment 5); test scoring once (jobs 8864797-8864801).
+- **Outcome:** Primary arm (raw binding, canonical links, Arm 2, train-centred, 76 TFs, by-gene split): no model shows binding signal. Elastic net knockdown-only primary +0.00083 [-0.00292, 0.00456]; LightGBM +0.00041 [-0.00252, 0.00347]; network -0.00556 [-0.00914, -0.00225]. The by-TF split is null. The adopted model is the linear one. Expression: rung-3 gain over rung 2 is null for all three models (elastic net -0.00436 [-0.01273, 0.00438]). The power-law sensitivity arm is null on both targets. Imputed binding is reported beside the verdict and does not enter it.
+- **Files:** regulatome/m7_step2/ (SPEC.md, README.md, per_tf_test.tsv, pooled.tsv, ladder.tsv, decision.tsv, decision_expr.tsv, adopted_weights.tsv).
+
 ### 2026-11-11 — Canonical ABC vs Perturb-seq: null; Hi-C dump bug found
 - **Context:** Yuyang asked to be sure we apply the basic literature ABC and test whether ABC-called TF targets overlap Perturb-seq responders.
 - **Change:** regulatome/m2c_abc_canonical/: audit of canonical vs m2_abc vs m2b; ABC v1.1.2 run through its own Snakemake workflow (MACS2 candidates top 150k, ATAC x H3K27ac, Hi-C + power-law arm), per-TF targets from lab MACS2 peaks (q <= 0.05), Fisher overlap with top-5% responders, matched-element and ATAC-top-N nulls. Found that m2_abc/dump_hic.sh wrote an empty value column, so every earlier Hi-C arm silently used the power-law; fixed dump and reran.
