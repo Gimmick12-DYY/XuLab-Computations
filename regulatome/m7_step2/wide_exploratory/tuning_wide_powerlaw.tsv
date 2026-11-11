@@ -1,0 +1,217 @@
+label	link	target	model	rung	hp	params	val_metric
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	level	enet	1	0	"{""alpha"": 0.0001, ""l1_ratio"": 0.1}"	0.17590
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	level	enet	1	1	"{""alpha"": 0.0001, ""l1_ratio"": 0.5}"	0.17586
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	level	enet	1	2	"{""alpha"": 0.0001, ""l1_ratio"": 0.9}"	0.17581
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	level	enet	1	3	"{""alpha"": 0.0003, ""l1_ratio"": 0.1}"	0.17585
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	level	enet	1	4	"{""alpha"": 0.0003, ""l1_ratio"": 0.5}"	0.17572
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	level	enet	1	5	"{""alpha"": 0.0003, ""l1_ratio"": 0.9}"	0.17559
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	level	enet	1	6	"{""alpha"": 0.001, ""l1_ratio"": 0.1}"	0.17569
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	level	enet	1	7	"{""alpha"": 0.001, ""l1_ratio"": 0.5}"	0.17522
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	level	enet	1	8	"{""alpha"": 0.001, ""l1_ratio"": 0.9}"	0.17470
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	level	enet	1	9	"{""alpha"": 0.003, ""l1_ratio"": 0.1}"	0.17522
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	level	enet	1	10	"{""alpha"": 0.003, ""l1_ratio"": 0.5}"	0.17358
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	level	enet	1	11	"{""alpha"": 0.003, ""l1_ratio"": 0.9}"	0.17145
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	level	enet	1	12	"{""alpha"": 0.01, ""l1_ratio"": 0.1}"	0.17348
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	level	enet	1	13	"{""alpha"": 0.01, ""l1_ratio"": 0.5}"	0.16734
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	level	enet	1	14	"{""alpha"": 0.01, ""l1_ratio"": 0.9}"	0.16569
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	level	enet	2	0	"{""alpha"": 0.0001, ""l1_ratio"": 0.1}"	0.18574
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	level	enet	2	1	"{""alpha"": 0.0001, ""l1_ratio"": 0.5}"	0.18570
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	level	enet	2	2	"{""alpha"": 0.0001, ""l1_ratio"": 0.9}"	0.18566
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	level	enet	2	3	"{""alpha"": 0.0003, ""l1_ratio"": 0.1}"	0.18571
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	level	enet	2	4	"{""alpha"": 0.0003, ""l1_ratio"": 0.5}"	0.18558
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	level	enet	2	5	"{""alpha"": 0.0003, ""l1_ratio"": 0.9}"	0.18544
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	level	enet	2	6	"{""alpha"": 0.001, ""l1_ratio"": 0.1}"	0.18558
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	level	enet	2	7	"{""alpha"": 0.001, ""l1_ratio"": 0.5}"	0.18511
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	level	enet	2	8	"{""alpha"": 0.001, ""l1_ratio"": 0.9}"	0.18458
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	level	enet	2	9	"{""alpha"": 0.003, ""l1_ratio"": 0.1}"	0.18519
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	level	enet	2	10	"{""alpha"": 0.003, ""l1_ratio"": 0.5}"	0.18348
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	level	enet	2	11	"{""alpha"": 0.003, ""l1_ratio"": 0.9}"	0.18253
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	level	enet	2	12	"{""alpha"": 0.01, ""l1_ratio"": 0.1}"	0.18356
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	level	enet	2	13	"{""alpha"": 0.01, ""l1_ratio"": 0.5}"	0.17921
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	level	enet	2	14	"{""alpha"": 0.01, ""l1_ratio"": 0.9}"	0.17241
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	level	enet	3	0	"{""alpha"": 0.0001, ""l1_ratio"": 0.1}"	0.18667
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	level	enet	3	1	"{""alpha"": 0.0001, ""l1_ratio"": 0.5}"	0.18694
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	level	enet	3	2	"{""alpha"": 0.0001, ""l1_ratio"": 0.9}"	0.18721
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	level	enet	3	3	"{""alpha"": 0.0003, ""l1_ratio"": 0.1}"	0.18680
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	level	enet	3	4	"{""alpha"": 0.0003, ""l1_ratio"": 0.5}"	0.18758
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	level	enet	3	5	"{""alpha"": 0.0003, ""l1_ratio"": 0.9}"	0.18826
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	level	enet	3	6	"{""alpha"": 0.001, ""l1_ratio"": 0.1}"	0.18724
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	level	enet	3	7	"{""alpha"": 0.001, ""l1_ratio"": 0.5}"	0.18901
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	level	enet	3	8	"{""alpha"": 0.001, ""l1_ratio"": 0.9}"	0.18975
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	level	enet	3	9	"{""alpha"": 0.003, ""l1_ratio"": 0.1}"	0.18821
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	level	enet	3	10	"{""alpha"": 0.003, ""l1_ratio"": 0.5}"	0.18956
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	level	enet	3	11	"{""alpha"": 0.003, ""l1_ratio"": 0.9}"	0.18667
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	level	enet	3	12	"{""alpha"": 0.01, ""l1_ratio"": 0.1}"	0.18893
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	level	enet	3	13	"{""alpha"": 0.01, ""l1_ratio"": 0.5}"	0.18106
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	level	enet	3	14	"{""alpha"": 0.01, ""l1_ratio"": 0.9}"	0.17271
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	level	enet	4	0	"{""alpha"": 0.0001, ""l1_ratio"": 0.1}"	0.18406
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	level	enet	4	1	"{""alpha"": 0.0001, ""l1_ratio"": 0.5}"	0.18456
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	level	enet	4	2	"{""alpha"": 0.0001, ""l1_ratio"": 0.9}"	0.18502
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	level	enet	4	3	"{""alpha"": 0.0003, ""l1_ratio"": 0.1}"	0.18433
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	level	enet	4	4	"{""alpha"": 0.0003, ""l1_ratio"": 0.5}"	0.18566
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	level	enet	4	5	"{""alpha"": 0.0003, ""l1_ratio"": 0.9}"	0.18660
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	level	enet	4	6	"{""alpha"": 0.001, ""l1_ratio"": 0.1}"	0.18516
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	level	enet	4	7	"{""alpha"": 0.001, ""l1_ratio"": 0.5}"	0.18773
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	level	enet	4	8	"{""alpha"": 0.001, ""l1_ratio"": 0.9}"	0.18945
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	level	enet	4	9	"{""alpha"": 0.003, ""l1_ratio"": 0.1}"	0.18669
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	level	enet	4	10	"{""alpha"": 0.003, ""l1_ratio"": 0.5}"	0.18991
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	level	enet	4	11	"{""alpha"": 0.003, ""l1_ratio"": 0.9}"	0.18822
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	level	enet	4	12	"{""alpha"": 0.01, ""l1_ratio"": 0.1}"	0.18881
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	level	enet	4	13	"{""alpha"": 0.01, ""l1_ratio"": 0.5}"	0.18233
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	level	enet	4	14	"{""alpha"": 0.01, ""l1_ratio"": 0.9}"	0.17329
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	level	lgb	1	0	"{""num_leaves"": 7, ""min_data_in_leaf"": 10, ""feature_fraction"": 0.7}"	0.21116
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	level	lgb	1	1	"{""num_leaves"": 7, ""min_data_in_leaf"": 10, ""feature_fraction"": 1.0}"	0.21031
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	level	lgb	1	2	"{""num_leaves"": 7, ""min_data_in_leaf"": 30, ""feature_fraction"": 0.7}"	0.20999
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	level	lgb	1	3	"{""num_leaves"": 7, ""min_data_in_leaf"": 30, ""feature_fraction"": 1.0}"	0.20932
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	level	lgb	1	4	"{""num_leaves"": 15, ""min_data_in_leaf"": 10, ""feature_fraction"": 0.7}"	0.20856
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	level	lgb	1	5	"{""num_leaves"": 15, ""min_data_in_leaf"": 10, ""feature_fraction"": 1.0}"	0.20532
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	level	lgb	1	6	"{""num_leaves"": 15, ""min_data_in_leaf"": 30, ""feature_fraction"": 0.7}"	0.20850
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	level	lgb	1	7	"{""num_leaves"": 15, ""min_data_in_leaf"": 30, ""feature_fraction"": 1.0}"	0.20737
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	level	lgb	1	8	"{""num_leaves"": 31, ""min_data_in_leaf"": 10, ""feature_fraction"": 0.7}"	0.19918
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	level	lgb	1	9	"{""num_leaves"": 31, ""min_data_in_leaf"": 10, ""feature_fraction"": 1.0}"	0.20521
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	level	lgb	1	10	"{""num_leaves"": 31, ""min_data_in_leaf"": 30, ""feature_fraction"": 0.7}"	0.20557
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	level	lgb	1	11	"{""num_leaves"": 31, ""min_data_in_leaf"": 30, ""feature_fraction"": 1.0}"	0.20329
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	level	lgb	2	0	"{""num_leaves"": 7, ""min_data_in_leaf"": 10, ""feature_fraction"": 0.7}"	0.21687
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	level	lgb	2	1	"{""num_leaves"": 7, ""min_data_in_leaf"": 10, ""feature_fraction"": 1.0}"	0.21769
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	level	lgb	2	2	"{""num_leaves"": 7, ""min_data_in_leaf"": 30, ""feature_fraction"": 0.7}"	0.21393
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	level	lgb	2	3	"{""num_leaves"": 7, ""min_data_in_leaf"": 30, ""feature_fraction"": 1.0}"	0.21043
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	level	lgb	2	4	"{""num_leaves"": 15, ""min_data_in_leaf"": 10, ""feature_fraction"": 0.7}"	0.21378
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	level	lgb	2	5	"{""num_leaves"": 15, ""min_data_in_leaf"": 10, ""feature_fraction"": 1.0}"	0.21079
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	level	lgb	2	6	"{""num_leaves"": 15, ""min_data_in_leaf"": 30, ""feature_fraction"": 0.7}"	0.20499
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	level	lgb	2	7	"{""num_leaves"": 15, ""min_data_in_leaf"": 30, ""feature_fraction"": 1.0}"	0.20527
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	level	lgb	2	8	"{""num_leaves"": 31, ""min_data_in_leaf"": 10, ""feature_fraction"": 0.7}"	0.20514
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	level	lgb	2	9	"{""num_leaves"": 31, ""min_data_in_leaf"": 10, ""feature_fraction"": 1.0}"	0.20265
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	level	lgb	2	10	"{""num_leaves"": 31, ""min_data_in_leaf"": 30, ""feature_fraction"": 0.7}"	0.20618
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	level	lgb	2	11	"{""num_leaves"": 31, ""min_data_in_leaf"": 30, ""feature_fraction"": 1.0}"	0.20196
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	level	lgb	3	0	"{""num_leaves"": 7, ""min_data_in_leaf"": 10, ""feature_fraction"": 0.7}"	0.20773
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	level	lgb	3	1	"{""num_leaves"": 7, ""min_data_in_leaf"": 10, ""feature_fraction"": 1.0}"	0.21606
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	level	lgb	3	2	"{""num_leaves"": 7, ""min_data_in_leaf"": 30, ""feature_fraction"": 0.7}"	0.20867
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	level	lgb	3	3	"{""num_leaves"": 7, ""min_data_in_leaf"": 30, ""feature_fraction"": 1.0}"	0.20556
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	level	lgb	3	4	"{""num_leaves"": 15, ""min_data_in_leaf"": 10, ""feature_fraction"": 0.7}"	0.20946
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	level	lgb	3	5	"{""num_leaves"": 15, ""min_data_in_leaf"": 10, ""feature_fraction"": 1.0}"	0.21458
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	level	lgb	3	6	"{""num_leaves"": 15, ""min_data_in_leaf"": 30, ""feature_fraction"": 0.7}"	0.20999
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	level	lgb	3	7	"{""num_leaves"": 15, ""min_data_in_leaf"": 30, ""feature_fraction"": 1.0}"	0.20539
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	level	lgb	3	8	"{""num_leaves"": 31, ""min_data_in_leaf"": 10, ""feature_fraction"": 0.7}"	0.20722
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	level	lgb	3	9	"{""num_leaves"": 31, ""min_data_in_leaf"": 10, ""feature_fraction"": 1.0}"	0.20234
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	level	lgb	3	10	"{""num_leaves"": 31, ""min_data_in_leaf"": 30, ""feature_fraction"": 0.7}"	0.20862
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	level	lgb	3	11	"{""num_leaves"": 31, ""min_data_in_leaf"": 30, ""feature_fraction"": 1.0}"	0.20887
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	level	lgb	4	0	"{""num_leaves"": 7, ""min_data_in_leaf"": 10, ""feature_fraction"": 0.7}"	0.20953
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	level	lgb	4	1	"{""num_leaves"": 7, ""min_data_in_leaf"": 10, ""feature_fraction"": 1.0}"	0.20799
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	level	lgb	4	2	"{""num_leaves"": 7, ""min_data_in_leaf"": 30, ""feature_fraction"": 0.7}"	0.21090
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	level	lgb	4	3	"{""num_leaves"": 7, ""min_data_in_leaf"": 30, ""feature_fraction"": 1.0}"	0.20817
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	level	lgb	4	4	"{""num_leaves"": 15, ""min_data_in_leaf"": 10, ""feature_fraction"": 0.7}"	0.21144
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	level	lgb	4	5	"{""num_leaves"": 15, ""min_data_in_leaf"": 10, ""feature_fraction"": 1.0}"	0.20401
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	level	lgb	4	6	"{""num_leaves"": 15, ""min_data_in_leaf"": 30, ""feature_fraction"": 0.7}"	0.21334
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	level	lgb	4	7	"{""num_leaves"": 15, ""min_data_in_leaf"": 30, ""feature_fraction"": 1.0}"	0.20755
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	level	lgb	4	8	"{""num_leaves"": 31, ""min_data_in_leaf"": 10, ""feature_fraction"": 0.7}"	0.20928
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	level	lgb	4	9	"{""num_leaves"": 31, ""min_data_in_leaf"": 10, ""feature_fraction"": 1.0}"	0.20608
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	level	lgb	4	10	"{""num_leaves"": 31, ""min_data_in_leaf"": 30, ""feature_fraction"": 0.7}"	0.20492
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	level	lgb	4	11	"{""num_leaves"": 31, ""min_data_in_leaf"": 30, ""feature_fraction"": 1.0}"	0.20968
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	detect	enet	1	0	"{""alpha"": 0.0001, ""l1_ratio"": 0.1}"	0.88603
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	detect	enet	1	1	"{""alpha"": 0.0001, ""l1_ratio"": 0.5}"	0.88601
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	detect	enet	1	2	"{""alpha"": 0.0001, ""l1_ratio"": 0.9}"	0.88600
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	detect	enet	1	3	"{""alpha"": 0.0003, ""l1_ratio"": 0.1}"	0.88598
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	detect	enet	1	4	"{""alpha"": 0.0003, ""l1_ratio"": 0.5}"	0.88598
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	detect	enet	1	5	"{""alpha"": 0.0003, ""l1_ratio"": 0.9}"	0.88596
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	detect	enet	1	6	"{""alpha"": 0.001, ""l1_ratio"": 0.1}"	0.88590
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	detect	enet	1	7	"{""alpha"": 0.001, ""l1_ratio"": 0.5}"	0.88595
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	detect	enet	1	8	"{""alpha"": 0.001, ""l1_ratio"": 0.9}"	0.88597
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	detect	enet	1	9	"{""alpha"": 0.003, ""l1_ratio"": 0.1}"	0.88582
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	detect	enet	1	10	"{""alpha"": 0.003, ""l1_ratio"": 0.5}"	0.88578
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	detect	enet	1	11	"{""alpha"": 0.003, ""l1_ratio"": 0.9}"	0.88579
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	detect	enet	1	12	"{""alpha"": 0.01, ""l1_ratio"": 0.1}"	0.88541
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	detect	enet	1	13	"{""alpha"": 0.01, ""l1_ratio"": 0.5}"	0.88530
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	detect	enet	1	14	"{""alpha"": 0.01, ""l1_ratio"": 0.9}"	0.88511
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	detect	enet	2	0	"{""alpha"": 0.0001, ""l1_ratio"": 0.1}"	0.89424
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	detect	enet	2	1	"{""alpha"": 0.0001, ""l1_ratio"": 0.5}"	0.89422
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	detect	enet	2	2	"{""alpha"": 0.0001, ""l1_ratio"": 0.9}"	0.89423
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	detect	enet	2	3	"{""alpha"": 0.0003, ""l1_ratio"": 0.1}"	0.89427
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	detect	enet	2	4	"{""alpha"": 0.0003, ""l1_ratio"": 0.5}"	0.89429
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	detect	enet	2	5	"{""alpha"": 0.0003, ""l1_ratio"": 0.9}"	0.89432
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	detect	enet	2	6	"{""alpha"": 0.001, ""l1_ratio"": 0.1}"	0.89444
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	detect	enet	2	7	"{""alpha"": 0.001, ""l1_ratio"": 0.5}"	0.89445
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	detect	enet	2	8	"{""alpha"": 0.001, ""l1_ratio"": 0.9}"	0.89443
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	detect	enet	2	9	"{""alpha"": 0.003, ""l1_ratio"": 0.1}"	0.89429
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	detect	enet	2	10	"{""alpha"": 0.003, ""l1_ratio"": 0.5}"	0.89439
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	detect	enet	2	11	"{""alpha"": 0.003, ""l1_ratio"": 0.9}"	0.89444
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	detect	enet	2	12	"{""alpha"": 0.01, ""l1_ratio"": 0.1}"	0.89209
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	detect	enet	2	13	"{""alpha"": 0.01, ""l1_ratio"": 0.5}"	0.89198
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	detect	enet	2	14	"{""alpha"": 0.01, ""l1_ratio"": 0.9}"	0.89128
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	detect	enet	3	0	"{""alpha"": 0.0001, ""l1_ratio"": 0.1}"	0.88975
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	detect	enet	3	1	"{""alpha"": 0.0001, ""l1_ratio"": 0.5}"	0.88995
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	detect	enet	3	2	"{""alpha"": 0.0001, ""l1_ratio"": 0.9}"	0.89005
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	detect	enet	3	3	"{""alpha"": 0.0003, ""l1_ratio"": 0.1}"	0.88993
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	detect	enet	3	4	"{""alpha"": 0.0003, ""l1_ratio"": 0.5}"	0.89037
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	detect	enet	3	5	"{""alpha"": 0.0003, ""l1_ratio"": 0.9}"	0.89070
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	detect	enet	3	6	"{""alpha"": 0.001, ""l1_ratio"": 0.1}"	0.89033
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	detect	enet	3	7	"{""alpha"": 0.001, ""l1_ratio"": 0.5}"	0.89146
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	detect	enet	3	8	"{""alpha"": 0.001, ""l1_ratio"": 0.9}"	0.89243
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	detect	enet	3	9	"{""alpha"": 0.003, ""l1_ratio"": 0.1}"	0.89073
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	detect	enet	3	10	"{""alpha"": 0.003, ""l1_ratio"": 0.5}"	0.89289
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	detect	enet	3	11	"{""alpha"": 0.003, ""l1_ratio"": 0.9}"	0.89369
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	detect	enet	3	12	"{""alpha"": 0.01, ""l1_ratio"": 0.1}"	0.89038
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	detect	enet	3	13	"{""alpha"": 0.01, ""l1_ratio"": 0.5}"	0.89122
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	detect	enet	3	14	"{""alpha"": 0.01, ""l1_ratio"": 0.9}"	0.89085
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	detect	enet	4	0	"{""alpha"": 0.0001, ""l1_ratio"": 0.1}"	0.88873
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	detect	enet	4	1	"{""alpha"": 0.0001, ""l1_ratio"": 0.5}"	0.88892
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	detect	enet	4	2	"{""alpha"": 0.0001, ""l1_ratio"": 0.9}"	0.88907
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	detect	enet	4	3	"{""alpha"": 0.0003, ""l1_ratio"": 0.1}"	0.88897
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	detect	enet	4	4	"{""alpha"": 0.0003, ""l1_ratio"": 0.5}"	0.88941
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	detect	enet	4	5	"{""alpha"": 0.0003, ""l1_ratio"": 0.9}"	0.88984
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	detect	enet	4	6	"{""alpha"": 0.001, ""l1_ratio"": 0.1}"	0.88942
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	detect	enet	4	7	"{""alpha"": 0.001, ""l1_ratio"": 0.5}"	0.89079
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	detect	enet	4	8	"{""alpha"": 0.001, ""l1_ratio"": 0.9}"	0.89166
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	detect	enet	4	9	"{""alpha"": 0.003, ""l1_ratio"": 0.1}"	0.89005
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	detect	enet	4	10	"{""alpha"": 0.003, ""l1_ratio"": 0.5}"	0.89247
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	detect	enet	4	11	"{""alpha"": 0.003, ""l1_ratio"": 0.9}"	0.89334
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	detect	enet	4	12	"{""alpha"": 0.01, ""l1_ratio"": 0.1}"	0.89021
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	detect	enet	4	13	"{""alpha"": 0.01, ""l1_ratio"": 0.5}"	0.89133
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	detect	enet	4	14	"{""alpha"": 0.01, ""l1_ratio"": 0.9}"	0.89085
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	detect	lgb	1	0	"{""num_leaves"": 7, ""min_data_in_leaf"": 10, ""feature_fraction"": 0.7}"	0.89658
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	detect	lgb	1	1	"{""num_leaves"": 7, ""min_data_in_leaf"": 10, ""feature_fraction"": 1.0}"	0.89683
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	detect	lgb	1	2	"{""num_leaves"": 7, ""min_data_in_leaf"": 30, ""feature_fraction"": 0.7}"	0.89628
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	detect	lgb	1	3	"{""num_leaves"": 7, ""min_data_in_leaf"": 30, ""feature_fraction"": 1.0}"	0.89662
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	detect	lgb	1	4	"{""num_leaves"": 15, ""min_data_in_leaf"": 10, ""feature_fraction"": 0.7}"	0.89683
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	detect	lgb	1	5	"{""num_leaves"": 15, ""min_data_in_leaf"": 10, ""feature_fraction"": 1.0}"	0.89632
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	detect	lgb	1	6	"{""num_leaves"": 15, ""min_data_in_leaf"": 30, ""feature_fraction"": 0.7}"	0.89753
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	detect	lgb	1	7	"{""num_leaves"": 15, ""min_data_in_leaf"": 30, ""feature_fraction"": 1.0}"	0.89694
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	detect	lgb	1	8	"{""num_leaves"": 31, ""min_data_in_leaf"": 10, ""feature_fraction"": 0.7}"	0.89653
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	detect	lgb	1	9	"{""num_leaves"": 31, ""min_data_in_leaf"": 10, ""feature_fraction"": 1.0}"	0.89624
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	detect	lgb	1	10	"{""num_leaves"": 31, ""min_data_in_leaf"": 30, ""feature_fraction"": 0.7}"	0.89756
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	detect	lgb	1	11	"{""num_leaves"": 31, ""min_data_in_leaf"": 30, ""feature_fraction"": 1.0}"	0.89638
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	detect	lgb	2	0	"{""num_leaves"": 7, ""min_data_in_leaf"": 10, ""feature_fraction"": 0.7}"	0.89645
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	detect	lgb	2	1	"{""num_leaves"": 7, ""min_data_in_leaf"": 10, ""feature_fraction"": 1.0}"	0.89712
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	detect	lgb	2	2	"{""num_leaves"": 7, ""min_data_in_leaf"": 30, ""feature_fraction"": 0.7}"	0.89630
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	detect	lgb	2	3	"{""num_leaves"": 7, ""min_data_in_leaf"": 30, ""feature_fraction"": 1.0}"	0.89716
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	detect	lgb	2	4	"{""num_leaves"": 15, ""min_data_in_leaf"": 10, ""feature_fraction"": 0.7}"	0.89675
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	detect	lgb	2	5	"{""num_leaves"": 15, ""min_data_in_leaf"": 10, ""feature_fraction"": 1.0}"	0.89699
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	detect	lgb	2	6	"{""num_leaves"": 15, ""min_data_in_leaf"": 30, ""feature_fraction"": 0.7}"	0.89629
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	detect	lgb	2	7	"{""num_leaves"": 15, ""min_data_in_leaf"": 30, ""feature_fraction"": 1.0}"	0.89730
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	detect	lgb	2	8	"{""num_leaves"": 31, ""min_data_in_leaf"": 10, ""feature_fraction"": 0.7}"	0.89702
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	detect	lgb	2	9	"{""num_leaves"": 31, ""min_data_in_leaf"": 10, ""feature_fraction"": 1.0}"	0.89627
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	detect	lgb	2	10	"{""num_leaves"": 31, ""min_data_in_leaf"": 30, ""feature_fraction"": 0.7}"	0.89707
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	detect	lgb	2	11	"{""num_leaves"": 31, ""min_data_in_leaf"": 30, ""feature_fraction"": 1.0}"	0.89676
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	detect	lgb	3	0	"{""num_leaves"": 7, ""min_data_in_leaf"": 10, ""feature_fraction"": 0.7}"	0.89650
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	detect	lgb	3	1	"{""num_leaves"": 7, ""min_data_in_leaf"": 10, ""feature_fraction"": 1.0}"	0.89596
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	detect	lgb	3	2	"{""num_leaves"": 7, ""min_data_in_leaf"": 30, ""feature_fraction"": 0.7}"	0.89518
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	detect	lgb	3	3	"{""num_leaves"": 7, ""min_data_in_leaf"": 30, ""feature_fraction"": 1.0}"	0.89660
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	detect	lgb	3	4	"{""num_leaves"": 15, ""min_data_in_leaf"": 10, ""feature_fraction"": 0.7}"	0.89560
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	detect	lgb	3	5	"{""num_leaves"": 15, ""min_data_in_leaf"": 10, ""feature_fraction"": 1.0}"	0.89561
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	detect	lgb	3	6	"{""num_leaves"": 15, ""min_data_in_leaf"": 30, ""feature_fraction"": 0.7}"	0.89495
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	detect	lgb	3	7	"{""num_leaves"": 15, ""min_data_in_leaf"": 30, ""feature_fraction"": 1.0}"	0.89676
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	detect	lgb	3	8	"{""num_leaves"": 31, ""min_data_in_leaf"": 10, ""feature_fraction"": 0.7}"	0.89682
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	detect	lgb	3	9	"{""num_leaves"": 31, ""min_data_in_leaf"": 10, ""feature_fraction"": 1.0}"	0.89614
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	detect	lgb	3	10	"{""num_leaves"": 31, ""min_data_in_leaf"": 30, ""feature_fraction"": 0.7}"	0.89645
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	detect	lgb	3	11	"{""num_leaves"": 31, ""min_data_in_leaf"": 30, ""feature_fraction"": 1.0}"	0.89532
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	detect	lgb	4	0	"{""num_leaves"": 7, ""min_data_in_leaf"": 10, ""feature_fraction"": 0.7}"	0.89771
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	detect	lgb	4	1	"{""num_leaves"": 7, ""min_data_in_leaf"": 10, ""feature_fraction"": 1.0}"	0.89718
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	detect	lgb	4	2	"{""num_leaves"": 7, ""min_data_in_leaf"": 30, ""feature_fraction"": 0.7}"	0.89712
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	detect	lgb	4	3	"{""num_leaves"": 7, ""min_data_in_leaf"": 30, ""feature_fraction"": 1.0}"	0.89585
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	detect	lgb	4	4	"{""num_leaves"": 15, ""min_data_in_leaf"": 10, ""feature_fraction"": 0.7}"	0.89589
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	detect	lgb	4	5	"{""num_leaves"": 15, ""min_data_in_leaf"": 10, ""feature_fraction"": 1.0}"	0.89700
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	detect	lgb	4	6	"{""num_leaves"": 15, ""min_data_in_leaf"": 30, ""feature_fraction"": 0.7}"	0.89809
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	detect	lgb	4	7	"{""num_leaves"": 15, ""min_data_in_leaf"": 30, ""feature_fraction"": 1.0}"	0.89573
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	detect	lgb	4	8	"{""num_leaves"": 31, ""min_data_in_leaf"": 10, ""feature_fraction"": 0.7}"	0.89808
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	detect	lgb	4	9	"{""num_leaves"": 31, ""min_data_in_leaf"": 10, ""feature_fraction"": 1.0}"	0.89641
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	detect	lgb	4	10	"{""num_leaves"": 31, ""min_data_in_leaf"": 30, ""feature_fraction"": 0.7}"	0.89833
+EXPLORATORY (Amendment 7, post-hoc)	powerlaw	detect	lgb	4	11	"{""num_leaves"": 31, ""min_data_in_leaf"": 30, ""feature_fraction"": 1.0}"	0.89656

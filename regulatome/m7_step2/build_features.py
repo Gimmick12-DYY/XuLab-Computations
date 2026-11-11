@@ -1,13 +1,14 @@
 # m7_step2 step C: per-gene and per-(TF, gene) features on one ABC link set. Standardisation (per feature, per draw) uses train-chromosome genes only.
-# usage: build_features.py <raw|imp> [link_set_name=powerlaw]. Writes features/<kind>_<link>/{base,real,pseudo0-4,mis0-4,refs}.npz and feature_qc.json.
+# usage: build_features.py <raw|imp> [link_set_name=powerlaw] [wide]. Writes features/<kind>_<link>/{base,real,pseudo0-4,mis0-4,refs}.npz and feature_qc.json.
+# "wide" (Amendment 7, exploratory): universe splits/gene_split_wide.tsv, output features/<kind>_<link>_wide/, base, real and pseudo only.
 import gzip, json, os, sys
 import numpy as np, pandas as pd, scipy.sparse as sp
 X = "/work/users/d/y/dyy12/XuLab"; R = f"{X}/regulatome"; O = f"{R}/m7_step2"; G1 = f"{R}/gate1/cellmats"
-kind = sys.argv[1]; link = sys.argv[2] if len(sys.argv) > 2 else "powerlaw"; assert kind in ("raw", "imp")
+kind = sys.argv[1]; link = sys.argv[2] if len(sys.argv) > 2 else "powerlaw"; assert kind in ("raw", "imp"); WIDE = len(sys.argv) > 3 and sys.argv[3] == "wide"
 ABC = {"powerlaw": f"{R}/m2_abc/results/Predictions_powerlaw/EnhancerPredictionsFull_thr0.02.tsv", "hicfixed": f"{R}/m2c_abc_canonical/results/HEK293T_hicfixed/Predictions/EnhancerPredictionsFull_threshold0.02_self_promoter.tsv"}[link]; CANON = link != "powerlaw"
-Out = f"{O}/features/{kind}_{link}"; os.makedirs(Out, exist_ok=True); SEED = 20261111; ND = 5
+Out = f"{O}/features/{kind}_{link}" + ("_wide" if WIDE else ""); os.makedirs(Out, exist_ok=True); SEED = 20261111; ND = 5
 tfs = [l.strip() for l in open(f"{R}/m1_binding/v2/tfs.txt") if l.strip()]; NT = len(tfs)
-G = pd.read_csv(f"{O}/splits/gene_split.tsv", sep="\t"); genes = G.gene.values; NG = len(genes); gidx = pd.Series(np.arange(NG), index=genes); train = (G.set == "train").values
+G = pd.read_csv(f"{O}/splits/gene_split{'_wide' if WIDE else ''}.tsv", sep="\t"); genes = G.gene.values; NG = len(genes); gidx = pd.Series(np.arange(NG), index=genes); train = (G.set == "train").values
 P = pd.read_csv(f"{O}/pair_list.tsv", sep="\t"); ta = {t: i for i, t in enumerate(tfs)}; pa = P.a.map(ta).values; pb = P.b.map(ta).values
 E_ = pd.read_csv(f"{R}/m0_universe/elements_v2.bed", sep="\t", header=None, names=["chrom", "start", "end", "eid", "type", "pid", "ptype", "cls"]); act = E_.cls.isin(["promoter", "distal_active", "bivalent"]).values; Panel = E_[act].reset_index(drop=True)
 CL = pd.read_csv(f"{R}/m2c_abc_canonical/results/HEK293T_hicfixed/Neighborhoods/EnhancerList.txt", sep="\t", usecols=["chr", "start", "end", "ATAC.RPM", "H3K27ac.RPM"]) if CANON else None
@@ -70,6 +71,7 @@ for d in range(ND):
         rng = np.random.default_rng(SEED + 1000 * (d + 1) + i)
         for ix in DEC: Bp[ix, i] = B[ix[rng.permutation(len(ix))], i]
     np.savez(f"{Out}/pseudo{d}.npz", **feats(Bp)); print("pseudo", d, flush=True)
+if WIDE: json.dump(qc, open(f"{Out}/feature_qc.json", "w"), indent=1, default=str); print(json.dumps(qc, default=str)[:1500]); sys.exit(0)
 # mis-paired: each TF's binding replaced by another TF's from the same depth tertile (derangement within tertile)
 F = pd.read_csv(f"{R}/m6_improve/repro_v1/per_tf_floor_test.tsv", sep="\t").set_index("tf"); ter = F.tertile.reindex(tfs).values; assert pd.notna(ter).all(); MAP = {}
 for d in range(ND):

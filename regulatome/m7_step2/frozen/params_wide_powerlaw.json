@@ -1,0 +1,74 @@
+{
+ "detect|enet|rung1": {
+  "alpha": 0.0001,
+  "l1_ratio": 0.1
+ },
+ "detect|enet|rung2": {
+  "alpha": 0.001,
+  "l1_ratio": 0.5
+ },
+ "detect|enet|rung3": {
+  "alpha": 0.003,
+  "l1_ratio": 0.9
+ },
+ "detect|enet|rung4": {
+  "alpha": 0.003,
+  "l1_ratio": 0.9
+ },
+ "detect|lgb|rung1": {
+  "feature_fraction": 0.7,
+  "min_data_in_leaf": 30,
+  "num_leaves": 31
+ },
+ "detect|lgb|rung2": {
+  "feature_fraction": 1.0,
+  "min_data_in_leaf": 30,
+  "num_leaves": 15
+ },
+ "detect|lgb|rung3": {
+  "feature_fraction": 0.7,
+  "min_data_in_leaf": 10,
+  "num_leaves": 31
+ },
+ "detect|lgb|rung4": {
+  "feature_fraction": 0.7,
+  "min_data_in_leaf": 30,
+  "num_leaves": 31
+ },
+ "level|enet|rung1": {
+  "alpha": 0.0001,
+  "l1_ratio": 0.1
+ },
+ "level|enet|rung2": {
+  "alpha": 0.0001,
+  "l1_ratio": 0.1
+ },
+ "level|enet|rung3": {
+  "alpha": 0.001,
+  "l1_ratio": 0.9
+ },
+ "level|enet|rung4": {
+  "alpha": 0.003,
+  "l1_ratio": 0.5
+ },
+ "level|lgb|rung1": {
+  "feature_fraction": 0.7,
+  "min_data_in_leaf": 10,
+  "num_leaves": 7
+ },
+ "level|lgb|rung2": {
+  "feature_fraction": 1.0,
+  "min_data_in_leaf": 10,
+  "num_leaves": 7
+ },
+ "level|lgb|rung3": {
+  "feature_fraction": 1.0,
+  "min_data_in_leaf": 10,
+  "num_leaves": 7
+ },
+ "level|lgb|rung4": {
+  "feature_fraction": 0.7,
+  "min_data_in_leaf": 30,
+  "num_leaves": 15
+ }
+}

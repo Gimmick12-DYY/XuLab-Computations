@@ -1,0 +1,217 @@
+label	link	target	model	rung	hp	params	val_metric
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	level	enet	1	0	"{""alpha"": 0.0001, ""l1_ratio"": 0.1}"	0.19237
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	level	enet	1	1	"{""alpha"": 0.0001, ""l1_ratio"": 0.5}"	0.19233
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	level	enet	1	2	"{""alpha"": 0.0001, ""l1_ratio"": 0.9}"	0.19229
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	level	enet	1	3	"{""alpha"": 0.0003, ""l1_ratio"": 0.1}"	0.19233
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	level	enet	1	4	"{""alpha"": 0.0003, ""l1_ratio"": 0.5}"	0.19221
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	level	enet	1	5	"{""alpha"": 0.0003, ""l1_ratio"": 0.9}"	0.19208
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	level	enet	1	6	"{""alpha"": 0.001, ""l1_ratio"": 0.1}"	0.19219
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	level	enet	1	7	"{""alpha"": 0.001, ""l1_ratio"": 0.5}"	0.19176
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	level	enet	1	8	"{""alpha"": 0.001, ""l1_ratio"": 0.9}"	0.19129
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	level	enet	1	9	"{""alpha"": 0.003, ""l1_ratio"": 0.1}"	0.19179
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	level	enet	1	10	"{""alpha"": 0.003, ""l1_ratio"": 0.5}"	0.19031
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	level	enet	1	11	"{""alpha"": 0.003, ""l1_ratio"": 0.9}"	0.18846
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	level	enet	1	12	"{""alpha"": 0.01, ""l1_ratio"": 0.1}"	0.19029
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	level	enet	1	13	"{""alpha"": 0.01, ""l1_ratio"": 0.5}"	0.18553
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	level	enet	1	14	"{""alpha"": 0.01, ""l1_ratio"": 0.9}"	0.18216
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	level	enet	2	0	"{""alpha"": 0.0001, ""l1_ratio"": 0.1}"	0.19577
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	level	enet	2	1	"{""alpha"": 0.0001, ""l1_ratio"": 0.5}"	0.19572
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	level	enet	2	2	"{""alpha"": 0.0001, ""l1_ratio"": 0.9}"	0.19567
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	level	enet	2	3	"{""alpha"": 0.0003, ""l1_ratio"": 0.1}"	0.19572
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	level	enet	2	4	"{""alpha"": 0.0003, ""l1_ratio"": 0.5}"	0.19557
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	level	enet	2	5	"{""alpha"": 0.0003, ""l1_ratio"": 0.9}"	0.19541
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	level	enet	2	6	"{""alpha"": 0.001, ""l1_ratio"": 0.1}"	0.19555
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	level	enet	2	7	"{""alpha"": 0.001, ""l1_ratio"": 0.5}"	0.19501
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	level	enet	2	8	"{""alpha"": 0.001, ""l1_ratio"": 0.9}"	0.19441
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	level	enet	2	9	"{""alpha"": 0.003, ""l1_ratio"": 0.1}"	0.19505
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	level	enet	2	10	"{""alpha"": 0.003, ""l1_ratio"": 0.5}"	0.19314
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	level	enet	2	11	"{""alpha"": 0.003, ""l1_ratio"": 0.9}"	0.19107
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	level	enet	2	12	"{""alpha"": 0.01, ""l1_ratio"": 0.1}"	0.19312
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	level	enet	2	13	"{""alpha"": 0.01, ""l1_ratio"": 0.5}"	0.18720
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	level	enet	2	14	"{""alpha"": 0.01, ""l1_ratio"": 0.9}"	0.18216
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	level	enet	3	0	"{""alpha"": 0.0001, ""l1_ratio"": 0.1}"	0.18793
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	level	enet	3	1	"{""alpha"": 0.0001, ""l1_ratio"": 0.5}"	0.18818
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	level	enet	3	2	"{""alpha"": 0.0001, ""l1_ratio"": 0.9}"	0.18842
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	level	enet	3	3	"{""alpha"": 0.0003, ""l1_ratio"": 0.1}"	0.18805
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	level	enet	3	4	"{""alpha"": 0.0003, ""l1_ratio"": 0.5}"	0.18878
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	level	enet	3	5	"{""alpha"": 0.0003, ""l1_ratio"": 0.9}"	0.18946
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	level	enet	3	6	"{""alpha"": 0.001, ""l1_ratio"": 0.1}"	0.18847
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	level	enet	3	7	"{""alpha"": 0.001, ""l1_ratio"": 0.5}"	0.19029
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	level	enet	3	8	"{""alpha"": 0.001, ""l1_ratio"": 0.9}"	0.19160
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	level	enet	3	9	"{""alpha"": 0.003, ""l1_ratio"": 0.1}"	0.18949
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	level	enet	3	10	"{""alpha"": 0.003, ""l1_ratio"": 0.5}"	0.19307
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	level	enet	3	11	"{""alpha"": 0.003, ""l1_ratio"": 0.9}"	0.19273
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	level	enet	3	12	"{""alpha"": 0.01, ""l1_ratio"": 0.1}"	0.19122
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	level	enet	3	13	"{""alpha"": 0.01, ""l1_ratio"": 0.5}"	0.18840
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	level	enet	3	14	"{""alpha"": 0.01, ""l1_ratio"": 0.9}"	0.18216
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	level	enet	4	0	"{""alpha"": 0.0001, ""l1_ratio"": 0.1}"	0.18118
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	level	enet	4	1	"{""alpha"": 0.0001, ""l1_ratio"": 0.5}"	0.18179
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	level	enet	4	2	"{""alpha"": 0.0001, ""l1_ratio"": 0.9}"	0.18235
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	level	enet	4	3	"{""alpha"": 0.0003, ""l1_ratio"": 0.1}"	0.18150
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	level	enet	4	4	"{""alpha"": 0.0003, ""l1_ratio"": 0.5}"	0.18316
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	level	enet	4	5	"{""alpha"": 0.0003, ""l1_ratio"": 0.9}"	0.18454
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	level	enet	4	6	"{""alpha"": 0.001, ""l1_ratio"": 0.1}"	0.18255
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	level	enet	4	7	"{""alpha"": 0.001, ""l1_ratio"": 0.5}"	0.18671
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	level	enet	4	8	"{""alpha"": 0.001, ""l1_ratio"": 0.9}"	0.18885
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	level	enet	4	9	"{""alpha"": 0.003, ""l1_ratio"": 0.1}"	0.18486
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	level	enet	4	10	"{""alpha"": 0.003, ""l1_ratio"": 0.5}"	0.19088
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	level	enet	4	11	"{""alpha"": 0.003, ""l1_ratio"": 0.9}"	0.19169
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	level	enet	4	12	"{""alpha"": 0.01, ""l1_ratio"": 0.1}"	0.18862
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	level	enet	4	13	"{""alpha"": 0.01, ""l1_ratio"": 0.5}"	0.18882
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	level	enet	4	14	"{""alpha"": 0.01, ""l1_ratio"": 0.9}"	0.18238
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	level	lgb	1	0	"{""num_leaves"": 7, ""min_data_in_leaf"": 10, ""feature_fraction"": 0.7}"	0.21040
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	level	lgb	1	1	"{""num_leaves"": 7, ""min_data_in_leaf"": 10, ""feature_fraction"": 1.0}"	0.20852
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	level	lgb	1	2	"{""num_leaves"": 7, ""min_data_in_leaf"": 30, ""feature_fraction"": 0.7}"	0.21032
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	level	lgb	1	3	"{""num_leaves"": 7, ""min_data_in_leaf"": 30, ""feature_fraction"": 1.0}"	0.20973
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	level	lgb	1	4	"{""num_leaves"": 15, ""min_data_in_leaf"": 10, ""feature_fraction"": 0.7}"	0.20956
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	level	lgb	1	5	"{""num_leaves"": 15, ""min_data_in_leaf"": 10, ""feature_fraction"": 1.0}"	0.20779
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	level	lgb	1	6	"{""num_leaves"": 15, ""min_data_in_leaf"": 30, ""feature_fraction"": 0.7}"	0.20920
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	level	lgb	1	7	"{""num_leaves"": 15, ""min_data_in_leaf"": 30, ""feature_fraction"": 1.0}"	0.20769
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	level	lgb	1	8	"{""num_leaves"": 31, ""min_data_in_leaf"": 10, ""feature_fraction"": 0.7}"	0.20159
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	level	lgb	1	9	"{""num_leaves"": 31, ""min_data_in_leaf"": 10, ""feature_fraction"": 1.0}"	0.20066
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	level	lgb	1	10	"{""num_leaves"": 31, ""min_data_in_leaf"": 30, ""feature_fraction"": 0.7}"	0.20464
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	level	lgb	1	11	"{""num_leaves"": 31, ""min_data_in_leaf"": 30, ""feature_fraction"": 1.0}"	0.20601
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	level	lgb	2	0	"{""num_leaves"": 7, ""min_data_in_leaf"": 10, ""feature_fraction"": 0.7}"	0.20932
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	level	lgb	2	1	"{""num_leaves"": 7, ""min_data_in_leaf"": 10, ""feature_fraction"": 1.0}"	0.21163
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	level	lgb	2	2	"{""num_leaves"": 7, ""min_data_in_leaf"": 30, ""feature_fraction"": 0.7}"	0.21138
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	level	lgb	2	3	"{""num_leaves"": 7, ""min_data_in_leaf"": 30, ""feature_fraction"": 1.0}"	0.21257
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	level	lgb	2	4	"{""num_leaves"": 15, ""min_data_in_leaf"": 10, ""feature_fraction"": 0.7}"	0.20881
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	level	lgb	2	5	"{""num_leaves"": 15, ""min_data_in_leaf"": 10, ""feature_fraction"": 1.0}"	0.20806
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	level	lgb	2	6	"{""num_leaves"": 15, ""min_data_in_leaf"": 30, ""feature_fraction"": 0.7}"	0.20696
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	level	lgb	2	7	"{""num_leaves"": 15, ""min_data_in_leaf"": 30, ""feature_fraction"": 1.0}"	0.21253
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	level	lgb	2	8	"{""num_leaves"": 31, ""min_data_in_leaf"": 10, ""feature_fraction"": 0.7}"	0.20038
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	level	lgb	2	9	"{""num_leaves"": 31, ""min_data_in_leaf"": 10, ""feature_fraction"": 1.0}"	0.20744
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	level	lgb	2	10	"{""num_leaves"": 31, ""min_data_in_leaf"": 30, ""feature_fraction"": 0.7}"	0.20502
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	level	lgb	2	11	"{""num_leaves"": 31, ""min_data_in_leaf"": 30, ""feature_fraction"": 1.0}"	0.20582
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	level	lgb	3	0	"{""num_leaves"": 7, ""min_data_in_leaf"": 10, ""feature_fraction"": 0.7}"	0.20084
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	level	lgb	3	1	"{""num_leaves"": 7, ""min_data_in_leaf"": 10, ""feature_fraction"": 1.0}"	0.19963
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	level	lgb	3	2	"{""num_leaves"": 7, ""min_data_in_leaf"": 30, ""feature_fraction"": 0.7}"	0.20815
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	level	lgb	3	3	"{""num_leaves"": 7, ""min_data_in_leaf"": 30, ""feature_fraction"": 1.0}"	0.20621
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	level	lgb	3	4	"{""num_leaves"": 15, ""min_data_in_leaf"": 10, ""feature_fraction"": 0.7}"	0.20324
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	level	lgb	3	5	"{""num_leaves"": 15, ""min_data_in_leaf"": 10, ""feature_fraction"": 1.0}"	0.20106
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	level	lgb	3	6	"{""num_leaves"": 15, ""min_data_in_leaf"": 30, ""feature_fraction"": 0.7}"	0.20124
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	level	lgb	3	7	"{""num_leaves"": 15, ""min_data_in_leaf"": 30, ""feature_fraction"": 1.0}"	0.20064
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	level	lgb	3	8	"{""num_leaves"": 31, ""min_data_in_leaf"": 10, ""feature_fraction"": 0.7}"	0.20644
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	level	lgb	3	9	"{""num_leaves"": 31, ""min_data_in_leaf"": 10, ""feature_fraction"": 1.0}"	0.19209
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	level	lgb	3	10	"{""num_leaves"": 31, ""min_data_in_leaf"": 30, ""feature_fraction"": 0.7}"	0.20184
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	level	lgb	3	11	"{""num_leaves"": 31, ""min_data_in_leaf"": 30, ""feature_fraction"": 1.0}"	0.21052
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	level	lgb	4	0	"{""num_leaves"": 7, ""min_data_in_leaf"": 10, ""feature_fraction"": 0.7}"	0.20214
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	level	lgb	4	1	"{""num_leaves"": 7, ""min_data_in_leaf"": 10, ""feature_fraction"": 1.0}"	0.20172
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	level	lgb	4	2	"{""num_leaves"": 7, ""min_data_in_leaf"": 30, ""feature_fraction"": 0.7}"	0.20784
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	level	lgb	4	3	"{""num_leaves"": 7, ""min_data_in_leaf"": 30, ""feature_fraction"": 1.0}"	0.21019
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	level	lgb	4	4	"{""num_leaves"": 15, ""min_data_in_leaf"": 10, ""feature_fraction"": 0.7}"	0.20551
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	level	lgb	4	5	"{""num_leaves"": 15, ""min_data_in_leaf"": 10, ""feature_fraction"": 1.0}"	0.20652
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	level	lgb	4	6	"{""num_leaves"": 15, ""min_data_in_leaf"": 30, ""feature_fraction"": 0.7}"	0.21741
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	level	lgb	4	7	"{""num_leaves"": 15, ""min_data_in_leaf"": 30, ""feature_fraction"": 1.0}"	0.20643
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	level	lgb	4	8	"{""num_leaves"": 31, ""min_data_in_leaf"": 10, ""feature_fraction"": 0.7}"	0.19988
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	level	lgb	4	9	"{""num_leaves"": 31, ""min_data_in_leaf"": 10, ""feature_fraction"": 1.0}"	0.20074
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	level	lgb	4	10	"{""num_leaves"": 31, ""min_data_in_leaf"": 30, ""feature_fraction"": 0.7}"	0.20755
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	level	lgb	4	11	"{""num_leaves"": 31, ""min_data_in_leaf"": 30, ""feature_fraction"": 1.0}"	0.20502
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	detect	enet	1	0	"{""alpha"": 0.0001, ""l1_ratio"": 0.1}"	0.89471
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	detect	enet	1	1	"{""alpha"": 0.0001, ""l1_ratio"": 0.5}"	0.89471
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	detect	enet	1	2	"{""alpha"": 0.0001, ""l1_ratio"": 0.9}"	0.89472
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	detect	enet	1	3	"{""alpha"": 0.0003, ""l1_ratio"": 0.1}"	0.89473
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	detect	enet	1	4	"{""alpha"": 0.0003, ""l1_ratio"": 0.5}"	0.89472
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	detect	enet	1	5	"{""alpha"": 0.0003, ""l1_ratio"": 0.9}"	0.89470
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	detect	enet	1	6	"{""alpha"": 0.001, ""l1_ratio"": 0.1}"	0.89478
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	detect	enet	1	7	"{""alpha"": 0.001, ""l1_ratio"": 0.5}"	0.89475
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	detect	enet	1	8	"{""alpha"": 0.001, ""l1_ratio"": 0.9}"	0.89479
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	detect	enet	1	9	"{""alpha"": 0.003, ""l1_ratio"": 0.1}"	0.89499
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	detect	enet	1	10	"{""alpha"": 0.003, ""l1_ratio"": 0.5}"	0.89506
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	detect	enet	1	11	"{""alpha"": 0.003, ""l1_ratio"": 0.9}"	0.89513
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	detect	enet	1	12	"{""alpha"": 0.01, ""l1_ratio"": 0.1}"	0.89531
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	detect	enet	1	13	"{""alpha"": 0.01, ""l1_ratio"": 0.5}"	0.89575
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	detect	enet	1	14	"{""alpha"": 0.01, ""l1_ratio"": 0.9}"	0.89593
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	detect	enet	2	0	"{""alpha"": 0.0001, ""l1_ratio"": 0.1}"	0.89495
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	detect	enet	2	1	"{""alpha"": 0.0001, ""l1_ratio"": 0.5}"	0.89495
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	detect	enet	2	2	"{""alpha"": 0.0001, ""l1_ratio"": 0.9}"	0.89495
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	detect	enet	2	3	"{""alpha"": 0.0003, ""l1_ratio"": 0.1}"	0.89502
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	detect	enet	2	4	"{""alpha"": 0.0003, ""l1_ratio"": 0.5}"	0.89500
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	detect	enet	2	5	"{""alpha"": 0.0003, ""l1_ratio"": 0.9}"	0.89501
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	detect	enet	2	6	"{""alpha"": 0.001, ""l1_ratio"": 0.1}"	0.89505
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	detect	enet	2	7	"{""alpha"": 0.001, ""l1_ratio"": 0.5}"	0.89507
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	detect	enet	2	8	"{""alpha"": 0.001, ""l1_ratio"": 0.9}"	0.89508
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	detect	enet	2	9	"{""alpha"": 0.003, ""l1_ratio"": 0.1}"	0.89533
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	detect	enet	2	10	"{""alpha"": 0.003, ""l1_ratio"": 0.5}"	0.89560
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	detect	enet	2	11	"{""alpha"": 0.003, ""l1_ratio"": 0.9}"	0.89576
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	detect	enet	2	12	"{""alpha"": 0.01, ""l1_ratio"": 0.1}"	0.89597
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	detect	enet	2	13	"{""alpha"": 0.01, ""l1_ratio"": 0.5}"	0.89644
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	detect	enet	2	14	"{""alpha"": 0.01, ""l1_ratio"": 0.9}"	0.89640
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	detect	enet	3	0	"{""alpha"": 0.0001, ""l1_ratio"": 0.1}"	0.88798
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	detect	enet	3	1	"{""alpha"": 0.0001, ""l1_ratio"": 0.5}"	0.88814
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	detect	enet	3	2	"{""alpha"": 0.0001, ""l1_ratio"": 0.9}"	0.88832
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	detect	enet	3	3	"{""alpha"": 0.0003, ""l1_ratio"": 0.1}"	0.88820
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	detect	enet	3	4	"{""alpha"": 0.0003, ""l1_ratio"": 0.5}"	0.88867
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	detect	enet	3	5	"{""alpha"": 0.0003, ""l1_ratio"": 0.9}"	0.88908
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	detect	enet	3	6	"{""alpha"": 0.001, ""l1_ratio"": 0.1}"	0.88900
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	detect	enet	3	7	"{""alpha"": 0.001, ""l1_ratio"": 0.5}"	0.89038
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	detect	enet	3	8	"{""alpha"": 0.001, ""l1_ratio"": 0.9}"	0.89161
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	detect	enet	3	9	"{""alpha"": 0.003, ""l1_ratio"": 0.1}"	0.89065
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	detect	enet	3	10	"{""alpha"": 0.003, ""l1_ratio"": 0.5}"	0.89353
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	detect	enet	3	11	"{""alpha"": 0.003, ""l1_ratio"": 0.9}"	0.89469
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	detect	enet	3	12	"{""alpha"": 0.01, ""l1_ratio"": 0.1}"	0.89362
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	detect	enet	3	13	"{""alpha"": 0.01, ""l1_ratio"": 0.5}"	0.89626
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	detect	enet	3	14	"{""alpha"": 0.01, ""l1_ratio"": 0.9}"	0.89640
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	detect	enet	4	0	"{""alpha"": 0.0001, ""l1_ratio"": 0.1}"	0.88835
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	detect	enet	4	1	"{""alpha"": 0.0001, ""l1_ratio"": 0.5}"	0.88846
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	detect	enet	4	2	"{""alpha"": 0.0001, ""l1_ratio"": 0.9}"	0.88857
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	detect	enet	4	3	"{""alpha"": 0.0003, ""l1_ratio"": 0.1}"	0.88848
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	detect	enet	4	4	"{""alpha"": 0.0003, ""l1_ratio"": 0.5}"	0.88889
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	detect	enet	4	5	"{""alpha"": 0.0003, ""l1_ratio"": 0.9}"	0.88911
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	detect	enet	4	6	"{""alpha"": 0.001, ""l1_ratio"": 0.1}"	0.88906
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	detect	enet	4	7	"{""alpha"": 0.001, ""l1_ratio"": 0.5}"	0.89017
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	detect	enet	4	8	"{""alpha"": 0.001, ""l1_ratio"": 0.9}"	0.89153
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	detect	enet	4	9	"{""alpha"": 0.003, ""l1_ratio"": 0.1}"	0.89063
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	detect	enet	4	10	"{""alpha"": 0.003, ""l1_ratio"": 0.5}"	0.89348
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	detect	enet	4	11	"{""alpha"": 0.003, ""l1_ratio"": 0.9}"	0.89463
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	detect	enet	4	12	"{""alpha"": 0.01, ""l1_ratio"": 0.1}"	0.89354
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	detect	enet	4	13	"{""alpha"": 0.01, ""l1_ratio"": 0.5}"	0.89629
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	detect	enet	4	14	"{""alpha"": 0.01, ""l1_ratio"": 0.9}"	0.89640
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	detect	lgb	1	0	"{""num_leaves"": 7, ""min_data_in_leaf"": 10, ""feature_fraction"": 0.7}"	0.90249
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	detect	lgb	1	1	"{""num_leaves"": 7, ""min_data_in_leaf"": 10, ""feature_fraction"": 1.0}"	0.90149
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	detect	lgb	1	2	"{""num_leaves"": 7, ""min_data_in_leaf"": 30, ""feature_fraction"": 0.7}"	0.90218
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	detect	lgb	1	3	"{""num_leaves"": 7, ""min_data_in_leaf"": 30, ""feature_fraction"": 1.0}"	0.90099
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	detect	lgb	1	4	"{""num_leaves"": 15, ""min_data_in_leaf"": 10, ""feature_fraction"": 0.7}"	0.89969
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	detect	lgb	1	5	"{""num_leaves"": 15, ""min_data_in_leaf"": 10, ""feature_fraction"": 1.0}"	0.90013
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	detect	lgb	1	6	"{""num_leaves"": 15, ""min_data_in_leaf"": 30, ""feature_fraction"": 0.7}"	0.90179
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	detect	lgb	1	7	"{""num_leaves"": 15, ""min_data_in_leaf"": 30, ""feature_fraction"": 1.0}"	0.90090
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	detect	lgb	1	8	"{""num_leaves"": 31, ""min_data_in_leaf"": 10, ""feature_fraction"": 0.7}"	0.89925
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	detect	lgb	1	9	"{""num_leaves"": 31, ""min_data_in_leaf"": 10, ""feature_fraction"": 1.0}"	0.90006
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	detect	lgb	1	10	"{""num_leaves"": 31, ""min_data_in_leaf"": 30, ""feature_fraction"": 0.7}"	0.89968
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	detect	lgb	1	11	"{""num_leaves"": 31, ""min_data_in_leaf"": 30, ""feature_fraction"": 1.0}"	0.89975
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	detect	lgb	2	0	"{""num_leaves"": 7, ""min_data_in_leaf"": 10, ""feature_fraction"": 0.7}"	0.90259
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	detect	lgb	2	1	"{""num_leaves"": 7, ""min_data_in_leaf"": 10, ""feature_fraction"": 1.0}"	0.90251
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	detect	lgb	2	2	"{""num_leaves"": 7, ""min_data_in_leaf"": 30, ""feature_fraction"": 0.7}"	0.90387
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	detect	lgb	2	3	"{""num_leaves"": 7, ""min_data_in_leaf"": 30, ""feature_fraction"": 1.0}"	0.90313
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	detect	lgb	2	4	"{""num_leaves"": 15, ""min_data_in_leaf"": 10, ""feature_fraction"": 0.7}"	0.90485
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	detect	lgb	2	5	"{""num_leaves"": 15, ""min_data_in_leaf"": 10, ""feature_fraction"": 1.0}"	0.90267
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	detect	lgb	2	6	"{""num_leaves"": 15, ""min_data_in_leaf"": 30, ""feature_fraction"": 0.7}"	0.90370
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	detect	lgb	2	7	"{""num_leaves"": 15, ""min_data_in_leaf"": 30, ""feature_fraction"": 1.0}"	0.90259
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	detect	lgb	2	8	"{""num_leaves"": 31, ""min_data_in_leaf"": 10, ""feature_fraction"": 0.7}"	0.90216
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	detect	lgb	2	9	"{""num_leaves"": 31, ""min_data_in_leaf"": 10, ""feature_fraction"": 1.0}"	0.90249
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	detect	lgb	2	10	"{""num_leaves"": 31, ""min_data_in_leaf"": 30, ""feature_fraction"": 0.7}"	0.90184
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	detect	lgb	2	11	"{""num_leaves"": 31, ""min_data_in_leaf"": 30, ""feature_fraction"": 1.0}"	0.90334
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	detect	lgb	3	0	"{""num_leaves"": 7, ""min_data_in_leaf"": 10, ""feature_fraction"": 0.7}"	0.90422
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	detect	lgb	3	1	"{""num_leaves"": 7, ""min_data_in_leaf"": 10, ""feature_fraction"": 1.0}"	0.90357
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	detect	lgb	3	2	"{""num_leaves"": 7, ""min_data_in_leaf"": 30, ""feature_fraction"": 0.7}"	0.90428
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	detect	lgb	3	3	"{""num_leaves"": 7, ""min_data_in_leaf"": 30, ""feature_fraction"": 1.0}"	0.90315
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	detect	lgb	3	4	"{""num_leaves"": 15, ""min_data_in_leaf"": 10, ""feature_fraction"": 0.7}"	0.90557
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	detect	lgb	3	5	"{""num_leaves"": 15, ""min_data_in_leaf"": 10, ""feature_fraction"": 1.0}"	0.90387
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	detect	lgb	3	6	"{""num_leaves"": 15, ""min_data_in_leaf"": 30, ""feature_fraction"": 0.7}"	0.90608
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	detect	lgb	3	7	"{""num_leaves"": 15, ""min_data_in_leaf"": 30, ""feature_fraction"": 1.0}"	0.90430
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	detect	lgb	3	8	"{""num_leaves"": 31, ""min_data_in_leaf"": 10, ""feature_fraction"": 0.7}"	0.90335
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	detect	lgb	3	9	"{""num_leaves"": 31, ""min_data_in_leaf"": 10, ""feature_fraction"": 1.0}"	0.90686
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	detect	lgb	3	10	"{""num_leaves"": 31, ""min_data_in_leaf"": 30, ""feature_fraction"": 0.7}"	0.90402
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	detect	lgb	3	11	"{""num_leaves"": 31, ""min_data_in_leaf"": 30, ""feature_fraction"": 1.0}"	0.90574
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	detect	lgb	4	0	"{""num_leaves"": 7, ""min_data_in_leaf"": 10, ""feature_fraction"": 0.7}"	0.90310
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	detect	lgb	4	1	"{""num_leaves"": 7, ""min_data_in_leaf"": 10, ""feature_fraction"": 1.0}"	0.90262
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	detect	lgb	4	2	"{""num_leaves"": 7, ""min_data_in_leaf"": 30, ""feature_fraction"": 0.7}"	0.90303
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	detect	lgb	4	3	"{""num_leaves"": 7, ""min_data_in_leaf"": 30, ""feature_fraction"": 1.0}"	0.90248
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	detect	lgb	4	4	"{""num_leaves"": 15, ""min_data_in_leaf"": 10, ""feature_fraction"": 0.7}"	0.90284
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	detect	lgb	4	5	"{""num_leaves"": 15, ""min_data_in_leaf"": 10, ""feature_fraction"": 1.0}"	0.90226
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	detect	lgb	4	6	"{""num_leaves"": 15, ""min_data_in_leaf"": 30, ""feature_fraction"": 0.7}"	0.90302
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	detect	lgb	4	7	"{""num_leaves"": 15, ""min_data_in_leaf"": 30, ""feature_fraction"": 1.0}"	0.90491
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	detect	lgb	4	8	"{""num_leaves"": 31, ""min_data_in_leaf"": 10, ""feature_fraction"": 0.7}"	0.90290
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	detect	lgb	4	9	"{""num_leaves"": 31, ""min_data_in_leaf"": 10, ""feature_fraction"": 1.0}"	0.90384
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	detect	lgb	4	10	"{""num_leaves"": 31, ""min_data_in_leaf"": 30, ""feature_fraction"": 0.7}"	0.90289
+EXPLORATORY (Amendment 7, post-hoc)	hicfixed	detect	lgb	4	11	"{""num_leaves"": 31, ""min_data_in_leaf"": 30, ""feature_fraction"": 1.0}"	0.90362

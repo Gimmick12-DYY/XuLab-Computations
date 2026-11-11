@@ -1,0 +1,8 @@
+m7_step2 Amendment 7 freeze (EXPLORATORY widened-universe expression ladder), 2026-11-11. Tuned on train/validation only; no widened test number computed. sha256:
+3b283f99480711e25761f69103a7e0b13e9911ad3e737841b44e1c215aeba1a5  m7_wide.py
+f2f0e0f1c605503a5d26f7430baa20f3249489335e1bb9f0a6c51e147a16fbc3  make_wide.py
+deca91592c79d5c2e8b3a15af3b2f36728f70633f494830b62b14edd5e816935  build_features.py
+d8087a1e10b73ab696ba0e73d5f6fed085980296de829c06e0c5c3b60febf3df  run_wide.sbatch
+12aaa503ebe656971fa975278754b8e07ad9cea903ca60a9563dc9270215b05e  splits/gene_split_wide.tsv
+1767916c56a9480a4c0bfcd8644f826cd889db447d620106f9bca068108a8504  frozen/params_wide_hicfixed.json
+efa0aac6400acb9ecec7b806fffc74f7eb1df304a2ebc17ce80c4d137a757c13  frozen/params_wide_powerlaw.json

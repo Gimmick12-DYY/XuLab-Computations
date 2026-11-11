@@ -1,0 +1,5 @@
+label	split	n_genes	frac_absent_set_to_0	frac_level_eq_0	frac_detected_ge10pct
+EXPLORATORY (Amendment 7, post-hoc)	all	19807	0.3036	0.3036	0.5665
+EXPLORATORY (Amendment 7, post-hoc)	test	4071	0.3321	0.3321	0.5431
+EXPLORATORY (Amendment 7, post-hoc)	train	13820	0.2964	0.2964	0.5703
+EXPLORATORY (Amendment 7, post-hoc)	val	1916	0.2954	0.2954	0.5887
