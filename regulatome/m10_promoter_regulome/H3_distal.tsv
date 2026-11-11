@@ -1,0 +1,4 @@
+label	tf	n_genes_linked_to_distal_motif_site	n_responders	OR_own	lo	hi	OR_pooled_thinned	OR_atac
+diagnostic, benchmark already read	CTCF	932	51	1.3321	0.7476	2.3759	0.9601	0.9601
+diagnostic, benchmark already read	NRF1	770	42	1.3463	0.7531	2.5500	1.3463	0.6714
+diagnostic, benchmark already read	ZNF143	8292	421	0.9753	0.8031	1.1764	0.9851	0.7981

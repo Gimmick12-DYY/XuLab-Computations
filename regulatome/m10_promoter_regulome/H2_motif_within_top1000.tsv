@@ -1,0 +1,33 @@
+label	tf	testable	n_top1000_with_motif	n_without	resp_rate_with	resp_rate_without	OR_with_vs_without	lo	hi
+diagnostic, benchmark already read	CTCF	True	667.0000	333.0000	0.0495	0.0300	1.6267	0.8428	3.5767
+diagnostic, benchmark already read	DDIT3	False	67.0000	933.0000	0.1045	0.0697	1.6437	0.6075	3.2982
+diagnostic, benchmark already read	E2F3	False	720.0000	280.0000	0.0611	0.0679	0.8821	0.5251	1.7122
+diagnostic, benchmark already read	E4F1	False	134.0000	866.0000	0.0522	0.0727	0.7443	0.2723	1.4418
+diagnostic, benchmark already read	EPAS1	False	91.0000	909.0000	0.0330	0.0594	0.6208	0.0894	1.4986
+diagnostic, benchmark already read	ETS2	False	685.0000	315.0000	0.0540	0.0603	0.8792	0.5248	1.6574
+diagnostic, benchmark already read	FOXC1	False	104.0000	896.0000	0.0481	0.0580	0.8892	0.2315	1.8792
+diagnostic, benchmark already read	FOXJ3	False	232.0000	768.0000	0.0517	0.0495	1.0756	0.5179	1.9794
+diagnostic, benchmark already read	FOXK1	False	177.0000	823.0000	0.0960	0.0486	2.1093	1.0729	3.5515
+diagnostic, benchmark already read	HES1	False	354.0000	646.0000	0.0198	0.0604	0.3319	0.1312	0.6596
+diagnostic, benchmark already read	HOXA10	False	63.0000	937.0000	0.0952	0.0502	2.1193	0.7357	4.3816
+diagnostic, benchmark already read	HOXA5	False	48.0000	952.0000	0.0000	0.0525	0.1842	0.1274	0.2806
+diagnostic, benchmark already read	HOXB6	False	60.0000	940.0000	0.0500	0.0553	1.0301	0.1564	2.4305
+diagnostic, benchmark already read	HOXB8	False	70.0000	930.0000	0.0286	0.0516	0.6641	0.1158	1.5857
+diagnostic, benchmark already read	HOXC9	False	84.0000	916.0000	0.0595	0.0437	1.4972	0.3796	3.1280
+diagnostic, benchmark already read	MAZ	True	966.0000	34.0000	0.0611	0.0294	1.4643	0.5166	5.9181
+diagnostic, benchmark already read	MEF2A	False	215.0000	785.0000	0.0419	0.0433	1.0021	0.4271	1.9149
+diagnostic, benchmark already read	MEF2D	False	139.0000	861.0000	0.0360	0.0511	0.7512	0.2186	1.5299
+diagnostic, benchmark already read	MLX	False	169.0000	831.0000	0.0651	0.0481	1.4180	0.6539	2.6860
+diagnostic, benchmark already read	MSX2	True	34.0000	966.0000	0.0294	0.0507	0.8299	0.2064	2.6523
+diagnostic, benchmark already read	NFYA	False	568.0000	432.0000	0.0423	0.0486	0.8612	0.4710	1.5924
+diagnostic, benchmark already read	NRF1	True	721.0000	279.0000	0.1331	0.0430	3.3015	1.9435	7.2979
+diagnostic, benchmark already read	RBPJ	True	477.0000	523.0000	0.0440	0.0459	0.9602	0.5110	1.7538
+diagnostic, benchmark already read	RELA	False	222.0000	778.0000	0.0721	0.0488	1.5368	0.7818	2.7071
+diagnostic, benchmark already read	SOX4	False	317.0000	683.0000	0.0694	0.0527	1.3507	0.7541	2.2775
+diagnostic, benchmark already read	TBX3	False	413.0000	587.0000	0.0412	0.0426	0.9736	0.5089	1.7855
+diagnostic, benchmark already read	ZBTB7A	False	503.0000	497.0000	0.0398	0.0664	0.5879	0.3189	0.9968
+diagnostic, benchmark already read	ZIC2	False	417.0000	583.0000	0.0671	0.0583	1.1654	0.7019	1.9104
+diagnostic, benchmark already read	ZNF143	True	408.0000	592.0000	0.0760	0.0321	2.4541	1.3917	4.8363
+diagnostic, benchmark already read	ZNF282	True	214.0000	786.0000	0.0607	0.0471	1.3391	0.6814	2.4943
+diagnostic, benchmark already read	ZNF768	False	436.0000	564.0000	0.0528	0.0496	1.0698	0.5980	1.9053
+diagnostic, benchmark already read	POOLED_median						1.0301	0.8821	1.3507

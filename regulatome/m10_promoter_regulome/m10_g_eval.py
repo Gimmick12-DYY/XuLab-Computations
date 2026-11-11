@@ -64,7 +64,8 @@ for t in TESTABLE:
         chip = pd.Series(BKs["CTCF"], index=bg).reindex(ug).values; cpos = topk(np.nan_to_num(chip, nan=-1)) & resp
         for nm, tg in L.items(): REC.append(dict(label=LAB, tf=t, list=nm, n_list=int(tg.sum()), chip_HEK293_positive_responders=int(cpos.sum()), recovered=int((cpos & tg).sum())))
         REC.append(dict(label=LAB, tf=t, list="raw_tss500_top1000 (m10)", n_list=1000, chip_HEK293_positive_responders=int(cpos.sum()), recovered=int((cpos & topk(w500[t])).sum())))
-pd.DataFrame(G2).to_csv(f"{O}/G2_lists.tsv", sep="\t", index=False, float_format="%.4f"); pd.DataFrame(REC).to_csv(f"{O}/G2_ctcf_recovery.tsv", sep="\t", index=False)
+G2 = pd.DataFrame(G2); G2.loc[G2.n_genes == 0, ["OR", "OR_lo", "OR_hi", "OR_matched", "OR_pseudoTF", "OR_swapped"]] = np.nan; G2.loc[G2.n_swapped == 0, "OR_swapped"] = np.nan  # Amendment 3: empty lists are NA
+G2.to_csv(f"{O}/G2_lists.tsv", sep="\t", index=False, float_format="%.4f"); pd.DataFrame(REC).to_csv(f"{O}/G2_ctcf_recovery.tsv", sep="\t", index=False)
 # ---- G3
 chip_t = pd.Series(BKs["CTCF_293T"], index=bg).reindex(ug).values; ours = w500["CTCF"]; ct = topk(np.nan_to_num(chip_t, nan=-1)); ot = topk(ours); rk = pd.Series(ours).rank(pct=True).values
 A = ct & (rk < .5); B = ot & ~ct; pool = allw / allt * 1e6; G3 = []
