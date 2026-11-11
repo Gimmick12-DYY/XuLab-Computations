@@ -1,0 +1,39 @@
+pair	reference	best_pct	af3_tier	af3_ipsae	af3_status	tier	a	b	control
+RBBP4-ZNF644	False	0.9753	strong	0.59	af3_strong	AF3_only	RBBP4	ZNF644	False
+MLX-SREBF2	True	0.7829	strong	0.575	af3_strong	AF3_only	MLX	SREBF2	True
+RBBP7-ZNF644	False	0.767	strong	0.516	af3_strong	AF3_only	RBBP7	ZNF644	False
+DDIT3-TBX3	False	0.7754	strong	0.515	af3_strong	AF3_only	DDIT3	TBX3	False
+ETS2-RBPJ	False	0.9831	strong	0.514	af3_strong	AF3_only	ETS2	RBPJ	False
+EPAS1-SREBF2	False	0.8338	strong	0.5	af3_strong	AF3_only	EPAS1	SREBF2	False
+ETS2-RBBP7	False	0.6186	strong	0.48	af3_strong	AF3_only	ETS2	RBBP7	False
+RBPJ-ZBTB7A	False	0.6923	strong	0.467	af3_strong	AF3_only	RBPJ	ZBTB7A	False
+XPA-ZIC2	False	0.7614	strong	0.466	af3_strong	AF3_only	XPA	ZIC2	False
+ADNP-MTF2	False	0.9166	strong	0.46	af3_strong	AF3_only	ADNP	MTF2	False
+HOXB9-RBBP7	False	0.6537	strong	0.454	af3_strong	AF3_only	HOXB9	RBBP7	False
+RBBP4-TBX3	False	0.8948	strong	0.434	af3_strong	AF3_only	RBBP4	TBX3	False
+HOXA10-RBBP4	False	0.8578	strong	0.416	af3_strong	AF3_only	HOXA10	RBBP4	False
+RBBP4-SAFB	False	0.9438	strong	0.411	af3_strong	AF3_only	RBBP4	SAFB	False
+HOXB9-XPA	False	0.765	strong	0.386	af3_strong	AF3_only	HOXB9	XPA	False
+NR1D2-TBX3	False	0.8117	strong	0.382	af3_strong	AF3_only	NR1D2	TBX3	False
+HOXA10-XPA	False	0.7501	strong	0.351	af3_strong	AF3_only	HOXA10	XPA	False
+RBBP7-SAFB	False	0.8069	strong	0.324	af3_strong	AF3_only	RBBP7	SAFB	False
+MAZ-RBPJ	False	0.9124	strong	0.313	af3_strong	AF3_only	MAZ	RBPJ	False
+HOXC9-RBBP4	False	0.7225	strong	0.312	af3_strong	AF3_only	HOXC9	RBBP4	False
+RBBP7-ZNF703	False	0.9059	strong	0.759	af3_strong	T1	RBBP7	ZNF703	False
+DR1-NFYA	False	0.9546	strong	0.53	af3_strong	T1	DR1	NFYA	False
+HOXB9-RBBP4	False	0.8734	strong	0.428	af3_strong	T1	HOXB9	RBBP4	False
+DDIT3-RBBP4	False	0.9838	strong	0.398	af3_strong	T1	DDIT3	RBBP4	False
+E2F3-RBBP7	False	0.8955	strong	0.379	af3_strong	T1	E2F3	RBBP7	False
+RBBP4-ZIC2	False	0.9539	strong	0.337	af3_strong	T1	RBBP4	ZIC2	True
+MTF2-RBBP4	False	0.9604	strong	0.33	af3_strong	T1	MTF2	RBBP4	True
+RBBP4-ZNF703	False	0.9763	strong	0.322	af3_strong	T1	RBBP4	ZNF703	False
+DDIT3-RBBP7	False	0.9224	strong	0.312	af3_strong	T1	DDIT3	RBBP7	False
+EPAS1-HES1	False	0.6624	strong	0.559	af3_strong	T2	EPAS1	HES1	False
+NR1D2-ZNF703	False	0.6404	strong	0.566	af3_strong	T3	NR1D2	ZNF703	False
+DDIT3-MTF2	False	0.8406	strong	0.479	af3_strong	T3	DDIT3	MTF2	False
+FLYWCH1-RBBP7	False	0.6047	strong	0.464	af3_strong	T3	FLYWCH1	RBBP7	False
+EPAS1-HP1	False	0.792	strong	0.34	af3_strong	T3	EPAS1	HP1	False
+HES1-NR1D2	False	0.6394	strong	0.307	af3_strong	T3	HES1	NR1D2	False
+CTCF-STAG2	True	0.7566	not_run		af3_not_tested	reference_only	CTCF	STAG2	True
+EZH2-MTF2	True	0.9471	not_run		af3_not_tested	reference_only	EZH2	MTF2	True
+MAZ-ZNF143	True	0.9114	not_run		af3_not_tested	reference_only	MAZ	ZNF143	True

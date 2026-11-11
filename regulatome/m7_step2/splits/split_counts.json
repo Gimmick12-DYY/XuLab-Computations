@@ -1,0 +1,40 @@
+{
+ "abc_genes": 19807,
+ "kd_genes_arm2": 12349,
+ "kd_genes_arm1": 12427,
+ "universe_before_drops": 11312,
+ "multi_chromosome_symbols_in_abc": 0,
+ "dropped_no_chromosome": 0,
+ "dropped_chrY_chrM_nonprimary": 0,
+ "dropped_by_chrom": {},
+ "universe_final": 11312,
+ "set_sizes_arm2": {
+  "train": 7883,
+  "test": 2211,
+  "val": 1128
+ },
+ "set_sizes_arm1": {
+  "train": 7925,
+  "test": 2229,
+  "val": 1131
+ },
+ "testable_tfs": 76,
+ "claim_tier_tfs_testable": 19,
+ "fold_sizes": {
+  "0": 16,
+  "1": 15,
+  "2": 15,
+  "3": 15,
+  "4": 15
+ },
+ "binding_tfs_not_testable": [
+  "GLYR1",
+  "SREBF2",
+  "ZNF367"
+ ],
+ "arm1_testable": 30,
+ "pairs_dropped_member_not_in_panel": [],
+ "pairs": 38,
+ "pairs_control": 6,
+ "pairs_af3_strong": 35
+}
