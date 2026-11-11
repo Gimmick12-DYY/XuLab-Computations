@@ -53,3 +53,10 @@ The script is diag.py, run as jobs 8865840 (D1), 8865841 (D2) and 8865843 (D3). 
   - No feature or join error was found.
 - **D2, controls on the claim-tier reading (from per_tf_test.tsv; d2_claim_tier_controls.tsv).**
 - **D3, signed unfitted references (d3_signed_refs_pooled.tsv, d3_signed_refs_per_tf.tsv).** One sign per TF is estimated on train chromosomes, then applied to the test Spearman. References are on the power-law panel build, Arm 2, both centrings. The baseline-only elastic net beside them is unsigned.
+
+## EXPLORATORY widened-universe expression ladder (Amendment 7; post-hoc; does not change the section 7 expression verdict)
+
+- Universe: all 19,807 ABC genes. Train 13,820, validation 1,916, test 4,071 genes. Genes absent from the matrix (target set to 0): 29.6%, 29.5% and 33.2% of each split. Detected at >= 10%: 57.0%, 58.9% and 54.3%.
+- Elastic net and LightGBM, re-tuned on validation (frozen/params_wide_*.json). Freeze aaa5b02; test scored once, in jobs 8869458 and 8869511-8869513.
+- Tables in wide_exploratory/: ladder_wide.tsv covers the level target (R2) and the detection target (AUROC, AP). dropone_wide.tsv covers rung 3, level target, all 79 TFs.
+- The mis-paired control does not apply, because the per-TF rung holds all 79 TFs at once.

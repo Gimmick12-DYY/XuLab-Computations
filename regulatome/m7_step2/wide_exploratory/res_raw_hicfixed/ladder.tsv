@@ -1,0 +1,25 @@
+label	kind	link	target	model	rung	metric	value	lo	hi	gain_vs_prev	gain_lo	gain_hi	pseudo_value	real_minus_pseudo	rmp_lo	rmp_hi
+EXPLORATORY (Amendment 7, post-hoc)	raw	hicfixed	level	enet	1	r2	0.19188	0.17234	0.21306							
+EXPLORATORY (Amendment 7, post-hoc)	raw	hicfixed	level	enet	2	r2	0.19917	0.17991	0.22021	0.00729	0.00398	0.01066				
+EXPLORATORY (Amendment 7, post-hoc)	raw	hicfixed	level	enet	3	r2	0.19577	0.17633	0.21723	-0.00340	-0.00795	0.00121	0.19632	-0.00054	-0.00536	0.00421
+EXPLORATORY (Amendment 7, post-hoc)	raw	hicfixed	level	enet	4	r2	0.19813	0.17846	0.21921	0.00236	-0.00019	0.00487	0.19816	-0.00003	-0.00330	0.00359
+EXPLORATORY (Amendment 7, post-hoc)	raw	hicfixed	level	lgb	1	r2	0.21216	0.19006	0.23649							
+EXPLORATORY (Amendment 7, post-hoc)	raw	hicfixed	level	lgb	2	r2	0.21101	0.18880	0.23494	-0.00114	-0.00517	0.00268				
+EXPLORATORY (Amendment 7, post-hoc)	raw	hicfixed	level	lgb	3	r2	0.20140	0.17762	0.22683	-0.00962	-0.01827	-0.00037	0.20290	-0.00151	-0.01082	0.00875
+EXPLORATORY (Amendment 7, post-hoc)	raw	hicfixed	level	lgb	4	r2	0.20155	0.17626	0.22762	0.00016	-0.00947	0.00940	0.20133	0.00022	-0.01092	0.01107
+EXPLORATORY (Amendment 7, post-hoc)	raw	hicfixed	detect	enet	1	auroc	0.89510	0.88492	0.90528							
+EXPLORATORY (Amendment 7, post-hoc)	raw	hicfixed	detect	enet	1	ap	0.88685	0.87164	0.90084							
+EXPLORATORY (Amendment 7, post-hoc)	raw	hicfixed	detect	enet	2	auroc	0.89629	0.88605	0.90655	0.00119	0.00047	0.00193				
+EXPLORATORY (Amendment 7, post-hoc)	raw	hicfixed	detect	enet	2	ap	0.88762	0.87235	0.90163	0.00077	-0.00004	0.00158				
+EXPLORATORY (Amendment 7, post-hoc)	raw	hicfixed	detect	enet	3	auroc	0.89620	0.88607	0.90633	-0.00009	-0.00050	0.00028	0.89617	0.00003	-0.00061	0.00066
+EXPLORATORY (Amendment 7, post-hoc)	raw	hicfixed	detect	enet	3	ap	0.88812	0.87307	0.90217	0.00050	-0.00018	0.00118	0.88825	-0.00013	-0.00173	0.00153
+EXPLORATORY (Amendment 7, post-hoc)	raw	hicfixed	detect	enet	4	auroc	0.89620	0.88608	0.90632	0.00000	-0.00001	0.00001	0.89622	-0.00002	-0.00067	0.00061
+EXPLORATORY (Amendment 7, post-hoc)	raw	hicfixed	detect	enet	4	ap	0.88813	0.87308	0.90218	0.00001	-0.00001	0.00002	0.88831	-0.00018	-0.00181	0.00152
+EXPLORATORY (Amendment 7, post-hoc)	raw	hicfixed	detect	lgb	1	auroc	0.90274	0.89276	0.91263							
+EXPLORATORY (Amendment 7, post-hoc)	raw	hicfixed	detect	lgb	1	ap	0.88932	0.87374	0.90488							
+EXPLORATORY (Amendment 7, post-hoc)	raw	hicfixed	detect	lgb	2	auroc	0.90407	0.89407	0.91405	0.00133	-0.00068	0.00344				
+EXPLORATORY (Amendment 7, post-hoc)	raw	hicfixed	detect	lgb	2	ap	0.89098	0.87559	0.90620	0.00166	-0.00274	0.00619				
+EXPLORATORY (Amendment 7, post-hoc)	raw	hicfixed	detect	lgb	3	auroc	0.90106	0.89099	0.91104	-0.00301	-0.00581	-0.00015	0.90275	-0.00168	-0.00448	0.00106
+EXPLORATORY (Amendment 7, post-hoc)	raw	hicfixed	detect	lgb	3	ap	0.88411	0.86762	0.90062	-0.00687	-0.01522	0.00076	0.88968	-0.00557	-0.01412	0.00199
+EXPLORATORY (Amendment 7, post-hoc)	raw	hicfixed	detect	lgb	4	auroc	0.90384	0.89387	0.91392	0.00278	0.00024	0.00535	0.90294	0.00091	-0.00136	0.00312
+EXPLORATORY (Amendment 7, post-hoc)	raw	hicfixed	detect	lgb	4	ap	0.88960	0.87379	0.90501	0.00549	-0.00112	0.01231	0.89018	-0.00059	-0.00703	0.00559

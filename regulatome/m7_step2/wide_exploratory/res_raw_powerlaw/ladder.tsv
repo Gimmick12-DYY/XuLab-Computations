@@ -1,0 +1,25 @@
+label	kind	link	target	model	rung	metric	value	lo	hi	gain_vs_prev	gain_lo	gain_hi	pseudo_value	real_minus_pseudo	rmp_lo	rmp_hi
+EXPLORATORY (Amendment 7, post-hoc)	raw	powerlaw	level	enet	1	r2	0.18479	0.16438	0.20528							
+EXPLORATORY (Amendment 7, post-hoc)	raw	powerlaw	level	enet	2	r2	0.20055	0.18078	0.22131	0.01576	0.00985	0.02244				
+EXPLORATORY (Amendment 7, post-hoc)	raw	powerlaw	level	enet	3	r2	0.20514	0.18451	0.22663	0.00459	-0.00109	0.01039	0.19380	0.01134	0.00531	0.01773
+EXPLORATORY (Amendment 7, post-hoc)	raw	powerlaw	level	enet	4	r2	0.20480	0.18431	0.22618	-0.00033	-0.00310	0.00245	0.19569	0.00912	0.00392	0.01447
+EXPLORATORY (Amendment 7, post-hoc)	raw	powerlaw	level	lgb	1	r2	0.21602	0.18998	0.24090							
+EXPLORATORY (Amendment 7, post-hoc)	raw	powerlaw	level	lgb	2	r2	0.21708	0.19064	0.24161	0.00105	-0.00721	0.00977				
+EXPLORATORY (Amendment 7, post-hoc)	raw	powerlaw	level	lgb	3	r2	0.21393	0.18374	0.24338	-0.00315	-0.02056	0.01335	0.20750	0.00643	-0.00978	0.02193
+EXPLORATORY (Amendment 7, post-hoc)	raw	powerlaw	level	lgb	4	r2	0.21780	0.18975	0.24542	0.00387	-0.00859	0.01741	0.20638	0.01141	-0.00014	0.02247
+EXPLORATORY (Amendment 7, post-hoc)	raw	powerlaw	detect	enet	1	auroc	0.88557	0.87491	0.89664							
+EXPLORATORY (Amendment 7, post-hoc)	raw	powerlaw	detect	enet	1	ap	0.88159	0.86729	0.89603							
+EXPLORATORY (Amendment 7, post-hoc)	raw	powerlaw	detect	enet	2	auroc	0.89268	0.88251	0.90333	0.00711	0.00406	0.01021				
+EXPLORATORY (Amendment 7, post-hoc)	raw	powerlaw	detect	enet	2	ap	0.88738	0.87318	0.90163	0.00579	0.00281	0.00877				
+EXPLORATORY (Amendment 7, post-hoc)	raw	powerlaw	detect	enet	3	auroc	0.89383	0.88366	0.90416	0.00115	-0.00005	0.00252	0.89176	0.00207	0.00086	0.00329
+EXPLORATORY (Amendment 7, post-hoc)	raw	powerlaw	detect	enet	3	ap	0.88763	0.87325	0.90201	0.00025	-0.00172	0.00230	0.88618	0.00145	-0.00071	0.00370
+EXPLORATORY (Amendment 7, post-hoc)	raw	powerlaw	detect	enet	4	auroc	0.89393	0.88365	0.90430	0.00010	-0.00104	0.00118	0.89160	0.00233	0.00063	0.00397
+EXPLORATORY (Amendment 7, post-hoc)	raw	powerlaw	detect	enet	4	ap	0.88572	0.87128	0.90021	-0.00191	-0.00432	0.00030	0.88543	0.00029	-0.00312	0.00357
+EXPLORATORY (Amendment 7, post-hoc)	raw	powerlaw	detect	lgb	1	auroc	0.90199	0.89209	0.91171							
+EXPLORATORY (Amendment 7, post-hoc)	raw	powerlaw	detect	lgb	1	ap	0.89930	0.88573	0.91227							
+EXPLORATORY (Amendment 7, post-hoc)	raw	powerlaw	detect	lgb	2	auroc	0.90293	0.89325	0.91277	0.00094	-0.00111	0.00299				
+EXPLORATORY (Amendment 7, post-hoc)	raw	powerlaw	detect	lgb	2	ap	0.89882	0.88504	0.91198	-0.00048	-0.00610	0.00471				
+EXPLORATORY (Amendment 7, post-hoc)	raw	powerlaw	detect	lgb	3	auroc	0.89895	0.88877	0.90913	-0.00398	-0.00641	-0.00156	0.89946	-0.00051	-0.00280	0.00173
+EXPLORATORY (Amendment 7, post-hoc)	raw	powerlaw	detect	lgb	3	ap	0.89054	0.87520	0.90509	-0.00828	-0.01532	-0.00197	0.89333	-0.00279	-0.00925	0.00331
+EXPLORATORY (Amendment 7, post-hoc)	raw	powerlaw	detect	lgb	4	auroc	0.89945	0.88980	0.90934	0.00050	-0.00171	0.00266	0.89959	-0.00014	-0.00257	0.00225
+EXPLORATORY (Amendment 7, post-hoc)	raw	powerlaw	detect	lgb	4	ap	0.89374	0.87913	0.90756	0.00320	-0.00269	0.00963	0.89520	-0.00146	-0.00749	0.00458
