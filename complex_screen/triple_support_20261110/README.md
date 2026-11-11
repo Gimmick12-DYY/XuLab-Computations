@@ -23,3 +23,5 @@ than 20 such pairs exist. It is not matched on promoter fraction. It describes t
 top-3 columns.
 
 A few words dominate the top-3 lists across pairs and methods (PKNX1, ZNF460, ZNF575, ZNF160, FIZ1; ZNF460 is in a top 3 for 34 of 128 pairs). They are panel-wide words, not pair-specific.
+
+v3 uses the masked rebuilt profile (3bfdaa3); v1/v2 numbers are superseded.
