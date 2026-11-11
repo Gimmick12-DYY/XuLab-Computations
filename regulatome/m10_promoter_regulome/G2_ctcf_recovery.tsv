@@ -1,0 +1,5 @@
+label	tf	list	n_list	chip_HEK293_positive_responders	recovered
+diagnostic, benchmark already read	CTCF	i_peak_within_1kb	1001	117	10
+diagnostic, benchmark already read	CTCF	ii_motif_proximal_fragments	1000	117	29
+diagnostic, benchmark already read	CTCF	iii_ratio_to_pooled_other78	1000	117	12
+diagnostic, benchmark already read	CTCF	raw_tss500_top1000 (m10)	1000	117	12
