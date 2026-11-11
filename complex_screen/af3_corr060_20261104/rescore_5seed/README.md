@@ -1,1 +1,2 @@
 - 2026-11-11: AF3 5-seed array 8667715 task 29 (JobId 8857868) moved from l40-gpu to l40-gpu,a100-gpu with scontrol, as a one-task test of the AF3 3.0.1 container on A100 (never run there before); all other tasks stay on l40-gpu.
+- 2026-11-11: A100 test passed (task 29, FLYWCH1-RBBP7, COMPLETED on a100-gpu node g141608, 15 min, MaxRSS 9.3 GB; same 80-file output set and summary_confidences.json fields as l40 task 28); remaining pending tasks of array 8667715 moved to l40-gpu,a100-gpu with scontrol (same QOS, resources and %2 throttle).
