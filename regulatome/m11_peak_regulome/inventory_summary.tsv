@@ -1,0 +1,6 @@
+set	n_tfs	median_n	min_n	max_n	median_width	frac_tss	frac_canon	frac_atac
+a_lab_macs2_as_called_p0.01	79	3.182e+05	50388	874486	150	0.03338	0.08098	0.05045
+b_lab_q005	79	5211	0	99899	247	0.09142	0.1724	0.1375
+c_TFevent_bins_fdr0.2	79	703	35	258931	1000	0.4005	0.5707	0.541
+d_imputed_peaks	45	2e+04	5985	20000	326	0.581	0.7943	0.7361
+e_pmat_peaks	45	1726	67	20000	672	0.1835	0.3078	0.251
