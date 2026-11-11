@@ -39,3 +39,17 @@ The knockdown target is the raw per-TF z (out_v2: Arm 2 primary, Arm 1 secondary
 ## Scripts
 
 make_splits.py, build_features.py, count_canonical.py, m7.py (all fits), make_jobs.py, select_params.py, chain.sh (stage chain), score.py (test scoring, once), summarise.py, weights.py, run_*.sbatch. dryrun_val*.sbatch exercised the scoring code on validation chromosomes before the freeze (Amendment 5.9). Outputs (features/, fits/, results/, logs/) are not tracked.
+
+## EXPLORATORY post-hoc diagnostics (Amendment 6; declared after the test chromosomes were read; cannot change any verdict)
+
+The script is diag.py, run as jobs 8865840 (D1), 8865841 (D2) and 8865843 (D3). Outputs are in diagnostics_exploratory/, and every table carries the label column "EXPLORATORY (Amendment 6, post-hoc)".
+
+- **D1, expression baseline audit (train and validation only; d1_expression_audit.json).**
+  - Target: universe genes with a target number 11,222. min 0.037, median 0.259, max 4.02; none at zero.
+  - Spearman with the target on train genes (canonical): promoter ATAC 0.22, promoter H3K27ac 0.31, pooled promoter binding 0.23.
+  - Rung-1 elastic net validation R2: 0.040 as fitted, and 0.040 when refitted here on the same genes. Widening to all ABC genes on train and validation chromosomes gives 0.194; undetected genes stay at their NTC mean, and the 30% absent from the matrix are set to 0. ABC genes at >= 10% detection give 0.040. Power-law: 0.032, 0.176 and 0.032.
+  - Canonical: every gene's self-promoter element contains its TSS. The element found by coordinates at the TSS is a self-promoter element for 11,312 of 11,312 genes. Spearman of that element's ATAC with the promoter feature is 0.96; the feature sums all of a gene's self-promoter elements (12,821 links).
+  - Power-law: 777 genes have no self-promoter link. The remaining 10,535 have one within 499 bp of the TSS, and for 10,372 it contains the TSS. Spearman with the TSS-element ATAC is 0.86.
+  - No feature or join error was found.
+- **D2, controls on the claim-tier reading (from per_tf_test.tsv; d2_claim_tier_controls.tsv).**
+- **D3, signed unfitted references (d3_signed_refs_pooled.tsv, d3_signed_refs_per_tf.tsv).** One sign per TF is estimated on train chromosomes, then applied to the test Spearman. References are on the power-law panel build, Arm 2, both centrings. The baseline-only elastic net beside them is unsigned.

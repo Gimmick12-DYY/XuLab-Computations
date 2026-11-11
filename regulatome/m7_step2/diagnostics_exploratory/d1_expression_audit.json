@@ -1,0 +1,138 @@
+{
+ "label": "EXPLORATORY (Amendment 6, post-hoc)",
+ "i_target_distribution_universe": {
+  "n_universe": 11312,
+  "n_with_target": 11222,
+  "n_without_target_arm1_only": 90,
+  "min": 0.03655768558382988,
+  "q25": 0.12995973229408264,
+  "median": 0.2588866949081421,
+  "q75": 0.4850022718310356,
+  "max": 4.018136501312256,
+  "fraction_zero": 0.0,
+  "target": "NTC mean log1p(CP10k), Arm 2, genes >= 10% NTC detection"
+ },
+ "i_target_distribution_all_measured_genes": {
+  "n": 18145,
+  "min": 0.003236005548387766,
+  "q25": 0.02144799195230007,
+  "median": 0.12057892978191376,
+  "q75": 0.3368518054485321,
+  "max": 4.344357967376709,
+  "fraction_zero": 0.0
+ },
+ "hicfixed": {
+  "ii_spearman_with_target_train_genes": {
+   "promoter_atac": 0.22187156505288988,
+   "promoter_h3k27ac": 0.311446434919183,
+   "abc_distal_sum": -0.119455100625768,
+   "n_links": -0.15845393596139812,
+   "cgi_flag": 0.0650237842116438,
+   "pool_promoter": 0.23264996924431608,
+   "pool_distal": -0.09103126763918767
+  },
+  "ii_n_train_genes": 7883,
+  "iii_val_r2_as_fitted": {
+   "enet_rung1": 0.040279365890321994,
+   "enet_rung2": 0.04471194568835568,
+   "lgb_rung1": 0.05456964817313126,
+   "lgb_rung2": 0.05705017188815509,
+   "mlp_rung1": 0.07388093403166696,
+   "mlp_rung2": 0.07564419096730424
+  },
+  "iv_widened_universe_rung1_enet": {
+   "a_universe_genes_recomputed": {
+    "n_train": 7883,
+    "n_val": 1128,
+    "val_r2": 0.04027008412918609,
+    "frac_target_zero_val": 0.0,
+    "frac_absent_from_matrix_val": 0.0,
+    "spearman_promoter_atac_train": 0.22163428399041993
+   },
+   "b_all_abc_genes_widened": {
+    "n_train": 13923,
+    "n_val": 1924,
+    "val_r2": 0.19358303285433953,
+    "frac_target_zero_val": 0.2978170478170478,
+    "frac_absent_from_matrix_val": 0.2978170478170478,
+    "spearman_promoter_atac_train": 0.6363777808936212
+   },
+   "c_abc_genes_detected_ge10pct": {
+    "n_train": 7886,
+    "n_val": 1128,
+    "val_r2": 0.0403102728040573,
+    "frac_target_zero_val": 0.0,
+    "frac_absent_from_matrix_val": 0.0,
+    "spearman_promoter_atac_train": 0.22191263506254658
+   },
+   "n_links_with_unmapped_element": 0
+  },
+  "v_promoter_at_own_tss": {
+   "genes_with_self_promoter_link": 11312,
+   "genes_without": 0,
+   "self_element_contains_tss": 11312,
+   "within_1kb": 11312,
+   "max_distance_bp": 0,
+   "genes_with_an_element_containing_tss": 11312,
+   "tss_element_is_one_of_the_self_promoter_elements": 11312,
+   "spearman_tss_element_atac_vs_promoter_atac_feature": 0.9636632261676938
+  }
+ },
+ "powerlaw": {
+  "ii_spearman_with_target_train_genes": {
+   "promoter_atac": 0.20994924169238982,
+   "promoter_h3k27ac": 0.31727781163241464,
+   "abc_distal_sum": -0.004758362399081729,
+   "n_links": -0.0014734844774810987,
+   "cgi_flag": 0.060622470543288474,
+   "pool_promoter": 0.21364839129815846,
+   "pool_distal": -0.021810561455718133
+  },
+  "ii_n_train_genes": 7883,
+  "iii_val_r2_as_fitted": {
+   "enet_rung1": 0.032082172658225216,
+   "enet_rung2": 0.045331092630117586,
+   "lgb_rung1": 0.06780384891772895,
+   "lgb_rung2": 0.07867134839544399,
+   "mlp_rung1": 0.09674977965495424,
+   "mlp_rung2": 0.09683698530233131
+  },
+  "iv_widened_universe_rung1_enet": {
+   "a_universe_genes_recomputed": {
+    "n_train": 7883,
+    "n_val": 1128,
+    "val_r2": 0.03206828128287453,
+    "frac_target_zero_val": 0.0,
+    "frac_absent_from_matrix_val": 0.0,
+    "spearman_promoter_atac_train": 0.20984430355161157
+   },
+   "b_all_abc_genes_widened": {
+    "n_train": 13820,
+    "n_val": 1916,
+    "val_r2": 0.1758980760796911,
+    "frac_target_zero_val": 0.2954070981210856,
+    "frac_absent_from_matrix_val": 0.2954070981210856,
+    "spearman_promoter_atac_train": 0.6326256124017997
+   },
+   "c_abc_genes_detected_ge10pct": {
+    "n_train": 7882,
+    "n_val": 1128,
+    "val_r2": 0.032103800572906516,
+    "frac_target_zero_val": 0.0,
+    "frac_absent_from_matrix_val": 0.0,
+    "spearman_promoter_atac_train": 0.20998511466211503
+   },
+   "n_links_with_unmapped_element": 0
+  },
+  "v_promoter_at_own_tss": {
+   "genes_with_self_promoter_link": 10535,
+   "genes_without": 777,
+   "self_element_contains_tss": 10372,
+   "within_1kb": 10535,
+   "max_distance_bp": 499,
+   "genes_with_an_element_containing_tss": 10282,
+   "tss_element_is_one_of_the_self_promoter_elements": 10282,
+   "spearman_tss_element_atac_vs_promoter_atac_feature": 0.8558784302316221
+  }
+ }
+}
