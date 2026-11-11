@@ -4,6 +4,8 @@ import json, os
 import numpy as np, pandas as pd
 from scipy.stats import rankdata, norm
 import matplotlib; matplotlib.use("Agg"); import matplotlib.pyplot as plt
+import glob as _g, matplotlib.font_manager as _fm
+for _f in _g.glob("/work/users/d/y/dyy12/fonts/arial/*.ttf"): _fm.fontManager.addfont(_f)
 plt.rcParams["font.family"] = "Arial"; plt.rcParams["svg.fonttype"] = "none"
 X = "/work/users/d/y/dyy12/XuLab"; RG = f"{X}/regulatome"; O = f"{RG}/m16_strong_phenotype"; OUT = f"{O}/out"; LAB = "diagnostic, benchmark already read"; SEED = 20261111; rng = np.random.default_rng(SEED)
 OWN = {"HP1": ["CBX1", "CBX3", "CBX5"], "ZUFSP": ["ZUP1"]}; tfs79 = [l.strip() for l in open(f"{RG}/m1_binding/v2/tfs.txt") if l.strip()]
@@ -46,7 +48,12 @@ for ver in ("score", "promoter"):
         for gname, m in groups:
             v = a[m]; bv = v[rng.integers(0, len(v), (500, len(v)))].mean(1) if len(v) else np.array([np.nan])
             DEC.append(dict(label=LAB, version=ver, tf=t, group=gname, n=int(m.sum()), mean_absz=float(v.mean()) if len(v) else np.nan, lo=float(np.nanpercentile(bv, 2.5)), hi=float(np.nanpercentile(bv, 97.5))))
-R = pd.DataFrame(ROWS); R.to_csv(f"{OUT}/simple_per_tf.tsv", sep="\t", index=False, float_format="%.4f"); pd.DataFrame(DEC).to_csv(f"{OUT}/simple_deciles.tsv", sep="\t", index=False, float_format="%.4f")
+R = pd.DataFrame(ROWS); R.loc[R.n_list == 0, ["OR", "OR_lo", "OR_hi", "OR_matched", "spearman_P_absz", "sp_lo", "sp_hi"]] = np.nan  # empty list (no q005 peak linked): NA, not the +0.5-corrected 19.0
+for (ver, t) in list(TAB):
+    if TAB[(ver, t)][0] + TAB[(ver, t)][1] == 0: del TAB[(ver, t)]
+EMPTY = {(v, t) for v in ("score", "promoter") for t in W[v].index if not (W[v].loc[t].values > 0).any()}
+R.loc[[(("score" if r.version == "peak_score_x_abc" else "promoter"), r.swap_tf) in EMPTY for r in R.itertuples()], "OR_swapped"] = np.nan
+R.to_csv(f"{OUT}/simple_per_tf.tsv", sep="\t", index=False, float_format="%.4f"); pd.DataFrame(DEC).to_csv(f"{OUT}/simple_deciles.tsv", sep="\t", index=False, float_format="%.4f")
 def mh(keys):  # Mantel-Haenszel OR with Robins-Breslow-Greenland 95% interval
     num = den = P_ = Q_ = R_ = S_ = 0.0
     for k in keys:
@@ -58,13 +65,13 @@ PO = []
 for ver, G in R.groupby("version"):
     for grp, H in (("strong_phenotype", G[G.strong_phenotype]), ("not_strong", G[~G.strong_phenotype])):
         if not len(H): continue
-        dlt = (H.OR - H.OR_matched).values; b = np.median(dlt[rng.integers(0, len(dlt), (2000, len(dlt)))], axis=1); m, lo, hi = mh([(("score" if ver == "peak_score_x_abc" else "promoter"), t) for t in H.tf])
+        H = H[H.OR.notna()]; dlt = (H.OR - H.OR_matched).values; b = np.median(dlt[rng.integers(0, len(dlt), (2000, len(dlt)))], axis=1); m, lo, hi = mh([k for k in [(("score" if ver == "peak_score_x_abc" else "promoter"), t) for t in H.tf] if k in TAB])
         PO.append(dict(label=LAB, version=ver, group=grp, n_tfs=len(H), median_OR=H.OR.median(), median_OR_matched=H.OR_matched.median(), median_OR_minus_matched=float(np.median(dlt)), lo=float(np.percentile(b, 2.5)), hi=float(np.percentile(b, 97.5)),
-                       frac_OR_gt_matched=float((H.OR > H.OR_matched).mean()), frac_OR_gt_swapped=float((H.OR > H.OR_swapped).mean()), mantel_haenszel_OR=m, mh_lo=lo, mh_hi=hi, mean_spearman=H.spearman_P_absz.mean(), tfs=",".join(H.tf)))
+                       frac_OR_gt_matched=float((H.OR > H.OR_matched).mean()), frac_OR_gt_swapped=float((H.OR > H.OR_swapped)[H.OR_swapped.notna()].mean()), mantel_haenszel_OR=m, mh_lo=lo, mh_hi=hi, mean_spearman=H.spearman_P_absz.mean(), tfs=",".join(H.tf)))
 PO = pd.DataFrame(PO); PO.to_csv(f"{OUT}/simple_pooled.tsv", sep="\t", index=False, float_format="%.4f"); print(PO.drop(columns=["tfs", "label"]).to_string(index=False))
 # figure
 fig = plt.figure(figsize=(11, 5.5)); ax = fig.add_axes([0.07, 0.30, 0.62, 0.62]); col = {"peak_score_x_abc": "#E08214", "promoter_only": "#2C6FB7"}
-G = R[R.version == "peak_score_x_abc"].sort_values("OR").reset_index(drop=True); xs = np.arange(len(G)); Pm = R[R.version == "promoter_only"].set_index("tf")
+G = R[(R.version == "peak_score_x_abc") & R.OR.notna()].sort_values("OR").reset_index(drop=True); xs = np.arange(len(G)); Pm = R[R.version == "promoter_only"].set_index("tf")
 for k, r in G.iterrows():
     c = col["peak_score_x_abc"] if r.strong_phenotype else "#BBBBBB"; ax.plot([k, k], [r.OR_lo, r.OR_hi], color=c, lw=1); ax.plot(k, r.OR, "o", color=c, ms=4); ax.plot([k - .3, k + .3], [r.OR_matched] * 2, color="#555555", lw=1)
     if r.tf in Pm.index: ax.plot(k + .25, Pm.loc[r.tf, "OR"], "s", color=col["promoter_only"] if r.strong_phenotype else "#DDDDDD", ms=3)

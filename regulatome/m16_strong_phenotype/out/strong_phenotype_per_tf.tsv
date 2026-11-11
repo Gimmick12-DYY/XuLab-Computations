@@ -1,0 +1,80 @@
+label	panel_tf	genes	n_cells	knockdown_pct	auc	q	c1	c2	c3	c4	strong_phenotype	kd_ceiling	benchmark_testable_m10	depth_tertile	hitag_cells	claim_tier_d_ge_0.04	status
+diagnostic, benchmark already read	ADNP	ADNP	476	30.5	0.5698	0.07492	True	True	False	True	False	0.2307	False	low	1792	False	fails
+diagnostic, benchmark already read	AKAP8L	AKAP8L	115	45.8	0.5173	0.5691	True	True	False	True	False	-0.0985	False	low	1490	False	fails
+diagnostic, benchmark already read	CHAMP1	CHAMP1	102	42.86	0.5525	0.4561	True	True	False	True	False	-0.0014	False	mid	2942	False	fails
+diagnostic, benchmark already read	CTCF	CTCF	321	34.57	0.8239	0.03184	True	True	True	True	True	0.3	True	high	10410	True	strong phenotype
+diagnostic, benchmark already read	DDIT3	DDIT3	269	57.13	0.4909	0.7642	True	True	False	True	False	-0.0455	False	high	22129	True	fails
+diagnostic, benchmark already read	DNMT1	DNMT1	458	55.42	0.9108	0.03184	True	True	True	True	True	0.575	False	mid	2458	False	strong phenotype
+diagnostic, benchmark already read	DR1	DR1	144	29.47	0.5884	0.2547	True	False	False	True	False	0.1107	False	high	5661	True	fails
+diagnostic, benchmark already read	E2F3	E2F3	210	20.05	0.5044	0.5691	True	False	False	True	False	0.1008	False	high	30622	True	fails
+diagnostic, benchmark already read	E4F1	E4F1	419	48.07	0.8951	0.03184	True	True	True	True	True	0.7544	False	high	12061	True	strong phenotype
+diagnostic, benchmark already read	EPAS1	EPAS1	63	25.62			True	False	False	False	False	0.052	False	low	1046	False	not assessable (< 100 cells)
+diagnostic, benchmark already read	ETS2	ETS2	298	58.97	0.4685	0.8095	True	True	False	True	False	0.2852	False	low	1637	False	fails
+diagnostic, benchmark already read	EZH2	EZH2	55	50.96			True	True	False	False	False	0.0407	False	mid	3970	False	not assessable (< 100 cells)
+diagnostic, benchmark already read	FLYWCH1	FLYWCH1	235	45.92	0.5145	0.561	True	True	False	True	False	0.1322	False	high	5824	False	fails
+diagnostic, benchmark already read	FOXC1	FOXC1	153	25.79	0.6007	0.1592	True	False	False	True	False	0.3657	False	mid	4760	False	fails
+diagnostic, benchmark already read	FOXJ3	FOXJ3	222	43.89	0.4834	0.8054	True	True	False	True	False	0.2316	False	mid	2303	False	fails
+diagnostic, benchmark already read	FOXK1	FOXK1	343	45.75	0.5508	0.2568	True	True	False	True	False	0.2659	False	low	1202	False	fails
+diagnostic, benchmark already read	GLYR1	GLYR1	19	59.08			False	True	False	False	False		False	high	16883	True	not assessable (< 100 cells)
+diagnostic, benchmark already read	HES1	HES1	93	67.03			True	True	False	False	False	0.0314	False	mid	4325	False	not assessable (< 100 cells)
+diagnostic, benchmark already read	HOXA10	HOXA10	295	37.84	0.5138	0.5333	True	True	False	True	False	0.0713	False	high	6476	False	fails
+diagnostic, benchmark already read	HOXA5	HOXA5	154	41.47	0.4655	0.8095	True	True	False	True	False	0.0696	False	low	1758	False	fails
+diagnostic, benchmark already read	HOXB6	HOXB6	220	24.87	0.5613	0.2568	True	False	False	True	False	-0.0129	False	high	5703	False	fails
+diagnostic, benchmark already read	HOXB8	HOXB8	293	40.69	0.5483	0.2687	True	True	False	True	False	0.0214	False	mid	1980	False	fails
+diagnostic, benchmark already read	HOXB9	HOXB9	144	46.28	0.4797	0.8095	True	True	False	True	False	0.026	False	high	5903	True	fails
+diagnostic, benchmark already read	HOXC4	HOXC4	322	29.56	0.4731	0.8095	True	False	False	True	False	0.2935	False	low	1023	False	fails
+diagnostic, benchmark already read	HOXC9	HOXC9	149	57.19	0.5101	0.5771	True	True	False	True	False	0.2135	False	mid	3331	False	fails
+diagnostic, benchmark already read	HOXD10	HOXD10	411	22.6	0.4532	0.9193	True	False	False	True	False	0.09	False	low	1224	False	fails
+diagnostic, benchmark already read	HP1	CBX1,CBX3,CBX5	193	67.43			True	True	False	False	False	0.05315	False	low	1243	False	not assessable (< 100 cells)
+diagnostic, benchmark already read	MAZ	MAZ	456	60.28	0.5791	0.07348	True	True	False	True	False	0.1657	True	mid	3968	False	fails
+diagnostic, benchmark already read	MBD3	MBD3	95	58.1			True	True	False	False	False	-0.1339	False	high	28330	True	not assessable (< 100 cells)
+diagnostic, benchmark already read	MEF2A	MEF2A	174	34.44	0.6479	0.03184	True	True	True	True	True	-0.0417	False	low	1027	False	strong phenotype
+diagnostic, benchmark already read	MEF2D	MEF2D	274	27.09	0.518	0.5436	True	False	False	True	False	-0.1431	False	low	1764	False	fails
+diagnostic, benchmark already read	MLX	MLX	84	66.23			True	True	False	False	False	-0.0604	False	high	23262	True	not assessable (< 100 cells)
+diagnostic, benchmark already read	MSX2	MSX2	443	68.13	0.5651	0.1676	True	True	False	True	False	-0.0454	True	low	1277	False	fails
+diagnostic, benchmark already read	MTF2	MTF2	187	49.41	0.6684	0.05789	True	True	False	True	False	0.1346	False	high	8746	True	fails
+diagnostic, benchmark already read	NEUROD4	NEUROD4	162	100	0.5764	0.207	True	True	False	False	False	-0.0187	False	low	1262	False	fails
+diagnostic, benchmark already read	NFYA	NFYA	135	46.69	0.4275	0.8769	True	True	False	True	False	0.1122	False	high	70292	True	fails
+diagnostic, benchmark already read	NME2	NME2	866	59.17	0.5665	0.07348	True	True	False	True	False	0.6216	False	high	30095	True	fails
+diagnostic, benchmark already read	NR1D2	NR1D2	167	16.08	0.466	0.8095	True	False	False	True	False	0.1559	False	low	1262	False	fails
+diagnostic, benchmark already read	NRF1	NRF1	343	45.26	0.8723	0.03184	True	True	True	True	True	0.6545	True	low	1416	False	strong phenotype
+diagnostic, benchmark already read	PA2G4	PA2G4	124	65.38	0.7188	0.03184	True	True	True	True	True	0.0718	False	high	5319	False	strong phenotype
+diagnostic, benchmark already read	PCGF6	PCGF6	332	51.08	0.5069	0.6953	True	True	False	True	False	0.1432	False	low	1070	False	fails
+diagnostic, benchmark already read	POGK	POGK	125	44.11	0.3843	0.9403	True	True	False	True	False	0.1379	False	mid	2651	False	fails
+diagnostic, benchmark already read	RBBP4	RBBP4	68	53.01			True	True	False	False	False	0.0702	False	high	181396	True	not assessable (< 100 cells)
+diagnostic, benchmark already read	RBBP7	RBBP7	399	45.53	0.6199	0.03184	True	True	True	True	True	0.13	False	high	39619	True	strong phenotype
+diagnostic, benchmark already read	RBPJ	RBPJ	343	47.96	0.6137	0.03184	True	True	True	True	True	0.2737	True	high	5138	False	strong phenotype
+diagnostic, benchmark already read	RELA	RELA	200	48.83	0.5097	0.5691	True	True	False	True	False	0.0708	False	mid	2123	False	fails
+diagnostic, benchmark already read	SAFB	SAFB	322	44.02	0.6429	0.03184	True	True	True	True	True	0.1541	False	high	9654	True	strong phenotype
+diagnostic, benchmark already read	SETDB1	SETDB1	237	41.46	0.7725	0.03184	True	True	True	True	True	0.2905	True	low	1028	False	strong phenotype
+diagnostic, benchmark already read	SMARCA1	SMARCA1	101	51.29	0.6089	0.2568	True	True	False	True	False	0.0835	False	mid	3745	False	fails
+diagnostic, benchmark already read	SOX12	SOX12	77	35.82			True	True	False	False	False	-0.0558	False	low	1508	False	not assessable (< 100 cells)
+diagnostic, benchmark already read	SOX4	SOX4	347	49.81	0.4822	0.8095	True	True	False	True	False	0.0168	False	high	64652	True	fails
+diagnostic, benchmark already read	SRCAP	SRCAP	319	-11.96	0.4772	0.8095	True	False	False	True	False	0.1127	False	mid	3859	False	fails
+diagnostic, benchmark already read	SREBF2	SREBF2	18	44.16			False	True	False	False	False		False	low	1211	False	not assessable (< 100 cells)
+diagnostic, benchmark already read	STAG2	STAG2	134	18.28	0.4481	0.8544	True	False	False	True	False		False	mid	3599	False	fails
+diagnostic, benchmark already read	TBX3	TBX3	278	48.22	0.5741	0.2123	True	True	False	True	False	-0.0092	False	mid	4391	False	fails
+diagnostic, benchmark already read	THAP6	THAP6	181	57.72	0.5631	0.2903	True	True	False	True	False	-0.3541	False	mid	2516	False	fails
+diagnostic, benchmark already read	TRAFD1	TRAFD1	54	69.05			True	True	False	False	False	0.2006	False	low	1546	False	not assessable (< 100 cells)
+diagnostic, benchmark already read	WIZ	WIZ	103	41.37	0.5265	0.5691	True	True	False	True	False	0.2266	False	mid	3449	False	fails
+diagnostic, benchmark already read	XPA	XPA	236	65.12	0.5187	0.5333	True	True	False	True	False	0.3007	False	high	50752	True	fails
+diagnostic, benchmark already read	ZBTB40	ZBTB40	67	0.9353			True	False	False	False	False	-0.0723	False	low	1535	False	not assessable (< 100 cells)
+diagnostic, benchmark already read	ZBTB43	ZBTB43	171	43.82	0.4129	0.9403	True	True	False	True	False	0.1044	False	mid	1818	False	fails
+diagnostic, benchmark already read	ZBTB7A	ZBTB7A	361	26.07	0.5524	0.2077	True	False	False	True	False	0.1672	False	high	7005	False	fails
+diagnostic, benchmark already read	ZIC2	ZIC2	150	44.68	0.5837	0.2077	True	True	False	True	False	0.0741	False	mid	4896	False	fails
+diagnostic, benchmark already read	ZNF143	ZNF143	267	34.62	0.6088	0.07492	True	True	False	True	False	0.2958	True	low	1736	False	fails
+diagnostic, benchmark already read	ZNF282	ZNF282	244	54.78	0.5341	0.3626	True	True	False	True	False	0.0728	True	mid	2959	False	fails
+diagnostic, benchmark already read	ZNF367	ZNF367	45	52.32			True	True	False	False	False		False	mid	4492	False	not assessable (< 100 cells)
+diagnostic, benchmark already read	ZNF503	ZNF503	160	65.14	0.5252	0.5195	True	True	False	True	False	0.0374	False	low	1050	False	fails
+diagnostic, benchmark already read	ZNF507	ZNF507	227	38.08	0.5703	0.2077	True	True	False	True	False	0.1973	False	high	30870	True	fails
+diagnostic, benchmark already read	ZNF512B	ZNF512B	146	55.57	0.564	0.2911	True	True	False	True	False	-0.3244	False	high	5185	True	fails
+diagnostic, benchmark already read	ZNF512	ZNF512	225	46.05	0.5515	0.2903	True	True	False	True	False	0.1816	False	mid	2122	False	fails
+diagnostic, benchmark already read	ZNF581	ZNF581	170	74.56	0.5798	0.2568	True	True	False	True	False	0.114	False	low	1316	False	fails
+diagnostic, benchmark already read	ZNF606	ZNF606	68	16.78			True	False	False	False	False	-0.0326	False	low	1235	False	not assessable (< 100 cells)
+diagnostic, benchmark already read	ZNF644	ZNF644	100	49.05	0.5089	0.5691	True	True	False	True	False	-0.1162	False	mid	4749	False	fails
+diagnostic, benchmark already read	ZNF703	ZNF703	82	48.36			True	True	False	False	False	-0.1526	False	high	21216	True	not assessable (< 100 cells)
+diagnostic, benchmark already read	ZNF746	ZNF746	113	69.97	0.6886	0.07492	True	True	False	True	False	0.3942	True	mid	3099	False	fails
+diagnostic, benchmark already read	ZNF768	ZNF768	388	18.45	0.548	0.2568	True	False	False	True	False	0.0534	False	high	5837	False	fails
+diagnostic, benchmark already read	ZNF777	ZNF777	463	40.27	0.5477	0.2568	True	True	False	True	False	0.1955	False	mid	3400	False	fails
+diagnostic, benchmark already read	ZNF79	ZNF79	201	42.13	0.4792	0.8095	True	True	False	True	False	0.112	False	low	1232	False	fails
+diagnostic, benchmark already read	ZUFSP	ZUP1	293	47.23	0.5896	0.07492	True	True	False	True	False	0.1004	False	mid	2496	False	fails

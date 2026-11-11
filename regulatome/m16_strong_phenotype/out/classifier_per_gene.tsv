@@ -1,0 +1,82 @@
+label	name	n_cells	auc	null_mean	null_p97_5	p	target_nonzero_in_ntc_train	q	note	knockdown_pct	panel_tf	c1_ge25_cells	c2_ge30pct_kd	c3_classifier_q05	c4_target_nonzero_ntc_train	strong_phenotype
+diagnostic, benchmark already read	ADNP	476	0.5698	0.4998	0.5656	0.0199	True	0.07492		30.5	ADNP	True	True	False	True	False
+diagnostic, benchmark already read	AKAP8L	115	0.5173	0.5055	0.6464	0.398	True	0.5691		45.8	AKAP8L	True	True	False	True	False
+diagnostic, benchmark already read	CHAMP1	102	0.5525	0.4984	0.6212	0.2637	True	0.4561		42.86	CHAMP1	True	True	False	True	False
+diagnostic, benchmark already read	CTCF	321	0.8239	0.4987	0.5824	0.004975	True	0.03184		34.57	CTCF	True	True	True	True	True
+diagnostic, benchmark already read	DDIT3	269	0.4909	0.5011	0.5954	0.597	True	0.7642		57.13	DDIT3	True	True	False	True	False
+diagnostic, benchmark already read	DNMT1	458	0.9108	0.5045	0.5891	0.004975	True	0.03184		55.42	DNMT1	True	True	True	True	True
+diagnostic, benchmark already read	DR1	144	0.5884	0.4973	0.6247	0.0995	True	0.2547		29.47	DR1	True	False	False	True	False
+diagnostic, benchmark already read	E2F3	210	0.5044	0.4981	0.597	0.4129	True	0.5691		20.05	E2F3	True	False	False	True	False
+diagnostic, benchmark already read	E4F1	419	0.8951	0.4963	0.597	0.004975	True	0.03184		48.07	E4F1	True	True	True	True	True
+diagnostic, benchmark already read	ETS2	298	0.4685	0.498	0.5922	0.7264	True	0.8095		58.97	ETS2	True	True	False	True	False
+diagnostic, benchmark already read	FLYWCH1	235	0.5145	0.4957	0.5914	0.3682	True	0.561		45.92	FLYWCH1	True	True	False	True	False
+diagnostic, benchmark already read	FOXC1	153	0.6007	0.4941	0.6097	0.04478	True	0.1592		25.79	FOXC1	True	False	False	True	False
+diagnostic, benchmark already read	FOXJ3	222	0.4834	0.4997	0.5978	0.6418	True	0.8054		43.89	FOXJ3	True	True	False	True	False
+diagnostic, benchmark already read	FOXK1	343	0.5508	0.4996	0.5775	0.1095	True	0.2568		45.75	FOXK1	True	True	False	True	False
+diagnostic, benchmark already read	HOXA10	295	0.5138	0.4946	0.5732	0.3333	True	0.5333		37.84	HOXA10	True	True	False	True	False
+diagnostic, benchmark already read	HOXA5	154	0.4655	0.5014	0.6158	0.7363	True	0.8095		41.47	HOXA5	True	True	False	True	False
+diagnostic, benchmark already read	HOXB6	220	0.5613	0.5016	0.5962	0.1095	True	0.2568		24.87	HOXB6	True	False	False	True	False
+diagnostic, benchmark already read	HOXB8	293	0.5483	0.5011	0.5807	0.1343	True	0.2687		40.69	HOXB8	True	True	False	True	False
+diagnostic, benchmark already read	HOXB9	144	0.4797	0.5104	0.6306	0.6915	True	0.8095		46.28	HOXB9	True	True	False	True	False
+diagnostic, benchmark already read	HOXC4	322	0.4731	0.4986	0.5695	0.7463	True	0.8095		29.56	HOXC4	True	False	False	True	False
+diagnostic, benchmark already read	HOXC9	149	0.5101	0.5001	0.6204	0.4328	True	0.5771		57.19	HOXC9	True	True	False	True	False
+diagnostic, benchmark already read	HOXD10	411	0.4532	0.5021	0.5726	0.8905	True	0.9193		22.6	HOXD10	True	False	False	True	False
+diagnostic, benchmark already read	MAZ	456	0.5791	0.4992	0.5703	0.01493	True	0.07348		60.28	MAZ	True	True	False	True	False
+diagnostic, benchmark already read	MEF2A	174	0.6479	0.4959	0.606	0.004975	True	0.03184		34.44	MEF2A	True	True	True	True	True
+diagnostic, benchmark already read	MEF2D	274	0.518	0.5005	0.5863	0.3483	True	0.5436		27.09	MEF2D	True	False	False	True	False
+diagnostic, benchmark already read	MSX2	443	0.5651	0.503	0.5772	0.04975	True	0.1676		68.13	MSX2	True	True	False	True	False
+diagnostic, benchmark already read	MTF2	187	0.6684	0.5003	0.612	0.00995	True	0.05789		49.41	MTF2	True	True	False	True	False
+diagnostic, benchmark already read	NEUROD4	162	0.5764	0.4908	0.6031	0.06468	False	0.207		100	NEUROD4	True	True	False	False	False
+diagnostic, benchmark already read	NFYA	135	0.4275	0.4909	0.6244	0.8358	True	0.8769		46.69	NFYA	True	True	False	True	False
+diagnostic, benchmark already read	NME2	866	0.5665	0.504	0.5524	0.01493	True	0.07348		59.17	NME2	True	True	False	True	False
+diagnostic, benchmark already read	NR1D2	167	0.466	0.501	0.6149	0.7114	True	0.8095		16.08	NR1D2	True	False	False	True	False
+diagnostic, benchmark already read	NRF1	343	0.8723	0.4994	0.5875	0.004975	True	0.03184		45.26	NRF1	True	True	True	True	True
+diagnostic, benchmark already read	PA2G4	124	0.7188	0.5032	0.6245	0.004975	True	0.03184		65.38	PA2G4	True	True	True	True	True
+diagnostic, benchmark already read	PCGF6	332	0.5069	0.5059	0.5821	0.5323	True	0.6953		51.08	PCGF6	True	True	False	True	False
+diagnostic, benchmark already read	POGK	125	0.3843	0.4959	0.6373	0.9403	True	0.9403		44.11	POGK	True	True	False	True	False
+diagnostic, benchmark already read	RBBP7	399	0.6199	0.4972	0.5677	0.004975	True	0.03184		45.53	RBBP7	True	True	True	True	True
+diagnostic, benchmark already read	RBPJ	343	0.6137	0.5019	0.5867	0.004975	True	0.03184		47.96	RBPJ	True	True	True	True	True
+diagnostic, benchmark already read	RELA	200	0.5097	0.501	0.6005	0.4179	True	0.5691		48.83	RELA	True	True	False	True	False
+diagnostic, benchmark already read	SAFB	322	0.6429	0.4995	0.6013	0.004975	True	0.03184		44.02	SAFB	True	True	True	True	True
+diagnostic, benchmark already read	SETDB1	237	0.7725	0.5034	0.5986	0.004975	True	0.03184		41.46	SETDB1	True	True	True	True	True
+diagnostic, benchmark already read	SMARCA1	101	0.6089	0.5023	0.6945	0.1194	True	0.2568		51.29	SMARCA1	True	True	False	True	False
+diagnostic, benchmark already read	SOX4	347	0.4822	0.5011	0.5764	0.6915	True	0.8095		49.81	SOX4	True	True	False	True	False
+diagnostic, benchmark already read	SRCAP	319	0.4772	0.4997	0.5863	0.6965	True	0.8095		-11.96	SRCAP	True	False	False	True	False
+diagnostic, benchmark already read	STAG2	134	0.4481	0.5009	0.6254	0.801	True	0.8544		18.28	STAG2	True	False	False	True	False
+diagnostic, benchmark already read	TBX3	278	0.5741	0.5039	0.587	0.0796	True	0.2123		48.22	TBX3	True	True	False	True	False
+diagnostic, benchmark already read	THAP6	181	0.5631	0.4976	0.605	0.1542	True	0.2903		57.72	THAP6	True	True	False	True	False
+diagnostic, benchmark already read	WIZ	103	0.5265	0.5021	0.6922	0.403	True	0.5691		41.37	WIZ	True	True	False	True	False
+diagnostic, benchmark already read	XPA	236	0.5187	0.4955	0.5932	0.3284	True	0.5333		65.12	XPA	True	True	False	True	False
+diagnostic, benchmark already read	ZBTB43	171	0.4129	0.5026	0.6188	0.9303	True	0.9403		43.82	ZBTB43	True	True	False	True	False
+diagnostic, benchmark already read	ZBTB7A	361	0.5524	0.4991	0.5707	0.07463	True	0.2077		26.07	ZBTB7A	True	False	False	True	False
+diagnostic, benchmark already read	ZIC2	150	0.5837	0.5025	0.6272	0.07463	True	0.2077		44.68	ZIC2	True	True	False	True	False
+diagnostic, benchmark already read	ZNF143	267	0.6088	0.4953	0.5859	0.0199	True	0.07492		34.62	ZNF143	True	True	False	True	False
+diagnostic, benchmark already read	ZNF282	244	0.5341	0.4999	0.5949	0.204	True	0.3626		54.78	ZNF282	True	True	False	True	False
+diagnostic, benchmark already read	ZNF503	160	0.5252	0.5011	0.6185	0.3085	True	0.5195		65.14	ZNF503	True	True	False	True	False
+diagnostic, benchmark already read	ZNF507	227	0.5703	0.4936	0.5865	0.06965	True	0.2077		38.08	ZNF507	True	True	False	True	False
+diagnostic, benchmark already read	ZNF512	225	0.5515	0.499	0.6064	0.1542	True	0.2903		46.05	ZNF512	True	True	False	True	False
+diagnostic, benchmark already read	ZNF512B	146	0.564	0.4971	0.6179	0.1592	True	0.2911		55.57	ZNF512B	True	True	False	True	False
+diagnostic, benchmark already read	ZNF581	170	0.5798	0.5017	0.6275	0.1244	True	0.2568		74.56	ZNF581	True	True	False	True	False
+diagnostic, benchmark already read	ZNF644	100	0.5089	0.4924	0.6267	0.3831	True	0.5691		49.05	ZNF644	True	True	False	True	False
+diagnostic, benchmark already read	ZNF746	113	0.6886	0.5014	0.6825	0.0199	True	0.07492		69.97	ZNF746	True	True	False	True	False
+diagnostic, benchmark already read	ZNF768	388	0.548	0.4996	0.569	0.1144	True	0.2568		18.45	ZNF768	True	False	False	True	False
+diagnostic, benchmark already read	ZNF777	463	0.5477	0.5041	0.5672	0.1244	True	0.2568		40.27	ZNF777	True	True	False	True	False
+diagnostic, benchmark already read	ZNF79	201	0.4792	0.4975	0.5994	0.6617	True	0.8095		42.13	ZNF79	True	True	False	True	False
+diagnostic, benchmark already read	ZUP1	293	0.5896	0.4976	0.5854	0.0199	True	0.07492		47.23	ZUFSP	True	True	False	True	False
+diagnostic, benchmark already read	CBX1	92							not assessable (< 100 cells)	67.43	HP1	True	True	False	False	False
+diagnostic, benchmark already read	CBX3	18							not assessable (< 100 cells)	50.85	HP1	False	True	False	False	False
+diagnostic, benchmark already read	CBX5	83							not assessable (< 100 cells)	27.82	HP1	True	False	False	False	False
+diagnostic, benchmark already read	EPAS1	63							not assessable (< 100 cells)	25.62	EPAS1	True	False	False	False	False
+diagnostic, benchmark already read	EZH2	55							not assessable (< 100 cells)	50.96	EZH2	True	True	False	False	False
+diagnostic, benchmark already read	GLYR1	19							not assessable (< 100 cells)	59.08	GLYR1	False	True	False	False	False
+diagnostic, benchmark already read	HES1	93							not assessable (< 100 cells)	67.03	HES1	True	True	False	False	False
+diagnostic, benchmark already read	MBD3	95							not assessable (< 100 cells)	58.1	MBD3	True	True	False	False	False
+diagnostic, benchmark already read	MLX	84							not assessable (< 100 cells)	66.23	MLX	True	True	False	False	False
+diagnostic, benchmark already read	RBBP4	68							not assessable (< 100 cells)	53.01	RBBP4	True	True	False	False	False
+diagnostic, benchmark already read	SOX12	77							not assessable (< 100 cells)	35.82	SOX12	True	True	False	False	False
+diagnostic, benchmark already read	SREBF2	18							not assessable (< 100 cells)	44.16	SREBF2	False	True	False	False	False
+diagnostic, benchmark already read	TRAFD1	54							not assessable (< 100 cells)	69.05	TRAFD1	True	True	False	False	False
+diagnostic, benchmark already read	ZBTB40	67							not assessable (< 100 cells)	0.9353	ZBTB40	True	False	False	False	False
+diagnostic, benchmark already read	ZNF367	45							not assessable (< 100 cells)	52.32	ZNF367	True	True	False	False	False
+diagnostic, benchmark already read	ZNF606	68							not assessable (< 100 cells)	16.78	ZNF606	True	False	False	False	False
+diagnostic, benchmark already read	ZNF703	82							not assessable (< 100 cells)	48.36	ZNF703	True	True	False	False	False
