@@ -180,3 +180,34 @@ Each step lists what changed, the sanity check (own motif recovered in the per-T
   - Bulk CTCF OCR bins: 16.6% motif.
 - Imputed CTCF vs 79-TF mean: r 0.94. AUROC for bulk CTCF within OCR: imputed CTCF 0.53, 79-TF mean 0.54, imputed minus mean 0.45.
 - Reading: the imputed CTCF track is the shared open-chromatin / promoter signal. Its top bins hold no more bulk CTCF binding than a random open bin. CTCF looks enriched only against a genome background, which every open-chromatin set would show. This agrees with the 2026-10-20 AUPRC result (imputed CTCF 0.13 < ATAC 0.22).
+
+## Step 11 (2026-11-11): peak re-calling with controls, gate + QC (recall/; criteria fixed before results)
+- Variants:
+  - raw_lab: lab MACS2, no control.
+  - raw_tf: MACS2 with the other 78 TFs' reads as control.
+  - raw_atac: MACS2 with HEK293T OmniATAC as control.
+  - imp_loo: imputed / mean of the other TFs.
+  - imp_atac: imputed minus its ATAC-level median.
+  - imp_binom: binomial peak calling on the imputed bin x cell matrices vs the other 78 TFs.
+- Gate: top 1,000 sites in union ATAC, HOT bins removed (1,346 bins, 90% promoters); background matched on GC x CpG x promoter x ATAC quintile; HOMER known on odd and even chromosomes. 32 TFs have an own motif in the HOMER library.
+- Bug fixed: the first HOMER array lacked -bg and produced nothing. Reran as 8919043; artifact-dropped copy 8919046.
+- Own motif in the top 10 on disc and val (strict / loose <= 25):
+
+  | variant | with artifacts | artifacts dropped |
+  |---|---|---|
+  | raw_lab | 3 / 5 (CTCF, NFYA, NRF1) | 3 / 5 |
+  | raw_tf | 1 / 3 | 2 / 3 (CTCF, NRF1) |
+  | raw_atac | 1 / 1 | 1 / 1 |
+  | imp_loo | 0 / 3 | 0 / 4 |
+  | imp_atac | 0 / 2 | 0 / 1 |
+  | imp_binom | 0 / 2 | 0 / 1 |
+
+- Bulk specificity (own overlap / median of other TFs):
+  - CTCF vs HEK293T ChIP-nexus: raw_lab 2.86, raw_tf 3.50, raw_atac 0.86, imputed 0.57-1.04.
+  - ZNF282 vs HEK293T ChIP-exo: raw_lab 1.08, raw_tf 0.40, raw_atac 1.00, imp_atac 1.49, imp_binom 0.03, imp_loo 0.06.
+- Open-chromatin metrics:
+  - Fraction of the top 1,000 inside union ATAC (median): raw_lab 0.18, raw_tf 0.035, raw_atac 0.02.
+  - Jaccard between TFs: raw_tf 0.0002 vs raw_lab 0.012.
+  - The controls push peaks out of open chromatin rather than sharpening the sites inside it. Shallow TFs gain many peaks outside ATAC: ZNF143 45k -> 69-91k at p <= 1e-5.
+- Criteria: c1 (more own-motif passes than raw_lab) fails for all; c2 (bulk not lower) passes only raw_lab; c3 (less shared open chromatin) passes raw_tf and raw_atac. Adopt: none.
+- Verdict: keep the lab peaks. Controlling for open chromatin removes real TF signal, because real sites of CTCF, NFY and NRF1 are open, and it adds noise outside open chromatin. The imputed data gain nothing from re-calling. Nothing downstream changes (Fig 2, Fig 3, regulome untouched).

@@ -1,0 +1,7 @@
+variant	n_tf	strict_le10	loose_le25	median_rank_disc	tfs_strict
+imp_atac	32	0	1	98.5	
+imp_binom	32	0	1	131.0	
+imp_loo	32	0	4	60.5	
+raw_atac	32	1	1	95.5	NRF1
+raw_lab	32	3	5	107.0	CTCF,NFYA,NRF1
+raw_tf	32	2	3	80.0	CTCF,NRF1
