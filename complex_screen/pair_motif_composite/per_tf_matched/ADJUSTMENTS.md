@@ -165,3 +165,18 @@ Each step lists what changed, the sanity check (own motif recovered in the per-T
   - AF3 strong medians 0.69 / 0.70 / 0.55 / 0.67.
   - Own-motif ranks (of 2,920; peak 500 / 2,000): CTCF 308 / 73, MAZ 118 / 58, ZNF143 404 / 19.
 - Verdict: masking restores own motifs for CTCF / NFYA / NRF1, partly for MAZ, ZNF143 and MLX. Shared motifs that hold on held-out chromosomes are rare, and no known-complex control shares one. So the shared-motif route does not support candidate pairs. DDIT3-MTF2 is the only AF3-strong pair with a held-out shared word, and that word is found in 8 TFs.
+
+## Step 10 (2026-11-11): CTCF on imputed data, and AF3 role
+- User: AF3 is supporting evidence only; candidates need enriched motifs. shared_motif_* tables are now sorted motif first (emp_p, n held-out shared, pct); AF3 is a column, not a filter.
+- Candidates at emp <= 0.05: raw masked 9 / 1,863; imputed 42 / 1,863. Imputed words are CpG / YY1-like and shared by 3-10 TFs.
+- CTCF rank contradiction checked. It comes from the background, not from an error.
+  - Earlier imputed-peak run (motif_analysis/motif/ctcf), CTCF(Zf) rank of 472: rank 4 vs HOMER genome background (3.25% vs 1.81%); rank 386 vs OCR background (2.30% vs 9.48%).
+  - motif_bins/ctcf gives the same picture: rank 112 vs genome, 414 vs OCR.
+  - Step 8 used an OCR background: rank 453.
+- Within union ATAC (FIMO CTCF.H12CORE p <= 1e-4; bulk = CTCF majority-2-of-3 peaks):
+  - CTCF imputed top 10k: motif 19.6%, bulk CTCF 31.4%, promoter 90%.
+  - 79-TF mean top 10k: 20.4%, 31.9%, 89%.
+  - All OCR bins: 9.5%, 32.7%, 32%.
+  - Bulk CTCF OCR bins: 16.6% motif.
+- Imputed CTCF vs 79-TF mean: r 0.94. AUROC for bulk CTCF within OCR: imputed CTCF 0.53, 79-TF mean 0.54, imputed minus mean 0.45.
+- Reading: the imputed CTCF track is the shared open-chromatin / promoter signal. Its top bins hold no more bulk CTCF binding than a random open bin. CTCF looks enriched only against a genome background, which every open-chromatin set would show. This agrees with the 2026-10-20 AUPRC result (imputed CTCF 0.13 < ATAC 0.22).
