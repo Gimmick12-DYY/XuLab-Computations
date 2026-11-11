@@ -23,9 +23,9 @@ def own_ids(t): names = ALIAS.get(t, [t]); return [k for k, m in enumerate(motif
 cb = {}
 for l in open(f"{X}/motif_analysis/cache/motifdb/codebook_artifacts.meme"):
     if l.startswith("MOTIF "): cb[l.split()[1]] = l.split()[1]
-S = pd.read_csv(f"{G}/sites.tsv", sep="\t"); hit = {}
+S = pd.read_csv(f"{G}/sites.tsv", sep="\t"); S["key"] = S.key.str.replace(":", "_").str.replace("-", "_"); hit = {}
 for f in sorted(glob.glob(f"{G}/fimo/c*.tsv.gz")):
-    for l in gzip.open(f, "rt"): m, s = l.rstrip("\n").split("\t"); hit.setdefault(s, []).append(mi[m])
+    for l in gzip.open(f, "rt"): m, s = l.rstrip("\n").split("\t"); hit.setdefault(s, []).append(mi[m])  # FIMO names are chr_start_end (FIMO cuts names at :)
 tfs = sorted(S.tf.unique()); P = ["disc", "val"]; LO, SE = {}, {}
 for pt in P:
     lo = np.full((M, len(tfs)), np.nan); se = lo.copy()
@@ -52,10 +52,7 @@ for pt in P:
     for j, t in enumerate(tfs):
         f = f"{G}/cm/{t}_{pt}.tsv"
         if not os.path.exists(f) or os.path.getsize(f) == 0: continue
-        c = pd.read_csv(f, sep="\t", comment="#", header=None)
-        hd = [l for l in open(f) if l.startswith("#")]; cols = hd[-1].lstrip("# ").split() if hd else None
-        if cols and len(cols) == c.shape[1]: c.columns = cols
-        else: c.columns = ["db_index", "motif_id", "motif_alt_id", "consensus", "E-value", "adj_p-value", "log_adj_p-value", "bin_location", "bin_width", "total_width", "sites_in_bin", "total_sites", "p_success", "p-value", "mult_tests"][:c.shape[1]]
+        c = pd.read_csv(f, sep="\t", comment="#")  # centrimo.tsv: header row db_index motif_id motif_alt_id ... log_adj_p-value ...
         for m, v in zip(c.motif_id, c["log_adj_p-value"]):
             if m in mi: cm[mi[m], j] = -float(v)
         cm[np.isnan(cm[:, j]), j] = 0.0
