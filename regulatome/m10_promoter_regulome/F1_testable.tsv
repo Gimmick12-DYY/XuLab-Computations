@@ -1,0 +1,33 @@
+label	arm	tf	testable_by	ours	OR	OR_lo	OR_hi	OR_matched	OR_pseudoTF	OR_swapped	passes	cells	total_reads	reads_within_1kb_tss
+diagnostic, benchmark already read	arm2	CTCF	motif 1.94 [1.50-2.43];bulk_chip_HEK293orK562 2.93 [2.32-3.58];bulk_chip_HEK293T 1.94 [1.50-2.42];chromnitron 2.33 [1.83-2.92]	raw_tss500	0.8508	0.6090	1.1570	0.9634	1.5011	1.0794	False	10410	800230.0000	54269.0000
+diagnostic, benchmark already read	arm2	CTCF	motif 1.94 [1.50-2.43];bulk_chip_HEK293orK562 2.93 [2.32-3.58];bulk_chip_HEK293T 1.94 [1.50-2.42];chromnitron 2.33 [1.83-2.92]	imp_tss500	1.0326	0.7611	1.3670	0.9863	1.4491	0.8508	False	10410	800230.0000	54269.0000
+diagnostic, benchmark already read	arm2	MAZ	bulk_chip_HEK293orK562 1.35 [1.01-1.73]	raw_tss500	1.2233	0.8957	1.5295	1.0326	0.8955	1.0559	False	3968	1076014.0000	38140.0000
+diagnostic, benchmark already read	arm2	MAZ	bulk_chip_HEK293orK562 1.35 [1.01-1.73]	imp_tss500	0.9406	0.6736	1.2476	1.0326	0.8843	0.9863	False	3968	1076014.0000	38140.0000
+diagnostic, benchmark already read	arm2	MSX2	motif 1.50 [1.17-1.88]	raw_tss500	1.0094	0.7257	1.3197	0.9863	0.9520	1.2972	False	1277	87257.0000	5740.0000
+diagnostic, benchmark already read	arm2	MSX2	motif 1.50 [1.17-1.88]	imp_tss500	1.0326	0.7419	1.3686	1.0094	0.8843	1.1507	False	1277	87257.0000	5740.0000
+diagnostic, benchmark already read	arm2	NRF1	motif 6.59 [5.33-7.95];chromnitron 5.52 [4.54-6.63]	raw_tss500	2.5546	2.0480	3.1438	1.0210	0.7958	1.0094	True	1416	376207.0000	17516.0000
+diagnostic, benchmark already read	arm2	NRF1	motif 6.59 [5.33-7.95];chromnitron 5.52 [4.54-6.63]	imp_tss500	1.0559	0.7624	1.3497	1.0094	0.6565	1.0794	False	1416	376207.0000	17516.0000
+diagnostic, benchmark already read	arm2	RBPJ	motif 1.42 [1.07-1.80]	raw_tss500	0.8955	0.6407	1.2013	0.9406	1.1747	0.5529	False	5138	791497.0000	34580.0000
+diagnostic, benchmark already read	arm2	RBPJ	motif 1.42 [1.07-1.80]	imp_tss500	0.9180	0.6580	1.2066	0.9520	1.2477	0.9406	False	5138	791497.0000	34580.0000
+diagnostic, benchmark already read	arm2	SETDB1	bulk_chip_HEK293orK562 1.66 [1.27-2.14]	raw_tss500	0.7632	0.5323	1.0191	1.0094	1.0912	0.9634	False	1028	64287.0000	4392.0000
+diagnostic, benchmark already read	arm2	SETDB1	bulk_chip_HEK293orK562 1.66 [1.27-2.14]	imp_tss500	0.8508	0.6108	1.1656	0.9863	1.1387	0.9180	False	1028	64287.0000	4392.0000
+diagnostic, benchmark already read	arm2	ZNF143	motif 2.52 [1.98-3.12];chromnitron 1.72 [1.31-2.15]	raw_tss500	1.0794	0.7787	1.4136	0.9863	0.9863	0.8508	False	1736	651672.0000	21377.0000
+diagnostic, benchmark already read	arm2	ZNF143	motif 2.52 [1.98-3.12];chromnitron 1.72 [1.31-2.15]	imp_tss500	0.8955	0.6475	1.1848	0.9863	0.9180	1.0794	False	1736	651672.0000	21377.0000
+diagnostic, benchmark already read	arm2	ZNF282	bulk_chip_HEK293orK562 1.63 [1.25-2.05]	raw_tss500	0.9634	0.6960	1.2666	1.0094	1.6336	1.0326	False	2959	573837.0000	22318.0000
+diagnostic, benchmark already read	arm2	ZNF282	bulk_chip_HEK293orK562 1.63 [1.25-2.05]	imp_tss500	1.4491	1.0957	1.8296	1.0326	1.8829	1.2972	False	2959	573837.0000	22318.0000
+diagnostic, benchmark already read	arm2	ZNF746	chromnitron 1.55 [1.17-2.00]	raw_tss500	0.9406	0.6730	1.2151	0.9634	2.4735	1.1030	False	3099	1009074.0000	32069.0000
+diagnostic, benchmark already read	arm2	ZNF746	chromnitron 1.55 [1.17-2.00]	imp_tss500	0.9406	0.6802	1.2342	1.1507	3.1425	1.0094	False	3099	1009074.0000	32069.0000
+diagnostic, benchmark already read	arm1	CTCF	motif 1.94 [1.50-2.43];bulk_chip_HEK293orK562 2.93 [2.32-3.58];bulk_chip_HEK293T 1.94 [1.50-2.42];chromnitron 2.33 [1.83-2.92]	raw_tss500	0.7190	0.4898	0.9623	1.0308	0.8717	1.0076	False	10410	800230.0000	54269.0000
+diagnostic, benchmark already read	arm1	CTCF	motif 1.94 [1.50-2.43];bulk_chip_HEK293orK562 2.93 [2.32-3.58];bulk_chip_HEK293T 1.94 [1.50-2.42];chromnitron 2.33 [1.83-2.92]	imp_tss500	1.0540	0.7817	1.3891	0.9961	0.7837	0.9164	False	10410	800230.0000	54269.0000
+diagnostic, benchmark already read	arm1	MAZ	bulk_chip_HEK293orK562 1.35 [1.01-1.73]	raw_tss500	0.7620	0.5240	1.0127	0.9617	1.0308	0.8055	False	3968	1076014.0000	38140.0000
+diagnostic, benchmark already read	arm1	MAZ	bulk_chip_HEK293orK562 1.35 [1.01-1.73]	imp_tss500	1.0076	0.7121	1.3165	0.9846	1.0775	1.0308	False	3968	1076014.0000	38140.0000
+diagnostic, benchmark already read	arm1	MSX2	motif 1.50 [1.17-1.88]	raw_tss500	1.4206	1.0872	1.7943	1.0076	0.9277	0.8940	True	1277	87257.0000	5740.0000
+diagnostic, benchmark already read	arm1	MSX2	motif 1.50 [1.17-1.88]	imp_tss500	0.9390	0.6768	1.2399	0.9961	0.8828	1.1010	False	1277	87257.0000	5740.0000
+diagnostic, benchmark already read	arm1	NRF1	motif 6.59 [5.33-7.95];chromnitron 5.52 [4.54-6.63]	raw_tss500	2.4190	1.9188	3.0082	1.0076	0.7946	1.0076	True	1416	376207.0000	17516.0000
+diagnostic, benchmark already read	arm1	NRF1	motif 6.59 [5.33-7.95];chromnitron 5.52 [4.54-6.63]	imp_tss500	1.0775	0.7905	1.4019	0.9846	0.6451	0.8940	False	1416	376207.0000	17516.0000
+diagnostic, benchmark already read	arm1	SETDB1	bulk_chip_HEK293orK562 1.66 [1.27-2.14]	raw_tss500	0.8274	0.5816	1.1134	0.9846	0.8384	1.0775	False	1028	64287.0000	4392.0000
+diagnostic, benchmark already read	arm1	SETDB1	bulk_chip_HEK293orK562 1.66 [1.27-2.14]	imp_tss500	1.0308	0.7228	1.3651	0.9617	0.8494	0.9164	False	1028	64287.0000	4392.0000
+diagnostic, benchmark already read	arm1	ZNF143	motif 2.52 [1.98-3.12];chromnitron 1.72 [1.31-2.15]	raw_tss500	1.0076	0.7317	1.3333	1.0076	0.8164	1.1010	False	1736	651672.0000	21377.0000
+diagnostic, benchmark already read	arm1	ZNF143	motif 2.52 [1.98-3.12];chromnitron 1.72 [1.31-2.15]	imp_tss500	1.1725	0.8611	1.5181	1.0076	0.7620	1.1486	False	1736	651672.0000	21377.0000
+diagnostic, benchmark already read	arm1	ZNF282	bulk_chip_HEK293orK562 1.63 [1.25-2.05]	raw_tss500	1.3196	0.9909	1.7068	1.0076	0.9961	0.8716	False	2959	573837.0000	22318.0000
+diagnostic, benchmark already read	arm1	ZNF282	bulk_chip_HEK293orK562 1.63 [1.25-2.05]	imp_tss500	1.3196	0.9884	1.6923	0.9846	0.9617	1.3446	False	2959	573837.0000	22318.0000

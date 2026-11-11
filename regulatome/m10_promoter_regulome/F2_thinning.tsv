@@ -1,0 +1,5 @@
+label	tf	probability_vector	promoter_fragments_ours	full_depth_OR	our_raw_OR	thinned_OR_median	thinned_OR_p2_5	thinned_OR_p97_5	thinned_frac_ge_full_minus_0_1	mean_genes_with_ge1_read_thinned	genes_with_ge1_read_ours
+diagnostic, benchmark already read	CTCF	bulk ChIP HEK293T p-value track	33265	1.9402	0.9180	1.6878	1.4485	1.9402	0.1250	7914.8500	9228
+diagnostic, benchmark already read	CTCF	bulk ChIP HEK293 CPM (ENCODE)	33265	2.9275	0.8955	2.6872	2.4574	2.9627	0.1350	7238.0000	9228
+diagnostic, benchmark already read	NRF1	Chromnitron	10467	5.5186	2.5546	4.1782	3.5973	4.7695	0.0000	4433.5000	4473
+diagnostic, benchmark already read	NRF1	motif score shifted to >= 0	10467	6.5914	2.6872	2.6371	2.0859	3.1424	0.0000	5847.1500	4473

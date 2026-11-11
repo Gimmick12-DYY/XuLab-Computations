@@ -1,0 +1,3 @@
+label	set	n_tfs	spearman	lo	hi
+diagnostic, benchmark already read	all_tested	76	0.0957	-0.1326	0.3394
+diagnostic, benchmark already read	testable	9	-0.0333	-0.8869	0.7391

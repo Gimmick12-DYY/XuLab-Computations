@@ -1,0 +1,5 @@
+label	arm	ours	n_testable	n_pass	passing
+diagnostic, benchmark already read	arm2	raw_tss500	9	1	NRF1
+diagnostic, benchmark already read	arm2	imp_tss500	9	0	
+diagnostic, benchmark already read	arm1	raw_tss500	7	2	MSX2,NRF1
+diagnostic, benchmark already read	arm1	imp_tss500	7	0	
