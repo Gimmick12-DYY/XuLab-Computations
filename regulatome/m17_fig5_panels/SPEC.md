@@ -29,3 +29,10 @@ Label for every table and figure: diagnostic, benchmark already read. HEK293T da
 - Top 20 candidates, ranked by the number of confirmed TFs with raw-promoter binding above the 75th percentile, then by summed |z| (all cells).
 - Declared genes, looked up whatever they show: MYC, EZH2, CCNE1, TXNIP, LDLR, CDKN1A. For each, every TF ranked by |z| (all cells) with half z, binding percentiles and confirmed-pair status.
 - Report the numbers with their comparison; untested causes are written as unexplained.
+
+## Amendment 1 (2026-11-11): P4, a many-TF gene example and a locus figure; P2 reliability column
+Written before any P4 number is computed.
+- Pair definitions per (gene, TF), m15 dc matrices (raw reading beside): responsive = |z| >= 2 in half 1 and in half 2 with the same sign; bound = a q005 peak in an ABC-linked element of the gene (peak signalValue x ABC > 0). Beside it, bound_promoter = raw promoter reads above the TF 75th percentile.
+- Per gene: n_responsive, n_bound, n_both, and the expected n_both if binding and response were independent across that gene TFs (n_bound x n_responsive / n_TFs). Top 20 genes by n_both, ties by summed |z| over the n_both TFs. Global count of genes with n_both >= 3, 5, 8.
+- Locus figure for the top 3 genes (and NRF1/E4F1 gene PGAM1 as a declared fourth): gene body and ABC-linked elements along the chromosome; one ball per responsive TF; ball area proportional to |z| (all cells); colour by direction (gene down on knockdown vs up); filled = bound (placed above the linked element holding its strongest peak), hollow = responsive without a linked peak (placed in a side group). Bound but non-responsive TFs drawn as small grey dots at their element. PNG and SVG.
+- P2 addition: per TF, the knockdown split-half reliability (m7 ceiling column) next to each model test Spearman, and sqrt(reliability) as the largest correlation any predictor could reach; read as a comparison only.
