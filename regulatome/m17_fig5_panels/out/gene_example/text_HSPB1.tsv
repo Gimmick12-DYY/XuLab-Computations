@@ -1,0 +1,141 @@
+## HSPB1 locus
+chr	strand	TSS_ABC	gene_start	gene_end	transcript	exons
+chr7	+	76302672	76302673	76304292	ENST00000248553.7	76302673-76303076;76303802-76303865;76303984-76304292
+## HSPB1 ABC-linked elements (canonical, ABC >= 0.02)
+start	end	type	ABC
+76259706	76261054	distal	0.0390
+76267163	76268257	distal	0.0308
+76291322	76292537	distal	0.0545
+76302372	76303876	promoter	1.0000
+76306933	76307433	distal	0.0288
+76314233	76314733	distal	0.0278
+76317628	76318432	distal	0.1171
+76318548	76319048	distal	0.0668
+76359623	76360123	distal	0.0241
+76379463	76380551	distal	0.0208
+76392521	76394101	distal	0.0379
+## HSPB1 TFs with a linked q005 peak
+TF	element	type	peak_signalValue	ABC	pct_raw_promoter_reads	pct_peak_score	z_all	z_half1	z_half2	confirmed_K10000	confirmed_K2000	strong_phenotype	own_motif_at_element	has_knockdown
+FLYWCH1	76302372-76303876	promoter	13.37	1.0000	1.00	1.00	-16.87	-14.66	-8.17	yes	yes	no	no motif	yes
+E4F1	76302372-76303876	promoter	13.19	1.0000	1.00	1.00	-4.86	-4.45	-1.95	no	no	yes	no	yes
+SOX4	76302372-76303876	promoter	12.85	1.0000	1.00	1.00	-0.77	-0.92	-0.46	no	no	no	no	yes
+MBD3	76302372-76303876	promoter	10.96	1.0000	1.00	1.00	1.75	0.29	1.90	no	no	no	no motif	yes
+MLX	76302372-76303876	promoter	9.38	1.0000	1.00	1.00	-0.05	-1.44	0.77	no	no	no	no	yes
+NFYA	76302372-76303876	promoter	8.94	1.0000	0.99	0.99	1.47	0.70	1.40	no	no	no	no	yes
+ZNF644	76302372-76303876	promoter	8.22	1.0000	1.00	1.00	1.91	1.36	1.51	no	no	no	no motif	yes
+MEF2A	76302372-76303876	promoter	8.21	1.0000	1.00	1.00	1.09	1.27	0.36	no	no	yes	yes	yes
+THAP6	76302372-76303876	promoter	8.16	1.0000	1.00	1.00	1.14	1.58	-0.08	no	no	no	no motif	yes
+RBBP4	76317628-76318432	distal	7.83	0.1171	0.48	0.16	0.63	0.87	0.34	no	no	no	no motif	yes
+GLYR1	76302372-76303876	promoter	7.71	1.0000	NA	1.00	NA	NA	NA	no	no	no	no motif	no
+HOXC9	76302372-76303876	promoter	7.37	1.0000	1.00	1.00	1.32	1.91	-0.37	no	no	no	yes	yes
+WIZ	76302372-76303876	promoter	7.01	1.0000	1.00	1.00	1.01	0.95	0.72	no	no	no	no motif	yes
+ZIC2	76302372-76303876	promoter	6.94	1.0000	1.00	1.00	1.99	-0.34	2.69	no	no	no	yes	yes
+ZNF507	76302372-76303876	promoter	6.73	1.0000	0.95	0.98	-0.14	-1.85	1.18	no	no	no	no motif	yes
+MTF2	76302372-76303876	promoter	6.72	1.0000	1.00	1.00	1.95	1.59	1.42	no	no	no	no motif	yes
+NRF1	76302372-76303876	promoter	6.62	1.0000	1.00	1.00	-8.04	-6.43	-4.57	yes	yes	yes	yes	yes
+MAZ	76302372-76303876	promoter	6.51	1.0000	1.00	1.00	1.24	1.58	0.27	no	no	no	yes	yes
+HOXC4	76302372-76303876	promoter	6.45	1.0000	1.00	1.00	-1.58	-1.33	-0.88	no	no	no	no motif	yes
+XPA	76259706-76261054	distal	6.37	0.0390	0.22	0.39	-0.14	0.50	-0.41	no	no	no	no motif	yes
+POGK	76302372-76303876	promoter	6.31	1.0000	1.00	1.00	0.22	0.62	-0.28	no	no	no	no motif	yes
+ZBTB43	76302372-76303876	promoter	6.27	1.0000	1.00	1.00	-0.49	-0.18	-0.37	no	no	no	no motif	yes
+CHAMP1	76302372-76303876	promoter	6.19	1.0000	1.00	1.00	-3.01	-2.20	-2.20	no	no	no	no motif	yes
+ZBTB7A	76302372-76303876	promoter	6.19	1.0000	1.00	1.00	-0.06	-0.41	0.45	no	no	no	yes	yes
+DR1	76302372-76303876	promoter	6.04	1.0000	1.00	1.00	0.77	0.05	0.97	no	no	no	no motif	yes
+ZNF746	76302372-76303876	promoter	6.02	1.0000	1.00	1.00	1.97	0.16	2.16	no	no	no	no motif	yes
+MEF2D	76302372-76303876	promoter	5.32	1.0000	1.00	1.00	-1.00	-0.41	-0.82	no	no	no	yes	yes
+ZBTB40	76302372-76303876	promoter	5.04	1.0000	1.00	1.00	0.78	1.20	-0.29	no	no	no	no motif	yes
+FOXJ3	76302372-76303876	promoter	5.02	1.0000	1.00	1.00	-1.34	0.21	-2.46	no	no	no	yes	yes
+ETS2	76302372-76303876	promoter	4.96	1.0000	1.00	1.00	3.55	2.43	2.75	yes	no	no	yes	yes
+SMARCA1	76317628-76318432	distal	4.96	0.1171	0.95	0.93	1.74	2.17	-0.02	no	no	no	no motif	yes
+NME2	76302372-76303876	promoter	4.91	1.0000	0.92	0.95	-4.58	-3.28	-2.99	yes	no	no	no motif	yes
+HOXB6	76302372-76303876	promoter	4.65	1.0000	1.00	0.98	-0.29	-1.59	1.17	no	no	no	no	yes
+HOXB9	76302372-76303876	promoter	4.59	1.0000	1.00	0.99	1.09	1.42	0.07	no	no	no	no motif	yes
+SREBF2	76302372-76303876	promoter	4.51	1.0000	NA	1.00	NA	NA	NA	no	no	no	no motif	no
+HOXA10	76302372-76303876	promoter	4.38	1.0000	1.00	0.97	0.92	1.57	-0.32	no	no	no	no	yes
+RBBP7	76259706-76261054	distal	4.23	0.0390	0.37	0.51	-0.88	-1.84	0.43	no	no	yes	no motif	yes
+TRAFD1	76302372-76303876	promoter	4.18	1.0000	1.00	0.99	1.12	0.24	2.44	no	no	no	no motif	yes
+DDIT3	76302372-76303876	promoter	4.14	1.0000	0.57	0.90	-1.10	1.07	-3.22	no	no	no	no	yes
+ZNF282	76302372-76303876	promoter	4.13	1.0000	1.00	0.99	1.17	1.63	0.41	no	no	no	no	yes
+ZNF512	76259706-76261054	distal	4.13	0.0390	0.94	0.93	0.00	0.46	-0.37	no	no	no	no motif	yes
+E2F3	76379463-76380551	distal	4.01	0.0208	0.43	0.33	-1.45	-1.08	-1.66	no	no	no	yes	yes
+ZUFSP	76317628-76318432	distal	3.67	0.1171	0.98	0.94	-2.98	-1.06	-2.79	no	no	no	no motif	yes
+SRCAP	76379463-76380551	distal	3.67	0.0208	0.88	0.85	1.97	2.00	0.90	no	no	no	no motif	yes
+ADNP	76259706-76261054	distal	3.62	0.0390	0.92	0.90	2.36	2.15	1.45	no	no	no	no motif	yes
+ZNF777	76392521-76394101	distal	2.87	0.0379	0.82	0.79	-1.84	-0.63	-1.92	no	no	no	no motif	yes
+## HSPB1 z under every knockdown (m15 double-centred, Arm 2, all cells), ranked by |z|
+TF	z_all	z_half1	z_half2	q005_peak_linked	confirmed_K10000
+FLYWCH1	-16.87	-14.66	-8.17	yes	yes
+NRF1	-8.04	-6.43	-4.57	yes	yes
+DNMT1	5.58	4.37	3.74	no	yes
+E4F1	-4.85	-4.45	-1.95	yes	no
+NME2	-4.58	-3.28	-2.99	yes	yes
+ETS2	3.55	2.43	2.75	yes	yes
+CTCF	3.36	3.82	0.73	no	no
+CHAMP1	-3.01	-2.20	-2.20	yes	no
+ZUFSP	-2.98	-1.06	-2.79	yes	no
+PCGF6	2.98	0.65	3.37	no	no
+ZNF703	2.67	-0.79	3.41	no	no
+RBPJ	2.48	1.82	1.99	no	no
+ADNP	2.36	2.16	1.45	yes	no
+EZH2	2.22	2.33	0.70	no	no
+FOXC1	-2.12	-1.29	-1.65	no	no
+ZNF79	-2.11	-0.31	-3.09	no	no
+ZIC2	1.99	-0.34	2.69	yes	no
+SRCAP	1.97	2.00	0.90	yes	no
+ZNF746	1.97	0.16	2.16	yes	no
+MTF2	1.95	1.59	1.42	yes	no
+MSX2	1.94	0.43	2.27	no	no
+ZNF644	1.91	1.36	1.51	yes	no
+ZNF777	-1.84	-0.63	-1.92	yes	no
+MBD3	1.75	0.29	1.90	yes	no
+SMARCA1	1.74	2.18	-0.02	yes	no
+HOXC4	-1.58	-1.33	-0.88	yes	no
+ZNF512B	-1.55	-0.34	-2.12	no	no
+NR1D2	-1.51	-2.57	-0.06	no	no
+HES1	-1.51	-0.29	-2.38	no	no
+NEUROD4	1.50	2.13	-0.37	no	no
+NFYA	1.47	0.70	1.40	yes	no
+E2F3	-1.45	-1.08	-1.66	yes	no
+AKAP8L	1.35	0.24	1.49	no	no
+FOXJ3	-1.34	0.21	-2.46	yes	no
+HOXC9	1.32	1.91	-0.37	yes	no
+MAZ	1.24	1.58	0.27	yes	no
+ZNF282	1.17	1.63	0.41	yes	no
+SETDB1	1.16	0.88	1.09	no	no
+THAP6	1.14	1.58	-0.08	yes	no
+TRAFD1	1.12	0.24	2.44	yes	no
+DDIT3	-1.10	1.07	-3.22	yes	no
+MEF2A	1.09	1.27	0.36	yes	no
+HOXB9	1.09	1.41	0.07	yes	no
+SAFB	-1.08	-0.66	-0.73	no	no
+WIZ	1.01	0.95	0.72	yes	no
+MEF2D	-1.01	-0.41	-0.82	yes	no
+HOXA10	0.92	1.57	-0.32	yes	no
+RBBP7	-0.88	-1.84	0.43	yes	no
+EPAS1	0.87	1.36	-0.56	no	no
+ZBTB40	0.78	1.20	-0.29	yes	no
+DR1	0.77	0.05	0.97	yes	no
+SOX4	-0.77	-0.92	-0.46	yes	no
+RBBP4	0.63	0.87	0.34	yes	no
+HOXB8	0.61	0.57	0.81	no	no
+ZBTB43	-0.49	-0.18	-0.37	yes	no
+SOX12	0.46	0.39	0.39	no	no
+RELA	0.41	-1.90	1.85	no	no
+ZNF503	0.38	0.38	0.48	no	no
+HP1	0.37	-0.11	0.23	no	no
+ZNF606	-0.37	0.53	-0.61	no	no
+HOXD10	0.35	1.27	-0.41	no	no
+FOXK1	0.31	0.04	0.49	no	no
+PA2G4	-0.31	0.21	-0.62	no	no
+ZNF768	-0.30	1.20	-1.65	no	no
+HOXB6	-0.29	-1.59	1.17	yes	no
+HOXA5	0.25	-0.15	1.01	no	no
+POGK	0.22	0.62	-0.28	yes	no
+ZNF143	-0.17	-0.92	1.29	no	no
+XPA	-0.14	0.50	-0.41	yes	no
+ZNF507	-0.14	-1.85	1.18	yes	no
+TBX3	0.07	0.25	0.03	no	no
+ZBTB7A	-0.06	-0.41	0.45	yes	no
+MLX	-0.05	-1.44	0.76	yes	no
+ZNF581	-0.01	0.58	-0.28	no	no
+ZNF512	0.00	0.46	-0.37	yes	no
