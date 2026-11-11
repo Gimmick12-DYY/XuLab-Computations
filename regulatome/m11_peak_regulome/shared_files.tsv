@@ -1,0 +1,37 @@
+tf	version	file	exists	format	n_peaks	frac_hot
+NRF1	raw_lab	/vast/som/xujie_lab/TAGATG-293T/bigwig/macs2/TF.NRF1/TF.NRF1_peaks.narrowPeak	True	narrowPeak (full)	247762.0	0.004637515034589646
+NRF1	raw_tf	/work/users/d/y/dyy12/XuLab/complex_screen/pair_motif_composite/recall/peaks_tf/TF.NRF1_peaks.narrowPeak	True	narrowPeak (full)	245004.0	0.0007224371846990253
+NRF1	raw_atac	/work/users/d/y/dyy12/XuLab/complex_screen/pair_motif_composite/recall/peaks_atac/TF.NRF1_peaks.narrowPeak	True	narrowPeak (full)	233935.0	0.0002906790347746169
+NRF1	imp_loo	per-bin score (104,738 union-ATAC 1 kb bins)	True	bin-level score, not peaks		
+NRF1	imp_atac	per-bin score (104,738 union-ATAC 1 kb bins)	True	bin-level score, not peaks		
+NRF1	imp_binom	per-bin score (104,738 union-ATAC 1 kb bins)	True	bin-level score, not peaks		
+CTCF	raw_lab	/vast/som/xujie_lab/TAGATG-293T/bigwig/macs2/TF.CTCF/TF.CTCF_peaks.narrowPeak	True	narrowPeak (full)	576004.0	0.0021996375025173437
+CTCF	raw_tf	/work/users/d/y/dyy12/XuLab/complex_screen/pair_motif_composite/recall/peaks_tf/TF.CTCF_peaks.narrowPeak	True	narrowPeak (full)	590815.0	0.0004062185286426377
+CTCF	raw_atac	/work/users/d/y/dyy12/XuLab/complex_screen/pair_motif_composite/recall/peaks_atac/TF.CTCF_peaks.narrowPeak	True	narrowPeak (full)	532187.0	9.395193794662402e-05
+CTCF	imp_loo	per-bin score (104,738 union-ATAC 1 kb bins)	True	bin-level score, not peaks		
+CTCF	imp_atac	per-bin score (104,738 union-ATAC 1 kb bins)	True	bin-level score, not peaks		
+CTCF	imp_binom	per-bin score (104,738 union-ATAC 1 kb bins)	True	bin-level score, not peaks		
+ZNF143	raw_lab	/vast/som/xujie_lab/TAGATG-293T/bigwig/macs2/TF.ZNF143/TF.ZNF143_peaks.narrowPeak	True	narrowPeak (full)	399144.0	0.0026055759324955406
+ZNF143	raw_tf	/work/users/d/y/dyy12/XuLab/complex_screen/pair_motif_composite/recall/peaks_tf/TF.ZNF143_peaks.narrowPeak	True	narrowPeak (full)	398805.0	0.00013791201213625708
+ZNF143	raw_atac	/work/users/d/y/dyy12/XuLab/complex_screen/pair_motif_composite/recall/peaks_atac/TF.ZNF143_peaks.narrowPeak	True	narrowPeak (full)	379461.0	0.00015548369924708996
+ZNF143	imp_loo	per-bin score (104,738 union-ATAC 1 kb bins)	True	bin-level score, not peaks		
+ZNF143	imp_atac	per-bin score (104,738 union-ATAC 1 kb bins)	True	bin-level score, not peaks		
+ZNF143	imp_binom	per-bin score (104,738 union-ATAC 1 kb bins)	True	bin-level score, not peaks		
+MAZ	raw_lab	/vast/som/xujie_lab/TAGATG-293T/bigwig/macs2/TF.MAZ/TF.MAZ_peaks.narrowPeak	True	narrowPeak (full)	593446.0	0.001905817884019776
+MAZ	raw_tf	/work/users/d/y/dyy12/XuLab/complex_screen/pair_motif_composite/recall/peaks_tf/TF.MAZ_peaks.narrowPeak	True	narrowPeak (full)	594585.0	6.727381282743426e-05
+MAZ	raw_atac	/work/users/d/y/dyy12/XuLab/complex_screen/pair_motif_composite/recall/peaks_atac/TF.MAZ_peaks.narrowPeak	True	narrowPeak (full)	554880.0	0.00010092272202998847
+MAZ	imp_loo	per-bin score (104,738 union-ATAC 1 kb bins)	True	bin-level score, not peaks		
+MAZ	imp_atac	per-bin score (104,738 union-ATAC 1 kb bins)	True	bin-level score, not peaks		
+MAZ	imp_binom	per-bin score (104,738 union-ATAC 1 kb bins)	True	bin-level score, not peaks		
+NFYA	raw_lab	/vast/som/xujie_lab/TAGATG-293T/bigwig/macs2/TF.NFYA/TF.NFYA_peaks.narrowPeak	True	narrowPeak (full)	133056.0	0.01735359547859548
+NFYA	raw_tf	/work/users/d/y/dyy12/XuLab/complex_screen/pair_motif_composite/recall/peaks_tf/TF.NFYA_peaks.narrowPeak	True	narrowPeak (full)	77296.0	0.002665079693645208
+NFYA	raw_atac	/work/users/d/y/dyy12/XuLab/complex_screen/pair_motif_composite/recall/peaks_atac/TF.NFYA_peaks.narrowPeak	True	narrowPeak (full)	89788.0	0.0014033055642179355
+NFYA	imp_loo	per-bin score (104,738 union-ATAC 1 kb bins)	True	bin-level score, not peaks		
+NFYA	imp_atac	per-bin score (104,738 union-ATAC 1 kb bins)	True	bin-level score, not peaks		
+NFYA	imp_binom	per-bin score (104,738 union-ATAC 1 kb bins)	True	bin-level score, not peaks		
+E4F1	raw_lab	/vast/som/xujie_lab/TAGATG-293T/bigwig/macs2/TF.E4F1/TF.E4F1_peaks.narrowPeak	True	narrowPeak (full)	318187.0	0.004399928344024111
+E4F1	raw_tf	/work/users/d/y/dyy12/XuLab/complex_screen/pair_motif_composite/recall/peaks_tf/TF.E4F1_peaks.narrowPeak	True	narrowPeak (full)	241300.0	0.00022793203481143805
+E4F1	raw_atac	/work/users/d/y/dyy12/XuLab/complex_screen/pair_motif_composite/recall/peaks_atac/TF.E4F1_peaks.narrowPeak	True	narrowPeak (full)	251388.0	0.0003779018887138606
+E4F1	imp_loo	per-bin score (104,738 union-ATAC 1 kb bins)	True	bin-level score, not peaks		
+E4F1	imp_atac	per-bin score (104,738 union-ATAC 1 kb bins)	True	bin-level score, not peaks		
+E4F1	imp_binom	per-bin score (104,738 union-ATAC 1 kb bins)	True	bin-level score, not peaks		
