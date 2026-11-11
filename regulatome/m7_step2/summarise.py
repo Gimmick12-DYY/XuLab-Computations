@@ -61,7 +61,7 @@ for kind in KINDS:
                 row["pseudo_r2_mean"] = float(ps.r2.mean()); pb = np.mean([boot_r2(Z[f"{pk}__{r_}__{c}"]) for c in ps.cond], axis=0); row["real_minus_pseudo"] = R - float(ps.r2.mean()); d = bo - pb; row["real_minus_pseudo_lo"], row["real_minus_pseudo_hi"] = float(np.percentile(d, 2.5)), float(np.percentile(d, 97.5))
             LADDER.append(row); prev_boot, prev_r = bo, R
 Lad = pd.DataFrame(LADDER); Lad.to_csv(f"{O}/ladder.tsv", sep="\t", index=False, float_format="%.5f")
-# decision rule (Amendment 3)
+# decision rule (section 7, Amendments 1-5)
 D = []
 def get(kind, split, arm, centring, m, mo, tset="all"):
     q = P[(P.kind == kind) & (P.split == split) & (P.arm == arm) & (P.centring == centring) & (P.model == m) & (P["mode"] == mo) & (P.tf_set == tset)]; return q.iloc[0] if len(q) else None
@@ -71,8 +71,20 @@ for kind in P.kind.unique():
             r = get(kind, split, "arm2", "train", m, mo)
             if r is None: continue
             a1 = get(kind, split, "arm1", "train", m, mo); raw = get(kind, split, "arm2", "raw", m, mo)
-            d = dict(kind=kind, split=split, model=m, mode=mo, primary=r.primary, primary_lo=r.primary_lo, primary_hi=r.primary_hi, primary_pseudo=r.get("primary_pseudo"), primary_mis=r.get("primary_mis"), arm1_primary=a1.primary if a1 is not None else np.nan, raw_centring_primary=raw.primary if raw is not None else np.nan)
+            d = dict(kind=kind, split=split, model=m, mode=mo, primary=r.primary, primary_lo=r.primary_lo, primary_hi=r.primary_hi, primary_pseudo=r.get("primary_pseudo"), primary_mis=r.get("primary_mis"), arm1_primary=a1.primary if a1 is not None else np.nan, raw_centring_primary=raw.primary if raw is not None else np.nan, raw_centring_lo=raw.primary_lo if raw is not None else np.nan, raw_centring_hi=raw.primary_hi if raw is not None else np.nan)
             d["interval_above_0"] = bool(r.primary_lo > 0); d["exceeds_pseudo"] = bool(r.primary > r.get("primary_pseudo", np.inf)); d["exceeds_mis"] = bool(r.primary > r.get("primary_mis", np.inf)); d["arm1_same_sign"] = bool(a1 is not None and np.sign(a1.primary) == np.sign(r.primary))
             d["shows_binding_signal"] = d["interval_above_0"] and d["exceeds_pseudo"] and d["exceeds_mis"] and d["arm1_same_sign"]; d["beats_win100k"] = bool(r.minus_ref_win100k_lo > 0); d["beats_v8"] = bool(r.minus_ref_v8_lo > 0); d["beats_linear"] = bool("minus_linear_lo" in r and r.get("minus_linear_lo", np.nan) > 0)
+            d["centrings_agree"] = bool(raw is not None and np.sign(raw.primary) == np.sign(r.primary) and (raw.primary_lo > 0) == (r.primary_lo > 0))  # Amendment 5
             d["replaces_linear"] = bool(split == "gene" and not (m == "enet" and mo == "kd_only") and d["shows_binding_signal"] and d["beats_linear"] and d["beats_win100k"] and d["beats_v8"]); D.append(d)
-Dd = pd.DataFrame(D); Dd.to_csv(f"{O}/decision.tsv", sep="\t", index=False, float_format="%.5f"); print(Dd.to_string())
+Dd = pd.DataFrame(D)
+# adopted Regulome model per binding kind and link set (Amendment 5): the linear model unless exactly the rule lets a complex one replace it
+Dd["adopted"] = False
+for kind, G in Dd[Dd.split == "gene"].groupby("kind"):
+    c = G[G.replaces_linear]
+    pick = c.sort_values("primary", ascending=False).index[0] if len(c) else G[(G.model == "enet") & (G["mode"] == "kd_only")].index[0]
+    Dd.loc[pick, "adopted"] = True
+Dd.to_csv(f"{O}/decision.tsv", sep="\t", index=False, float_format="%.5f"); print(Dd.to_string())
+# expression verdict (Amendment 5): binding adds to an accessibility model of steady-state expression if rung 3 gain over rung 2 and rung 3 real minus pseudo both have intervals above 0
+if len(Lad):
+    X = Lad[(Lad["mode"] == "expr_only") & (Lad.rung == 3)].copy(); X["gain_interval_above_0"] = X.gain_lo > 0; X["pseudo_interval_above_0"] = X.real_minus_pseudo_lo > 0; X["binding_adds_to_expression"] = X.gain_interval_above_0 & X.pseudo_interval_above_0
+    X[["kind", "model", "r2", "gain_vs_prev", "gain_lo", "gain_hi", "real_minus_pseudo", "real_minus_pseudo_lo", "real_minus_pseudo_hi", "gain_interval_above_0", "pseudo_interval_above_0", "binding_adds_to_expression"]].to_csv(f"{O}/decision_expr.tsv", sep="\t", index=False, float_format="%.5f")

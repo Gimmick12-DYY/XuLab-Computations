@@ -1,0 +1,114 @@
+{
+ "expr|enet|rung1": {
+  "alpha": 0.0001,
+  "l1_ratio": 0.1
+ },
+ "expr|enet|rung2": {
+  "alpha": 0.0001,
+  "l1_ratio": 0.1
+ },
+ "expr|enet|rung3": {
+  "alpha": 0.003,
+  "l1_ratio": 0.9
+ },
+ "expr|enet|rung4": {
+  "alpha": 0.003,
+  "l1_ratio": 0.9
+ },
+ "expr|lgb|rung1": {
+  "feature_fraction": 1.0,
+  "min_data_in_leaf": 30,
+  "num_leaves": 7
+ },
+ "expr|lgb|rung2": {
+  "feature_fraction": 1.0,
+  "min_data_in_leaf": 30,
+  "num_leaves": 7
+ },
+ "expr|lgb|rung3": {
+  "feature_fraction": 1.0,
+  "min_data_in_leaf": 30,
+  "num_leaves": 15
+ },
+ "expr|lgb|rung4": {
+  "feature_fraction": 0.7,
+  "min_data_in_leaf": 30,
+  "num_leaves": 15
+ },
+ "expr|mlp|rung1": {
+  "drop": 0.0,
+  "emb": 16,
+  "h": 128
+ },
+ "expr|mlp|rung2": {
+  "drop": 0.2,
+  "emb": 8,
+  "h": 256
+ },
+ "expr|mlp|rung3": {
+  "drop": 0.0,
+  "emb": 16,
+  "h": 256
+ },
+ "expr|mlp|rung4": {
+  "drop": 0.2,
+  "emb": 16,
+  "h": 256
+ },
+ "kd|enet|both|base": {
+  "alpha": 0.001,
+  "l1_ratio": 0.1
+ },
+ "kd|enet|both|real": {
+  "alpha": 0.0001,
+  "l1_ratio": 0.9
+ },
+ "kd|enet|kd_only|base": {
+  "alpha": 0.001,
+  "l1_ratio": 0.1
+ },
+ "kd|enet|kd_only|real": {
+  "alpha": 0.0001,
+  "l1_ratio": 0.9
+ },
+ "kd|lgb|both|base": {
+  "feature_fraction": 1.0,
+  "min_data_in_leaf": 200,
+  "num_leaves": 15
+ },
+ "kd|lgb|both|real": {
+  "feature_fraction": 1.0,
+  "min_data_in_leaf": 200,
+  "num_leaves": 31
+ },
+ "kd|lgb|kd_only|base": {
+  "feature_fraction": 1.0,
+  "min_data_in_leaf": 50,
+  "num_leaves": 63
+ },
+ "kd|lgb|kd_only|real": {
+  "feature_fraction": 1.0,
+  "min_data_in_leaf": 200,
+  "num_leaves": 31
+ },
+ "kd|mlp|both|base": {
+  "drop": 0.2,
+  "emb": 8,
+  "h": 128
+ },
+ "kd|mlp|both|real": {
+  "drop": 0.2,
+  "emb": 16,
+  "h": 256
+ },
+ "kd|mlp|kd_only|base": {
+  "drop": 0.2,
+  "emb": 16,
+  "h": 128
+ },
+ "kd|mlp|kd_only|real": {
+  "drop": 0.2,
+  "emb": 8,
+  "h": 64
+ }
+}

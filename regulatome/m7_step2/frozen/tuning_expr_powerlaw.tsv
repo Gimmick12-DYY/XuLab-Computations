@@ -1,0 +1,13 @@
+key	n	best	worst	params
+expr|enet|rung1	15	0.03208	0.01744	"{""alpha"": 0.0001, ""l1_ratio"": 0.1}"
+expr|enet|rung2	15	0.04533	0.03017	"{""alpha"": 0.0001, ""l1_ratio"": 0.1}"
+expr|enet|rung3	15	0.05309	0.03642	"{""alpha"": 0.003, ""l1_ratio"": 0.5}"
+expr|enet|rung4	15	0.051	0.03899	"{""alpha"": 0.003, ""l1_ratio"": 0.5}"
+expr|lgb|rung1	12	0.0678	0.0579	"{""num_leaves"": 15, ""min_data_in_leaf"": 30, ""feature_fraction"": 0.7}"
+expr|lgb|rung2	12	0.07867	0.05578	"{""num_leaves"": 7, ""min_data_in_leaf"": 10, ""feature_fraction"": 1.0}"
+expr|lgb|rung3	12	0.07343	0.04989	"{""num_leaves"": 7, ""min_data_in_leaf"": 30, ""feature_fraction"": 0.7}"
+expr|lgb|rung4	12	0.07211	0.05569	"{""num_leaves"": 7, ""min_data_in_leaf"": 10, ""feature_fraction"": 0.7}"
+expr|mlp|rung1	12	0.09675	0.0831	"{""h"": 128, ""drop"": 0.0, ""emb"": 8}"
+expr|mlp|rung2	12	0.09684	0.08502	"{""h"": 256, ""drop"": 0.2, ""emb"": 16}"
+expr|mlp|rung3	12	0.07612	0.05664	"{""h"": 256, ""drop"": 0.2, ""emb"": 8}"
+expr|mlp|rung4	12	0.07118	0.05392	"{""h"": 256, ""drop"": 0.2, ""emb"": 8}"
