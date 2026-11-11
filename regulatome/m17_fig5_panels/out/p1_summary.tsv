@@ -1,0 +1,33 @@
+label	binding	matrix	standardisation	dropped	n_rows	n_cols	diag_mean	offdiag_mean	diag_minus_off	p_perm	n_own_best	own_best_tfs
+diagnostic, benchmark already read	A_peak_score_x_abc	strong10	raw_difference	none	9	10	0.03753	0.003341	0.03419	0.0133	2	E4F1,NRF1
+diagnostic, benchmark already read	A_peak_score_x_abc	strong10	raw_difference	NRF1,E4F1	7	8	-0.003601	-0.005094	0.001493	0.4505	0	
+diagnostic, benchmark already read	A_peak_score_x_abc	strong10	column_z	none	9	10	0.3337	-0.03708	0.3708	0.1591	0	
+diagnostic, benchmark already read	A_peak_score_x_abc	strong10	column_z	NRF1,E4F1	7	8	-0.07154	-0.0238	-0.04774	0.546	0	
+diagnostic, benchmark already read	A_peak_score_x_abc	strong10	row_z	none	9	10	0.4237	-0.04707	0.4707	0.06869	2	E4F1,NRF1
+diagnostic, benchmark already read	A_peak_score_x_abc	strong10	row_z	NRF1,E4F1	7	8	-0.1888	-0.2168	0.02801	0.4653	0	
+diagnostic, benchmark already read	A_peak_score_x_abc	strong10	log2_OR	none	9	10	0.1768	-0.03301	0.2098	0.0161	3	E4F1,NRF1,SAFB
+diagnostic, benchmark already read	A_peak_score_x_abc	strong10	log2_OR	NRF1,E4F1	7	8	0.04178	-0.08715	0.1289	0.1418	1	SAFB
+diagnostic, benchmark already read	A_peak_score_x_abc	all	raw_difference	none	68	76	0.007611	0.002168	0.005442	0.1405	2	E4F1,NRF1
+diagnostic, benchmark already read	A_peak_score_x_abc	all	raw_difference	NRF1,E4F1	66	74	0.002342	0.0007192	0.001622	0.3572	1	ZNF143
+diagnostic, benchmark already read	A_peak_score_x_abc	all	column_z	none	68	76	0.0996	-0.001328	0.1009	0.2091	1	CHAMP1
+diagnostic, benchmark already read	A_peak_score_x_abc	all	column_z	NRF1,E4F1	66	74	0.0627	-0.002166	0.06486	0.292	1	CHAMP1
+diagnostic, benchmark already read	A_peak_score_x_abc	all	row_z	none	68	76	0.2009	-0.002679	0.2036	0.035	2	E4F1,NRF1
+diagnostic, benchmark already read	A_peak_score_x_abc	all	row_z	NRF1,E4F1	66	74	0.03816	-0.05331	0.09147	0.2002	1	ZNF143
+diagnostic, benchmark already read	A_peak_score_x_abc	all	log2_OR	none	68	76	0.06297	0.02363	0.03933	0.1764	2	E4F1,NRF1
+diagnostic, benchmark already read	A_peak_score_x_abc	all	log2_OR	NRF1,E4F1	66	74	0.0452	0.01945	0.02575	0.2801	0	
+diagnostic, benchmark already read	B_raw_promoter_reads	strong10	raw_difference	none	10	10	0.04168	0.0241	0.01758	0.09269	2	E4F1,NRF1
+diagnostic, benchmark already read	B_raw_promoter_reads	strong10	raw_difference	NRF1,E4F1	8	8	-0.01051	-0.0006198	-0.009893	0.894	0	
+diagnostic, benchmark already read	B_raw_promoter_reads	strong10	column_z	none	10	10	-0.06878	0.007642	-0.07642	0.5876	1	NRF1
+diagnostic, benchmark already read	B_raw_promoter_reads	strong10	column_z	NRF1,E4F1	8	8	-0.5034	-0.06406	-0.4393	0.8882	0	
+diagnostic, benchmark already read	B_raw_promoter_reads	strong10	row_z	none	10	10	0.08145	-0.00905	0.0905	0.2984	2	E4F1,NRF1
+diagnostic, benchmark already read	B_raw_promoter_reads	strong10	row_z	NRF1,E4F1	8	8	-0.5823	-0.3973	-0.185	0.8702	0	
+diagnostic, benchmark already read	B_raw_promoter_reads	strong10	log2_OR	none	10	10	0.03298	0.0721	-0.03912	0.7078	2	E4F1,NRF1
+diagnostic, benchmark already read	B_raw_promoter_reads	strong10	log2_OR	NRF1,E4F1	8	8	-0.2113	-0.06033	-0.151	0.9737	0	
+diagnostic, benchmark already read	B_raw_promoter_reads	all	raw_difference	none	76	76	0.01142	0.006989	0.00443	0.0256	2	E4F1,NRF1
+diagnostic, benchmark already read	B_raw_promoter_reads	all	raw_difference	NRF1,E4F1	74	74	0.004958	0.004	0.0009587	0.3331	1	WIZ
+diagnostic, benchmark already read	B_raw_promoter_reads	all	column_z	none	76	76	0.1289	-0.001718	0.1306	0.1272	2	NRF1,WIZ
+diagnostic, benchmark already read	B_raw_promoter_reads	all	column_z	NRF1,E4F1	74	74	0.06204	-0.005401	0.06744	0.2787	1	WIZ
+diagnostic, benchmark already read	B_raw_promoter_reads	all	row_z	none	76	76	0.1136	-0.001515	0.1151	0.08149	2	E4F1,NRF1
+diagnostic, benchmark already read	B_raw_promoter_reads	all	row_z	NRF1,E4F1	74	74	-0.06427	-0.101	0.03677	0.3232	1	WIZ
+diagnostic, benchmark already read	B_raw_promoter_reads	all	log2_OR	none	76	76	0.07825	0.04126	0.03699	0.05599	2	E4F1,NRF1
+diagnostic, benchmark already read	B_raw_promoter_reads	all	log2_OR	NRF1,E4F1	74	74	0.05306	0.03033	0.02273	0.1747	2	DDIT3,ZIC2

@@ -1,0 +1,217 @@
+label	gene	tf	z_half1	z_half2	z_all	direction_on_kd	half_agree	pct_b_raw_promoter_reads	pct_a_peak_score_q005	promoter_peak_q005	own_motif_at_promoter	n_linked_elements_with_peak_q005	shared_by	cosmic_cgc	n_tfs	n_raw_ge75	n_peak_ge75	sum_absz
+diagnostic, benchmark already read	HSPB1	FLYWCH1	-15.01	-8.197	-17	down	True	1	1	True		2	46	not available locally	3	3	2	31.07
+diagnostic, benchmark already read	HSPB1	NRF1	-7.009	-4.653	-8.391	down	True	0.999	0.9998	True	False	1	46	not available locally	3	3	2	31.07
+diagnostic, benchmark already read	HSPB1	DNMT1	4.212	3.833	5.679	up	True	0.9935	0.4764	False		0	46	not available locally	3	3	2	31.07
+diagnostic, benchmark already read	RPLP1	DNMT1	-4.138	-2.91	-5.037	down	True	0.8342	0.4764	False		0	37	not available locally	4	3	2	19.7
+diagnostic, benchmark already read	RPLP1	NME2	-3.412	-3.618	-4.935	down	True	0.9765	0.9374	True		2	37	not available locally	4	3	2	19.7
+diagnostic, benchmark already read	RPLP1	WIZ	2.281	3.456	4.122	up	True	0.5998	0.3891	False		0	37	not available locally	4	3	2	19.7
+diagnostic, benchmark already read	RPLP1	E4F1	4.08	3.905	5.609	up	True	0.9982	0.9961	True	False	2	37	not available locally	4	3	2	19.7
+diagnostic, benchmark already read	PLS3	RBPJ	-4.114	-3.294	-5.259	down	True	0.4401	0.412	False	True	0	12	not available locally	3	2	0	21.57
+diagnostic, benchmark already read	PLS3	DNMT1	5.298	3.093	6.048	up	True	0.8342	0.4764	False		0	12	not available locally	3	2	0	21.57
+diagnostic, benchmark already read	PLS3	NRF1	9.267	4.774	10.26	up	True	0.8047	0.4732	False	False	0	12	not available locally	3	2	0	21.57
+diagnostic, benchmark already read	PGAM1	NRF1	-10.34	-6.024	-11.87	down	True	0.9855	0.9903	True	True	1	19	not available locally	2	2	2	19.56
+diagnostic, benchmark already read	PGAM1	E4F1	-6.259	-4.493	-7.689	down	True	0.8734	0.7809	True	False	1	19	not available locally	2	2	2	19.56
+diagnostic, benchmark already read	PA2G4	DNMT1	-5.531	-2.878	-6.096	down	True	0.8342	0.4764	False		0	29	not available locally	3	2	0	18.09
+diagnostic, benchmark already read	PA2G4	E4F1	-4.262	-4.447	-6.087	down	True	0.8981	0.6239	False	False	2	29	not available locally	3	2	0	18.09
+diagnostic, benchmark already read	PA2G4	ZNF143	-5.346	-2.662	-5.906	down	True	0.2786	0.4561	False	True	0	29	not available locally	3	2	0	18.09
+diagnostic, benchmark already read	NDUFB10	DNMT1	-6.143	-4.596	-7.654	down	True	0.9287	0.4764	False		0	15	not available locally	3	2	1	17.82
+diagnostic, benchmark already read	NDUFB10	NRF1	3.823	2.745	4.7	up	True	0.8047	0.9547	False	True	1	15	not available locally	3	2	1	17.82
+diagnostic, benchmark already read	NDUFB10	CTCF	5.163	2.2	5.468	up	True	0.5851	0.3905	False	True	0	15	not available locally	3	2	1	17.82
+diagnostic, benchmark already read	RPS26	E4F1	-6.943	-3.695	-7.738	down	True	0.5383	0.779	True	False	3	24	not available locally	3	2	2	17.15
+diagnostic, benchmark already read	RPS26	NME2	-2.869	-3.558	-4.491	down	True	0.7637	0.9071	True		3	24	not available locally	3	2	2	17.15
+diagnostic, benchmark already read	RPS26	ZNF746	2.429	4.301	4.925	up	True	0.82	0.4182	False		0	24	not available locally	3	2	2	17.15
+diagnostic, benchmark already read	DAD1	NRF1	-8.066	-5.374	-9.667	down	True	0.9099	0.4732	False	True	0	23	not available locally	2	2	0	16.79
+diagnostic, benchmark already read	DAD1	E4F1	-6.136	-3.728	-7.122	down	True	0.8111	0.2047	False	False	0	23	not available locally	2	2	0	16.79
+diagnostic, benchmark already read	HSPE1	NRF1	-6.904	-4.823	-8.41	down	True	0.8047	0.4732	False	True	0	24	not available locally	2	2	1	16.57
+diagnostic, benchmark already read	HSPE1	E4F1	-6.36	-5.132	-8.162	down	True	0.9918	0.9937	True	False	1	24	not available locally	2	2	1	16.57
+diagnostic, benchmark already read	HES4	DNMT1	-4.778	-3.741	-6.059	down	True	0.285	0.4764	False		0	12	not available locally	3	2	0	16.08
+diagnostic, benchmark already read	HES4	RBPJ	-4.17	-2.799	-5.012	down	True	0.8644	0.412	False	True	0	12	not available locally	3	2	0	16.08
+diagnostic, benchmark already read	HES4	NME2	-3.304	-3.845	-5.009	down	True	0.7637	0.1723	False		0	12	not available locally	3	2	0	16.08
+diagnostic, benchmark already read	TUBA1B	NRF1	-7.18	-4.231	-8.281	down	True	0.9511	0.4732	False	False	0	19	not available locally	2	2	0	15.47
+diagnostic, benchmark already read	TUBA1B	E4F1	-5.391	-4.796	-7.191	down	True	0.8981	0.5932	False	False	2	19	not available locally	2	2	0	15.47
+diagnostic, benchmark already read	MRPL17	E4F1	-5.526	-5.523	-7.745	down	True	0.8111	0.7971	True	False	1	21	not available locally	2	2	2	14.82
+diagnostic, benchmark already read	MRPL17	NRF1	-5.111	-4.989	-7.077	down	True	0.9855	0.9988	True	True	1	21	not available locally	2	2	2	14.82
+diagnostic, benchmark already read	TRAPPC5	E4F1	-7.059	-5.534	-8.958	down	True	0.7714	0.5045	False	False	1	29	not available locally	2	2	0	14.51
+diagnostic, benchmark already read	TRAPPC5	NRF1	-4.607	-3.118	-5.55	down	True	0.8047	0.4732	False	True	0	29	not available locally	2	2	0	14.51
+diagnostic, benchmark already read	FTL	E4F1	4.638	4.526	6.432	up	True	0.9918	0.2047	False	False	0	15	not available locally	2	2	0	14.21
+diagnostic, benchmark already read	FTL	FOXK1	5.484	5.627	7.777	up	True	0.9165	0.492	False	False	0	15	not available locally	2	2	0	14.21
+diagnostic, benchmark already read	NHP2	E4F1	-8.017	-5.939	-9.962	down	True	0.9484	0.7431	True	False	1	20	not available locally	2	2	0	13.35
+diagnostic, benchmark already read	NHP2	EZH2	-2.167	-3.486	-3.388	down	True	0.7866	0.4099	False		0	20	not available locally	2	2	0	13.35
+diagnostic, benchmark already read	SNRPD2	E4F1	-7.338	-5.14	-8.935	down	True	0.9958	0.9738	True	False	2	27	not available locally	2	2	2	13.19
+diagnostic, benchmark already read	SNRPD2	NME2	-2.451	-3.679	-4.259	down	True	0.9363	0.937	True		5	27	not available locally	2	2	2	13.19
+diagnostic, benchmark already read	MDK	NME2	-4.666	-5.293	-6.985	down	True	0.8748	0.1723	False		0	17	not available locally	2	2	1	13.11
+diagnostic, benchmark already read	MDK	NRF1	5.614	2.727	6.125	up	True	0.9099	0.9618	False	False	1	17	not available locally	2	2	1	13.11
+diagnostic, benchmark already read	TIMM13	E4F1	-4.873	-5.223	-7.047	down	True	0.9583	0.9637	True	False	1	18	not available locally	2	2	1	11.61
+diagnostic, benchmark already read	TIMM13	ZNF143	-3.652	-2.738	-4.558	down	True	0.9487	0.4561	False	True	0	18	not available locally	2	2	1	11.61
+diagnostic, benchmark already read	ARHGDIA	E4F1	-3.74	-3.44	-5.059	down	True	0.8734	0.6642	False	False	1	24	not available locally	2	2	0	11.32
+diagnostic, benchmark already read	ARHGDIA	MAZ	6.144	2.35	6.261	up	True	0.9142	0.3921	False	True	0	24	not available locally	2	2	0	11.32
+diagnostic, benchmark already read	MRPL41	E4F1	-5.013	-3.472	-6.08	down	True	0.9484	0.9642	True	False	1	22	not available locally	2	2	1	11.22
+diagnostic, benchmark already read	MRPL41	NRF1	-3.95	-3.312	-5.141	down	True	0.9921	0.4732	False	True	0	22	not available locally	2	2	1	11.22
+diagnostic, benchmark already read	GLA	RBPJ	-4.601	-2.281	-5.055	down	True	0.7745	0.412	False	True	0	15	not available locally	2	2	0	11.04
+diagnostic, benchmark already read	GLA	DNMT1	4.505	3.964	5.989	up	True	0.8342	0.4764	False		0	15	not available locally	2	2	0	11.04
+diagnostic, benchmark already read	RPL23A	NME2	-2.996	-3.822	-4.759	down	True	0.7966	0.6965	True		1	9	not available locally	2	2	0	9.151
+diagnostic, benchmark already read	RPL23A	DNMT1	-3.721	-2.399	-4.392	down	True	0.8342	0.4764	False		0	9	not available locally	2	2	0	9.151
+diagnostic, benchmark already read	UQCC2	NRF1	-9.99	-4.328	-10.57	down	True	0.9969	0.9963	True	True	1	15	not available locally	3	1	1	30.56
+diagnostic, benchmark already read	UQCC2	E4F1	-7.753	-6.849	-10.31	down	True	0.3071	0.4493	False	False	1	15	not available locally	3	1	1	30.56
+diagnostic, benchmark already read	UQCC2	ADNP	-5.368	-8.114	-9.676	down	True	0.7256	0.436	False		0	15	not available locally	3	1	1	30.56
+diagnostic, benchmark already read	MRPL54	E4F1	-5.177	-5.007	-7.154	down	True	0.9583	0.8465	True	False	2	29	not available locally	3	1	1	20.98
+diagnostic, benchmark already read	MRPL54	ZNF143	-5.879	-2.361	-6.162	down	True	0.2786	0.4561	False	True	0	29	not available locally	3	1	1	20.98
+diagnostic, benchmark already read	MRPL54	NRF1	6.163	4.579	7.669	up	True	0.3009	0.4732	False	True	0	29	not available locally	3	1	1	20.98
+diagnostic, benchmark already read	H1-0	E4F1	7.8	5.903	9.77	up	True	0.9888	0.8693	True	False	1	27	not available locally	2	1	1	20.77
+diagnostic, benchmark already read	H1-0	DNMT1	8.727	6.734	11	up	True	0.6676	0.4764	False		0	27	not available locally	2	1	1	20.77
+diagnostic, benchmark already read	CKB	DNMT1	-10.43	-7.348	-12.7	down	True	0.285	0.4764	False		0	27	not available locally	2	1	1	17.91
+diagnostic, benchmark already read	CKB	E4F1	-3.839	-3.555	-5.206	down	True	0.8734	0.9592	True	False	3	27	not available locally	2	1	1	17.91
+diagnostic, benchmark already read	PTMA	E4F1	-9.229	-7.253	-11.72	down	True	0.5383	0.2047	False	True	0	16	not available locally	2	1	1	16.82
+diagnostic, benchmark already read	PTMA	CTCF	-3.872	-3.353	-5.095	down	True	0.8757	0.8783	False	True	1	16	not available locally	2	1	1	16.82
+diagnostic, benchmark already read	RPL8	DNMT1	-5.728	-3.794	-6.825	down	True	0.285	0.4764	False		0	8	not available locally	3	1	0	16.43
+diagnostic, benchmark already read	RPL8	NME2	-3.682	-2.965	-4.71	down	True	0.6331	0.1723	False		0	8	not available locally	3	1	0	16.43
+diagnostic, benchmark already read	RPL8	ZNF746	2.558	4.206	4.895	up	True	0.896	0.4182	False		0	8	not available locally	3	1	0	16.43
+diagnostic, benchmark already read	ZNF428	NRF1	-9.311	-6.221	-11.17	down	True	0.3009	0.9701	False	True	1	24	not available locally	2	1	1	16.02
+diagnostic, benchmark already read	ZNF428	ZNF143	3.467	3.516	4.855	up	True	0.7836	0.4561	False	True	0	24	not available locally	2	1	1	16.02
+diagnostic, benchmark already read	LDHA	E4F1	-6.062	-7.244	-9.222	down	True	0.3071	0.2047	False	False	0	19	not available locally	2	1	1	14.44
+diagnostic, benchmark already read	LDHA	NRF1	-4.643	-2.512	-5.215	down	True	0.8047	0.9752	False	False	1	19	not available locally	2	1	1	14.44
+diagnostic, benchmark already read	RPL36A	PA2G4	-4.155	-2.082	-4.637	down	True	0.5356	0.4854	False		0	14	not available locally	3	1	0	14.29
+diagnostic, benchmark already read	RPL36A	FOXC1	-2.939	-3.919	-4.504	down	True	0.7402	0.4604	False	False	0	14	not available locally	3	1	0	14.29
+diagnostic, benchmark already read	RPL36A	NRF1	4.493	2.584	5.145	up	True	0.9511	0.4732	False	False	0	14	not available locally	3	1	0	14.29
+diagnostic, benchmark already read	MICOS13	E4F1	-6.028	-5.829	-8.329	down	True	0.7714	0.8007	True	False	1	18	not available locally	2	1	1	13.84
+diagnostic, benchmark already read	MICOS13	ZNF143	-4.406	-3.318	-5.507	down	True	0.2786	0.4561	False	True	0	18	not available locally	2	1	1	13.84
+diagnostic, benchmark already read	MRPS12	E4F1	-6.689	-4.975	-8.323	down	True	0.919	0.2047	False	False	0	28	not available locally	2	1	0	13.57
+diagnostic, benchmark already read	MRPS12	NRF1	-4.491	-2.763	-5.244	down	True	0.6624	0.4732	False	True	0	28	not available locally	2	1	0	13.57
+diagnostic, benchmark already read	SF3B5	E4F1	-6.361	-4.036	-7.488	down	True	0.9484	0.8694	True	False	2	25	not available locally	2	1	1	13.25
+diagnostic, benchmark already read	SF3B5	NRF1	-3.993	-4.292	-5.765	down	True	0.6624	0.4732	False	False	0	25	not available locally	2	1	1	13.25
+diagnostic, benchmark already read	TMEM14A	NRF1	-5.344	-4.704	-7.09	down	True	0.8047	0.4732	False	True	0	19	not available locally	2	1	0	13.21
+diagnostic, benchmark already read	TMEM14A	MAZ	-5.079	-3.463	-6.12	down	True	0.4383	0.3921	False	True	0	19	not available locally	2	1	0	13.21
+diagnostic, benchmark already read	SNRNP70	NRF1	-6.733	-5.025	-8.392	down	True	0.8047	0.4732	False	True	0	32	not available locally	2	1	1	12.79
+diagnostic, benchmark already read	SNRNP70	CTCF	-2.704	-3.771	-4.396	down	True	0.432	0.8647	False	False	2	32	not available locally	2	1	1	12.79
+diagnostic, benchmark already read	PPIA	E4F1	-5.671	-4.931	-7.494	down	True	0.4625	0.8079	True	False	1	18	not available locally	2	1	1	12.67
+diagnostic, benchmark already read	PPIA	NME2	-3.65	-3.707	-5.174	down	True	0.9241	0.1723	False		0	18	not available locally	2	1	1	12.67
+diagnostic, benchmark already read	PSMA4	NRF1	-5.776	-3.896	-6.952	down	True	0.9951	0.9975	True	True	1	20	not available locally	2	1	1	12.29
+diagnostic, benchmark already read	PSMA4	E4F1	-4.291	-3.191	-5.339	down	True	0.6686	0.4917	False	False	1	20	not available locally	2	1	1	12.29
+diagnostic, benchmark already read	MRPS34	DNMT1	-5.562	-2.907	-6.138	down	True	0.8342	0.4764	False		0	12	not available locally	2	1	0	11.91
+diagnostic, benchmark already read	MRPS34	E4F1	-4.842	-3.192	-5.774	down	True	0.5383	0.2047	False	False	0	12	not available locally	2	1	0	11.91
+diagnostic, benchmark already read	ATP5F1D	E4F1	-4.994	-4.676	-6.805	down	True	0.8111	0.4415	False	False	1	24	not available locally	2	1	0	11.75
+diagnostic, benchmark already read	ATP5F1D	NME2	-3.123	-3.954	-4.945	down	True	0.1999	0.5286	False		2	24	not available locally	2	1	0	11.75
+diagnostic, benchmark already read	JOSD2	MAZ	4.382	2.739	5.119	up	True	0.7611	0.3921	False	True	0	24	not available locally	2	1	0	11.63
+diagnostic, benchmark already read	JOSD2	ZNF143	4.85	4.444	6.514	up	True	0.6256	0.4561	False	True	0	24	not available locally	2	1	0	11.63
+diagnostic, benchmark already read	ARL6IP1	ZNF507	-4.092	-6.087	-7.328	down	True	0.9465	0.6836	True		2	35	not available locally	2	1	1	11.6
+diagnostic, benchmark already read	ARL6IP1	CTCF	3.65	2.242	4.267	up	True	0.5851	0.821	False	True	1	35	not available locally	2	1	1	11.6
+diagnostic, benchmark already read	CYCS	E4F1	-4.778	-4.034	-6.24	down	True	0.8734	0.7809	True	True	1	24	not available locally	2	1	1	11.34
+diagnostic, benchmark already read	CYCS	NRF1	-4.255	-2.827	-5.095	down	True	0.3009	0.4732	False	True	0	24	not available locally	2	1	1	11.34
+diagnostic, benchmark already read	AKR7A2	NRF1	-3.986	-4.109	-5.65	down	True	0.8047	0.4732	False	True	0	10	not available locally	2	1	0	11.3
+diagnostic, benchmark already read	AKR7A2	E4F1	-4.654	-3.234	-5.65	down	True	0.4625	0.2047	False	False	0	10	not available locally	2	1	0	11.3
+diagnostic, benchmark already read	NABP2	E4F1	-3.873	-4.093	-5.565	down	True	0.9484	0.9482	True	False	2	22	not available locally	2	1	1	11.26
+diagnostic, benchmark already read	NABP2	CTCF	5.021	2.793	5.697	up	True	0.5851	0.3905	False	False	0	22	not available locally	2	1	1	11.26
+diagnostic, benchmark already read	NDUFAF8	E4F1	-5.188	-3.83	-6.438	down	True	0.7714	0.7431	True	False	1	15	not available locally	2	1	0	11.17
+diagnostic, benchmark already read	NDUFAF8	DNMT1	-3.825	-2.805	-4.73	down	True	0.285	0.4764	False		0	15	not available locally	2	1	0	11.17
+diagnostic, benchmark already read	RPS21	DNMT1	-4.688	-3.324	-5.723	down	True	0.8342	0.4764	False		0	11	not available locally	2	1	0	10.78
+diagnostic, benchmark already read	RPS21	NME2	-3.695	-3.483	-5.058	down	True	0.4552	0.1723	False		0	11	not available locally	2	1	0	10.78
+diagnostic, benchmark already read	CBX1	ZNF143	-5.115	-2.234	-5.46	down	True	0.9487	0.4561	False	True	0	25	not available locally	2	1	0	10.34
+diagnostic, benchmark already read	CBX1	NRF1	-3.887	-2.96	-4.88	down	True	0.3009	0.4732	False	True	0	25	not available locally	2	1	0	10.34
+diagnostic, benchmark already read	RPL41	E4F1	-4.587	-3.215	-5.586	down	True	0.8111	0.8738	True	False	3	20	not available locally	2	1	1	10.34
+diagnostic, benchmark already read	RPL41	NME2	-2.662	-4.194	-4.752	down	True	0.6815	0.5986	False		2	20	not available locally	2	1	1	10.34
+diagnostic, benchmark already read	LAMTOR2	E4F1	-3.72	-4.644	-5.785	down	True	0.5383	0.7997	True	False	2	15	not available locally	2	1	1	10.1
+diagnostic, benchmark already read	LAMTOR2	FOXK1	4.022	2.394	4.312	up	True	0.8013	0.492	False	False	0	15	not available locally	2	1	1	10.1
+diagnostic, benchmark already read	RPS19	NME2	-3.068	-4.065	-4.973	down	True	0.8518	0.9085	True		3	28	not available locally	2	1	1	10.1
+diagnostic, benchmark already read	RPS19	NRF1	4.467	2.583	5.124	up	True	0.3009	0.4732	False	True	0	28	not available locally	2	1	1	10.1
+diagnostic, benchmark already read	H3-3A	NME2	-3.344	-3.736	-4.965	down	True	0.6815	0.9883	True		2	37	not available locally	2	1	1	9.755
+diagnostic, benchmark already read	H3-3A	FOXK1	4.069	2.953	4.79	up	True	0.8013	0.492	False	False	0	37	not available locally	2	1	1	9.755
+diagnostic, benchmark already read	HMGN2	E4F1	-4.894	-3.247	-5.849	down	True	0.3868	0.2047	False	False	0	28	not available locally	2	1	1	9.669
+diagnostic, benchmark already read	HMGN2	ZNF777	-2.038	-3.582	-3.82	down	True	0.9856	0.9652	True		1	28	not available locally	2	1	1	9.669
+diagnostic, benchmark already read	ATP5MC2	E4F1	-10.82	-6.527	-12.53	down	True	0.16	0.2047	False	False	0	19	not available locally	3	0	2	25.41
+diagnostic, benchmark already read	ATP5MC2	CTCF	-4.184	-4.066	-5.765	down	True	0.7113	0.903	False	True	1	19	not available locally	3	0	2	25.41
+diagnostic, benchmark already read	ATP5MC2	NRF1	5.58	4.425	7.11	up	True	0.3009	0.975	False	False	1	19	not available locally	3	0	2	25.41
+diagnostic, benchmark already read	DMKN	CTCF	-9.49	-4.662	-10.41	down	True	0.2641	0.7843	False	True	1	19	not available locally	3	0	1	24.2
+diagnostic, benchmark already read	DMKN	NME2	-5.97	-3.959	-7.079	down	True	0.1999	0.48	False		1	19	not available locally	3	0	1	24.2
+diagnostic, benchmark already read	DMKN	DNMT1	-5.623	-3.739	-6.709	down	True	0.285	0.4764	False		0	19	not available locally	3	0	1	24.2
+diagnostic, benchmark already read	LSM7	NRF1	-9.056	-7.016	-11.44	down	True	0.3009	0.4732	False	True	0	29	not available locally	3	0	1	22.56
+diagnostic, benchmark already read	LSM7	E4F1	-5.673	-3.194	-6.431	down	True	0.7242	0.8803	True	False	2	29	not available locally	3	0	1	22.56
+diagnostic, benchmark already read	LSM7	NME2	-2.851	-3.879	-4.692	down	True	0.3248	0.5409	False		1	29	not available locally	3	0	1	22.56
+diagnostic, benchmark already read	RPL10	NRF1	-12.63	-8.516	-15.2	down	True	0.3009	0.4732	False	True	0	13	not available locally	2	0	0	20.65
+diagnostic, benchmark already read	RPL10	NME2	-3.5	-4.293	-5.447	down	True	0.03206	0.1723	False		0	13	not available locally	2	0	0	20.65
+diagnostic, benchmark already read	C4orf3	E4F1	-4.991	-6.395	-7.86	down	True	0.3071	0.7033	False	False	1	10	not available locally	3	0	0	20.61
+diagnostic, benchmark already read	C4orf3	NRF1	-5.794	-4.078	-7.073	down	True	0.6624	0.4732	False	False	0	10	not available locally	3	0	0	20.61
+diagnostic, benchmark already read	C4orf3	CTCF	-4.609	-3.329	-5.68	down	True	0.08911	0.3905	False	False	0	10	not available locally	3	0	0	20.61
+diagnostic, benchmark already read	GPC3	PCGF6	2.403	4.431	4.982	up	True	0.3753	0.4963	False		0	28	not available locally	3	0	0	20.41
+diagnostic, benchmark already read	GPC3	SETDB1	4.842	2.336	5.331	up	True	0.4023	0.5	False		0	28	not available locally	3	0	0	20.41
+diagnostic, benchmark already read	GPC3	DNMT1	6.85	7.599	10.1	up	True	0.285	0.4764	False		0	28	not available locally	3	0	0	20.41
+diagnostic, benchmark already read	GSTP1	NME2	-9.289	-8.568	-12.6	down	True	0.7248	0.4804	False		2	23	not available locally	2	0	0	18.92
+diagnostic, benchmark already read	GSTP1	DNMT1	4.309	4.732	6.323	up	True	0.6676	0.4764	False		0	23	not available locally	2	0	0	18.92
+diagnostic, benchmark already read	NAA38	ZNF777	-3.846	-2.155	-4.343	down	True	0.6234	0.363	False		0	14	not available locally	3	0	1	18.11
+diagnostic, benchmark already read	NAA38	CTCF	3.659	4.19	5.416	up	True	0.7113	0.3905	False	False	0	14	not available locally	3	0	1	18.11
+diagnostic, benchmark already read	NAA38	ZNF143	7.337	4.096	8.352	up	True	0.6256	0.9427	False	False	1	14	not available locally	3	0	1	18.11
+diagnostic, benchmark already read	HBQ1	NRF1	-5.81	-2.842	-6.339	down	True	0.3009	0.4732	False	True	0	8	not available locally	3	0	0	17.49
+diagnostic, benchmark already read	HBQ1	NME2	-3.99	-4.489	-5.933	down	True	0.2597	0.1723	False		0	8	not available locally	3	0	0	17.49
+diagnostic, benchmark already read	HBQ1	CTCF	-3.883	-3.557	-5.221	down	True	0.2641	0.3905	False	True	0	8	not available locally	3	0	0	17.49
+diagnostic, benchmark already read	UCHL1	DR1	-5.748	-9.987	-11.52	down	True	0.1258	0.3215	False		0	14	not available locally	2	0	0	17.46
+diagnostic, benchmark already read	UCHL1	XPA	-2.885	-5.249	-5.939	down	True	0.1198	0.4949	True		1	14	not available locally	2	0	0	17.46
+diagnostic, benchmark already read	TUBB	E4F1	-8.525	-4.796	-9.658	down	True	0.03977	0.2047	False	False	0	14	not available locally	2	0	0	17.26
+diagnostic, benchmark already read	TUBB	NRF1	-6.03	-4.649	-7.604	down	True	0.3009	0.4732	False	False	0	14	not available locally	2	0	0	17.26
+diagnostic, benchmark already read	UFC1	HOXC4	-6.496	-9.368	-11.39	down	True	0.366	0.4825	False		0	14	not available locally	2	0	0	17.18
+diagnostic, benchmark already read	UFC1	E4F1	-4.582	-3.548	-5.787	down	True	0.16	0.2047	False	False	0	14	not available locally	2	0	0	17.18
+diagnostic, benchmark already read	POLR2F	E4F1	-6.157	-5.792	-8.406	down	True	0.2315	0.2047	False	False	0	27	not available locally	2	0	0	16.79
+diagnostic, benchmark already read	POLR2F	NRF1	-7.413	-4.101	-8.382	down	True	0.3009	0.4732	False	True	0	27	not available locally	2	0	0	16.79
+diagnostic, benchmark already read	GAL	E4F1	-8.29	-6.01	-10.22	down	True	0.4625	0.7226	True	False	2	8	not available locally	2	0	0	16.66
+diagnostic, benchmark already read	GAL	DNMT1	-5.795	-3.106	-6.443	down	True	0.285	0.4764	False		0	8	not available locally	2	0	0	16.66
+diagnostic, benchmark already read	TOMM6	E4F1	-9.768	-7.364	-12.22	down	True	0.2315	0.2047	False	False	0	14	not available locally	2	0	0	16.59
+diagnostic, benchmark already read	TOMM6	DNMT1	-2.73	-3.579	-4.372	down	True	0.285	0.4764	False		0	14	not available locally	2	0	0	16.59
+diagnostic, benchmark already read	CCT3	NRF1	-7.491	-5.508	-9.285	down	True	0.3009	0.9699	False	False	1	37	not available locally	2	0	1	16.56
+diagnostic, benchmark already read	CCT3	E4F1	-4.753	-5.762	-7.278	down	True	0.3071	0.659	False	False	3	37	not available locally	2	0	1	16.56
+diagnostic, benchmark already read	NDUFS5	E4F1	-9.367	-6.931	-11.63	down	True	0.16	0.4769	False	False	1	22	not available locally	2	0	0	16.39
+diagnostic, benchmark already read	NDUFS5	NME2	-2.857	-3.975	-4.758	down	True	0.6331	0.4447	False		1	22	not available locally	2	0	0	16.39
+diagnostic, benchmark already read	SSB	ZNF703	-7.084	-10.36	-12.4	down	True	0.1872	0.3584	False		0	16	not available locally	2	0	0	16.12
+diagnostic, benchmark already read	SSB	ZNF143	-2.082	-3.514	-3.717	down	True	0.2786	0.4561	False	False	0	16	not available locally	2	0	0	16.12
+diagnostic, benchmark already read	EEF1A2	CTCF	-6.726	-5.348	-8.576	down	True	0.7113	0.3905	False	True	0	12	not available locally	2	0	0	16.05
+diagnostic, benchmark already read	EEF1A2	NME2	-5.499	-5.094	-7.475	down	True	0.7248	0.5582	False		1	12	not available locally	2	0	0	16.05
+diagnostic, benchmark already read	ERH	E4F1	-5.224	-4.668	-6.982	down	True	0.6686	0.7089	True	False	1	10	not available locally	3	0	0	15.94
+diagnostic, benchmark already read	ERH	NME2	-3.783	-2.728	-4.631	down	True	0.5781	0.1723	False		0	10	not available locally	3	0	0	15.94
+diagnostic, benchmark already read	ERH	ETS2	3.933	2.516	4.331	up	True	0.3256	0.3007	False	True	0	10	not available locally	3	0	0	15.94
+diagnostic, benchmark already read	NDUFA8	NRF1	-8.552	-4.81	-9.714	down	True	0.3009	0.4732	False	True	0	10	not available locally	2	0	0	15.78
+diagnostic, benchmark already read	NDUFA8	E4F1	-4.832	-3.68	-6.065	down	True	0.16	0.2047	False	False	0	10	not available locally	2	0	0	15.78
+diagnostic, benchmark already read	RPS15	DNMT1	-4.434	-3.505	-5.642	down	True	0.6676	0.4764	False		0	11	not available locally	3	0	0	15.1
+diagnostic, benchmark already read	RPS15	NME2	-2.801	-3.477	-4.386	down	True	0.4552	0.6154	False		1	11	not available locally	3	0	0	15.1
+diagnostic, benchmark already read	RPS15	CTCF	4.523	2.401	5.07	up	True	0.7113	0.3905	False	True	0	11	not available locally	3	0	0	15.1
+diagnostic, benchmark already read	FMC1	E4F1	-6.624	-5.374	-8.518	down	True	0.2315	0.641	False	False	1	25	not available locally	2	0	0	14.68
+diagnostic, benchmark already read	FMC1	NRF1	-4.908	-3.729	-6.157	down	True	0.6624	0.4732	False	False	0	25	not available locally	2	0	0	14.68
+diagnostic, benchmark already read	OST4	E4F1	-6.407	-6.799	-9.22	down	True	0.3868	0.2047	False	False	0	19	not available locally	2	0	0	13.79
+diagnostic, benchmark already read	OST4	NME2	-3.092	-3.427	-4.574	down	True	0.5781	0.6291	False		2	19	not available locally	2	0	0	13.79
+diagnostic, benchmark already read	CHCHD10	E4F1	-6.795	-4.741	-8.264	down	True	0.03977	0.2047	False	False	0	16	not available locally	2	0	0	13.65
+diagnostic, benchmark already read	CHCHD10	NME2	-4.59	-2.957	-5.386	down	True	0.03206	0.4367	False		1	16	not available locally	2	0	0	13.65
+diagnostic, benchmark already read	PRAME	CTCF	-3.709	-3.952	-5.317	down	True	0.08911	0.8009	False	True	1	21	not available locally	2	0	2	13.37
+diagnostic, benchmark already read	PRAME	DNMT1	4.806	6.866	8.055	up	True	0.285	0.958	False		1	21	not available locally	2	0	2	13.37
+diagnostic, benchmark already read	NOP2	CTCF	-6.71	-4.154	-7.861	down	True	0.432	0.3905	False	True	0	28	not available locally	2	0	0	13.34
+diagnostic, benchmark already read	NOP2	NRF1	-4.238	-3.49	-5.478	down	True	0.3009	0.4732	False	True	0	28	not available locally	2	0	0	13.34
+diagnostic, benchmark already read	HSPA1B	DNMT1	-6.536	-4.294	-7.768	down	True	0.285	0.4764	False		0	1	not available locally	2	0	0	13.12
+diagnostic, benchmark already read	HSPA1B	RBPJ	-4.125	-3.438	-5.354	down	True	0.1678	0.412	False	True	0	1	not available locally	2	0	0	13.12
+diagnostic, benchmark already read	MIF	E4F1	-5.588	-4.988	-7.463	down	True	0.03977	0.2047	False	False	0	14	not available locally	2	0	0	12.83
+diagnostic, benchmark already read	MIF	NME2	-3.906	-3.715	-5.371	down	True	0.03206	0.3513	False		1	14	not available locally	2	0	0	12.83
+diagnostic, benchmark already read	RPL36	DNMT1	-3.958	-2.962	-4.932	down	True	0.285	0.4764	False		0	17	not available locally	3	0	0	12.74
+diagnostic, benchmark already read	RPL36	FOXC1	-2.183	-3.526	-3.652	down	True	0.5333	0.4604	False	False	0	17	not available locally	3	0	0	12.74
+diagnostic, benchmark already read	RPL36	ZNF746	2.235	3.542	4.157	up	True	0.2191	0.4182	False		0	17	not available locally	3	0	0	12.74
+diagnostic, benchmark already read	EEF1A1	FOXC1	-2.572	-4.711	-4.584	down	True	0.2047	0.9272	False	False	1	22	not available locally	2	0	1	12.65
+diagnostic, benchmark already read	EEF1A1	E4F1	6.756	4.484	8.071	up	True	0.1002	0.6988	False	False	1	22	not available locally	2	0	1	12.65
+diagnostic, benchmark already read	RIMS2	ZNF777	4.952	3.271	5.899	up	True	0.6234	0.363	False		0	6	not available locally	2	0	0	12.43
+diagnostic, benchmark already read	RIMS2	E4F1	5.125	4.064	6.529	up	True	0.3868	0.2047	False	False	0	6	not available locally	2	0	0	12.43
+diagnostic, benchmark already read	ARL2	E4F1	-5.394	-4.435	-6.973	down	True	0.5383	0.8285	True	False	2	29	not available locally	2	0	2	11.44
+diagnostic, benchmark already read	ARL2	CTCF	-3.739	-2.457	-4.464	down	True	0.7113	0.8706	False	True	1	29	not available locally	2	0	2	11.44
+diagnostic, benchmark already read	EIF5A	NRF1	-4.894	-3.139	-5.792	down	True	0.6624	0.4732	False	True	0	14	not available locally	2	0	0	11.34
+diagnostic, benchmark already read	EIF5A	E4F1	-3.967	-3.943	-5.545	down	True	0.6686	0.2047	False	False	0	14	not available locally	2	0	0	11.34
+diagnostic, benchmark already read	CDKN1A	NRF1	3.979	3.224	5.109	up	True	0.3009	0.4732	False	False	0	5	not available locally	2	0	0	10.96
+diagnostic, benchmark already read	CDKN1A	DNMT1	4.048	4.318	5.855	up	True	0.6676	0.4764	False		0	5	not available locally	2	0	0	10.96
+diagnostic, benchmark already read	TENM1	SETDB1	4.384	2.691	5.139	up	True	0.4023	0.5	False		0	20	not available locally	2	0	0	10.84
+diagnostic, benchmark already read	TENM1	DNMT1	5.201	2.65	5.7	up	True	0.285	0.4764	False		0	20	not available locally	2	0	0	10.84
+diagnostic, benchmark already read	NSMCE4A	CTCF	-5.728	-2.921	-6.344	down	True	0.7113	0.3905	False	True	0	4	not available locally	2	0	0	10.7
+diagnostic, benchmark already read	NSMCE4A	RBBP4	-2.24	-3.763	-4.359	down	True	0.2931	0.2859	True		1	4	not available locally	2	0	0	10.7
+diagnostic, benchmark already read	ZNF580	ZNF581	-2.405	-4.943	-5.451	down	True	0.3739	0.5	False		0	15	not available locally	2	0	0	10.49
+diagnostic, benchmark already read	ZNF580	E4F1	-3.738	-3.417	-5.042	down	True	0.3071	0.6735	False	False	1	15	not available locally	2	0	0	10.49
+diagnostic, benchmark already read	IFITM1	NME2	-3.671	-3.582	-5.105	down	True	0.03206	0.1723	False		0	11	not available locally	2	0	0	9.948
+diagnostic, benchmark already read	IFITM1	FOXK1	2.351	4.293	4.843	up	True	0.3668	0.492	False	True	0	11	not available locally	2	0	0	9.948
+diagnostic, benchmark already read	RPAIN	ZNF143	-4.091	-3.912	-5.593	down	True	0.2786	0.924	False	True	1	18	not available locally	2	0	2	9.493
+diagnostic, benchmark already read	RPAIN	ZNF507	-3.68	-2.235	-3.9	down	True	0.75	0.8789	True		1	18	not available locally	2	0	2	9.493
+diagnostic, benchmark already read	RPL22	NME2	-2.5	-3.776	-4.358	down	True	0.1999	0.1723	False		0	11	not available locally	2	0	0	9.107
+diagnostic, benchmark already read	RPL22	NRF1	3.786	2.877	4.749	up	True	0.3009	0.4732	False	False	0	11	not available locally	2	0	0	9.107
+diagnostic, benchmark already read	STMN1	ZBTB7A	-2.579	-5.285	-3.932	down	True	0.1144	0.9161	True	False	1	24	not available locally	2	0	1	9.055
+diagnostic, benchmark already read	STMN1	DNMT1	3.901	3.335	5.123	up	True	0.285	0.4764	False		0	24	not available locally	2	0	1	9.055
+diagnostic, benchmark already read	RGS10	ETS2	-3.835	-7.617	-8.414	down	True	0.3256	0.3007	False	True	0	8	not available locally	2	0	0	8.829
+diagnostic, benchmark already read	RGS10	PA2G4	-2.633	3.583	-0.4151	down	False	0.198	0.4854	False		0	8	not available locally	2	0	0	8.829
+diagnostic, benchmark already read	AKT3	ZNF512B	-3.922	1.942	-2.395	down	False	0.1448	0.3866	False		0	10	not available locally	2	0	0	7.758
+diagnostic, benchmark already read	AKT3	E4F1	4.236	3.299	5.363	up	True	0.03977	0.2047	False	False	0	10	not available locally	2	0	0	7.758

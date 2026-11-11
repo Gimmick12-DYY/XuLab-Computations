@@ -11,7 +11,7 @@ Part A - authors strong-phenotype filter, reproduced (m16_classifier.py, job 892
   ntc_negative_control.tsv     20 NTC-vs-NTC sets through the same classifier (1/20 p<0.05, 0/20 q<0.05)
 
 Part B - simple model vs Perturb-seq, strong vs not-strong (m16_compare.py, job 8923056)
-  Per TF: top-1000 genes by q005 peak score x ABC (or promoter-only) vs top-5% |z| responders (Arm 2, double-centred z); Haldane OR,
+  Per TF: top-1000 genes by q005 peak score x ABC (or promoter-only) vs top-5% |z| responders (Arm 2, raw per-TF z, m9 responses_arm2 key r1; corrected 2026-11-11, an earlier version of this README said double-centred); Haldane OR,
   gene-bootstrap 95% interval; controls matched genes (promoter-ATAC decile x CpG), swapped TF. TFs with an empty list (no q005 peak linked
   to any universe gene, e.g. SETDB1) are NA and excluded from pooled numbers; empty swapped lists are NA.
   simple_per_tf.tsv, simple_pooled.tsv (median OR, median OR-matched with TF-bootstrap interval, Mantel-Haenszel OR), simple_deciles.tsv, simple_summary.png/.svg

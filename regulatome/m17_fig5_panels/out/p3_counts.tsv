@@ -1,0 +1,5 @@
+label	reading	K	n_pairs	n_genes	genes_1tf	genes_2tf	genes_3tf	genes_4plus	multi_with_ge2_raw_ge75	multi_with_ge2_peak_ge75
+diagnostic, benchmark already read	dc	2000	930	785	679	76	22	8	24	11
+diagnostic, benchmark already read	dc	10000	1976	1565	1276	208	50	31	58	19
+diagnostic, benchmark already read	raw	2000	915	796	699	76	20	1	22	10
+diagnostic, benchmark already read	raw	10000	1937	1595	1334	201	42	18	45	17
