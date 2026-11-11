@@ -81,7 +81,7 @@ def evaluate(sel_name, K, ti, gj):
         STATS.append(r)
     vc = pd.Series([TF[i] for i in ti]).value_counts(); COMP.append(dict(label=LAB, reading=READING, selection=sel_name, K=K, n_pairs=len(ti), n_tfs=len(vc), n_genes=len(np.unique(gj)), pairs_per_tf=";".join(f"{a}:{b}" for a, b in vc.items())))
     zz = ZA[ti, gj]; sg = pd.DataFrame(dict(tf=[TF[i] for i in ti], down=zz < 0)).groupby("tf").down.agg(["mean", "size"]).reset_index()
-    for x in sg.itertuples(): SIGN.append(dict(label=LAB, reading=READING, selection=sel_name, K=K, tf=x.tf, n_pairs=int(x._3), frac_down_on_knockdown=float(x._2)))
+    for x in sg.itertuples(): SIGN.append(dict(label=LAB, reading=READING, selection=sel_name, K=K, tf=x.tf, n_pairs=int(x[3]), frac_down_on_knockdown=float(x[2])))
 for K in (100, 500, 2000, 10000):
     a1, b1 = select(Z1, K); c1 = T2[a1, b1]; a2, b2 = select(Z2, K); c2 = T1[a2, b2]
     STATS.append(dict(label=LAB, reading=READING, selection="survival", K=K, binding="", n_pairs=K, survival_half1_to_half2=float(c1.mean()), survival_half2_to_half1=float(c2.mean()), chance=0.05))
