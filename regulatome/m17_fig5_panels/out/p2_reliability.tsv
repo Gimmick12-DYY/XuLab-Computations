@@ -1,0 +1,11 @@
+tf	label	reliability_ceiling	sqrt_reliability_max_r	enet_both	enet_kd_only	lgb_both	lgb_kd_only	mlp_both	mlp_kd_only	best_model_real	best_over_max_r
+CTCF	diagnostic, benchmark already read; post hoc subset of an already scored test	0.3000	0.5477	-0.0214	-0.0215	-0.0114	-0.0129	-0.0180	0.0127	0.0127	0.0232
+DNMT1	diagnostic, benchmark already read; post hoc subset of an already scored test	0.5750	0.7583	0.0653	0.0652	0.0453	0.0461	0.0677	0.0660	0.0677	0.0893
+E4F1	diagnostic, benchmark already read; post hoc subset of an already scored test	0.7544	0.8686	0.1225	0.1224	0.1152	0.1076	0.1347	0.1292	0.1347	0.1551
+MEF2A	diagnostic, benchmark already read; post hoc subset of an already scored test	-0.0417	0.0000	-0.0004	0.0006	0.0337	0.0171	0.0301	0.0291	0.0337	
+NRF1	diagnostic, benchmark already read; post hoc subset of an already scored test	0.6545	0.8090	0.0797	0.0798	0.1060	0.0968	0.1075	0.1049	0.1075	0.1328
+PA2G4	diagnostic, benchmark already read; post hoc subset of an already scored test	0.0718	0.2680	0.0476	0.0471	0.0455	0.0257	0.0454	0.0568	0.0568	0.2121
+RBBP7	diagnostic, benchmark already read; post hoc subset of an already scored test	0.1300	0.3606	0.0227	0.0224	0.0517	0.0478	0.0513	0.0085	0.0517	0.1433
+RBPJ	diagnostic, benchmark already read; post hoc subset of an already scored test	0.2737	0.5232	0.0290	0.0290	0.0284	0.0226	0.0641	0.0541	0.0641	0.1224
+SAFB	diagnostic, benchmark already read; post hoc subset of an already scored test	0.1541	0.3926	0.0326	0.0327	0.0256	0.0385	0.0230	0.0109	0.0385	0.0981
+SETDB1	diagnostic, benchmark already read; post hoc subset of an already scored test	0.2905	0.5390	0.0225	0.0223	0.0283	0.0210	0.0466	0.0231	0.0466	0.0865

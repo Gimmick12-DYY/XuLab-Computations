@@ -18,3 +18,8 @@ print(PO[(PO.split == "gene")].drop(columns=["label", "tfs"]).round(3).to_string
 W = T[(T.kind == "raw_hicfixed") & (T.split == "gene") & (T.centring == "train")].pivot_table(index="tf", columns=["model", "mode"], values="real")
 W["ref_win100k"] = T[(T.kind == "raw_hicfixed") & (T.split == "gene")].groupby("tf").ref_win100k.first(); W["ref_v8"] = T[(T.kind == "raw_hicfixed") & (T.split == "gene")].groupby("tf").ref_v8.first()
 W.columns = ["_".join(c) if isinstance(c, tuple) else c for c in W.columns]; W.to_csv(f"{OUT}/p2_side_by_side_raw_bygene_train.tsv", sep="\t", float_format="%.4f"); print(W.round(3).to_string())
+# Amendment 1: reliability column. ceiling = knockdown split-half reliability (m7); sqrt(reliability) = largest correlation any predictor could reach.
+S = T[(T.kind == "raw_hicfixed") & (T.split == "gene") & (T.centring == "train")]; W = S.pivot_table(index="tf", columns=["model", "mode"], values="real"); W.columns = ["_".join(c) for c in W.columns]
+c = S.groupby("tf").ceiling.first(); W.insert(0, "reliability_ceiling", c); W.insert(1, "sqrt_reliability_max_r", np.sqrt(c.clip(lower=0)))
+W["best_model_real"] = W[[x for x in W.columns if x.split("_")[0] in ("enet", "lgb", "mlp")]].max(1); W["best_over_max_r"] = (W.best_model_real / W.sqrt_reliability_max_r).where(W.sqrt_reliability_max_r > 0)
+W.insert(0, "label", LAB); W.reset_index().to_csv(f"{OUT}/p2_reliability.tsv", sep="\t", index=False, float_format="%.4f"); print(W.drop(columns="label").round(3).to_string())
