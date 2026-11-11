@@ -1,0 +1,6 @@
+label	w	split	N	median_OR	n_tfs
+diagnostic / development, benchmark already read	0.0000	train	702	1.0760	76
+diagnostic / development, benchmark already read	0.1000	train	702	1.0812	76
+diagnostic / development, benchmark already read	0.3000	train	702	1.0812	76
+diagnostic / development, benchmark already read	1.0000	train	702	1.0804	76
+diagnostic / development, benchmark already read	3.0000	train	702	1.0829	76

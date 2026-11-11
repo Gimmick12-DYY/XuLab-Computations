@@ -1,0 +1,13 @@
+label	tf	reference	ours	n_ref_positive_responders	in_our_top1000	bound_ranked_low	no_signal	median_our_rank_pct_of_those
+diagnostic / development, benchmark already read	CTCF	bulk_chip_HEK293	raw_tss500	117	12	92	13	58.514
+diagnostic / development, benchmark already read	CTCF	bulk_chip_HEK293	imp_tss500	117	14	102	1	52.654
+diagnostic / development, benchmark already read	CTCF	bulk_chip_HEK293T_pval	raw_tss500	86	18	59	9	64.820
+diagnostic / development, benchmark already read	CTCF	bulk_chip_HEK293T_pval	imp_tss500	86	12	72	2	55.509
+diagnostic / development, benchmark already read	CTCF	motif_p1e-4	raw_tss500	327	34	247	46	58.514
+diagnostic / development, benchmark already read	CTCF	motif_p1e-4	imp_tss500	327	41	276	10	57.401
+diagnostic / development, benchmark already read	CTCF	chromnitron	raw_tss500	99	10	83	6	58.514
+diagnostic / development, benchmark already read	CTCF	chromnitron	imp_tss500	99	14	85	0	58.105
+diagnostic / development, benchmark already read	ZNF143	motif_p1e-4	raw_tss500	274	31	93	150	27.859
+diagnostic / development, benchmark already read	ZNF143	motif_p1e-4	imp_tss500	274	23	235	16	52.066
+diagnostic / development, benchmark already read	ZNF143	chromnitron	raw_tss500	78	15	31	32	62.562
+diagnostic / development, benchmark already read	ZNF143	chromnitron	imp_tss500	78	5	73	0	50.864

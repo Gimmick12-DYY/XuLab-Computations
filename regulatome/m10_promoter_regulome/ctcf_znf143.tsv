@@ -1,0 +1,64 @@
+label	tf	item	value	n_ref	lo	hi	OR_matched	n_set
+diagnostic / development, benchmark already read	CTCF	reads_total	800230.0000					
+diagnostic / development, benchmark already read	CTCF	frac_reads_within_tss1kb_any_gene	0.0678					
+diagnostic / development, benchmark already read	CTCF	frac_reads_in_canonical_elements	0.1412					
+diagnostic / development, benchmark already read	CTCF	our_macs2_peaks_q05_n	3640.0000					
+diagnostic / development, benchmark already read	CTCF	frac_our_peaks_within_1kb_of_tss	0.2654					
+diagnostic / development, benchmark already read	CTCF	bulk_chip_HEK293_peaks_n	51511.0000					
+diagnostic / development, benchmark already read	CTCF	frac_bulk_chip_peaks_within_1kb_of_tss	0.0879					
+diagnostic / development, benchmark already read	CTCF	spearman_raw_tss500_vs_bulk_chip_HEK293	0.2195					
+diagnostic / development, benchmark already read	CTCF	overlap_top500_raw_tss500_vs_bulk_chip_HEK293	33.0000	500.0000				
+diagnostic / development, benchmark already read	CTCF	overlap_top1000_raw_tss500_vs_bulk_chip_HEK293	136.0000	1000.0000				
+diagnostic / development, benchmark already read	CTCF	spearman_raw_tss500_vs_bulk_chip_HEK293T_pval	0.5320					
+diagnostic / development, benchmark already read	CTCF	overlap_top500_raw_tss500_vs_bulk_chip_HEK293T_pval	104.0000	500.0000				
+diagnostic / development, benchmark already read	CTCF	overlap_top1000_raw_tss500_vs_bulk_chip_HEK293T_pval	290.0000	1000.0000				
+diagnostic / development, benchmark already read	CTCF	spearman_raw_tss500_vs_motif_p1e-4	0.1284					
+diagnostic / development, benchmark already read	CTCF	overlap_top500_raw_tss500_vs_motif_p1e-4	345.0000	6437.0000				
+diagnostic / development, benchmark already read	CTCF	overlap_top1000_raw_tss500_vs_motif_p1e-4	675.0000	6437.0000				
+diagnostic / development, benchmark already read	CTCF	spearman_raw_tss500_vs_motif_score	0.1493					
+diagnostic / development, benchmark already read	CTCF	overlap_top500_raw_tss500_vs_motif_score	35.0000	500.0000				
+diagnostic / development, benchmark already read	CTCF	overlap_top1000_raw_tss500_vs_motif_score	126.0000	1000.0000				
+diagnostic / development, benchmark already read	CTCF	spearman_raw_tss500_vs_chromnitron	0.3848					
+diagnostic / development, benchmark already read	CTCF	overlap_top500_raw_tss500_vs_chromnitron	44.0000	500.0000				
+diagnostic / development, benchmark already read	CTCF	overlap_top1000_raw_tss500_vs_chromnitron	134.0000	1000.0000				
+diagnostic / development, benchmark already read	CTCF	spearman_imp_tss500_vs_bulk_chip_HEK293	0.1919					
+diagnostic / development, benchmark already read	CTCF	overlap_top500_imp_tss500_vs_bulk_chip_HEK293	11.0000	500.0000				
+diagnostic / development, benchmark already read	CTCF	overlap_top1000_imp_tss500_vs_bulk_chip_HEK293	79.0000	1000.0000				
+diagnostic / development, benchmark already read	CTCF	spearman_imp_tss500_vs_bulk_chip_HEK293T_pval	0.3160					
+diagnostic / development, benchmark already read	CTCF	overlap_top500_imp_tss500_vs_bulk_chip_HEK293T_pval	33.0000	500.0000				
+diagnostic / development, benchmark already read	CTCF	overlap_top1000_imp_tss500_vs_bulk_chip_HEK293T_pval	134.0000	1000.0000				
+diagnostic / development, benchmark already read	CTCF	spearman_imp_tss500_vs_motif_p1e-4	0.2572					
+diagnostic / development, benchmark already read	CTCF	overlap_top500_imp_tss500_vs_motif_p1e-4	387.0000	6437.0000				
+diagnostic / development, benchmark already read	CTCF	overlap_top1000_imp_tss500_vs_motif_p1e-4	786.0000	6437.0000				
+diagnostic / development, benchmark already read	CTCF	spearman_imp_tss500_vs_motif_score	0.2948					
+diagnostic / development, benchmark already read	CTCF	overlap_top500_imp_tss500_vs_motif_score	27.0000	500.0000				
+diagnostic / development, benchmark already read	CTCF	overlap_top1000_imp_tss500_vs_motif_score	116.0000	1000.0000				
+diagnostic / development, benchmark already read	CTCF	spearman_imp_tss500_vs_chromnitron	0.2911					
+diagnostic / development, benchmark already read	CTCF	overlap_top500_imp_tss500_vs_chromnitron	13.0000	500.0000				
+diagnostic / development, benchmark already read	CTCF	overlap_top1000_imp_tss500_vs_chromnitron	86.0000	1000.0000				
+diagnostic / development, benchmark already read	CTCF	OR_distal_elements_with_our_peak	0.9553		0.7414	1.2051	1.0012	1586.0000
+diagnostic / development, benchmark already read	CTCF	OR_distal_elements_with_bulk_chip_peak	1.0693		0.8779	1.2945	1.0224	7792.0000
+diagnostic / development, benchmark already read	ZNF143	reads_total	651672.0000					
+diagnostic / development, benchmark already read	ZNF143	frac_reads_within_tss1kb_any_gene	0.0328					
+diagnostic / development, benchmark already read	ZNF143	frac_reads_in_canonical_elements	0.0762					
+diagnostic / development, benchmark already read	ZNF143	our_macs2_peaks_q05_n	5334.0000					
+diagnostic / development, benchmark already read	ZNF143	frac_our_peaks_within_1kb_of_tss	0.0714					
+diagnostic / development, benchmark already read	ZNF143	spearman_raw_tss500_vs_motif_p1e-4	0.0105					
+diagnostic / development, benchmark already read	ZNF143	overlap_top500_raw_tss500_vs_motif_p1e-4	201.0000	4303.0000				
+diagnostic / development, benchmark already read	ZNF143	overlap_top1000_raw_tss500_vs_motif_p1e-4	397.0000	4303.0000				
+diagnostic / development, benchmark already read	ZNF143	spearman_raw_tss500_vs_motif_score	0.0153					
+diagnostic / development, benchmark already read	ZNF143	overlap_top500_raw_tss500_vs_motif_score	45.0000	500.0000				
+diagnostic / development, benchmark already read	ZNF143	overlap_top1000_raw_tss500_vs_motif_score	126.0000	1000.0000				
+diagnostic / development, benchmark already read	ZNF143	spearman_raw_tss500_vs_chromnitron	0.2342					
+diagnostic / development, benchmark already read	ZNF143	overlap_top500_raw_tss500_vs_chromnitron	49.0000	500.0000				
+diagnostic / development, benchmark already read	ZNF143	overlap_top1000_raw_tss500_vs_chromnitron	153.0000	1000.0000				
+diagnostic / development, benchmark already read	ZNF143	spearman_imp_tss500_vs_motif_p1e-4	-0.0310					
+diagnostic / development, benchmark already read	ZNF143	overlap_top500_imp_tss500_vs_motif_p1e-4	146.0000	4303.0000				
+diagnostic / development, benchmark already read	ZNF143	overlap_top1000_imp_tss500_vs_motif_p1e-4	308.0000	4303.0000				
+diagnostic / development, benchmark already read	ZNF143	spearman_imp_tss500_vs_motif_score	-0.0257					
+diagnostic / development, benchmark already read	ZNF143	overlap_top500_imp_tss500_vs_motif_score	15.0000	500.0000				
+diagnostic / development, benchmark already read	ZNF143	overlap_top1000_imp_tss500_vs_motif_score	70.0000	1000.0000				
+diagnostic / development, benchmark already read	ZNF143	spearman_imp_tss500_vs_chromnitron	0.1552					
+diagnostic / development, benchmark already read	ZNF143	overlap_top500_imp_tss500_vs_chromnitron	13.0000	500.0000				
+diagnostic / development, benchmark already read	ZNF143	overlap_top1000_imp_tss500_vs_chromnitron	50.0000	1000.0000				
+diagnostic / development, benchmark already read	ZNF143	OR_distal_elements_with_our_peak	1.0447		0.7072	1.4546	1.0447	662.0000
