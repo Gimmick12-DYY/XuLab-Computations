@@ -1,0 +1,31 @@
+label	tf	peak_set	n_peaks	median_width	frac_in_union_atac	frac_summit_in_abc_element	frac_within_1kb_tss	frac_hot_flagged	frac_own_motif_within_50bp	frac_within_100bp_of_lab_q005	treatment_reads	control_pool_reads	control_reads_kept	frac_within_100bp_of_ENCODE_HEK293_ChIP_summit	frac_ENCODE_HEK293_ChIP_summits_within_100bp_of_set
+diagnostic, benchmark already read	NRF1	V0_other78_full	5424	150.0000	0.0334	0.0717	0.0223	0.0015	0.0085	0.2681					
+diagnostic, benchmark already read	NRF1	V1_other78_3x	4567	150.0000	0.0517	0.0885	0.0344	0.0026	0.0120	0.2796	376207.0000	104966814.0000	1129844.0000		
+diagnostic, benchmark already read	NRF1	V2_omniatac_3x	4769	150.0000	0.0130	0.0398	0.0117	0.0004	0.0071	0.2797	376207.0000	36000322.0000	1126269.0000		
+diagnostic, benchmark already read	NRF1	lab_q0.05	1916	257.0000	0.1926	0.2286	0.1399	0.0454	0.0465	1.0000					
+diagnostic, benchmark already read	NRF1	background_10000_union_ATAC_positions	10000		1.0000	0.8540	0.3107	0.0485	0.0349						
+diagnostic, benchmark already read	CTCF	V0_other78_full	1089	150.0000	0.0202	0.0597	0.0174	0.0009	0.0211	0.7521				0.0064	0.0001
+diagnostic, benchmark already read	CTCF	V1_other78_3x	856	150.0000	0.0631	0.0970	0.0374	0.0035	0.0292	0.7582	800230.0000	104542791.0000	2400563.0000	0.0175	0.0003
+diagnostic, benchmark already read	CTCF	V2_omniatac_3x	926	150.0000	0.0054	0.0292	0.0108	0.0000	0.0194	0.7279	800230.0000	36000322.0000	2398494.0000	0.0011	0.0000
+diagnostic, benchmark already read	CTCF	lab_q0.05	3640	214.0000	0.4052	0.4412	0.2657	0.1099	0.0799	1.0000				0.0679	0.0048
+diagnostic, benchmark already read	CTCF	background_10000_union_ATAC_positions	10000		1.0000	0.8540	0.3107	0.0485	0.0832						
+diagnostic, benchmark already read	ZNF143	V0_other78_full	11392	150.0000	0.0156	0.0452	0.0093	0.0002	0.0407	0.3660					
+diagnostic, benchmark already read	ZNF143	V1_other78_3x	581	150.0000	0.0310	0.0620	0.0120	0.0000	0.0310	0.8709	651672.0000	104691349.0000	1955848.0000		
+diagnostic, benchmark already read	ZNF143	V2_omniatac_3x	9640	150.0000	0.0049	0.0204	0.0068	0.0009	0.0389	0.3700	651672.0000	36000322.0000	1952855.0000		
+diagnostic, benchmark already read	ZNF143	lab_q0.05	5334	263.0000	0.1085	0.1444	0.0714	0.0195	0.0435	1.0000					
+diagnostic, benchmark already read	ZNF143	background_10000_union_ATAC_positions	10000		1.0000	0.8540	0.3107	0.0485	0.0398						
+diagnostic, benchmark already read	MAZ	V0_other78_full	901	150.0000	0.0200	0.0533	0.0189	0.0000	0.1310	0.8335					
+diagnostic, benchmark already read	MAZ	V1_other78_3x	647	150.0000	0.0247	0.0618	0.0216	0.0000	0.1376	0.8083	1076014.0000	104267007.0000	3227015.0000		
+diagnostic, benchmark already read	MAZ	V2_omniatac_3x	999	150.0000	0.0070	0.0220	0.0110	0.0020	0.1361	0.7708	1076014.0000	36000322.0000	3225506.0000		
+diagnostic, benchmark already read	MAZ	lab_q0.05	11648	269.0000	0.1250	0.1593	0.0829	0.0287	0.1697	1.0000					
+diagnostic, benchmark already read	MAZ	background_10000_union_ATAC_positions	10000		1.0000	0.8540	0.3107	0.0485	0.2261						
+diagnostic, benchmark already read	NFYA	V0_other78_full	127	150.0000	0.0630	0.0945	0.0236	0.0472	0.0394	0.9055					
+diagnostic, benchmark already read	NFYA	V1_other78_3x	129	155.0000	0.0775	0.0930	0.0465	0.0698	0.0465	0.9147	8506855.0000	96836166.0000	25518566.0000		
+diagnostic, benchmark already read	NFYA	V2_omniatac_3x	2504	189.0000	0.0156	0.0331	0.0124	0.0104	0.0120	0.7959	8506855.0000	36000322.0000	25522905.0000		
+diagnostic, benchmark already read	NFYA	lab_q0.05	41448	210.0000	0.3923	0.4248	0.2514	0.0723	0.0433	1.0000					
+diagnostic, benchmark already read	NFYA	background_10000_union_ATAC_positions	10000		1.0000	0.8540	0.3107	0.0485	0.0231						
+diagnostic, benchmark already read	E4F1	V0_other78_full	270	150.0000	0.0148	0.0407	0.0148	0.0074	0.0000	0.9667					
+diagnostic, benchmark already read	E4F1	V1_other78_3x	268	150.0000	0.0187	0.0336	0.0149	0.0075	0.0000	0.9701	5294125.0000	100048896.0000	15876929.0000		
+diagnostic, benchmark already read	E4F1	V2_omniatac_3x	4140	162.0000	0.0087	0.0208	0.0111	0.0065	0.0029	0.7877	5294125.0000	36000322.0000	15881608.0000		
+diagnostic, benchmark already read	E4F1	lab_q0.05	48241	220.0000	0.1237	0.1541	0.0811	0.0232	0.0038	1.0000					
+diagnostic, benchmark already read	E4F1	background_10000_union_ATAC_positions	10000		1.0000	0.8540	0.3107	0.0485	0.0059						
