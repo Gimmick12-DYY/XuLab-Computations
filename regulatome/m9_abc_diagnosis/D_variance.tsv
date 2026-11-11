@@ -1,0 +1,21 @@
+label	arm	n_tfs	n_genes	component	var_explained	cumulative
+diagnostic, benchmark already read	arm2	76	11228	1	0.1158	0.1158
+diagnostic, benchmark already read	arm2	76	11228	2	0.0374	0.1532
+diagnostic, benchmark already read	arm2	76	11228	3	0.0264	0.1796
+diagnostic, benchmark already read	arm2	76	11228	4	0.0230	0.2026
+diagnostic, benchmark already read	arm2	76	11228	5	0.0181	0.2208
+diagnostic, benchmark already read	arm2	76	11228	6	0.0177	0.2385
+diagnostic, benchmark already read	arm2	76	11228	7	0.0174	0.2559
+diagnostic, benchmark already read	arm2	76	11228	8	0.0156	0.2714
+diagnostic, benchmark already read	arm2	76	11228	9	0.0151	0.2865
+diagnostic, benchmark already read	arm2	76	11228	10	0.0143	0.3008
+diagnostic, benchmark already read	arm1	30	11291	1	0.0757	0.0757
+diagnostic, benchmark already read	arm1	30	11291	2	0.0647	0.1404
+diagnostic, benchmark already read	arm1	30	11291	3	0.0508	0.1912
+diagnostic, benchmark already read	arm1	30	11291	4	0.0479	0.2391
+diagnostic, benchmark already read	arm1	30	11291	5	0.0393	0.2784
+diagnostic, benchmark already read	arm1	30	11291	6	0.0350	0.3134
+diagnostic, benchmark already read	arm1	30	11291	7	0.0350	0.3484
+diagnostic, benchmark already read	arm1	30	11291	8	0.0337	0.3821
+diagnostic, benchmark already read	arm1	30	11291	9	0.0332	0.4153
+diagnostic, benchmark already read	arm1	30	11291	10	0.0328	0.4481

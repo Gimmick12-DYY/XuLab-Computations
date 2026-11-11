@@ -1,0 +1,25 @@
+label	arm	reading	tf_set	n_tfs	median_OR	frac_OR_gt1	median_OR_atac_ctrl	frac_OR_gt_atac_ctrl	mean_logOR_minus_atac	lo	hi
+diagnostic, benchmark already read	arm2	r1	all	66	1.0132	0.5152	1.0194	0.4242	0.0796	-0.0628	0.3260
+diagnostic, benchmark already read	arm2	r1	ceiling_ge_0.2	18	0.9921	0.5000	1.0995	0.2222	-0.1057	-0.2094	0.0041
+diagnostic, benchmark already read	arm2	r2	all	66	1.0125	0.5909	1.0415	0.4697	0.0062	-0.0611	0.0819
+diagnostic, benchmark already read	arm2	r2	ceiling_ge_0.2	18	0.9896	0.5000	1.0910	0.3333	-0.1159	-0.2148	-0.0046
+diagnostic, benchmark already read	arm2	r3_k1	all	66	1.0210	0.5606	1.0061	0.6061	0.0260	-0.0316	0.0831
+diagnostic, benchmark already read	arm2	r3_k1	ceiling_ge_0.2	18	0.9569	0.3889	1.0530	0.5556	-0.0434	-0.1623	0.0559
+diagnostic, benchmark already read	arm2	r3_k2	all	66	1.0110	0.5152	1.0008	0.5606	0.0117	-0.0430	0.0668
+diagnostic, benchmark already read	arm2	r3_k2	ceiling_ge_0.2	18	0.9233	0.3333	1.0807	0.5000	-0.0898	-0.1980	-0.0004
+diagnostic, benchmark already read	arm2	r3_k3	all	66	0.9853	0.4697	1.0056	0.4848	0.0268	-0.0346	0.0926
+diagnostic, benchmark already read	arm2	r3_k3	ceiling_ge_0.2	18	0.9726	0.3333	1.0592	0.3333	-0.0891	-0.1747	-0.0096
+diagnostic, benchmark already read	arm2	r3_k5	all	66	1.0197	0.5606	0.9797	0.5758	0.0577	0.0032	0.1204
+diagnostic, benchmark already read	arm2	r3_k5	ceiling_ge_0.2	18	0.9706	0.4444	0.9906	0.3889	-0.0620	-0.1391	0.0163
+diagnostic, benchmark already read	arm1	r1	all	27	1.0310	0.5926	0.9792	0.4444	0.0001	-0.0952	0.1019
+diagnostic, benchmark already read	arm1	r1	ceiling_ge_0.2	11	1.0306	0.5455	1.0892	0.3636	-0.0199	-0.1836	0.1455
+diagnostic, benchmark already read	arm1	r2	all	27	1.0230	0.6296	0.9931	0.5185	-0.0328	-0.1649	0.0842
+diagnostic, benchmark already read	arm1	r2	ceiling_ge_0.2	11	1.0072	0.5455	1.0739	0.4545	-0.0272	-0.1791	0.1292
+diagnostic, benchmark already read	arm1	r3_k1	all	27	1.0887	0.6667	0.9706	0.6296	0.0553	-0.0441	0.1580
+diagnostic, benchmark already read	arm1	r3_k1	ceiling_ge_0.2	11	1.1056	0.7273	1.0318	0.6364	0.0200	-0.1174	0.1510
+diagnostic, benchmark already read	arm1	r3_k2	all	27	1.0434	0.5556	0.9640	0.5556	-0.0123	-0.0953	0.0642
+diagnostic, benchmark already read	arm1	r3_k2	ceiling_ge_0.2	11	0.9556	0.4545	1.0534	0.4545	-0.0669	-0.2359	0.0844
+diagnostic, benchmark already read	arm1	r3_k3	all	27	1.0661	0.5926	0.9616	0.5556	-0.0369	-0.1619	0.0639
+diagnostic, benchmark already read	arm1	r3_k3	ceiling_ge_0.2	11	1.0162	0.5455	1.0707	0.5455	-0.0269	-0.1786	0.0933
+diagnostic, benchmark already read	arm1	r3_k5	all	27	1.0497	0.6296	0.9995	0.5926	-0.0172	-0.0939	0.0523
+diagnostic, benchmark already read	arm1	r3_k5	ceiling_ge_0.2	11	1.0997	0.6364	1.0729	0.6364	-0.0225	-0.1152	0.0663

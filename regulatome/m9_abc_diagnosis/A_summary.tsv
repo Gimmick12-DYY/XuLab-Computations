@@ -1,0 +1,17 @@
+label	key	value
+diagnostic, benchmark already read	universe_genes_arm2	11228
+diagnostic, benchmark already read	tfs_with_peaks	79
+diagnostic, benchmark already read	tfs_with_ge20_targets	69
+diagnostic, benchmark already read	median_n_targets	1439.0
+diagnostic, benchmark already read	median_frac_universe	0.12816173851086568
+diagnostic, benchmark already read	frac_universe_target_of_gt_half_tfs	0.009173494834342715
+diagnostic, benchmark already read	frac_universe_target_of_ge1_tf	0.9959921624510153
+diagnostic, benchmark already read	frac_universe_target_of_0_tfs	0.004007837548984681
+diagnostic, benchmark already read	median_jaccard_tf_pairs	0.060163649703008346
+diagnostic, benchmark already read	iqr_jaccard_tf_pairs	0.033-0.148
+diagnostic, benchmark already read	median_jaccard_atac_ctrl_pairs	0.2918125991011905
+diagnostic, benchmark already read	median_frac_targets_promoter_only	0.32786093674553357
+diagnostic, benchmark already read	median_frac_targets_distal_only	0.6151182919792267
+diagnostic, benchmark already read	median_jaccard_tf_vs_own_atac_ctrl	0.11725190839694656
+diagnostic, benchmark already read	kd_matrix_units	222
+diagnostic, benchmark already read	kd_matrix_tfs	77

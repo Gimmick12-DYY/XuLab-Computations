@@ -1,0 +1,3 @@
+label	arm	spearman_c1_vs_ceiling	spearman_absc1_vs_ceiling	spearman_c1_vs_kd_cells	spearman_absc1_vs_kd_cells	n_tfs
+diagnostic, benchmark already read	arm1	-0.4416	-0.0011	-0.3631	0.0385	30
+diagnostic, benchmark already read	arm2	-0.2996	0.5793	-0.2380	0.1683	76
