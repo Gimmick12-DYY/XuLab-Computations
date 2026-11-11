@@ -4,7 +4,8 @@ import numpy as np, pandas as pd
 O = "/work/users/d/y/dyy12/XuLab/regulatome/m7_step2"; NB = 2000; SEED = 20261111; F = pd.read_csv(f"{O}/splits/tf_folds.tsv", sep="\t").set_index("TF")
 def boot(v, rng):
     v = np.asarray(v, float); n = len(v); b = v[rng.integers(0, n, (NB, n))].mean(1); return float(v.mean()), float(np.percentile(b, 2.5)), float(np.percentile(b, 97.5))
-L = pd.concat([pd.read_csv(f"{O}/results/{k}/per_tf_long.tsv", sep="\t", keep_default_na=False) for k in ("raw", "imp") if os.path.exists(f"{O}/results/{k}/per_tf_long.tsv")])
+KINDS = sorted(k for k in os.listdir(f"{O}/results") if os.path.exists(f"{O}/results/{k}/per_tf_long.tsv"))  # <binding kind>_<link set>: raw_hicfixed (primary verdict), raw_powerlaw (sensitivity), imp_*
+L = pd.concat([pd.read_csv(f"{O}/results/{k}/per_tf_long.tsv", sep="\t", keep_default_na=False).assign(kind=k) for k in KINDS])
 L = pd.concat([L[L.split == "gene"], L[L.split != "gene"].assign(split="byTF")])
 L["cc"] = L.cond.str.replace(r"\d+$", "", regex=True)
 W = L.groupby(["kind", "split", "arm", "centring", "model", "mode", "tf", "cc"]).spearman.mean().unstack("cc").reset_index()  # pseudo, mis averaged over draws per TF
@@ -39,7 +40,7 @@ for k, G in Rr.groupby(["kind", "split", "arm", "model"]):
 P = pd.DataFrame(rows); P.to_csv(f"{O}/pooled.tsv", sep="\t", index=False, float_format="%.5f")
 # expression ladder
 LADDER = []
-for kind in ("raw", "imp"):
+for kind in KINDS:
     p = f"{O}/results/{kind}/expr_long.tsv"
     if not os.path.exists(p): continue
     E = pd.read_csv(p, sep="\t", keep_default_na=False); Z = np.load(f"{O}/results/{kind}/expr_preds.npz"); y = Z["y"]; n = len(y); rngE = np.random.default_rng(SEED + 5); idx = rngE.integers(0, n, (NB, n))

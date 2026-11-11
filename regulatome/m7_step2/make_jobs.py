@@ -26,4 +26,4 @@ elif which == "kd_final":
         for arm, ce, c in combos:
             for m in MODELS:
                 for mo in ("kd_only", "both"): add("kd", arm, ce, m, mo, c, sp, 0, kind, "frozen", "final")
-J = pd.DataFrame(rows, columns=C); f = f"{O}/{kind}_{which}.tsv"; J.to_csv(f, sep="\t", index=False); print(f, len(J))
+J = pd.DataFrame(rows, columns=C); L = os.environ.get("M7_LINK", "powerlaw"); f = f"{O}/{(L + chr(95)) if L != 'powerlaw' else ''}{kind}_{which}.tsv"; J.to_csv(f, sep="\t", index=False); print(f, len(J))

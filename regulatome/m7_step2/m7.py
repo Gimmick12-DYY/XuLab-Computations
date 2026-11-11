@@ -3,7 +3,7 @@
 import json, os, sys, time
 import numpy as np, pandas as pd, scipy.sparse as sp
 from scipy.stats import rankdata
-X = "/work/users/d/y/dyy12/XuLab"; R = f"{X}/regulatome"; O = f"{R}/m7_step2"; LINK = "powerlaw"
+X = "/work/users/d/y/dyy12/XuLab"; R = f"{X}/regulatome"; O = f"{R}/m7_step2"; LINK = os.environ.get("M7_LINK", "powerlaw"); FROZEN = f"{O}/frozen/params_{LINK}.json"; JOB_PREFIX = "" if LINK == "powerlaw" else f"{LINK}_"
 ARMS = {"arm1": "arm1_high_knockdown", "arm2": "arm2_all_cell"}; ALIAS = {"CBX1": "HP1", "CBX3": "HP1", "CBX5": "HP1", "ZUP1": "ZUFSP"}; panel = lambda t: ALIAS.get(t, t)
 OWN = {"HP1": ["CBX1", "CBX3", "CBX5"], "ZUFSP": ["ZUP1"]}
 GRID = {
@@ -153,7 +153,7 @@ def mlp_predict_val(net, X, target):
 def params_for(job):
     if str(job.hp) != "frozen":
         g = GRID["enet"] if job.model == "enet" else (GRID["mlp"] if job.model == "mlp" else GRID["lgb_kd" if job.target == "kd" else "lgb_expr"]); return g[int(job.hp)]
-    fp = json.load(open(f"{O}/frozen/params.json"));
+    fp = json.load(open(FROZEN));
     return fp[job_key_params(job)]
 def job_key_params(job):
     cc = "real" if (job.target == "expr") or job.cond in ("real",) or str(job.cond).startswith(("pseudo", "mis")) else "base"
