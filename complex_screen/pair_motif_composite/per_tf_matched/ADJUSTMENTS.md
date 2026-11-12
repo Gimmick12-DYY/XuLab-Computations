@@ -253,3 +253,13 @@ Each step lists what changed, the sanity check (own motif recovered in the per-T
   - AF3 strong/weak: 17 / 110 have weight cosine pct >= 0.95; 15 / 110 have cross-prediction pct >= 0.95.
   - All candidates: 123 and 137 of 1,732.
 - Verdict: fails both gates. The sequence signal that exists is depth / promoter composition, not TF-specific grammar.
+
+## Step 15 (2026-11-12): motif-centred read profiles (motif_centred/; mc_*.py; jobs 8936631-8936634)
+- FIMO p <= 1e-5 instances of 2,159 motifs (motifs with hits) in eligible non-HOT union-ATAC bins. Per library: read 5' ends within +/- 50 bp of motif centres vs 200-500 bp flanks (cf), and centre reads per instance per million library reads (occ). Each statistic also panel-standardized; odd / even chromosomes separately.
+- Gate 1 (own motif top 10 on both halves; 42 TFs with an own motif): cf 2 (CTCF 1/1, NFYA 3/4); occ 2 (NRF1 1/1, EPAS1); occ_panel 1 (NRF1); cf_panel 0.
+- Gate 2 (held-out percentile >= 0.95):
+  - CTCF->STAG2: cf 0.85, cf_panel 0.88, occ 0.94 (discovery 0.955), occ_panel 0.90. Closest of all methods tried.
+  - MAZ<->ZNF143 <= 0.39; NFYA->ZNF644 <= 0.42.
+  - Negative NFYA->CTCF reaches 0.90-0.94.
+- Verdict: no statistic passes either gate. CTCF->STAG2 comes close (0.94) and is the one known pair with a consistent near-pass across methods.
+- Overall, Steps 1-15: every standard family of motif tests on these single-cell libraries fails the same controls. Tried: per-peak enrichment (HOMER, FIMO, imputed, raw, masked), background variants, peak re-calling, panel standardization, summit centrality, k-mer models, motif-centred read profiles. Motif enrichment cannot validate pairs at this depth. Fig 4c needs new bulk HEK293T data, or must be labelled exploratory.

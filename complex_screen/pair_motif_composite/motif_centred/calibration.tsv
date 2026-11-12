@@ -1,0 +1,5 @@
+method	n_tf_with_own	own_strict	own_loose	own_strict_tfs	positives_passed	negatives_passed	gate1	gate2	usable
+cf	42	2	3	CTCF,NFYA	0	0	False	False	False
+cf_panel	42	0	0		0	0	False	False	False
+occ	42	2	2	EPAS1,NRF1	0	0	False	False	False
+occ_panel	42	1	1	NRF1	0	0	False	False	False
