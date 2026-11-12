@@ -25,7 +25,7 @@ P = rp.use()
 plt.rcParams["font.sans-serif"] = ["Arial"] + plt.rcParams["font.sans-serif"]
 plt.rcParams["svg.fonttype"] = "none"
 OD = OUT / "fig2_draft"
-CELL = {"CTCF": "HEK293/HEK293T", "MAZ": "HEK293", "ZBTB7A": "HEK293", "ZIC2": "HEK293", "ZNF282": "HEK293T", "ZNF777": "HEK293"}
+CELL = {"CTCF": "HEK293", "MAZ": "HEK293", "ZBTB7A": "HEK293", "ZIC2": "HEK293", "ZNF282": "HEK293T", "ZNF777": "HEK293"}
 B = pd.read_csv(OUT / "round2/pearson/r2p_corr_preferred_top5000_znf777.tsv", sep="\t", index_col=0).values[6:, :6]
 rz = (B - B.mean(1, keepdims=True)) / B.std(1, keepdims=True)
 cz = (B - B.mean(0, keepdims=True)) / B.std(0, keepdims=True)

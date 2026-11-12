@@ -24,7 +24,7 @@ import regulome_palette as rp  # noqa: E402
 P = rp.use()
 plt.rcParams["font.sans-serif"] = ["Arial"] + plt.rcParams["font.sans-serif"]
 plt.rcParams["svg.fonttype"] = "none"
-CELL = {"CTCF": "HEK293/HEK293T", "MAZ": "HEK293", "ZBTB7A": "HEK293", "ZIC2": "HEK293", "ZNF282": "HEK293T", "ZNF777": "HEK293"}
+CELL = {"CTCF": "HEK293", "MAZ": "HEK293", "ZBTB7A": "HEK293", "ZIC2": "HEK293", "ZNF282": "HEK293T", "ZNF777": "HEK293"}
 df = pd.read_csv(OUT / "round2/pearson/r2p_corr_preferred_top5000_znf777.tsv", sep="\t", index_col=0)
 tf_of = [l.replace("_", " ").split()[-1] for l in df.index]
 lab = [(f"{t} ChIP ({CELL[t]})" if l.lower().startswith("bulk") else f"{t} sc") for l, t in zip(df.index, tf_of)]

@@ -22,7 +22,7 @@ import regulome_palette as rp  # noqa: E402
 P = rp.use()
 plt.rcParams["font.sans-serif"] = ["Arial"] + plt.rcParams["font.sans-serif"]
 plt.rcParams["svg.fonttype"] = "none"
-CELL = {"CTCF": "HEK293/HEK293T", "MAZ": "HEK293", "ZBTB7A": "HEK293", "ZIC2": "HEK293", "ZNF282": "HEK293T", "ZNF777": "HEK293"}
+CELL = {"CTCF": "HEK293", "MAZ": "HEK293", "ZBTB7A": "HEK293", "ZIC2": "HEK293", "ZNF282": "HEK293T", "ZNF777": "HEK293"}
 B = pd.read_csv(OUT / "round2/pearson/r2p_corr_preferred_top5000_znf777.tsv", sep="\t", index_col=0).values[6:, :6]
 fig, ax = plt.subplots(figsize=(3.0, 2.7))
 lim = 0.5
