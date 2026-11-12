@@ -36,14 +36,24 @@ def mapper(useq, mseq):
     for a, b, n in difflib.SequenceMatcher(None, useq, mseq, autojunk=False).get_matching_blocks():
         for k in range(n): m[a + k + 1] = b + k + 1
     return (lambda i: m.get(i)), f"aligned ({len(m)}/{len(useq)} residues matched)"
+# Extra mode (2026-11-12): `dbd_face.py --extra PAIR` scores a pair outside the 5-seed run from af3_local/out (strong seeds from the per-seed
+# string in af3_local/af3_scores.tsv), same rule, written to dbd_face_extra.tsv; dbd_face.tsv is not touched.
+import sys
+EXTRA = sys.argv[2] if len(sys.argv) > 2 and sys.argv[1] == "--extra" else None
+LOC = "/work/users/d/y/dyy12/XuLab/complex_screen/af3_local"
 def seeds_strong(p):
+    if EXTRA:
+        L = pd.read_csv(f"{LOC}/af3_scores.tsv", sep="\t"); x = L[L.pair == p.replace("_", "__")].iloc[0].per_seed_iptm_ipsae_tier
+        st = [int(s) for s, t in re.findall(r"(\d+):[\d.]+/[\d.]+ (\w+)", x) if t == "strong"]; return len(st), st
     x = open(f"{O}/scores_s5/{p}.tsv").read().rstrip("\n").split("\t")
     return int(x[5]), [int(s) for s, t in re.findall(r"(\d+):[\d.]+/[\d.]+ (\w+)", x[-1]) if t == "strong"]
-P = [l.strip() for l in open(f"{O}/seeds5/all.txt") if l.strip()]
-strong = [p for p in P if os.path.exists(f"{O}/scores_s5/{p}.tsv") and os.path.getsize(f"{O}/scores_s5/{p}.tsv") and seeds_strong(p)[0] >= 3]
+if EXTRA: strong = [EXTRA]
+else:
+    P = [l.strip() for l in open(f"{O}/seeds5/all.txt") if l.strip()]
+    strong = [p for p in P if os.path.exists(f"{O}/scores_s5/{p}.tsv") and os.path.getsize(f"{O}/scores_s5/{p}.tsv") and seeds_strong(p)[0] >= 3]
 rows = []
 for p in strong:
-    a, b = p.split("_"); d = f"{O}/out_s5/{p.lower()}"; rs = pd.read_csv(f"{d}/ranking_scores.csv"); best = rs.loc[rs.groupby("seed").ranking_score.idxmax()].set_index("seed"); St = seeds_strong(p)[1]
+    a, b = p.split("_"); d = f"{LOC}/out/{p.lower()}" if EXTRA else f"{O}/out_s5/{p.lower()}"; rs = pd.read_csv(f"{d}/ranking_scores.csv"); best = rs.loc[rs.groupby("seed").ranking_score.idxmax()].set_index("seed"); St = seeds_strong(p)[1]
     U = {a: set(), b: set()}; SEQ = {}
     for s in St:
         A = atoms(f"{d}/seed-{s}_sample-{int(best.loc[s, 'sample'])}/model.cif"); ch = list(dict.fromkeys(A.label_asym_id))
@@ -62,5 +72,5 @@ for p in strong:
         rows.append(dict(pair=p, tf=tf, dbd_source=f"UniProt {u['acc']} ({how})" if F else f"UniProt {u['acc']}: no DNA-binding feature", dbd_range="; ".join(rng) if rng else "none",
                          n_interface=n, share_in_dbd=round(sh, 3) if R else np.nan, flag=("DBD-face" if R and n and sh >= .5 else ("" if R else "non-DBD partner")),
                          n_strong_seeds=len(St), partner=b if tf == a else a))
-T = pd.DataFrame(rows); T.to_csv(f"{OUT}/dbd_face.tsv", sep="\t", index=False)
+T = pd.DataFrame(rows); T.to_csv(f"{OUT}/dbd_face_extra.tsv" if EXTRA else f"{OUT}/dbd_face.tsv", sep="\t", index=False)
 print(len(strong), "strong pairs;", T[T.flag == "DBD-face"].pair.nunique(), "pairs flagged")
