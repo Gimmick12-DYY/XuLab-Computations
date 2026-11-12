@@ -2,7 +2,7 @@
 
 **Figure 3 | TF coordinated binding modules sit on Hi-C loops and assemble a super-enhancer hub.**
 
-**a**, Schematic. Left: a higher-order coordinated binding module on the linear genome, ≥3 regions (promoters blue, enhancer vermillion) with coordinated binding of every pair across single cells (module edges, red). Right: one possible 3D arrangement, a rosette in which the elements with coordinated binding meet at a TF hub and the chromatin between them forms loops detectable by Hi-C. Illustration, not data.
+**a**, Schematic of higher-order coordinated binding for one TF: single-cell HITAG binding at a promoter and two enhancers; coordinated binding across cells (Cicero pair score on that TF's peaks); a module is three or more elements with every pair coordinated, edges over 25 kb; module edges tested against Hi-C loops, drawn as a rosette hub.
 
 **b**, RBBP4 example. Left: RBBP4 coordinated binding network (components ≥10 regions); coloured edges = higher-order coordinated binding modules, pink = module edge on a wild-type HEK293T Hi-C loop (Peakachu 5 kb ∪ 10 kb, score ≥0.7, ±30 kb), gold = module with every edge on a loop (15). Right: genome-wide circos of RBBP4 module edges with the Peakachu loops underneath (359 modules, 1,072 coordinated binding edges, 328 on a loop, 27 modules with every edge on a loop).
 

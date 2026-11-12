@@ -6,7 +6,7 @@ Illustrator-safe font attributes, cropped to content), `.pdf` and a 300 dpi `.pn
 
 | Panel | Plan | File(s) | Source (Longleaf XuLab unless noted) | Script / commit |
 |---|---|---|---|---|
-| a | What coordinated binding is (schematic, a possible rosette) | `a_coordinated_binding_rosette` (120 x 52 mm) | illustration, not data | `a_rosette_schematic.py` |
+| a | What coordinated binding is (four steps: single-cell binding of one TF, coordinated binding across cells, higher-order module, tested against 3D contacts) | `a_coordinated_binding_schematic` (.svg master 183 x 71 mm, .png 300 dpi rendered with headless Chrome; rsvg drops the drop-shadow TF glyphs) | original drawing, no data | `scripts/a_schematic.py` |
 | b | RBBP4 example: network | `b1_rbbp4_network` | `hic/work_wt293t/loops/union_5k_10k_0.7/RBBP4_sweep_k50_i10000_s555_pad30kb/publication_plots_v2/tf_peak_network_cliques_loops.svg` (deck slide 169) | `hic/scripts/plot_clique_network_loops_v2.py`; text fix here |
 | b | RBBP4 example: Hi-C loop plot | `b2_rbbp4_hic_circos` | same folder, `RBBP4_clique_loop_edges_circos_tf_top.svg` (slide 170) | `hic/scripts/plot_clique_circos_tf_top.py` |
 | c | RBBP4 pairs along all chromosomes, module edges highlighted, only the Hi-C loops that support them | `c_rbbp4_chromosomes` (180 x 150 mm) | RBBP4_sweep_k50_i10000_s555: first-step Cicero pairs (peak_edges.tsv, pairs >25 kb, same set as panel d / S1D), modules from cliques.tsv; Peakachu 0.7 loops (5 kb + 10 kb), +-30 kb anchor rule | `scripts/c_rbbp4_chromosomes.py` |
@@ -22,7 +22,7 @@ Illustrator-safe font attributes, cropped to content), `.pdf` and a 300 dpi `.pn
 g, h and i are drawn on larger canvases with fonts preset for the print sizes given; place them at 100% of the SVG/PDF size.
 b, c and f are slide-sized originals (b1 444 mm, b2 311 mm, c 419 mm, f 281 mm wide): scale them down when placing.
 
-**Missing:** none (a is a first draft of the schematic: linear module -> rosette in 3D).
+**Missing:** none.
 
 Panel c was redrawn on 2026-11-12 to the user's spec (all pairs; module edges in dark blue; only supporting loops below).
 
