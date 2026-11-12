@@ -1,7 +1,7 @@
 """Fig 3 panel c: RBBP4 coordinated binding pairs and module edges along every chromosome, with only the Hi-C loops that support them.
 Above each chromosome: all RBBP4 Cicero pairs >25 kb (first-step pairs of the RBBP4_sweep_k50_i10000_s555 run, peak_edges.tsv, the
-same pair set as the S1D / panel d loop tests) in light grey; module edges (pairs inside higher-order coordinated binding modules,
-results/RBBP4_sweep_k50_i10000_s555/cliques.tsv, >25 kb) on top in dark blue. Below: only the Peakachu score >=0.7 loops
+same pair set as the S1D / panel d loop tests) in blue (user 2026-11-12: not grey); module edges (pairs inside higher-order coordinated binding modules,
+results/RBBP4_sweep_k50_i10000_s555/cliques.tsv, >25 kb) on top in dark purple. Below: only the Peakachu score >=0.7 loops
 (wild-type HEK293T, 5 kb + 10 kb) that support at least one shown pair under the panel d rule (both anchors within +-30 kb;
 compare_union_pairs_and_clique_edges.assign_loop): full red if they support a module edge, light red if they support plain pairs only.
 Paper style: 180 mm wide, Arial 6-7 pt, white background; SVG text as explicit Arial attributes (Illustrator-safe).
@@ -20,7 +20,7 @@ for f in glob.glob("/work/users/d/y/dyy12/fonts/arial/*.ttf"): fm.fontManager.ad
 plt.rcParams.update({"font.family": "sans-serif", "font.sans-serif": ["Arial"], "font.size": 6, "svg.fonttype": "none", "pdf.fonttype": 42,
                      "axes.linewidth": 0.5, "xtick.major.width": 0.5, "xtick.major.size": 2.5, "xtick.labelsize": 6, "axes.labelsize": 7})
 OUT = Path(sys.argv[1]) if len(sys.argv) > 1 else Path("."); COB = X / "cobinding"; L = X / "hic/work_wt293t/loops"
-PAIRC, MODC, LOOPM, LOOPP, CHR, INK = "#BDBDBD", "#1F3F8F", "#B83A2E", "#F4A582", "#9E9E9E", "#1A1A1A"
+PAIRC, MODC, LOOPM, LOOPP, CHR, INK = "#7A9CCB", "#5B2A86", "#B83A2E", "#F4A582", "#7F7F7F", "#1A1A1A"   # pairs Cicero blue (palette C), module edges dark purple, loops Hi-C reds
 fine = F.U.load_bedpe(L / "peakachu_5000.loops.0.7.bedpe", "5000"); coarse = F.U.load_bedpe(L / "peakachu_10000.loops.0.7.bedpe", "10000")
 ix5 = F.U.index_anchors(fine, 5000); ix10 = F.U.index_anchors(coarse, 10000)
 pairs = [p for p in F.U.load_edges(COB / "work/RBBP4_sweep_k50_i10000_s555/RBBP4.peak_edges.tsv") if F.span_bp(p) > F.MIN_SPAN]
@@ -49,10 +49,10 @@ MM = 1 / 25.4; fig, ax = plt.subplots(figsize=(180 * MM, 150 * MM)); fig.subplot
 for c in CH:
     ax.plot([0, F.HG38[c] / 1e6], [y_of[c], y_of[c]], color=CHR, lw=1.4, solid_capstyle="round", zorder=4)
     ax.text(-3, y_of[c], c.replace("chr", ""), ha="right", va="center", fontsize=6, color=INK)
-ax.add_collection(LineCollection(pc, colors=PAIRC, linewidths=0.25, alpha=0.6, zorder=1))
+ax.add_collection(LineCollection(pc, colors=PAIRC, linewidths=0.3, alpha=0.75, zorder=1))
 ax.add_collection(LineCollection(lc(loops_pair_only), colors=LOOPP, linewidths=0.3, alpha=0.9, zorder=2))
 ax.add_collection(LineCollection(lc(loops_mod), colors=LOOPM, linewidths=0.55, alpha=1, zorder=3))
-ax.add_collection(LineCollection(ec, colors=MODC, linewidths=0.6, alpha=1, zorder=5))
+ax.add_collection(LineCollection(ec, colors=MODC, linewidths=0.7, alpha=1, zorder=5))
 mx = max(F.HG38.values()) / 1e6; ax.set_xlim(-8, mx + 6); ax.set_ylim(-0.6, y_of[CH[0]] + 0.55)
 ax.set_yticks([]); [ax.spines[s].set_visible(False) for s in ("top", "right", "left")]; ax.spines["bottom"].set_color("#7F7F7F")
 ax.set_xlabel("Position (Mb, hg38)"); ax.tick_params(axis="x", colors=INK)
@@ -79,5 +79,5 @@ def illustrator_text(svg):
         return tag[:-1].rstrip() + f' font-family="Arial, {PS[(wt, "normal")]}, Helvetica, sans-serif" font-size="{float(size):.3f}"' + (' font-weight="bold"' if wt == "bold" else "") + ">"
     svg = re.sub(r"<text\b[^>]*>", one, svg)
     return re.sub(r"<tspan\b[^>]*>", lambda m: one(re.match(r"[\s\S]*", m.group(0).replace("<tspan", "<text", 1))).replace("<text", "<tspan", 1), svg)
-stem = OUT / "c_rbbp4_chromosomes"; fig.savefig(f"{stem}.svg"); fig.savefig(f"{stem}.pdf"); fig.savefig(f"{stem}.png", dpi=300)
+stem = OUT / "c_rbbp4_chromosomes"; fig.savefig(f"{stem}.svg"); fig.savefig(f"{stem}.png", dpi=300)   # PNG + SVG only (user)
 p = Path(f"{stem}.svg"); p.write_text(illustrator_text(p.read_text())); print("font shorthand left:", p.read_text().count("font: "))
