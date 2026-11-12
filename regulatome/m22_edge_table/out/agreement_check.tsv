@@ -1,0 +1,3 @@
+label	level	n	mean_spearman	lo	hi	swapped_tf_mean	sw_lo	sw_hi	real_minus_swapped	d_lo	d_hi
+diagnostic (external knockdown used as a check, not a definition)	within genes (>= 3 bound TFs with knockdown): Spearman(share, |z|)	11109	-0.01162	-0.01722	-0.006063	0.002933	-0.002295	0.008078	-0.01415	-0.0211	-0.006588
+diagnostic (external knockdown used as a check, not a definition)	within TFs (bound genes): Spearman(score, |z|)	66	0.00296	-0.009667	0.01435	-0.001126	-0.01162	0.008286	0.001562	-0.01122	0.01402

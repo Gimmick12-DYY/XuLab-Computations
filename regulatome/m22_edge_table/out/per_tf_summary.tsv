@@ -1,0 +1,72 @@
+tf	n_target_genes	n_promoter_bound	median_shared_by	n_with_module	n_reproducible_kd_external	tier
+ADNP	1439	505	21.0	94	3	Tier 3 (not testable: noise floor only, not met)
+AKAP8L	705	285	21.0	7	0	Tier 3 (not testable: noise floor only, not met)
+CHAMP1	1553	595	21.0	105	3	Tier 3 (not testable: noise floor only, not met)
+CTCF	2460	994	21.0	82	32	Tier 1
+DDIT3	5871	2905	20.0	114	10	Tier 1
+DNMT1	532	214	21.0	2	15	Tier 3 (not testable: noise floor only, not met)
+DR1	4010	1676	20.0	752	6	Tier 2
+E2F3	7566	4072	19.0	306	11	Tier 1
+E4F1	6632	3307	19.0	1269	574	Tier 2
+EPAS1	98	33	22.0	0	0	Tier 3 (tested, none met)
+ETS2	4477	1724	19.0	2522	21	Tier 3 (tested, none met)
+EZH2	2025	768	21.0	112	4	Tier 3 (not testable: noise floor only, not met)
+FLYWCH1	2071	765	21.0	111	2	Tier 3 (not testable: noise floor only, not met)
+FOXC1	890	291	21.0	7	5	Tier 2
+FOXJ3	616	214	21.0	4	1	Tier 3 (tested, none met)
+FOXK1	180	96	21.0	2	1	Tier 3 (tested, none met)
+GLYR1	6433	3250	19.0	779	0	Tier 2
+HES1	76	22	26.5	0	0	Tier 2
+HOXA10	2175	903	21.0	108	3	Tier 3 (tested, none met)
+HOXA5	115	24	23.0	0	1	Tier 3 (tested, none met)
+HOXB6	2762	1109	21.0	321	1	Tier 3 (tested, none met)
+HOXB8	554	220	21.5	4	1	Tier 3 (tested, none met)
+HOXB9	1985	757	21.0	86	1	Tier 2
+HOXC4	395	150	23.0	8	1	Tier 3 (not testable: noise floor only, not met)
+HOXC9	2017	771	21.0	202	4	Tier 3 (tested, none met)
+HOXD10	341	115	20.0	0	0	Tier 3 (not testable: noise floor only, not met)
+HP1	197	70	22.0	1	0	Tier 3 (not testable: noise floor only, not met)
+MAZ	2423	871	21.0	243	8	Tier 3 (tested, none met)
+MBD3	8446	4775	18.0	797	11	Tier 2
+MEF2A	448	172	23.0	14	0	Tier 3 (tested, none met)
+MEF2D	579	218	21.0	1	0	Tier 3 (tested, none met)
+MLX	6839	3539	19.0	738	6	Tier 2
+MTF2	5172	2210	20.0	859	5	Tier 2
+NFYA	10332	7334	17.0	938	21	Tier 1
+NME2	7360	3892	19.0	577	212	Tier 2
+NRF1	602	257	22.0	23	41	Tier 2
+PA2G4	329	119	23.0	0	0	Tier 3 (not testable: noise floor only, not met)
+PCGF6	83	31	19.0	0	0	Tier 3 (not testable: noise floor only, not met)
+POGK	1532	517	21.0	160	1	Tier 3 (not testable: noise floor only, not met)
+RBBP4	11068	9115	17.0	0	21	Tier 2
+RBBP7	6514	3367	20.0	106	9	Tier 2
+RBPJ	1977	737	21.0	34	10	Tier 3 (tested, none met)
+RELA	15	4	22.0	0	0	Tier 2
+SAFB	1722	692	22.0	27	3	Tier 2
+SMARCA1	1571	620	21.0	84	3	Tier 3 (not testable: noise floor only, not met)
+SOX12	10	3	19.0	0	0	Tier 3 (not testable: noise floor only, not met)
+SOX4	10310	7284	17.0	1244	19	Tier 2
+SRCAP	1733	667	20.0	135	3	Tier 3 (not testable: noise floor only, not met)
+SREBF2	318	97	22.0	6	0	Tier 3 (not testable: noise floor only, not met)
+STAG2	304	109	23.0	0	0	Tier 3 (not testable: noise floor only, not met)
+TBX3	269	103	22.0	0	0	Tier 2
+THAP6	1325	503	21.0	70	0	Tier 3 (not testable: noise floor only, not met)
+TRAFD1	609	224	21.0	20	0	Tier 3 (not testable: noise floor only, not met)
+WIZ	2492	923	20.0	230	12	Tier 3 (not testable: noise floor only, not met)
+XPA	9273	5837	18.0	299	37	Tier 2
+ZBTB40	473	167	21.0	22	0	Tier 3 (not testable: noise floor only, not met)
+ZBTB43	507	194	21.0	4	1	Tier 3 (not testable: noise floor only, not met)
+ZBTB7A	3304	1332	20.0	211	9	Tier 3 (tested, none met)
+ZIC2	2369	915	21.0	115	0	Tier 3 (tested, none met)
+ZNF143	986	346	21.0	92	12	Tier 3 (tested, none met)
+ZNF282	4466	1831	19.0	1761	5	Tier 3 (tested, none met)
+ZNF367	340	119	23.0	0	0	Tier 3 (not testable: noise floor only, not met)
+ZNF507	8587	5101	18.0	1066	53	Tier 2
+ZNF512	1200	388	20.5	44	3	Tier 3 (not testable: noise floor only, not met)
+ZNF512B	2547	954	20.0	168	2	Tier 2
+ZNF644	2476	947	21.0	143	1	Tier 3 (not testable: noise floor only, not met)
+ZNF703	3180	1410	21.0	50	4	Tier 2
+ZNF746	1837	692	20.0	164	22	Tier 3 (not testable: noise floor only, not met)
+ZNF768	650	250	22.0	0	1	Tier 2
+ZNF777	3077	1203	20.0	354	8	Tier 3 (tested, none met)
+ZUFSP	1410	479	22.0	131	2	Tier 3 (not testable: noise floor only, not met)
