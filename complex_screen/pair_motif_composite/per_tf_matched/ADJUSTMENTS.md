@@ -263,3 +263,13 @@ Each step lists what changed, the sanity check (own motif recovered in the per-T
   - Negative NFYA->CTCF reaches 0.90-0.94.
 - Verdict: no statistic passes either gate. CTCF->STAG2 comes close (0.94) and is the one known pair with a consistent near-pass across methods.
 - Overall, Steps 1-15: every standard family of motif tests on these single-cell libraries fails the same controls. Tried: per-peak enrichment (HOMER, FIMO, imputed, raw, masked), background variants, peak re-calling, panel standardization, summit centrality, k-mer models, motif-centred read profiles. Motif enrichment cannot validate pairs at this depth. Fig 4c needs new bulk HEK293T data, or must be labelled exploratory.
+
+## Step 16 (2026-11-12): systematic own-motif recovery and depth downsampling (downsample/; ds_task.py, ds_systematic.py; jobs 8980414, 8981638, 8981639)
+- Full depth, all methods (systematic_full_depth.tsv): 50 of 79 TFs have an own motif in a database. 4 recover it (rank <= 10 on both halves) in >= 1 method: NRF1, NFYA, CTCF, and EPAS1 (one statistic only, occ; probably weak).
+  - Per method: HOMER 3, FIMO fisher / panel 1, CentriMo 0, motif-centred cf 2 / occ 2, k-mer 0.
+  - Recovered vs not, median cells 5,913 vs 3,215 (MWU p 0.90); motif information content 13.1 vs 11.2 bits (p 0.25). Neither depth nor motif IC separates them at n = 4.
+- Downsampling (32 TFs with a HOMER motif; 500-50,000 cells, 2-3 seeds; lab MACS2 settings, same gate pipeline):
+  - Recovered at some depth: NRF1 (from 500-1,000 cells), CTCF (from ~500; stable from 3,000), NFYA (from 6,000).
+  - Never recovered at any depth: the other 29, including deep libraries SOX4 (65k cells), E2F3 (31k), MLX (23k) and RBBP4-class partners. SOX4 / E2F3 fold stays ~1.0-1.45 at every depth.
+  - Fraction recovered by depth: 6% (500 cells), 3% (1,000), 0% (1,500), 6% (3,000), 29% (6,000), 20% (12,000), 33% (25,000). Only deep TFs reach the higher depths (7, 5, 3 TFs), so the rise reflects NFYA / CTCF, not a panel-wide depth effect.
+- Reading: extra depth helps only TFs that are already recoverable (strong, long motifs: CTCF, NRF1; NFYA needs about 2x our median library). For most TFs, deep libraries included, the TF-specific motif signal is absent at any depth. The limit is library specificity (Tn5 open-chromatin background, antibody, mode of binding), not sequencing depth alone.
