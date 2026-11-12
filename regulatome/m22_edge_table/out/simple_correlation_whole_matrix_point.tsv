@@ -1,0 +1,37 @@
+label	version	target	way	score_matrix	n_tfs	n_entries	spearman	pearson
+diagnostic; point estimates (intervals in simple_correlation_whole_matrix.tsv)	all_cells	|z|	1 raw pooled	real	76	853252	0.0058	0.0071
+diagnostic; point estimates (intervals in simple_correlation_whole_matrix.tsv)	all_cells	|z|	1 raw pooled	swapped TF (m7 mis0, same depth tertile)	76	853252	-0.0145	-0.0121
+diagnostic; point estimates (intervals in simple_correlation_whole_matrix.tsv)	all_cells	|z|	1 raw pooled	ATAC-only	76	853252	0.0041	0.0046
+diagnostic; point estimates (intervals in simple_correlation_whole_matrix.tsv)	all_cells	|z|	2 row-standardised	real	76	763434	0.0001	0.0019
+diagnostic; point estimates (intervals in simple_correlation_whole_matrix.tsv)	all_cells	|z|	2 row-standardised	swapped TF (m7 mis0, same depth tertile)	76	763435	-0.0004	0.0005
+diagnostic; point estimates (intervals in simple_correlation_whole_matrix.tsv)	all_cells	|z|	2 row-standardised	ATAC-only	76	853252	0.0041	0.0039
+diagnostic; point estimates (intervals in simple_correlation_whole_matrix.tsv)	all_cells	|z|	3 within-TF percentile	real	76	853252	-0.0000	0.0002
+diagnostic; point estimates (intervals in simple_correlation_whole_matrix.tsv)	all_cells	|z|	3 within-TF percentile	swapped TF (m7 mis0, same depth tertile)	76	853252	-0.0013	-0.0015
+diagnostic; point estimates (intervals in simple_correlation_whole_matrix.tsv)	all_cells	|z|	3 within-TF percentile	ATAC-only	76	853252	0.0042	0.0042
+diagnostic; point estimates (intervals in simple_correlation_whole_matrix.tsv)	all_cells	signed z	1 raw pooled	real	76	853252	0.0102	0.0069
+diagnostic; point estimates (intervals in simple_correlation_whole_matrix.tsv)	all_cells	signed z	1 raw pooled	swapped TF (m7 mis0, same depth tertile)	76	853252	-0.0069	-0.0102
+diagnostic; point estimates (intervals in simple_correlation_whole_matrix.tsv)	all_cells	signed z	1 raw pooled	ATAC-only	76	853252	0.0057	0.0039
+diagnostic; point estimates (intervals in simple_correlation_whole_matrix.tsv)	all_cells	signed z	2 row-standardised	real	76	763434	-0.0022	-0.0031
+diagnostic; point estimates (intervals in simple_correlation_whole_matrix.tsv)	all_cells	signed z	2 row-standardised	swapped TF (m7 mis0, same depth tertile)	76	763435	0.0009	0.0024
+diagnostic; point estimates (intervals in simple_correlation_whole_matrix.tsv)	all_cells	signed z	2 row-standardised	ATAC-only	76	853252	0.0052	0.0029
+diagnostic; point estimates (intervals in simple_correlation_whole_matrix.tsv)	all_cells	signed z	3 within-TF percentile	real	76	853252	-0.0015	-0.0020
+diagnostic; point estimates (intervals in simple_correlation_whole_matrix.tsv)	all_cells	signed z	3 within-TF percentile	swapped TF (m7 mis0, same depth tertile)	76	853252	0.0017	0.0025
+diagnostic; point estimates (intervals in simple_correlation_whole_matrix.tsv)	all_cells	signed z	3 within-TF percentile	ATAC-only	76	853252	0.0054	0.0054
+diagnostic; point estimates (intervals in simple_correlation_whole_matrix.tsv)	top25_sgRNA	|z|	1 raw pooled	real	63	707239	0.0097	0.0152
+diagnostic; point estimates (intervals in simple_correlation_whole_matrix.tsv)	top25_sgRNA	|z|	1 raw pooled	swapped TF (m7 mis0, same depth tertile)	63	707239	0.0053	0.0151
+diagnostic; point estimates (intervals in simple_correlation_whole_matrix.tsv)	top25_sgRNA	|z|	1 raw pooled	ATAC-only	63	707239	0.0197	0.0210
+diagnostic; point estimates (intervals in simple_correlation_whole_matrix.tsv)	top25_sgRNA	|z|	2 row-standardised	real	63	628656	0.0018	0.0038
+diagnostic; point estimates (intervals in simple_correlation_whole_matrix.tsv)	top25_sgRNA	|z|	2 row-standardised	swapped TF (m7 mis0, same depth tertile)	63	639882	0.0013	0.0035
+diagnostic; point estimates (intervals in simple_correlation_whole_matrix.tsv)	top25_sgRNA	|z|	2 row-standardised	ATAC-only	63	707239	0.0201	0.0207
+diagnostic; point estimates (intervals in simple_correlation_whole_matrix.tsv)	top25_sgRNA	|z|	3 within-TF percentile	real	63	707239	-0.0006	-0.0004
+diagnostic; point estimates (intervals in simple_correlation_whole_matrix.tsv)	top25_sgRNA	|z|	3 within-TF percentile	swapped TF (m7 mis0, same depth tertile)	63	707239	0.0003	0.0011
+diagnostic; point estimates (intervals in simple_correlation_whole_matrix.tsv)	top25_sgRNA	|z|	3 within-TF percentile	ATAC-only	63	707239	0.0201	0.0201
+diagnostic; point estimates (intervals in simple_correlation_whole_matrix.tsv)	top25_sgRNA	signed z	1 raw pooled	real	63	707239	0.0016	-0.0027
+diagnostic; point estimates (intervals in simple_correlation_whole_matrix.tsv)	top25_sgRNA	signed z	1 raw pooled	swapped TF (m7 mis0, same depth tertile)	63	707239	0.0008	-0.0065
+diagnostic; point estimates (intervals in simple_correlation_whole_matrix.tsv)	top25_sgRNA	signed z	1 raw pooled	ATAC-only	63	707239	0.0104	0.0028
+diagnostic; point estimates (intervals in simple_correlation_whole_matrix.tsv)	top25_sgRNA	signed z	2 row-standardised	real	63	628656	0.0031	0.0004
+diagnostic; point estimates (intervals in simple_correlation_whole_matrix.tsv)	top25_sgRNA	signed z	2 row-standardised	swapped TF (m7 mis0, same depth tertile)	63	639882	0.0025	0.0010
+diagnostic; point estimates (intervals in simple_correlation_whole_matrix.tsv)	top25_sgRNA	signed z	2 row-standardised	ATAC-only	63	707239	0.0096	0.0023
+diagnostic; point estimates (intervals in simple_correlation_whole_matrix.tsv)	top25_sgRNA	signed z	3 within-TF percentile	real	63	707239	0.0066	0.0076
+diagnostic; point estimates (intervals in simple_correlation_whole_matrix.tsv)	top25_sgRNA	signed z	3 within-TF percentile	swapped TF (m7 mis0, same depth tertile)	63	707239	0.0065	0.0074
+diagnostic; point estimates (intervals in simple_correlation_whole_matrix.tsv)	top25_sgRNA	signed z	3 within-TF percentile	ATAC-only	63	707239	0.0095	0.0095
