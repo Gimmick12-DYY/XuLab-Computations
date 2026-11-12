@@ -1,9 +1,9 @@
 """Fig 3 panel c: RBBP4 coordinated binding pairs and module edges along every chromosome, with only the Hi-C loops that support them.
 Above each chromosome: all RBBP4 Cicero pairs >25 kb (first-step pairs of the RBBP4_sweep_k50_i10000_s555 run, peak_edges.tsv, the
-same pair set as the S1D / panel d loop tests) in blue (user 2026-11-12: not grey); module edges (pairs inside higher-order coordinated binding modules,
+same pair set as the S1D / panel d loop tests) in dark blue (user 2026-11-12); module edges (pairs inside higher-order coordinated binding modules,
 results/RBBP4_sweep_k50_i10000_s555/cliques.tsv, >25 kb) on top in yellow. Below: only the Peakachu score >=0.7 loops
 (wild-type HEK293T, 5 kb + 10 kb) that support at least one shown pair under the panel d rule (both anchors within +-30 kb;
-compare_union_pairs_and_clique_edges.assign_loop): full red if they support a module edge, light red if they support plain pairs only.
+compare_union_pairs_and_clique_edges.assign_loop): all drawn in one red (user 2026-11-12).
 Paper style: 180 mm wide, Arial 6-7 pt, white background; SVG text as explicit Arial attributes (Illustrator-safe).
 Runs on Longleaf (hic env):  python scripts/c_rbbp4_chromosomes.py <outdir>"""
 import glob, math, re, sys
@@ -21,9 +21,9 @@ plt.rcParams.update({"font.family": "sans-serif", "font.sans-serif": ["Arial"], 
                      "axes.linewidth": 0.5, "xtick.major.width": 0.5, "xtick.major.size": 2.5, "xtick.labelsize": 6, "axes.labelsize": 7})
 OUT = Path(sys.argv[1]) if len(sys.argv) > 1 else Path("."); COB = X / "cobinding"; L = X / "hic/work_wt293t/loops"
 import os
-PAIRC, MODC, LOOPM, LOOPP, CHR, INK = "#7A9CCB", "#F2B705", "#B83A2E", "#F4A582", "#7F7F7F", "#1A1A1A"   # user 2026-11-12: pairs blue, module edges yellow, loops Hi-C reds
+PAIRC, MODC, LOOPM, LOOPP, CHR, INK = "#1F3F8F", "#F2B705", "#C0392B", "#C0392B", "#7F7F7F", "#1A1A1A"   # user 2026-11-12: pairs dark blue, module edges yellow, all supporting loops one red
 PAIRC, MODC = os.environ.get("C_PAIR", PAIRC), os.environ.get("C_MOD", MODC)   # colour options (one hue: light pairs, dark module edges)
-PA, PLW, MLW = float(os.environ.get("C_PAIR_ALPHA", 0.75)), float(os.environ.get("C_PAIR_LW", 0.3)), float(os.environ.get("C_MOD_LW", 0.7))
+PA, PLW, MLW = float(os.environ.get("C_PAIR_ALPHA", 0.55)), float(os.environ.get("C_PAIR_LW", 0.3)), float(os.environ.get("C_MOD_LW", 0.7))
 fine = F.U.load_bedpe(L / "peakachu_5000.loops.0.7.bedpe", "5000"); coarse = F.U.load_bedpe(L / "peakachu_10000.loops.0.7.bedpe", "10000")
 ix5 = F.U.index_anchors(fine, 5000); ix10 = F.U.index_anchors(coarse, 10000)
 pairs = [p for p in F.U.load_edges(COB / "work/RBBP4_sweep_k50_i10000_s555/RBBP4.peak_edges.tsv") if F.span_bp(p) > F.MIN_SPAN]
@@ -53,16 +53,14 @@ for c in CH:
     ax.plot([0, F.HG38[c] / 1e6], [y_of[c], y_of[c]], color=CHR, lw=1.4, solid_capstyle="round", zorder=4)
     ax.text(-3, y_of[c], c.replace("chr", ""), ha="right", va="center", fontsize=6, color=INK)
 ax.add_collection(LineCollection(pc, colors=PAIRC, linewidths=PLW, alpha=PA, zorder=1))
-ax.add_collection(LineCollection(lc(loops_pair_only), colors=LOOPP, linewidths=0.3, alpha=0.9, zorder=2))
-ax.add_collection(LineCollection(lc(loops_mod), colors=LOOPM, linewidths=0.55, alpha=1, zorder=3))
+ax.add_collection(LineCollection(lc(loops_pair_only) + lc(loops_mod), colors=LOOPP, linewidths=0.35, alpha=0.8, zorder=2))   # one colour for every supporting loop (user)
 ax.add_collection(LineCollection(ec, colors=MODC, linewidths=MLW, alpha=float(os.environ.get("C_MOD_ALPHA", 1)), zorder=5))
 mx = max(F.HG38.values()) / 1e6; ax.set_xlim(-8, mx + 6); ax.set_ylim(-0.6, y_of[CH[0]] + 0.55)
 ax.set_yticks([]); [ax.spines[s].set_visible(False) for s in ("top", "right", "left")]; ax.spines["bottom"].set_color("#7F7F7F")
 ax.set_xlabel("Position (Mb, hg38)"); ax.tick_params(axis="x", colors=INK)
 ax.text(-7.5, y_of[CH[0]] + 0.42, "pairs ↑   loops ↓", fontsize=5.5, color="#555555", ha="left", va="center")
-h = [Line2D([], [], color=PAIRC, lw=1.2), Line2D([], [], color=MODC, lw=1.2), Line2D([], [], color=LOOPM, lw=1.2), Line2D([], [], color=LOOPP, lw=1.2)]
-lab = [f"Coordinated binding pair (n = {len(pairs):,})", f"Module edge (n = {len(edges):,})",
-       f"Hi-C loop supporting a module edge (n = {len(loops_mod):,})", f"Hi-C loop supporting other pairs only (n = {len(loops_pair_only):,})"]
+h = [Line2D([], [], color=PAIRC, lw=1.2), Line2D([], [], color=MODC, lw=1.2), Line2D([], [], color=LOOPP, lw=1.2)]
+lab = [f"Coordinated binding pair (n = {len(pairs):,})", f"Module edge (n = {len(edges):,})", f"Hi-C loop supporting a pair (n = {n_sup:,})"]
 ax.legend(h, lab, loc="lower right", bbox_to_anchor=(1.0, 0.02), fontsize=6, frameon=False, handlelength=1.4, labelspacing=0.35,
           title=f"Supporting loops: {n_sup:,} of {n_loops_total:,} Peakachu loops", title_fontsize=6, alignment="left")
 PS = {("normal", "normal"): "ArialMT", ("bold", "normal"): "Arial-BoldMT"}
