@@ -1,0 +1,21 @@
+a	b	B_mean5	K_all_genes	n_shared_responders	frac_same_direction	known	known_reason	af3_5seed	shared_module
+E4F1	HOXC9	0.9996	0.1273	0		False		none / not run	True
+POGK	ZNF746	0.9448	0.1411	0		False		none / not run	False
+MLX	THAP6	0.9441	0.1332	0		False		none / not run	True
+MLX	ZNF512B	0.9468	0.1256	0		False		none / not run	True
+MTF2	ZNF746	0.9778	0.09713	0		False		none / not run	True
+ETS2	ZNF746	0.9141	0.1734	9	1	False		none / not run	True
+MBD3	ZNF512B	0.9133	0.1582	0		True	STRING_phys>=.7	none / not run	True
+MTF2	WIZ	0.9649	0.09277	0		False		none / not run	True
+ETS2	RBPJ	0.9211	0.1297	3	1	False		weak	False
+MAZ	MLX	0.9672	0.08968	0		False		weak	True
+NFYA	ZNF746	0.9676	0.08957	0		False		none / not run	True
+E4F1	ZBTB7A	0.9413	0.1033	2	1	False		weak	True
+ETS2	TRAFD1	0.9037	0.1444	0		False		none / not run	False
+MLX	SMARCA1	0.9092	0.1319	0		False		none / not run	False
+MAZ	ZNF644	0.9464	0.09403	0		False		none / not run	False
+ETS2	WIZ	0.9232	0.1161	2	1	False		none / not run	True
+E4F1	ZUFSP	0.9812	0.08046	1	1	False		none / not run	True
+E4F1	NME2	0.8871	0.283	80	0.875	False		none / not run	True
+DDIT3	MBD3	0.9378	0.09495	0		False		none / not run	False
+DDIT3	ZNF703	0.9416	0.0936	0		False		none / not run	False

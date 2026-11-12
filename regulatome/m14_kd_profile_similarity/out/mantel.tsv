@@ -1,0 +1,49 @@
+label	tf_set	n_tfs	K	B	n_pairs	mantel_rho	p	partial_mantel_rho	partial_p
+diagnostic, benchmark-developed	primary_rel_ge_0.2	19	all_genes	mean5	171	-0.04168	0.5248	-0.02896	0.6517
+diagnostic, benchmark-developed	primary_rel_ge_0.2	19	all_genes	pct_all	171	-0.03321	0.6021	-0.0215	0.7489
+diagnostic, benchmark-developed	primary_rel_ge_0.2	19	all_genes	pct_noquies	171	-0.04068	0.5295	-0.02847	0.6593
+diagnostic, benchmark-developed	primary_rel_ge_0.2	19	all_genes	pct_tss	171	-0.1253	0.08689	-0.1118	0.1173
+diagnostic, benchmark-developed	primary_rel_ge_0.2	19	all_genes	pct_enhancer_biv	171	-0.006727	0.9205	-0.004551	0.9523
+diagnostic, benchmark-developed	primary_rel_ge_0.2	19	all_genes	pct_repressive	171	-0.01079	0.8723	0.006223	0.9309
+diagnostic, benchmark-developed	primary_rel_ge_0.2	19	all_genes	control depth: -|dlog cells|	171	-0.08531	0.1623		
+diagnostic, benchmark-developed	primary_rel_ge_0.2	19	all_genes	control depth: log cells product	171	0.05917	0.3827		
+diagnostic, benchmark-developed	primary_rel_ge_0.2	19	top2000_var	mean5	171	-0.0537	0.3809	-0.04398	0.4812
+diagnostic, benchmark-developed	primary_rel_ge_0.2	19	top2000_var	pct_all	171	-0.04177	0.4971	-0.03189	0.6105
+diagnostic, benchmark-developed	primary_rel_ge_0.2	19	top2000_var	pct_noquies	171	-0.05011	0.4197	-0.04034	0.5133
+diagnostic, benchmark-developed	primary_rel_ge_0.2	19	top2000_var	pct_tss	171	-0.1343	0.05369	-0.1243	0.07669
+diagnostic, benchmark-developed	primary_rel_ge_0.2	19	top2000_var	pct_enhancer_biv	171	-0.02292	0.7498	-0.02272	0.7534
+diagnostic, benchmark-developed	primary_rel_ge_0.2	19	top2000_var	pct_repressive	171	-0.01478	0.829	-0.001763	0.9791
+diagnostic, benchmark-developed	primary_rel_ge_0.2	19	top2000_var	control depth: -|dlog cells|	171	-0.07264	0.2285		
+diagnostic, benchmark-developed	primary_rel_ge_0.2	19	top2000_var	control depth: log cells product	171	0.0553	0.3886		
+diagnostic, benchmark-developed	strong10	10	all_genes	mean5	45	0.06864	0.6367	0.08814	0.584
+diagnostic, benchmark-developed	strong10	10	all_genes	pct_all	45	0.05303	0.7105	0.05959	0.6951
+diagnostic, benchmark-developed	strong10	10	all_genes	pct_noquies	45	0.04012	0.7828	0.05601	0.7167
+diagnostic, benchmark-developed	strong10	10	all_genes	pct_tss	45	-0.1664	0.2961	-0.1449	0.3975
+diagnostic, benchmark-developed	strong10	10	all_genes	pct_enhancer_biv	45	0.03794	0.8152	0.004222	0.9819
+diagnostic, benchmark-developed	strong10	10	all_genes	pct_repressive	45	0.1775	0.2317	0.2454	0.1201
+diagnostic, benchmark-developed	strong10	10	all_genes	control depth: -|dlog cells|	45	0.003953	0.9807		
+diagnostic, benchmark-developed	strong10	10	all_genes	control depth: log cells product	45	-0.09895	0.5983		
+diagnostic, benchmark-developed	strong10	10	top2000_var	mean5	45	0.1686	0.262	0.171	0.2787
+diagnostic, benchmark-developed	strong10	10	top2000_var	pct_all	45	0.106	0.4579	0.08803	0.5653
+diagnostic, benchmark-developed	strong10	10	top2000_var	pct_noquies	45	0.1147	0.4387	0.1118	0.4699
+diagnostic, benchmark-developed	strong10	10	top2000_var	pct_tss	45	-0.06088	0.6884	-0.0601	0.7026
+diagnostic, benchmark-developed	strong10	10	top2000_var	pct_enhancer_biv	45	0.1433	0.3387	0.1144	0.4818
+diagnostic, benchmark-developed	strong10	10	top2000_var	pct_repressive	45	0.2725	0.06789	0.3169	0.0447
+diagnostic, benchmark-developed	strong10	10	top2000_var	control depth: -|dlog cells|	45	-0.08406	0.5631		
+diagnostic, benchmark-developed	strong10	10	top2000_var	control depth: log cells product	45	-0.07312	0.6333		
+diagnostic, benchmark-developed	all76	75	all_genes	mean5	2775	0.01049	0.4532	0.0133	0.3435
+diagnostic, benchmark-developed	all76	75	all_genes	pct_all	2775	0.01412	0.3231	0.01683	0.2453
+diagnostic, benchmark-developed	all76	75	all_genes	pct_noquies	2775	0.01091	0.4362	0.01368	0.3321
+diagnostic, benchmark-developed	all76	75	all_genes	pct_tss	2775	-0.002552	0.86	2.076e-05	0.9992
+diagnostic, benchmark-developed	all76	75	all_genes	pct_enhancer_biv	2775	0.01098	0.4388	0.01485	0.3185
+diagnostic, benchmark-developed	all76	75	all_genes	pct_repressive	2775	0.01569	0.3283	0.01683	0.2931
+diagnostic, benchmark-developed	all76	75	all_genes	control depth: -|dlog cells|	2775	0.01694	0.231		
+diagnostic, benchmark-developed	all76	75	all_genes	control depth: log cells product	2775	-0.003795	0.664		
+diagnostic, benchmark-developed	all76	75	top2000_var	mean5	2775	0.008583	0.5537	0.01189	0.3963
+diagnostic, benchmark-developed	all76	75	top2000_var	pct_all	2775	0.01235	0.388	0.01546	0.2814
+diagnostic, benchmark-developed	all76	75	top2000_var	pct_noquies	2775	0.008681	0.542	0.0119	0.3947
+diagnostic, benchmark-developed	all76	75	top2000_var	pct_tss	2775	-0.002849	0.8404	0.0004007	0.9776
+diagnostic, benchmark-developed	all76	75	top2000_var	pct_enhancer_biv	2775	0.008827	0.5422	0.01338	0.3702
+diagnostic, benchmark-developed	all76	75	top2000_var	pct_repressive	2775	0.01288	0.416	0.01424	0.3751
+diagnostic, benchmark-developed	all76	75	top2000_var	control depth: -|dlog cells|	2775	0.01554	0.2778		
+diagnostic, benchmark-developed	all76	75	top2000_var	control depth: log cells product	2775	-0.006173	0.5392		

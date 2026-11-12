@@ -1,0 +1,16 @@
+{
+ "files": {
+  "all": "/work/users/d/y/dyy12/XuLab/complex_screen/af3_corr060_20261104/align_corr_20261109/inputs/pct_all.tsv",
+  "noquies": "/work/users/d/y/dyy12/XuLab/complex_screen/af3_corr060_20261104/align_corr_20261109/inputs/pct_noquies.tsv",
+  "tss": "/work/users/d/y/dyy12/XuLab/complex_screen/af3_corr060_20261104/align_corr_20261109/inputs/pct_tss.tsv",
+  "enhancer_biv": "/work/users/d/y/dyy12/XuLab/complex_screen/af3_corr060_20261104/align_corr_20261109/inputs/pct_enhancer_biv.tsv",
+  "repressive": "/work/users/d/y/dyy12/XuLab/complex_screen/af3_corr060_20261104/align_corr_20261109/inputs/pct_repressive.tsv"
+ },
+ "sha256": {
+  "all": "b854a4099cb18526a449a769a2ed866e74fab497c90d26470e77b94560c40989",
+  "noquies": "9e3d7d7c55c3d1582a71f2f53463bbfd68e5d9edeb0df9047f64a3b6ea581532",
+  "tss": "6121a6935d9bfb81f0d83fe7a9bbe47df58d9e00097ec273a7202a181c4e893d",
+  "enhancer_biv": "9c984430deeb976d0b7054d8f2020f6844fffeb49ef6d12fc4aab3b3681154e6",
+  "repressive": "396f73f2b174003fa31abc1020657d50a3a56029cce5f3274d02f3fe075f2144"
+ }
+}

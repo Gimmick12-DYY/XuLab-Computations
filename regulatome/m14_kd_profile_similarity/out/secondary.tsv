@@ -1,0 +1,7 @@
+label	comparison	n_a	n_b	mean_K_a	mean_K_b	diff	mannwhitney_p
+diagnostic, benchmark-developed	shared coordinated-binding module regions (p < 0.05) vs other pairs	542	2233	6.834e-05	-0.0007265	0.0007949	0.389
+diagnostic, benchmark-developed	frozen candidates vs non-candidates (best_pct < 0.60), cell-tertile stratified	1568	1163	-0.0002357	-0.001286	0.001531	0.4759
+diagnostic, benchmark-developed	AF3 5-seed strong vs none / not run	23	2683	-0.01673	-0.0005534	-0.01618	0.1143
+diagnostic, benchmark-developed	AF3 5-seed weak vs none / not run	68	2683	0.003365	-0.0005534	0.003918	0.6487
+diagnostic, benchmark-developed	DNA-test DISPLACED vs other AF3-strong	6	17	-0.01747	-0.01647	-0.0009932	0.8648
+diagnostic, benchmark-developed	CAP-SELEX called vs rest	0	2775				
