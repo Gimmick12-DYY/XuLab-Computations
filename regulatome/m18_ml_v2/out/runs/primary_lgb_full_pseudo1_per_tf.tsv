@@ -1,0 +1,11 @@
+config	tf	spearman_oof	reliability	frac_of_max_r
+primary_lgb_full_pseudo1	CTCF	0.08754	0.30000	0.15982
+primary_lgb_full_pseudo1	DNMT1	0.11900	0.57500	0.15694
+primary_lgb_full_pseudo1	E4F1	0.23253	0.75440	0.26771
+primary_lgb_full_pseudo1	MEF2A	0.02380	-0.04170	
+primary_lgb_full_pseudo1	NRF1	0.22029	0.65450	0.27230
+primary_lgb_full_pseudo1	PA2G4	0.03838	0.07180	0.14323
+primary_lgb_full_pseudo1	RBBP7	0.05626	0.13000	0.15604
+primary_lgb_full_pseudo1	RBPJ	0.09119	0.27370	0.17431
+primary_lgb_full_pseudo1	SAFB	0.04961	0.15410	0.12637
+primary_lgb_full_pseudo1	SETDB1	0.07326	0.29050	0.13593

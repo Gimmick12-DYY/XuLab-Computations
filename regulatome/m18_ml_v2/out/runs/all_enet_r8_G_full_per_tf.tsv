@@ -1,0 +1,77 @@
+config	tf	spearman_oof	reliability	frac_of_max_r
+all_enet_r8_G_full	ADNP	-0.01851	0.23070	-0.03854
+all_enet_r8_G_full	AKAP8L	0.00886	-0.09850	
+all_enet_r8_G_full	CHAMP1	0.00425	-0.00140	
+all_enet_r8_G_full	CTCF	0.04533	0.30000	0.08276
+all_enet_r8_G_full	DDIT3	0.02055	-0.04550	
+all_enet_r8_G_full	DNMT1	-0.07900	0.57500	-0.10418
+all_enet_r8_G_full	DR1	0.01825	0.11070	0.05486
+all_enet_r8_G_full	E2F3	-0.03276	0.10080	-0.10317
+all_enet_r8_G_full	E4F1	-0.09257	0.75440	-0.10657
+all_enet_r8_G_full	EPAS1	-0.02340	0.05200	-0.10260
+all_enet_r8_G_full	ETS2	0.10047	0.28520	0.18813
+all_enet_r8_G_full	EZH2	-0.01945	0.04070	-0.09643
+all_enet_r8_G_full	FLYWCH1	0.09869	0.13220	0.27142
+all_enet_r8_G_full	FOXC1	-0.09091	0.36570	-0.15032
+all_enet_r8_G_full	FOXJ3	-0.05650	0.23160	-0.11739
+all_enet_r8_G_full	FOXK1	0.03432	0.26590	0.06656
+all_enet_r8_G_full	HES1	-0.03727	0.03140	-0.21031
+all_enet_r8_G_full	HOXA10	0.09997	0.07130	0.37438
+all_enet_r8_G_full	HOXA5	0.04228	0.06960	0.16026
+all_enet_r8_G_full	HOXB6	-0.00431	-0.01290	
+all_enet_r8_G_full	HOXB8	0.02056	0.02140	0.14053
+all_enet_r8_G_full	HOXB9	0.07048	0.02600	0.43712
+all_enet_r8_G_full	HOXC4	-0.02252	0.29350	-0.04156
+all_enet_r8_G_full	HOXC9	-0.05359	0.21350	-0.11598
+all_enet_r8_G_full	HOXD10	0.04340	0.09000	0.14466
+all_enet_r8_G_full	HP1	0.06433	0.05315	0.27905
+all_enet_r8_G_full	MAZ	0.09733	0.16570	0.23910
+all_enet_r8_G_full	MBD3	0.02728	-0.13390	
+all_enet_r8_G_full	MEF2A	0.04255	-0.04170	
+all_enet_r8_G_full	MEF2D	-0.01386	-0.14310	
+all_enet_r8_G_full	MLX	0.06600	-0.06040	
+all_enet_r8_G_full	MSX2	0.03604	-0.04540	
+all_enet_r8_G_full	MTF2	0.01152	0.13460	0.03139
+all_enet_r8_G_full	NEUROD4	0.09434	-0.01870	
+all_enet_r8_G_full	NFYA	0.03292	0.11220	0.09827
+all_enet_r8_G_full	NME2	-0.09767	0.62160	-0.12389
+all_enet_r8_G_full	NR1D2	-0.06671	0.15590	-0.16896
+all_enet_r8_G_full	NRF1	0.07604	0.65450	0.09399
+all_enet_r8_G_full	PA2G4	-0.01351	0.07180	-0.05043
+all_enet_r8_G_full	PCGF6	-0.06921	0.14320	-0.18290
+all_enet_r8_G_full	POGK	0.11379	0.13790	0.30641
+all_enet_r8_G_full	RBBP4	-0.05177	0.07020	-0.19539
+all_enet_r8_G_full	RBBP7	-0.05340	0.13000	-0.14809
+all_enet_r8_G_full	RBPJ	0.06314	0.27370	0.12069
+all_enet_r8_G_full	RELA	0.08445	0.07080	0.31737
+all_enet_r8_G_full	SAFB	0.04773	0.15410	0.12158
+all_enet_r8_G_full	SETDB1	-0.04130	0.29050	-0.07663
+all_enet_r8_G_full	SMARCA1	0.07147	0.08350	0.24734
+all_enet_r8_G_full	SOX12	0.08388	-0.05580	
+all_enet_r8_G_full	SOX4	-0.04680	0.01680	-0.36108
+all_enet_r8_G_full	SRCAP	0.03519	0.11270	0.10482
+all_enet_r8_G_full	STAG2	-0.02097		
+all_enet_r8_G_full	TBX3	0.02998	-0.00920	
+all_enet_r8_G_full	THAP6	0.07598	-0.35410	
+all_enet_r8_G_full	TRAFD1	0.08863	0.20060	0.19789
+all_enet_r8_G_full	WIZ	0.04089	0.22660	0.08591
+all_enet_r8_G_full	XPA	-0.07804	0.30070	-0.14231
+all_enet_r8_G_full	ZBTB40	0.00847	-0.07230	
+all_enet_r8_G_full	ZBTB43	0.03034	0.10440	0.09389
+all_enet_r8_G_full	ZBTB7A	-0.05573	0.16720	-0.13630
+all_enet_r8_G_full	ZIC2	0.05771	0.07410	0.21202
+all_enet_r8_G_full	ZNF143	-0.02912	0.29580	-0.05354
+all_enet_r8_G_full	ZNF282	0.05103	0.07280	0.18912
+all_enet_r8_G_full	ZNF503	-0.00749	0.03740	-0.03872
+all_enet_r8_G_full	ZNF507	-0.05786	0.19730	-0.13027
+all_enet_r8_G_full	ZNF512	0.13611	0.18160	0.31939
+all_enet_r8_G_full	ZNF512B	0.07624	-0.32440	
+all_enet_r8_G_full	ZNF581	-0.06273	0.11400	-0.18579
+all_enet_r8_G_full	ZNF606	-0.02495	-0.03260	
+all_enet_r8_G_full	ZNF644	0.03022	-0.11620	
+all_enet_r8_G_full	ZNF703	0.02762	-0.15260	
+all_enet_r8_G_full	ZNF746	0.11831	0.39420	0.18843
+all_enet_r8_G_full	ZNF768	0.06906	0.05340	0.29884
+all_enet_r8_G_full	ZNF777	-0.06457	0.19550	-0.14604
+all_enet_r8_G_full	ZNF79	-0.00878	0.11200	-0.02624
+all_enet_r8_G_full	ZUFSP	-0.05340	0.10040	-0.16853

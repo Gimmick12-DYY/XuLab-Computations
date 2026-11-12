@@ -1,0 +1,77 @@
+config	tf	spearman_oof	reliability	frac_of_max_r
+all_lgb_r8_G_full	ADNP	0.04007	0.23070	0.08342
+all_lgb_r8_G_full	AKAP8L	0.01589	-0.09850	
+all_lgb_r8_G_full	CHAMP1	0.00792	-0.00140	
+all_lgb_r8_G_full	CTCF	0.08588	0.30000	0.15679
+all_lgb_r8_G_full	DDIT3	0.05578	-0.04550	
+all_lgb_r8_G_full	DNMT1	0.12430	0.57500	0.16392
+all_lgb_r8_G_full	DR1	0.06068	0.11070	0.18238
+all_lgb_r8_G_full	E2F3	0.07502	0.10080	0.23628
+all_lgb_r8_G_full	E4F1	0.21414	0.75440	0.24655
+all_lgb_r8_G_full	EPAS1	0.01280	0.05200	0.05612
+all_lgb_r8_G_full	ETS2	0.17534	0.28520	0.32833
+all_lgb_r8_G_full	EZH2	-0.00385	0.04070	-0.01909
+all_lgb_r8_G_full	FLYWCH1	0.13600	0.13220	0.37404
+all_lgb_r8_G_full	FOXC1	0.20004	0.36570	0.33079
+all_lgb_r8_G_full	FOXJ3	0.10714	0.23160	0.22262
+all_lgb_r8_G_full	FOXK1	0.08194	0.26590	0.15891
+all_lgb_r8_G_full	HES1	0.06560	0.03140	0.37020
+all_lgb_r8_G_full	HOXA10	0.14871	0.07130	0.55693
+all_lgb_r8_G_full	HOXA5	0.04519	0.06960	0.17129
+all_lgb_r8_G_full	HOXB6	0.01441	-0.01290	
+all_lgb_r8_G_full	HOXB8	0.05004	0.02140	0.34205
+all_lgb_r8_G_full	HOXB9	0.16503	0.02600	1.02349
+all_lgb_r8_G_full	HOXC4	0.19483	0.29350	0.35962
+all_lgb_r8_G_full	HOXC9	0.05251	0.21350	0.11365
+all_lgb_r8_G_full	HOXD10	0.07771	0.09000	0.25902
+all_lgb_r8_G_full	HP1	0.06902	0.05315	0.29937
+all_lgb_r8_G_full	MAZ	0.11045	0.16570	0.27132
+all_lgb_r8_G_full	MBD3	0.07168	-0.13390	
+all_lgb_r8_G_full	MEF2A	0.03958	-0.04170	
+all_lgb_r8_G_full	MEF2D	-0.00000	-0.14310	
+all_lgb_r8_G_full	MLX	0.12632	-0.06040	
+all_lgb_r8_G_full	MSX2	0.09227	-0.04540	
+all_lgb_r8_G_full	MTF2	0.16278	0.13460	0.44368
+all_lgb_r8_G_full	NEUROD4	0.14033	-0.01870	
+all_lgb_r8_G_full	NFYA	0.08335	0.11220	0.24883
+all_lgb_r8_G_full	NME2	0.31909	0.62160	0.40472
+all_lgb_r8_G_full	NR1D2	0.13701	0.15590	0.34700
+all_lgb_r8_G_full	NRF1	0.21674	0.65450	0.26791
+all_lgb_r8_G_full	PA2G4	0.02707	0.07180	0.10103
+all_lgb_r8_G_full	PCGF6	0.09174	0.14320	0.24244
+all_lgb_r8_G_full	POGK	0.17570	0.13790	0.47314
+all_lgb_r8_G_full	RBBP4	0.09956	0.07020	0.37578
+all_lgb_r8_G_full	RBBP7	0.04866	0.13000	0.13495
+all_lgb_r8_G_full	RBPJ	0.16176	0.27370	0.30920
+all_lgb_r8_G_full	RELA	0.19595	0.07080	0.73642
+all_lgb_r8_G_full	SAFB	0.06784	0.15410	0.17282
+all_lgb_r8_G_full	SETDB1	0.07518	0.29050	0.13949
+all_lgb_r8_G_full	SMARCA1	0.21934	0.08350	0.75905
+all_lgb_r8_G_full	SOX12	0.07744	-0.05580	
+all_lgb_r8_G_full	SOX4	0.06683	0.01680	0.51560
+all_lgb_r8_G_full	SRCAP	0.02337	0.11270	0.06961
+all_lgb_r8_G_full	STAG2	0.01382		
+all_lgb_r8_G_full	TBX3	0.07370	-0.00920	
+all_lgb_r8_G_full	THAP6	0.16057	-0.35410	
+all_lgb_r8_G_full	TRAFD1	0.23844	0.20060	0.53236
+all_lgb_r8_G_full	WIZ	0.10911	0.22660	0.22921
+all_lgb_r8_G_full	XPA	0.17314	0.30070	0.31574
+all_lgb_r8_G_full	ZBTB40	0.02900	-0.07230	
+all_lgb_r8_G_full	ZBTB43	0.08524	0.10440	0.26381
+all_lgb_r8_G_full	ZBTB7A	0.08998	0.16720	0.22005
+all_lgb_r8_G_full	ZIC2	0.10160	0.07410	0.37326
+all_lgb_r8_G_full	ZNF143	0.06769	0.29580	0.12447
+all_lgb_r8_G_full	ZNF282	0.12011	0.07280	0.44515
+all_lgb_r8_G_full	ZNF503	-0.00215	0.03740	-0.01110
+all_lgb_r8_G_full	ZNF507	0.13458	0.19730	0.30299
+all_lgb_r8_G_full	ZNF512	0.17424	0.18160	0.40887
+all_lgb_r8_G_full	ZNF512B	0.18457	-0.32440	
+all_lgb_r8_G_full	ZNF581	0.04574	0.11400	0.13547
+all_lgb_r8_G_full	ZNF606	0.05055	-0.03260	
+all_lgb_r8_G_full	ZNF644	0.10155	-0.11620	
+all_lgb_r8_G_full	ZNF703	0.03573	-0.15260	
+all_lgb_r8_G_full	ZNF746	0.29957	0.39420	0.47713
+all_lgb_r8_G_full	ZNF768	0.05575	0.05340	0.24128
+all_lgb_r8_G_full	ZNF777	0.11842	0.19550	0.26782
+all_lgb_r8_G_full	ZNF79	0.10189	0.11200	0.30444
+all_lgb_r8_G_full	ZUFSP	0.04034	0.10040	0.12730

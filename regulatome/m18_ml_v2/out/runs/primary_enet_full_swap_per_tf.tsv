@@ -1,0 +1,11 @@
+config	tf	spearman_oof	reliability	frac_of_max_r
+primary_enet_full_swap	CTCF	0.00000	0.30000	0.00001
+primary_enet_full_swap	DNMT1	0.12222	0.57500	0.16118
+primary_enet_full_swap	E4F1	0.15159	0.75440	0.17453
+primary_enet_full_swap	MEF2A	-0.02737	-0.04170	
+primary_enet_full_swap	NRF1	0.17486	0.65450	0.21614
+primary_enet_full_swap	PA2G4	0.02293	0.07180	0.08558
+primary_enet_full_swap	RBBP7	0.01417	0.13000	0.03930
+primary_enet_full_swap	RBPJ	-0.07837	0.27370	-0.14980
+primary_enet_full_swap	SAFB	-0.03347	0.15410	-0.08526
+primary_enet_full_swap	SETDB1	0.04875	0.29050	0.09044

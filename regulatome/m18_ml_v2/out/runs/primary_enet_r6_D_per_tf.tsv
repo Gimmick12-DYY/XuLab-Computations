@@ -1,0 +1,11 @@
+config	tf	spearman_oof	reliability	frac_of_max_r
+primary_enet_r6_D	CTCF	0.00490	0.30000	0.00895
+primary_enet_r6_D	DNMT1	0.12645	0.57500	0.16676
+primary_enet_r6_D	E4F1	0.14171	0.75440	0.16315
+primary_enet_r6_D	MEF2A	-0.03487	-0.04170	
+primary_enet_r6_D	NRF1	0.16204	0.65450	0.20030
+primary_enet_r6_D	PA2G4	0.01454	0.07180	0.05428
+primary_enet_r6_D	RBBP7	0.02457	0.13000	0.06814
+primary_enet_r6_D	RBPJ	-0.06990	0.27370	-0.13361
+primary_enet_r6_D	SAFB	-0.03855	0.15410	-0.09819
+primary_enet_r6_D	SETDB1	0.04393	0.29050	0.08151

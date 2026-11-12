@@ -1,0 +1,6 @@
+fold	held_tf	grid	n_iter	inner_val_sp
+0		"{""num_leaves"": 63, ""min_data_in_leaf"": 50}"	822	0.11903160155823582
+1		"{""num_leaves"": 63, ""min_data_in_leaf"": 50}"	727	0.1261094469731481
+2		"{""num_leaves"": 63, ""min_data_in_leaf"": 50}"	776	0.12075915635498229
+3		"{""num_leaves"": 63, ""min_data_in_leaf"": 50}"	723	0.11989870238304458
+4		"{""num_leaves"": 63, ""min_data_in_leaf"": 50}"	686	0.12099599693705798
