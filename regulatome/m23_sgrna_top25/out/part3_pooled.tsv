@@ -1,0 +1,13 @@
+label	version	comparison	group	n_tfs	MH_OR	lo	hi
+diagnostic, benchmark-developed	all_cell_min25	m16_top1000_vs_top5pct	strong10	9	1.123	1.008	1.251
+diagnostic, benchmark-developed	all_cell_min25	m16_top1000_vs_top5pct	other	60	1.001	0.9577	1.045
+diagnostic, benchmark-developed	all_cell_min25	m19_B1xP4	strong10	7	1.092	0.9754	1.224
+diagnostic, benchmark-developed	all_cell_min25	m19_B1xP4	other	32	0.9033	0.785	1.039
+diagnostic, benchmark-developed	all_cell_min25	m19_B2xP1	strong10	9	1.156	1.047	1.276
+diagnostic, benchmark-developed	all_cell_min25	m19_B2xP1	other	59	1.01	0.9711	1.051
+diagnostic, benchmark-developed	top25_own	m16_top1000_vs_top5pct	strong10	9	1.082	0.9703	1.207
+diagnostic, benchmark-developed	top25_own	m16_top1000_vs_top5pct	other	47	1.004	0.9576	1.053
+diagnostic, benchmark-developed	top25_own	m19_B1xP4	strong10	8	1.035	0.8678	1.235
+diagnostic, benchmark-developed	top25_own	m19_B1xP4	other	23	1.131	0.9987	1.281
+diagnostic, benchmark-developed	top25_own	m19_B2xP1	strong10	9	1.068	0.9657	1.181
+diagnostic, benchmark-developed	top25_own	m19_B2xP1	other	47	1.049	1.004	1.096

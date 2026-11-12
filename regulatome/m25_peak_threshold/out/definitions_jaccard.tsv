@@ -1,0 +1,7 @@
+label	definition	n_tfs_with_edges	median_jaccard	NFYA_RBBP4	RBBP4_SOX4	NRF1_E4F1
+diagnostic	E0_q005	71	0.05705	0.9269	0.9232	0.06179
+diagnostic	E1_as_called	79	0.7938	0.98	0.9809	0.7769
+diagnostic	E2_top2000	79	0.05091	0.3132	0.2775	0.06195
+diagnostic	E2_top5000	79	0.1042	0.5176	0.5135	0.1305
+diagnostic	E2_top10000	79	0.1366	0.6891	0.6691	0.162
+diagnostic	E2_top20000	79	0.1937	0.818	0.779	0.202

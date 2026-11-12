@@ -1,0 +1,396 @@
+label	version	tf	cells	ontarget_logfc	split_half_r	reliability_SB	reproducible_responders	strong_phenotype
+diagnostic, benchmark-developed	all_cell_min25	ADNP	476	-0.1576	0.05016	0.09553	45	False
+diagnostic, benchmark-developed	all_cell_min25	AKAP8L	115	-0.2068	-0.04005	-0.08344	11	False
+diagnostic, benchmark-developed	all_cell_min25	HP1	175	-0.2997	-0.006342	-0.01276	0	False
+diagnostic, benchmark-developed	all_cell_min25	CHAMP1	102	-0.0578	0.01036	0.02051	18	False
+diagnostic, benchmark-developed	all_cell_min25	CTCF	321	-0.1721	0.1638	0.2815	141	True
+diagnostic, benchmark-developed	all_cell_min25	DDIT3	269	-0.04398	-0.06663	-0.1428	15	False
+diagnostic, benchmark-developed	all_cell_min25	DNMT1	458	-0.4874	0.4729	0.6421	320	True
+diagnostic, benchmark-developed	all_cell_min25	DR1	144	-0.143	0.02145	0.042	17	False
+diagnostic, benchmark-developed	all_cell_min25	E2F3	210	-0.1299	0.02935	0.05703	20	False
+diagnostic, benchmark-developed	all_cell_min25	E4F1	419	-0.09002	0.5131	0.6782	951	True
+diagnostic, benchmark-developed	all_cell_min25	EPAS1	63	-0.03369	0.0182	0.03575	9	False
+diagnostic, benchmark-developed	all_cell_min25	ETS2	298	-0.06898	0.1323	0.2337	60	False
+diagnostic, benchmark-developed	all_cell_min25	EZH2	55	-0.3103	-0.01471	-0.02986	27	False
+diagnostic, benchmark-developed	all_cell_min25	FLYWCH1	235	-0.07312	0.03161	0.06128	12	False
+diagnostic, benchmark-developed	all_cell_min25	FOXC1	153	-0.1122	0.1578	0.2726	86	False
+diagnostic, benchmark-developed	all_cell_min25	FOXJ3	222	-0.2259	0.1077	0.1945	23	False
+diagnostic, benchmark-developed	all_cell_min25	FOXK1	343	-0.1494	0.1114	0.2005	65	False
+diagnostic, benchmark-developed	all_cell_min25	HES1	93	-0.1551	0.0338	0.06539	15	False
+diagnostic, benchmark-developed	all_cell_min25	HOXA10	295	-0.1407	0.03248	0.06292	14	False
+diagnostic, benchmark-developed	all_cell_min25	HOXA5	154	-0.08938	0.001319	0.002635	17	False
+diagnostic, benchmark-developed	all_cell_min25	HOXB6	220	-0.05631	-0.01479	-0.03002	12	False
+diagnostic, benchmark-developed	all_cell_min25	HOXB8	293	-0.03589	-0.00769	-0.0155	17	False
+diagnostic, benchmark-developed	all_cell_min25	HOXB9	144	-0.129	-0.008659	-0.01747	7	False
+diagnostic, benchmark-developed	all_cell_min25	HOXC4	322	-0.05935	0.1334	0.2354	57	False
+diagnostic, benchmark-developed	all_cell_min25	HOXC9	149	-0.1393	0.05963	0.1125	30	False
+diagnostic, benchmark-developed	all_cell_min25	HOXD10	411	-0.05823	0.02616	0.05099	16	False
+diagnostic, benchmark-developed	all_cell_min25	MAZ	456	-0.5049	0.08175	0.1511	31	False
+diagnostic, benchmark-developed	all_cell_min25	MBD3	95	-0.2019	-0.02547	-0.05227	24	False
+diagnostic, benchmark-developed	all_cell_min25	MEF2A	174	-0.2114	-0.06512	-0.1393	9	True
+diagnostic, benchmark-developed	all_cell_min25	MEF2D	274	-0.02784	-0.02538	-0.05208	20	False
+diagnostic, benchmark-developed	all_cell_min25	MLX	84	-0.22	-0.007999	-0.01613	12	False
+diagnostic, benchmark-developed	all_cell_min25	MSX2	443	-0.09996	0.02281	0.0446	20	False
+diagnostic, benchmark-developed	all_cell_min25	MTF2	187	-0.318	0.08661	0.1594	27	False
+diagnostic, benchmark-developed	all_cell_min25	NEUROD4	162	-9.609e-05	0.02898	0.05633	18	False
+diagnostic, benchmark-developed	all_cell_min25	NFYA	135	-0.09795	0.03404	0.06584	18	False
+diagnostic, benchmark-developed	all_cell_min25	NME2	866	-0.8516	0.3771	0.5477	278	False
+diagnostic, benchmark-developed	all_cell_min25	NR1D2	167	-0.03988	0.1005	0.1826	29	False
+diagnostic, benchmark-developed	all_cell_min25	NRF1	343	-0.1529	0.4486	0.6194	591	True
+diagnostic, benchmark-developed	all_cell_min25	PA2G4	124	-0.9021	0.03443	0.06657	19	True
+diagnostic, benchmark-developed	all_cell_min25	PCGF6	332	-0.2466	0.08925	0.1639	28	False
+diagnostic, benchmark-developed	all_cell_min25	POGK	125	-0.1008	-0.0584	-0.124	3	False
+diagnostic, benchmark-developed	all_cell_min25	RBBP4	68	-0.4651	0.04611	0.08816	23	False
+diagnostic, benchmark-developed	all_cell_min25	RBBP7	399	-0.4626	0.08381	0.1547	21	True
+diagnostic, benchmark-developed	all_cell_min25	RBPJ	343	-0.2882	0.07882	0.1461	52	True
+diagnostic, benchmark-developed	all_cell_min25	RELA	200	-0.07494	0.05065	0.09642	30	False
+diagnostic, benchmark-developed	all_cell_min25	SAFB	322	-0.3012	0.04728	0.09029	32	True
+diagnostic, benchmark-developed	all_cell_min25	SETDB1	237	-0.1235	0.174	0.2964	67	True
+diagnostic, benchmark-developed	all_cell_min25	SMARCA1	101	-0.32	0.101	0.1835	55	False
+diagnostic, benchmark-developed	all_cell_min25	SOX12	77	-0.07921	-0.01172	-0.02372	6	False
+diagnostic, benchmark-developed	all_cell_min25	SOX4	347	-0.472	0.004257	0.008478	22	False
+diagnostic, benchmark-developed	all_cell_min25	SRCAP	319	0.03903	0.05419	0.1028	22	False
+diagnostic, benchmark-developed	all_cell_min25	STAG2	134	-0.2639	-0.02953	-0.06086	22	False
+diagnostic, benchmark-developed	all_cell_min25	TBX3	278	-0.1421	-0.01759	-0.03581	21	False
+diagnostic, benchmark-developed	all_cell_min25	THAP6	181	-0.1011	-0.1244	-0.2841	15	False
+diagnostic, benchmark-developed	all_cell_min25	TRAFD1	54	-0.1407	0.1155	0.2071	21	False
+diagnostic, benchmark-developed	all_cell_min25	WIZ	103	-0.04375	0.06195	0.1167	43	False
+diagnostic, benchmark-developed	all_cell_min25	XPA	236	-0.1788	0.1162	0.2082	35	False
+diagnostic, benchmark-developed	all_cell_min25	ZBTB40	67	-0.003104	0.01801	0.03538	16	False
+diagnostic, benchmark-developed	all_cell_min25	ZBTB43	171	-0.06593	0.01176	0.02325	12	False
+diagnostic, benchmark-developed	all_cell_min25	ZBTB7A	361	-0.04428	0.05371	0.1019	28	False
+diagnostic, benchmark-developed	all_cell_min25	ZIC2	150	-0.08429	0.03052	0.05923	20	False
+diagnostic, benchmark-developed	all_cell_min25	ZNF143	267	-0.05763	0.1288	0.2282	70	False
+diagnostic, benchmark-developed	all_cell_min25	ZNF282	244	-0.1282	0.02633	0.05131	25	False
+diagnostic, benchmark-developed	all_cell_min25	ZNF367	45	-0.07892	0.02418	0.04722	14	False
+diagnostic, benchmark-developed	all_cell_min25	ZNF503	160	-0.308	0.0006848	0.001369	12	False
+diagnostic, benchmark-developed	all_cell_min25	ZNF507	227	-0.1077	0.1094	0.1972	68	False
+diagnostic, benchmark-developed	all_cell_min25	ZNF512	225	-0.1326	0.017	0.03343	14	False
+diagnostic, benchmark-developed	all_cell_min25	ZNF512B	146	-0.1216	-0.06088	-0.1297	8	False
+diagnostic, benchmark-developed	all_cell_min25	ZNF581	170	-0.1157	0.03626	0.06998	20	False
+diagnostic, benchmark-developed	all_cell_min25	ZNF606	68	-0.008014	0.008874	0.01759	9	False
+diagnostic, benchmark-developed	all_cell_min25	ZNF644	100	-0.4	0.0002912	0.0005822	17	False
+diagnostic, benchmark-developed	all_cell_min25	ZNF703	82	-0.2453	-0.03139	-0.06481	12	False
+diagnostic, benchmark-developed	all_cell_min25	ZNF746	113	-0.09315	0.1666	0.2856	94	False
+diagnostic, benchmark-developed	all_cell_min25	ZNF768	388	-0.09872	0.005305	0.01055	14	False
+diagnostic, benchmark-developed	all_cell_min25	ZNF777	463	-0.04409	0.08823	0.1622	37	False
+diagnostic, benchmark-developed	all_cell_min25	ZNF79	201	-0.02322	0.06821	0.1277	17	False
+diagnostic, benchmark-developed	all_cell_min25	ZUFSP	293	-0.133	0.04449	0.08519	17	False
+diagnostic, benchmark-developed	top25_own	ADNP	119	-0.2672	-0.09784	-0.2169	127	False
+diagnostic, benchmark-developed	top25_own	AKAP8L	29	-0.2834	0.1147	0.2058	11	False
+diagnostic, benchmark-developed	top25_own	CHAMP1	26	-0.08485	0.2375	0.3838	4	False
+diagnostic, benchmark-developed	top25_own	CTCF	80	-0.2979	0.07621	0.1416	62	True
+diagnostic, benchmark-developed	top25_own	DDIT3	67	-0.06202	-0.0002376	-0.0004753	53	False
+diagnostic, benchmark-developed	top25_own	DNMT1	114	-0.6019	0.2647	0.4186	295	True
+diagnostic, benchmark-developed	top25_own	DR1	36	-0.111	0.0612	0.1153	13	False
+diagnostic, benchmark-developed	top25_own	E2F3	30	-0.2462				False
+diagnostic, benchmark-developed	top25_own	E4F1	105	-0.1256	0.1325	0.234	88	True
+diagnostic, benchmark-developed	top25_own	ETS2	74	-0.06681	0.01658	0.03262	63	False
+diagnostic, benchmark-developed	top25_own	FLYWCH1	59	-0.1214	-0.0627	-0.1338	15	False
+diagnostic, benchmark-developed	top25_own	FOXC1	38	-0.1879	-0.003027	-0.006072	17	False
+diagnostic, benchmark-developed	top25_own	FOXJ3	56	-0.2935	0.1178	0.2108	7	False
+diagnostic, benchmark-developed	top25_own	FOXK1	86	-0.2451	-0.02651	-0.05446	118	False
+diagnostic, benchmark-developed	top25_own	HOXA10	74	-0.1741	-0.05941	-0.1263	50	False
+diagnostic, benchmark-developed	top25_own	HOXA5	38	-0.1307	0.02463	0.04808	49	False
+diagnostic, benchmark-developed	top25_own	HOXB6	49	-0.03711				False
+diagnostic, benchmark-developed	top25_own	HOXB8	73	-0.03302	-0.02838	-0.05842	163	False
+diagnostic, benchmark-developed	top25_own	HOXB9	36	-0.1259	0.1331	0.2349	7	False
+diagnostic, benchmark-developed	top25_own	HOXC4	80	-0.08835	0.1202	0.2146	16	False
+diagnostic, benchmark-developed	top25_own	HOXC9	37	-0.1449	0.06666	0.125	5	False
+diagnostic, benchmark-developed	top25_own	HOXD10	99	-0.08746				False
+diagnostic, benchmark-developed	top25_own	MAZ	114	-0.5794	-0.08266	-0.1802	26	False
+diagnostic, benchmark-developed	top25_own	MEF2A	44	-0.4585	-0.007844	-0.01581	78	True
+diagnostic, benchmark-developed	top25_own	MEF2D	68	-0.05109	0.09474	0.1731	5	False
+diagnostic, benchmark-developed	top25_own	MSX2	111	-0.1039	-0.05238	-0.1106	123	False
+diagnostic, benchmark-developed	top25_own	MTF2	47	-0.3532	0.05526	0.1047	49	False
+diagnostic, benchmark-developed	top25_own	NEUROD4	40	-8.025e-05	0.02714	0.05285	6	False
+diagnostic, benchmark-developed	top25_own	NFYA	34	-0.1064				False
+diagnostic, benchmark-developed	top25_own	NME2	216	-1.081	0.09557	0.1745	340	False
+diagnostic, benchmark-developed	top25_own	NR1D2	42	-0.09966	0.04439	0.08501	20	False
+diagnostic, benchmark-developed	top25_own	NRF1	86	-0.2175	0.2242	0.3663	276	True
+diagnostic, benchmark-developed	top25_own	PA2G4	31	-1.065	-0.007846	-0.01582	12	True
+diagnostic, benchmark-developed	top25_own	PCGF6	83	-0.3241	-0.005321	-0.0107	5	False
+diagnostic, benchmark-developed	top25_own	POGK	31	-0.1523	0.09042	0.1658	25	False
+diagnostic, benchmark-developed	top25_own	RBBP7	100	-0.6805	-0.04775	-0.1003	179	True
+diagnostic, benchmark-developed	top25_own	RBPJ	86	-0.3668	-0.08466	-0.185	42	True
+diagnostic, benchmark-developed	top25_own	RELA	50	-0.1236	-0.03939	-0.08201	50	False
+diagnostic, benchmark-developed	top25_own	SAFB	80	-0.4065	0.05155	0.09805	59	True
+diagnostic, benchmark-developed	top25_own	SETDB1	59	-0.1779	0.0666	0.1249	64	True
+diagnostic, benchmark-developed	top25_own	SMARCA1	25	-0.4056				False
+diagnostic, benchmark-developed	top25_own	SOX4	66	-0.7072				False
+diagnostic, benchmark-developed	top25_own	SRCAP	80	-0.0182	0.1245	0.2214	20	False
+diagnostic, benchmark-developed	top25_own	TBX3	70	-0.179	0.02288	0.04474	52	False
+diagnostic, benchmark-developed	top25_own	THAP6	45	-0.1108	0.04571	0.08742	20	False
+diagnostic, benchmark-developed	top25_own	WIZ	26	-0.09561	0.04079	0.07838	22	False
+diagnostic, benchmark-developed	top25_own	XPA	59	-0.2304	-0.02756	-0.05668	13	False
+diagnostic, benchmark-developed	top25_own	ZBTB43	43	-0.09106	0.0634	0.1192	16	False
+diagnostic, benchmark-developed	top25_own	ZBTB7A	90	-0.03244	0.08354	0.1542	26	False
+diagnostic, benchmark-developed	top25_own	ZIC2	38	-0.1029	-0.01566	-0.03182	24	False
+diagnostic, benchmark-developed	top25_own	ZNF143	67	-0.102	0.05565	0.1054	67	False
+diagnostic, benchmark-developed	top25_own	ZNF282	61	-0.194	-0.02811	-0.05785	100	False
+diagnostic, benchmark-developed	top25_own	ZNF503	40	-0.3084	0.04579	0.08757	33	False
+diagnostic, benchmark-developed	top25_own	ZNF507	57	-0.1631	0.09782	0.1782	15	False
+diagnostic, benchmark-developed	top25_own	ZNF512	56	-0.1891	0.08209	0.1517	36	False
+diagnostic, benchmark-developed	top25_own	ZNF512B	36	-0.1382				False
+diagnostic, benchmark-developed	top25_own	ZNF581	42	-0.1401	0.06886	0.1288	7	False
+diagnostic, benchmark-developed	top25_own	ZNF644	25	-0.4732				False
+diagnostic, benchmark-developed	top25_own	ZNF746	28	-0.09451				False
+diagnostic, benchmark-developed	top25_own	ZNF768	93	-0.01042				False
+diagnostic, benchmark-developed	top25_own	ZNF777	116	-0.08386	-0.05602	-0.1187	121	False
+diagnostic, benchmark-developed	top25_own	ZNF79	50	-0.05865	-0.01581	-0.03213	57	False
+diagnostic, benchmark-developed	top25_own	ZUFSP	73	-0.1942	0.003544	0.007063	48	False
+diagnostic, benchmark-developed	top25_own_ntc25	ADNP	119	-0.2229	0.03839	0.07394	18	False
+diagnostic, benchmark-developed	top25_own_ntc25	AKAP8L	29	-0.2696	-0.0121	-0.0245	11	False
+diagnostic, benchmark-developed	top25_own_ntc25	CHAMP1	26	-0.08133	0.06009	0.1134	18	False
+diagnostic, benchmark-developed	top25_own_ntc25	CTCF	80	-0.3022	0.04639	0.08867	62	True
+diagnostic, benchmark-developed	top25_own_ntc25	DDIT3	67	-0.06213	0.01324	0.02613	15	False
+diagnostic, benchmark-developed	top25_own_ntc25	DNMT1	114	-0.5946	0.2555	0.407	108	True
+diagnostic, benchmark-developed	top25_own_ntc25	DR1	36	-0.1119	0.01797	0.03531	22	False
+diagnostic, benchmark-developed	top25_own_ntc25	E2F3	30	-0.1762				False
+diagnostic, benchmark-developed	top25_own_ntc25	E4F1	105	-0.1235	0.1462	0.2551	132	True
+diagnostic, benchmark-developed	top25_own_ntc25	ETS2	74	-0.06791	-0.005417	-0.01089	10	False
+diagnostic, benchmark-developed	top25_own_ntc25	FLYWCH1	59	-0.1162	0.01653	0.03252	7	False
+diagnostic, benchmark-developed	top25_own_ntc25	FOXC1	38	-0.2214	0.0276	0.05372	9	False
+diagnostic, benchmark-developed	top25_own_ntc25	FOXJ3	56	-0.224	0.06798	0.1273	18	False
+diagnostic, benchmark-developed	top25_own_ntc25	FOXK1	86	-0.2124	0.03934	0.0757	22	False
+diagnostic, benchmark-developed	top25_own_ntc25	HOXA10	74	-0.199	0.001651	0.003297	13	False
+diagnostic, benchmark-developed	top25_own_ntc25	HOXA5	38	-0.1459	-0.003418	-0.006859	14	False
+diagnostic, benchmark-developed	top25_own_ntc25	HOXB6	49	-0.03853				False
+diagnostic, benchmark-developed	top25_own_ntc25	HOXB8	73	-0.03762	0.0009483	0.001895	9	False
+diagnostic, benchmark-developed	top25_own_ntc25	HOXB9	36	-0.1257	0.03411	0.06597	11	False
+diagnostic, benchmark-developed	top25_own_ntc25	HOXC4	80	-0.07997	0.07149	0.1334	29	False
+diagnostic, benchmark-developed	top25_own_ntc25	HOXC9	37	-0.1709	0.009945	0.01969	12	False
+diagnostic, benchmark-developed	top25_own_ntc25	HOXD10	99	-0.05727				False
+diagnostic, benchmark-developed	top25_own_ntc25	MAZ	114	-0.6457	0.04471	0.08559	19	False
+diagnostic, benchmark-developed	top25_own_ntc25	MEF2A	44	-0.3844	0.05653	0.107	11	True
+diagnostic, benchmark-developed	top25_own_ntc25	MEF2D	68	-0.04256	0.05871	0.1109	24	False
+diagnostic, benchmark-developed	top25_own_ntc25	MSX2	111	-0.1154	-0.0003316	-0.0006634	10	False
+diagnostic, benchmark-developed	top25_own_ntc25	MTF2	47	-0.3419	0.02162	0.04232	24	False
+diagnostic, benchmark-developed	top25_own_ntc25	NEUROD4	40	-0.0001381	0.007324	0.01454	10	False
+diagnostic, benchmark-developed	top25_own_ntc25	NFYA	34	-0.09579				False
+diagnostic, benchmark-developed	top25_own_ntc25	NME2	216	-1.208	0.1141	0.2048	44	False
+diagnostic, benchmark-developed	top25_own_ntc25	NR1D2	42	-0.0975	0.00472	0.009396	13	False
+diagnostic, benchmark-developed	top25_own_ntc25	NRF1	86	-0.1835	0.2266	0.3695	278	True
+diagnostic, benchmark-developed	top25_own_ntc25	PA2G4	31	-1.183	-0.009848	-0.01989	22	True
+diagnostic, benchmark-developed	top25_own_ntc25	PCGF6	83	-0.3076	0.02039	0.03997	25	False
+diagnostic, benchmark-developed	top25_own_ntc25	POGK	31	-0.1349	0.05873	0.1109	12	False
+diagnostic, benchmark-developed	top25_own_ntc25	RBBP7	100	-0.6844	0.05761	0.1089	21	True
+diagnostic, benchmark-developed	top25_own_ntc25	RBPJ	86	-0.3538	0.01551	0.03055	12	True
+diagnostic, benchmark-developed	top25_own_ntc25	RELA	50	-0.1273	0.05264	0.1	17	False
+diagnostic, benchmark-developed	top25_own_ntc25	SAFB	80	-0.3489	0.01605	0.03159	19	True
+diagnostic, benchmark-developed	top25_own_ntc25	SETDB1	59	-0.1713	0.04169	0.08004	18	True
+diagnostic, benchmark-developed	top25_own_ntc25	SMARCA1	25	-0.4036				False
+diagnostic, benchmark-developed	top25_own_ntc25	SOX4	66	-0.726				False
+diagnostic, benchmark-developed	top25_own_ntc25	SRCAP	80	0.01451	0.03853	0.0742	19	False
+diagnostic, benchmark-developed	top25_own_ntc25	TBX3	70	-0.1764	-0.003	-0.006018	8	False
+diagnostic, benchmark-developed	top25_own_ntc25	THAP6	45	-0.1069	-0.0291	-0.05994	8	False
+diagnostic, benchmark-developed	top25_own_ntc25	WIZ	26	-0.09758	0.04477	0.0857	16	False
+diagnostic, benchmark-developed	top25_own_ntc25	XPA	59	-0.2355	-0.003977	-0.007986	11	False
+diagnostic, benchmark-developed	top25_own_ntc25	ZBTB43	43	-0.08781	-0.005677	-0.01142	11	False
+diagnostic, benchmark-developed	top25_own_ntc25	ZBTB7A	90	-0.04327	0.04308	0.0826	24	False
+diagnostic, benchmark-developed	top25_own_ntc25	ZIC2	38	-0.1171	0.01929	0.03785	13	False
+diagnostic, benchmark-developed	top25_own_ntc25	ZNF143	67	-0.09439	0.0501	0.09542	40	False
+diagnostic, benchmark-developed	top25_own_ntc25	ZNF282	61	-0.1733	-0.04438	-0.09288	11	False
+diagnostic, benchmark-developed	top25_own_ntc25	ZNF503	40	-0.342	0.01505	0.02965	10	False
+diagnostic, benchmark-developed	top25_own_ntc25	ZNF507	57	-0.1396	0.03045	0.0591	29	False
+diagnostic, benchmark-developed	top25_own_ntc25	ZNF512	56	-0.1672	0.009556	0.01893	8	False
+diagnostic, benchmark-developed	top25_own_ntc25	ZNF512B	36	-0.1256				False
+diagnostic, benchmark-developed	top25_own_ntc25	ZNF581	42	-0.1613	0.001884	0.003761	13	False
+diagnostic, benchmark-developed	top25_own_ntc25	ZNF644	25	-0.4207				False
+diagnostic, benchmark-developed	top25_own_ntc25	ZNF746	28	-0.08413				False
+diagnostic, benchmark-developed	top25_own_ntc25	ZNF768	93	-0.01116				False
+diagnostic, benchmark-developed	top25_own_ntc25	ZNF777	116	-0.07454	0.01533	0.0302	24	False
+diagnostic, benchmark-developed	top25_own_ntc25	ZNF79	50	-0.04976	0.01284	0.02535	6	False
+diagnostic, benchmark-developed	top25_own_ntc25	ZUFSP	73	-0.1842	-0.02832	-0.05829	14	False
+diagnostic, benchmark-developed	random25_d0	ADNP	119	-0.1642	0.06001	0.1132	21	False
+diagnostic, benchmark-developed	random25_d0	AKAP8L	29	-0.2392	0.001536	0.003067	25	False
+diagnostic, benchmark-developed	random25_d0	CHAMP1	26	-0.04554	-0.003574	-0.007174	27	False
+diagnostic, benchmark-developed	random25_d0	CTCF	80	-0.1493	0.00781	0.0155	17	True
+diagnostic, benchmark-developed	random25_d0	DDIT3	67	-0.01227	0.0176	0.03459	16	False
+diagnostic, benchmark-developed	random25_d0	DNMT1	114	-0.5523	0.1315	0.2324	45	True
+diagnostic, benchmark-developed	random25_d0	DR1	36	-0.1688	-0.02362	-0.04838	11	False
+diagnostic, benchmark-developed	random25_d0	E2F3	28	-0.04425				False
+diagnostic, benchmark-developed	random25_d0	E4F1	105	-0.08289	0.1447	0.2528	143	True
+diagnostic, benchmark-developed	random25_d0	ETS2	74	-0.08817	0.02983	0.05793	12	False
+diagnostic, benchmark-developed	random25_d0	FLYWCH1	59	-0.04589	0.01549	0.03051	6	False
+diagnostic, benchmark-developed	random25_d0	FOXC1	38	-0.02892	0.1274	0.226	58	False
+diagnostic, benchmark-developed	random25_d0	FOXJ3	56	-0.1563	0.009904	0.01961	7	False
+diagnostic, benchmark-developed	random25_d0	FOXK1	86	-0.1673	-0.02868	-0.05905	12	False
+diagnostic, benchmark-developed	random25_d0	HOXA10	74	-0.1263	-0.01096	-0.02216	14	False
+diagnostic, benchmark-developed	random25_d0	HOXA5	38	-0.1438	-0.02856	-0.0588	9	False
+diagnostic, benchmark-developed	random25_d0	HOXB6	31	-0.06266				False
+diagnostic, benchmark-developed	random25_d0	HOXB8	73	-0.04483	-0.001998	-0.004004	15	False
+diagnostic, benchmark-developed	random25_d0	HOXB9	36	-0.1088	-0.05986	-0.1273	11	False
+diagnostic, benchmark-developed	random25_d0	HOXC4	80	-0.08241	-0.008218	-0.01657	14	False
+diagnostic, benchmark-developed	random25_d0	HOXC9	37	-0.1291	0.0271	0.05277	25	False
+diagnostic, benchmark-developed	random25_d0	HOXD10	88	-0.08013				False
+diagnostic, benchmark-developed	random25_d0	MAZ	114	-0.4756	-0.03493	-0.07239	18	False
+diagnostic, benchmark-developed	random25_d0	MEF2A	44	-0.1156	0.00032	0.0006398	11	True
+diagnostic, benchmark-developed	random25_d0	MEF2D	68	0.00915	0.01654	0.03254	12	False
+diagnostic, benchmark-developed	random25_d0	MSX2	111	-0.1189	-0.007731	-0.01558	14	False
+diagnostic, benchmark-developed	random25_d0	MTF2	47	-0.4018	-0.04991	-0.1051	11	False
+diagnostic, benchmark-developed	random25_d0	NEUROD4	40	-9.739e-05	0.006155	0.01223	14	False
+diagnostic, benchmark-developed	random25_d0	NFYA	34	-0.1176	0.01721	0.03384	11	False
+diagnostic, benchmark-developed	random25_d0	NME2	216	-0.8271	0.1928	0.3233	99	False
+diagnostic, benchmark-developed	random25_d0	NR1D2	42	-0.05639	0.03263	0.0632	16	False
+diagnostic, benchmark-developed	random25_d0	NRF1	86	-0.1351	0.1127	0.2026	111	True
+diagnostic, benchmark-developed	random25_d0	PA2G4	31	-0.9024	0.009591	0.019	9	True
+diagnostic, benchmark-developed	random25_d0	PCGF6	83	-0.2909	0.01111	0.02198	15	False
+diagnostic, benchmark-developed	random25_d0	POGK	31	-0.1132	0.06625	0.1243	6	False
+diagnostic, benchmark-developed	random25_d0	RBBP7	100	-0.4455	0.02045	0.04008	16	True
+diagnostic, benchmark-developed	random25_d0	RBPJ	86	-0.3117	0.1225	0.2183	33	True
+diagnostic, benchmark-developed	random25_d0	RELA	50	-0.03387	0.02313	0.04521	9	False
+diagnostic, benchmark-developed	random25_d0	SAFB	80	-0.2811	-0.00522	-0.01049	12	True
+diagnostic, benchmark-developed	random25_d0	SETDB1	59	-0.1539	0.05177	0.09844	17	True
+diagnostic, benchmark-developed	random25_d0	SMARCA1	25	-0.2585				False
+diagnostic, benchmark-developed	random25_d0	SOX4	87	-0.5444	-0.05204	-0.1098	12	False
+diagnostic, benchmark-developed	random25_d0	SRCAP	80	0.01742	0.03158	0.06123	12	False
+diagnostic, benchmark-developed	random25_d0	STAG2	29	-0.1871				False
+diagnostic, benchmark-developed	random25_d0	TBX3	70	-0.1475	-0.0396	-0.08247	13	False
+diagnostic, benchmark-developed	random25_d0	THAP6	45	-0.09798	0.009105	0.01805	29	False
+diagnostic, benchmark-developed	random25_d0	WIZ	26	-0.05599	0.0007551	0.001509	17	False
+diagnostic, benchmark-developed	random25_d0	XPA	59	-0.2091	0.09266	0.1696	42	False
+diagnostic, benchmark-developed	random25_d0	ZBTB43	43	-0.05423	-0.05541	-0.1173	9	False
+diagnostic, benchmark-developed	random25_d0	ZBTB7A	90	-0.07929	-0.01074	-0.02171	12	False
+diagnostic, benchmark-developed	random25_d0	ZIC2	38	-0.0543	0.007243	0.01438	12	False
+diagnostic, benchmark-developed	random25_d0	ZNF143	67	-0.04699	-0.04669	-0.09795	14	False
+diagnostic, benchmark-developed	random25_d0	ZNF282	61	-0.117	0.01341	0.02647	16	False
+diagnostic, benchmark-developed	random25_d0	ZNF503	40	-0.307	0.0577	0.1091	48	False
+diagnostic, benchmark-developed	random25_d0	ZNF507	57	-0.1032	0.06411	0.1205	13	False
+diagnostic, benchmark-developed	random25_d0	ZNF512	56	-0.1035	0.02094	0.04102	5	False
+diagnostic, benchmark-developed	random25_d0	ZNF512B	36	-0.1828	0.01581	0.03113	5	False
+diagnostic, benchmark-developed	random25_d0	ZNF581	42	-0.1008	0.05594	0.106	36	False
+diagnostic, benchmark-developed	random25_d0	ZNF644	25	-0.2548				False
+diagnostic, benchmark-developed	random25_d0	ZNF746	28	-0.1096	0.03814	0.07348	1	False
+diagnostic, benchmark-developed	random25_d0	ZNF768	83	0.01246				False
+diagnostic, benchmark-developed	random25_d0	ZNF777	116	-0.07227	0.01971	0.03866	19	False
+diagnostic, benchmark-developed	random25_d0	ZNF79	50	-0.0139	0.0459	0.08777	8	False
+diagnostic, benchmark-developed	random25_d0	ZUFSP	73	-0.1289	-0.03853	-0.08015	9	False
+diagnostic, benchmark-developed	random25_d1	ADNP	119	-0.1535	0.08727	0.1605	38	False
+diagnostic, benchmark-developed	random25_d1	AKAP8L	29	-0.1878	0.09574	0.1747	28	False
+diagnostic, benchmark-developed	random25_d1	CHAMP1	26	-0.06334	0.003147	0.006274	14	False
+diagnostic, benchmark-developed	random25_d1	CTCF	80	-0.1716	0.04074	0.07829	39	True
+diagnostic, benchmark-developed	random25_d1	DDIT3	67	-0.04691	-0.008316	-0.01677	14	False
+diagnostic, benchmark-developed	random25_d1	DNMT1	114	-0.5404	0.158	0.2729	51	True
+diagnostic, benchmark-developed	random25_d1	DR1	36	-0.2338	0.004753	0.009461	12	False
+diagnostic, benchmark-developed	random25_d1	E2F3	29	-0.152				False
+diagnostic, benchmark-developed	random25_d1	E4F1	105	-0.07729	0.1361	0.2396	132	True
+diagnostic, benchmark-developed	random25_d1	ETS2	74	-0.05977	-0.02511	-0.05151	7	False
+diagnostic, benchmark-developed	random25_d1	FLYWCH1	59	-0.08827	0.02159	0.04227	20	False
+diagnostic, benchmark-developed	random25_d1	FOXC1	38	-0.1722	0.02121	0.04154	22	False
+diagnostic, benchmark-developed	random25_d1	FOXJ3	56	-0.2354	0.00399	0.007948	11	False
+diagnostic, benchmark-developed	random25_d1	FOXK1	86	-0.1325	-0.0009897	-0.001981	8	False
+diagnostic, benchmark-developed	random25_d1	HOXA10	74	-0.1288	-0.003196	-0.006412	5	False
+diagnostic, benchmark-developed	random25_d1	HOXA5	38	-0.1518	-0.006633	-0.01335	6	False
+diagnostic, benchmark-developed	random25_d1	HOXB6	33	-0.06652				False
+diagnostic, benchmark-developed	random25_d1	HOXB8	73	0.009519	-0.02917	-0.06009	13	False
+diagnostic, benchmark-developed	random25_d1	HOXB9	36	-0.1102				False
+diagnostic, benchmark-developed	random25_d1	HOXC4	80	-0.06042	0.04211	0.08082	19	False
+diagnostic, benchmark-developed	random25_d1	HOXC9	37	-0.09106	-0.00433	-0.008698	15	False
+diagnostic, benchmark-developed	random25_d1	HOXD10	92	-0.03725				False
+diagnostic, benchmark-developed	random25_d1	MAZ	114	-0.4911	0.0003083	0.0006164	6	False
+diagnostic, benchmark-developed	random25_d1	MEF2A	44	-0.3141	-0.03787	-0.07872	9	True
+diagnostic, benchmark-developed	random25_d1	MEF2D	68	-0.03541	0.0642	0.1207	19	False
+diagnostic, benchmark-developed	random25_d1	MSX2	111	-0.09408	-0.05152	-0.1086	10	False
+diagnostic, benchmark-developed	random25_d1	MTF2	47	-0.3113	0.007852	0.01558	6	False
+diagnostic, benchmark-developed	random25_d1	NEUROD4	40	-8.141e-05	0.02843	0.05529	13	False
+diagnostic, benchmark-developed	random25_d1	NFYA	34	-0.1223	-0.003545	-0.007115	19	False
+diagnostic, benchmark-developed	random25_d1	NME2	216	-0.8365	0.04772	0.09109	23	False
+diagnostic, benchmark-developed	random25_d1	NR1D2	42	-0.01122	0.02968	0.05765	20	False
+diagnostic, benchmark-developed	random25_d1	NRF1	86	-0.1472	0.08436	0.1556	63	True
+diagnostic, benchmark-developed	random25_d1	PA2G4	31	-0.9503	-0.01918	-0.03911	7	True
+diagnostic, benchmark-developed	random25_d1	PCGF6	83	-0.2377	0.01569	0.0309	18	False
+diagnostic, benchmark-developed	random25_d1	POGK	31	-0.1381				False
+diagnostic, benchmark-developed	random25_d1	RBBP7	100	-0.4227	0.001266	0.002529	8	True
+diagnostic, benchmark-developed	random25_d1	RBPJ	86	-0.2935	0.05356	0.1017	13	True
+diagnostic, benchmark-developed	random25_d1	RELA	50	-0.09211	-0.01785	-0.03635	12	False
+diagnostic, benchmark-developed	random25_d1	SAFB	80	-0.2965	-0.01215	-0.0246	15	True
+diagnostic, benchmark-developed	random25_d1	SETDB1	59	-0.09022	0.04704	0.08985	15	True
+diagnostic, benchmark-developed	random25_d1	SMARCA1	25	-0.1991				False
+diagnostic, benchmark-developed	random25_d1	SOX4	87	-0.4491	0.01044	0.02066	19	False
+diagnostic, benchmark-developed	random25_d1	SRCAP	80	0.04499	0.04869	0.09286	11	False
+diagnostic, benchmark-developed	random25_d1	STAG2	31	-0.06009				False
+diagnostic, benchmark-developed	random25_d1	TBX3	70	-0.1804	-0.02512	-0.05153	16	False
+diagnostic, benchmark-developed	random25_d1	THAP6	45	-0.09849	0.06221	0.1171	18	False
+diagnostic, benchmark-developed	random25_d1	WIZ	26	-0.004636				False
+diagnostic, benchmark-developed	random25_d1	XPA	59	-0.1847	0.02171	0.0425	4	False
+diagnostic, benchmark-developed	random25_d1	ZBTB43	43	-0.05079	-0.06549	-0.1402	15	False
+diagnostic, benchmark-developed	random25_d1	ZBTB7A	90	-0.05233	-0.008941	-0.01804	10	False
+diagnostic, benchmark-developed	random25_d1	ZIC2	38	-0.04514	-0.02327	-0.04765	13	False
+diagnostic, benchmark-developed	random25_d1	ZNF143	67	-0.04206	0.004979	0.009909	28	False
+diagnostic, benchmark-developed	random25_d1	ZNF282	61	-0.1064	-0.0181	-0.03687	13	False
+diagnostic, benchmark-developed	random25_d1	ZNF503	40	-0.2141	0.006108	0.01214	14	False
+diagnostic, benchmark-developed	random25_d1	ZNF507	57	-0.07316	0.133	0.2348	75	False
+diagnostic, benchmark-developed	random25_d1	ZNF512	56	-0.1461	-0.01699	-0.03457	3	False
+diagnostic, benchmark-developed	random25_d1	ZNF512B	36	-0.1292	0.0505	0.09614	7	False
+diagnostic, benchmark-developed	random25_d1	ZNF581	42	-0.1361	0.0008564	0.001711	23	False
+diagnostic, benchmark-developed	random25_d1	ZNF644	25	-0.4641	-0.01533	-0.03114	10	False
+diagnostic, benchmark-developed	random25_d1	ZNF746	28	-0.1082	-0.02455	-0.05034	6	False
+diagnostic, benchmark-developed	random25_d1	ZNF768	89	0.01171				False
+diagnostic, benchmark-developed	random25_d1	ZNF777	116	-0.04671	0.02576	0.05023	16	False
+diagnostic, benchmark-developed	random25_d1	ZNF79	50	0.001276	0.001986	0.003964	11	False
+diagnostic, benchmark-developed	random25_d1	ZUFSP	73	-0.1266	-0.008892	-0.01794	9	False
+diagnostic, benchmark-developed	random25_d2	ADNP	119	-0.1337	0.03399	0.06575	16	False
+diagnostic, benchmark-developed	random25_d2	AKAP8L	29	-0.1379	-0.0004965	-0.0009935	15	False
+diagnostic, benchmark-developed	random25_d2	CHAMP1	26	-0.01426	-0.003004	-0.006026	15	False
+diagnostic, benchmark-developed	random25_d2	CTCF	80	-0.2062	0.07129	0.1331	36	True
+diagnostic, benchmark-developed	random25_d2	DDIT3	67	-0.0608	0.004607	0.009172	15	False
+diagnostic, benchmark-developed	random25_d2	DNMT1	114	-0.5001	0.1708	0.2918	66	True
+diagnostic, benchmark-developed	random25_d2	DR1	36	-0.1886				False
+diagnostic, benchmark-developed	random25_d2	E2F3	30	-0.2277				False
+diagnostic, benchmark-developed	random25_d2	E4F1	105	-0.09963	0.1562	0.2702	133	True
+diagnostic, benchmark-developed	random25_d2	ETS2	74	-0.06872	-0.02185	-0.04468	7	False
+diagnostic, benchmark-developed	random25_d2	FLYWCH1	59	-0.07182	-0.02486	-0.05099	9	False
+diagnostic, benchmark-developed	random25_d2	FOXC1	38	-0.1608	0.162	0.2788	104	False
+diagnostic, benchmark-developed	random25_d2	FOXJ3	56	-0.1405	-0.03344	-0.06919	11	False
+diagnostic, benchmark-developed	random25_d2	FOXK1	86	-0.1786	0.04303	0.08251	25	False
+diagnostic, benchmark-developed	random25_d2	HOXA10	74	-0.1522	-0.1304	-0.2999	10	False
+diagnostic, benchmark-developed	random25_d2	HOXA5	38	-0.08819	0.003607	0.007188	6	False
+diagnostic, benchmark-developed	random25_d2	HOXB6	38	-0.03135				False
+diagnostic, benchmark-developed	random25_d2	HOXB8	73	-0.03963	-0.02494	-0.05116	16	False
+diagnostic, benchmark-developed	random25_d2	HOXB9	36	-0.1901	-0.008933	-0.01803	14	False
+diagnostic, benchmark-developed	random25_d2	HOXC4	80	-0.08263	-0.07881	-0.1711	6	False
+diagnostic, benchmark-developed	random25_d2	HOXC9	37	-0.1063	0.02936	0.05705	29	False
+diagnostic, benchmark-developed	random25_d2	HOXD10	91	-0.05846				False
+diagnostic, benchmark-developed	random25_d2	MAZ	114	-0.506	-0.0007293	-0.00146	13	False
+diagnostic, benchmark-developed	random25_d2	MEF2A	44	-0.2069	0.0006181	0.001235	11	True
+diagnostic, benchmark-developed	random25_d2	MEF2D	68	-0.06059	0.01279	0.02526	5	False
+diagnostic, benchmark-developed	random25_d2	MSX2	111	-0.1151	-0.005439	-0.01094	24	False
+diagnostic, benchmark-developed	random25_d2	MTF2	47	-0.2141	0.03854	0.07422	15	False
+diagnostic, benchmark-developed	random25_d2	NEUROD4	40	-0.0001419	0.0278	0.0541	11	False
+diagnostic, benchmark-developed	random25_d2	NFYA	34	-0.08368	0.08237	0.1522	25	False
+diagnostic, benchmark-developed	random25_d2	NME2	216	-0.8393	0.1022	0.1854	43	False
+diagnostic, benchmark-developed	random25_d2	NR1D2	42	-0.1031	-0.01208	-0.02446	15	False
+diagnostic, benchmark-developed	random25_d2	NRF1	86	-0.1246	0.1634	0.2809	102	True
+diagnostic, benchmark-developed	random25_d2	PA2G4	31	-0.7602	-0.006469	-0.01302	6	True
+diagnostic, benchmark-developed	random25_d2	PCGF6	83	-0.2255	0.08923	0.1638	41	False
+diagnostic, benchmark-developed	random25_d2	POGK	31	-0.01961	-0.0149	-0.03025	8	False
+diagnostic, benchmark-developed	random25_d2	RBBP7	100	-0.4484	0.04107	0.0789	13	True
+diagnostic, benchmark-developed	random25_d2	RBPJ	86	-0.2818	0.02053	0.04023	11	True
+diagnostic, benchmark-developed	random25_d2	RELA	50	-0.0845	-0.01457	-0.02957	8	False
+diagnostic, benchmark-developed	random25_d2	SAFB	80	-0.3233	0.00475	0.009455	8	True
+diagnostic, benchmark-developed	random25_d2	SETDB1	59	-0.1431	0.04047	0.07779	19	True
+diagnostic, benchmark-developed	random25_d2	SMARCA1	25	-0.3596				False
+diagnostic, benchmark-developed	random25_d2	SOX4	87	-0.4204	-0.02924	-0.06024	5	False
+diagnostic, benchmark-developed	random25_d2	SRCAP	80	0.02417	-0.02359	-0.04832	9	False
+diagnostic, benchmark-developed	random25_d2	STAG2	31	-0.1517				False
+diagnostic, benchmark-developed	random25_d2	TBX3	70	-0.1415	-0.01173	-0.02374	16	False
+diagnostic, benchmark-developed	random25_d2	THAP6	45	-0.06046	0.03232	0.06262	19	False
+diagnostic, benchmark-developed	random25_d2	WIZ	26	0.01839	-0.005442	-0.01094	12	False
+diagnostic, benchmark-developed	random25_d2	XPA	59	-0.21	-0.01912	-0.03899	9	False
+diagnostic, benchmark-developed	random25_d2	ZBTB43	43	-0.06053	0.02145	0.042	4	False
+diagnostic, benchmark-developed	random25_d2	ZBTB7A	90	-0.01396	0.005379	0.0107	11	False
+diagnostic, benchmark-developed	random25_d2	ZIC2	38	-0.08862	0.01985	0.03893	8	False
+diagnostic, benchmark-developed	random25_d2	ZNF143	67	-0.05043	4.183e-08	8.366e-08	18	False
+diagnostic, benchmark-developed	random25_d2	ZNF282	61	-0.1198	-0.01038	-0.02098	11	False
+diagnostic, benchmark-developed	random25_d2	ZNF503	40	-0.2836	0.01625	0.03198	12	False
+diagnostic, benchmark-developed	random25_d2	ZNF507	57	-0.08677	0.1298	0.2298	69	False
+diagnostic, benchmark-developed	random25_d2	ZNF512	56	-0.09423	0.01165	0.02303	12	False
+diagnostic, benchmark-developed	random25_d2	ZNF512B	36	-0.163	-0.01225	-0.0248	8	False
+diagnostic, benchmark-developed	random25_d2	ZNF581	42	-0.1235	-0.002593	-0.005199	18	False
+diagnostic, benchmark-developed	random25_d2	ZNF644	25	-0.4807	-0.02236	-0.04574	9	False
+diagnostic, benchmark-developed	random25_d2	ZNF746	28	-0.09891	0.03966	0.07629	9	False
+diagnostic, benchmark-developed	random25_d2	ZNF768	85	-0.0282				False
+diagnostic, benchmark-developed	random25_d2	ZNF777	116	-0.04328	0.05525	0.1047	23	False
+diagnostic, benchmark-developed	random25_d2	ZNF79	50	-0.005854	-0.03564	-0.07391	7	False
+diagnostic, benchmark-developed	random25_d2	ZUFSP	73	-0.1498	0.02521	0.04918	16	False

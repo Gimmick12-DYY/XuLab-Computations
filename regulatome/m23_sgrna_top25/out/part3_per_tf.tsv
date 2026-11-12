@@ -1,0 +1,411 @@
+label	version	comparison	tf	strong_phenotype	n_responders	status	OR	OR_lo	OR_hi	OR_swapped	OR_matched
+diagnostic, benchmark-developed	all_cell_min25	m16_top1000_vs_top5pct	ADNP	False	561	ok	1.034	0.7492	1.354	0.8661	1.01
+diagnostic, benchmark-developed	all_cell_min25	m16_top1000_vs_top5pct	AKAP8L	False	561	ok	1.005	0.6681	1.376	0.9557	1.005
+diagnostic, benchmark-developed	all_cell_min25	m16_top1000_vs_top5pct	HP1	False	561	ok	1.406	0.7267	2.296	1.301	1.07
+diagnostic, benchmark-developed	all_cell_min25	m16_top1000_vs_top5pct	CHAMP1	False	561	ok	1.056	0.7664	1.376	0.763	1.009
+diagnostic, benchmark-developed	all_cell_min25	m16_top1000_vs_top5pct	CTCF	True	561	ok	0.9872	0.7186	1.3	0.763	1.034
+diagnostic, benchmark-developed	all_cell_min25	m16_top1000_vs_top5pct	DDIT3	False	561	ok	1.079	0.8002	1.392	1.127	1.079
+diagnostic, benchmark-developed	all_cell_min25	m16_top1000_vs_top5pct	DNMT1	True	561	ok	1.034	0.6493	1.464	1.009	0.9926
+diagnostic, benchmark-developed	all_cell_min25	m16_top1000_vs_top5pct	DR1	False	561	ok	1.01	0.7152	1.311	0.8729	1.057
+diagnostic, benchmark-developed	all_cell_min25	m16_top1000_vs_top5pct	E2F3	False	561	ok	1.199	0.89	1.557	1.127	1.032
+diagnostic, benchmark-developed	all_cell_min25	m16_top1000_vs_top5pct	E4F1	True	561	ok	1.501	1.139	1.924	1.176	1.103
+diagnostic, benchmark-developed	all_cell_min25	m16_top1000_vs_top5pct	EPAS1	False	561	ok	2.276	0.9597	3.936	1.069	1.118
+diagnostic, benchmark-developed	all_cell_min25	m16_top1000_vs_top5pct	ETS2	False	561	ok	0.8739	0.6209	1.173	0.3433	1.057
+diagnostic, benchmark-developed	all_cell_min25	m16_top1000_vs_top5pct	EZH2	False	561	ok	0.8295	0.5909	1.105	1.032	1.034
+diagnostic, benchmark-developed	all_cell_min25	m16_top1000_vs_top5pct	FLYWCH1	False	561	ok	0.9632	0.6993	1.287	1.272	1.032
+diagnostic, benchmark-developed	all_cell_min25	m16_top1000_vs_top5pct	FOXC1	False	561	ok	0.8714	0.6031	1.16	1.032	0.9975
+diagnostic, benchmark-developed	all_cell_min25	m16_top1000_vs_top5pct	FOXJ3	False	561	ok	0.7406	0.449	1.093	1.15	1.022
+diagnostic, benchmark-developed	all_cell_min25	m16_top1000_vs_top5pct	FOXK1	False	561	ok	0.9342	0.3925	1.658	1.315	1.052
+diagnostic, benchmark-developed	all_cell_min25	m16_top1000_vs_top5pct	HES1	False	561	ok	0.9031	0.1323	2.063	0.8285	1.179
+diagnostic, benchmark-developed	all_cell_min25	m16_top1000_vs_top5pct	HOXA10	False	561	ok	0.9178	0.6503	1.206	0.8507	1.009
+diagnostic, benchmark-developed	all_cell_min25	m16_top1000_vs_top5pct	HOXA5	False	561	ok	0.9441	0.2613	1.841	0.8551	0.9441
+diagnostic, benchmark-developed	all_cell_min25	m16_top1000_vs_top5pct	HOXB6	False	561	ok	1.297	0.9792	1.688	1.15	0.9976
+diagnostic, benchmark-developed	all_cell_min25	m16_top1000_vs_top5pct	HOXB8	False	561	ok	0.6427	0.3759	0.9722	0.9459	0.9889
+diagnostic, benchmark-developed	all_cell_min25	m16_top1000_vs_top5pct	HOXB9	False	561	ok	0.9178	0.6592	1.214	1.127	1.032
+diagnostic, benchmark-developed	all_cell_min25	m16_top1000_vs_top5pct	HOXC4	False	561	ok	1.379	0.8634	1.983	0.9435	1.037
+diagnostic, benchmark-developed	all_cell_min25	m16_top1000_vs_top5pct	HOXC9	False	561	ok	0.9404	0.6665	1.243	1.199	1.079
+diagnostic, benchmark-developed	all_cell_min25	m16_top1000_vs_top5pct	HOXD10	False	561	ok	1.024	0.5849	1.537	1.293	1.024
+diagnostic, benchmark-developed	all_cell_min25	m16_top1000_vs_top5pct	MAZ	False	561	ok	0.8953	0.6457	1.184	0.9031	1.009
+diagnostic, benchmark-developed	all_cell_min25	m16_top1000_vs_top5pct	MBD3	False	561	ok	0.8729	0.5982	1.167	1.223	0.9518
+diagnostic, benchmark-developed	all_cell_min25	m16_top1000_vs_top5pct	MEF2A	True	561	ok	1.1	0.687	1.618	0.9037	1.05
+diagnostic, benchmark-developed	all_cell_min25	m16_top1000_vs_top5pct	MEF2D	False	561	ok	1.097	0.7183	1.506	0.5908	1.02
+diagnostic, benchmark-developed	all_cell_min25	m16_top1000_vs_top5pct	MLX	False	561	ok	1.15	0.8457	1.5	0.9861	1.032
+diagnostic, benchmark-developed	all_cell_min25	m16_top1000_vs_top5pct	MSX2	False	561	too few / no list					
+diagnostic, benchmark-developed	all_cell_min25	m16_top1000_vs_top5pct	MTF2	False	561	ok	0.72	0.4981	0.9822	0.9178	0.9632
+diagnostic, benchmark-developed	all_cell_min25	m16_top1000_vs_top5pct	NEUROD4	False	561	too few / no list					
+diagnostic, benchmark-developed	all_cell_min25	m16_top1000_vs_top5pct	NFYA	False	561	ok	1.174	0.8738	1.526	1.199	1.079
+diagnostic, benchmark-developed	all_cell_min25	m16_top1000_vs_top5pct	NME2	False	561	ok	1.032	0.7457	1.37	1.032	1.009
+diagnostic, benchmark-developed	all_cell_min25	m16_top1000_vs_top5pct	NR1D2	False	561	too few / no list					
+diagnostic, benchmark-developed	all_cell_min25	m16_top1000_vs_top5pct	NRF1	True	561	ok	1.639	1.186	2.223		1.049
+diagnostic, benchmark-developed	all_cell_min25	m16_top1000_vs_top5pct	PA2G4	True	561	ok	1.131	0.6761	1.73	1.128	0.9662
+diagnostic, benchmark-developed	all_cell_min25	m16_top1000_vs_top5pct	PCGF6	False	561	ok	1.599	0.5518	3.159		1.075
+diagnostic, benchmark-developed	all_cell_min25	m16_top1000_vs_top5pct	POGK	False	561	ok	0.8507	0.5991	1.142	0.9975	1.032
+diagnostic, benchmark-developed	all_cell_min25	m16_top1000_vs_top5pct	RBBP4	False	561	ok	0.8729	0.6226	1.183	0.8963	1.032
+diagnostic, benchmark-developed	all_cell_min25	m16_top1000_vs_top5pct	RBBP7	True	561	ok	0.8507	0.5973	1.117	0.9404	0.9632
+diagnostic, benchmark-developed	all_cell_min25	m16_top1000_vs_top5pct	RBPJ	True	561	ok	0.9643	0.6979	1.288	0.6354	1.01
+diagnostic, benchmark-developed	all_cell_min25	m16_top1000_vs_top5pct	RELA	False	561	ok	0.6119	0.4047	1.144	1.103	0.6119
+diagnostic, benchmark-developed	all_cell_min25	m16_top1000_vs_top5pct	SAFB	True	561	ok	1.174	0.8711	1.538	1.546	1.009
+diagnostic, benchmark-developed	all_cell_min25	m16_top1000_vs_top5pct	SETDB1	True	561	too few / no list					
+diagnostic, benchmark-developed	all_cell_min25	m16_top1000_vs_top5pct	SMARCA1	False	561	ok	1.223	0.9076	1.56	1.009	1.009
+diagnostic, benchmark-developed	all_cell_min25	m16_top1000_vs_top5pct	SOX12	False	561	ok	3.002	0.6747	9.828		0.9037
+diagnostic, benchmark-developed	all_cell_min25	m16_top1000_vs_top5pct	SOX4	False	561	ok	1.15	0.8539	1.473	1.104	1.032
+diagnostic, benchmark-developed	all_cell_min25	m16_top1000_vs_top5pct	SRCAP	False	561	ok	1.176	0.8655	1.527	1.056	0.9988
+diagnostic, benchmark-developed	all_cell_min25	m16_top1000_vs_top5pct	STAG2	False	561	ok	1.381	0.7909	2.057	1.223	1.017
+diagnostic, benchmark-developed	all_cell_min25	m16_top1000_vs_top5pct	TBX3	False	561	ok	1.079	0.548	1.689	0.7847	0.9988
+diagnostic, benchmark-developed	all_cell_min25	m16_top1000_vs_top5pct	THAP6	False	561	ok	0.8953	0.6429	1.204	0.9926	0.9861
+diagnostic, benchmark-developed	all_cell_min25	m16_top1000_vs_top5pct	TRAFD1	False	561	ok	0.8551	0.546	1.242	1.1	1.035
+diagnostic, benchmark-developed	all_cell_min25	m16_top1000_vs_top5pct	WIZ	False	561	ok	1.152	0.8555	1.515	1.135	1.01
+diagnostic, benchmark-developed	all_cell_min25	m16_top1000_vs_top5pct	XPA	False	561	ok	0.8953	0.6331	1.183	0.5712	0.9632
+diagnostic, benchmark-developed	all_cell_min25	m16_top1000_vs_top5pct	ZBTB40	False	561	ok	0.763	0.4438	1.146		0.9896
+diagnostic, benchmark-developed	all_cell_min25	m16_top1000_vs_top5pct	ZBTB43	False	561	ok	0.8745	0.5434	1.259	1.2	1.003
+diagnostic, benchmark-developed	all_cell_min25	m16_top1000_vs_top5pct	ZBTB7A	False	561	ok	1.2	0.8834	1.56	1.032	1.057
+diagnostic, benchmark-developed	all_cell_min25	m16_top1000_vs_top5pct	ZIC2	False	561	ok	1.009	0.7324	1.301	0.8285	1.056
+diagnostic, benchmark-developed	all_cell_min25	m16_top1000_vs_top5pct	ZNF143	False	561	ok	1.026	0.7333	1.352	1.508	1.002
+diagnostic, benchmark-developed	all_cell_min25	m16_top1000_vs_top5pct	ZNF282	False	561	ok	1.032	0.7458	1.352	0.6119	0.9746
+diagnostic, benchmark-developed	all_cell_min25	m16_top1000_vs_top5pct	ZNF367	False	561	ok	0.8387	0.4422	1.312	0.9404	0.964
+diagnostic, benchmark-developed	all_cell_min25	m16_top1000_vs_top5pct	ZNF503	False	561	too few / no list					
+diagnostic, benchmark-developed	all_cell_min25	m16_top1000_vs_top5pct	ZNF507	False	561	ok	0.7414	0.5111	1.015	0.9861	1.056
+diagnostic, benchmark-developed	all_cell_min25	m16_top1000_vs_top5pct	ZNF512	False	561	ok	1.128	0.8477	1.451	1.022	1.01
+diagnostic, benchmark-developed	all_cell_min25	m16_top1000_vs_top5pct	ZNF512B	False	561	ok	1.199	0.8817	1.562	1.103	1.032
+diagnostic, benchmark-developed	all_cell_min25	m16_top1000_vs_top5pct	ZNF581	False	561	too few / no list					
+diagnostic, benchmark-developed	all_cell_min25	m16_top1000_vs_top5pct	ZNF606	False	561	too few / no list					
+diagnostic, benchmark-developed	all_cell_min25	m16_top1000_vs_top5pct	ZNF644	False	561	ok	1.079	0.7899	1.41	1.242	0.9861
+diagnostic, benchmark-developed	all_cell_min25	m16_top1000_vs_top5pct	ZNF703	False	561	ok	0.9861	0.7196	1.298	0.9178	0.9404
+diagnostic, benchmark-developed	all_cell_min25	m16_top1000_vs_top5pct	ZNF746	False	561	ok	1.009	0.7309	1.329	0.9643	1.056
+diagnostic, benchmark-developed	all_cell_min25	m16_top1000_vs_top5pct	ZNF768	False	561	ok	0.9971	0.6645	1.367	1.056	0.9971
+diagnostic, benchmark-developed	all_cell_min25	m16_top1000_vs_top5pct	ZNF777	False	561	ok	1.127	0.8238	1.488	1.174	0.9632
+diagnostic, benchmark-developed	all_cell_min25	m16_top1000_vs_top5pct	ZNF79	False	561	too few / no list					
+diagnostic, benchmark-developed	all_cell_min25	m16_top1000_vs_top5pct	ZUFSP	False	561	ok	1.174	0.8495	1.528	0.8387	0.9861
+diagnostic, benchmark-developed	all_cell_min25	m19_B1xP4	ADNP	False	45	ok	0.7368	0.2136	1.568	1.917	1.12
+diagnostic, benchmark-developed	all_cell_min25	m19_B1xP4	AKAP8L	False	11	too few / no list					
+diagnostic, benchmark-developed	all_cell_min25	m19_B1xP4	HP1	False	0	too few / no list					
+diagnostic, benchmark-developed	all_cell_min25	m19_B1xP4	CHAMP1	False	18	too few / no list					
+diagnostic, benchmark-developed	all_cell_min25	m19_B1xP4	CTCF	True	141	ok	1.102	0.7097	1.57	0.4673	1.016
+diagnostic, benchmark-developed	all_cell_min25	m19_B1xP4	DDIT3	False	15	too few / no list					
+diagnostic, benchmark-developed	all_cell_min25	m19_B1xP4	DNMT1	True	320	ok	1.309	0.7336	1.939	1.208	0.9479
+diagnostic, benchmark-developed	all_cell_min25	m19_B1xP4	DR1	False	17	too few / no list					
+diagnostic, benchmark-developed	all_cell_min25	m19_B1xP4	E2F3	False	20	ok	0.5853	0.2327	1.507	0.9676	1.08
+diagnostic, benchmark-developed	all_cell_min25	m19_B1xP4	E4F1	True	951	ok	1.045	0.9105	1.198	0.9679	1.03
+diagnostic, benchmark-developed	all_cell_min25	m19_B1xP4	EPAS1	False	9	too few / no list					
+diagnostic, benchmark-developed	all_cell_min25	m19_B1xP4	ETS2	False	60	ok	0.8807	0.5099	1.445	1.097	1.012
+diagnostic, benchmark-developed	all_cell_min25	m19_B1xP4	EZH2	False	27	ok	0.6486	0.09342	1.578	1.829	1.111
+diagnostic, benchmark-developed	all_cell_min25	m19_B1xP4	FLYWCH1	False	12	too few / no list					
+diagnostic, benchmark-developed	all_cell_min25	m19_B1xP4	FOXC1	False	86	ok	0.9363	0.3326	1.791	0.7768	1.095
+diagnostic, benchmark-developed	all_cell_min25	m19_B1xP4	FOXJ3	False	23	ok	0.3654	0.2557	0.601	2.242	1.147
+diagnostic, benchmark-developed	all_cell_min25	m19_B1xP4	FOXK1	False	65	ok	2.423	0.439	5.925	1.925	1.423
+diagnostic, benchmark-developed	all_cell_min25	m19_B1xP4	HES1	False	15	too few / no list					
+diagnostic, benchmark-developed	all_cell_min25	m19_B1xP4	HOXA10	False	14	too few / no list					
+diagnostic, benchmark-developed	all_cell_min25	m19_B1xP4	HOXA5	False	17	too few / no list					
+diagnostic, benchmark-developed	all_cell_min25	m19_B1xP4	HOXB6	False	12	too few / no list					
+diagnostic, benchmark-developed	all_cell_min25	m19_B1xP4	HOXB8	False	17	too few / no list					
+diagnostic, benchmark-developed	all_cell_min25	m19_B1xP4	HOXB9	False	7	too few / no list					
+diagnostic, benchmark-developed	all_cell_min25	m19_B1xP4	HOXC4	False	57	ok	1.763	0.2553	4.059	0.6011	1.234
+diagnostic, benchmark-developed	all_cell_min25	m19_B1xP4	HOXC9	False	30	ok	0.9849	0.2622	2.059	1.413	0.9849
+diagnostic, benchmark-developed	all_cell_min25	m19_B1xP4	HOXD10	False	16	too few / no list					
+diagnostic, benchmark-developed	all_cell_min25	m19_B1xP4	MAZ	False	31	ok	0.4452	0.06709	1.068	2.307	1.112
+diagnostic, benchmark-developed	all_cell_min25	m19_B1xP4	MBD3	False	24	ok	0.3857	0.1754	0.8814	1.022	0.9373
+diagnostic, benchmark-developed	all_cell_min25	m19_B1xP4	MEF2A	True	9	too few / no list					
+diagnostic, benchmark-developed	all_cell_min25	m19_B1xP4	MEF2D	False	20	ok	0.4481	0.3048	0.745	1.49	1.416
+diagnostic, benchmark-developed	all_cell_min25	m19_B1xP4	MLX	False	12	too few / no list					
+diagnostic, benchmark-developed	all_cell_min25	m19_B1xP4	MSX2	False	20	too few / no list					
+diagnostic, benchmark-developed	all_cell_min25	m19_B1xP4	MTF2	False	27	ok	0.816	0.3603	1.752	0.5402	0.9445
+diagnostic, benchmark-developed	all_cell_min25	m19_B1xP4	NEUROD4	False	18	too few / no list					
+diagnostic, benchmark-developed	all_cell_min25	m19_B1xP4	NFYA	False	18	too few / no list					
+diagnostic, benchmark-developed	all_cell_min25	m19_B1xP4	NME2	False	278	ok	1.134	0.8792	1.467	0.8316	1.01
+diagnostic, benchmark-developed	all_cell_min25	m19_B1xP4	NR1D2	False	29	too few / no list					
+diagnostic, benchmark-developed	all_cell_min25	m19_B1xP4	NRF1	True	591	ok	1.428	0.9996	1.922		0.9897
+diagnostic, benchmark-developed	all_cell_min25	m19_B1xP4	PA2G4	True	19	too few / no list					
+diagnostic, benchmark-developed	all_cell_min25	m19_B1xP4	PCGF6	False	28	ok	2.335	1.602	3.809		2.335
+diagnostic, benchmark-developed	all_cell_min25	m19_B1xP4	POGK	False	3	too few / no list					
+diagnostic, benchmark-developed	all_cell_min25	m19_B1xP4	RBBP4	False	23	ok	0.6831	0.4189	1.015	0.9918	0.6831
+diagnostic, benchmark-developed	all_cell_min25	m19_B1xP4	RBBP7	True	21	ok	1.727	0.7449	5.634	1.56	0.9521
+diagnostic, benchmark-developed	all_cell_min25	m19_B1xP4	RBPJ	True	52	ok	0.7704	0.2872	1.459	0.6223	1.022
+diagnostic, benchmark-developed	all_cell_min25	m19_B1xP4	RELA	False	30	ok	11.83	6.926	24.85	0.775	11.83
+diagnostic, benchmark-developed	all_cell_min25	m19_B1xP4	SAFB	True	32	ok	0.8707	0.226	1.946	0.5073	1.104
+diagnostic, benchmark-developed	all_cell_min25	m19_B1xP4	SETDB1	True	67	too few / no list					
+diagnostic, benchmark-developed	all_cell_min25	m19_B1xP4	SMARCA1	False	55	ok	1.1	0.432	1.94	1.095	1.1
+diagnostic, benchmark-developed	all_cell_min25	m19_B1xP4	SOX12	False	6	too few / no list					
+diagnostic, benchmark-developed	all_cell_min25	m19_B1xP4	SOX4	False	22	ok	0.4957	0.2019	3.401	2.144	0.7305
+diagnostic, benchmark-developed	all_cell_min25	m19_B1xP4	SRCAP	False	22	ok	0.9834	0.1412	2.487	0.8591	1.334
+diagnostic, benchmark-developed	all_cell_min25	m19_B1xP4	STAG2	False	22	ok	0.7955	0.5465	1.327	0.582	0.7955
+diagnostic, benchmark-developed	all_cell_min25	m19_B1xP4	TBX3	False	21	ok	0.9437	0.6458	1.6	1.628	0.9437
+diagnostic, benchmark-developed	all_cell_min25	m19_B1xP4	THAP6	False	15	too few / no list					
+diagnostic, benchmark-developed	all_cell_min25	m19_B1xP4	TRAFD1	False	21	ok	1.274	0.317	3.808	0.5578	1.274
+diagnostic, benchmark-developed	all_cell_min25	m19_B1xP4	WIZ	False	43	ok	0.8388	0.322	1.642	1.273	1.099
+diagnostic, benchmark-developed	all_cell_min25	m19_B1xP4	XPA	False	35	ok	1.961	0.8084	14.22	0.7057	0.9567
+diagnostic, benchmark-developed	all_cell_min25	m19_B1xP4	ZBTB40	False	16	too few / no list					
+diagnostic, benchmark-developed	all_cell_min25	m19_B1xP4	ZBTB43	False	12	too few / no list					
+diagnostic, benchmark-developed	all_cell_min25	m19_B1xP4	ZBTB7A	False	28	ok	1.169	0.4652	2.418	0.9146	0.9944
+diagnostic, benchmark-developed	all_cell_min25	m19_B1xP4	ZIC2	False	20	ok	0.7471	0.1091	1.831	0.1516	1.019
+diagnostic, benchmark-developed	all_cell_min25	m19_B1xP4	ZNF143	False	70	ok	2.017	0.9281	3.47	0.678	1.046
+diagnostic, benchmark-developed	all_cell_min25	m19_B1xP4	ZNF282	False	25	ok	0.5038	0.1565	1.144	14.15	1.025
+diagnostic, benchmark-developed	all_cell_min25	m19_B1xP4	ZNF367	False	14	too few / no list					
+diagnostic, benchmark-developed	all_cell_min25	m19_B1xP4	ZNF503	False	12	too few / no list					
+diagnostic, benchmark-developed	all_cell_min25	m19_B1xP4	ZNF507	False	68	ok	0.7798	0.4891	1.439	0.9115	0.9789
+diagnostic, benchmark-developed	all_cell_min25	m19_B1xP4	ZNF512	False	14	too few / no list					
+diagnostic, benchmark-developed	all_cell_min25	m19_B1xP4	ZNF512B	False	8	too few / no list					
+diagnostic, benchmark-developed	all_cell_min25	m19_B1xP4	ZNF581	False	20	too few / no list					
+diagnostic, benchmark-developed	all_cell_min25	m19_B1xP4	ZNF606	False	9	too few / no list					
+diagnostic, benchmark-developed	all_cell_min25	m19_B1xP4	ZNF644	False	17	too few / no list					
+diagnostic, benchmark-developed	all_cell_min25	m19_B1xP4	ZNF703	False	12	too few / no list					
+diagnostic, benchmark-developed	all_cell_min25	m19_B1xP4	ZNF746	False	94	ok	0.8451	0.4057	1.419	0.9068	0.996
+diagnostic, benchmark-developed	all_cell_min25	m19_B1xP4	ZNF768	False	14	too few / no list					
+diagnostic, benchmark-developed	all_cell_min25	m19_B1xP4	ZNF777	False	37	ok	0.7623	0.2919	1.461	1.047	1.011
+diagnostic, benchmark-developed	all_cell_min25	m19_B1xP4	ZNF79	False	17	too few / no list					
+diagnostic, benchmark-developed	all_cell_min25	m19_B1xP4	ZUFSP	False	17	too few / no list					
+diagnostic, benchmark-developed	all_cell_min25	m19_B2xP1	ADNP	False	561	ok	0.8802	0.5208	1.279	0.9656	0.9662
+diagnostic, benchmark-developed	all_cell_min25	m19_B2xP1	AKAP8L	False	561	ok	1.245	0.7043	1.925	0.984	1.014
+diagnostic, benchmark-developed	all_cell_min25	m19_B2xP1	HP1	False	561	ok	1.953	0.6589	3.746	1.063	1.306
+diagnostic, benchmark-developed	all_cell_min25	m19_B2xP1	CHAMP1	False	561	ok	1.1	0.7329	1.542	0.7091	0.9876
+diagnostic, benchmark-developed	all_cell_min25	m19_B2xP1	CTCF	True	561	ok	0.9941	0.7257	1.277	0.799	1.017
+diagnostic, benchmark-developed	all_cell_min25	m19_B2xP1	DDIT3	False	561	ok	1.08	0.889	1.319	1.115	1.055
+diagnostic, benchmark-developed	all_cell_min25	m19_B2xP1	DNMT1	True	561	ok	0.8752	0.3915	1.487	0.9436	0.974
+diagnostic, benchmark-developed	all_cell_min25	m19_B2xP1	DR1	False	561	ok	0.8656	0.6525	1.093	0.8145	1.025
+diagnostic, benchmark-developed	all_cell_min25	m19_B2xP1	E2F3	False	561	ok	1.064	0.8916	1.259	1.12	0.9974
+diagnostic, benchmark-developed	all_cell_min25	m19_B2xP1	E4F1	True	561	ok	1.361	1.14	1.63	1.099	1.122
+diagnostic, benchmark-developed	all_cell_min25	m19_B2xP1	EPAS1	False	561	ok	2.185	0.3227	5.112	0.9388	0.8756
+diagnostic, benchmark-developed	all_cell_min25	m19_B2xP1	ETS2	False	561	ok	0.9886	0.7634	1.23	0.9332	1.061
+diagnostic, benchmark-developed	all_cell_min25	m19_B2xP1	EZH2	False	561	ok	0.6896	0.4295	0.9607	1.281	1.031
+diagnostic, benchmark-developed	all_cell_min25	m19_B2xP1	FLYWCH1	False	561	ok	0.9753	0.6749	1.342	1.281	1.049
+diagnostic, benchmark-developed	all_cell_min25	m19_B2xP1	FOXC1	False	561	ok	0.8453	0.4033	1.375	1.026	1.029
+diagnostic, benchmark-developed	all_cell_min25	m19_B2xP1	FOXJ3	False	561	ok	0.974	0.4286	1.667	1.141	1.074
+diagnostic, benchmark-developed	all_cell_min25	m19_B2xP1	FOXK1	False	561	ok	1.142	0.3218	2.239	2.302	1.142
+diagnostic, benchmark-developed	all_cell_min25	m19_B2xP1	HES1	False	561	ok	0.4212	0.2918	0.7066	0.7994	1.325
+diagnostic, benchmark-developed	all_cell_min25	m19_B2xP1	HOXA10	False	561	ok	0.956	0.662	1.28	1.054	1.032
+diagnostic, benchmark-developed	all_cell_min25	m19_B2xP1	HOXA5	False	561	ok	2.114	0.3529	5.531	0.4704	1.212
+diagnostic, benchmark-developed	all_cell_min25	m19_B2xP1	HOXB6	False	561	ok	1.238	0.9149	1.576	1.011	0.9988
+diagnostic, benchmark-developed	all_cell_min25	m19_B2xP1	HOXB8	False	561	ok	0.6622	0.2429	1.182	1.394	1.043
+diagnostic, benchmark-developed	all_cell_min25	m19_B2xP1	HOXB9	False	561	ok	1.047	0.7212	1.412	1.041	1.047
+diagnostic, benchmark-developed	all_cell_min25	m19_B2xP1	HOXC4	False	561	ok	1.426	0.647	2.403	0.8853	0.9918
+diagnostic, benchmark-developed	all_cell_min25	m19_B2xP1	HOXC9	False	561	ok	1.025	0.7118	1.394	1.222	1.055
+diagnostic, benchmark-developed	all_cell_min25	m19_B2xP1	HOXD10	False	561	ok	0.9441	0.2595	1.882	1.666	1.128
+diagnostic, benchmark-developed	all_cell_min25	m19_B2xP1	MAZ	False	561	ok	0.9442	0.6692	1.278	1.325	1.022
+diagnostic, benchmark-developed	all_cell_min25	m19_B2xP1	MBD3	False	561	ok	0.9366	0.7877	1.111	1.047	0.9151
+diagnostic, benchmark-developed	all_cell_min25	m19_B2xP1	MEF2A	True	561	ok	0.8582	0.3494	1.528	2.713	1.105
+diagnostic, benchmark-developed	all_cell_min25	m19_B2xP1	MEF2D	False	561	ok	0.6686	0.2345	1.205	0.9227	1.053
+diagnostic, benchmark-developed	all_cell_min25	m19_B2xP1	MLX	False	561	ok	0.994	0.8284	1.2	0.9809	1.029
+diagnostic, benchmark-developed	all_cell_min25	m19_B2xP1	MSX2	False	561	too few / no list					
+diagnostic, benchmark-developed	all_cell_min25	m19_B2xP1	MTF2	False	561	ok	0.8499	0.6602	1.056	0.9298	0.9517
+diagnostic, benchmark-developed	all_cell_min25	m19_B2xP1	NEUROD4	False	561	too few / no list					
+diagnostic, benchmark-developed	all_cell_min25	m19_B2xP1	NFYA	False	561	ok	1.11	0.9335	1.348	1.171	1.064
+diagnostic, benchmark-developed	all_cell_min25	m19_B2xP1	NME2	False	561	ok	0.9564	0.7958	1.137	0.9046	1.005
+diagnostic, benchmark-developed	all_cell_min25	m19_B2xP1	NR1D2	False	561	too few / no list					
+diagnostic, benchmark-developed	all_cell_min25	m19_B2xP1	NRF1	True	561	ok	2.429	1.564	3.482		0.9656
+diagnostic, benchmark-developed	all_cell_min25	m19_B2xP1	PA2G4	True	561	ok	0.9108	0.2509	1.831	0.9613	1.088
+diagnostic, benchmark-developed	all_cell_min25	m19_B2xP1	PCGF6	False	561	ok	2.339	0.3221	5.509		0.9332
+diagnostic, benchmark-developed	all_cell_min25	m19_B2xP1	POGK	False	561	ok	1.067	0.6835	1.525	0.9915	1.067
+diagnostic, benchmark-developed	all_cell_min25	m19_B2xP1	RBBP4	False	561	ok	1.14	0.922	1.429	1.154	1.111
+diagnostic, benchmark-developed	all_cell_min25	m19_B2xP1	RBBP7	True	561	ok	1.073	0.8972	1.287	0.9866	0.982
+diagnostic, benchmark-developed	all_cell_min25	m19_B2xP1	RBPJ	True	561	ok	1.017	0.7097	1.366	0.7473	0.9866
+diagnostic, benchmark-developed	all_cell_min25	m19_B2xP1	RELA	False	561	ok	2.11	1.074	6.655	1.205	2.11
+diagnostic, benchmark-developed	all_cell_min25	m19_B2xP1	SAFB	True	561	ok	1.026	0.686	1.41	1.454	0.994
+diagnostic, benchmark-developed	all_cell_min25	m19_B2xP1	SETDB1	True	561	too few / no list					
+diagnostic, benchmark-developed	all_cell_min25	m19_B2xP1	SMARCA1	False	561	ok	1.235	0.8451	1.684	1.096	1.051
+diagnostic, benchmark-developed	all_cell_min25	m19_B2xP1	SOX12	False	561	ok	11.41	1.986	94.43		2.713
+diagnostic, benchmark-developed	all_cell_min25	m19_B2xP1	SOX4	False	561	ok	1.051	0.8835	1.266	1.187	1.029
+diagnostic, benchmark-developed	all_cell_min25	m19_B2xP1	SRCAP	False	561	ok	1.28	0.9009	1.719	1.075	0.9871
+diagnostic, benchmark-developed	all_cell_min25	m19_B2xP1	STAG2	False	561	ok	0.9989	0.2742	1.973	1.172	0.9989
+diagnostic, benchmark-developed	all_cell_min25	m19_B2xP1	TBX3	False	561	ok	0.8572	0.2525	1.771	1.067	1.06
+diagnostic, benchmark-developed	all_cell_min25	m19_B2xP1	THAP6	False	561	ok	0.7973	0.4782	1.19	1.074	0.9683
+diagnostic, benchmark-developed	all_cell_min25	m19_B2xP1	TRAFD1	False	561	ok	1.023	0.4712	1.656	0.9804	1.023
+diagnostic, benchmark-developed	all_cell_min25	m19_B2xP1	WIZ	False	561	ok	1.16	0.8405	1.503	1.307	1.032
+diagnostic, benchmark-developed	all_cell_min25	m19_B2xP1	XPA	False	561	ok	0.9872	0.8314	1.189	0.3412	0.9947
+diagnostic, benchmark-developed	all_cell_min25	m19_B2xP1	ZBTB40	False	561	ok	0.7611	0.2712	1.447		1.012
+diagnostic, benchmark-developed	all_cell_min25	m19_B2xP1	ZBTB43	False	561	ok	0.8629	0.3412	1.536	1.264	1.082
+diagnostic, benchmark-developed	all_cell_min25	m19_B2xP1	ZBTB7A	False	561	ok	1.219	0.939	1.535	1.151	1.033
+diagnostic, benchmark-developed	all_cell_min25	m19_B2xP1	ZIC2	False	561	ok	0.9417	0.6594	1.254	0.8773	1.067
+diagnostic, benchmark-developed	all_cell_min25	m19_B2xP1	ZNF143	False	561	ok	0.9459	0.529	1.451	1.212	1.008
+diagnostic, benchmark-developed	all_cell_min25	m19_B2xP1	ZNF282	False	561	ok	0.9565	0.7514	1.193	2.11	0.9836
+diagnostic, benchmark-developed	all_cell_min25	m19_B2xP1	ZNF367	False	561	too few / no list					
+diagnostic, benchmark-developed	all_cell_min25	m19_B2xP1	ZNF503	False	561	too few / no list					
+diagnostic, benchmark-developed	all_cell_min25	m19_B2xP1	ZNF507	False	561	ok	0.9715	0.8241	1.15	0.9186	1.072
+diagnostic, benchmark-developed	all_cell_min25	m19_B2xP1	ZNF512	False	561	ok	1.061	0.6234	1.593	1.278	1.061
+diagnostic, benchmark-developed	all_cell_min25	m19_B2xP1	ZNF512B	False	561	ok	1.165	0.8392	1.523	1.161	1.053
+diagnostic, benchmark-developed	all_cell_min25	m19_B2xP1	ZNF581	False	561	too few / no list					
+diagnostic, benchmark-developed	all_cell_min25	m19_B2xP1	ZNF606	False	561	too few / no list					
+diagnostic, benchmark-developed	all_cell_min25	m19_B2xP1	ZNF644	False	561	ok	1.075	0.7898	1.427	1.7	0.9891
+diagnostic, benchmark-developed	all_cell_min25	m19_B2xP1	ZNF703	False	561	ok	1.155	0.8969	1.461	0.8885	0.9472
+diagnostic, benchmark-developed	all_cell_min25	m19_B2xP1	ZNF746	False	561	ok	0.994	0.6769	1.387	1.209	1.075
+diagnostic, benchmark-developed	all_cell_min25	m19_B2xP1	ZNF768	False	561	ok	0.8253	0.3624	1.359	1.029	1.081
+diagnostic, benchmark-developed	all_cell_min25	m19_B2xP1	ZNF777	False	561	ok	1.104	0.8255	1.417	1.075	0.9463
+diagnostic, benchmark-developed	all_cell_min25	m19_B2xP1	ZNF79	False	561	too few / no list					
+diagnostic, benchmark-developed	all_cell_min25	m19_B2xP1	ZUFSP	False	561	ok	0.9306	0.5726	1.349	0.5675	0.976
+diagnostic, benchmark-developed	top25_own	m16_top1000_vs_top5pct	ADNP	False	561	ok	1.034	0.7512	1.354	0.8661	1.034
+diagnostic, benchmark-developed	top25_own	m16_top1000_vs_top5pct	AKAP8L	False	561	ok	1.167	0.8155	1.566	0.64	1.037
+diagnostic, benchmark-developed	top25_own	m16_top1000_vs_top5pct	CHAMP1	False	561	ok	0.9632	0.6959	1.281	0.8507	0.9861
+diagnostic, benchmark-developed	top25_own	m16_top1000_vs_top5pct	CTCF	True	561	ok	1.01	0.7465	1.321	0.8953	1.057
+diagnostic, benchmark-developed	top25_own	m16_top1000_vs_top5pct	DDIT3	False	561	ok	1.199	0.8978	1.548	1.247	1.079
+diagnostic, benchmark-developed	top25_own	m16_top1000_vs_top5pct	DNMT1	True	561	ok	1.378	0.9261	1.856	0.9632	1.034
+diagnostic, benchmark-developed	top25_own	m16_top1000_vs_top5pct	DR1	False	561	ok	0.7856	0.5394	1.072	1.127	0.9872
+diagnostic, benchmark-developed	top25_own	m16_top1000_vs_top5pct	E2F3	False	561	ok	1.056	0.7747	1.373	0.8729	1.079
+diagnostic, benchmark-developed	top25_own	m16_top1000_vs_top5pct	E4F1	True	561	ok	1.056	0.7765	1.388	1.176	1.009
+diagnostic, benchmark-developed	top25_own	m16_top1000_vs_top5pct	ETS2	False	561	ok	1.176	0.8711	1.536	0.3433	1.069
+diagnostic, benchmark-developed	top25_own	m16_top1000_vs_top5pct	FLYWCH1	False	561	ok	0.9178	0.659	1.216	1.009	1.021
+diagnostic, benchmark-developed	top25_own	m16_top1000_vs_top5pct	FOXC1	False	561	ok	0.9466	0.6627	1.258	1.223	1.01
+diagnostic, benchmark-developed	top25_own	m16_top1000_vs_top5pct	FOXJ3	False	561	ok	1.022	0.6831	1.425	0.9492	1.059
+diagnostic, benchmark-developed	top25_own	m16_top1000_vs_top5pct	FOXK1	False	561	ok	0.9342	0.3733	1.623	1.315	1.052
+diagnostic, benchmark-developed	top25_own	m16_top1000_vs_top5pct	HOXA10	False	561	ok	1.15	0.8368	1.497	1.103	1.044
+diagnostic, benchmark-developed	top25_own	m16_top1000_vs_top5pct	HOXA5	False	561	ok	1.705	0.7242	2.914	0.9264	1.128
+diagnostic, benchmark-developed	top25_own	m16_top1000_vs_top5pct	HOXB6	False	561	ok	1.15	0.85	1.511	0.9861	1.009
+diagnostic, benchmark-developed	top25_own	m16_top1000_vs_top5pct	HOXB8	False	561	ok	1.532	1.076	2.064	1.088	1.029
+diagnostic, benchmark-developed	top25_own	m16_top1000_vs_top5pct	HOXB9	False	561	ok	0.9178	0.6489	1.211	0.9861	0.9861
+diagnostic, benchmark-developed	top25_own	m16_top1000_vs_top5pct	HOXC4	False	561	ok	1.093	0.6571	1.617	0.8525	1.037
+diagnostic, benchmark-developed	top25_own	m16_top1000_vs_top5pct	HOXC9	False	561	ok	0.8285	0.5839	1.092	1.079	1.079
+diagnostic, benchmark-developed	top25_own	m16_top1000_vs_top5pct	HOXD10	False	561	ok	0.8982	0.4637	1.413	1.243	1.024
+diagnostic, benchmark-developed	top25_own	m16_top1000_vs_top5pct	MAZ	False	561	ok	1.056	0.7605	1.373	0.9031	1.056
+diagnostic, benchmark-developed	top25_own	m16_top1000_vs_top5pct	MEF2A	True	561	ok	1.15	0.7059	1.68	0.9037	1.001
+diagnostic, benchmark-developed	top25_own	m16_top1000_vs_top5pct	MEF2D	False	561	ok	1.097	0.6938	1.509	0.4797	1.02
+diagnostic, benchmark-developed	top25_own	m16_top1000_vs_top5pct	MSX2	False	561	too few / no list					
+diagnostic, benchmark-developed	top25_own	m16_top1000_vs_top5pct	MTF2	False	561	ok	0.9861	0.7019	1.313	0.9861	1.032
+diagnostic, benchmark-developed	top25_own	m16_top1000_vs_top5pct	NEUROD4	False	561	too few / no list					
+diagnostic, benchmark-developed	top25_own	m16_top1000_vs_top5pct	NFYA	False	561	ok	0.9404	0.6757	1.23	1.501	1.079
+diagnostic, benchmark-developed	top25_own	m16_top1000_vs_top5pct	NME2	False	561	ok	1.032	0.7472	1.36	0.8507	1.056
+diagnostic, benchmark-developed	top25_own	m16_top1000_vs_top5pct	NR1D2	False	561	too few / no list					
+diagnostic, benchmark-developed	top25_own	m16_top1000_vs_top5pct	NRF1	True	561	ok	1.395	0.9766	1.878		1.012
+diagnostic, benchmark-developed	top25_own	m16_top1000_vs_top5pct	PA2G4	True	561	ok	1.405	0.8262	2.042	0.9188	0.9988
+diagnostic, benchmark-developed	top25_own	m16_top1000_vs_top5pct	PCGF6	False	561	ok	0.5803	0.1035	1.396		1.075
+diagnostic, benchmark-developed	top25_own	m16_top1000_vs_top5pct	POGK	False	561	ok	0.7847	0.55	1.062	0.9213	1.032
+diagnostic, benchmark-developed	top25_own	m16_top1000_vs_top5pct	RBBP7	True	561	ok	1.079	0.7937	1.401	1.103	1.162
+diagnostic, benchmark-developed	top25_own	m16_top1000_vs_top5pct	RBPJ	True	561	ok	0.9872	0.6988	1.325	0.9178	1.01
+diagnostic, benchmark-developed	top25_own	m16_top1000_vs_top5pct	RELA	False	561	ok	0.6119	0.4078	1.144	0.8507	1.966
+diagnostic, benchmark-developed	top25_own	m16_top1000_vs_top5pct	SAFB	True	561	ok	0.8729	0.6178	1.172	0.9335	1.032
+diagnostic, benchmark-developed	top25_own	m16_top1000_vs_top5pct	SETDB1	True	561	too few / no list					
+diagnostic, benchmark-developed	top25_own	m16_top1000_vs_top5pct	SMARCA1	False	561	ok	0.9404	0.6673	1.239	0.9404	1.056
+diagnostic, benchmark-developed	top25_own	m16_top1000_vs_top5pct	SOX4	False	561	ok	0.9178	0.6551	1.216	1.176	1.056
+diagnostic, benchmark-developed	top25_own	m16_top1000_vs_top5pct	SRCAP	False	561	ok	1.128	0.815	1.455	0.9632	1.034
+diagnostic, benchmark-developed	top25_own	m16_top1000_vs_top5pct	TBX3	False	561	ok	0.9195	0.4633	1.497	1.15	1.079
+diagnostic, benchmark-developed	top25_own	m16_top1000_vs_top5pct	THAP6	False	561	ok	1.15	0.8431	1.485	1.29	1.032
+diagnostic, benchmark-developed	top25_own	m16_top1000_vs_top5pct	WIZ	False	561	ok	1.034	0.7559	1.358	1.135	1.034
+diagnostic, benchmark-developed	top25_own	m16_top1000_vs_top5pct	XPA	False	561	ok	1.056	0.769	1.396	1.207	1.044
+diagnostic, benchmark-developed	top25_own	m16_top1000_vs_top5pct	ZBTB43	False	561	ok	1.179	0.7614	1.649	1.034	1.047
+diagnostic, benchmark-developed	top25_own	m16_top1000_vs_top5pct	ZBTB7A	False	561	ok	1.08	0.7934	1.426	1.199	1.057
+diagnostic, benchmark-developed	top25_own	m16_top1000_vs_top5pct	ZIC2	False	561	ok	1.009	0.746	1.32	1.223	1.032
+diagnostic, benchmark-developed	top25_own	m16_top1000_vs_top5pct	ZNF143	False	561	ok	0.9558	0.6891	1.299	1.316	1.002
+diagnostic, benchmark-developed	top25_own	m16_top1000_vs_top5pct	ZNF282	False	561	ok	1.174	0.8693	1.533	0.6119	1.056
+diagnostic, benchmark-developed	top25_own	m16_top1000_vs_top5pct	ZNF503	False	561	too few / no list					
+diagnostic, benchmark-developed	top25_own	m16_top1000_vs_top5pct	ZNF507	False	561	ok	0.763	0.5279	1.034	0.8953	1.044
+diagnostic, benchmark-developed	top25_own	m16_top1000_vs_top5pct	ZNF512	False	561	ok	0.9188	0.6593	1.231	0.9504	1.01
+diagnostic, benchmark-developed	top25_own	m16_top1000_vs_top5pct	ZNF512B	False	561	ok	1.009	0.7295	1.324	0.9861	1.056
+diagnostic, benchmark-developed	top25_own	m16_top1000_vs_top5pct	ZNF581	False	561	too few / no list					
+diagnostic, benchmark-developed	top25_own	m16_top1000_vs_top5pct	ZNF644	False	561	ok	1.009	0.7235	1.328	1.668	1.032
+diagnostic, benchmark-developed	top25_own	m16_top1000_vs_top5pct	ZNF746	False	561	ok	0.8507	0.6029	1.122	0.9188	1.032
+diagnostic, benchmark-developed	top25_own	m16_top1000_vs_top5pct	ZNF768	False	561	ok	0.8287	0.5426	1.194	1.127	1.031
+diagnostic, benchmark-developed	top25_own	m16_top1000_vs_top5pct	ZNF777	False	561	ok	1.103	0.8234	1.444	1.079	1.079
+diagnostic, benchmark-developed	top25_own	m16_top1000_vs_top5pct	ZNF79	False	561	too few / no list					
+diagnostic, benchmark-developed	top25_own	m16_top1000_vs_top5pct	ZUFSP	False	561	ok	1.15	0.8512	1.498	0.777	1.021
+diagnostic, benchmark-developed	top25_own	m19_B1xP4	ADNP	False	127	ok	1.007	0.5489	1.569	0.942	1.007
+diagnostic, benchmark-developed	top25_own	m19_B1xP4	AKAP8L	False	11	too few / no list					
+diagnostic, benchmark-developed	top25_own	m19_B1xP4	CHAMP1	False	4	too few / no list					
+diagnostic, benchmark-developed	top25_own	m19_B1xP4	CTCF	True	62	ok	0.8816	0.4029	1.541	0.7736	1.066
+diagnostic, benchmark-developed	top25_own	m19_B1xP4	DDIT3	False	53	ok	1.381	0.8151	2.363	1.252	0.9466
+diagnostic, benchmark-developed	top25_own	m19_B1xP4	DNMT1	True	295	ok	1.596	0.9399	2.341	1.241	1.035
+diagnostic, benchmark-developed	top25_own	m19_B1xP4	DR1	False	13	too few / no list					
+diagnostic, benchmark-developed	top25_own	m19_B1xP4	E4F1	True	88	ok	0.9971	0.6596	1.556	0.7211	0.9971
+diagnostic, benchmark-developed	top25_own	m19_B1xP4	ETS2	False	63	ok	0.8743	0.4909	1.445	1.045	0.9988
+diagnostic, benchmark-developed	top25_own	m19_B1xP4	FLYWCH1	False	15	too few / no list					
+diagnostic, benchmark-developed	top25_own	m19_B1xP4	FOXC1	False	17	too few / no list					
+diagnostic, benchmark-developed	top25_own	m19_B1xP4	FOXJ3	False	7	too few / no list					
+diagnostic, benchmark-developed	top25_own	m19_B1xP4	FOXK1	False	118	ok	1.314	0.238	3.159	1.669	1.314
+diagnostic, benchmark-developed	top25_own	m19_B1xP4	HOXA10	False	50	ok	1.501	0.7362	2.58	0.8956	0.9521
+diagnostic, benchmark-developed	top25_own	m19_B1xP4	HOXA5	False	49	ok	2.988	0.7823	8.373	1.727	0.9675
+diagnostic, benchmark-developed	top25_own	m19_B1xP4	HOXB8	False	163	ok	2.186	1.183	3.461	1.985	1.052
+diagnostic, benchmark-developed	top25_own	m19_B1xP4	HOXB9	False	7	too few / no list					
+diagnostic, benchmark-developed	top25_own	m19_B1xP4	HOXC4	False	16	too few / no list					
+diagnostic, benchmark-developed	top25_own	m19_B1xP4	HOXC9	False	5	too few / no list					
+diagnostic, benchmark-developed	top25_own	m19_B1xP4	MAZ	False	26	ok	1.671	0.5941	3.576	2.744	0.929
+diagnostic, benchmark-developed	top25_own	m19_B1xP4	MEF2A	True	78	ok	1.114	0.1556	2.462	6.757	1.114
+diagnostic, benchmark-developed	top25_own	m19_B1xP4	MEF2D	False	5	too few / no list					
+diagnostic, benchmark-developed	top25_own	m19_B1xP4	MSX2	False	123	too few / no list					
+diagnostic, benchmark-developed	top25_own	m19_B1xP4	MTF2	False	49	ok	0.477	0.2455	0.8212	0.9734	0.9582
+diagnostic, benchmark-developed	top25_own	m19_B1xP4	NEUROD4	False	6	too few / no list					
+diagnostic, benchmark-developed	top25_own	m19_B1xP4	NME2	False	340	ok	0.9992	0.8035	1.266	1.034	1.026
+diagnostic, benchmark-developed	top25_own	m19_B1xP4	NR1D2	False	20	too few / no list					
+diagnostic, benchmark-developed	top25_own	m19_B1xP4	NRF1	True	276	ok	1.423	0.8537	2.114		1.046
+diagnostic, benchmark-developed	top25_own	m19_B1xP4	PA2G4	True	12	too few / no list					
+diagnostic, benchmark-developed	top25_own	m19_B1xP4	PCGF6	False	5	too few / no list					
+diagnostic, benchmark-developed	top25_own	m19_B1xP4	POGK	False	25	ok	1.699	0.5177	3.906	0.7098	0.9837
+diagnostic, benchmark-developed	top25_own	m19_B1xP4	RBBP7	True	179	ok	0.8727	0.6484	1.183	1.111	1.025
+diagnostic, benchmark-developed	top25_own	m19_B1xP4	RBPJ	True	42	ok	0.9885	0.3502	1.905	1.085	1.154
+diagnostic, benchmark-developed	top25_own	m19_B1xP4	RELA	False	50	ok	7.13	4.308	14.09	0.7866	7.13
+diagnostic, benchmark-developed	top25_own	m19_B1xP4	SAFB	True	59	ok	1.038	0.455	1.919	0.2764	1.038
+diagnostic, benchmark-developed	top25_own	m19_B1xP4	SETDB1	True	64	too few / no list					
+diagnostic, benchmark-developed	top25_own	m19_B1xP4	SRCAP	False	20	ok	2.462	0.7676	5.727	0.7062	1.096
+diagnostic, benchmark-developed	top25_own	m19_B1xP4	TBX3	False	52	ok	0.3854	0.2921	0.5346	1.566	1.183
+diagnostic, benchmark-developed	top25_own	m19_B1xP4	THAP6	False	20	ok	4.167	1.499	9.571	2.72	1.009
+diagnostic, benchmark-developed	top25_own	m19_B1xP4	WIZ	False	22	ok	1.698	0.6084	3.943	0.4684	1.102
+diagnostic, benchmark-developed	top25_own	m19_B1xP4	XPA	False	13	too few / no list					
+diagnostic, benchmark-developed	top25_own	m19_B1xP4	ZBTB43	False	16	too few / no list					
+diagnostic, benchmark-developed	top25_own	m19_B1xP4	ZBTB7A	False	26	ok	1.528	0.6684	3.284	0.8035	1.102
+diagnostic, benchmark-developed	top25_own	m19_B1xP4	ZIC2	False	24	ok	1.054	0.2891	2.449	1.368	1.054
+diagnostic, benchmark-developed	top25_own	m19_B1xP4	ZNF143	False	67	ok	1.904	0.8337	3.218	2.176	1.097
+diagnostic, benchmark-developed	top25_own	m19_B1xP4	ZNF282	False	100	ok	1.194	0.7914	1.767	3.567	1.013
+diagnostic, benchmark-developed	top25_own	m19_B1xP4	ZNF503	False	33	too few / no list					
+diagnostic, benchmark-developed	top25_own	m19_B1xP4	ZNF507	False	15	too few / no list					
+diagnostic, benchmark-developed	top25_own	m19_B1xP4	ZNF512	False	36	ok	0.8727	0.1254	2.013	1.247	1.158
+diagnostic, benchmark-developed	top25_own	m19_B1xP4	ZNF581	False	7	too few / no list					
+diagnostic, benchmark-developed	top25_own	m19_B1xP4	ZNF777	False	121	ok	1.002	0.6589	1.416	1.323	1.002
+diagnostic, benchmark-developed	top25_own	m19_B1xP4	ZNF79	False	57	too few / no list					
+diagnostic, benchmark-developed	top25_own	m19_B1xP4	ZUFSP	False	48	ok	1.679	0.72	3.084	0.3282	1.065
+diagnostic, benchmark-developed	top25_own	m19_B2xP1	ADNP	False	561	ok	1.278	0.8523	1.795	1.049	1.142
+diagnostic, benchmark-developed	top25_own	m19_B2xP1	AKAP8L	False	561	ok	1.323	0.7281	2.031	0.984	1.09
+diagnostic, benchmark-developed	top25_own	m19_B2xP1	CHAMP1	False	561	ok	0.9876	0.6416	1.381	1.161	0.9506
+diagnostic, benchmark-developed	top25_own	m19_B2xP1	CTCF	True	561	ok	1.017	0.7259	1.339	1.059	1.064
+diagnostic, benchmark-developed	top25_own	m19_B2xP1	DDIT3	False	561	ok	1.274	1.056	1.519	1.241	1.111
+diagnostic, benchmark-developed	top25_own	m19_B2xP1	DNMT1	True	561	ok	1.595	0.858	2.493	1.015	1.074
+diagnostic, benchmark-developed	top25_own	m19_B2xP1	DR1	False	561	ok	0.8238	0.6135	1.04	1.062	0.973
+diagnostic, benchmark-developed	top25_own	m19_B2xP1	E2F3	False	561	ok	0.9734	0.8109	1.162	0.8946	1.081
+diagnostic, benchmark-developed	top25_own	m19_B2xP1	E4F1	True	561	ok	1.009	0.8354	1.209	1.039	1.037
+diagnostic, benchmark-developed	top25_own	m19_B2xP1	ETS2	False	561	ok	1.076	0.8458	1.34	0.3006	1.061
+diagnostic, benchmark-developed	top25_own	m19_B2xP1	FLYWCH1	False	561	ok	1.005	0.705	1.364	1.016	1.064
+diagnostic, benchmark-developed	top25_own	m19_B2xP1	FOXC1	False	561	ok	1.066	0.593	1.661	1.26	1.066
+diagnostic, benchmark-developed	top25_own	m19_B2xP1	FOXJ3	False	561	ok	1.278	0.6404	2.021	1.141	1.074
+diagnostic, benchmark-developed	top25_own	m19_B2xP1	FOXK1	False	561	ok	0.2962	0.08489	0.8158	1.352	1.142
+diagnostic, benchmark-developed	top25_own	m19_B2xP1	HOXA10	False	561	ok	1.214	0.8941	1.593	1.189	1.057
+diagnostic, benchmark-developed	top25_own	m19_B2xP1	HOXA5	False	561	ok	1.212	0.3072	3.542	0.5595	1.212
+diagnostic, benchmark-developed	top25_own	m19_B2xP1	HOXB6	False	561	ok	1.149	0.8728	1.498	0.8392	0.9988
+diagnostic, benchmark-developed	top25_own	m19_B2xP1	HOXB8	False	561	ok	1.652	0.9453	2.531	0.9989	1.141
+diagnostic, benchmark-developed	top25_own	m19_B2xP1	HOXB9	False	561	ok	1.047	0.7384	1.42	0.9802	1.017
+diagnostic, benchmark-developed	top25_own	m19_B2xP1	HOXC4	False	561	ok	0.9918	0.3397	1.816	1.012	1.134
+diagnostic, benchmark-developed	top25_own	m19_B2xP1	HOXC9	False	561	ok	0.8521	0.5686	1.185	1.041	1.055
+diagnostic, benchmark-developed	top25_own	m19_B2xP1	HOXD10	False	561	ok	1.316	0.4964	2.303	1.264	1.128
+diagnostic, benchmark-developed	top25_own	m19_B2xP1	MAZ	False	561	ok	0.9442	0.657	1.281	1.325	1.049
+diagnostic, benchmark-developed	top25_own	m19_B2xP1	MEF2A	True	561	ok	1.105	0.4437	1.915	2.713	1.105
+diagnostic, benchmark-developed	top25_own	m19_B2xP1	MEF2D	False	561	ok	0.9549	0.4188	1.58	0.7086	1.152
+diagnostic, benchmark-developed	top25_own	m19_B2xP1	MSX2	False	561	too few / no list					
+diagnostic, benchmark-developed	top25_own	m19_B2xP1	MTF2	False	561	ok	0.9173	0.7211	1.116	0.9618	1.022
+diagnostic, benchmark-developed	top25_own	m19_B2xP1	NEUROD4	False	561	too few / no list					
+diagnostic, benchmark-developed	top25_own	m19_B2xP1	NFYA	False	561	ok	1.479	1.224	1.785	1.181	1.11
+diagnostic, benchmark-developed	top25_own	m19_B2xP1	NME2	False	561	ok	1.145	0.9544	1.348	0.9385	1.065
+diagnostic, benchmark-developed	top25_own	m19_B2xP1	NR1D2	False	561	too few / no list					
+diagnostic, benchmark-developed	top25_own	m19_B2xP1	NRF1	True	561	ok	1.941	1.166	2.856		1.049
+diagnostic, benchmark-developed	top25_own	m19_B2xP1	PA2G4	True	561	ok	1.835	0.7899	3.155	0.9437	1.088
+diagnostic, benchmark-developed	top25_own	m19_B2xP1	PCGF6	False	561	ok	0.9332	0.2399	2.665		0.9332
+diagnostic, benchmark-developed	top25_own	m19_B2xP1	POGK	False	561	ok	1.111	0.7277	1.54	0.7023	1.067
+diagnostic, benchmark-developed	top25_own	m19_B2xP1	RBBP7	True	561	ok	1.082	0.8966	1.298	1.11	1.174
+diagnostic, benchmark-developed	top25_own	m19_B2xP1	RBPJ	True	561	ok	0.9262	0.6259	1.284	0.9711	1.048
+diagnostic, benchmark-developed	top25_own	m19_B2xP1	RELA	False	561	ok	2.11	1.076	6.681	0.7681	2.11
+diagnostic, benchmark-developed	top25_own	m19_B2xP1	SAFB	True	561	ok	0.9298	0.6202	1.304	0.9108	1.092
+diagnostic, benchmark-developed	top25_own	m19_B2xP1	SETDB1	True	561	too few / no list					
+diagnostic, benchmark-developed	top25_own	m19_B2xP1	SMARCA1	False	561	ok	0.9791	0.6492	1.382	0.9303	1.087
+diagnostic, benchmark-developed	top25_own	m19_B2xP1	SOX4	False	561	ok	1.016	0.8558	1.219	1.126	1.133
+diagnostic, benchmark-developed	top25_own	m19_B2xP1	SRCAP	False	561	ok	1.14	0.768	1.576	0.9291	1.071
+diagnostic, benchmark-developed	top25_own	m19_B2xP1	TBX3	False	561	ok	0.6588	0.09523	1.431	1.562	1.06
+diagnostic, benchmark-developed	top25_own	m19_B2xP1	THAP6	False	561	ok	1.012	0.621	1.473	1.074	1.012
+diagnostic, benchmark-developed	top25_own	m19_B2xP1	WIZ	False	561	ok	1.083	0.7709	1.422	1.307	1.007
+diagnostic, benchmark-developed	top25_own	m19_B2xP1	XPA	False	561	ok	0.9509	0.8114	1.131	0.8253	1.025
+diagnostic, benchmark-developed	top25_own	m19_B2xP1	ZBTB43	False	561	ok	1.193	0.5678	2.027	1.083	1.193
+diagnostic, benchmark-developed	top25_own	m19_B2xP1	ZBTB7A	False	561	ok	1.015	0.7591	1.294	0.9379	1.051
+diagnostic, benchmark-developed	top25_own	m19_B2xP1	ZIC2	False	561	ok	0.8685	0.6065	1.168	1.177	1.067
+diagnostic, benchmark-developed	top25_own	m19_B2xP1	ZNF143	False	561	ok	0.7026	0.352	1.147	0.3868	1.008
+diagnostic, benchmark-developed	top25_own	m19_B2xP1	ZNF282	False	561	ok	1.011	0.8012	1.247	2.11	1.067
+diagnostic, benchmark-developed	top25_own	m19_B2xP1	ZNF503	False	561	too few / no list					
+diagnostic, benchmark-developed	top25_own	m19_B2xP1	ZNF507	False	561	ok	1.088	0.9177	1.29	1.021	1.032
+diagnostic, benchmark-developed	top25_own	m19_B2xP1	ZNF512	False	561	ok	0.8931	0.5157	1.373	0.8752	1.061
+diagnostic, benchmark-developed	top25_own	m19_B2xP1	ZNF512B	False	561	ok	0.9928	0.7224	1.324	0.956	1.066
+diagnostic, benchmark-developed	top25_own	m19_B2xP1	ZNF581	False	561	too few / no list					
+diagnostic, benchmark-developed	top25_own	m19_B2xP1	ZNF644	False	561	ok	1.001	0.7253	1.316	2.153	1.001
+diagnostic, benchmark-developed	top25_own	m19_B2xP1	ZNF746	False	561	ok	0.8352	0.5375	1.165	1.14	1.059
+diagnostic, benchmark-developed	top25_own	m19_B2xP1	ZNF768	False	561	ok	0.9094	0.4086	1.52	1.431	1.124
+diagnostic, benchmark-developed	top25_own	m19_B2xP1	ZNF777	False	561	ok	1.165	0.8805	1.479	1.102	1.084
+diagnostic, benchmark-developed	top25_own	m19_B2xP1	ZNF79	False	561	too few / no list					
+diagnostic, benchmark-developed	top25_own	m19_B2xP1	ZUFSP	False	561	ok	1.304	0.8582	1.842	0.5675	1.114

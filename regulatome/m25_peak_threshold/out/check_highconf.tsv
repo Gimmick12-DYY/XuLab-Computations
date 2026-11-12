@@ -1,0 +1,25 @@
+label	definition	K	subset	n_pairs	own_bound	swapped_tertile_mean_bound
+diagnostic	E0_q005	500	all	221	0.3801	0.3054
+diagnostic	E0_q005	500	without E4F1, NRF1, DNMT1	28	0.2857	0.2854
+diagnostic	E0_q005	2000	all	451	0.3792	0.2913
+diagnostic	E0_q005	2000	without E4F1, NRF1, DNMT1	75	0.2533	0.2605
+diagnostic	E1_as_called	500	all	221	0.8778	0.8793
+diagnostic	E1_as_called	500	without E4F1, NRF1, DNMT1	28	0.8571	0.8636
+diagnostic	E1_as_called	2000	all	451	0.8803	0.8771
+diagnostic	E1_as_called	2000	without E4F1, NRF1, DNMT1	75	0.8667	0.8479
+diagnostic	E2_top2000	500	all	221	0.1041	0.1344
+diagnostic	E2_top2000	500	without E4F1, NRF1, DNMT1	28	0.1071	0.123
+diagnostic	E2_top2000	2000	all	451	0.1308	0.1229
+diagnostic	E2_top2000	2000	without E4F1, NRF1, DNMT1	75	0.16	0.1083
+diagnostic	E2_top5000	500	all	221	0.2217	0.241
+diagnostic	E2_top5000	500	without E4F1, NRF1, DNMT1	28	0.1786	0.2048
+diagnostic	E2_top5000	2000	all	451	0.2461	0.2273
+diagnostic	E2_top5000	2000	without E4F1, NRF1, DNMT1	75	0.2	0.1924
+diagnostic	E2_top10000	500	all	221	0.3077	0.3376
+diagnostic	E2_top10000	500	without E4F1, NRF1, DNMT1	28	0.2857	0.2864
+diagnostic	E2_top10000	2000	all	451	0.3171	0.3215
+diagnostic	E2_top10000	2000	without E4F1, NRF1, DNMT1	75	0.2933	0.2843
+diagnostic	E2_top20000	500	all	221	0.3891	0.4497
+diagnostic	E2_top20000	500	without E4F1, NRF1, DNMT1	28	0.3214	0.4057
+diagnostic	E2_top20000	2000	all	451	0.4035	0.4286
+diagnostic	E2_top20000	2000	without E4F1, NRF1, DNMT1	75	0.3467	0.3792

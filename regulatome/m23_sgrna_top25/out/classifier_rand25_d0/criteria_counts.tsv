@@ -1,0 +1,12 @@
+criterion	n_tfs
+TFs with a knockdown in the streamed cells	79
+c1 >= 25 cells	64
+c2 >= 30% knockdown	64
+assessable (>= 100 cells)	9
+c3 classifier q < 0.05	2
+c4 target non-zero in NTC training	9
+strong phenotype (all four)	2
+strong & ceiling >= 0.2	2
+ceiling >= 0.2	19
+strong & m10 testable	0
+m10 testable	9

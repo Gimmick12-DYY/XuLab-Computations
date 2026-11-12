@@ -1,0 +1,82 @@
+label	name	n_cells	auc	null_mean	null_p97_5	p	target_nonzero_in_ntc_train	q	note	knockdown_pct	panel_tf	c1_ge25_cells	c2_ge30pct_kd	c3_classifier_q05	c4_target_nonzero_ntc_train	strong_phenotype
+diagnostic, benchmark already read	ADNP	119	0.5147	0.498	0.6381	0.3781	True	0.4254		30.5	ADNP	True	True	False	True	False
+diagnostic, benchmark already read	DNMT1	114	0.9196	0.5009	0.6575	0.004975	True	0.02239		55.42	DNMT1	True	True	True	True	True
+diagnostic, benchmark already read	E4F1	105	0.9375	0.4881	0.6547	0.004975	True	0.02239		48.07	E4F1	True	True	True	True	True
+diagnostic, benchmark already read	HOXD10	103	0.5775	0.5005	0.6464	0.194	True	0.2495		22.6	HOXD10	True	False	False	True	False
+diagnostic, benchmark already read	MAZ	114	0.5069	0.4953	0.625	0.4527	True	0.4527		60.28	MAZ	True	True	False	True	False
+diagnostic, benchmark already read	MSX2	111	0.5702	0.498	0.6263	0.1741	True	0.2495		68.13	MSX2	True	True	False	True	False
+diagnostic, benchmark already read	NME2	216	0.6064	0.5042	0.6102	0.0398	True	0.08955		59.17	NME2	True	True	False	True	False
+diagnostic, benchmark already read	RBBP7	100	0.6356	0.5087	0.6813	0.0597	True	0.1075		45.53	RBBP7	True	True	False	True	False
+diagnostic, benchmark already read	ZNF777	116	0.6204	0.5019	0.6261	0.03483	True	0.08955		40.27	ZNF777	True	True	False	True	False
+diagnostic, benchmark already read	AKAP8L	29							not assessable (< 100 cells)	45.8	AKAP8L	True	True	False	False	False
+diagnostic, benchmark already read	CBX1	23							not assessable (< 100 cells)	67.43	HP1	False	True	False	False	False
+diagnostic, benchmark already read	CBX3	4							not assessable (< 100 cells)	50.85	HP1	False	True	False	False	False
+diagnostic, benchmark already read	CBX5	21							not assessable (< 100 cells)	27.82	HP1	False	False	False	False	False
+diagnostic, benchmark already read	CHAMP1	26							not assessable (< 100 cells)	42.86	CHAMP1	True	True	False	False	False
+diagnostic, benchmark already read	CTCF	80							not assessable (< 100 cells)	34.57	CTCF	True	True	False	False	False
+diagnostic, benchmark already read	DDIT3	67							not assessable (< 100 cells)	57.13	DDIT3	True	True	False	False	False
+diagnostic, benchmark already read	DR1	36							not assessable (< 100 cells)	29.47	DR1	True	False	False	False	False
+diagnostic, benchmark already read	E2F3	52							not assessable (< 100 cells)	20.05	E2F3	True	False	False	False	False
+diagnostic, benchmark already read	EPAS1	16							not assessable (< 100 cells)	25.62	EPAS1	False	False	False	False	False
+diagnostic, benchmark already read	ETS2	74							not assessable (< 100 cells)	58.97	ETS2	True	True	False	False	False
+diagnostic, benchmark already read	EZH2	14							not assessable (< 100 cells)	50.96	EZH2	False	True	False	False	False
+diagnostic, benchmark already read	FLYWCH1	59							not assessable (< 100 cells)	45.92	FLYWCH1	True	True	False	False	False
+diagnostic, benchmark already read	FOXC1	38							not assessable (< 100 cells)	25.79	FOXC1	True	False	False	False	False
+diagnostic, benchmark already read	FOXJ3	56							not assessable (< 100 cells)	43.89	FOXJ3	True	True	False	False	False
+diagnostic, benchmark already read	FOXK1	86							not assessable (< 100 cells)	45.75	FOXK1	True	True	False	False	False
+diagnostic, benchmark already read	GLYR1	5							not assessable (< 100 cells)	59.08	GLYR1	False	True	False	False	False
+diagnostic, benchmark already read	HES1	23							not assessable (< 100 cells)	67.03	HES1	False	True	False	False	False
+diagnostic, benchmark already read	HOXA10	74							not assessable (< 100 cells)	37.84	HOXA10	True	True	False	False	False
+diagnostic, benchmark already read	HOXA5	38							not assessable (< 100 cells)	41.47	HOXA5	True	True	False	False	False
+diagnostic, benchmark already read	HOXB6	55							not assessable (< 100 cells)	24.87	HOXB6	True	False	False	False	False
+diagnostic, benchmark already read	HOXB8	73							not assessable (< 100 cells)	40.69	HOXB8	True	True	False	False	False
+diagnostic, benchmark already read	HOXB9	36							not assessable (< 100 cells)	46.28	HOXB9	True	True	False	False	False
+diagnostic, benchmark already read	HOXC4	80							not assessable (< 100 cells)	29.56	HOXC4	True	False	False	False	False
+diagnostic, benchmark already read	HOXC9	37							not assessable (< 100 cells)	57.19	HOXC9	True	True	False	False	False
+diagnostic, benchmark already read	MBD3	24							not assessable (< 100 cells)	58.1	MBD3	False	True	False	False	False
+diagnostic, benchmark already read	MEF2A	44							not assessable (< 100 cells)	34.44	MEF2A	True	True	False	False	False
+diagnostic, benchmark already read	MEF2D	68							not assessable (< 100 cells)	27.09	MEF2D	True	False	False	False	False
+diagnostic, benchmark already read	MLX	21							not assessable (< 100 cells)	66.23	MLX	False	True	False	False	False
+diagnostic, benchmark already read	MTF2	47							not assessable (< 100 cells)	49.41	MTF2	True	True	False	False	False
+diagnostic, benchmark already read	NEUROD4	40							not assessable (< 100 cells)	100	NEUROD4	True	True	False	False	False
+diagnostic, benchmark already read	NFYA	34							not assessable (< 100 cells)	46.69	NFYA	True	True	False	False	False
+diagnostic, benchmark already read	NR1D2	42							not assessable (< 100 cells)	16.08	NR1D2	True	False	False	False	False
+diagnostic, benchmark already read	NRF1	86							not assessable (< 100 cells)	45.26	NRF1	True	True	False	False	False
+diagnostic, benchmark already read	PA2G4	31							not assessable (< 100 cells)	65.38	PA2G4	True	True	False	False	False
+diagnostic, benchmark already read	PCGF6	83							not assessable (< 100 cells)	51.08	PCGF6	True	True	False	False	False
+diagnostic, benchmark already read	POGK	31							not assessable (< 100 cells)	44.11	POGK	True	True	False	False	False
+diagnostic, benchmark already read	RBBP4	17							not assessable (< 100 cells)	53.01	RBBP4	False	True	False	False	False
+diagnostic, benchmark already read	RBPJ	86							not assessable (< 100 cells)	47.96	RBPJ	True	True	False	False	False
+diagnostic, benchmark already read	RELA	50							not assessable (< 100 cells)	48.83	RELA	True	True	False	False	False
+diagnostic, benchmark already read	SAFB	80							not assessable (< 100 cells)	44.02	SAFB	True	True	False	False	False
+diagnostic, benchmark already read	SETDB1	59							not assessable (< 100 cells)	41.46	SETDB1	True	True	False	False	False
+diagnostic, benchmark already read	SMARCA1	25							not assessable (< 100 cells)	51.29	SMARCA1	True	True	False	False	False
+diagnostic, benchmark already read	SOX12	19							not assessable (< 100 cells)	35.82	SOX12	False	True	False	False	False
+diagnostic, benchmark already read	SOX4	87							not assessable (< 100 cells)	49.81	SOX4	True	True	False	False	False
+diagnostic, benchmark already read	SRCAP	80							not assessable (< 100 cells)	-11.96	SRCAP	True	False	False	False	False
+diagnostic, benchmark already read	SREBF2	4							not assessable (< 100 cells)	44.16	SREBF2	False	True	False	False	False
+diagnostic, benchmark already read	STAG2	34							not assessable (< 100 cells)	18.28	STAG2	True	False	False	False	False
+diagnostic, benchmark already read	TBX3	70							not assessable (< 100 cells)	48.22	TBX3	True	True	False	False	False
+diagnostic, benchmark already read	THAP6	45							not assessable (< 100 cells)	57.72	THAP6	True	True	False	False	False
+diagnostic, benchmark already read	TRAFD1	14							not assessable (< 100 cells)	69.05	TRAFD1	False	True	False	False	False
+diagnostic, benchmark already read	WIZ	26							not assessable (< 100 cells)	41.37	WIZ	True	True	False	False	False
+diagnostic, benchmark already read	XPA	59							not assessable (< 100 cells)	65.12	XPA	True	True	False	False	False
+diagnostic, benchmark already read	ZBTB40	17							not assessable (< 100 cells)	0.9353	ZBTB40	False	False	False	False	False
+diagnostic, benchmark already read	ZBTB43	43							not assessable (< 100 cells)	43.82	ZBTB43	True	True	False	False	False
+diagnostic, benchmark already read	ZBTB7A	90							not assessable (< 100 cells)	26.07	ZBTB7A	True	False	False	False	False
+diagnostic, benchmark already read	ZIC2	38							not assessable (< 100 cells)	44.68	ZIC2	True	True	False	False	False
+diagnostic, benchmark already read	ZNF143	67							not assessable (< 100 cells)	34.62	ZNF143	True	True	False	False	False
+diagnostic, benchmark already read	ZNF282	61							not assessable (< 100 cells)	54.78	ZNF282	True	True	False	False	False
+diagnostic, benchmark already read	ZNF367	11							not assessable (< 100 cells)	52.32	ZNF367	False	True	False	False	False
+diagnostic, benchmark already read	ZNF503	40							not assessable (< 100 cells)	65.14	ZNF503	True	True	False	False	False
+diagnostic, benchmark already read	ZNF507	57							not assessable (< 100 cells)	38.08	ZNF507	True	True	False	False	False
+diagnostic, benchmark already read	ZNF512	56							not assessable (< 100 cells)	46.05	ZNF512	True	True	False	False	False
+diagnostic, benchmark already read	ZNF512B	36							not assessable (< 100 cells)	55.57	ZNF512B	True	True	False	False	False
+diagnostic, benchmark already read	ZNF581	42							not assessable (< 100 cells)	74.56	ZNF581	True	True	False	False	False
+diagnostic, benchmark already read	ZNF606	17							not assessable (< 100 cells)	16.78	ZNF606	False	False	False	False	False
+diagnostic, benchmark already read	ZNF644	25							not assessable (< 100 cells)	49.05	ZNF644	True	True	False	False	False
+diagnostic, benchmark already read	ZNF703	20							not assessable (< 100 cells)	48.36	ZNF703	False	True	False	False	False
+diagnostic, benchmark already read	ZNF746	28							not assessable (< 100 cells)	69.97	ZNF746	True	True	False	False	False
+diagnostic, benchmark already read	ZNF768	97							not assessable (< 100 cells)	18.45	ZNF768	True	False	False	False	False
+diagnostic, benchmark already read	ZNF79	50							not assessable (< 100 cells)	42.13	ZNF79	True	True	False	False	False
+diagnostic, benchmark already read	ZUP1	73							not assessable (< 100 cells)	47.23	ZUFSP	True	True	False	False	False

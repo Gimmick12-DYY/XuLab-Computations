@@ -1,0 +1,4 @@
+label	version	n_tfs	n_control_pairs	mean_K_control	mean_K_matched	diff	lo	hi	p
+diagnostic, benchmark-developed	all_cell_min25	77	128	0.002618	-0.0007975	0.003415	-0.005059	0.0119	0.2284
+diagnostic, benchmark-developed	top25_own	53	60	0.0001873	-0.001742	0.001929	-0.01408	0.01706	0.388
+diagnostic, benchmark-developed	random25_d0	57	66	0.002385	-0.001308	0.003693	0.0003929	0.00745	0.1723

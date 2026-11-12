@@ -1,0 +1,13 @@
+label	metric	comparison	n_tfs	median_diff	lo	hi
+diagnostic, benchmark-developed	ontarget_logfc	top25_own minus all cells	63	-0.04828	-0.05723	-0.03516
+diagnostic, benchmark-developed	ontarget_logfc	top25_own minus random25 (mean of draws)	63	-0.04706	-0.06726	-0.03608
+diagnostic, benchmark-developed	ontarget_logfc	random25 minus all cells	64	0.001852	-0.0021	0.008933
+diagnostic, benchmark-developed	reliability_SB	top25_own minus all cells	53	-0.07813	-0.1552	0.007755
+diagnostic, benchmark-developed	reliability_SB	top25_own minus random25 (mean of draws)	53	0.03619	-0.01681	0.09128
+diagnostic, benchmark-developed	reliability_SB	random25 minus all cells	58	-0.08425	-0.1024	-0.05628
+diagnostic, benchmark-developed	reproducible_responders	top25_own minus all cells	53	0	-5	21
+diagnostic, benchmark-developed	reproducible_responders	top25_own minus random25 (mean of draws)	53	18	6.667	38.33
+diagnostic, benchmark-developed	reproducible_responders	random25 minus all cells	58	-10	-16	-7
+diagnostic, benchmark-developed	cells	top25_own minus all cells	63	-177	-220	-140
+diagnostic, benchmark-developed	cells	top25_own minus random25 (mean of draws)	63	0	0	0
+diagnostic, benchmark-developed	cells	random25 minus all cells	64	-177.5	-210	-140
