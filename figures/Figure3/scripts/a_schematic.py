@@ -1,8 +1,8 @@
 """Fig 3a illustration (v3, journal style): hand-built SVG, Arial, Palette C + Fig 3 element colours.
-Pure drawing, no data. Output: a_coordinated_binding_schematic.svg (183 x 71 mm); PNG/PDF rendered separately."""
+Pure drawing, no data. Output: a_coordinated_binding_schematic.svg (183 x 103 mm); PNG/PDF rendered separately."""
 import numpy as np
 U=4.0                      # svg units per mm
-W,H=183*U,71*U
+W,H=183*U,103*U
 TEAL="#2C7A6B"; PROM="#3B6FB6"; ENH="#E8821E"; GREY="#8C8C8C"; INK="#1A1A1A"; DARK="#4D4D4D"
 LIGHT="#BDBDBD"; HIC="#B83A2E"; FONT="Arial, Helvetica, sans-serif"
 pt=lambda p: p*0.3528*U    # font pt -> units
@@ -78,22 +78,29 @@ for xe,lab,c in [(50,"P",PROM),(86,"E1",ENH),(122,"E2",ENH)]: text(xe,214,lab,si
 chevron(166,104)
 
 # ---------- panel 2: coordinated binding matrix + pair scores ----------
-x2=186; header(x2,16,"Coordinated binding across cells")
-M=np.array([[1,1,1,0],[0,1,0,1],[1,1,1,0],[0,0,0,1],[1,1,1,0],[1,0,0,1],[0,0,0,0],[1,1,1,1]])
-cs=13; mx,my=x2+22,40
-for j,(lab,c) in enumerate([("P",PROM),("E1",ENH),("E2",ENH),("X",GREY)]):
-    text(mx+j*cs+cs/2-0.5,my-4,lab,size=6,anchor="middle",fill=c,weight="bold")
-for i in range(M.shape[0]):
-    for j in range(4):
-        f="url(#gCellT)" if M[i,j] else "#EFEFEF"
-        add(f'<rect x="{mx+j*cs:.1f}" y="{my+i*cs:.1f}" width="{cs-2}" height="{cs-2}" rx="2.2" fill="{f}"/>')
-add(f'<text x="{mx-8}" y="{my+M.shape[0]*cs/2}" font-family="{FONT}" font-size="{pt(5):.2f}" fill="{DARK}" text-anchor="middle" transform="rotate(-90 {mx-8} {my+M.shape[0]*cs/2})">cells</text>')
-# bracket over P,E1,E2 columns -> correlated
-bx0,bx1=mx,mx+3*cs-2; by=my+M.shape[0]*cs+5
-add(f'<path d="M{bx0},{by} v4 h{bx1-bx0} v-4" fill="none" stroke="{DARK}" stroke-width="0.8"/>')
-text((bx0+bx1)/2,by+13,"bound in the same cells",size=5,anchor="middle",fill=DARK)
+x2=186; header(x2,16,"Coordination across cells")
+IND=np.array([[1,0,1],[1,1,0],[0,1,0],[1,0,0],[0,0,1],[0,1,1],[1,0,0],[0,1,1]])
+COO=np.array([[1,1,1],[0,0,0],[1,1,1],[0,0,0],[1,1,1],[0,0,0],[1,1,1],[0,0,0]])
+cs=10.5
+def grid(gx,gy,Mx,title,col):
+    text(gx+1.5*cs,gy-15,title,size=5.5,anchor="middle",fill=col,weight="bold")
+    for j,(lab,c) in enumerate([("P",PROM),("E1",ENH),("E2",ENH)]):
+        text(gx+j*cs+cs/2-0.8,gy-4,lab,size=5,anchor="middle",fill=c,weight="bold")
+    for i in range(Mx.shape[0]):
+        for j in range(3):
+            f="url(#gCellT)" if Mx[i,j] else "#EFEFEF"
+            add(f'<rect x="{gx+j*cs:.1f}" y="{gy+i*cs:.1f}" width="{cs-1.8}" height="{cs-1.8}" rx="1.8" fill="{f}"/>')
+    allb=int(Mx.all(1).sum())
+    text(gx+1.5*cs,gy+Mx.shape[0]*cs+8,f"all 3 bound: {allb}/8",size=5,anchor="middle",fill=DARK)
+gy0=46
+grid(x2+14,gy0,IND,"Independent",DARK)
+grid(x2+66,gy0,COO,"Coordinated",TEAL)
+add(f'<text x="{x2+7}" y="{gy0+42}" font-family="{FONT}" font-size="{pt(5):.2f}" fill="{DARK}" text-anchor="middle" transform="rotate(-90 {x2+7} {gy0+42})">cells</text>')
+text(x2+64,gy0+8*cs+18,"same frequency per element (4/8); only",size=5,anchor="middle",fill=DARK)
+text(x2+64,gy0+8*cs+25,"coordinated binding exceeds chance (1/8 × 8 = 1)",size=5,anchor="middle",fill=DARK)
+mx=x2+30; by=gy0+8*cs+26
 # pair score triangle
-tx,ty,t=mx+4,by+44,13
+tx,ty,t=mx-6,by+38,12
 S={(0,1):.92,(0,2):.85,(1,2):.9,(0,3):.08,(1,3):.15,(2,3):.12}
 def blue(v):
     a=np.array([0xF4,0xF6,0xFA]); b=np.array([0x1F,0x3F,0x8F]); c=(a+(b-a)*v).astype(int); return "#%02X%02X%02X"%tuple(c)
@@ -102,7 +109,7 @@ for (i,j),v in S.items():
     add(f'<path d="M{cx:.1f},{cyy-t/2+0.6:.1f} L{cx+t/2-0.6:.1f},{cyy:.1f} L{cx:.1f},{cyy+t/2-0.6:.1f} L{cx-t/2+0.6:.1f},{cyy:.1f} Z" fill="{blue(v)}"/>')
 for k,c in enumerate(["gProm","gEnh","gEnh","gOth"]):
     add(f'<rect x="{tx+k*t-5:.1f}" y="{ty+6:.1f}" width="10" height="3.6" rx="1.4" fill="url(#{c})"/>')
-text(tx+3*t+12,ty-14,"pair score",size=5,fill=DARK); text(tx+3*t+12,ty-7,"(Cicero)",size=5,fill=DARK)
+text(tx+3*t+12,ty-14,"pair score",size=5,fill=DARK); text(tx+3*t+12,ty-7,"(Cicero, k = 50)",size=5,fill=DARK)
 for k,v in enumerate([.1,.5,.9]): add(f'<rect x="{tx+3*t+12+k*7:.1f}" y="{ty-3:.1f}" width="7" height="4" fill="{blue(v)}"/>')
 chevron(320,104)
 
@@ -179,8 +186,70 @@ arcpath(ox+1*t,ox+9*t,gy2+3,9,HIC,1.3,up=False)
 text(ox+5*t,gy2+23,"module edge on a Hi-C loop",size=5,anchor="middle",fill=HIC)
 text(ox-6,oy-58,"Hi-C contacts",size=5.5,fill=DARK,weight="bold")
 
+# ---------- pipeline strip: what is actually computed ----------
+add(f'<line x1="8" y1="252" x2="724" y2="252" stroke="#E3E3E3" stroke-width="0.8"/>')
+text(8,268,"Pipeline, run separately for each TF",size=6.5,weight="bold")
+cards=[("HITAG profiles","79 TFs, one library per TF;","single HEK293T cells"),
+       ("Peaks","MACS2 per TF, q ≤ 0.05;","median ~5,200 peaks"),
+       ("Cell aggregates","Cicero groups of 50","nearest-neighbour cells"),
+       ("Pair scores","Cicero co-accessibility","per peak pair; keep >25 kb"),
+       ("Modules","≥3 elements with every","pair coordinated"),
+       ("Hi-C support","HEK293T Hi-C, Peakachu ≥0.7;","both ends ±30 kb of anchors"),
+       ("Null","10,000 shuffles keeping chr","and spacing; BH q per TF")]
+cw,ch,gap=94,92,8.7; y0=278
+for n,(t1,l1,l2) in enumerate(cards):
+    x=8+n*(cw+gap)
+    add(f'<rect x="{x:.1f}" y="{y0}" width="{cw}" height="{ch}" rx="7" fill="#FAFAFA" stroke="#D9D9D9" stroke-width="0.8"/>')
+    add(f'<circle cx="{x+10:.1f}" cy="{y0+11}" r="6.2" fill="{TEAL}"/>')
+    text(x+10,y0+13.4,str(n+1),size=5.5,anchor="middle",fill="#FFFFFF",weight="bold")
+    text(x+20,y0+13.4,t1,size=6,weight="bold")
+    cx,cy=x+cw/2,y0+44
+    if n==0:
+        add(f'<rect x="{cx-26}" y="{cy-13}" width="52" height="26" rx="13" fill="url(#gCell)" stroke="#BFD3CE" stroke-width="0.8"/>')
+        add(f'<line x1="{cx-19}" y1="{cy+4}" x2="{cx+19}" y2="{cy+4}" stroke="#9B9B9B" stroke-width="0.9"/>')
+        for dx in (-11,11): tf(cx+dx,cy+3.5,s=0.75)
+    elif n==1:
+        pts=" ".join(f"{cx-30+u:.1f},{cy+12-11*np.exp(-((u-14)/4)**2)-17*np.exp(-((u-33)/3.5)**2)-8*np.exp(-((u-48)/4)**2):.1f}" for u in np.linspace(0,60,80))
+        add(f'<polyline points="{pts}" fill="none" stroke="{TEAL}" stroke-width="1.2"/>')
+        for u in (14,33,48): add(f'<rect x="{cx-30+u-3:.1f}" y="{cy+14}" width="6" height="2.6" fill="{INK}"/>')
+    elif n==2:
+        rng2=np.random.default_rng(5)
+        for gx_,gy_ in [(-16,-3),(2,5),(17,-5)]:
+            add(f'<circle cx="{cx+gx_}" cy="{cy+gy_}" r="9" fill="#EAF2F0" stroke="#BFD3CE" stroke-width="0.6"/>')
+            for _ in range(7):
+                a,r=rng2.random()*6.28,rng2.random()*6
+                add(f'<circle cx="{cx+gx_+r*np.cos(a):.1f}" cy="{cy+gy_+r*np.sin(a):.1f}" r="1.3" fill="{TEAL}"/>')
+    elif n==3:
+        add(f'<line x1="{cx-30}" y1="{cy+10}" x2="{cx+30}" y2="{cy+10}" stroke="{LIGHT}" stroke-width="1.2"/>')
+        for u,kk in [(-22,"P"),(0,"E"),(22,"E")]: element(cx+u,cy+10,kk,w=8,h=3,ah=0) if kk=="E" else add(f'<rect x="{cx+u-4}" y="{cy+8.5}" width="8" height="3" rx="1.2" fill="url(#gProm)"/>')
+        arcpath(cx-22,cx,cy+8,6,INK,1.0); arcpath(cx,cx+22,cy+8,6,INK,1.0); arcpath(cx-22,cx+22,cy+8,12,INK,1.0)
+    elif n==4:
+        V=[(cx-14,cy+9,"sP"),(cx+14,cy+9,"sE"),(cx,cy-12,"sE")]
+        for a_ in range(3):
+            for b_ in range(a_+1,3): add(f'<line x1="{V[a_][0]}" y1="{V[a_][1]}" x2="{V[b_][0]}" y2="{V[b_][1]}" stroke="{INK}" stroke-width="1.2"/>')
+        for x_,y_,g_ in V: sphere(x_,y_,5,g_)
+    elif n==5:
+        tt=5.2; ox_,oy_=cx-26,cy+14
+        for i_ in range(11):
+            for j_ in range(i_,11):
+                v=np.exp(-(j_-i_)/2)*0.6
+                if (i_,j_)==(1,8): v=0.95
+                a_=np.array([0xFF,0xF5,0xF0]); b_=np.array([0xA5,0x0F,0x15]); c_="#%02X%02X%02X"%tuple((a_+(b_-a_)*v).astype(int))
+                px,py=ox_+(i_+j_)*tt/2,oy_-(j_-i_)*tt/2
+                add(f'<path d="M{px:.1f},{py-tt/2:.1f} L{px+tt/2:.1f},{py:.1f} L{px:.1f},{py+tt/2:.1f} L{px-tt/2:.1f},{py:.1f} Z" fill="{c_}"/>')
+        lx_,ly_=ox_+9*tt/2,oy_-7*tt/2
+        add(f'<circle cx="{lx_:.1f}" cy="{ly_:.1f}" r="4.4" fill="none" stroke="{INK}" stroke-width="0.8"/>')
+    elif n==6:
+        xs_=np.linspace(0,1,24); d_=np.exp(-((xs_-0.4)**2)/(2*0.12**2))
+        for xv,dv in zip(xs_,d_): add(f'<rect x="{cx-28+xv*44:.1f}" y="{cy+12-dv*22:.1f}" width="1.6" height="{dv*22:.1f}" fill="{LIGHT}"/>')
+        add(f'<line x1="{cx+22}" y1="{cy+12}" x2="{cx+22}" y2="{cy-12}" stroke="{HIC}" stroke-width="1.4"/>')
+        add(f'<line x1="{cx-30}" y1="{cy+12}" x2="{cx+28}" y2="{cy+12}" stroke="{DARK}" stroke-width="0.6"/>')
+    text(x+cw/2,y0+72,l1,size=5,anchor="middle",fill=DARK)
+    text(x+cw/2,y0+80,l2,size=5,anchor="middle",fill=DARK)
+    if n<len(cards)-1:
+        add(f'<path d="M{x+cw+1.8:.1f},{y0+ch/2-4} l4,4 l-4,4" fill="none" stroke="{LIGHT}" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>')
 # ---------- legend ----------
-ly=262; lx=8
+ly=396; lx=8
 tf(lx+6,ly+3,s=0.8); text(lx+14,ly+2,"TF (HITAG)",size=5.5)
 element(lx+68,ly+2,"P",w=12,h=3.8); text(lx+86,ly+2,"promoter",size=5.5)
 element(lx+132,ly,"E",w=12,h=3.8); text(lx+142,ly+2,"enhancer",size=5.5)
@@ -188,6 +257,6 @@ nucleosome(lx+190,ly,r=4.2); text(lx+198,ly+2,"nucleosome",size=5.5)
 add(f'<path d="M{lx+250},{ly+2} q8,-10 16,0" fill="none" stroke="{INK}" stroke-width="1.2"/>'); text(lx+271,ly+2,"coordinated binding edge",size=5.5)
 add(f'<path d="M{lx+372},{ly-2} q8,10 16,0" fill="none" stroke="{HIC}" stroke-width="1.3"/>'); text(lx+393,ly+2,"Hi-C loop",size=5.5)
 
-svg=(f'<svg xmlns="http://www.w3.org/2000/svg" width="183mm" height="71mm" viewBox="0 0 {W:.0f} {H:.0f}">'
+svg=(f'<svg xmlns="http://www.w3.org/2000/svg" width="183mm" height="103mm" viewBox="0 0 {W:.0f} {H:.0f}">'
      f'<defs>{"".join(defs)}</defs><rect width="100%" height="100%" fill="#FFFFFF"/>'+"\n".join(out)+"</svg>")
 open("a_coordinated_binding_schematic.svg","w").write(svg)
