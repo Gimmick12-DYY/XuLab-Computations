@@ -1,0 +1,10 @@
+label	tf	chip	n_genes_both	spearman_ours_vs_chip	spearman_chip_vs_absz	spearman_ours_vs_absz	spearman_chip_vs_absz_all_chip_genes
+diagnostic	CTCF	CTCF HEK293T (GSE103651, ChIP-nexus)	1947	0.0853	0.0663	-0.0195	0.0763
+diagnostic	CTCF	CTCF HEK293 (ENCODE)	2021	0.0701	0.0754	-0.0214	0.0704
+diagnostic	MAZ	MAZ HEK293	2406	0.1223	0.0381	0.0096	0.0225
+diagnostic	NFYA	NFYA K562	6849	0.3926	-0.0141	0.0062	-0.0136
+diagnostic	SETDB1	SETDB1 HEK293	0				0.0361
+diagnostic	ZBTB7A	ZBTB7A HEK293	2266	0.1417	0.0300	0.0491	-0.0092
+diagnostic	ZIC2	ZIC2 HEK293	2261	0.0537	-0.0177	0.0089	-0.0142
+diagnostic	ZNF282	ZNF282 HEK293	2567	0.1230	0.0278	0.0034	0.0365
+diagnostic	ZNF777	ZNF777 HEK293	1711	0.1800	0.0505	0.0269	0.0277
