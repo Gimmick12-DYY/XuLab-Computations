@@ -229,3 +229,15 @@ Each step lists what changed, the sanity check (own motif recovered in the per-T
   - Others are in the hundreds to thousands.
 - Gate 2: no positive reaches 0.95 in any method. Best are CTCF -> STAG2 fisher 0.865 and panel 0.737. NFYA -> ZNF644 reaches at most 0.63; MAZ <-> ZNF143 at most 0.49 held-out.
 - Verdict: none of the four methods passes either gate. With the most standard choices (accessibility-matched background, artifact drop, panel standardization, summit centrality), our single-cell sites do not give own-motif or known-partner motif evidence beyond NRF1 / CTCF / NFYA. Motif enrichment from these data cannot validate novel pairs. Candidate tables were written (candidates_anchor.tsv, candidates_shared.tsv) but they have no calibrated meaning.
+
+## Step 13 (2026-11-12): external evidence for the AF3-supported candidates (user: options 1 and 2)
+- Option 2, CAP-SELEX 2025 (Xie et al., Nature 641:1329; Supplementary Table S2, from static-content.springer.com, external/capselex2025/):
+  - Screen covers 19 of our 79 TFs: FOXJ3, FOXK1, HOXA10, HOXB9, HOXD10, MEF2A, MEF2D, MLX, MSX2, NR1D2, SOX12, SOX4, SREBF2, TBX3, ZBTB43, ZBTB7A, ZNF143, ZNF282, ZNF581.
+  - Of 110 AF3 strong/weak frozen candidates, 7 were tested, all "no cooperative signal": FOXJ3-FOXK1, FOXK1-SOX12, FOXK1-SOX4, HOXD10-NR1D2, MEF2D-ZBTB7A, MLX-SREBF2 (strong), NR1D2-TBX3 (strong). The other 103 were not tested.
+  - Across all 3,081 panel pairs, only 3 have a call, all spacing/orientation (code 2) and all known pairs: FOXK1-MLX, HOXD10-SREBF2, MLX-MSX2.
+  - CAP-SELEX tests DNA-guided cooperativity in vitro, so "no signal" does not rule out a protein-protein complex. It gives no composite-motif support to any AF3 pair.
+- Option 1, bulk data (HEK293T only, per the user's rule):
+  - Public HEK293T TF ChIP exists for CTCF, ZNF143 and ZNF282 only.
+  - AF3 pairs touching them are CTCF-SAFB, EZH2-ZNF282 and ZNF282-ZNF746. SAFB and EZH2 have no motif; ZNF746 bulk exists only in HEK293.
+  - No AF3 pair can be tested with HEK293T bulk on both partners. New bulk experiments are still needed.
+- Lookup table: external/capselex2025/capselex_lookup.tsv (all 3,081 pairs).
