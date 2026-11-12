@@ -1,0 +1,14 @@
+column	file	commit
+cells,depth_tertile,noise_floor_d,noise_floor_clears	/work/users/d/y/dyy12/XuLab/regulatome/m6_improve/repro_v1/per_tf_floor_test.tsv	untracked sha256:6c1d4c1d9a0a7fa7
+fragments	/work/users/d/y/dyy12/XuLab/regulatome/m7_step2/features/canon_counts/read_totals.tsv	untracked sha256:36ad9bd6b964b400
+q005_peaks	/work/users/d/y/dyy12/XuLab/regulatome/m11_peak_regulome/inventory_per_tf.tsv	2cd51ca
+genes_with_linked_peak	/work/users/d/y/dyy12/XuLab/regulatome/m11_peak_regulome/out/long_q0.05.tsv.gz	untracked sha256:4792a75e64285bdd
+own_motif_hocomoco_v11	/work/users/d/y/dyy12/XuLab/regulatome/m9_abc_diagnosis/work/motifs/	untracked directory
+heldout_own_motif_rank	/work/users/d/y/dyy12/XuLab/complex_screen/pair_motif_composite/per_tf_raw/own_motif_check.tsv	3bfdaa3
+G1	/work/users/d/y/dyy12/XuLab/regulatome/m10_promoter_regulome/G1_signal_fraction.tsv	592fef2
+m20_part1d	/work/users/d/y/dyy12/XuLab/regulatome/m20_raw_binding_audit/out/part1d_motif_label_check.tsv	8dc8af0
+m20_part2	/work/users/d/y/dyy12/XuLab/regulatome/m20_raw_binding_audit/out/part2_all_tfs_vs_each_chip.tsv	8dc8af0
+m16	/work/users/d/y/dyy12/XuLab/regulatome/m16_strong_phenotype/out/strong_phenotype_per_tf.tsv	b527f84
+reliability	/work/users/d/y/dyy12/XuLab/regulatome/m7_step2/splits/tf_folds.tsv	881148b
+m19_counts	/work/users/d/y/dyy12/XuLab/regulatome/m19_binary_matrices/out/responder_counts.tsv	159a12a
+m19	/work/users/d/y/dyy12/XuLab/regulatome/m19_binary_matrices/out/all_combinations_per_tf.tsv	159a12a
