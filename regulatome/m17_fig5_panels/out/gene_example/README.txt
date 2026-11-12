@@ -9,3 +9,5 @@ fig5d_<gene>_impact.svg/png   circle area = |z| of the gene on that TF knockdown
                               hollow grey = TF without knockdown data. Each TF sits above the linked element holding its strongest peak (all TFs with a linked q005 peak are drawn).
 fig5d_<gene>_binding.svg/png  circle area = binding percentile; colour strength = |z|.
 TXNIP: MLX is drawn with * (not in the confirmed set). COSMIC CGC not available locally.
+
+SUPERSEDED (2026-11-11): the fig5d_<gene>_impact / _binding circle drawings in this folder are replaced by the locus view in ../gene_example_v2/ (SPEC Amendment 3). Kept for the record only.
