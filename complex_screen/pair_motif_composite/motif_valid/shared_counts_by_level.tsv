@@ -1,0 +1,17 @@
+z_both	generic_excluded	heldout_same_sign	pairs_with_shared	pct	median_n_shared_if_any
+>=2	False	False	1732	100.0	115.0
+>=2	False	True	1732	100.0	106.5
+>=2	True	False	1727	99.7	12.0
+>=2	True	True	1697	98.0	8.0
+>=3	False	False	1625	93.8	32.0
+>=3	False	True	1608	92.8	33.0
+>=3	True	False	583	33.7	1.0
+>=3	True	True	514	29.7	2.0
+>=4	False	False	1039	60.0	16.0
+>=4	False	True	1035	59.8	16.0
+>=4	True	False	61	3.5	2.0
+>=4	True	True	61	3.5	2.0
+>=5	False	False	500	28.9	10.0
+>=5	False	True	500	28.9	10.0
+>=5	True	False	7	0.4	1.0
+>=5	True	True	7	0.4	1.0
