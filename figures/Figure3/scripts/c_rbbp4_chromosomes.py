@@ -1,7 +1,7 @@
 """Fig 3 panel c: RBBP4 coordinated binding pairs and module edges along every chromosome, with only the Hi-C loops that support them.
 Above each chromosome: all RBBP4 Cicero pairs >25 kb (first-step pairs of the RBBP4_sweep_k50_i10000_s555 run, peak_edges.tsv, the
 same pair set as the S1D / panel d loop tests) in blue (user 2026-11-12: not grey); module edges (pairs inside higher-order coordinated binding modules,
-results/RBBP4_sweep_k50_i10000_s555/cliques.tsv, >25 kb) on top in dark purple. Below: only the Peakachu score >=0.7 loops
+results/RBBP4_sweep_k50_i10000_s555/cliques.tsv, >25 kb) on top in yellow. Below: only the Peakachu score >=0.7 loops
 (wild-type HEK293T, 5 kb + 10 kb) that support at least one shown pair under the panel d rule (both anchors within +-30 kb;
 compare_union_pairs_and_clique_edges.assign_loop): full red if they support a module edge, light red if they support plain pairs only.
 Paper style: 180 mm wide, Arial 6-7 pt, white background; SVG text as explicit Arial attributes (Illustrator-safe).
@@ -21,7 +21,7 @@ plt.rcParams.update({"font.family": "sans-serif", "font.sans-serif": ["Arial"], 
                      "axes.linewidth": 0.5, "xtick.major.width": 0.5, "xtick.major.size": 2.5, "xtick.labelsize": 6, "axes.labelsize": 7})
 OUT = Path(sys.argv[1]) if len(sys.argv) > 1 else Path("."); COB = X / "cobinding"; L = X / "hic/work_wt293t/loops"
 import os
-PAIRC, MODC, LOOPM, LOOPP, CHR, INK = "#7A9CCB", "#5B2A86", "#B83A2E", "#F4A582", "#7F7F7F", "#1A1A1A"   # pairs Cicero blue (palette C), module edges dark purple, loops Hi-C reds
+PAIRC, MODC, LOOPM, LOOPP, CHR, INK = "#7A9CCB", "#F2B705", "#B83A2E", "#F4A582", "#7F7F7F", "#1A1A1A"   # user 2026-11-12: pairs blue, module edges yellow, loops Hi-C reds
 PAIRC, MODC = os.environ.get("C_PAIR", PAIRC), os.environ.get("C_MOD", MODC)   # colour options (one hue: light pairs, dark module edges)
 PA, PLW, MLW = float(os.environ.get("C_PAIR_ALPHA", 0.75)), float(os.environ.get("C_PAIR_LW", 0.3)), float(os.environ.get("C_MOD_LW", 0.7))
 fine = F.U.load_bedpe(L / "peakachu_5000.loops.0.7.bedpe", "5000"); coarse = F.U.load_bedpe(L / "peakachu_10000.loops.0.7.bedpe", "10000")
