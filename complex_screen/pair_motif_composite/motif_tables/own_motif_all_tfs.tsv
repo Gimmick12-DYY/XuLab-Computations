@@ -1,0 +1,80 @@
+tf	cells	homer_motif	A_disc_rank	A_disc_log10p	A_disc_q	A_disc_fold	A_val_rank	A_val_log10p	A_val_q	A_val_fold	C_imputed_genomebg_rank	C_imputed_genomebg_log10p	C_imputed_genomebg_fold	C_imputed_ocrbg_rank	C_imputed_ocrbg_log10p	C_imputed_ocrbg_fold	A_disc_own_vs_other_libs_pct	A_val_own_vs_other_libs_pct	B_motif	B_disc_rank	B_val_rank	B_disc_z	B_disc_log10p	B_val_z	B_val_log10p	has_motif	A_pass	A_sig_both_p1e5	B_pass	B_sig_both_p1e5
+NFYA	70292	NFY(CCAAT)	1.0	-110.18	0.0	4.54	1.0	-47.42	0.0	3.76	129.0	-13.24	1.07	261.0	-0.0	0.94	1.0	0.987	NFYA.H12CORE.0.P.B	2.0	15.0	15.66	-54.56	10.46	-24.86	True	True	True	False	True
+NRF1	1416	NRF1(NRF)	1.0	-6.46	0.0002	2.23	1.0	-10.0	0.0	3.09	276.0	0.0	0.23	215.0	-0.01	0.94	0.756	0.91	NRF1.H12CORE.0.PS.A	4.0	1.0	4.69	-5.57	5.32	-6.98	True	True	True	True	True
+CTCF	10410	CTCF(Zf)	7.0	-15.94	0.0	3.31	5.0	-13.18	0.0	3.3	4.0	-96.41	1.8	338.0	-0.0	0.52	0.962	0.987	CTCF.H12CORE.0.P.B	66.0	29.0	5.27	-6.87	5.81	-8.21	True	True	True	False	True
+HOXD10	1224	Hoxc13(Homeobox)	11.0	-3.01	0.0447	1.92	21.0	-2.43	0.0839	1.33	175.0	0.0	0.11	242.0	-0.01	0.91	0.833	0.987	MA1506.2	477.0	445.0	1.2	-0.63	1.27	-0.69	True	False	False	False	False
+RELA	2123	NFkB-p65(RHD)	18.0	-3.21	0.0165	5.83	165.0	-0.61	0.7111	1.17	154.0	-2.98	1.1	97.0	-0.65	1.1	0.705	0.782	MA0107.1	534.0	1534.0	1.08	-0.55	-0.23	0.09	True	False	False	False	False
+MAZ	3968	Maz(Zf)	20.0	-2.59	0.06	1.18	106.0	-1.18	0.2912	1.11	3.0	-159.69	1.17	1.0	-125.12	1.19	0.731	0.513	MAZ.H12CORE.1.P.B	52.0	159.0	3.31	-3.03	1.34	-0.74	True	False	False	False	False
+HOXC9	3331	Hoxd11(Homeobox)	22.0	-2.5	0.0685	1.83	170.0	-0.53	0.8104	1.06	161.0	-7.61	1.04	326.0	-0.0	0.84	0.5	0.705	MA0485.3	2196.0	834.0	-1.2	0.64	0.51	-0.22	True	False	False	False	False
+SOX12	1508	Sox9(HMG)	24.0	-1.71	0.4318	1.24	252.0	-0.34	0.8556	1.03	258.0	-1.16	1.04				0.808	0.667	SOX12.H12CORE.0.SM.B	1110.0	2028.0	0.25	-0.1	-1.34	0.74	True	False	False	False	False
+HOXA10	6476	Hoxd9(Homeobox)	25.0	-3.56	0.0052	1.36	13.0	-4.25	0.002	4.04	107.0	-9.16	1.08	171.0	-0.14	0.99	0.218	1.0	MA0899.2	2175.0	1940.0	-1.27	0.69	-0.96	0.47	True	False	False	False	False
+HOXB9	5903	Hoxa9(Homeobox)	41.0	-1.87	0.1538	1.37	12.0	-3.55	0.0111	1.42	150.0	-7.64	1.06				0.692	0.897	MA1503.2	1971.0	1897.0	-0.91	0.44	-0.88	0.42	True	False	False	False	False
+MEF2A	1027	Mef2b(MADS)	43.0	-1.48	0.3627	2.01	138.0	-0.57	0.9442	1.1	234.0	0.0	0.22	46.0	-7.9	1.18	0.526	0.859	MEF2A.H12CORE.0.P.B	2228.0	1852.0	-1.43	0.82	-0.61	0.26	True	False	False	False	False
+ZIC2	4896	Zic(Zf)	43.0	-1.88	0.1438	1.33	318.0	-0.18	0.9806	0.95	162.0	-6.06	1.06	469.0	0.0	0.82	0.936	0.308	MA1629.2	260.0	479.0	2.07	-1.41	1.65	-1.01	True	False	False	False	False
+HOXA5	1758	Hoxb4(Homeobox)	56.0	-1.47	0.3011	1.16	296.0	-0.18	1.0	0.88	51.0	-15.29	1.13	267.0	-0.0	0.95	0.526	0.359	MA0158.2	834.0	1816.0	0.62	-0.27	-0.61	0.26	True	False	False	False	False
+E2F3	30622	E2F4(E2F)	57.0	-3.51	0.0026	1.38	51.0	-2.62	0.0221	1.31	9.0	-74.48	1.19	72.0	-7.05	1.15	0.885	0.897	E2F3.H12CORE.0.P.B	349.0	190.0	2.57	-2.0	4.36	-4.89	True	False	False	False	False
+FOXK1	1202	FOXK1(Forkhead)	59.0	-1.14	0.6208	1.31	116.0	-0.8	0.6432	1.15	129.0	0.0	0.21	401.0	0.0	0.77	0.833	0.769	MA0852.3	560.0	1206.0	0.88	-0.42	0.3	-0.12	True	False	False	False	False
+FOXC1	4760	Foxo1(Forkhead)	80.0	-1.16	0.4115	1.16	91.0	-0.85	0.757	1.12	58.0	-10.3	1.14	155.0	-0.17	0.97	0.846	0.692	MA0032.2	2197.0	2107.0	-1.08	0.55	-1.92	1.26	True	False	False	False	False
+HOXC4	1023	Hoxb4(Homeobox)	95.0	-1.06	0.4281	1.12	85.0	-1.05	0.4891	1.61	150.0	-3.26	1.07				0.795	0.859	MA1504.2	1032.0	1091.0	0.32	-0.12	0.34	-0.13	True	False	False	False	False
+MLX	23262	MNT(bHLH)	115.0	-1.23	0.2429	1.28	45.0	-2.24	0.0606	1.5	165.0	-5.61	1.07	16.0	-26.63	1.23	0.628	0.872	MLX.H12CORE.0.PM.A	374.0	394.0	1.93	-1.27	1.69	-1.04	True	False	False	False	False
+FOXJ3	2303	Foxo3(Forkhead)	120.0	-0.86	0.5377	1.39	115.0	-0.7	0.823	1.15	60.0	-8.06	1.12	213.0	-0.04	0.94	0.538	0.641	MA0851.2	1631.0	1291.0	-0.3	0.12	-0.82	0.39	True	False	False	False	False
+SOX4	64652	Sox4(HMG)	165.0	-0.61	0.7051	1.15	124.0	-1.12	0.288	1.44	327.0	-0.1	0.99	44.0	-32.84	1.07	0.09	0.974	SOX4.H12CORE.0.PSM.A	1524.0	1356.0	-0.82	0.39	-0.87	0.42	True	False	False	False	False
+NEUROD4	1262	Atoh1(bHLH)	178.0	-0.47	0.9229	1.04	37.0	-1.92	0.1551	1.31	208.0	-3.37	1.06				0.385	0.962	nan							True	False	False	False	False
+HOXB6	5703	Hoxb4(Homeobox)	199.0	-0.61	0.5817	1.48	182.0	-0.57	0.6876	1.22	55.0	-22.77	1.11	313.0	-0.0	0.74	0.692	0.667	MA1500.2	2232.0	736.0	-1.52	0.9	0.79	-0.37	True	False	False	False	False
+ZNF143	1736	ZNF143|STAF(Zf)	215.0	-0.36	0.9647	1.04	190.0	-0.43	0.9224	1.09	383.0	0.0	0.24	218.0	-0.01	0.94	0.205	0.205	MA0088.2	584.0	192.0	0.88	-0.42	1.69	-1.04	True	False	False	False	False
+DDIT3	22129	CEBP:AP1(bZIP)	231.0	-0.33	0.9472	1.03	172.0	-0.59	0.715	1.2	360.0	-0.03	0.95	288.0	-0.0	0.84	0.269	0.705	MA0019.2	1623.0	1625.0	-0.74	0.34	-0.7	0.31	True	False	False	False	False
+HOXB8	1980	Hoxb4(Homeobox)	258.0	-0.2	1.0	0.97	86.0	-1.0	0.5515	1.48	54.0	-17.17	1.13	231.0	-0.01	0.96	0.154	0.846	MA1502.2	2000.0	1572.0	-0.98	0.48	-0.31	0.12	True	False	False	False	False
+NR1D2	1262	RORgt(NR)	261.0	-0.24	1.0	0.94	312.0	-0.16	1.0	0.77	331.0	-0.23	0.98				0.513	0.449	NR1D2.H12CORE.0.P.B	618.0	456.0	0.76	-0.35	0.39	-0.16	True	False	False	False	False
+ETS2	1637	ETS1(ETS)	262.0	-0.21	1.0	0.96	34.0	-1.46	0.4786	1.27	8.0	-37.26	1.18	455.0	0.0	0.87	0.141	0.641	MA1484.2	199.0	288.0	1.76	-1.11	0.56	-0.24	True	False	False	False	False
+TBX3	4391	Tbx5(T-box)	282.0	-0.3	0.8525	1.0	210.0	-0.43	0.8292	1.02	436.0	-0.0	0.96	327.0	-0.0	0.95	0.731	0.603	MA1566.3	1656.0	1250.0	-0.26	0.1	0.18	-0.06	True	False	False	False	False
+EPAS1	1046	NPAS(bHLH)	289.0	-0.22	0.9937	0.98	169.0	-0.46	0.9836	1.05	172.0	0.0	0.19	115.0	-0.57	1.03	0.449	0.526	EPAS1.H12CORE.0.P.B	650.0	530.0	0.87	-0.41	1.09	-0.56	True	False	False	False	False
+MEF2D	1764	Mef2d(MADS)	301.0	-0.26	0.8671	0.98	369.0	-0.09	1.0	0.74	233.0	0.0	0.19	85.0	-1.79	1.07	0.244	0.41	MEF2D.H12CORE.0.PS.A	2306.0	2159.0	-1.5	0.87	-1.32	0.73	True	False	False	False	False
+RBPJ	5138	RBPJ:Ebox(?,bHLH)	308.0	-0.14	1.0	0.85	293.0	-0.32	0.7839	1.01	207.0	-4.43	1.1	319.0	-0.0	0.86	0.372	0.449	MA1116.2	959.0	1133.0	0.32	-0.13	0.31	-0.12	True	False	False	False	False
+ZNF768	5837	ZNF768(Zf)	472.0	0.0	1.0	0.0	472.0	0.0	1.0	0.0				234.0	-0.0	0.83	0.0	0.0	MA1731.2	1868.0	864.0	-0.69	0.31	0.6	-0.26	True	False	False	False	False
+RBBP4	181396																		nan							True	False	False	False	False
+XPA	50752																		nan							True	False	False	False	False
+RBBP7	39619																		nan							True	False	False	False	False
+ZNF507	30870																		ZNF507	495.0	1047.0	1.87	-1.21	0.19	-0.07	True	False	False	False	False
+NME2	30095																		nan							True	False	False	False	False
+MBD3	28330																		MBD3	175.0	99.0	4.62	-5.41	5.04	-6.33	True	False	False	False	True
+ZNF703	21216																		ZNF703	2389.0	2101.0	-1.99	1.33	-1.39	0.79	True	False	False	False	False
+GLYR1	16883																		GLYR1	1665.0	2469.0	-0.69	0.31	-2.64	2.08	True	False	False	False	False
+E4F1	12061																		E4F1.H12CORE.0.P.B	209.0	497.0	3.18	-2.83	1.69	-1.04	True	False	False	False	False
+SAFB	9654																		nan							True	False	False	False	False
+MTF2	8746																		nan							True	False	False	False	False
+ZBTB7A	7005																		MA0750.3	49.0	458.0	4.29	-4.75	1.65	-1.0	True	False	False	False	False
+FLYWCH1	5824																		FLYWCH1	1778.0	1694.0	-0.41	0.16	-0.56	0.24	True	False	False	False	False
+DR1	5661																		nan							True	False	False	False	False
+PA2G4	5319																		nan							True	False	False	False	False
+ZNF512B	5185																		nan							True	False	False	False	False
+ZNF644	4749																		nan							True	False	False	False	False
+ZNF367	4492																		ZNF367	1218.0	2241.0	0.24	-0.09	-1.31	0.72	True	False	False	False	False
+HES1	4325																		MA1099.3	471.0	198.0	1.25	-0.68	2.09	-1.43	True	False	False	False	False
+EZH2	3970																		nan							True	False	False	False	False
+SRCAP	3859																		nan							True	False	False	False	False
+SMARCA1	3745																		nan							True	False	False	False	False
+STAG2	3599																		nan							True	False	False	False	False
+WIZ	3449																		nan							True	False	False	False	False
+ZNF777	3400																		nan							True	False	False	False	False
+ZNF746	3099																		ZNF746	47.0	116.0	3.78	-3.81	3.1	-2.72	True	False	False	False	False
+ZNF282	2959																		MA1154.2	1727.0	1654.0	-0.35	0.14	-0.46	0.19	True	False	False	False	False
+CHAMP1	2942																		nan							True	False	False	False	False
+POGK	2651																		POGK	1514.0	351.0	-0.21	0.08	1.52	-0.89	True	False	False	False	False
+THAP6	2516																		nan							True	False	False	False	False
+ZUFSP	2496																		nan							True	False	False	False	False
+DNMT1	2458																		nan							True	False	False	False	False
+ZNF512	2122																		nan							True	False	False	False	False
+ZBTB43	1818																		nan							True	False	False	False	False
+ADNP	1792																		nan							True	False	False	False	False
+TRAFD1	1546																		nan							True	False	False	False	False
+ZBTB40	1535																		ZBTB40	2294.0	1942.0	-1.22	0.65	-0.77	0.35	True	False	False	False	False
+AKAP8L	1490																		nan							True	False	False	False	False
+ZNF581	1316																		nan							True	False	False	False	False
+MSX2	1277																		MSX2.H12CORE.0.SM.B	836.0	568.0	0.69	-0.31	0.09	-0.03	True	False	False	False	False
+HP1	1243																		nan							True	False	False	False	False
+ZNF606	1235																		ZNF606	365.0	1229.0	1.72	-1.06	0.22	-0.08	True	False	False	False	False
+ZNF79	1232																		ZNF79.H12CORE.0.P.C	2255.0	2470.0	-1.22	0.65	-1.9	1.24	True	False	False	False	False
+SREBF2	1211																		MA1939.2	471.0	231.0	1.14	-0.6	0.08	-0.03	True	False	False	False	False
+PCGF6	1070																		nan							True	False	False	False	False
+ZNF503	1050																		ZNF503	1138.0	584.0	0.34	-0.13	0.93	-0.45	True	False	False	False	False
+SETDB1	1028																		nan							True	False	False	False	False
