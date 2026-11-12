@@ -241,3 +241,15 @@ Each step lists what changed, the sanity check (own motif recovered in the per-T
   - AF3 pairs touching them are CTCF-SAFB, EZH2-ZNF282 and ZNF282-ZNF746. SAFB and EZH2 have no motif; ZNF746 bulk exists only in HEK293.
   - No AF3 pair can be tested with HEK293T bulk on both partners. New bulk experiments are still needed.
 - Lookup table: external/capselex2025/capselex_lookup.tsv (all 3,081 pairs).
+
+## Step 14 (2026-11-12): sequence model, 6-mer logistic regression per library (sequence_model/; sm_kmer.py; job 8937878)
+- Inputs as motif_valid (lab summits top 1,000 in open chromatin, HOT / Alu / artifacts removed, matched background). RC-collapsed 6-mers, L2 logistic regression; trained on odd chromosomes and tested on even + X, and the reverse.
+- Held-out AUROC: median 0.56 (IQR 0.53-0.60). The best libraries are the deepest: RBBP4 0.89, NFYA 0.87, SOX4 0.86, XPA 0.82, ZNF507 0.78, NME2 0.78, E2F3 0.76, MBD3 0.75.
+- Own-motif gate (learned weights vs motif 6-mer scores, rank <= 10 in both models): 0 of 49 strict. NFYA ranks 4 / 46, CTCF 6 / 142, NR1D2 10 / 977; every other TF is above 85.
+- Anchors (A's model on B's held-out sites, percentile among 78 other libraries):
+  - Positives: CTCF->STAG2 0.26, MAZ->ZNF143 0.13, ZNF143->MAZ 0.13, NFYA->ZNF644 0.47 (0 pass).
+  - Negatives: CTCF->NFYA 0.96 passes, NFYA->CTCF 0.83. Promoter-like models score NFYA sites high.
+- Pairs (descriptive only, method not calibrated):
+  - AF3 strong/weak: 17 / 110 have weight cosine pct >= 0.95; 15 / 110 have cross-prediction pct >= 0.95.
+  - All candidates: 123 and 137 of 1,732.
+- Verdict: fails both gates. The sequence signal that exists is depth / promoter composition, not TF-specific grammar.

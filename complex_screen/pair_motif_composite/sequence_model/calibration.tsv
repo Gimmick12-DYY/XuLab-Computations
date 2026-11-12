@@ -1,0 +1,2 @@
+method	median_heldout_auroc	n_tf_with_own	own_strict	own_loose	own_strict_tfs	positives_passed	negatives_passed	gate1	gate2	usable
+kmer_logreg	0.56	49	0	0		0	1	False	False	False

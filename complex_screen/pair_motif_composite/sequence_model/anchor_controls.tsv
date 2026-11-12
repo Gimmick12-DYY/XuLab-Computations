@@ -1,0 +1,7 @@
+anchor	partner	kind	cross_auroc	pct
+CTCF	STAG2	positive	0.562	0.256
+MAZ	ZNF143	positive	0.532	0.128
+ZNF143	MAZ	positive	0.518	0.128
+NFYA	ZNF644	positive	0.597	0.474
+CTCF	NFYA	negative	0.766	0.962
+NFYA	CTCF	negative	0.69	0.833
