@@ -1,0 +1,61 @@
+label	B	P	direction	n_tfs	diag_minus_offdiag_OR	p_perm	diag_minus_offdiag_logOR	p_perm_log	n_own_best	own_best_tfs
+diagnostic, benchmark-developed	B1_any_linked_peak	P1_top5pct	all	68	0.02457	0.2307	0.02278	0.2091	2	NRF1,SRCAP
+diagnostic, benchmark-developed	B1_any_linked_peak	P1_top5pct	down	68	0.1698	0.007399	0.1158	0.0004	4	HOXC4,HOXC9,NRF1,RBBP4
+diagnostic, benchmark-developed	B1_any_linked_peak	P1_top5pct	up	68	-0.02578	0.6575	-0.03917	0.8538	1	SRCAP
+diagnostic, benchmark-developed	B1_any_linked_peak	P2_absz_ge3	all	59	-0.02532	0.5566	-0.008799	0.5608	2	CHAMP1,DDIT3
+diagnostic, benchmark-developed	B1_any_linked_peak	P2_absz_ge3	down	29	-0.0311	0.5458	-0.02227	0.6075	1	ZBTB43
+diagnostic, benchmark-developed	B1_any_linked_peak	P2_absz_ge3	up	53	-0.01645	0.5197	-0.05365	0.7752	0	
+diagnostic, benchmark-developed	B1_any_linked_peak	P3_BH_q05	all	10	-0.03395	0.552	0.009398	0.4993	0	
+diagnostic, benchmark-developed	B1_any_linked_peak	P3_BH_q05	down	7	0.3537	0.06449	0.2471	0.09599	1	ZNF143
+diagnostic, benchmark-developed	B1_any_linked_peak	P3_BH_q05	up	8	-0.07035	0.5512	-0.02304	0.5671	1	E4F1
+diagnostic, benchmark-developed	B1_any_linked_peak	P4_reproducible_halves	all	36	0.1235	0.2566	-0.02672	0.6307	0	
+diagnostic, benchmark-developed	B1_any_linked_peak	P4_reproducible_halves	down	13	0.07268	0.2982	0.1247	0.1879	0	
+diagnostic, benchmark-developed	B1_any_linked_peak	P4_reproducible_halves	up	22	-0.0483	0.5404	0.02933	0.3912	0	
+diagnostic, benchmark-developed	B2_promoter_peak	P1_top5pct	all	68	0.1223	0.06789	0.04043	0.1304	2	E4F1,NRF1
+diagnostic, benchmark-developed	B2_promoter_peak	P1_top5pct	down	68	0.06879	0.1874	0.09086	0.0237	5	E4F1,HOXC4,NRF1,RBBP4,SOX4
+diagnostic, benchmark-developed	B2_promoter_peak	P1_top5pct	up	68	0.163	0.09609	-0.02793	0.728	1	ZBTB7A
+diagnostic, benchmark-developed	B2_promoter_peak	P2_absz_ge3	all	59	-0.03698	0.5379	0.07587	0.1379	1	CHAMP1
+diagnostic, benchmark-developed	B2_promoter_peak	P2_absz_ge3	down	29	0.1454	0.4154	0.09996	0.161	1	HOXC4
+diagnostic, benchmark-developed	B2_promoter_peak	P2_absz_ge3	up	53	0.03416	0.4535	-0.1055	0.8999	1	ZNF703
+diagnostic, benchmark-developed	B2_promoter_peak	P3_BH_q05	all	10	-0.08072	0.5655	0.02358	0.4485	0	
+diagnostic, benchmark-developed	B2_promoter_peak	P3_BH_q05	down	7	0.3617	0.07299	0.3235	0.05909	3	E4F1,NRF1,ZNF143
+diagnostic, benchmark-developed	B2_promoter_peak	P3_BH_q05	up	8	-0.1037	0.552	-0.1378	0.7945	2	E4F1,FOXK1
+diagnostic, benchmark-developed	B2_promoter_peak	P4_reproducible_halves	all	36	0.4388	0.249	-0.03749	0.6609	0	
+diagnostic, benchmark-developed	B2_promoter_peak	P4_reproducible_halves	down	13	0.2348	0.1661	0.2033	0.1125	1	WIZ
+diagnostic, benchmark-developed	B2_promoter_peak	P4_reproducible_halves	up	22	-0.1572	0.653	-0.07697	0.7405	1	SRCAP
+diagnostic, benchmark-developed	B3_top500_peakxABC	P1_top5pct	all	68	0.01576	0.3263	0.01371	0.3442	3	E4F1,HOXB6,NRF1
+diagnostic, benchmark-developed	B3_top500_peakxABC	P1_top5pct	down	68	0.07769	0.1066	0.09191	0.0174	2	HOXC4,NRF1
+diagnostic, benchmark-developed	B3_top500_peakxABC	P1_top5pct	up	68	-0.04408	0.7769	-0.06174	0.9164	0	
+diagnostic, benchmark-developed	B3_top500_peakxABC	P2_absz_ge3	all	59	-0.06522	0.6933	-0.03456	0.6652	0	
+diagnostic, benchmark-developed	B3_top500_peakxABC	P2_absz_ge3	down	29	0.001657	0.4875	0.05786	0.3051	1	ZBTB43
+diagnostic, benchmark-developed	B3_top500_peakxABC	P2_absz_ge3	up	53	-0.09886	0.7164	-0.1341	0.9234	1	CHAMP1
+diagnostic, benchmark-developed	B3_top500_peakxABC	P3_BH_q05	all	10	-0.2897	0.8908	-0.2227	0.8836	0	
+diagnostic, benchmark-developed	B3_top500_peakxABC	P3_BH_q05	down	7	0.3176	0.06589	0.2964	0.06489	2	NRF1,ZNF143
+diagnostic, benchmark-developed	B3_top500_peakxABC	P3_BH_q05	up	8	-0.2091	0.746	-0.232	0.8433	0	
+diagnostic, benchmark-developed	B3_top500_peakxABC	P4_reproducible_halves	all	36	-0.04977	0.579	-0.1499	0.9126	0	
+diagnostic, benchmark-developed	B3_top500_peakxABC	P4_reproducible_halves	down	13	-0.01185	0.509	0.08848	0.3174	0	
+diagnostic, benchmark-developed	B3_top500_peakxABC	P4_reproducible_halves	up	22	-0.3446	0.9494	-0.2301	0.9365	0	
+diagnostic, benchmark-developed	B3_top1000_peakxABC	P1_top5pct	all	68	0.0297	0.2008	0.02612	0.1878	2	E4F1,NRF1
+diagnostic, benchmark-developed	B3_top1000_peakxABC	P1_top5pct	down	68	0.08117	0.08259	0.08639	0.009199	2	HOXC4,NRF1
+diagnostic, benchmark-developed	B3_top1000_peakxABC	P1_top5pct	up	68	-0.02415	0.6479	-0.0399	0.8455	0	
+diagnostic, benchmark-developed	B3_top1000_peakxABC	P2_absz_ge3	all	59	-0.04305	0.6278	-0.01391	0.5874	1	CHAMP1
+diagnostic, benchmark-developed	B3_top1000_peakxABC	P2_absz_ge3	down	29	-0.02581	0.5528	-0.00577	0.5318	1	ZBTB43
+diagnostic, benchmark-developed	B3_top1000_peakxABC	P2_absz_ge3	up	53	-0.08914	0.7048	-0.112	0.9006	0	
+diagnostic, benchmark-developed	B3_top1000_peakxABC	P3_BH_q05	all	10	-0.05635	0.5639	0.008894	0.478	0	
+diagnostic, benchmark-developed	B3_top1000_peakxABC	P3_BH_q05	down	7	0.3523	0.06709	0.2294	0.1079	2	NME2,ZNF143
+diagnostic, benchmark-developed	B3_top1000_peakxABC	P3_BH_q05	up	8	-0.08686	0.5907	-0.05919	0.6385	0	
+diagnostic, benchmark-developed	B3_top1000_peakxABC	P4_reproducible_halves	all	36	0.1335	0.2374	0.02745	0.3936	0	
+diagnostic, benchmark-developed	B3_top1000_peakxABC	P4_reproducible_halves	down	13	0.1067	0.2522	0.1561	0.1709	1	WIZ
+diagnostic, benchmark-developed	B3_top1000_peakxABC	P4_reproducible_halves	up	22	-0.1094	0.6886	0.02089	0.4375	0	
+diagnostic, benchmark-developed	B3_top2000_peakxABC	P1_top5pct	all	68	0.03072	0.1938	0.02606	0.1839	2	NRF1,SRCAP
+diagnostic, benchmark-developed	B3_top2000_peakxABC	P1_top5pct	down	68	0.07414	0.103	0.07866	0.0142	3	HOXC4,HOXC9,NRF1
+diagnostic, benchmark-developed	B3_top2000_peakxABC	P1_top5pct	up	68	-0.01174	0.5493	-0.02892	0.7878	1	SRCAP
+diagnostic, benchmark-developed	B3_top2000_peakxABC	P2_absz_ge3	all	59	-0.05567	0.6776	-0.03584	0.7239	1	CHAMP1
+diagnostic, benchmark-developed	B3_top2000_peakxABC	P2_absz_ge3	down	29	-0.02524	0.5304	-0.02853	0.6244	1	ZBTB43
+diagnostic, benchmark-developed	B3_top2000_peakxABC	P2_absz_ge3	up	53	-0.04342	0.5939	-0.09324	0.8925	0	
+diagnostic, benchmark-developed	B3_top2000_peakxABC	P3_BH_q05	all	10	-0.02861	0.5364	0.0184	0.4695	0	
+diagnostic, benchmark-developed	B3_top2000_peakxABC	P3_BH_q05	down	7	0.3572	0.0453	0.2508	0.09219	1	ZNF143
+diagnostic, benchmark-developed	B3_top2000_peakxABC	P3_BH_q05	up	8	-0.1202	0.6663	-0.1079	0.7489	1	E4F1
+diagnostic, benchmark-developed	B3_top2000_peakxABC	P4_reproducible_halves	all	36	0.07823	0.3468	-0.02397	0.6216	0	
+diagnostic, benchmark-developed	B3_top2000_peakxABC	P4_reproducible_halves	down	13	0.101	0.2327	0.1602	0.1256	0	
+diagnostic, benchmark-developed	B3_top2000_peakxABC	P4_reproducible_halves	up	22	-0.116	0.7073	-0.03029	0.6085	0	
