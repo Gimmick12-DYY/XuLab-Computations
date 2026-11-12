@@ -79,10 +79,7 @@ s = (P2 / "tf_peak_network_cliques_loops.svg").read_text().replace("fill: #f7f7f
 emit("b1_rbbp4_network", glyph_text_to_live(s, drop=("RBBP4 co-binding clusters",)))
 s = (P2 / "RBBP4_clique_loop_edges_circos_tf_top.svg").read_text()
 emit("b2_rbbp4_hic_circos", glyph_text_to_live(drop_text_groups(s, ("Genome-wide RBBP4",)), drop=("Genome-wide RBBP4",)))
-# c: RBBP4 genome-wide chromosome plot, module edges above / Peakachu loops below (slide 172)
-for v in ("plain", "highlight"):
-    s = (P2 / f"RBBP4_clique_edges_above_loops_below_chromosomes.{v}.svg").read_text()
-    emit(f"c_rbbp4_chromosomes_{v}", glyph_text_to_live(s, drop=("Genome-wide RBBP4", "Pairs above chromosomes")))
+# c: made by scripts/c_rbbp4_chromosomes.py (all RBBP4 pairs, module edges highlighted, only supporting loops; user 2026-11-12)
 # d, e, g, h, i: Fig 3 v7 panels (final-size renders, commits 9766509 / 1a3c955 / 715c1a5)
 for name, src, sc in (("d_module_edges_hic_support", "a_module_edges", 1.0), ("e_module_genomic_class", "b_class_bars", 1.0), ("g_se_browser", "c_se_browser", 0.739),
                       ("h_se_3d_structure", "d_se_rosette", 0.421), ("i_se_flower", "e_se_flower", 0.367)):

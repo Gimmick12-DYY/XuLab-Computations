@@ -9,7 +9,7 @@ Illustrator-safe font attributes, cropped to content), `.pdf` and a 300 dpi `.pn
 | a | What coordinated binding is (schematic, a possible rosette) | `a_coordinated_binding_rosette` (120 x 52 mm) | illustration, not data | `a_rosette_schematic.py` |
 | b | RBBP4 example: network | `b1_rbbp4_network` | `hic/work_wt293t/loops/union_5k_10k_0.7/RBBP4_sweep_k50_i10000_s555_pad30kb/publication_plots_v2/tf_peak_network_cliques_loops.svg` (deck slide 169) | `hic/scripts/plot_clique_network_loops_v2.py`; text fix here |
 | b | RBBP4 example: Hi-C loop plot | `b2_rbbp4_hic_circos` | same folder, `RBBP4_clique_loop_edges_circos_tf_top.svg` (slide 170) | `hic/scripts/plot_clique_circos_tf_top.py` |
-| c | RBBP4 chromosome plot (module edges above, loops below) | `c_rbbp4_chromosomes_plain`, `c_rbbp4_chromosomes_highlight` | same folder, `RBBP4_clique_edges_above_loops_below_chromosomes.{plain,highlight}.svg` (slide 172) | `hic/scripts/plot_pairs_vs_loops_chromosomes_v2.py` |
+| c | RBBP4 pairs along all chromosomes, module edges highlighted, only the Hi-C loops that support them | `c_rbbp4_chromosomes` (180 x 150 mm) | RBBP4_sweep_k50_i10000_s555: first-step Cicero pairs (peak_edges.tsv, pairs >25 kb, same set as panel d / S1D), modules from cliques.tsv; Peakachu 0.7 loops (5 kb + 10 kb), +-30 kb anchor rule | `scripts/c_rbbp4_chromosomes.py` |
 | d | All-TF module loop-edge support + per-edge shuffle null | `d_module_edges_hic_support` | Fig 3 v7 panel a | `figures/fig3_v7/a_module_edges_v7.py` (9766509) |
 | e | All-TF module distribution (genomic class) | `e_module_genomic_class` | Fig 3 v7 panel b | `figures/fig3_v7/b_class_bars_v7.py` (9766509) |
 | f | Chord of the most widely shared module edges | `f_top_shared_edges_chord` | Mac `hub_figures/basic/clique_edge_overlap/fig_chord_tf_top_shared_edges.svg` (slide 72, md5 7902fef4 = deck) | title/subtitle dropped here |
@@ -24,8 +24,7 @@ b, c and f are slide-sized originals (b1 444 mm, b2 311 mm, c 419 mm, f 281 mm w
 
 **Missing:** none (a is a first draft of the schematic: linear module -> rosette in 3D).
 
-**Not certain:** "RBBP4 chromosome combined plot" (c) is taken as the chromosome-track plot (slide 172, plain and highlight versions);
-the circos (slide 170) is filed as b's Hi-C plot. Swap if you meant the other way round.
+Panel c was redrawn on 2026-11-12 to the user's spec (all pairs; module edges in dark blue; only supporting loops below).
 
 `supplementary/`: pairs with Hi-C loop support + per-pair null (approved D1), whole-module block-shuffle null (stricter; 35/40),
 RBBP4 pair/edge permutation (S1D, slide 16), SE edge-count table (slide 21).
