@@ -1,0 +1,697 @@
+label	tf	ranking	top_n	n	own_motif_frac	swapped_motif	swapped_motif_frac	own_motif_bg_frac	swapped_motif_bg_frac	chip_frac::CTCF_HEK293T_GSE103651_peaks.bed	chip_frac::CTCF_HEK293_peaks.bed	chip_frac::MAZ_HEK293_peaks.bed	chip_frac::NFYA_K562_peaks.bed	chip_frac::ZBTB7A_HEK293_peaks.bed	chip_frac::ZIC2_HEK293_peaks.bed	chip_frac::ZNF282_HEK293_peaks.bed	chip_frac::ZNF777_HEK293_peaks.bed
+diagnostic	ADNP	r1_signal	500	500													
+diagnostic	ADNP	r1_signal	1000	827													
+diagnostic	ADNP	r1_signal	2000	827													
+diagnostic	ADNP	r2_ratio	500	500													
+diagnostic	ADNP	r2_ratio	1000	827													
+diagnostic	ADNP	r2_ratio	2000	827													
+diagnostic	ADNP	r3_residual	500	500													
+diagnostic	ADNP	r3_residual	1000	827													
+diagnostic	ADNP	r3_residual	2000	827													
+diagnostic	ADNP	r4_atac	500	500													
+diagnostic	ADNP	r4_atac	1000	827													
+diagnostic	ADNP	r4_atac	2000	827													
+diagnostic	AKAP8L	r1_signal	500	427													
+diagnostic	AKAP8L	r1_signal	1000	427													
+diagnostic	AKAP8L	r1_signal	2000	427													
+diagnostic	AKAP8L	r2_ratio	500	427													
+diagnostic	AKAP8L	r2_ratio	1000	427													
+diagnostic	AKAP8L	r2_ratio	2000	427													
+diagnostic	AKAP8L	r3_residual	500	427													
+diagnostic	AKAP8L	r3_residual	1000	427													
+diagnostic	AKAP8L	r3_residual	2000	427													
+diagnostic	AKAP8L	r4_atac	500	427													
+diagnostic	AKAP8L	r4_atac	1000	427													
+diagnostic	AKAP8L	r4_atac	2000	427													
+diagnostic	CHAMP1	r1_signal	500	500													
+diagnostic	CHAMP1	r1_signal	1000	1000													
+diagnostic	CHAMP1	r1_signal	2000	1017													
+diagnostic	CHAMP1	r2_ratio	500	500													
+diagnostic	CHAMP1	r2_ratio	1000	1000													
+diagnostic	CHAMP1	r2_ratio	2000	1017													
+diagnostic	CHAMP1	r3_residual	500	500													
+diagnostic	CHAMP1	r3_residual	1000	1000													
+diagnostic	CHAMP1	r3_residual	2000	1017													
+diagnostic	CHAMP1	r4_atac	500	500													
+diagnostic	CHAMP1	r4_atac	1000	1000													
+diagnostic	CHAMP1	r4_atac	2000	1017													
+diagnostic	CTCF	r1_signal	500	500	0.268	DDIT3	0.01	0.282	0.006	0.142	0.126						
+diagnostic	CTCF	r1_signal	1000	1000	0.255	DDIT3	0.008	0.288	0.008	0.149	0.135						
+diagnostic	CTCF	r1_signal	2000	1475	0.2522	DDIT3	0.008136	0.2597	0.01288	0.1708	0.158						
+diagnostic	CTCF	r2_ratio	500	500	0.266	DDIT3	0.01	0.258	0.006	0.194	0.174						
+diagnostic	CTCF	r2_ratio	1000	1000	0.27	DDIT3	0.009	0.252	0.015	0.192	0.176						
+diagnostic	CTCF	r2_ratio	2000	1475	0.2522	DDIT3	0.008136	0.2508	0.009492	0.1708	0.158						
+diagnostic	CTCF	r3_residual	500	500	0.254	DDIT3	0.01	0.246	0.01	0.14	0.116						
+diagnostic	CTCF	r3_residual	1000	1000	0.25	DDIT3	0.008	0.233	0.011	0.147	0.127						
+diagnostic	CTCF	r3_residual	2000	1475	0.2522	DDIT3	0.008136	0.2725	0.008814	0.1708	0.158						
+diagnostic	CTCF	r4_atac	500	500	0.214	DDIT3	0.006	0.274	0.01	0.118	0.112						
+diagnostic	CTCF	r4_atac	1000	1000	0.246	DDIT3	0.007	0.264	0.01	0.151	0.142						
+diagnostic	CTCF	r4_atac	2000	1475	0.2522	DDIT3	0.008136	0.2447	0.01627	0.1708	0.158						
+diagnostic	DDIT3	r1_signal	500	500	0.01	E2F3	0.258	0	0.164								
+diagnostic	DDIT3	r1_signal	1000	1000	0.013	E2F3	0.247	0.013	0.167								
+diagnostic	DDIT3	r1_signal	2000	2000	0.0085	E2F3	0.228	0.008	0.164								
+diagnostic	DDIT3	r2_ratio	500	500	0.02	E2F3	0.128	0.014	0.116								
+diagnostic	DDIT3	r2_ratio	1000	1000	0.016	E2F3	0.155	0.015	0.125								
+diagnostic	DDIT3	r2_ratio	2000	2000	0.0145	E2F3	0.1745	0.0125	0.156								
+diagnostic	DDIT3	r3_residual	500	500	0.012	E2F3	0.268	0.002	0.164								
+diagnostic	DDIT3	r3_residual	1000	1000	0.01	E2F3	0.247	0.014	0.161								
+diagnostic	DDIT3	r3_residual	2000	2000	0.011	E2F3	0.233	0.008	0.1615								
+diagnostic	DDIT3	r4_atac	500	500	0.004	E2F3	0.226	0.012	0.168								
+diagnostic	DDIT3	r4_atac	1000	1000	0.008	E2F3	0.223	0.005	0.145								
+diagnostic	DDIT3	r4_atac	2000	2000	0.0065	E2F3	0.223	0.0095	0.1455								
+diagnostic	DNMT1	r1_signal	500	323													
+diagnostic	DNMT1	r1_signal	1000	323													
+diagnostic	DNMT1	r1_signal	2000	323													
+diagnostic	DNMT1	r2_ratio	500	323													
+diagnostic	DNMT1	r2_ratio	1000	323													
+diagnostic	DNMT1	r2_ratio	2000	323													
+diagnostic	DNMT1	r3_residual	500	323													
+diagnostic	DNMT1	r3_residual	1000	323													
+diagnostic	DNMT1	r3_residual	2000	323													
+diagnostic	DNMT1	r4_atac	500	323													
+diagnostic	DNMT1	r4_atac	1000	323													
+diagnostic	DNMT1	r4_atac	2000	323													
+diagnostic	DR1	r1_signal	500	500													
+diagnostic	DR1	r1_signal	1000	1000													
+diagnostic	DR1	r1_signal	2000	2000													
+diagnostic	DR1	r2_ratio	500	500													
+diagnostic	DR1	r2_ratio	1000	1000													
+diagnostic	DR1	r2_ratio	2000	2000													
+diagnostic	DR1	r3_residual	500	500													
+diagnostic	DR1	r3_residual	1000	1000													
+diagnostic	DR1	r3_residual	2000	2000													
+diagnostic	DR1	r4_atac	500	500													
+diagnostic	DR1	r4_atac	1000	1000													
+diagnostic	DR1	r4_atac	2000	2000													
+diagnostic	E2F3	r1_signal	500	500	0.272	E4F1	0.034	0.168	0.01								
+diagnostic	E2F3	r1_signal	1000	1000	0.234	E4F1	0.028	0.153	0.009								
+diagnostic	E2F3	r1_signal	2000	2000	0.223	E4F1	0.028	0.1815	0.006								
+diagnostic	E2F3	r2_ratio	500	500	0.144	E4F1	0.008	0.11	0.014								
+diagnostic	E2F3	r2_ratio	1000	1000	0.157	E4F1	0.009	0.132	0.008								
+diagnostic	E2F3	r2_ratio	2000	2000	0.184	E4F1	0.011	0.14	0.009								
+diagnostic	E2F3	r3_residual	500	500	0.266	E4F1	0.026	0.162	0.01								
+diagnostic	E2F3	r3_residual	1000	1000	0.248	E4F1	0.02	0.182	0.007								
+diagnostic	E2F3	r3_residual	2000	2000	0.2275	E4F1	0.023	0.1505	0.0055								
+diagnostic	E2F3	r4_atac	500	500	0.198	E4F1	0.038	0.096	0.008								
+diagnostic	E2F3	r4_atac	1000	1000	0.205	E4F1	0.035	0.159	0.007								
+diagnostic	E2F3	r4_atac	2000	2000	0.213	E4F1	0.031	0.1535	0.0085								
+diagnostic	E4F1	r1_signal	500	500	0.024	EPAS1	0.008	0.006	0.008								
+diagnostic	E4F1	r1_signal	1000	1000	0.025	EPAS1	0.016	0.008	0.013								
+diagnostic	E4F1	r1_signal	2000	2000	0.023	EPAS1	0.0145	0.0055	0.014								
+diagnostic	E4F1	r2_ratio	500	500	0.004	EPAS1	0.016	0.016	0.01								
+diagnostic	E4F1	r2_ratio	1000	1000	0.003	EPAS1	0.011	0.014	0.013								
+diagnostic	E4F1	r2_ratio	2000	2000	0.0065	EPAS1	0.0105	0.007	0.0095								
+diagnostic	E4F1	r3_residual	500	500	0.016	EPAS1	0.008	0.01	0.014								
+diagnostic	E4F1	r3_residual	1000	1000	0.016	EPAS1	0.012	0.009	0.012								
+diagnostic	E4F1	r3_residual	2000	2000	0.02	EPAS1	0.016	0.007	0.012								
+diagnostic	E4F1	r4_atac	500	500	0.026	EPAS1	0.016	0.006	0.008								
+diagnostic	E4F1	r4_atac	1000	1000	0.025	EPAS1	0.013	0.011	0.013								
+diagnostic	E4F1	r4_atac	2000	2000	0.029	EPAS1	0.0145	0.0095	0.013								
+diagnostic	ETS2	r1_signal	500	500	0.106	FOXC1	0.01	0.114	0.002								
+diagnostic	ETS2	r1_signal	1000	1000	0.121	FOXC1	0.011	0.099	0.011								
+diagnostic	ETS2	r1_signal	2000	2000	0.117	FOXC1	0.0115	0.101	0.01								
+diagnostic	ETS2	r2_ratio	500	500	0.088	FOXC1	0.014	0.096	0.026								
+diagnostic	ETS2	r2_ratio	1000	1000	0.102	FOXC1	0.017	0.119	0.028								
+diagnostic	ETS2	r2_ratio	2000	2000	0.1075	FOXC1	0.013	0.1065	0.019								
+diagnostic	ETS2	r3_residual	500	500	0.118	FOXC1	0.01	0.116	0.008								
+diagnostic	ETS2	r3_residual	1000	1000	0.111	FOXC1	0.01	0.114	0.013								
+diagnostic	ETS2	r3_residual	2000	2000	0.111	FOXC1	0.0125	0.0965	0.0205								
+diagnostic	ETS2	r4_atac	500	500	0.112	FOXC1	0.008	0.094	0.004								
+diagnostic	ETS2	r4_atac	1000	1000	0.122	FOXC1	0.008	0.108	0.002								
+diagnostic	ETS2	r4_atac	2000	2000	0.1315	FOXC1	0.007	0.107	0.005								
+diagnostic	EZH2	r1_signal	500	500													
+diagnostic	EZH2	r1_signal	1000	1000													
+diagnostic	EZH2	r1_signal	2000	1325													
+diagnostic	EZH2	r2_ratio	500	500													
+diagnostic	EZH2	r2_ratio	1000	1000													
+diagnostic	EZH2	r2_ratio	2000	1325													
+diagnostic	EZH2	r3_residual	500	500													
+diagnostic	EZH2	r3_residual	1000	1000													
+diagnostic	EZH2	r3_residual	2000	1325													
+diagnostic	EZH2	r4_atac	500	500													
+diagnostic	EZH2	r4_atac	1000	1000													
+diagnostic	EZH2	r4_atac	2000	1325													
+diagnostic	FLYWCH1	r1_signal	500	500													
+diagnostic	FLYWCH1	r1_signal	1000	1000													
+diagnostic	FLYWCH1	r1_signal	2000	1213													
+diagnostic	FLYWCH1	r2_ratio	500	500													
+diagnostic	FLYWCH1	r2_ratio	1000	1000													
+diagnostic	FLYWCH1	r2_ratio	2000	1213													
+diagnostic	FLYWCH1	r3_residual	500	500													
+diagnostic	FLYWCH1	r3_residual	1000	1000													
+diagnostic	FLYWCH1	r3_residual	2000	1213													
+diagnostic	FLYWCH1	r4_atac	500	500													
+diagnostic	FLYWCH1	r4_atac	1000	1000													
+diagnostic	FLYWCH1	r4_atac	2000	1213													
+diagnostic	FOXC1	r1_signal	500	465	0.004301	FOXJ3	0.008602	0.01075	0.01505								
+diagnostic	FOXC1	r1_signal	1000	465	0.004301	FOXJ3	0.008602	0.006452	0.008602								
+diagnostic	FOXC1	r1_signal	2000	465	0.004301	FOXJ3	0.008602	0.006452	0.006452								
+diagnostic	FOXC1	r2_ratio	500	465	0.004301	FOXJ3	0.008602	0.006452	0.008602								
+diagnostic	FOXC1	r2_ratio	1000	465	0.004301	FOXJ3	0.008602	0.004301	0.006452								
+diagnostic	FOXC1	r2_ratio	2000	465	0.004301	FOXJ3	0.008602	0.01075	0.004301								
+diagnostic	FOXC1	r3_residual	500	465	0.004301	FOXJ3	0.008602	0.01505	0.0129								
+diagnostic	FOXC1	r3_residual	1000	465	0.004301	FOXJ3	0.008602	0.006452	0.01075								
+diagnostic	FOXC1	r3_residual	2000	465	0.004301	FOXJ3	0.008602	0.01505	0.01075								
+diagnostic	FOXC1	r4_atac	500	465	0.004301	FOXJ3	0.008602	0.004301	0.006452								
+diagnostic	FOXC1	r4_atac	1000	465	0.004301	FOXJ3	0.008602	0.004301	0.01075								
+diagnostic	FOXC1	r4_atac	2000	465	0.004301	FOXJ3	0.008602	0.006452	0.01075								
+diagnostic	FOXJ3	r1_signal	500	345	0.005797	FOXK1	0.005797	0.01449	0.02899								
+diagnostic	FOXJ3	r1_signal	1000	345	0.005797	FOXK1	0.005797	0.002899	0.02029								
+diagnostic	FOXJ3	r1_signal	2000	345	0.005797	FOXK1	0.005797	0.005797	0.01449								
+diagnostic	FOXJ3	r2_ratio	500	345	0.005797	FOXK1	0.005797	0.002899	0.01739								
+diagnostic	FOXJ3	r2_ratio	1000	345	0.005797	FOXK1	0.005797	0.002899	0.005797								
+diagnostic	FOXJ3	r2_ratio	2000	345	0.005797	FOXK1	0.005797	0.01739	0.01449								
+diagnostic	FOXJ3	r3_residual	500	345	0.005797	FOXK1	0.005797	0.005797	0.02029								
+diagnostic	FOXJ3	r3_residual	1000	345	0.005797	FOXK1	0.005797	0.008696	0.02029								
+diagnostic	FOXJ3	r3_residual	2000	345	0.005797	FOXK1	0.005797	0.002899	0.03768								
+diagnostic	FOXJ3	r4_atac	500	345	0.005797	FOXK1	0.005797	0.002899	0.005797								
+diagnostic	FOXJ3	r4_atac	1000	345	0.005797	FOXK1	0.005797	0.02029	0.01739								
+diagnostic	FOXJ3	r4_atac	2000	345	0.005797	FOXK1	0.005797	0.002899	0.005797								
+diagnostic	GLYR1	r1_signal	500	500													
+diagnostic	GLYR1	r1_signal	1000	1000													
+diagnostic	GLYR1	r1_signal	2000	2000													
+diagnostic	GLYR1	r2_ratio	500	500													
+diagnostic	GLYR1	r2_ratio	1000	1000													
+diagnostic	GLYR1	r2_ratio	2000	2000													
+diagnostic	GLYR1	r3_residual	500	500													
+diagnostic	GLYR1	r3_residual	1000	1000													
+diagnostic	GLYR1	r3_residual	2000	2000													
+diagnostic	GLYR1	r4_atac	500	500													
+diagnostic	GLYR1	r4_atac	1000	1000													
+diagnostic	GLYR1	r4_atac	2000	2000													
+diagnostic	HOXA10	r1_signal	500	500	0.002	HOXA5	0.002	0.004	0.004								
+diagnostic	HOXA10	r1_signal	1000	1000	0.005	HOXA5	0.003	0.004	0.001								
+diagnostic	HOXA10	r1_signal	2000	1363	0.004402	HOXA5	0.002935	0.004402	0.002201								
+diagnostic	HOXA10	r2_ratio	500	500	0.012	HOXA5	0.006	0.006	0.002								
+diagnostic	HOXA10	r2_ratio	1000	1000	0.006	HOXA5	0.003	0.006	0.002								
+diagnostic	HOXA10	r2_ratio	2000	1363	0.004402	HOXA5	0.002935	0.004402	0.002201								
+diagnostic	HOXA10	r3_residual	500	500	0.004	HOXA5	0.002	0.008	0.008								
+diagnostic	HOXA10	r3_residual	1000	1000	0.006	HOXA5	0.003	0.004	0								
+diagnostic	HOXA10	r3_residual	2000	1363	0.004402	HOXA5	0.002935	0.005136	0.0007337								
+diagnostic	HOXA10	r4_atac	500	500	0	HOXA5	0.002	0.004	0								
+diagnostic	HOXA10	r4_atac	1000	1000	0.001	HOXA5	0.002	0.001	0.003								
+diagnostic	HOXA10	r4_atac	2000	1363	0.004402	HOXA5	0.002935	0.00807	0								
+diagnostic	HOXB6	r1_signal	500	500	0.008	HOXB8	0	0.004	0.004								
+diagnostic	HOXB6	r1_signal	1000	1000	0.006	HOXB8	0	0.002	0.002								
+diagnostic	HOXB6	r1_signal	2000	1734	0.00519	HOXB8	0.001153	0.004614	0.00173								
+diagnostic	HOXB6	r2_ratio	500	500	0.008	HOXB8	0.002	0.002	0.004								
+diagnostic	HOXB6	r2_ratio	1000	1000	0.004	HOXB8	0.001	0.006	0.002								
+diagnostic	HOXB6	r2_ratio	2000	1734	0.00519	HOXB8	0.001153	0.002307	0.002307								
+diagnostic	HOXB6	r3_residual	500	500	0.01	HOXB8	0	0.004	0.004								
+diagnostic	HOXB6	r3_residual	1000	1000	0.006	HOXB8	0	0.003	0.004								
+diagnostic	HOXB6	r3_residual	2000	1734	0.00519	HOXB8	0.001153	0.00346	0.002307								
+diagnostic	HOXB6	r4_atac	500	500	0.006	HOXB8	0	0	0								
+diagnostic	HOXB6	r4_atac	1000	1000	0.005	HOXB8	0.001	0	0.001								
+diagnostic	HOXB6	r4_atac	2000	1734	0.00519	HOXB8	0.001153	0.002884	0.00346								
+diagnostic	HOXB8	r1_signal	500	323	0	HOXC9	0.003096	0.003096	0.009288								
+diagnostic	HOXB8	r1_signal	1000	323	0	HOXC9	0.003096	0.003096	0.009288								
+diagnostic	HOXB8	r1_signal	2000	323	0	HOXC9	0.003096	0.003096	0.006192								
+diagnostic	HOXB8	r2_ratio	500	323	0	HOXC9	0.003096	0.003096	0.02477								
+diagnostic	HOXB8	r2_ratio	1000	323	0	HOXC9	0.003096	0.006192	0.009288								
+diagnostic	HOXB8	r2_ratio	2000	323	0	HOXC9	0.003096	0.006192	0.006192								
+diagnostic	HOXB8	r3_residual	500	323	0	HOXC9	0.003096	0	0.01238								
+diagnostic	HOXB8	r3_residual	1000	323	0	HOXC9	0.003096	0	0.003096								
+diagnostic	HOXB8	r3_residual	2000	323	0	HOXC9	0.003096	0.006192	0.01238								
+diagnostic	HOXB8	r4_atac	500	323	0	HOXC9	0.003096	0.003096	0.01548								
+diagnostic	HOXB8	r4_atac	1000	323	0	HOXC9	0.003096	0.003096	0.006192								
+diagnostic	HOXB8	r4_atac	2000	323	0	HOXC9	0.003096	0	0.009288								
+diagnostic	HOXB9	r1_signal	500	500													
+diagnostic	HOXB9	r1_signal	1000	1000													
+diagnostic	HOXB9	r1_signal	2000	1251													
+diagnostic	HOXB9	r2_ratio	500	500													
+diagnostic	HOXB9	r2_ratio	1000	1000													
+diagnostic	HOXB9	r2_ratio	2000	1251													
+diagnostic	HOXB9	r3_residual	500	500													
+diagnostic	HOXB9	r3_residual	1000	1000													
+diagnostic	HOXB9	r3_residual	2000	1251													
+diagnostic	HOXB9	r4_atac	500	500													
+diagnostic	HOXB9	r4_atac	1000	1000													
+diagnostic	HOXB9	r4_atac	2000	1251													
+diagnostic	HOXC4	r1_signal	500	257													
+diagnostic	HOXC4	r1_signal	1000	257													
+diagnostic	HOXC4	r1_signal	2000	257													
+diagnostic	HOXC4	r2_ratio	500	257													
+diagnostic	HOXC4	r2_ratio	1000	257													
+diagnostic	HOXC4	r2_ratio	2000	257													
+diagnostic	HOXC4	r3_residual	500	257													
+diagnostic	HOXC4	r3_residual	1000	257													
+diagnostic	HOXC4	r3_residual	2000	257													
+diagnostic	HOXC4	r4_atac	500	257													
+diagnostic	HOXC4	r4_atac	1000	257													
+diagnostic	HOXC4	r4_atac	2000	257													
+diagnostic	HOXC9	r1_signal	500	500	0.004	MAZ	0.486	0.006	0.486								
+diagnostic	HOXC9	r1_signal	1000	1000	0.006	MAZ	0.484	0.015	0.457								
+diagnostic	HOXC9	r1_signal	2000	1286	0.005443	MAZ	0.4759	0.004666	0.479								
+diagnostic	HOXC9	r2_ratio	500	500	0.008	MAZ	0.384	0.01	0.38								
+diagnostic	HOXC9	r2_ratio	1000	1000	0.006	MAZ	0.45	0.007	0.439								
+diagnostic	HOXC9	r2_ratio	2000	1286	0.005443	MAZ	0.4759	0.009331	0.4432								
+diagnostic	HOXC9	r3_residual	500	500	0.006	MAZ	0.454	0.004	0.42								
+diagnostic	HOXC9	r3_residual	1000	1000	0.006	MAZ	0.448	0.009	0.437								
+diagnostic	HOXC9	r3_residual	2000	1286	0.005443	MAZ	0.4759	0.009331	0.4635								
+diagnostic	HOXC9	r4_atac	500	500	0.004	MAZ	0.556	0.004	0.498								
+diagnostic	HOXC9	r4_atac	1000	1000	0.005	MAZ	0.516	0.007	0.466								
+diagnostic	HOXC9	r4_atac	2000	1286	0.005443	MAZ	0.4759	0.004666	0.4495								
+diagnostic	HOXD10	r1_signal	500	203													
+diagnostic	HOXD10	r1_signal	1000	203													
+diagnostic	HOXD10	r1_signal	2000	203													
+diagnostic	HOXD10	r2_ratio	500	203													
+diagnostic	HOXD10	r2_ratio	1000	203													
+diagnostic	HOXD10	r2_ratio	2000	203													
+diagnostic	HOXD10	r3_residual	500	203													
+diagnostic	HOXD10	r3_residual	1000	203													
+diagnostic	HOXD10	r3_residual	2000	203													
+diagnostic	HOXD10	r4_atac	500	203													
+diagnostic	HOXD10	r4_atac	1000	203													
+diagnostic	HOXD10	r4_atac	2000	203													
+diagnostic	MAZ	r1_signal	500	500	0.522	MEF2A	0.008	0.45	0.004			0.626					
+diagnostic	MAZ	r1_signal	1000	1000	0.483	MEF2A	0.006	0.445	0.012			0.592					
+diagnostic	MAZ	r1_signal	2000	1456	0.4876	MEF2A	0.006868	0.4354	0.01099			0.5714					
+diagnostic	MAZ	r2_ratio	500	500	0.444	MEF2A	0.018	0.388	0.004			0.314					
+diagnostic	MAZ	r2_ratio	1000	1000	0.479	MEF2A	0.009	0.421	0.015			0.49					
+diagnostic	MAZ	r2_ratio	2000	1456	0.4876	MEF2A	0.006868	0.4609	0.01236			0.5714					
+diagnostic	MAZ	r3_residual	500	500	0.522	MEF2A	0.01	0.448	0.002			0.542					
+diagnostic	MAZ	r3_residual	1000	1000	0.488	MEF2A	0.01	0.451	0.008			0.531					
+diagnostic	MAZ	r3_residual	2000	1456	0.4876	MEF2A	0.006868	0.4485	0.004808			0.5714					
+diagnostic	MAZ	r4_atac	500	500	0.506	MEF2A	0.002	0.546	0.004			0.756					
+diagnostic	MAZ	r4_atac	1000	1000	0.526	MEF2A	0.002	0.505	0.006			0.701					
+diagnostic	MAZ	r4_atac	2000	1456	0.4876	MEF2A	0.006868	0.4581	0.006181			0.5714					
+diagnostic	MBD3	r1_signal	500	500													
+diagnostic	MBD3	r1_signal	1000	1000													
+diagnostic	MBD3	r1_signal	2000	2000													
+diagnostic	MBD3	r2_ratio	500	500													
+diagnostic	MBD3	r2_ratio	1000	1000													
+diagnostic	MBD3	r2_ratio	2000	2000													
+diagnostic	MBD3	r3_residual	500	500													
+diagnostic	MBD3	r3_residual	1000	1000													
+diagnostic	MBD3	r3_residual	2000	2000													
+diagnostic	MBD3	r4_atac	500	500													
+diagnostic	MBD3	r4_atac	1000	1000													
+diagnostic	MBD3	r4_atac	2000	2000													
+diagnostic	MEF2A	r1_signal	500	259	0.003861	MEF2D	0.007722	0.01544	0.01158								
+diagnostic	MEF2A	r1_signal	1000	259	0.003861	MEF2D	0.007722	0.003861	0.003861								
+diagnostic	MEF2A	r1_signal	2000	259	0.003861	MEF2D	0.007722	0.01158	0.007722								
+diagnostic	MEF2A	r2_ratio	500	259	0.003861	MEF2D	0.007722	0.007722	0.003861								
+diagnostic	MEF2A	r2_ratio	1000	259	0.003861	MEF2D	0.007722	0.007722	0.01158								
+diagnostic	MEF2A	r2_ratio	2000	259	0.003861	MEF2D	0.007722	0	0								
+diagnostic	MEF2A	r3_residual	500	259	0.003861	MEF2D	0.007722	0.003861	0								
+diagnostic	MEF2A	r3_residual	1000	259	0.003861	MEF2D	0.007722	0	0								
+diagnostic	MEF2A	r3_residual	2000	259	0.003861	MEF2D	0.007722	0.007722	0.003861								
+diagnostic	MEF2A	r4_atac	500	259	0.003861	MEF2D	0.007722	0.003861	0.003861								
+diagnostic	MEF2A	r4_atac	1000	259	0.003861	MEF2D	0.007722	0.01931	0.01931								
+diagnostic	MEF2A	r4_atac	2000	259	0.003861	MEF2D	0.007722	0.01158	0.007722								
+diagnostic	MEF2D	r1_signal	500	337	0.002967	MLX	0.02967	0.002967	0.0178								
+diagnostic	MEF2D	r1_signal	1000	337	0.002967	MLX	0.02967	0.005935	0.01484								
+diagnostic	MEF2D	r1_signal	2000	337	0.002967	MLX	0.02967	0.01187	0.005935								
+diagnostic	MEF2D	r2_ratio	500	337	0.002967	MLX	0.02967	0.002967	0.02077								
+diagnostic	MEF2D	r2_ratio	1000	337	0.002967	MLX	0.02967	0.005935	0.008902								
+diagnostic	MEF2D	r2_ratio	2000	337	0.002967	MLX	0.02967	0.008902	0.02077								
+diagnostic	MEF2D	r3_residual	500	337	0.002967	MLX	0.02967	0.008902	0.02374								
+diagnostic	MEF2D	r3_residual	1000	337	0.002967	MLX	0.02967	0.0178	0.01187								
+diagnostic	MEF2D	r3_residual	2000	337	0.002967	MLX	0.02967	0.005935	0.02077								
+diagnostic	MEF2D	r4_atac	500	337	0.002967	MLX	0.02967	0.01187	0.005935								
+diagnostic	MEF2D	r4_atac	1000	337	0.002967	MLX	0.02967	0.01187	0.005935								
+diagnostic	MEF2D	r4_atac	2000	337	0.002967	MLX	0.02967	0.008902	0.01484								
+diagnostic	MLX	r1_signal	500	500	0.028	MSX2	0	0.016	0								
+diagnostic	MLX	r1_signal	1000	1000	0.022	MSX2	0	0.021	0								
+diagnostic	MLX	r1_signal	2000	2000	0.0265	MSX2	0	0.0235	0								
+diagnostic	MLX	r2_ratio	500	500	0.012	MSX2	0.002	0.016	0.002								
+diagnostic	MLX	r2_ratio	1000	1000	0.011	MSX2	0.003	0.011	0.003								
+diagnostic	MLX	r2_ratio	2000	2000	0.013	MSX2	0.003	0.014	0.0015								
+diagnostic	MLX	r3_residual	500	500	0.02	MSX2	0.002	0.006	0.002								
+diagnostic	MLX	r3_residual	1000	1000	0.028	MSX2	0.002	0.013	0								
+diagnostic	MLX	r3_residual	2000	2000	0.0235	MSX2	0.0015	0.0125	0								
+diagnostic	MLX	r4_atac	500	500	0.024	MSX2	0	0.014	0								
+diagnostic	MLX	r4_atac	1000	1000	0.028	MSX2	0.001	0.018	0.002								
+diagnostic	MLX	r4_atac	2000	2000	0.034	MSX2	0.001	0.014	0								
+diagnostic	MTF2	r1_signal	500	500													
+diagnostic	MTF2	r1_signal	1000	1000													
+diagnostic	MTF2	r1_signal	2000	2000													
+diagnostic	MTF2	r2_ratio	500	500													
+diagnostic	MTF2	r2_ratio	1000	1000													
+diagnostic	MTF2	r2_ratio	2000	2000													
+diagnostic	MTF2	r3_residual	500	500													
+diagnostic	MTF2	r3_residual	1000	1000													
+diagnostic	MTF2	r3_residual	2000	2000													
+diagnostic	MTF2	r4_atac	500	500													
+diagnostic	MTF2	r4_atac	1000	1000													
+diagnostic	MTF2	r4_atac	2000	2000													
+diagnostic	NFYA	r1_signal	500	500	0.322	NRF1	0.176	0.038	0.118				0.578				
+diagnostic	NFYA	r1_signal	1000	1000	0.279	NRF1	0.169	0.023	0.131				0.533				
+diagnostic	NFYA	r1_signal	2000	2000	0.236	NRF1	0.201	0.0255	0.1195				0.4685				
+diagnostic	NFYA	r2_ratio	500	500	0.012	NRF1	0.084	0.028	0.088				0.028				
+diagnostic	NFYA	r2_ratio	1000	1000	0.015	NRF1	0.089	0.031	0.09				0.029				
+diagnostic	NFYA	r2_ratio	2000	2000	0.018	NRF1	0.1105	0.0285	0.1075				0.043				
+diagnostic	NFYA	r3_residual	500	500	0.224	NRF1	0.18	0.022	0.152				0.4				
+diagnostic	NFYA	r3_residual	1000	1000	0.197	NRF1	0.191	0.033	0.147				0.383				
+diagnostic	NFYA	r3_residual	2000	2000	0.1735	NRF1	0.202	0.033	0.1365				0.3565				
+diagnostic	NFYA	r4_atac	500	500	0.408	NRF1	0.126	0.02	0.11				0.718				
+diagnostic	NFYA	r4_atac	1000	1000	0.35	NRF1	0.144	0.035	0.109				0.653				
+diagnostic	NFYA	r4_atac	2000	2000	0.297	NRF1	0.154	0.029	0.1175				0.586				
+diagnostic	NME2	r1_signal	500	500													
+diagnostic	NME2	r1_signal	1000	1000													
+diagnostic	NME2	r1_signal	2000	2000													
+diagnostic	NME2	r2_ratio	500	500													
+diagnostic	NME2	r2_ratio	1000	1000													
+diagnostic	NME2	r2_ratio	2000	2000													
+diagnostic	NME2	r3_residual	500	500													
+diagnostic	NME2	r3_residual	1000	1000													
+diagnostic	NME2	r3_residual	2000	2000													
+diagnostic	NME2	r4_atac	500	500													
+diagnostic	NME2	r4_atac	1000	1000													
+diagnostic	NME2	r4_atac	2000	2000													
+diagnostic	NRF1	r1_signal	500	369	0.2764	RBPJ	0.07588	0.1436	0.1382								
+diagnostic	NRF1	r1_signal	1000	369	0.2764	RBPJ	0.07588	0.1328	0.1057								
+diagnostic	NRF1	r1_signal	2000	369	0.2764	RBPJ	0.07588	0.1436	0.1192								
+diagnostic	NRF1	r2_ratio	500	369	0.2764	RBPJ	0.07588	0.1111	0.122								
+diagnostic	NRF1	r2_ratio	1000	369	0.2764	RBPJ	0.07588	0.1545	0.07859								
+diagnostic	NRF1	r2_ratio	2000	369	0.2764	RBPJ	0.07588	0.1518	0.09756								
+diagnostic	NRF1	r3_residual	500	369	0.2764	RBPJ	0.07588	0.1301	0.1057								
+diagnostic	NRF1	r3_residual	1000	369	0.2764	RBPJ	0.07588	0.1274	0.0813								
+diagnostic	NRF1	r3_residual	2000	369	0.2764	RBPJ	0.07588	0.1355	0.09214								
+diagnostic	NRF1	r4_atac	500	369	0.2764	RBPJ	0.07588	0.1355	0.1274								
+diagnostic	NRF1	r4_atac	1000	369	0.2764	RBPJ	0.07588	0.1328	0.0813								
+diagnostic	NRF1	r4_atac	2000	369	0.2764	RBPJ	0.07588	0.1301	0.103								
+diagnostic	POGK	r1_signal	500	500													
+diagnostic	POGK	r1_signal	1000	883													
+diagnostic	POGK	r1_signal	2000	883													
+diagnostic	POGK	r2_ratio	500	500													
+diagnostic	POGK	r2_ratio	1000	883													
+diagnostic	POGK	r2_ratio	2000	883													
+diagnostic	POGK	r3_residual	500	500													
+diagnostic	POGK	r3_residual	1000	883													
+diagnostic	POGK	r3_residual	2000	883													
+diagnostic	POGK	r4_atac	500	500													
+diagnostic	POGK	r4_atac	1000	883													
+diagnostic	POGK	r4_atac	2000	883													
+diagnostic	RBBP4	r1_signal	500	500													
+diagnostic	RBBP4	r1_signal	1000	1000													
+diagnostic	RBBP4	r1_signal	2000	2000													
+diagnostic	RBBP4	r2_ratio	500	500													
+diagnostic	RBBP4	r2_ratio	1000	1000													
+diagnostic	RBBP4	r2_ratio	2000	2000													
+diagnostic	RBBP4	r3_residual	500	500													
+diagnostic	RBBP4	r3_residual	1000	1000													
+diagnostic	RBBP4	r3_residual	2000	2000													
+diagnostic	RBBP4	r4_atac	500	500													
+diagnostic	RBBP4	r4_atac	1000	1000													
+diagnostic	RBBP4	r4_atac	2000	2000													
+diagnostic	RBBP7	r1_signal	500	500													
+diagnostic	RBBP7	r1_signal	1000	1000													
+diagnostic	RBBP7	r1_signal	2000	2000													
+diagnostic	RBBP7	r2_ratio	500	500													
+diagnostic	RBBP7	r2_ratio	1000	1000													
+diagnostic	RBBP7	r2_ratio	2000	2000													
+diagnostic	RBBP7	r3_residual	500	500													
+diagnostic	RBBP7	r3_residual	1000	1000													
+diagnostic	RBBP7	r3_residual	2000	2000													
+diagnostic	RBBP7	r4_atac	500	500													
+diagnostic	RBBP7	r4_atac	1000	1000													
+diagnostic	RBBP7	r4_atac	2000	2000													
+diagnostic	RBPJ	r1_signal	500	500	0.092	RELA	0.014	0.088	0.03								
+diagnostic	RBPJ	r1_signal	1000	1000	0.099	RELA	0.022	0.11	0.036								
+diagnostic	RBPJ	r1_signal	2000	1144	0.1005	RELA	0.01923	0.09528	0.04021								
+diagnostic	RBPJ	r2_ratio	500	500	0.108	RELA	0.02	0.084	0.032								
+diagnostic	RBPJ	r2_ratio	1000	1000	0.101	RELA	0.021	0.098	0.034								
+diagnostic	RBPJ	r2_ratio	2000	1144	0.1005	RELA	0.01923	0.08304	0.03059								
+diagnostic	RBPJ	r3_residual	500	500	0.096	RELA	0.016	0.134	0.032								
+diagnostic	RBPJ	r3_residual	1000	1000	0.093	RELA	0.021	0.086	0.032								
+diagnostic	RBPJ	r3_residual	2000	1144	0.1005	RELA	0.01923	0.09178	0.04545								
+diagnostic	RBPJ	r4_atac	500	500	0.104	RELA	0.018	0.13	0.026								
+diagnostic	RBPJ	r4_atac	1000	1000	0.106	RELA	0.017	0.108	0.034								
+diagnostic	RBPJ	r4_atac	2000	1144	0.1005	RELA	0.01923	0.09266	0.02622								
+diagnostic	SAFB	r1_signal	500	500													
+diagnostic	SAFB	r1_signal	1000	999													
+diagnostic	SAFB	r1_signal	2000	999													
+diagnostic	SAFB	r2_ratio	500	500													
+diagnostic	SAFB	r2_ratio	1000	999													
+diagnostic	SAFB	r2_ratio	2000	999													
+diagnostic	SAFB	r3_residual	500	500													
+diagnostic	SAFB	r3_residual	1000	999													
+diagnostic	SAFB	r3_residual	2000	999													
+diagnostic	SAFB	r4_atac	500	500													
+diagnostic	SAFB	r4_atac	1000	999													
+diagnostic	SAFB	r4_atac	2000	999													
+diagnostic	SMARCA1	r1_signal	500	500													
+diagnostic	SMARCA1	r1_signal	1000	1000													
+diagnostic	SMARCA1	r1_signal	2000	1007													
+diagnostic	SMARCA1	r2_ratio	500	500													
+diagnostic	SMARCA1	r2_ratio	1000	1000													
+diagnostic	SMARCA1	r2_ratio	2000	1007													
+diagnostic	SMARCA1	r3_residual	500	500													
+diagnostic	SMARCA1	r3_residual	1000	1000													
+diagnostic	SMARCA1	r3_residual	2000	1007													
+diagnostic	SMARCA1	r4_atac	500	500													
+diagnostic	SMARCA1	r4_atac	1000	1000													
+diagnostic	SMARCA1	r4_atac	2000	1007													
+diagnostic	SOX4	r1_signal	500	500	0.028	TBX3	0.094	0.032	0.074								
+diagnostic	SOX4	r1_signal	1000	1000	0.03	TBX3	0.09	0.028	0.096								
+diagnostic	SOX4	r1_signal	2000	2000	0.031	TBX3	0.083	0.0245	0.0955								
+diagnostic	SOX4	r2_ratio	500	500	0.032	TBX3	0.098	0.038	0.128								
+diagnostic	SOX4	r2_ratio	1000	1000	0.031	TBX3	0.092	0.041	0.093								
+diagnostic	SOX4	r2_ratio	2000	2000	0.0375	TBX3	0.098	0.0355	0.086								
+diagnostic	SOX4	r3_residual	500	500	0.036	TBX3	0.096	0.018	0.09								
+diagnostic	SOX4	r3_residual	1000	1000	0.027	TBX3	0.089	0.02	0.094								
+diagnostic	SOX4	r3_residual	2000	2000	0.027	TBX3	0.0905	0.0235	0.092								
+diagnostic	SOX4	r4_atac	500	500	0.032	TBX3	0.076	0.014	0.116								
+diagnostic	SOX4	r4_atac	1000	1000	0.032	TBX3	0.071	0.031	0.1								
+diagnostic	SOX4	r4_atac	2000	2000	0.0295	TBX3	0.067	0.034	0.1025								
+diagnostic	SRCAP	r1_signal	500	500													
+diagnostic	SRCAP	r1_signal	1000	1000													
+diagnostic	SRCAP	r1_signal	2000	1084													
+diagnostic	SRCAP	r2_ratio	500	500													
+diagnostic	SRCAP	r2_ratio	1000	1000													
+diagnostic	SRCAP	r2_ratio	2000	1084													
+diagnostic	SRCAP	r3_residual	500	500													
+diagnostic	SRCAP	r3_residual	1000	1000													
+diagnostic	SRCAP	r3_residual	2000	1084													
+diagnostic	SRCAP	r4_atac	500	500													
+diagnostic	SRCAP	r4_atac	1000	1000													
+diagnostic	SRCAP	r4_atac	2000	1084													
+diagnostic	THAP6	r1_signal	500	500													
+diagnostic	THAP6	r1_signal	1000	809													
+diagnostic	THAP6	r1_signal	2000	809													
+diagnostic	THAP6	r2_ratio	500	500													
+diagnostic	THAP6	r2_ratio	1000	809													
+diagnostic	THAP6	r2_ratio	2000	809													
+diagnostic	THAP6	r3_residual	500	500													
+diagnostic	THAP6	r3_residual	1000	809													
+diagnostic	THAP6	r3_residual	2000	809													
+diagnostic	THAP6	r4_atac	500	500													
+diagnostic	THAP6	r4_atac	1000	809													
+diagnostic	THAP6	r4_atac	2000	809													
+diagnostic	TRAFD1	r1_signal	500	336													
+diagnostic	TRAFD1	r1_signal	1000	336													
+diagnostic	TRAFD1	r1_signal	2000	336													
+diagnostic	TRAFD1	r2_ratio	500	336													
+diagnostic	TRAFD1	r2_ratio	1000	336													
+diagnostic	TRAFD1	r2_ratio	2000	336													
+diagnostic	TRAFD1	r3_residual	500	336													
+diagnostic	TRAFD1	r3_residual	1000	336													
+diagnostic	TRAFD1	r3_residual	2000	336													
+diagnostic	TRAFD1	r4_atac	500	336													
+diagnostic	TRAFD1	r4_atac	1000	336													
+diagnostic	TRAFD1	r4_atac	2000	336													
+diagnostic	WIZ	r1_signal	500	500													
+diagnostic	WIZ	r1_signal	1000	1000													
+diagnostic	WIZ	r1_signal	2000	1539													
+diagnostic	WIZ	r2_ratio	500	500													
+diagnostic	WIZ	r2_ratio	1000	1000													
+diagnostic	WIZ	r2_ratio	2000	1539													
+diagnostic	WIZ	r3_residual	500	500													
+diagnostic	WIZ	r3_residual	1000	1000													
+diagnostic	WIZ	r3_residual	2000	1539													
+diagnostic	WIZ	r4_atac	500	500													
+diagnostic	WIZ	r4_atac	1000	1000													
+diagnostic	WIZ	r4_atac	2000	1539													
+diagnostic	XPA	r1_signal	500	500													
+diagnostic	XPA	r1_signal	1000	1000													
+diagnostic	XPA	r1_signal	2000	2000													
+diagnostic	XPA	r2_ratio	500	500													
+diagnostic	XPA	r2_ratio	1000	1000													
+diagnostic	XPA	r2_ratio	2000	2000													
+diagnostic	XPA	r3_residual	500	500													
+diagnostic	XPA	r3_residual	1000	1000													
+diagnostic	XPA	r3_residual	2000	2000													
+diagnostic	XPA	r4_atac	500	500													
+diagnostic	XPA	r4_atac	1000	1000													
+diagnostic	XPA	r4_atac	2000	2000													
+diagnostic	ZBTB40	r1_signal	500	288													
+diagnostic	ZBTB40	r1_signal	1000	288													
+diagnostic	ZBTB40	r1_signal	2000	288													
+diagnostic	ZBTB40	r2_ratio	500	288													
+diagnostic	ZBTB40	r2_ratio	1000	288													
+diagnostic	ZBTB40	r2_ratio	2000	288													
+diagnostic	ZBTB40	r3_residual	500	288													
+diagnostic	ZBTB40	r3_residual	1000	288													
+diagnostic	ZBTB40	r3_residual	2000	288													
+diagnostic	ZBTB40	r4_atac	500	288													
+diagnostic	ZBTB40	r4_atac	1000	288													
+diagnostic	ZBTB40	r4_atac	2000	288													
+diagnostic	ZBTB43	r1_signal	500	310													
+diagnostic	ZBTB43	r1_signal	1000	310													
+diagnostic	ZBTB43	r1_signal	2000	310													
+diagnostic	ZBTB43	r2_ratio	500	310													
+diagnostic	ZBTB43	r2_ratio	1000	310													
+diagnostic	ZBTB43	r2_ratio	2000	310													
+diagnostic	ZBTB43	r3_residual	500	310													
+diagnostic	ZBTB43	r3_residual	1000	310													
+diagnostic	ZBTB43	r3_residual	2000	310													
+diagnostic	ZBTB43	r4_atac	500	310													
+diagnostic	ZBTB43	r4_atac	1000	310													
+diagnostic	ZBTB43	r4_atac	2000	310													
+diagnostic	ZBTB7A	r1_signal	500	500	0.12	ZIC2	0.1	0.166	0.166					0.126			
+diagnostic	ZBTB7A	r1_signal	1000	1000	0.131	ZIC2	0.115	0.15	0.17					0.13			
+diagnostic	ZBTB7A	r1_signal	2000	2000	0.1315	ZIC2	0.114	0.145	0.1615					0.107			
+diagnostic	ZBTB7A	r2_ratio	500	500	0.122	ZIC2	0.112	0.092	0.13					0.05			
+diagnostic	ZBTB7A	r2_ratio	1000	1000	0.146	ZIC2	0.12	0.124	0.119					0.084			
+diagnostic	ZBTB7A	r2_ratio	2000	2000	0.134	ZIC2	0.1145	0.122	0.1575					0.109			
+diagnostic	ZBTB7A	r3_residual	500	500	0.126	ZIC2	0.102	0.174	0.17					0.146			
+diagnostic	ZBTB7A	r3_residual	1000	1000	0.143	ZIC2	0.118	0.162	0.162					0.121			
+diagnostic	ZBTB7A	r3_residual	2000	2000	0.13	ZIC2	0.112	0.123	0.164					0.107			
+diagnostic	ZBTB7A	r4_atac	500	500	0.096	ZIC2	0.092	0.168	0.174					0.118			
+diagnostic	ZBTB7A	r4_atac	1000	1000	0.112	ZIC2	0.103	0.149	0.16					0.13			
+diagnostic	ZBTB7A	r4_atac	2000	2000	0.1365	ZIC2	0.116	0.1445	0.1545					0.1185			
+diagnostic	ZIC2	r1_signal	500	500	0.112	ZNF143	0.062	0.132	0.072						0.266		
+diagnostic	ZIC2	r1_signal	1000	1000	0.117	ZNF143	0.086	0.142	0.075						0.263		
+diagnostic	ZIC2	r1_signal	2000	1529	0.1282	ZNF143	0.08437	0.1491	0.08829						0.2708		
+diagnostic	ZIC2	r2_ratio	500	500	0.128	ZNF143	0.072	0.15	0.072						0.2		
+diagnostic	ZIC2	r2_ratio	1000	1000	0.142	ZNF143	0.075	0.156	0.064						0.237		
+diagnostic	ZIC2	r2_ratio	2000	1529	0.1282	ZNF143	0.08437	0.1517	0.05886						0.2708		
+diagnostic	ZIC2	r3_residual	500	500	0.11	ZNF143	0.066	0.146	0.06						0.262		
+diagnostic	ZIC2	r3_residual	1000	1000	0.121	ZNF143	0.07	0.149	0.064						0.256		
+diagnostic	ZIC2	r3_residual	2000	1529	0.1282	ZNF143	0.08437	0.155	0.07325						0.2708		
+diagnostic	ZIC2	r4_atac	500	500	0.096	ZNF143	0.102	0.164	0.068						0.34		
+diagnostic	ZIC2	r4_atac	1000	1000	0.126	ZNF143	0.086	0.163	0.093						0.309		
+diagnostic	ZIC2	r4_atac	2000	1529	0.1282	ZNF143	0.08437	0.1583	0.06998						0.2708		
+diagnostic	ZNF143	r1_signal	500	500	0.062	ZNF282	0.03	0.086	0.016								
+diagnostic	ZNF143	r1_signal	1000	579	0.06045	ZNF282	0.02936	0.05699	0.03454								
+diagnostic	ZNF143	r1_signal	2000	579	0.06045	ZNF282	0.02936	0.07599	0.02245								
+diagnostic	ZNF143	r2_ratio	500	500	0.054	ZNF282	0.032	0.082	0.02								
+diagnostic	ZNF143	r2_ratio	1000	579	0.06045	ZNF282	0.02936	0.07254	0.02591								
+diagnostic	ZNF143	r2_ratio	2000	579	0.06045	ZNF282	0.02936	0.05872	0.01727								
+diagnostic	ZNF143	r3_residual	500	500	0.054	ZNF282	0.032	0.062	0.024								
+diagnostic	ZNF143	r3_residual	1000	579	0.06045	ZNF282	0.02936	0.0639	0.03282								
+diagnostic	ZNF143	r3_residual	2000	579	0.06045	ZNF282	0.02936	0.05527	0.02591								
+diagnostic	ZNF143	r4_atac	500	500	0.064	ZNF282	0.03	0.06	0.032								
+diagnostic	ZNF143	r4_atac	1000	579	0.06045	ZNF282	0.02936	0.07254	0.02245								
+diagnostic	ZNF143	r4_atac	2000	579	0.06045	ZNF282	0.02936	0.0639	0.02763								
+diagnostic	ZNF282	r1_signal	500	500	0.026	ZNF768	0.102	0.026	0.08							0.092	
+diagnostic	ZNF282	r1_signal	1000	1000	0.026	ZNF768	0.093	0.023	0.094							0.1	
+diagnostic	ZNF282	r1_signal	2000	2000	0.0275	ZNF768	0.0865	0.02	0.088							0.081	
+diagnostic	ZNF282	r2_ratio	500	500	0.05	ZNF768	0.088	0.042	0.094							0.012	
+diagnostic	ZNF282	r2_ratio	1000	1000	0.038	ZNF768	0.079	0.037	0.077							0.024	
+diagnostic	ZNF282	r2_ratio	2000	2000	0.0335	ZNF768	0.0745	0.028	0.0855							0.0465	
+diagnostic	ZNF282	r3_residual	500	500	0.032	ZNF768	0.094	0.028	0.102							0.082	
+diagnostic	ZNF282	r3_residual	1000	1000	0.024	ZNF768	0.09	0.017	0.083							0.1	
+diagnostic	ZNF282	r3_residual	2000	2000	0.032	ZNF768	0.0835	0.028	0.08							0.063	
+diagnostic	ZNF282	r4_atac	500	500	0.022	ZNF768	0.086	0.038	0.1							0.11	
+diagnostic	ZNF282	r4_atac	1000	1000	0.027	ZNF768	0.084	0.026	0.097							0.11	
+diagnostic	ZNF282	r4_atac	2000	2000	0.025	ZNF768	0.091	0.025	0.0885							0.107	
+diagnostic	ZNF507	r1_signal	500	500													
+diagnostic	ZNF507	r1_signal	1000	1000													
+diagnostic	ZNF507	r1_signal	2000	2000													
+diagnostic	ZNF507	r2_ratio	500	500													
+diagnostic	ZNF507	r2_ratio	1000	1000													
+diagnostic	ZNF507	r2_ratio	2000	2000													
+diagnostic	ZNF507	r3_residual	500	500													
+diagnostic	ZNF507	r3_residual	1000	1000													
+diagnostic	ZNF507	r3_residual	2000	2000													
+diagnostic	ZNF507	r4_atac	500	500													
+diagnostic	ZNF507	r4_atac	1000	1000													
+diagnostic	ZNF507	r4_atac	2000	2000													
+diagnostic	ZNF512	r1_signal	500	500													
+diagnostic	ZNF512	r1_signal	1000	668													
+diagnostic	ZNF512	r1_signal	2000	668													
+diagnostic	ZNF512	r2_ratio	500	500													
+diagnostic	ZNF512	r2_ratio	1000	668													
+diagnostic	ZNF512	r2_ratio	2000	668													
+diagnostic	ZNF512	r3_residual	500	500													
+diagnostic	ZNF512	r3_residual	1000	668													
+diagnostic	ZNF512	r3_residual	2000	668													
+diagnostic	ZNF512	r4_atac	500	500													
+diagnostic	ZNF512	r4_atac	1000	668													
+diagnostic	ZNF512	r4_atac	2000	668													
+diagnostic	ZNF512B	r1_signal	500	500													
+diagnostic	ZNF512B	r1_signal	1000	1000													
+diagnostic	ZNF512B	r1_signal	2000	1615													
+diagnostic	ZNF512B	r2_ratio	500	500													
+diagnostic	ZNF512B	r2_ratio	1000	1000													
+diagnostic	ZNF512B	r2_ratio	2000	1615													
+diagnostic	ZNF512B	r3_residual	500	500													
+diagnostic	ZNF512B	r3_residual	1000	1000													
+diagnostic	ZNF512B	r3_residual	2000	1615													
+diagnostic	ZNF512B	r4_atac	500	500													
+diagnostic	ZNF512B	r4_atac	1000	1000													
+diagnostic	ZNF512B	r4_atac	2000	1615													
+diagnostic	ZNF644	r1_signal	500	500													
+diagnostic	ZNF644	r1_signal	1000	1000													
+diagnostic	ZNF644	r1_signal	2000	1585													
+diagnostic	ZNF644	r2_ratio	500	500													
+diagnostic	ZNF644	r2_ratio	1000	1000													
+diagnostic	ZNF644	r2_ratio	2000	1585													
+diagnostic	ZNF644	r3_residual	500	500													
+diagnostic	ZNF644	r3_residual	1000	1000													
+diagnostic	ZNF644	r3_residual	2000	1585													
+diagnostic	ZNF644	r4_atac	500	500													
+diagnostic	ZNF644	r4_atac	1000	1000													
+diagnostic	ZNF644	r4_atac	2000	1585													
+diagnostic	ZNF703	r1_signal	500	500													
+diagnostic	ZNF703	r1_signal	1000	1000													
+diagnostic	ZNF703	r1_signal	2000	2000													
+diagnostic	ZNF703	r2_ratio	500	500													
+diagnostic	ZNF703	r2_ratio	1000	1000													
+diagnostic	ZNF703	r2_ratio	2000	2000													
+diagnostic	ZNF703	r3_residual	500	500													
+diagnostic	ZNF703	r3_residual	1000	1000													
+diagnostic	ZNF703	r3_residual	2000	2000													
+diagnostic	ZNF703	r4_atac	500	500													
+diagnostic	ZNF703	r4_atac	1000	1000													
+diagnostic	ZNF703	r4_atac	2000	2000													
+diagnostic	ZNF746	r1_signal	500	500													
+diagnostic	ZNF746	r1_signal	1000	1000													
+diagnostic	ZNF746	r1_signal	2000	1163													
+diagnostic	ZNF746	r2_ratio	500	500													
+diagnostic	ZNF746	r2_ratio	1000	1000													
+diagnostic	ZNF746	r2_ratio	2000	1163													
+diagnostic	ZNF746	r3_residual	500	500													
+diagnostic	ZNF746	r3_residual	1000	1000													
+diagnostic	ZNF746	r3_residual	2000	1163													
+diagnostic	ZNF746	r4_atac	500	500													
+diagnostic	ZNF746	r4_atac	1000	1000													
+diagnostic	ZNF746	r4_atac	2000	1163													
+diagnostic	ZNF768	r1_signal	500	370	0.09459	CTCF	0.2	0.09459	0.2622								
+diagnostic	ZNF768	r1_signal	1000	370	0.09459	CTCF	0.2	0.08108	0.2919								
+diagnostic	ZNF768	r1_signal	2000	370	0.09459	CTCF	0.2	0.07568	0.2324								
+diagnostic	ZNF768	r2_ratio	500	370	0.09459	CTCF	0.2	0.08649	0.2892								
+diagnostic	ZNF768	r2_ratio	1000	370	0.09459	CTCF	0.2	0.0973	0.2676								
+diagnostic	ZNF768	r2_ratio	2000	370	0.09459	CTCF	0.2	0.08378	0.2568								
+diagnostic	ZNF768	r3_residual	500	370	0.09459	CTCF	0.2	0.0973	0.2676								
+diagnostic	ZNF768	r3_residual	1000	370	0.09459	CTCF	0.2	0.1216	0.2865								
+diagnostic	ZNF768	r3_residual	2000	370	0.09459	CTCF	0.2	0.07568	0.2865								
+diagnostic	ZNF768	r4_atac	500	370	0.09459	CTCF	0.2	0.08378	0.2784								
+diagnostic	ZNF768	r4_atac	1000	370	0.09459	CTCF	0.2	0.06757	0.2432								
+diagnostic	ZNF768	r4_atac	2000	370	0.09459	CTCF	0.2	0.09459	0.2297								
+diagnostic	ZNF777	r1_signal	500	500													0.048
+diagnostic	ZNF777	r1_signal	1000	1000													0.047
+diagnostic	ZNF777	r1_signal	2000	2000													0.0495
+diagnostic	ZNF777	r2_ratio	500	500													0.01
+diagnostic	ZNF777	r2_ratio	1000	1000													0.025
+diagnostic	ZNF777	r2_ratio	2000	2000													0.0505
+diagnostic	ZNF777	r3_residual	500	500													0.054
+diagnostic	ZNF777	r3_residual	1000	1000													0.034
+diagnostic	ZNF777	r3_residual	2000	2000													0.047
+diagnostic	ZNF777	r4_atac	500	500													0.04
+diagnostic	ZNF777	r4_atac	1000	1000													0.065
+diagnostic	ZNF777	r4_atac	2000	2000													0.054
+diagnostic	ZUFSP	r1_signal	500	500													
+diagnostic	ZUFSP	r1_signal	1000	849													
+diagnostic	ZUFSP	r1_signal	2000	849													
+diagnostic	ZUFSP	r2_ratio	500	500													
+diagnostic	ZUFSP	r2_ratio	1000	849													
+diagnostic	ZUFSP	r2_ratio	2000	849													
+diagnostic	ZUFSP	r3_residual	500	500													
+diagnostic	ZUFSP	r3_residual	1000	849													
+diagnostic	ZUFSP	r3_residual	2000	849													
+diagnostic	ZUFSP	r4_atac	500	500													
+diagnostic	ZUFSP	r4_atac	1000	849													
+diagnostic	ZUFSP	r4_atac	2000	849													

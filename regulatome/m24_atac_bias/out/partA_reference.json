@@ -1,0 +1,7 @@
+{
+ "label": "diagnostic",
+ "H3K27ac_frac_reads_in_union_atac": 0.22436230318238756,
+ "ATAC_frac_reads_in_union_atac": 0.29901721434602724,
+ "spearman_H3K27ac_vs_ATAC_union_centres": 0.473483560214434,
+ "n_union_peaks": 63824
+}

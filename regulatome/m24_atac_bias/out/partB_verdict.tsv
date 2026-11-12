@@ -1,0 +1,82 @@
+label	top_n	ranking_minus_signal	n_tfs	mean_gain_own_motif	lo	hi	mean_gain_own_minus_swapped	lo2	hi2	verdict_improves	chip	chip_gain
+diagnostic	500	r2_ratio	24	-0.02058	-0.05051	0.001667	-0.008083	-0.03575	0.01651	False		
+diagnostic	500	r3_residual	24	-0.004167	-0.01334	0.00175	-0.003417	-0.0145	0.003752	False		
+diagnostic	500	r4_atac	24	-0.00375	-0.01392	0.007	-0.003333	-0.01817	0.01317	False		
+diagnostic	500	r2_ratio	1								CTCF_HEK293T_GSE103651_peaks.bed	0.052
+diagnostic	500	r3_residual	1								CTCF_HEK293T_GSE103651_peaks.bed	-0.002
+diagnostic	500	r4_atac	1								CTCF_HEK293T_GSE103651_peaks.bed	-0.024
+diagnostic	500	r2_ratio	1								CTCF_HEK293_peaks.bed	0.048
+diagnostic	500	r3_residual	1								CTCF_HEK293_peaks.bed	-0.01
+diagnostic	500	r4_atac	1								CTCF_HEK293_peaks.bed	-0.014
+diagnostic	500	r2_ratio	1								MAZ_HEK293_peaks.bed	-0.312
+diagnostic	500	r3_residual	1								MAZ_HEK293_peaks.bed	-0.084
+diagnostic	500	r4_atac	1								MAZ_HEK293_peaks.bed	0.13
+diagnostic	500	r2_ratio	1								NFYA_K562_peaks.bed	-0.55
+diagnostic	500	r3_residual	1								NFYA_K562_peaks.bed	-0.178
+diagnostic	500	r4_atac	1								NFYA_K562_peaks.bed	0.14
+diagnostic	500	r2_ratio	1								ZBTB7A_HEK293_peaks.bed	-0.076
+diagnostic	500	r3_residual	1								ZBTB7A_HEK293_peaks.bed	0.02
+diagnostic	500	r4_atac	1								ZBTB7A_HEK293_peaks.bed	-0.008
+diagnostic	500	r2_ratio	1								ZIC2_HEK293_peaks.bed	-0.066
+diagnostic	500	r3_residual	1								ZIC2_HEK293_peaks.bed	-0.004
+diagnostic	500	r4_atac	1								ZIC2_HEK293_peaks.bed	0.074
+diagnostic	500	r2_ratio	1								ZNF282_HEK293_peaks.bed	-0.08
+diagnostic	500	r3_residual	1								ZNF282_HEK293_peaks.bed	-0.01
+diagnostic	500	r4_atac	1								ZNF282_HEK293_peaks.bed	0.018
+diagnostic	500	r2_ratio	1								ZNF777_HEK293_peaks.bed	-0.038
+diagnostic	500	r3_residual	1								ZNF777_HEK293_peaks.bed	0.006
+diagnostic	500	r4_atac	1								ZNF777_HEK293_peaks.bed	-0.008
+diagnostic	1000	r2_ratio	24	-0.01354	-0.03935	0.002668	-0.00375	-0.02338	0.01296	False		
+diagnostic	1000	r3_residual	24	-0.00325	-0.01092	0.001833	-0.001625	-0.012	0.005667	False		
+diagnostic	1000	r4_atac	24	0.003	-0.003333	0.01112	0.005708	-0.002918	0.01613	False		
+diagnostic	1000	r2_ratio	1								CTCF_HEK293T_GSE103651_peaks.bed	0.043
+diagnostic	1000	r3_residual	1								CTCF_HEK293T_GSE103651_peaks.bed	-0.002
+diagnostic	1000	r4_atac	1								CTCF_HEK293T_GSE103651_peaks.bed	0.002
+diagnostic	1000	r2_ratio	1								CTCF_HEK293_peaks.bed	0.041
+diagnostic	1000	r3_residual	1								CTCF_HEK293_peaks.bed	-0.008
+diagnostic	1000	r4_atac	1								CTCF_HEK293_peaks.bed	0.007
+diagnostic	1000	r2_ratio	1								MAZ_HEK293_peaks.bed	-0.102
+diagnostic	1000	r3_residual	1								MAZ_HEK293_peaks.bed	-0.061
+diagnostic	1000	r4_atac	1								MAZ_HEK293_peaks.bed	0.109
+diagnostic	1000	r2_ratio	1								NFYA_K562_peaks.bed	-0.504
+diagnostic	1000	r3_residual	1								NFYA_K562_peaks.bed	-0.15
+diagnostic	1000	r4_atac	1								NFYA_K562_peaks.bed	0.12
+diagnostic	1000	r2_ratio	1								ZBTB7A_HEK293_peaks.bed	-0.046
+diagnostic	1000	r3_residual	1								ZBTB7A_HEK293_peaks.bed	-0.009
+diagnostic	1000	r4_atac	1								ZBTB7A_HEK293_peaks.bed	0
+diagnostic	1000	r2_ratio	1								ZIC2_HEK293_peaks.bed	-0.026
+diagnostic	1000	r3_residual	1								ZIC2_HEK293_peaks.bed	-0.007
+diagnostic	1000	r4_atac	1								ZIC2_HEK293_peaks.bed	0.046
+diagnostic	1000	r2_ratio	1								ZNF282_HEK293_peaks.bed	-0.076
+diagnostic	1000	r3_residual	1								ZNF282_HEK293_peaks.bed	0
+diagnostic	1000	r4_atac	1								ZNF282_HEK293_peaks.bed	0.01
+diagnostic	1000	r2_ratio	1								ZNF777_HEK293_peaks.bed	-0.022
+diagnostic	1000	r3_residual	1								ZNF777_HEK293_peaks.bed	-0.013
+diagnostic	1000	r4_atac	1								ZNF777_HEK293_peaks.bed	0.018
+diagnostic	2000	r2_ratio	24	-0.01148	-0.031	6.25e-05	-0.004938	-0.01921	0.005335	False		
+diagnostic	2000	r3_residual	24	-0.002854	-0.008458	0.0004375	-0.003167	-0.009168	0.0005839	False		
+diagnostic	2000	r4_atac	24	0.00325	-0.0006458	0.008833	0.005833	-0.0003964	0.01631	False		
+diagnostic	2000	r2_ratio	1								CTCF_HEK293T_GSE103651_peaks.bed	0
+diagnostic	2000	r3_residual	1								CTCF_HEK293T_GSE103651_peaks.bed	0
+diagnostic	2000	r4_atac	1								CTCF_HEK293T_GSE103651_peaks.bed	0
+diagnostic	2000	r2_ratio	1								CTCF_HEK293_peaks.bed	0
+diagnostic	2000	r3_residual	1								CTCF_HEK293_peaks.bed	0
+diagnostic	2000	r4_atac	1								CTCF_HEK293_peaks.bed	0
+diagnostic	2000	r2_ratio	1								MAZ_HEK293_peaks.bed	0
+diagnostic	2000	r3_residual	1								MAZ_HEK293_peaks.bed	0
+diagnostic	2000	r4_atac	1								MAZ_HEK293_peaks.bed	0
+diagnostic	2000	r2_ratio	1								NFYA_K562_peaks.bed	-0.4255
+diagnostic	2000	r3_residual	1								NFYA_K562_peaks.bed	-0.112
+diagnostic	2000	r4_atac	1								NFYA_K562_peaks.bed	0.1175
+diagnostic	2000	r2_ratio	1								ZBTB7A_HEK293_peaks.bed	0.002
+diagnostic	2000	r3_residual	1								ZBTB7A_HEK293_peaks.bed	0
+diagnostic	2000	r4_atac	1								ZBTB7A_HEK293_peaks.bed	0.0115
+diagnostic	2000	r2_ratio	1								ZIC2_HEK293_peaks.bed	0
+diagnostic	2000	r3_residual	1								ZIC2_HEK293_peaks.bed	0
+diagnostic	2000	r4_atac	1								ZIC2_HEK293_peaks.bed	0
+diagnostic	2000	r2_ratio	1								ZNF282_HEK293_peaks.bed	-0.0345
+diagnostic	2000	r3_residual	1								ZNF282_HEK293_peaks.bed	-0.018
+diagnostic	2000	r4_atac	1								ZNF282_HEK293_peaks.bed	0.026
+diagnostic	2000	r2_ratio	1								ZNF777_HEK293_peaks.bed	0.001
+diagnostic	2000	r3_residual	1								ZNF777_HEK293_peaks.bed	-0.0025
+diagnostic	2000	r4_atac	1								ZNF777_HEK293_peaks.bed	0.0045
