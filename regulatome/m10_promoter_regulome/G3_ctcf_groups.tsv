@@ -1,6 +1,6 @@
 label	feature	n_A_chip_top_we_rank_low	A_mean	A_median	A_q25	A_q75	n_B_our_top_not_chip	B_mean	B_median	B_q25	B_q75	mannwhitney_p
-diagnostic, benchmark already read	promoter_atac_RPM	217	33.58	23.06	14.06	38.19	704	40.47	30.1	18.91	49.18	8.99e-06
-diagnostic, benchmark already read	cpg_island	217	0.9309	1	1	1	704	0.9815	1	1	1	0.0001461
-diagnostic, benchmark already read	pooled_panel_promoter_CPM	217	2.451	2.421	1.671	3.389	704	4.652	4.452	3.5	5.451	6.463e-57
-diagnostic, benchmark already read	our_ctcf_promoter_fragments	217	1.212	1	1	2	704	8.598	8	7	9	1.814e-113
-diagnostic, benchmark already read	chip_HEK293T_promoter_signal	217	31.57	27.68	23.05	34.95	704	10.18	9.593	6.332	13.88	4.127e-110
+diagnostic, benchmark already read	promoter_atac_RPM	217	33.58	23.06	14.06	38.19	709	39.8	29.89	19.03	48.36	9.769e-06
+diagnostic, benchmark already read	cpg_island	217	0.9309	1	1	1	709	0.9817	1	1	1	0.0001332
+diagnostic, benchmark already read	pooled_panel_promoter_CPM	217	2.451	2.421	1.671	3.389	709	4.62	4.395	3.474	5.411	1.046e-56
+diagnostic, benchmark already read	our_ctcf_promoter_fragments	217	1.212	1	1	2	709	8.587	8	7	9	1.013e-113
+diagnostic, benchmark already read	chip_HEK293T_promoter_signal	217	31.57	27.68	23.05	34.95	709	10.2	9.621	6.354	13.89	2.722e-110

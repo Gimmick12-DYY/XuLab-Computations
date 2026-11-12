@@ -1,0 +1,7 @@
+label	tf	sites	cells	top_frac	n_top	fragments_top	heldout_enrichment_top	top_lo	top_hi	heldout_enrichment_rest	rest_lo	rest_hi
+diagnostic, no Perturb-seq	NFYA	motif	own	0.1000	7029	307547	1.8447	1.7105	1.9901	1.4781	1.4460	1.5090
+diagnostic, no Perturb-seq	NFYA	motif	own	0.2500	17573	1186179	1.7288	1.6582	1.8049	1.4456	1.4102	1.4785
+diagnostic, no Perturb-seq	NFYA	motif	own	0.5000	35146	6683705	1.4311	1.3985	1.4669	1.6755	1.6163	1.7379
+diagnostic, no Perturb-seq	NFYA	motif	swap_CTCF	0.1000	1041	45663	1.2835	1.0180	1.6010	1.3744	1.2987	1.4584
+diagnostic, no Perturb-seq	NFYA	motif	swap_CTCF	0.2500	2602	382337	1.3398	1.2344	1.4527	1.3939	1.2872	1.4991
+diagnostic, no Perturb-seq	NFYA	motif	swap_CTCF	0.5000	5205	556671	1.4009	1.3179	1.5050	1.3033	1.1764	1.4485

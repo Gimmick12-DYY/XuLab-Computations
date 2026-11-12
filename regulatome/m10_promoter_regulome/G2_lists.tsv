@@ -1,26 +1,26 @@
 label	tf	list	n_genes	OR	OR_lo	OR_hi	OR_matched	OR_pseudoTF	swap_tf	OR_swapped	n_swapped
-diagnostic, benchmark already read	CTCF	i_peak_within_1kb	1001	0.9623	0.6946	1.2671	0.9852	1.2957	SOX4	0.8486	7309.0000
-diagnostic, benchmark already read	CTCF	ii_motif_proximal_fragments	1000	1.2724	0.9400	1.6498	1.0094	1.2355	SOX4	0.8508	1000.0000
-diagnostic, benchmark already read	CTCF	iii_ratio_to_pooled_other78	1000	0.9863	0.7132	1.3050	0.9863	1.3598	SOX4	1.1268	1000.0000
-diagnostic, benchmark already read	MAZ	i_peak_within_1kb	897	0.9635	0.6907	1.2936	1.0015	0.9383	HES1	1.4614	20.0000
-diagnostic, benchmark already read	MAZ	ii_motif_proximal_fragments	1000	1.1030	0.8178	1.4566	1.0094	0.8620	HES1	1.0914	804.0000
-diagnostic, benchmark already read	MAZ	iii_ratio_to_pooled_other78	1000	0.9634	0.6920	1.2612	0.9634	0.8955	HES1	1.0326	1000.0000
+diagnostic, benchmark already read	CTCF	i_peak_within_1kb	1001	0.9623	0.6834	1.2558	1.0082	1.2957	SOX4	0.8486	7309.0000
+diagnostic, benchmark already read	CTCF	ii_motif_proximal_fragments	1000	1.2972	0.9701	1.6390	1.0094	1.3347	SOX4	0.8508	1000.0000
+diagnostic, benchmark already read	CTCF	iii_ratio_to_pooled_other78	1000	0.9863	0.7078	1.3044	1.0094	1.2972	SOX4	1.1268	1000.0000
+diagnostic, benchmark already read	MAZ	i_peak_within_1kb	897	0.9635	0.6783	1.2760	1.0143	0.9133	HES1	1.4614	20.0000
+diagnostic, benchmark already read	MAZ	ii_motif_proximal_fragments	1000	1.1507	0.8424	1.4929	0.9863	0.9067	HES1	1.0914	804.0000
+diagnostic, benchmark already read	MAZ	iii_ratio_to_pooled_other78	1000	0.9634	0.6987	1.2713	0.9406	0.8955	HES1	1.0326	1000.0000
 diagnostic, benchmark already read	MSX2	i_peak_within_1kb	0						ZNF503		0.0000
-diagnostic, benchmark already read	MSX2	ii_motif_proximal_fragments	16	1.8392	0.4424	5.5765	1.8392	1.8392	ZNF503		
-diagnostic, benchmark already read	MSX2	iii_ratio_to_pooled_other78	1000	1.1268	0.8390	1.4665	1.0210	0.9634	ZNF503	1.0094	1000.0000
-diagnostic, benchmark already read	NRF1	i_peak_within_1kb	258	2.5198	1.6333	3.6147	1.0449	0.9206	NEUROD4		0.0000
-diagnostic, benchmark already read	NRF1	ii_motif_proximal_fragments	1000	3.0339	2.4440	3.6973	1.0326	0.8287	NEUROD4		
-diagnostic, benchmark already read	NRF1	iii_ratio_to_pooled_other78	1000	2.0275	1.5753	2.5527	1.0326	0.7524	NEUROD4	0.6776	1000.0000
-diagnostic, benchmark already read	RBPJ	i_peak_within_1kb	748	1.0611	0.7531	1.4273	0.9407	1.1071	ZNF507	0.7459	5086.0000
-diagnostic, benchmark already read	RBPJ	ii_motif_proximal_fragments	1000	0.8508	0.5891	1.1220	0.9634	1.1748	ZNF507		
-diagnostic, benchmark already read	RBPJ	iii_ratio_to_pooled_other78	1000	1.1268	0.8165	1.4676	1.0326	1.1149	ZNF507	0.6355	1000.0000
+diagnostic, benchmark already read	MSX2	ii_motif_proximal_fragments	16	1.8392	0.4318	5.5494	1.2070	0.5748	ZNF503		
+diagnostic, benchmark already read	MSX2	iii_ratio_to_pooled_other78	1000	1.1268	0.8379	1.4635	1.0094	0.9635	ZNF503	1.0094	1000.0000
+diagnostic, benchmark already read	NRF1	i_peak_within_1kb	258	2.5198	1.6119	3.6523	1.0449	0.8389	NEUROD4		0.0000
+diagnostic, benchmark already read	NRF1	ii_motif_proximal_fragments	1000	3.1060	2.5272	3.8004	1.0094	0.7524	NEUROD4		
+diagnostic, benchmark already read	NRF1	iii_ratio_to_pooled_other78	1000	2.0275	1.5650	2.5172	1.0326	0.8287	NEUROD4	0.6776	1000.0000
+diagnostic, benchmark already read	RBPJ	i_peak_within_1kb	748	1.0611	0.7270	1.4591	0.9407	1.1225	ZNF507	0.7459	5086.0000
+diagnostic, benchmark already read	RBPJ	ii_motif_proximal_fragments	1000	0.7849	0.5461	1.0542	0.9406	1.0794	ZNF507		
+diagnostic, benchmark already read	RBPJ	iii_ratio_to_pooled_other78	1000	1.1268	0.8040	1.4528	1.0326	1.1627	ZNF507	0.6355	1000.0000
 diagnostic, benchmark already read	SETDB1	i_peak_within_1kb	0						ADNP		515.0000
-diagnostic, benchmark already read	SETDB1	iii_ratio_to_pooled_other78	1000	0.8067	0.5849	1.0872	1.0094	1.1627	ADNP	0.8955	1000.0000
-diagnostic, benchmark already read	ZNF143	i_peak_within_1kb	357	0.9146	0.5082	1.3718	0.9748	1.0052	HOXA5	1.1626	25.0000
-diagnostic, benchmark already read	ZNF143	ii_motif_proximal_fragments	810	1.7559	1.3154	2.2746	0.9976	0.9837	HOXA5	1.1441	43.0000
-diagnostic, benchmark already read	ZNF143	iii_ratio_to_pooled_other78	1000	1.0794	0.7890	1.4151	1.0326	0.9180	HOXA5	0.8508	1000.0000
-diagnostic, benchmark already read	ZNF282	i_peak_within_1kb	1985	0.9130	0.7280	1.1236	1.0143	1.3910	RELA	2.1101	4.0000
-diagnostic, benchmark already read	ZNF282	ii_motif_proximal_fragments	419	1.1839	0.7131	1.7530	1.0251	1.5711	RELA	1.2785	198.0000
-diagnostic, benchmark already read	ZNF282	iii_ratio_to_pooled_other78	1000	1.0326	0.7205	1.3623	1.0094	1.4621	RELA	0.9634	1000.0000
-diagnostic, benchmark already read	ZNF746	i_peak_within_1kb	714	1.0862	0.7630	1.4528	0.9912	2.0542	SRCAP	1.1999	688.0000
-diagnostic, benchmark already read	ZNF746	iii_ratio_to_pooled_other78	1000	0.8731	0.6131	1.1618	1.0559	1.9691	SRCAP	0.9406	1000.0000
+diagnostic, benchmark already read	SETDB1	iii_ratio_to_pooled_other78	1000	0.8067	0.5531	1.0992	1.0094	1.1030	ADNP	0.8955	1000.0000
+diagnostic, benchmark already read	ZNF143	i_peak_within_1kb	357	0.9146	0.4779	1.4127	0.9748	1.0355	HOXA5	1.1626	25.0000
+diagnostic, benchmark already read	ZNF143	ii_motif_proximal_fragments	810	1.7559	1.3314	2.2864	1.0538	0.9421	HOXA5	1.1441	43.0000
+diagnostic, benchmark already read	ZNF143	iii_ratio_to_pooled_other78	1000	1.0794	0.7961	1.4150	0.9863	0.9635	HOXA5	0.8508	1000.0000
+diagnostic, benchmark already read	ZNF282	i_peak_within_1kb	1985	0.9130	0.7175	1.1303	1.0014	1.3760	RELA	2.1101	4.0000
+diagnostic, benchmark already read	ZNF282	ii_motif_proximal_fragments	419	1.1839	0.7335	1.7550	1.0251	1.4301	RELA	1.2785	198.0000
+diagnostic, benchmark already read	ZNF282	iii_ratio_to_pooled_other78	1000	1.0326	0.7659	1.3552	1.0326	1.5272	RELA	0.9634	1000.0000
+diagnostic, benchmark already read	ZNF746	i_peak_within_1kb	714	1.0862	0.7592	1.5090	1.0226	1.9584	SRCAP	1.1999	688.0000
+diagnostic, benchmark already read	ZNF746	iii_ratio_to_pooled_other78	1000	0.8731	0.6331	1.1672	1.0559	2.0275	SRCAP	0.9406	1000.0000

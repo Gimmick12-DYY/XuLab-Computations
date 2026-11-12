@@ -1,0 +1,7 @@
+label	tf	sites	cells	top_frac	n_top	fragments_top	heldout_enrichment_top	top_lo	top_hi	heldout_enrichment_rest	rest_lo	rest_hi
+diagnostic, no Perturb-seq	NRF1	motif	own	0.1000	142	21760	1.2329	0.9980	1.5829	1.6663	1.4959	1.8395
+diagnostic, no Perturb-seq	NRF1	motif	own	0.2500	354	217650	1.9385	1.7285	2.1449	1.1163	0.9812	1.2816
+diagnostic, no Perturb-seq	NRF1	motif	own	0.5000	708	326743	1.7229	1.5548	1.9104	1.0745	0.8440	1.3531
+diagnostic, no Perturb-seq	NRF1	motif	swap_ZNF143	0.1000	174	18957	1.1277	0.7458	1.6972	1.0588	0.9775	1.1503
+diagnostic, no Perturb-seq	NRF1	motif	swap_ZNF143	0.2500	434	393065	1.0786	0.9831	1.2134	1.0346	0.9222	1.1677
+diagnostic, no Perturb-seq	NRF1	motif	swap_ZNF143	0.5000	868	575174	1.0895	0.9925	1.1900	0.8836	0.7217	1.0918
