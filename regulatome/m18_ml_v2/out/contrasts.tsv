@@ -19,15 +19,15 @@ cross-validated, benchmark-developed	primary	enet	full real - full swapped-TF	10
 cross-validated, benchmark-developed	primary	enet	full real - full pseudo-TF (mean of 3)	10	0.0023	0.0002	0.0045	True
 cross-validated, benchmark-developed	primary	enet	HITAG gain real minus HITAG gain swap	10	0.0002	-0.0013	0.0019	False
 cross-validated, benchmark-developed	primary	enet	HITAG gain real minus HITAG gain pseudo	10	0.0023	0.0002	0.0043	True
-cross-validated, benchmark-developed	all	lgb	richer model adds: full - A	76	0.0758	0.0641	0.0876	True
-cross-validated, benchmark-developed	all	lgb	HITAG contributes: full - (A+R+H+C)	76	-0.0276	-0.0326	-0.0220	False
-cross-validated, benchmark-developed	all	lgb	+B+BC (this TF binding)	76	-0.0132	-0.0170	-0.0096	False
-cross-validated, benchmark-developed	all	lgb	+D (79-TF context)	76	-0.0167	-0.0201	-0.0133	False
+cross-validated, benchmark-developed	all	lgb	richer model adds: full - A	76	0.0758	0.0636	0.0880	True
+cross-validated, benchmark-developed	all	lgb	HITAG contributes: full - (A+R+H+C)	76	-0.0276	-0.0329	-0.0220	False
+cross-validated, benchmark-developed	all	lgb	+B+BC (this TF binding)	76	-0.0132	-0.0169	-0.0096	False
+cross-validated, benchmark-developed	all	lgb	+D (79-TF context)	76	-0.0167	-0.0202	-0.0132	False
 cross-validated, benchmark-developed	all	lgb	coordinated binding adds: +F	76	0.0016	-0.0002	0.0035	False
 cross-validated, benchmark-developed	all	lgb	complex pairs add (provisional): +G	76	0.0007	-0.0016	0.0029	False
-cross-validated, benchmark-developed	all	enet	richer model adds: full - A	76	0.0086	-0.0036	0.0203	False
+cross-validated, benchmark-developed	all	enet	richer model adds: full - A	76	0.0086	-0.0037	0.0205	False
 cross-validated, benchmark-developed	all	enet	HITAG contributes: full - (A+R+H+C)	76	-0.0004	-0.0024	0.0017	False
-cross-validated, benchmark-developed	all	enet	+B+BC (this TF binding)	76	-0.0001	-0.0015	0.0015	False
-cross-validated, benchmark-developed	all	enet	+D (79-TF context)	76	0.0002	-0.0014	0.0016	False
-cross-validated, benchmark-developed	all	enet	coordinated binding adds: +F	76	-0.0003	-0.0013	0.0005	False
+cross-validated, benchmark-developed	all	enet	+B+BC (this TF binding)	76	-0.0001	-0.0016	0.0015	False
+cross-validated, benchmark-developed	all	enet	+D (79-TF context)	76	0.0002	-0.0014	0.0017	False
+cross-validated, benchmark-developed	all	enet	coordinated binding adds: +F	76	-0.0003	-0.0012	0.0006	False
 cross-validated, benchmark-developed	all	enet	complex pairs add (provisional): +G	76	-0.0002	-0.0006	0.0002	False

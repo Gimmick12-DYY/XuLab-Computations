@@ -23,20 +23,21 @@ cross-validated, benchmark-developed	primary	enet	r8_G_full	10	0.0398	-0.0050	0.
 cross-validated, benchmark-developed	primary	enet	full_permtarget	10	0.0003	-0.0050	0.0060			
 cross-validated, benchmark-developed	primary	enet	r2_AR_half1	10	0.0228	-0.0239	0.0693			
 cross-validated, benchmark-developed	primary	enet	full_half1	10	0.0399	-0.0055	0.0882			
-cross-validated, benchmark-developed	primary	enet	full_byTF_dropE	10	0.0092	-0.0289	0.0449			
-cross-validated, benchmark-developed	all	lgb	r1_A	76	0.0256	0.0199	0.0315			
-cross-validated, benchmark-developed	all	lgb	r2_AR	76	0.1310	0.1144	0.1489	0.1054	0.0916	0.1196
-cross-validated, benchmark-developed	all	lgb	r3_ARH	76	0.1310	0.1136	0.1494	0.0000	0.0000	0.0000
-cross-validated, benchmark-developed	all	lgb	r4_ARHC	76	0.1290	0.1115	0.1478	-0.0020	-0.0053	0.0024
-cross-validated, benchmark-developed	all	lgb	r5_B	76	0.1157	0.0996	0.1331	-0.0132	-0.0171	-0.0097
-cross-validated, benchmark-developed	all	lgb	r6_D	76	0.0991	0.0839	0.1148	-0.0167	-0.0202	-0.0131
-cross-validated, benchmark-developed	all	lgb	r7_F	76	0.1007	0.0853	0.1165	0.0016	-0.0002	0.0035
-cross-validated, benchmark-developed	all	lgb	r8_G_full	76	0.1014	0.0861	0.1176	0.0007	-0.0015	0.0029
-cross-validated, benchmark-developed	all	enet	r1_A	76	0.0052	0.0009	0.0094			
-cross-validated, benchmark-developed	all	enet	r2_AR	76	0.0122	-0.0015	0.0257	0.0070	-0.0057	0.0199
-cross-validated, benchmark-developed	all	enet	r3_ARH	76	0.0122	-0.0023	0.0257	0.0000	0.0000	0.0000
-cross-validated, benchmark-developed	all	enet	r4_ARHC	76	0.0142	-0.0004	0.0277	0.0020	-0.0000	0.0048
-cross-validated, benchmark-developed	all	enet	r5_B	76	0.0141	0.0003	0.0281	-0.0001	-0.0016	0.0015
-cross-validated, benchmark-developed	all	enet	r6_D	76	0.0143	0.0010	0.0276	0.0002	-0.0014	0.0016
-cross-validated, benchmark-developed	all	enet	r7_F	76	0.0140	0.0011	0.0266	-0.0003	-0.0012	0.0006
-cross-validated, benchmark-developed	all	enet	r8_G_full	76	0.0138	0.0008	0.0275	-0.0002	-0.0006	0.0002
+cross-validated, benchmark-developed	primary	enet	full_byTF_keepE	10	0.0083	-0.0285	0.0439			
+cross-validated, benchmark-developed	primary	enet	full_byTF_dropE	10	0.0092	-0.0279	0.0463			
+cross-validated, benchmark-developed	all	lgb	r1_A	76	0.0256	0.0199	0.0312			
+cross-validated, benchmark-developed	all	lgb	r2_AR	76	0.1310	0.1136	0.1492	0.1054	0.0915	0.1201
+cross-validated, benchmark-developed	all	lgb	r3_ARH	76	0.1310	0.1139	0.1501	0.0000	0.0000	0.0000
+cross-validated, benchmark-developed	all	lgb	r4_ARHC	76	0.1290	0.1119	0.1471	-0.0020	-0.0053	0.0024
+cross-validated, benchmark-developed	all	lgb	r5_B	76	0.1157	0.0990	0.1334	-0.0132	-0.0170	-0.0096
+cross-validated, benchmark-developed	all	lgb	r6_D	76	0.0991	0.0847	0.1145	-0.0167	-0.0202	-0.0132
+cross-validated, benchmark-developed	all	lgb	r7_F	76	0.1007	0.0858	0.1165	0.0016	-0.0002	0.0035
+cross-validated, benchmark-developed	all	lgb	r8_G_full	76	0.1014	0.0861	0.1171	0.0007	-0.0015	0.0028
+cross-validated, benchmark-developed	all	enet	r1_A	76	0.0052	0.0009	0.0096			
+cross-validated, benchmark-developed	all	enet	r2_AR	76	0.0122	-0.0018	0.0260	0.0070	-0.0063	0.0202
+cross-validated, benchmark-developed	all	enet	r3_ARH	76	0.0122	-0.0018	0.0266	0.0000	0.0000	0.0000
+cross-validated, benchmark-developed	all	enet	r4_ARHC	76	0.0142	0.0001	0.0282	0.0020	-0.0000	0.0047
+cross-validated, benchmark-developed	all	enet	r5_B	76	0.0141	0.0008	0.0280	-0.0001	-0.0017	0.0014
+cross-validated, benchmark-developed	all	enet	r6_D	76	0.0143	0.0009	0.0273	0.0002	-0.0014	0.0016
+cross-validated, benchmark-developed	all	enet	r7_F	76	0.0140	0.0010	0.0270	-0.0003	-0.0012	0.0006
+cross-validated, benchmark-developed	all	enet	r8_G_full	76	0.0138	0.0010	0.0268	-0.0002	-0.0006	0.0002
