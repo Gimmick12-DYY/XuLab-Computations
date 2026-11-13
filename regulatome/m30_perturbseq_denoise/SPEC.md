@@ -1,0 +1,16 @@
+# m30: denoise Perturb-seq (drop commonly perturbed genes / remove shared components), then redo the simple per-TF overlap (diagnostic, tables only)
+
+User request (2026-11-13): remove genes that respond to many knockdowns (the Perturb-seq analogue of HOT regions), then redo the simple per-TF overlap.
+
+Data: Arm 2 raw per-TF z (all cells; halves for reproducible responders) on the m29 universe (11,228 genes, NTC detection >= 10%), own gene removed.
+75 panel TFs from the m15 "raw" matrices (as m29) + 9 cohesin perturbations (RAD21, SMC3, STAG1, NIPBL, WAPL, PDS5A, PDS5B, MAU2, CTCFL) from the m26 kd_response matrix (same z recipe, panel + cohesin NTC pool).
+This is NOT the full X-Atlas/Orion library: 84 perturbations only. No per-gene response-frequency summary from the authors is on disk, and the raw data are not re-streamed for it, so there is no second definition.
+
+1. Response frequency per gene = fraction of the 84 knockdowns with |z| >= 2. Computed on raw z (primary; the overlap lists use raw z) and on double-centred z (column mean then row mean removed, as m15 "dc"); report the number of genes over each cutoff under both and the Spearman of the two frequencies (how much double-centring already removes).
+   Cutoffs on the raw-z frequency: D1 drop genes with frequency >= 20%; D2 >= 10%; D3 drop the top 10% of genes by frequency (ties broken by mean |z|).
+   Report genes removed, top 30 names, and shares that are ribosomal (RPL/RPS), mitochondrial (MT-, MRPL, MRPS) and stress genes (HSP*, DNAJ*, ATF3, ATF4, DDIT3, DDIT4, JUN, JUNB, FOS, FOSB, EGR1, IER2, IER3, XBP1, HERPUD1, TRIB3, SESN2, CHAC1, GADD45A, GADD45B, PPP1R15A), vs their share in the universe.
+2. D4: remove the first k principal components of the 84 x 11,228 raw z matrix (SVD, no centring; NaN set to 0 for the fit), k = 1, 3, 5; residual z re-thresholded at |z| >= 2. For the halves, the same gene loadings are projected out of each half. Report variance explained by the first 5 components.
+3. For baseline (no denoising), D1, D2, D3, D4k1, D4k3, D4k5: simple per-TF overlap with the top-5,000 Regulome lists (m22, commit 9b8d8c1) within the remaining universe, for |z| >= 2 and for reproducible responders (|z| >= 2 in both halves, same sign); columns as simple_overlap_z2.tsv plus pct_of_all_genes_bound; and the m29 pass test (one-sided hypergeometric, BH q across testable TFs; swapped TF = other TFs of the same depth tertile, empirical p; matched genes = 1,000 draws matched on NTC expression decile x promoter ATAC decile x CpG within the remaining universe, empirical p). Testable: both lists >= 5 genes. Pass = q < 0.05 and swapped p <= 0.05 and matched p <= 0.05. Overlap uses the 75 panel TFs only.
+4. Mirror on the binding side, separately labelled (universe_filter = "drop genes bound by >= 50% of the 79 TFs"): the same tables after also removing from the universe the genes with shared_by >= 40 in the Regulome table. The Regulome table is not changed and shared binding is not treated as a defect.
+5. Summary per denoiser x list type x universe filter: genes removed, universe N, TFs testable, TFs with q < 0.05, TFs passing all three, median fold own vs median of swapped, and the fold for NRF1, E4F1, MAZ, CTCF, DNMT1, NME2.
+Results labelled diagnostic.
