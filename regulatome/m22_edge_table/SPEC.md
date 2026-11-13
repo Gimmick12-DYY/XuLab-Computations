@@ -35,3 +35,13 @@ List of bound high-confidence pairs (TF, gene, z, halves, promoter/distal, score
 - regulome_edges.tsv.gz becomes the top-5,000 table (primary). The q005 table is kept as regulome_edges_q005.tsv.gz for reference (m25 comparisons cite it).
 - Unchanged: ATAC background column (not validated), IgG off; Perturb-seq only in external columns (all cells and top-25% sgRNA cells); shared targets kept, shared_by and co-bound TFs as result columns; three impact versions (share, within-TF percentile, depth-scaled share).
 - Re-run on the new table (tables only): lookups (NRF1, E4F1, CTCF, NFYA, MLX; HSPB1, PGAM1, MYC, TXNIP), the high-confidence pair table (Amendment 2), the per-TF and whole-matrix simple correlation point estimates (Amendment 1), the share-vs-depth summary (Amendment 3), and a candidate example table: genes with >= 3 bound TFs where a bound TF has a reproducible external knockdown effect.
+
+## Amendment 5 (2026-11-12, user request, before any number): one overall correlation over all TFs, simple ABC vs canonical ABC (tables only)
+Diagnostic. The user asked for a single overall correlation across all TFs between the Regulome score and Perturb-seq, using the simple ABC model.
+- Two score matrices built the same way (Amendment 4 edge rule: each TF's top 5,000 lab peaks by signalValue, strongest summit per element, score = sum over the gene's linked elements of signalValue x ABC, 0 where no edge):
+  (a) canonical ABC, Hi-C (m2c HEK293T_hicfixed, ABC >= 0.02, self-promoter included) = the current Regulome;
+  (b) simple ABC = m2_abc Predictions_powerlaw EnhancerPredictionsFull_thr0.02 (ATAC-only activity, power-law contact, tiled elements_v2; self-promoters included).
+- Perturb-seq: Arm 2 raw per-TF z, all cells, own gene removed; TFs with a knockdown x the 11,228 genes.
+- One number per matrix: Spearman (and Pearson) of S with |z| over all (TF, gene) entries pooled ("overall over all TFs"), plus signed z; also row-standardised and within-TF percentile versions as in Amendment 1.
+- Controls on each link set: swapped TF (S rows permuted within depth tertile, 500 permutations) and ATAC-only (sum of element ATAC x ABC on the same links; for (b) ABC's normalized_atac_enh). TF-block bootstrap 95% interval (2,000 resamples).
+- (a) must reproduce the Amendment 1 point estimate (0.0001 for |z| raw pooled); a discrepancy is reported.
