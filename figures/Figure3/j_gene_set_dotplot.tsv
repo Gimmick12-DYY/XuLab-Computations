@@ -1,0 +1,10 @@
+term	name	Module pairs | TF-specific q	Module pairs | TF-specific fold	Module pairs | TF-specific genes	Module pairs | TF-specific gene_ratio	Module pairs | Conserved q	Module pairs | Conserved fold	Module pairs | Conserved genes	Module pairs | Conserved gene_ratio	All pairs | TF-specific q	All pairs | TF-specific fold	All pairs | TF-specific genes	All pairs | TF-specific gene_ratio	All pairs | Conserved q	All pairs | Conserved fold	All pairs | Conserved genes	All pairs | Conserved gene_ratio	Module pairs | TF-specific size-matched to 351: median q	Module pairs | TF-specific size-matched to 351: frac q<0.05	All pairs | TF-specific size-matched to 3367: median q	All pairs | TF-specific size-matched to 3367: frac q<0.05
+GO:0050907	detection of chemical stimulus involved in sensory perception	0.99992	0.86364	25	0.0049	1.0	0.0	0	0.0	1e-05	1.42107	60	0.00806	1.0	0.0	0	0.0	1.0	0.0	0.69574	0.035
+GO:0007600	sensory perception	0.99992	0.90182	104	0.02037	1.0	0.37835	3	0.00855	1e-05	1.23064	207	0.0278	1.0	0.48645	37	0.01099	1.0	0.0	0.56769	0.045
+GO:0098609	cell-cell adhesion	0.99992	0.90138	109	0.02135	1.0	0.12027	1	0.00285	1e-05	1.22464	216	0.02901	1.0	0.50153	40	0.01188	1.0	0.0	0.62704	0.035
+GO:0050877	nervous system process	0.99992	0.87994	182	0.03565	1.0	0.63286	9	0.02564	0.0	1.18668	358	0.04808	1.0	0.58644	80	0.02376	1.0	0.0	0.50294	0.06
+GO:0007186	G protein-coupled receptor signaling pathway	0.99992	0.91792	183	0.03585	1.0	0.51067	7	0.01994	0.0	1.24491	362	0.04862	1.0	0.46391	61	0.01812	1.0	0.0	0.25053	0.19
+GO:0006403	RNA localization	0.74762	1.20821	66	0.01293	0.66877	2.39623	9	0.02564	1.0	0.64009	51	0.00685	2e-05	1.80411	65	0.01931	1.0	0.0	1.0	0.0
+GO:0043484	regulation of RNA splicing	0.63079	1.21235	90	0.01763	1.0	1.76326	9	0.02564	1.0	0.68342	74	0.00994	1e-05	1.71561	84	0.02495	1.0	0.0	1.0	0.0
+GO:1903311	regulation of mRNA metabolic process	0.23408	1.22169	158	0.03095	1.0	1.23704	11	0.03134	1.0	0.75808	143	0.0192	0.0	1.55922	133	0.0395	1.0	0.0	1.0	0.0
+GO:0016071	mRNA metabolic process	0.23408	1.16393	244	0.0478	0.90022	1.52633	22	0.06268	1.0	0.79472	243	0.03263	0.0	1.4899	206	0.06118	1.0	0.0	1.0	0.0
