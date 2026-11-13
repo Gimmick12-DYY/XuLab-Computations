@@ -1,0 +1,12 @@
+label	gene	cells	min_cells_per_guide_pair	knockdown_pct_vs_all_NTC	ontarget_logfc_gem_matched	target_ntc_mean_cp10k	target_ntc_detect_frac	crit_ge25_cells	crit_ge30pct_kd	classifier	split_half_r	reliability_SB	reproducible_responders	in_halves_matrix
+diagnostic	CTCF	321	321	34.42	-0.1721	0.8574	0.7865	True	True	m16 rebuild: strong phenotype	0.1756	0.2987	156	True
+diagnostic	STAG2	134	26	18.5	-0.1153	2.515	0.9728	True	False	m16 rebuild: fails				False
+diagnostic	RAD21	68	68	28.33	-0.1872	1.446	0.9052	True	False	not run (not a panel TF)	0.1273	0.2258	37	True
+diagnostic	SMC3	112	112	48.08	-0.434	2.303	0.9643	True	True	not run (not a panel TF)	0.1638	0.2815	85	True
+diagnostic	STAG1	414	414	39.61	-0.3145	1.653	0.8777	True	True	not run (not a panel TF)	0.1112	0.2001	39	True
+diagnostic	NIPBL	264	264	41.7	-0.3171	1.628	0.9128	True	True	not run (not a panel TF)	0.09612	0.1754	63	True
+diagnostic	WAPL	179	179	38.96	-0.2276	1.075	0.8399	True	True	not run (not a panel TF)	0.1083	0.1954	81	True
+diagnostic	PDS5A	354	354	18.86	-0.1218	1.37	0.8822	True	False	not run (not a panel TF)	0.001914	0.003821	21	True
+diagnostic	PDS5B	152	152	33.06	-0.1554	0.7682	0.737	True	True	not run (not a panel TF)	0.08744	0.1608	39	True
+diagnostic	MAU2	161	161	34.69	-0.0873	0.3577	0.5057	True	True	not run (not a panel TF)	0.02611	0.05089	12	True
+diagnostic	CTCFL	181	181	18.72	-6.555e-05	0.001467		True	False	not run (not a panel TF)	0.1577	0.2724	83	True

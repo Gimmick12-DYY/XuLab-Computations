@@ -1,0 +1,7 @@
+label	definition	set	n_pairs	mean_similarity	matched_random_mean	p
+diagnostic	K_i	all focal pairs	45	-0.001173	-0.0005572	0.5309
+diagnostic	K_i	CTCF with cohesin/STAG2	9	0.01605	-0.001371	0.1902
+diagnostic	K_i	cohesin/STAG2 among themselves	36	-0.005479	-0.0002095	0.7067
+diagnostic	K_ii	all focal pairs	45	0.02303	0.02936	0.5799
+diagnostic	K_ii	CTCF with cohesin/STAG2	9	0.05991	0.01974	0.2695
+diagnostic	K_ii	cohesin/STAG2 among themselves	36	0.01382	0.03162	0.7109

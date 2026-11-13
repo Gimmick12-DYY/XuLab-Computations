@@ -1,0 +1,11 @@
+label	pair	A_cells	A_knockdown_pct	A_reliability	A_strong	A_reproducible_responders	B_cells	B_knockdown_pct	B_reliability	B_strong	B_reproducible_responders	both_detectable	K_i	K_ii
+diagnostic	CTCF-STAG2	321	34.57	0.3	strong phenotype	142	134	18.28		fails	0	False		0.1191
+diagnostic	DR1-NFYA	144	29.47	0.1107	fails	24	135	46.69	0.1122	fails	21	True	-0.001063	0.1527
+diagnostic	EZH2-MTF2	55	50.96	0.0407	not assessable (< 100 cells)	23	187	49.41	0.1346	fails	24	True	0.02019	0.04584
+diagnostic	EZH2-PCGF6	55	50.96	0.0407	not assessable (< 100 cells)	23	332	51.08	0.1432	fails	38	True	0.01447	0.08087
+diagnostic	HP1-SETDB1	193	27.82	0.05315	not assessable (< 100 cells)	0	237	41.46	0.2905	strong phenotype	49	False	0.01562	-0.01164
+diagnostic	MBD3-RBBP4	95	58.1	-0.1339	not assessable (< 100 cells)	18	68	53.01	0.0702	not assessable (< 100 cells)	21	False	0.04804	-0.006325
+diagnostic	MBD3-RBBP7	95	58.1	-0.1339	not assessable (< 100 cells)	18	399	45.53	0.13	strong phenotype	14	False	-0.05541	-0.07184
+diagnostic	MEF2A-MEF2D	174	34.44	-0.0417	strong phenotype	10	274	27.09	-0.1431	fails	12	False	-0.0597	0.01344
+diagnostic	MTF2-PCGF6	187	49.41	0.1346	fails	24	332	51.08	0.1432	fails	38	True	-0.03451	-0.1115
+diagnostic	RBBP4-RBBP7	68	53.01	0.0702	not assessable (< 100 cells)	21	399	45.53	0.13	strong phenotype	14	True	0.04599	0.08259

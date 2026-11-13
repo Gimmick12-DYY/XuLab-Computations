@@ -1,0 +1,91 @@
+panel_tf	gene_symbol	name_mapping	n_guide_pairs	n_guides_library	n_cells	n_guide_pairs_detected	present_hek293t
+ADNP	ADNP	same	1	2	476.0	1.0	True
+AKAP8L	AKAP8L	same	1	2	115.0	1.0	True
+CHAMP1	CHAMP1	same	1	2	102.0	1.0	True
+CTCF	CTCF	same	1	2	321.0	1.0	True
+DDIT3	DDIT3	same	1	2	269.0	1.0	True
+DNMT1	DNMT1	same	1	2	458.0	1.0	True
+DR1	DR1	same	1	2	144.0	1.0	True
+E2F3	E2F3	same	2	4	210.0	2.0	True
+E4F1	E4F1	same	1	2	419.0	1.0	True
+EPAS1	EPAS1	same	1	2	63.0	1.0	True
+ETS2	ETS2	same	1	2	298.0	1.0	True
+EZH2	EZH2	same	1	2	55.0	1.0	True
+FLYWCH1	FLYWCH1	same	1	2	235.0	1.0	True
+FOXC1	FOXC1	same	1	2	153.0	1.0	True
+FOXJ3	FOXJ3	same	1	2	222.0	1.0	True
+FOXK1	FOXK1	same	1	2	343.0	1.0	True
+GLYR1	GLYR1	same	1	2	19.0	1.0	True
+HES1	HES1	same	1	2	93.0	1.0	True
+HOXA10	HOXA10	same	1	2	295.0	1.0	True
+HOXA5	HOXA5	same	1	2	154.0	1.0	True
+HOXB6	HOXB6	same	2	4	220.0	2.0	True
+HOXB8	HOXB8	same	2	4	293.0	2.0	True
+HOXB9	HOXB9	same	1	2	144.0	1.0	True
+HOXC4	HOXC4	same	1	2	322.0	1.0	True
+HOXC9	HOXC9	same	1	2	149.0	1.0	True
+HOXD10	HOXD10	same	2	4	411.0	2.0	True
+HP1	CBX1	alias	1	2	92.0	1.0	True
+HP1	CBX3	alias	1	2	18.0	1.0	True
+HP1	CBX5	alias	1	2	83.0	1.0	True
+MAZ	MAZ	same	1	2	456.0	1.0	True
+MBD3	MBD3	same	1	2	95.0	1.0	True
+MEF2A	MEF2A	same	1	2	174.0	1.0	True
+MEF2D	MEF2D	same	1	2	274.0	1.0	True
+MLX	MLX	same	1	2	84.0	1.0	True
+MSX2	MSX2	same	1	2	443.0	1.0	True
+MTF2	MTF2	same	1	2	187.0	1.0	True
+NEUROD4	NEUROD4	same	1	2	162.0	1.0	True
+NFYA	NFYA	same	1	2	135.0	1.0	True
+NME2	NME2	same	1	2	866.0	1.0	True
+NR1D2	NR1D2	same	1	2	167.0	1.0	True
+NRF1	NRF1	same	1	2	343.0	1.0	True
+PA2G4	PA2G4	same	1	2	124.0	1.0	True
+PCGF6	PCGF6	same	1	2	332.0	1.0	True
+POGK	POGK	same	1	2	125.0	1.0	True
+RBBP4	RBBP4	same	1	2	68.0	1.0	True
+RBBP7	RBBP7	same	1	2	399.0	1.0	True
+RBPJ	RBPJ	same	1	2	343.0	1.0	True
+RELA	RELA	same	1	2	200.0	1.0	True
+SAFB	SAFB	same	1	2	322.0	1.0	True
+SETDB1	SETDB1	same	1	2	237.0	1.0	True
+SMARCA1	SMARCA1	same	1	2	101.0	1.0	True
+SOX12	SOX12	same	1	2	77.0	1.0	True
+SOX4	SOX4	same	2	4	347.0	2.0	True
+SRCAP	SRCAP	same	1	2	319.0	1.0	True
+SREBF2	SREBF2	same	1	2	18.0	1.0	True
+STAG2	STAG2	same	2	4	134.0	2.0	True
+TBX3	TBX3	same	1	2	278.0	1.0	True
+THAP6	THAP6	same	1	2	181.0	1.0	True
+TRAFD1	TRAFD1	same	1	2	54.0	1.0	True
+WIZ	WIZ	same	1	2	103.0	1.0	True
+XPA	XPA	same	1	2	236.0	1.0	True
+ZBTB40	ZBTB40	same	1	2	67.0	1.0	True
+ZBTB43	ZBTB43	same	1	2	171.0	1.0	True
+ZBTB7A	ZBTB7A	same	2	4	361.0	2.0	True
+ZIC2	ZIC2	same	1	2	150.0	1.0	True
+ZNF143	ZNF143	same	1	2	267.0	1.0	True
+ZNF282	ZNF282	same	1	2	244.0	1.0	True
+ZNF367	ZNF367	same	1	2	45.0	1.0	True
+ZNF503	ZNF503	same	1	2	160.0	1.0	True
+ZNF507	ZNF507	same	1	2	227.0	1.0	True
+ZNF512	ZNF512	same	1	2	225.0	1.0	True
+ZNF512B	ZNF512B	same	1	2	146.0	1.0	True
+ZNF581	ZNF581	same	1	2	170.0	1.0	True
+ZNF606	ZNF606	same	1	2	68.0	1.0	True
+ZNF644	ZNF644	same	1	2	100.0	1.0	True
+ZNF703	ZNF703	same	1	2	82.0	1.0	True
+ZNF746	ZNF746	same	1	2	113.0	1.0	True
+ZNF768	ZNF768	same	2	4	388.0	2.0	True
+ZNF777	ZNF777	same	1	2	463.0	1.0	True
+ZNF79	ZNF79	same	1	2	201.0	1.0	True
+ZUFSP	ZUP1	alias	1	2	293.0	1.0	True
+RAD21	RAD21	same	1	2			
+SMC3	SMC3	same	1	2			
+STAG1	STAG1	same	1	2			
+NIPBL	NIPBL	same	1	2			
+WAPL	WAPL	same	1	2			
+PDS5A	PDS5A	same	1	2			
+PDS5B	PDS5B	same	1	2			
+MAU2	MAU2	same	1	2			
+CTCFL	CTCFL	same	1	2			

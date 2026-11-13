@@ -1,0 +1,5 @@
+label	bin	n_pairs	mean_string_physical	n_with_string	frac_string_ge_0_7
+diagnostic	(-0.613, -0.294]	131		0	0
+diagnostic	(-0.294, 0.023]	1307	0.9216	19	0.01454
+diagnostic	(0.023, 0.341]	1504	0.9135	14	0.009309
+diagnostic	(0.341, 0.658]	139	0.886	1	0.007194
