@@ -1,0 +1,7 @@
+label	cutoff	universe_N	tfs_testable	median_perturb_list	median_regulome_list	tfs_q_lt_0_05	tfs_q_and_beat_swapped	tfs_pass_all	median_fold_own	median_fold_swapped	tfs_own_fold_above_swapped_median	F3_testable	F3_pass	tfs_q_lt_0_05_list	pass_list
+diagnostic	C1 |z|>=2	11228	75	647	1430	1	1	1	0.9923	0.9957	37	17	1	NRF1	NRF1
+diagnostic	C1_down z<=-2	11228	75	287	1430	2	2	2	1.025	0.9875	41	17	1	HOXC4,NRF1	HOXC4,NRF1
+diagnostic	C1_up z>=2	11228	75	335	1430	0	0	0	0.9668	1.007	34	17	0		
+diagnostic	C2 |z|>=3	11228	67	56	1401	1	0	0	0.9996	0.9908	37	17	0	NRF1	
+diagnostic	C3 top200 |z|	11228	75	200	1430	1	1	1	0.9936	1.011	35	17	1	NRF1	NRF1
+diagnostic	C4 reproducible halves	11228	73	21	1430	1	0	0	0.9177	0.9951	31	17	0	NRF1	
