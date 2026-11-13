@@ -1,0 +1,9 @@
+label	subset	n_tfs	hc_pairs	hc_tfs	frac_bound_own	frac_bound_swapped_tertile	frac_bound_matched_genes	MH_OR	MH_lo_RBG	MH_hi_RBG	pair_boot_lo	pair_boot_hi	tf_boot_lo	tf_boot_hi	per_tf_n	per_tf_median_spearman	n_tfs_interval_above_0	n_tfs_beat_both_controls	tfs_beat_both	whole_raw	whole_raw_swapped	whole_within_tf_pct	whole_within_tf_pct_swapped
+diagnostic	all TFs with a knockdown	75	451	23	0.2461	0.2285	0.1785	1.477	1.181	1.848	1.17	1.836	0.7922	2.103	75	-0.0006702	3	2	MAZ,NRF1	-0.0001449	-0.00356	0.0005774	-0.0006549
+diagnostic	all TFs with a knockdown without NRF1, E4F1	73	122	21	0.2049	0.1668	0.1786	1.185	0.7402	1.897	0.6966	1.812	0.4447	2.313	73	-0.001185	1	1	MAZ	-0.001414	-0.001091	-0.0003714	-0.0006709
+diagnostic	F1	60	445	21	0.2494	0.2296	0.1795	1.492	1.193	1.867	1.186	1.86	0.8586	2.206	60	-0.0006075	3	2	MAZ,NRF1	0.0003469	0.003336	0.001051	-0.001031
+diagnostic	F1 without NRF1, E4F1	58	116	19	0.2155	0.1676	0.1823	1.231	0.7668	1.976	0.7379	1.926	0.5328	2.221	58	-0.0009276	1	1	MAZ	-0.0008257	0.006574	-0.0001249	-0.001053
+diagnostic	F2	60	445	21	0.2494	0.2296	0.1795	1.492	1.193	1.867	1.193	1.842	0.8728	2.184	60	-0.0006075	3	2	MAZ,NRF1	0.0003469	0.003336	0.001051	-0.001031
+diagnostic	F2 without NRF1, E4F1	58	116	19	0.2155	0.1676	0.1823	1.231	0.7668	1.976	0.7218	1.877	0.4651	2.298	58	-0.0009276	1	1	MAZ	-0.0008257	0.006574	-0.0001249	-0.001053
+diagnostic	F3	17	424	10	0.2476	0.2287	0.1761	1.501	1.195	1.887	1.22	1.857	0.9893	2.229	17	-0.001185	2	1	NRF1	0.01616	0.007118	0.0008302	-0.004819
+diagnostic	F3 without NRF1, E4F1	15	95	8	0.2	0.15	0.1678	1.217	0.7226	2.051	0.6559	2.021	0.4539	2.364	15	-0.001652	0	0		0.01115	0.01701	-0.004034	-0.005397

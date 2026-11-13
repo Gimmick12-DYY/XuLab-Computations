@@ -1,0 +1,80 @@
+tf	label	cells_total	min_cells_per_guide_pair	n_guide_pairs	knockdown_pct	ntc_detect	reliability	reproducible_responders	m16_rebuilt_strong_phenotype	authors_label	F1_fail_reason	F1	F2_fail_reason	F2	F3_fail_reason	F3
+ADNP	diagnostic	476	476	1	30.5	0.7821	0.2307	44	fails	not released		True		True		True
+AKAP8L	diagnostic	115	115	1	45.8	0.7489	-0.0985	11	fails	not released		True		True	reliability < 0.2 or undefined	False
+CHAMP1	diagnostic	102	102	1	42.86	0.309	-0.0014	17	fails	not released		True		True	reliability < 0.2 or undefined	False
+CTCF	diagnostic	321	321	1	34.57	0.7886	0.3	142	strong phenotype	not released		True		True		True
+DDIT3	diagnostic	269	269	1	57.13	0.1851	-0.0455	16	fails	not released		True		True	reliability < 0.2 or undefined	False
+DNMT1	diagnostic	458	458	1	55.42	0.9568	0.575	285	strong phenotype	not released		True		True		True
+DR1	diagnostic	144	144	1	29.47	0.7651	0.1107	24	fails	not released	< 30% knockdown	False	< 30% knockdown	False	< 30% knockdown	False
+E2F3	diagnostic	210	93	2	20.05	0.8258	0.1008	20	fails	not released	< 30% knockdown	False	< 30% knockdown	False	< 30% knockdown	False
+E4F1	diagnostic	419	419	1	48.07	0.4028	0.7544	964	strong phenotype	not released		True		True		True
+EPAS1	diagnostic	63	63	1	25.62	0.3318	0.052	16	not assessable (< 100 cells)	not released	< 30% knockdown	False	< 30% knockdown	False	< 30% knockdown	False
+ETS2	diagnostic	298	298	1	58.97	0.2904	0.2852	52	fails	not released		True		True		True
+EZH2	diagnostic	55	55	1	50.96	0.8373	0.0407	23	not assessable (< 100 cells)	not released		True		True	reliability < 0.2 or undefined	False
+FLYWCH1	diagnostic	235	235	1	45.92	0.3421	0.1322	12	fails	not released		True		True	reliability < 0.2 or undefined	False
+FOXC1	diagnostic	153	153	1	25.79	0.739	0.3657	72	fails	not released	< 30% knockdown	False	< 30% knockdown	False	< 30% knockdown	False
+FOXJ3	diagnostic	222	222	1	43.89	0.7607	0.2316	23	fails	not released		True		True		True
+FOXK1	diagnostic	343	343	1	45.75	0.5734	0.2659	65	fails	not released		True		True		True
+GLYR1	diagnostic	19	19	1	59.08	0.6926			not assessable (< 100 cells)	not released	< 25 cells	False	< 25 cells	False	< 25 cells	False
+HES1	diagnostic	93	93	1	67.03	0.4864	0.0314	18	not assessable (< 100 cells)	not released		True		True	reliability < 0.2 or undefined	False
+HOXA10	diagnostic	295	295	1	37.84	0.6742	0.0713	17	fails	not released		True		True	reliability < 0.2 or undefined	False
+HOXA5	diagnostic	154	154	1	41.47	0.4511	0.0696	27	fails	not released		True		True	reliability < 0.2 or undefined	False
+HOXB6	diagnostic	220	86	2	24.87	0.4044	-0.0129	12	fails	not released	< 30% knockdown	False	< 30% knockdown	False	< 30% knockdown	False
+HOXB8	diagnostic	293	133	2	40.69	0.2116	0.0214	17	fails	not released		True		True	reliability < 0.2 or undefined	False
+HOXB9	diagnostic	144	144	1	46.28	0.5762	0.026	11	fails	not released		True		True	reliability < 0.2 or undefined	False
+HOXC4	diagnostic	322	322	1	29.56	0.4546	0.2935	54	fails	not released	< 30% knockdown	False	< 30% knockdown	False	< 30% knockdown	False
+HOXC9	diagnostic	149	149	1	57.19	0.5004	0.2135	26	fails	not released		True		True		True
+HOXD10	diagnostic	411	62	2	22.6	0.5495	0.09	16	fails	not released	< 30% knockdown	False	< 30% knockdown	False	< 30% knockdown	False
+HP1	diagnostic	193	18	3	27.82	0.861	0.05315	0	not assessable (< 100 cells)	not released	< 30% knockdown	False	< 30% knockdown	False	< 30% knockdown	False
+MAZ	diagnostic	456	456	1	60.28	0.943	0.1657	38	fails	not released		True		True	reliability < 0.2 or undefined	False
+MBD3	diagnostic	95	95	1	58.1	0.6459	-0.1339	18	not assessable (< 100 cells)	not released		True		True	reliability < 0.2 or undefined	False
+MEF2A	diagnostic	174	174	1	34.44	0.8412	-0.0417	10	strong phenotype	not released		True		True	reliability < 0.2 or undefined	False
+MEF2D	diagnostic	274	274	1	27.09	0.2307	-0.1431	12	fails	not released	< 30% knockdown	False	< 30% knockdown	False	< 30% knockdown	False
+MLX	diagnostic	84	84	1	66.23	0.6327	-0.0604	9	not assessable (< 100 cells)	not released		True		True	reliability < 0.2 or undefined	False
+MSX2	diagnostic	443	443	1	68.13	0.3314	-0.0454	17	fails	not released		True		True	reliability < 0.2 or undefined	False
+MTF2	diagnostic	187	187	1	49.41	0.8675	0.1346	24	fails	not released		True		True	reliability < 0.2 or undefined	False
+NEUROD4	diagnostic	162	162	1	100	0.0001786	-0.0187	8	fails	not released		True		True	reliability < 0.2 or undefined	False
+NFYA	diagnostic	135	135	1	46.69	0.4443	0.1122	21	fails	not released		True		True	reliability < 0.2 or undefined	False
+NME2	diagnostic	866	866	1	59.17	0.9999	0.6216	316	fails	not released		True		True		True
+NR1D2	diagnostic	167	167	1	16.08	0.4465	0.1559	38	fails	not released	< 30% knockdown	False	< 30% knockdown	False	< 30% knockdown	False
+NRF1	diagnostic	343	343	1	45.26	0.5773	0.6545	540	strong phenotype	not released		True		True		True
+PA2G4	diagnostic	124	124	1	65.38	0.9987	0.0718	15	strong phenotype	not released		True		True	reliability < 0.2 or undefined	False
+PCGF6	diagnostic	332	332	1	51.08	0.7574	0.1432	38	fails	not released		True		True	reliability < 0.2 or undefined	False
+POGK	diagnostic	125	125	1	44.11	0.4823	0.1379	13	fails	not released		True		True	reliability < 0.2 or undefined	False
+RBBP4	diagnostic	68	68	1	53.01	0.9573	0.0702	21	not assessable (< 100 cells)	not released		True		True	reliability < 0.2 or undefined	False
+RBBP7	diagnostic	399	399	1	45.53	0.9894	0.13	14	strong phenotype	not released		True		True	reliability < 0.2 or undefined	False
+RBPJ	diagnostic	343	343	1	47.96	0.8443	0.2737	56	strong phenotype	not released		True		True		True
+RELA	diagnostic	200	200	1	48.83	0.3464	0.0708	23	fails	not released		True		True	reliability < 0.2 or undefined	False
+SAFB	diagnostic	322	322	1	44.02	0.8951	0.1541	22	strong phenotype	not released		True		True	reliability < 0.2 or undefined	False
+SETDB1	diagnostic	237	237	1	41.46	0.5767	0.2905	49	strong phenotype	not released		True		True		True
+SMARCA1	diagnostic	101	101	1	51.29	0.8467	0.0835	45	fails	not released		True		True	reliability < 0.2 or undefined	False
+SOX12	diagnostic	77	77	1	35.82	0.4675	-0.0558	4	not assessable (< 100 cells)	not released		True		True	reliability < 0.2 or undefined	False
+SOX4	diagnostic	347	165	2	49.81	0.978	0.0168	22	fails	not released		True		True	reliability < 0.2 or undefined	False
+SRCAP	diagnostic	319	319	1	-11.96	0.6674	0.1127	29	fails	not released	< 30% knockdown	False	< 30% knockdown	False	< 30% knockdown	False
+SREBF2	diagnostic	18	18	1	44.16	0.7192			not assessable (< 100 cells)	not released	< 25 cells	False	< 25 cells	False	< 25 cells	False
+STAG2	diagnostic	134	26	2	18.28	0.9723		0	fails	not released	< 30% knockdown	False	< 30% knockdown	False	< 30% knockdown	False
+TBX3	diagnostic	278	278	1	48.22	0.5584	-0.0092	14	fails	not released		True		True	reliability < 0.2 or undefined	False
+THAP6	diagnostic	181	181	1	57.72	0.3838	-0.3541	15	fails	not released		True		True	reliability < 0.2 or undefined	False
+TRAFD1	diagnostic	54	54	1	69.05	0.4529	0.2006	15	not assessable (< 100 cells)	not released		True		True		True
+WIZ	diagnostic	103	103	1	41.37	0.2472	0.2266	45	fails	not released		True		True		True
+XPA	diagnostic	236	236	1	65.12	0.5557	0.3007	41	fails	not released		True		True		True
+ZBTB40	diagnostic	67	67	1	0.9353	0.4394	-0.0723	10	not assessable (< 100 cells)	not released	< 30% knockdown	False	< 30% knockdown	False	< 30% knockdown	False
+ZBTB43	diagnostic	171	171	1	43.82	0.3357	0.1044	12	fails	not released		True		True	reliability < 0.2 or undefined	False
+ZBTB7A	diagnostic	361	156	2	26.07	0.4814	0.1672	28	fails	not released	< 30% knockdown	False	< 30% knockdown	False	< 30% knockdown	False
+ZIC2	diagnostic	150	150	1	44.68	0.4458	0.0741	9	fails	not released		True		True	reliability < 0.2 or undefined	False
+ZNF143	diagnostic	267	267	1	34.62	0.381	0.2958	79	fails	not released		True		True		True
+ZNF282	diagnostic	244	244	1	54.78	0.4739	0.0728	26	fails	not released		True		True	reliability < 0.2 or undefined	False
+ZNF367	diagnostic	45	45	1	52.32	0.3308			not assessable (< 100 cells)	not released		True	< 50 cells in a guide pair	False	< 50 cells in a guide pair	False
+ZNF503	diagnostic	160	160	1	65.14	0.7268	0.0374	17	fails	not released		True		True	reliability < 0.2 or undefined	False
+ZNF507	diagnostic	227	227	1	38.08	0.5426	0.1973	68	fails	not released		True		True	reliability < 0.2 or undefined	False
+ZNF512B	diagnostic	146	146	1	55.57	0.4534	-0.3244	6	fails	not released		True		True	reliability < 0.2 or undefined	False
+ZNF512	diagnostic	225	225	1	46.05	0.5668	0.1816	29	fails	not released		True		True	reliability < 0.2 or undefined	False
+ZNF581	diagnostic	170	170	1	74.56	0.3571	0.114	11	fails	not released		True		True	reliability < 0.2 or undefined	False
+ZNF606	diagnostic	68	68	1	16.78	0.09117	-0.0326	11	not assessable (< 100 cells)	not released	< 30% knockdown	False	< 30% knockdown	False	< 30% knockdown	False
+ZNF644	diagnostic	100	100	1	49.05	0.9153	-0.1162	10	fails	not released		True		True	reliability < 0.2 or undefined	False
+ZNF703	diagnostic	82	82	1	48.36	0.77	-0.1526	13	not assessable (< 100 cells)	not released		True		True	reliability < 0.2 or undefined	False
+ZNF746	diagnostic	113	113	1	69.97	0.3133	0.3942	117	fails	not released		True		True		True
+ZNF768	diagnostic	388	52	2	18.45	0.5314	0.0534	14	fails	not released	< 30% knockdown	False	< 30% knockdown	False	< 30% knockdown	False
+ZNF777	diagnostic	463	463	1	40.27	0.26	0.1955	33	fails	not released		True		True	reliability < 0.2 or undefined	False
+ZNF79	diagnostic	201	201	1	42.13	0.1431	0.112	8	fails	not released		True		True	reliability < 0.2 or undefined	False
+ZUFSP	diagnostic	293	293	1	47.23	0.5385	0.1004	18	fails	not released		True		True	reliability < 0.2 or undefined	False
