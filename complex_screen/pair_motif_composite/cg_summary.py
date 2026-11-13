@@ -8,6 +8,7 @@ import os, re, glob, math, subprocess
 import numpy as np, pandas as pd
 X = "/work/users/d/y/dyy12/XuLab"; O = f"{X}/complex_screen/pair_motif_composite"; G = f"{O}/composite_gapped"
 P = pd.read_csv(f"{G}/pairs.tsv", sep="\t"); tasks = [l.strip() for l in open(f"{G}/tasks.tsv") if l.strip()]
+SUF = os.environ.get("SUFFIX", ""); tasks = [t for t in tasks if os.path.exists(f"{G}/results/{t}/known_val/knownResults.txt")]  # completed pairs only
 alt = {}
 for l in open(f"{O}/db/known.meme"):
     if l.startswith("MOTIF "): x = l.split(); alt[x[1]] = x[2] if len(x) > 2 else x[1]
@@ -63,7 +64,7 @@ else: gboth = pd.DataFrame(columns=["pair"])
 S["n_composite"] = S.pair.map(C[C.composite_candidate].groupby("pair").size() if len(C) else {}).fillna(0).astype(int) if len(C) else 0
 S["n_composite_novel"] = S.pair.map(C[C.composite_candidate & (C.db_match == "none (novel)")].groupby("pair").size() if len(C) else {}).fillna(0).astype(int) if len(C) else 0
 S["n_gapped_both_halves"] = S.pair.map(gboth.groupby("pair").size() if len(gboth) else {}).fillna(0).astype(int)
-C.to_csv(f"{G}/composite_hits.tsv", sep="\t", index=False); Gp.to_csv(f"{G}/gapped_hits.tsv", sep="\t", index=False); gboth.to_csv(f"{G}/gapped_both_halves.tsv", sep="\t", index=False); S.to_csv(f"{G}/pair_summary.tsv", sep="\t", index=False)
+C.to_csv(f"{G}/composite_hits{SUF}.tsv", sep="\t", index=False); Gp.to_csv(f"{G}/gapped_hits{SUF}.tsv", sep="\t", index=False); gboth.to_csv(f"{G}/gapped_both_halves{SUF}.tsv", sep="\t", index=False); S.to_csv(f"{G}/pair_summary{SUF}.tsv", sep="\t", index=False)
 print("pairs tested:", len(S), S.set.value_counts().to_dict())
 for st, s in S.groupby("set"): print(f"  {st:14s} n={len(s):3d}  with composite {int((s.n_composite > 0).sum())} ({100 * (s.n_composite > 0).mean():.0f}%)  novel {int((s.n_composite_novel > 0).sum())}  with gapped (both halves, not in A-only) {int((s.n_gapped_both_halves > 0).sum())} ({100 * (s.n_gapped_both_halves > 0).mean():.0f}%)")
 pd.set_option("display.width", 250); print(S.sort_values(["n_composite", "n_gapped_both_halves"], ascending=False).head(25)[["pair", "set", "af3", "disc_cob", "val_cob", "n_composite", "n_composite_novel", "n_gapped_both_halves"]].to_string(index=False))
