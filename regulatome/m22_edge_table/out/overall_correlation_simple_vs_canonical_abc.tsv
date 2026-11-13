@@ -1,0 +1,13 @@
+label	abc_model	n_links	target	way	n_tfs	n_entries	frac_entries_with_edge	spearman	tf_boot_lo	tf_boot_hi	pearson	swapped_tf_mean	swapped_tf_95pct	swapped_p	atac_only_spearman
+diagnostic	canonical ABC, Hi-C (current Regulome)	54390	|z|	1 raw pooled	76	853252	0.1696	5.447e-05	-0.01371	0.01289	0.001849	-0.003814	0.006651	0.2774	0.004056
+diagnostic	canonical ABC, Hi-C (current Regulome)	54390	|z|	2 row-standardised	76	853252	0.1696	-0.0005883	-0.00238	0.001237	0.001911	-0.0001957	0.001232	0.6627	0.004124
+diagnostic	canonical ABC, Hi-C (current Regulome)	54390	|z|	3 within-TF percentile	76	853252	0.1696	0.0006902	-0.001619	0.002869	0.0008428	-0.0003427	0.001035	0.1158	0.004229
+diagnostic	canonical ABC, Hi-C (current Regulome)	54390	signed z	1 raw pooled	76	853252	0.1696	0.004498	-0.004465	0.0131	0.00309	0.002736	0.008626	0.3054	0.005716
+diagnostic	canonical ABC, Hi-C (current Regulome)	54390	signed z	2 row-standardised	76	853252	0.1696	-0.003089	-0.007759	0.00175	-0.001919	0.0007866	0.002881	1	0.005233
+diagnostic	canonical ABC, Hi-C (current Regulome)	54390	signed z	3 within-TF percentile	76	853252	0.1696	-0.001716	-0.006064	0.002563	-0.002015	0.001528	0.003406	1	0.005391
+diagnostic	simple ABC (m2_abc: ATAC only, power-law)	59909	|z|	1 raw pooled	76	853252	0.1339	0.001343	-0.01187	0.01285	0.002335	-0.001739	0.006986	0.2974	0.002762
+diagnostic	simple ABC (m2_abc: ATAC only, power-law)	59909	|z|	2 row-standardised	76	853252	0.1339	0.0002102	-0.001705	0.00222	0.002429	0.00036	0.001753	0.5589	0.002752
+diagnostic	simple ABC (m2_abc: ATAC only, power-law)	59909	|z|	3 within-TF percentile	76	853252	0.1339	0.001174	-0.001022	0.003366	0.002266	0.0004538	0.001867	0.1836	0.002885
+diagnostic	simple ABC (m2_abc: ATAC only, power-law)	59909	signed z	1 raw pooled	76	853252	0.1339	0.005982	-0.002559	0.01392	0.003046	0.003164	0.008579	0.1916	0.006953
+diagnostic	simple ABC (m2_abc: ATAC only, power-law)	59909	signed z	2 row-standardised	76	853252	0.1339	-0.002228	-0.007129	0.002583	-0.001445	0.0008482	0.003145	0.994	0.006467
+diagnostic	simple ABC (m2_abc: ATAC only, power-law)	59909	signed z	3 within-TF percentile	76	853252	0.1339	-0.0004177	-0.005058	0.004086	0.0003734	0.001873	0.003593	0.9721	0.006619
