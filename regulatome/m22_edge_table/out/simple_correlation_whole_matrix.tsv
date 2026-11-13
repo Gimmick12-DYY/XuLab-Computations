@@ -1,0 +1,13 @@
+label	version	target	way	n_tfs	n_entries	spearman	ci_lo	ci_hi	pearson	swapped_tf_spearman_mean	swapped_p	atac_only_spearman
+diagnostic	all_cells	|z|	1 raw pooled	76	853252	0.00578	-0.02486	0.03535	0.007099	-0.005306	0.1788	0.004056
+diagnostic	all_cells	|z|	2 row-standardised	76	763434	7.133e-05	-0.002141	0.002342	0.001932	-0.0002653	0.3806	0.004124
+diagnostic	all_cells	|z|	3 within-TF percentile	76	853252	-2.926e-05	-0.002268	0.002231	0.0002412	-0.0006823	0.2298	0.004229
+diagnostic	all_cells	signed z	1 raw pooled	76	853252	0.01017	-0.005587	0.02538	0.006912	0.002988	0.1439	0.005716
+diagnostic	all_cells	signed z	2 row-standardised	76	763434	-0.002242	-0.005545	0.001145	-0.003061	0.001146	0.995	0.005233
+diagnostic	all_cells	signed z	3 within-TF percentile	76	853252	-0.001512	-0.005432	0.002263	-0.001996	0.001732	0.998	0.005391
+diagnostic	top25_sgRNA	|z|	1 raw pooled	63	707239	0.009688	-0.01013	0.02854	0.01515	0.0003059	0.1608	0.01971
+diagnostic	top25_sgRNA	|z|	2 row-standardised	63	628656	0.0018	-0.0001769	0.003788	0.003792	0.002081	0.6114	0.02007
+diagnostic	top25_sgRNA	|z|	3 within-TF percentile	63	707239	-0.0006114	-0.002539	0.001315	-0.0004027	0.00018	0.7942	0.02011
+diagnostic	top25_sgRNA	signed z	1 raw pooled	63	707239	0.001589	-0.01179	0.01543	-0.002735	0.006112	0.7892	0.01043
+diagnostic	top25_sgRNA	signed z	2 row-standardised	63	628656	0.003142	-8.578e-05	0.00674	0.0003545	0.004203	0.7982	0.009582
+diagnostic	top25_sgRNA	signed z	3 within-TF percentile	63	707239	0.006611	0.003188	0.01002	0.00764	0.008192	0.9451	0.009509

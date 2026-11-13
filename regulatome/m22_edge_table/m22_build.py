@@ -5,6 +5,8 @@ import numpy as np, pandas as pd
 from scipy.stats import nbinom, rankdata
 X = "/work/users/d/y/dyy12/XuLab"; RG = f"{X}/regulatome"; O = f"{RG}/m22_edge_table"; OUT = f"{O}/out"; os.makedirs(OUT, exist_ok=True); V = "/vast/som/xujie_lab/TAGATG-293T/bigwig"; QMIN = -np.log10(0.05)
 BG = sys.argv[sys.argv.index("--background") + 1] if "--background" in sys.argv else "atac"; assert BG in ("atac", "igg")
+PEAKS = sys.argv[sys.argv.index("--peaks") + 1] if "--peaks" in sys.argv else "top5000"; assert PEAKS in ("q005", "top5000")  # Amendment 4: top5000 primary
+SUF = "" if PEAKS == "top5000" else "_q005"
 tfs79 = [l.strip() for l in open(f"{RG}/m1_binding/v2/tfs.txt") if l.strip()]; ti = {t: i for i, t in enumerate(tfs79)}
 UNIV = np.load(f"{RG}/m9_abc_diagnosis/work/responses_arm2.npz", allow_pickle=True)["genes"].astype(str); gi = {g: k for k, g in enumerate(UNIV)}; NG = len(UNIV)
 EL = pd.read_csv(f"{RG}/m2c_abc_canonical/results/HEK293T_hicfixed/Neighborhoods/EnhancerList.txt", sep="\t"); acol = [c for c in EL.columns if c.startswith("ATAC.") and c.endswith(".RPM")][0]
@@ -24,7 +26,7 @@ PE = np.zeros((NE, 79), np.float32)
 for t in tfs79:
     f = f"{V}/macs2/TF.{t}/TF.{t}_peaks.narrowPeak"
     if not os.path.exists(f) or os.path.getsize(f) == 0: continue
-    P = pd.read_csv(f, sep="\t", header=None, usecols=[0, 1, 6, 8, 9], names=["c", "s", "sig", "q", "off"]); P = P[P.q >= QMIN]; e = elem_of(P.c.values.astype(str), (P.s + P.off).values); m = e >= 0; np.maximum.at(PE[:, ti[t]], e[m], P.sig.values[m])
+    P = pd.read_csv(f, sep="\t", header=None, usecols=[0, 1, 6, 8, 9], names=["c", "s", "sig", "q", "off"]); P = P[P.q >= QMIN] if PEAKS == "q005" else P[P.sig.rank(ascending=False, method="first") <= 5000]; e = elem_of(P.c.values.astype(str), (P.s + P.off).values); m = e >= 0; np.maximum.at(PE[:, ti[t]], e[m], P.sig.values[m])
 C = np.load(f"{RG}/m7_step2/features/canon_counts/raw_counts.npy").astype(float); TOT = C.sum(0); RE = C / np.maximum(TOT, 1) * 1e6
 WP = np.zeros((79, NG)); WPc = np.zeros((79, NG))
 for t in tfs79:
@@ -99,7 +101,11 @@ for k, t in enumerate(tfs79):
             i = KT.index(t); r.update({"observed_kd_z [external: X-Atlas/Orion HEK293T]": float(Z[i, g]), "observed_kd_z_half1 [external]": float(H1.loc[t, gene]) if t in H1.index else np.nan, "observed_kd_z_half2 [external]": float(H2.loc[t, gene]) if t in H2.index else np.nan,
                                    "kd_reliability [external]": float(FT.get(t, np.nan)), "kd_strong_phenotype [external]": SPH.get(t, "") == "strong phenotype"})
         ROWS.append(r)
-E = pd.DataFrame(ROWS); h1c, h2c = "observed_kd_z_half1 [external]", "observed_kd_z_half2 [external]"
+E = pd.DataFrame(ROWS)
+E["within_tf_percentile"] = E.groupby("tf").score_signal_x_abc.rank(pct=True); _med = E.groupby("tf").score_signal_x_abc.median(); E["_sc"] = E.score_signal_x_abc / E.tf.map(_med); E["depth_scaled_share"] = E._sc / E.groupby("gene")._sc.transform("sum"); E = E.drop(columns="_sc")
+T25 = pd.read_csv(f"{RG}/m23_sgrna_top25/out/observed_kd_top25.tsv.gz", sep="\t").rename(columns={"z_top25": "observed_kd_z_top25sgRNA [external]", "z_top25_half1": "observed_kd_z_top25sgRNA_half1 [external]", "z_top25_half2": "observed_kd_z_top25sgRNA_half2 [external]", "reproducible_top25": "observed_kd_reproducible_top25sgRNA [external]"})
+E = E.merge(T25, on=["tf", "gene"], how="left"); E["peak_definition"] = PEAKS
+h1c, h2c = "observed_kd_z_half1 [external]", "observed_kd_z_half2 [external]"
 E["observed_kd_reproducible [external]"] = (E[h1c].abs() >= 2) & (E[h2c].abs() >= 2) & (np.sign(E[h1c]) == np.sign(E[h2c]))
-E.to_csv(f"{OUT}/regulome_edges.tsv.gz", sep="\t", index=False, float_format="%.5g"); print("edges", len(E), flush=True)
-np.savez_compressed(f"{O}/work_matrices.npz", score=score, share=share, enr=enr_g, tfs=np.array(tfs79), genes=UNIV)
+E.to_csv(f"{OUT}/regulome_edges{SUF}.tsv.gz", sep="\t", index=False, float_format="%.5g"); print("edges", len(E), flush=True)
+np.savez_compressed(f"{O}/work_matrices{SUF}.npz", score=score, share=share, enr=enr_g, tfs=np.array(tfs79), genes=UNIV)

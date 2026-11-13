@@ -1,22 +1,21 @@
 label	K	tf	n_bound_highconf	median_pct_highconf	median_pct_bound_nonresponders	mannwhitney_p
-diagnostic	100	E4F1	14	0.6708	0.4931	0.0771
-diagnostic	100	FLYWCH1	1	1	0.507	
-diagnostic	100	NME2	1	0.2073	0.4969	
-diagnostic	100	NRF1	2	0.5889	0.4593	
-diagnostic	500	CTCF	2	0.2524	0.5022	
-diagnostic	500	DNMT1	1	0.1128	0.4887	
-diagnostic	500	E4F1	68	0.5709	0.4931	0.1623
-diagnostic	500	FLYWCH1	1	1	0.507	
-diagnostic	500	NME2	3	0.2073	0.4969	0.1259
-diagnostic	500	NRF1	7	0.7359	0.4593	0.05749
-diagnostic	500	ZNF143	1	0.05375	0.497	
-diagnostic	500	ZNF777	1	0.1092	0.5026	
-diagnostic	2000	CTCF	3	0.4894	0.5022	0.3746
-diagnostic	2000	DNMT1	3	0.2876	0.4887	0.1717
-diagnostic	2000	E4F1	133	0.5712	0.4931	0.02534
-diagnostic	2000	FLYWCH1	1	1	0.507	
-diagnostic	2000	NME2	6	0.2666	0.4969	0.2079
-diagnostic	2000	NRF1	16	0.7915	0.4593	0.0001096
-diagnostic	2000	ZNF143	3	0.1349	0.497	0.05175
-diagnostic	2000	ZNF507	5	0.5864	0.5008	0.6575
-diagnostic	2000	ZNF777	1	0.1092	0.5026	
+diagnostic	100	DNMT1	1	0.2638	0.4971	
+diagnostic	100	E4F1	7	0.6901	0.4987	0.07648
+diagnostic	100	FLYWCH1	1	1	0.5067	
+diagnostic	100	NME2	1	0.01971	0.4942	
+diagnostic	100	NRF1	4	0.582	0.4786	0.4888
+diagnostic	500	CTCF	2	0.253	0.5011	
+diagnostic	500	DNMT1	5	0.2638	0.4971	0.2658
+diagnostic	500	E4F1	26	0.5443	0.4987	0.569
+diagnostic	500	FLYWCH1	1	1	0.5067	
+diagnostic	500	NME2	1	0.01971	0.4942	
+diagnostic	500	NRF1	13	0.6457	0.4786	0.0315
+diagnostic	500	ZNF143	1	0.05234	0.4951	
+diagnostic	2000	CTCF	3	0.4831	0.5011	0.3718
+diagnostic	2000	DNMT1	10	0.4303	0.4971	0.6091
+diagnostic	2000	E4F1	56	0.5139	0.4987	0.5584
+diagnostic	2000	FLYWCH1	1	1	0.5067	
+diagnostic	2000	NME2	3	0.5215	0.4942	0.8416
+diagnostic	2000	NRF1	30	0.7398	0.4786	1.201e-05
+diagnostic	2000	ZNF143	3	0.133	0.4951	0.05022
+diagnostic	2000	ZNF507	5	0.4099	0.4968	0.3429

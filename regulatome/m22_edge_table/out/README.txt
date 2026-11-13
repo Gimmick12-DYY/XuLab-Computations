@@ -1,6 +1,6 @@
 m22_edge_table: the HEK293T Regulome edge table (SPEC.md, commit b3bd84d). Scripts: m22_build.py, m22_analyse.py, tf2genes.py, gene2tfs.py, make_gene_view.py, make_tf_view.py.
 DEFINITION. The Regulome is defined from our HITAG data only (lab q005 MACS2 peaks of 79 TFs), with HEK293T ATAC, H3K27ac and Hi-C as auxiliary inputs for element-gene links (canonical ABC, ABC >= 0.02, self-promoter included).
-An edge = a (TF, gene) pair with a q005 summit in the gene's promoter element or in an ABC-linked element. One definition, no classes; TFs that share target genes are kept as they are.
+An edge = a (TF, gene) pair with one of the TF's top 5,000 lab peaks (by signalValue, as called) with its summit in the gene's promoter element or an ABC-linked element (Amendment 4, the user's choice). The q005 version is kept as regulome_edges_q005.tsv.gz. One definition, no classes; shared targets are kept.
 Perturb-seq (X-Atlas/Orion HEK293T) never defines an edge. It appears only in columns marked [external], as a check.
 regulome_edges.tsv.gz columns: binding (promoter peak and signalValue, distal elements with a peak, best element, ABC and distance, score = sum signalValue x ABC, percentile within TF, promoter reads CPM);
 combined-panel results (shared_by, co_bound_tfs, panel_relative_ratio - descriptive only, never a filter; frozen partner TFs at the same element; Figure 3 coordinated binding module of the best element);

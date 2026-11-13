@@ -1,4 +1,4 @@
 label	version	n_genes	within_gene_spearman	lo	hi	swapped_tf	sw_lo	sw_hi	real_minus_swapped	d_lo	d_hi	frac_top_tf_reproducible	chance_rate	n_genes_with_any_reproducible
-diagnostic (external knockdown as a check)	predicted_impact_share_at_gene	11109	-0.01162	-0.01719	-0.006143	0.002934	-0.00225	0.007856	-0.01415	-0.02127	-0.006839	0.003691	0.006883	1129
-diagnostic (external knockdown as a check)	within_tf_percentile	11109	0.003911	-0.001178	0.009142	0.002764	-0.002479	0.008119	-0.0002312	-0.00761	0.007577	0.006571	0.006883	1129
-diagnostic (external knockdown as a check)	depth_scaled_share	11109	0.001119	-0.004302	0.006599	0.001269	-0.004061	0.006446	-0.001242	-0.008542	0.006393	0.004141	0.006883	1129
+diagnostic (external knockdown as a check)	predicted_impact_share_at_gene	10356	0.002057	-0.004784	0.008727	0.01388	0.007527	0.02036	-0.01405	-0.02325	-0.005082	0.004152	0.005338	717
+diagnostic (external knockdown as a check)	within_tf_percentile	10356	-0.002471	-0.009416	0.004282	0.01473	0.008467	0.02105	-0.01381	-0.02361	-0.004406	0.005601	0.005338	717
+diagnostic (external knockdown as a check)	depth_scaled_share	10356	0.004031	-0.003037	0.01089	0.01313	0.00654	0.02	-0.005916	-0.01544	0.004078	0.004249	0.005338	717
