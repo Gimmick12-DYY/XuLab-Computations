@@ -1,0 +1,9 @@
+label	variant	n_tfs	median_targets	median_fold_resp	median_fold_rep	total_top200_hits_resp	total_top200_expected_resp	fold_resp_NRF1	fold_resp_E4F1	fold_resp_CTCF	fold_resp_NFYA	fold_resp_MAZ	fold_resp_DNMT1	top200_NRF1	top200_E4F1	top200_CTCF	top200_NFYA	top200_MAZ	top200_DNMT1
+descriptive	0 current: top 5,000, ABC	75	1429.000	0.992	0.923	1008	971.442	1.254	1.049	0.967	0.977	1.154	1.066	58/42	66/58	26/26	20/14	11/15	33/31
+descriptive	i promoter-only, summit within 1 kb of TSS	75	509.000	1.013	0.982	984	968.234	1.388	1.057	0.944	1.062	0.935	1.052	57/42	67/58	27/26	19/14	11/15	31/31
+descriptive	ii top 500, ABC	75	194.000	0.953	0.000	797	806.659	1.178	1.199	0.930	0.985	1.117	1.159	37/31	68/57	25/26	20/14	16/15	16/14
+descriptive	ii top 1,000, ABC	75	326.000	0.991	0.142	982	954.452	1.202	1.163	0.899	0.947	1.023	1.193	58/42	63/58	27/26	19/14	10/15	37/31
+descriptive	ii top 2,000, ABC	75	570.000	1.017	0.809	1018	971.442	1.130	1.121	0.978	0.999	1.123	0.989	58/42	65/58	26/26	19/14	11/15	33/31
+descriptive	iii nearest TSS, top 5,000	75	3310.000	1.010	1.100	1108	971.442	1.117	1.051	1.037	1.082	0.925	1.016	37/42	68/58	38/26	16/14	13/15	37/31
+descriptive	iv fragments TSS +-1 kb, top 1,000 genes	75	1000.000	1.023	0.967	1032	971.442	1.414	1.119	0.905	0.936	1.106	1.006	67/42	75/58	28/26	12/14	18/15	30/31
+descriptive	v fragments / ATAC TSS +-1 kb (ATAC >= 20), top 1,000	75	1000.000	1.012	0.928	993	971.442	1.111	0.935	1.028	0.936	1.053	1.070	52/42	60/58	24/26	14/14	19/15	40/31

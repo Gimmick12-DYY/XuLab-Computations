@@ -1,0 +1,16 @@
+label	step	check	result	evidence
+descriptive	A1 build	peak coordinates within hg38 chromosome lengths	pass	0 of 28231387 peaks beyond hg38 ends
+descriptive	A1 build	top-5,000 summits fall in ATAC-derived ABC candidate elements far above a 1 Mb shift	pass	median over TFs 19.7% in elements vs 4.3% after +1 Mb shift (range 8.5-95.7%)
+descriptive	A1 build	NRF1 top-5,000 summits at known NRF1 target promoters (distance summit-TSS)	FAIL	TFAM:116384bp; TFB2M:1595616bp; POLRMT:6270bp; CYCS:1076202bp; COX6C:827430bp; ATP5F1B:12027bp
+descriptive	A1 build	m22_build.py reads no hg19 source (pmat)	pass	inputs: macs2 narrowPeak, m2c EnhancerList/Predictions (hg38), m7 canonical counts, m10 counts
+descriptive	A2 peaks	summit = start + col10 lies inside [start, end) for every peak	pass	0 of 28231387 rows outside
+descriptive	A2 peaks	signalValue column = col 7 and top-5,000 ranked on it	pass	m22_build.py: usecols [0,1,6,8,9] names c,s,sig,q,off; P.sig.rank(ascending=False) <= 5000; NRF1 top peak sig 10.1 vs median 1.9
+descriptive	A2 peaks	one peak file per TF, path TF.<TF>/TF.<TF>_peaks.narrowPeak	pass	75 files; missing: none; identity checkable only via own motif (m25: NFYA +16.8, NRF1 +11.2 points over background)
+descriptive	A3 joins	chromosome names of peaks match ABC elements	pass	peak chromosomes absent from elements: ['chrM']
+descriptive	A3 joins	ABC links map to universe genes	pass	54390 of 109421 links have TargetGene in the 11,228-gene universe; 0 link elements not found in EnhancerList; self-promoter rows 12726
+descriptive	A3 joins	universe genes with at least one ABC link	pass	11228 of 11228 universe genes have a link; 0 have none
+descriptive	A3 joins	duplicated gene symbols	pass	GeneList duplicated names 0 (last kept); Perturb-seq gene list duplicates 6 (m15 keeps last); universe genes without a GeneList TSS 0
+descriptive	A4 Perturb-seq	on-target logFC negative for each knockdown	pass	76 of 81 TFs negative; positive: SRCAP
+descriptive	A4 Perturb-seq	z of the knocked-down gene in its own row is negative (row = that TF, sign = KD minus NTC)	pass	67 of 68 own-gene z negative (single-guide-pair 'all' units); median -5.68; non-negative: SRCAP
+descriptive	A4 Perturb-seq	the most negative z of each TF's own gene is in that TF's row	pass	58 of 68 own genes are lowest in their own TF's row
+descriptive	A1 build	TSS coordinates hit by ENCODE NRF1 K562 peaks at the same known targets (build/TSS check)	pass	ENCODE NRF1 K562 peaks within 500 bp: TFAM:1; TFB2M:2; POLRMT:1; CYCS:1; COX6C:1; ATP5F1B:2. Our NRF1 miss them (data property, not a join error)
