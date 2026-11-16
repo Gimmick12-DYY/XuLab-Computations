@@ -1,0 +1,7 @@
+label	model	features	n_test_tfs	mean_spearman	median_spearman	n_tfs_spearman_gt_0	total_top200_hits	total_top200_expected
+descriptive, unseen-TF test	lgb	full	76	0.0040	0.0059	40	2292	982.4000
+descriptive, unseen-TF test	lgb	baseline	76	0.0094	0.0149	42	2419	982.4000
+descriptive, unseen-TF test	lgb	hitag_only	76	-0.0027	-0.0026	36	1148	982.4000
+descriptive, unseen-TF test	enet	full	76	0.0044	0.0002	38	2003	982.4000
+descriptive, unseen-TF test	enet	baseline	76	0.0072	0.0083	42	2175	982.4000
+descriptive, unseen-TF test	enet	hitag_only	76	-0.0013	-0.0033	36	1052	982.4000
