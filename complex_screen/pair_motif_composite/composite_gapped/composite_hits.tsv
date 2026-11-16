@@ -1,0 +1,883 @@
+pair	set	af3	consensus	disc_log10p	disc_fold	val_log10p	val_fold	db_match	matches_A_or_B_own	composite_candidate
+DDIT3-MLX	af3_weak	weak	CGYGGGGGCG	-21.0	14.22	-5.78	7.35	none (novel)	False	True
+DDIT3-MLX	af3_weak	weak	TCCGCCCCCT	-20.0	9.12	-4.11	2.63	KLF16.H12CORE.1.P.B	False	True
+DDIT3-MLX	af3_weak	weak	GTCCCCCTTC	-17.9	15.89	-2.21	2.76	none (novel)	False	True
+DDIT3-MLX	af3_weak	weak	TCAGCCCCGC	-11.8	2.69	-1.87	1.36	none (novel)	False	True
+DDIT3-MLX	af3_weak	weak	KGATTGGCGG	-11.7	7.88	-1.94	2.27	none (novel)	False	True
+DDIT3-MLX	af3_weak	weak	GCGTGGTCTG	-10.7	10.74	-5.85	14.31	none (novel)	False	True
+DDIT3-MLX	af3_weak	weak	CTCCTHCTCC	-5.9	5.42	-2.79	3.04	none (novel)	False	True
+DDIT3-MLX	af3_weak	weak	GTGGGGGTGGGG	-13.9	5.75	-1.99	1.86	KLF10.H12CORE.0.P.C	False	True
+DDIT3-MLX	af3_weak	weak	CGCCAATTAGAA	-9.6	5.73	-1.59	1.69	none (novel)	False	True
+DDIT3-MLX	af3_weak	weak	TGGAGCGAGGTT	-5.7	390.0	-4.71	392.0	none (novel)	False	True
+DDIT3-MLX	af3_weak	weak	GGRGGCGGGGCCAGGG	-21.0	14.91	-3.36	3.14	SP4.H12CORE.2.P.B	False	True
+DDIT3-MLX	af3_weak	weak	AGTTGCGT	-17.9	14.13	-1.86	2.28	none (novel)	False	True
+DDIT3-MLX	af3_weak	weak	TAACCGTT	-10.9	8.38	-1.35	1.69	none (novel)	False	True
+DDIT3-MLX	af3_weak	weak	TCCGCCCC	-5.2	1.91	-1.37	1.33	none (novel)	False	True
+DDIT3-NFYA	af3_weak	weak	CACWATTGGC	-10.9	13.35	-1.65	2.77	none (novel)	False	True
+DDIT3-NFYA	af3_weak	weak	TTTTGCGCAT	-8.8	8.5	-2.67	10.09	none (novel)	False	True
+DDIT3-NFYA	af3_weak	weak	CTCCCGATTGGC	-15.2	10.32	-1.87	2.14	none (novel)	False	True
+DDIT3-NFYA	af3_weak	weak	CATATTGATTGG	-11.2	6.56	-1.8	2.34	NFYC	False	True
+DDIT3-NFYA	af3_weak	weak	ACCTCCCCCTTC	-7.8	9.87	-2.24	3.21	none (novel)	False	True
+DDIT3-NFYA	af3_weak	weak	CYGGGRVGGAGGCGGG	-13.5	10.31	-1.87	2.19	ZN341.H12CORE.1.P.B	False	True
+DDIT3-NFYA	af3_weak	weak	CGCCCCGCCCCTCTGG	-6.8	9.0	-3.11	4.77	KLF12	False	True
+DDIT3-NFYA	af3_weak	weak	CGTCTGCG	-12.8	1.71	-1.73	1.19	none (novel)	False	True
+DDIT3-NFYA	af3_weak	weak	GTGACCAT	-8.6	4.98	-1.42	1.74	none (novel)	False	True
+DDIT3-NFYA	af3_weak	weak	ATTGATTG	-5.6	1.74	-3.72	1.75	HNF6.H12CORE.3.M.B	False	True
+DDIT3-RBBP4	af3_strong	strong	AGGGAACCAC	-16.3	13.53	-1.74	3.4	none (novel)	False	True
+DDIT3-RBBP4	af3_strong	strong	AGCTTGTAGG	-13.5	12.39	-2.18	3.09	none (novel)	False	True
+DDIT3-RBBP4	af3_strong	strong	GTGTGTGTGG	-6.9	138.0	-2.83	4.08	none (novel)	False	True
+DDIT3-RBBP4	af3_strong	strong	GGATGGGCGAGG	-14.4	13.9	-3.37	3.87	none (novel)	False	True
+DDIT3-RBBP4	af3_strong	strong	GGDTGGACCAAC	-10.7	11.12	-2.18	2.89	none (novel)	False	True
+DDIT3-RBBP4	af3_strong	strong	CACAGCAYCCAG	-6.6	6.88	-3.04	4.12	none (novel)	False	True
+DDIT3-RBBP4	af3_strong	strong	GGGGGCGGAGCTGTGC	-14.9	17.14	-1.62	2.72	SP1	False	True
+DDIT3-RBBP4	af3_strong	strong	CCMCACACACACACAC	-9.4	10.12	-1.74	3.09	ZNF646.DBD@HTS.GFPIVT@homely-violet-squirrel@AJolma.Autoseed@Multinom2_Onehit_Seed_HHMCACAAMNNNNNNNNNVRACMCACAAHBackgroundCyc1	False	True
+DDIT3-RBBP4	af3_strong	strong	CGGCGCGCGGAGCGGG	-9.4	15.64	-1.6	2.76	none (novel)	False	True
+DDIT3-RBBP4	af3_strong	strong	CAGTTTTA	-13.9	5.53	-2.34	2.29	none (novel)	False	True
+DDIT3-RBBP4	af3_strong	strong	GAACGGAG	-9.9	2.17	-1.75	1.34	none (novel)	False	True
+DDIT3-RBBP4	af3_strong	strong	TCAGAAGG	-7.1	3.68	-1.57	1.64	none (novel)	False	True
+DDIT3-RBBP4	af3_strong	strong	CGGGGATT	-5.6	5.74	-2.18	2.72	none (novel)	False	True
+DDIT3-RBBP7	af3_strong	strong	GCCCYGGCCA	-15.2	10.89	-3.02	2.36	none (novel)	False	True
+DDIT3-RBBP7	af3_strong	strong	TCGCCGAGCT	-11.1	9.85	-1.36	1.81	none (novel)	False	True
+DDIT3-RBBP7	af3_strong	strong	GGAGTCATGG	-9.5	387.0	-1.77	3.07	none (novel)	False	True
+DDIT3-RBBP7	af3_strong	strong	CGCSTGCGCAGT	-11.1	10.23	-1.67	2.59	none (novel)	False	True
+DDIT3-RBBP7	af3_strong	strong	GCTGGCCCCGGC	-10.9	19.36	-1.77	3.21	none (novel)	False	True
+DDIT3-RBBP7	af3_strong	strong	TCGAGCTCCGCC	-8.2	8.92	-3.65	6.36	none (novel)	False	True
+DDIT3-RBBP7	af3_strong	strong	CCCKCGGGSCCCGCCC	-12.1	6.6	-1.79	2.02	KLF12.H12CORE.0.P.C	False	True
+DDIT3-RBBP7	af3_strong	strong	GGTTGATT	-10.7	5.33	-3.23	2.27	none (novel)	False	True
+DDIT3-RBBP7	af3_strong	strong	ACTTCCGG	-9.0	3.46	-1.47	1.55	ELK1.H12CORE.0.PSM.A	False	True
+DDIT3-RBBP7	af3_strong	strong	CGAGTCGG	-5.7	2.21	-1.56	1.56	none (novel)	False	True
+DDIT3-RBBP7	af3_strong	strong	CCSCTRAC	-5.2	4.17	-2.86	2.55	none (novel)	False	True
+DDIT3-XPA	af3_weak	weak	CTARACCCCG	-21.2	18.07	-1.36	2.09	none (novel)	False	True
+DDIT3-XPA	af3_weak	weak	GCCGCCGTTG	-17.6	10.69	-1.36	1.83	none (novel)	False	True
+DDIT3-XPA	af3_weak	weak	CTTTCCTGAA	-12.3	17.88	-1.77	3.14	none (novel)	False	True
+DDIT3-XPA	af3_weak	weak	CGCGGAGGCGGA	-13.7	12.92	-1.73	2.54	none (novel)	False	True
+DDIT3-XPA	af3_weak	weak	AAGRAATTAGAA	-13.7	62.0	-1.77	2.84	none (novel)	False	True
+DDIT3-XPA	af3_weak	weak	CTGGAGCGGCCG	-9.6	239.0	-1.77	9.1	ZNF610	False	True
+DDIT3-XPA	af3_weak	weak	CCCACTGCATAC	-7.8	7.94	-1.36	2.13	none (novel)	False	True
+DDIT3-XPA	af3_weak	weak	TCSGCTCSGCTC	-5.8	7.68	-1.67	2.76	none (novel)	False	True
+DDIT3-XPA	af3_weak	weak	CCTGTCCCCTCC	-5.8	6.52	-5.41	4.65	none (novel)	False	True
+DDIT3-XPA	af3_weak	weak	GCCGCGGGGCCGCCTG	-16.6	15.52	-3.65	6.91	none (novel)	False	True
+DDIT3-XPA	af3_weak	weak	GGCCCCGCCCASCCCM	-16.0	12.62	-2.22	3.28	SP3.H12CORE.0.P.B	False	True
+DDIT3-XPA	af3_weak	weak	CCCCGCCCCTYCYGAG	-8.3	14.33	-2.67	4.21	KLF10	False	True
+DDIT3-XPA	af3_weak	weak	AGGCAAGGGGTGGGGC	-8.3	8.96	-1.77	7.0	KLF4	False	True
+DDIT3-XPA	af3_weak	weak	GGGGCGGAGTCAGGGC	-7.1	8.68	-1.77	7.0	ZN441.H12CORE.0.P.C	False	True
+DDIT3-XPA	af3_weak	weak	TTCTGGCCCCGCCCCT	-7.1	10.61	-1.77	91.0	SP1.H12CORE.2.P.B	False	True
+DDIT3-XPA	af3_weak	weak	GCCGAGCGGAGCCGAG	-5.9	6.68	-1.77	8.27	none (novel)	False	True
+DDIT3-XPA	af3_weak	weak	CGATTCGC	-11.1	2.49	-4.73	2.09	none (novel)	False	True
+DDIT3-XPA	af3_weak	weak	GGCGGAGT	-7.9	1.94	-2.81	1.56	none (novel)	False	True
+DDIT3-XPA	af3_weak	weak	NCGTTCAD	-7.0	6.36	-2.33	3.71	none (novel)	False	True
+DR1-NFYA	af3_strong	strong	TGCCTCTCWC	-11.2	8.88	-2.94	3.85	none (novel)	False	True
+DR1-NFYA	af3_strong	strong	GAGGCCCAGA	-11.1	11.83	-2.26	2.92	none (novel)	False	True
+DR1-NFYA	af3_strong	strong	CGCCKCCATC	-10.2	10.03	-1.78	3.51	TAF1.H12CORE.0.P.B	False	True
+DR1-NFYA	af3_strong	strong	GCTCACCGCCAT	-13.9	31.83	-2.68	10.23	none (novel)	False	True
+DR1-NFYA	af3_strong	strong	CAGCAAGTGGGC	-12.5	17.75	-2.68	4.94	none (novel)	False	True
+DR1-NFYA	af3_strong	strong	TCACCTCCTGTG	-8.4	15.59	-2.68	5.43	Erg	False	True
+DR1-NFYA	af3_strong	strong	AARAGGAGGAGG	-6.9	6.7	-2.68	440.0	none (novel)	False	True
+DR1-NFYA	af3_strong	strong	GCCCCTCCCCCTCCCT	-11.4	11.56	-2.35	3.54	ZNF281	False	True
+DR1-NFYA	af3_strong	strong	GTGGGGGCGGGGCCGC	-6.9	8.07	-3.14	3.99	SP1	False	True
+DR1-NFYA	af3_strong	strong	GCGGTACC	-13.4	9.76	-3.6	2.58	none (novel)	False	True
+DR1-NFYA	af3_strong	strong	GTGAGGGG	-8.1	6.37	-1.76	1.97	none (novel)	False	True
+E2F3-MBD3	af3_weak	weak	CCACAASSCA	-19.1	7.84	-2.01	2.22	ZN805.H12CORE.0.P.C	False	True
+E2F3-MBD3	af3_weak	weak	ATTGGTCGAT	-12.2	30.6	-1.63	2.52	none (novel)	False	True
+E2F3-MBD3	af3_weak	weak	CWGTWTGGGS	-12.2	12.24	-1.64	3.47	none (novel)	False	True
+E2F3-MBD3	af3_weak	weak	GAGTTCCGCC	-9.9	8.74	-3.38	3.45	none (novel)	False	True
+E2F3-MBD3	af3_weak	weak	CTCAGAGGCTGG	-14.9	8.37	-1.67	2.46	none (novel)	False	True
+E2F3-MBD3	af3_weak	weak	CATCACTACCTG	-9.5	10.2	-1.77	4.95	none (novel)	False	True
+E2F3-MBD3	af3_weak	weak	GACCCCGCCCGT	-6.7	6.22	-2.23	3.43	KLF15	False	True
+E2F3-MBD3	af3_weak	weak	AGGTCCCTCCCC	-5.7	5.75	-2.66	4.0	none (novel)	False	True
+E2F3-MBD3	af3_weak	weak	GCGGCTAGGGCGGAGC	-5.8	9.94	-2.66	4.26	none (novel)	False	True
+E2F3-MBD3	af3_weak	weak	CGGCCCCGCCTCTYAG	-5.1	2.73	-1.54	1.76	SP4.H12CORE.0.P.C	False	True
+E2F3-MBD3	af3_weak	weak	GTGACAGG	-11.0	5.38	-1.63	1.81	PBX3	False	True
+E2F3-MBD3	af3_weak	weak	CAGTCTAC	-6.9	5.88	-2.21	3.27	none (novel)	False	True
+E2F3-MBD3	af3_weak	weak	GGCGGATC	-6.6	1.6	-3.94	1.49	none (novel)	False	True
+E2F3-RBBP4	af3_weak	weak	CTCWCCTTCT	-15.6	22.67	-1.35	2.15	none (novel)	False	True
+E2F3-RBBP4	af3_weak	weak	AAKAGGCTGA	-15.6	22.67	-2.34	2.54	none (novel)	False	True
+E2F3-RBBP4	af3_weak	weak	AGCTACGGTC	-8.2	9.06	-2.01	2.69	none (novel)	False	True
+E2F3-RBBP4	af3_weak	weak	TAGCAAACGCCT	-15.6	18.55	-2.01	3.07	none (novel)	False	True
+E2F3-RBBP4	af3_weak	weak	CAACTCCTCCCC	-10.2	8.82	-1.35	2.61	ZNF263	False	True
+E2F3-RBBP4	af3_weak	weak	CCGCCCCACTAC	-7.2	8.33	-1.37	1.88	none (novel)	False	True
+E2F3-RBBP4	af3_weak	weak	SGGCGGGGCGKCGGGG	-10.2	9.38	-2.39	5.75	KLF9.H12CORE.1.P.B	False	True
+E2F3-RBBP4	af3_weak	weak	CCCCGCCCTTCCCGAG	-10.2	9.38	-3.46	4.0	KLF15	False	True
+E2F3-RBBP4	af3_weak	weak	CCAGGSCAYTCCCAYA	-5.3	5.86	-2.39	4.6	none (novel)	False	True
+E2F3-RBBP4	af3_weak	weak	CGCACGGA	-11.9	8.41	-1.54	1.87	none (novel)	False	True
+E2F3-RBBP7	af3_weak	weak	SCGATACTGAGG	-10.0	8.98	-2.2	2.73	none (novel)	False	True
+E2F3-RBBP7	af3_weak	weak	GGCGGGGCTGGG	-9.6	9.5	-4.56	3.65	KLF13.H12CORE.1.P.C	False	True
+E2F3-RBBP7	af3_weak	weak	GCGGGGTGGGAC	-8.9	8.02	-3.64	7.24	none (novel)	False	True
+E2F3-RBBP7	af3_weak	weak	ACTTGCCCCGCC	-7.8	9.28	-1.63	3.72	none (novel)	False	True
+E2F3-RBBP7	af3_weak	weak	CMGCCCMGCCCMGCCC	-10.9	334.0	-1.92	2.1	ZBED4	False	True
+E2F3-RBBP7	af3_weak	weak	TGGCTTCGCCCCTCCC	-10.3	6.48	-1.65	1.67	MAZ	False	True
+E2F3-RBBP7	af3_weak	weak	GRGGGGCGGGCCCRRR	-8.9	8.11	-1.72	2.4	KLF8.H12CORE.0.P.C	False	True
+E2F3-RBBP7	af3_weak	weak	CGGGGCWGTGGGCWGG	-7.1	7.84	-2.22	2.86	none (novel)	False	True
+E2F3-RBBP7	af3_weak	weak	CSGGCYCGGRGGCGGG	-6.8	7.24	-1.63	2.79	none (novel)	False	True
+E2F3-RBBP7	af3_weak	weak	CTTTTCGG	-13.5	10.12	-2.36	2.29	none (novel)	False	True
+E2F3-RBBP7	af3_weak	weak	GTCTGGCG	-5.8	6.09	-2.32	3.29	none (novel)	False	True
+E2F3-SOX4	af3_weak	weak	AAGCGCGGRR	-25.0	15.14	-1.52	1.75	none (novel)	False	True
+E2F3-SOX4	af3_weak	weak	CTTCGCAATG	-13.5	22.1	-3.99	3.47	none (novel)	False	True
+E2F3-SOX4	af3_weak	weak	TGGCAGAAAC	-12.2	11.33	-1.72	2.21	none (novel)	False	True
+E2F3-SOX4	af3_weak	weak	AGGGTGGGCTAC	-22.5	18.94	-1.35	2.09	none (novel)	False	True
+E2F3-SOX4	af3_weak	weak	GACCTATSGCCA	-14.5	13.76	-1.63	2.52	none (novel)	False	True
+E2F3-SOX4	af3_weak	weak	AGCATTAGAATG	-5.8	6.61	-1.77	62.0	none (novel)	False	True
+E2F3-SOX4	af3_weak	weak	GCGCACGCGCAGASAG	-13.9	10.06	-1.85	2.29	Nrf1	False	True
+E2F3-SOX4	af3_weak	weak	CCTBCCGGGCGGGGCC	-11.3	5.11	-1.52	1.9	KLF15	False	True
+E2F3-SOX4	af3_weak	weak	AGCGTCTG	-10.7	7.77	-1.78	1.87	none (novel)	False	True
+E2F3-SOX4	af3_weak	weak	GTCCGCAC	-9.8	7.89	-1.52	1.98	none (novel)	False	True
+E2F3-SOX4	af3_weak	weak	TACCGYCC	-7.6	3.3	-1.31	1.62	none (novel)	False	True
+E4F1-SOX4	af3_weak	weak	GACGTCTCTG	-11.7	8.86	-2.28	2.68	none (novel)	False	True
+E4F1-SOX4	af3_weak	weak	KGGAGGGGCKGGAGGG	-14.9	13.42	-1.37	1.89	KLF13.H12CORE.1.P.C	False	True
+E4F1-SOX4	af3_weak	weak	CCCSGMGCCCCGCCCC	-10.9	9.9	-1.74	2.33	SP1	False	True
+E4F1-SOX4	af3_weak	weak	GSCCTCGGCCCCGCCT	-9.4	298.0	-1.64	2.72	KLF12.H12CORE.0.P.C	False	True
+E4F1-SOX4	af3_weak	weak	CGCCGCCGCCGCCGCC	-9.4	4.51	-1.46	1.9	ZN519.H12CORE.0.P.C	False	True
+E4F1-SOX4	af3_weak	weak	ACTCCACC	-12.7	8.49	-3.11	4.07	none (novel)	False	True
+E4F1-SOX4	af3_weak	weak	AGTTCTGC	-10.7	6.95	-3.37	3.1	none (novel)	False	True
+E4F1-SOX4	af3_weak	weak	AGAGCCTG	-8.0	4.86	-1.46	2.06	none (novel)	False	True
+E4F1-SOX4	af3_weak	weak	GGGCGTAG	-6.5	4.21	-1.37	1.97	none (novel)	False	True
+HOXA10-RBBP4	af3_strong	strong	KMTGGAGCTM	-14.2	9.05	-1.46	1.75	none (novel)	False	True
+HOXA10-RBBP4	af3_strong	strong	GHGCTGGGAAGG	-14.8	10.57	-2.25	2.96	none (novel)	False	True
+HOXA10-RBBP4	af3_strong	strong	GCGGCGGCAGGG	-12.3	12.9	-2.26	3.55	ZNF672.FL@HTS.GFPIVT@scummy-lavender-capybara@AJolma.Autoseed@Multinom3_Onehit_Seed_DGNRYRRMGRCAGGGGVDTGRCKDNDWTGGBackgroundCyc2	False	True
+HOXA10-RBBP4	af3_strong	strong	ACGAAAGC	-15.2	14.85	-2.26	3.21	none (novel)	False	True
+HOXA10-RBBP4	af3_strong	strong	TCGAAGAT	-7.9	6.94	-1.65	2.66	none (novel)	False	True
+HOXA10-RBBP4	af3_strong	strong	TGATTGGG	-7.8	7.74	-1.91	2.17	none (novel)	False	True
+HOXA10-XPA	af3_strong	strong	GTACGGCGCT	-15.1	14.74	-1.33	2.21	none (novel)	False	True
+HOXA10-XPA	af3_strong	strong	CTYCCGRGGCCG	-25.0	19.63	-1.65	1.85	none (novel)	False	True
+HOXA10-XPA	af3_strong	strong	CCMACCCTCGCT	-12.5	20.46	-1.73	2.58	none (novel)	False	True
+HOXA10-XPA	af3_strong	strong	AGCWSYCCAGGC	-9.7	13.32	-1.8	2.69	none (novel)	False	True
+HOXA10-XPA	af3_strong	strong	GGGATWTGWAGK	-9.1	9.88	-1.33	2.0	CREM.H12CORE.1.P.C	False	True
+HOXA10-XPA	af3_strong	strong	CTCCACCCCATA	-7.3	3.97	-3.41	2.43	none (novel)	False	True
+HOXA10-XPA	af3_strong	strong	CGCTTKGCCCCGCCCC	-8.4	13.26	-2.38	2.49	KLF12	False	True
+HOXA10-XPA	af3_strong	strong	CCGCCGCCGCCBCCGC	-6.9	7.65	-1.68	2.86	ZN519.H12CORE.0.P.C	False	True
+HOXA10-XPA	af3_strong	strong	CCCGACTA	-11.4	9.32	-2.33	2.82	none (novel)	False	True
+HOXB9-RBBP4	af3_strong	strong	AGCGGCGAGT	-17.0	15.32	-1.38	1.89	none (novel)	False	True
+HOXB9-RBBP4	af3_strong	strong	TCAGCCAGGR	-13.9	10.26	-2.85	3.05	none (novel)	False	True
+HOXB9-RBBP4	af3_strong	strong	CCGCCCAATCCT	-9.8	14.11	-1.78	7.53	none (novel)	False	True
+HOXB9-RBBP4	af3_strong	strong	GCGCCGCTCCCT	-9.1	7.69	-2.35	4.29	ZNF610	False	True
+HOXB9-RBBP4	af3_strong	strong	GGCCCGCCCTGC	-7.2	15.52	-4.75	7.23	none (novel)	False	True
+HOXB9-RBBP4	af3_strong	strong	GCTCADTGGGCC	-6.0	8.37	-2.68	5.52	none (novel)	False	True
+HOXB9-RBBP4	af3_strong	strong	AGCTGGAGGCAC	-5.6	4.48	-5.29	4.96	none (novel)	False	True
+HOXB9-RBBP4	af3_strong	strong	GRGGGCGGGGCCCGGC	-6.9	7.53	-1.82	2.46	KLF9.H12CORE.1.P.B	False	True
+HOXB9-RBBP4	af3_strong	strong	TTTTGGCT	-13.9	11.71	-2.93	4.12	none (novel)	False	True
+HOXB9-RBBP4	af3_strong	strong	CGGAGAAA	-9.1	7.87	-1.66	1.96	none (novel)	False	True
+HOXB9-RBBP4	af3_strong	strong	AYCAGCGA	-9.1	7.34	-3.43	3.15	none (novel)	False	True
+HOXB9-RBBP4	af3_strong	strong	CCYGCTAC	-8.2	4.51	-2.93	2.62	none (novel)	False	True
+MLX-RBBP4	af3_weak	weak	TGSGGGCGTG	-29.2	31.25	-2.42	2.33	none (novel)	False	True
+MLX-RBBP4	af3_weak	weak	CRACCGCGRG	-21.1	18.38	-1.63	3.62	none (novel)	False	True
+MLX-RBBP4	af3_weak	weak	GAGTAACTCC	-16.5	14.82	-1.62	2.5	none (novel)	False	True
+MLX-RBBP4	af3_weak	weak	CVCGCATCGG	-16.5	21.73	-2.22	3.68	none (novel)	False	True
+MLX-RBBP4	af3_weak	weak	CGCGGCTYAA	-14.0	8.98	-2.87	2.52	none (novel)	False	True
+MLX-RBBP4	af3_weak	weak	CTGCAAATCA	-6.7	8.07	-1.77	6.69	none (novel)	False	True
+MLX-RBBP4	af3_weak	weak	CTTCTGTTCACT	-15.1	23.46	-3.64	8.06	none (novel)	False	True
+MLX-RBBP4	af3_weak	weak	GTGGTGCGCGGG	-13.4	10.24	-1.63	3.52	ZBTB14	False	True
+MLX-RBBP4	af3_weak	weak	GCTGTACCTTTC	-9.9	9.13	-3.09	3.76	ZNF708	False	True
+MLX-RBBP4	af3_weak	weak	GCGAGGCTGCGC	-6.7	6.41	-1.34	1.81	none (novel)	False	True
+MLX-RBBP4	af3_weak	weak	CTCGAGCCCCGCCCYC	-11.8	7.25	-1.69	2.01	KLF14.H12CORE.1.P.C	False	True
+MLX-RBBP4	af3_weak	weak	CSCRCRCACRCRCACA	-10.9	18.46	-1.63	2.97	ZNF865.FL@CHS@lanky-violet-jellyfish@OFornes.ExplaiNN@filter96_1	False	True
+MLX-RBBP4	af3_weak	weak	CCCCCTCYCCYCSCTC	-9.5	36.33	-1.63	3.22	ZN467.H12CORE.0.P.C	False	True
+MLX-RBBP4	af3_weak	weak	CTMGGCCTGGCCTCWC	-6.7	8.72	-1.77	6.69	none (novel)	False	True
+MLX-RBBP4	af3_weak	weak	CCGAGGCTCCGCCCAG	-5.8	7.29	-1.63	2.9	none (novel)	False	True
+MLX-RBBP4	af3_weak	weak	TGCACGAG	-13.6	15.72	-1.77	4.35	none (novel)	False	True
+MLX-RBBP4	af3_weak	weak	CTTCAMGT	-13.2	7.46	-1.35	1.98	none (novel)	False	True
+MLX-RBBP4	af3_weak	weak	TTAGGTAA	-12.2	12.54	-1.78	2.22	none (novel)	False	True
+MLX-RBBP4	af3_weak	weak	GGGCTGTA	-8.8	6.93	-1.78	2.29	none (novel)	False	True
+MLX-RBBP7	af3_weak	weak	GGGTCACGGG	-11.0	10.03	-1.59	3.13	none (novel)	False	True
+MLX-RBBP7	af3_weak	weak	AGTGGCGGAA	-5.7	5.47	-1.67	2.25	none (novel)	False	True
+MLX-RBBP7	af3_weak	weak	GGAAGCGCGAAT	-10.8	28.29	-1.58	2.94	none (novel)	False	True
+MLX-RBBP7	af3_weak	weak	AGACCCCTCCCC	-7.0	9.21	-1.74	3.08	MAZ	False	True
+MLX-RBBP7	af3_weak	weak	GCGCGCGGGCGGGCGG	-7.0	16.67	-1.74	4.2	MBD3.FL@CHS@breezy-brown-impala@Halle.Dimont@Motif_1_w20_astrained	False	True
+MLX-RBBP7	af3_weak	weak	ATGATTGA	-11.9	10.32	-2.83	4.24	none (novel)	False	True
+MLX-RBBP7	af3_weak	weak	CCAATAGG	-11.0	11.55	-1.74	3.36	none (novel)	False	True
+RBBP4-SAFB	af3_weak	weak	CCCGTYGCCT	-14.8	10.8	-2.3	3.13	none (novel)	False	True
+RBBP4-SAFB	af3_weak	weak	CGGCTGCTTG	-11.2	10.97	-3.17	4.01	none (novel)	False	True
+RBBP4-SAFB	af3_weak	weak	CGGCGCGGCG	-5.8	5.81	-1.73	2.56	none (novel)	False	True
+RBBP4-SAFB	af3_weak	weak	GGCTCCCGGCGC	-19.7	20.49	-2.39	4.34	none (novel)	False	True
+RBBP4-SAFB	af3_weak	weak	TCGCGGCAGCTT	-7.8	7.49	-1.68	2.62	none (novel)	False	True
+RBBP4-SAFB	af3_weak	weak	CTSCCCYGCCCCGCCC	-16.1	12.09	-2.3	2.9	KLF15	False	True
+RBBP4-SAFB	af3_weak	weak	GAATCTGC	-14.8	11.58	-1.73	2.86	none (novel)	False	True
+RBBP4-SAFB	af3_weak	weak	CAAYATTG	-11.3	6.31	-1.87	2.51	none (novel)	False	True
+RBBP4-SAFB	af3_weak	weak	GAKCCCTG	-10.5	3.71	-2.45	1.86	none (novel)	False	True
+RBBP4-ZIC2	af3_strong	strong	GTGAGAGTGG	-7.0	4.62	-3.82	3.38	none (novel)	False	True
+RBBP4-ZIC2	af3_strong	strong	YCCCGCCCCAGA	-8.5	10.73	-2.25	3.28	KLF10	False	True
+RBBP4-ZIC2	af3_strong	strong	GGTCAGCMCCDC	-7.2	13.63	-1.72	4.56	none (novel)	False	True
+RBBP4-ZIC2	af3_strong	strong	CCTTTCCTGTCC	-6.7	5.21	-1.57	2.76	none (novel)	False	True
+RBBP4-ZIC2	af3_strong	strong	CCCTSGGSCCSGCCCC	-8.2	7.23	-1.72	4.96	KLF9.H12CORE.1.P.B	False	True
+RBBP4-ZIC2	af3_strong	strong	AGTGCTAA	-11.2	17.0	-2.59	12.76	none (novel)	False	True
+RBBP4-ZIC2	af3_strong	strong	CSTGTAAT	-11.2	11.2	-1.63	2.2	none (novel)	False	True
+RBBP4-ZIC2	af3_strong	strong	CTCACACT	-10.3	10.13	-2.83	2.43	none (novel)	False	True
+RBBP4-ZNF644	af3_strong	strong	TCCAGGTCGCCT	-5.0	5.3	-1.74	4.56	none (novel)	False	True
+RBBP4-ZNF644	af3_strong	strong	GTGGGAGGCGGGGCTT	-14.1	14.77	-2.62	6.09	SP2.H12CORE.0.P.D	False	True
+RBBP4-ZNF644	af3_strong	strong	TGACTCMT	-17.1	30.78	-3.34	3.13	Jun	False	True
+RBBP4-ZNF644	af3_strong	strong	TTGTCAAG	-14.1	14.97	-3.6	5.02	none (novel)	False	True
+RBBP4-ZNF703	af3_strong	strong	GGTCTTGTTG	-18.1	23.1	-3.62	4.67	none (novel)	False	True
+RBBP4-ZNF703	af3_strong	strong	GGGCACAATG	-11.3	3.53	-1.59	1.59	none (novel)	False	True
+RBBP4-ZNF703	af3_strong	strong	GGACGGTAGC	-11.1	10.36	-2.77	3.0	none (novel)	False	True
+RBBP4-ZNF703	af3_strong	strong	TTGTGCGCAT	-8.8	7.38	-1.75	2.4	none (novel)	False	True
+RBBP4-ZNF703	af3_strong	strong	TCCSTCCGKT	-8.2	6.1	-2.74	3.25	none (novel)	False	True
+RBBP4-ZNF703	af3_strong	strong	CCCGGCSCSCCGCGCC	-10.0	9.64	-3.62	7.44	SP3.H12CORE.0.P.B	False	True
+RBBP4-ZNF703	af3_strong	strong	TTRAGGGG	-11.0	5.77	-1.32	1.73	none (novel)	False	True
+RBBP4-ZNF703	af3_strong	strong	GATAGTAG	-10.8	7.7	-2.2	2.9	none (novel)	False	True
+RBBP4-ZNF703	af3_strong	strong	CCYTACGG	-8.5	5.34	-3.29	2.97	none (novel)	False	True
+RBBP4-ZNF703	af3_strong	strong	CTCCTGAC	-7.8	7.57	-2.32	2.29	none (novel)	False	True
+RBBP4-ZNF703	af3_strong	strong	GSTGTGCG	-5.3	2.54	-2.91	1.94	none (novel)	False	True
+RBBP7-SAFB	af3_weak	weak	CCAATGGCGG	-8.0	8.78	-1.67	508.0	none (novel)	False	True
+RBBP7-SAFB	af3_weak	weak	CACCCCTGGG	-5.9	5.99	-1.5	2.64	none (novel)	False	True
+RBBP7-SAFB	af3_weak	weak	CGTCGACC	-9.8	12.58	-2.07	3.08	none (novel)	False	True
+RBBP7-SAFB	af3_weak	weak	AKGCCKGA	-9.2	7.34	-1.5	2.16	none (novel)	False	True
+RBBP7-SAFB	af3_weak	weak	ATGAGTCA	-8.5	9.51	-1.67	2.89	Jun	False	True
+RBBP7-SAFB	af3_weak	weak	GCGAGCAG	-5.9	6.31	-1.67	2.61	none (novel)	False	True
+RBBP7-SAFB	af3_weak	weak	GTTGTTGT	-5.1	1.83	-2.16	1.67	none (novel)	False	True
+RBBP7-ZNF703	af3_strong	strong	GCTGCCAWTG	-21.3	25.52	-1.63	2.18	none (novel)	False	True
+RBBP7-ZNF703	af3_strong	strong	GGCGAGCCTA	-10.9	10.58	-3.51	7.46	none (novel)	False	True
+RBBP7-ZNF703	af3_strong	strong	GGCGGGTATT	-8.9	7.86	-2.2	3.21	none (novel)	False	True
+RBBP7-ZNF703	af3_strong	strong	GAGGCGGGGCYGGGGC	-13.7	25.0	-2.63	3.35	KLF12.H12CORE.0.P.C	False	True
+RBBP7-ZNF703	af3_strong	strong	AGAGGCGGGGCCAGAG	-7.8	9.37	-1.69	233.0	SP1.H12CORE.2.P.B	False	True
+RBBP7-ZNF703	af3_strong	strong	TCCSTTTA	-12.3	715.0	-1.63	2.12	none (novel)	False	True
+RBBP7-ZNF703	af3_strong	strong	GCTTGGAG	-10.9	12.15	-1.52	2.62	none (novel)	False	True
+EZH2-RBBP4	known	not_tested	CGGGTATTAA	-8.3	8.58	-1.79	10.66	none (novel)	False	True
+EZH2-RBBP4	known	not_tested	AAAAGGGCGGTG	-8.3	11.44	-4.51	4.57	none (novel)	False	True
+EZH2-RBBP4	known	not_tested	CCTCCRGGCCCCRSCC	-5.8	7.87	-2.7	5.69	SP1.H12CORE.2.P.B	False	True
+EZH2-RBBP4	known	not_tested	CCGGCTAC	-8.9	6.6	-3.0	2.71	none (novel)	False	True
+EZH2-RBBP4	known	not_tested	CCCCATCC	-7.8	8.82	-1.85	2.42	none (novel)	False	True
+MBD3-RBBP4	known	not_tested	TGCCGGCCTGCG	-17.8	10.55	-3.13	3.55	none (novel)	False	True
+MBD3-RBBP4	known	not_tested	AAAAGGGGTGGG	-8.6	6.16	-1.37	2.0	none (novel)	False	True
+MBD3-RBBP4	known	not_tested	CCACCCCTGCCCCACC	-8.6	6.59	-2.3	2.41	ZN148.H12CORE.0.P.B	False	True
+MBD3-RBBP4	known	not_tested	TCCCGCCCCCGCAGGC	-7.9	6.95	-2.03	3.86	none (novel)	False	True
+MBD3-RBBP4	known	not_tested	RCATTGCK	-16.3	3.56	-1.56	1.4	none (novel)	False	True
+MBD3-RBBP4	known	not_tested	CTTATCCC	-11.4	1.9	-3.2	1.45	none (novel)	False	True
+MBD3-RBBP4	known	not_tested	TGCACGGC	-8.2	4.81	-1.82	2.08	none (novel)	False	True
+MBD3-RBBP7	known	not_tested	TCSCGACKCC	-16.7	32.77	-1.67	2.31	none (novel)	False	True
+MBD3-RBBP7	known	not_tested	CCGTGCGCCC	-7.1	5.88	-1.72	2.35	none (novel)	False	True
+MBD3-RBBP7	known	not_tested	GACTGCGCAA	-7.1	6.09	-2.23	2.74	none (novel)	False	True
+MBD3-RBBP7	known	not_tested	GGCGGGGTTTAG	-11.8	3.07	-1.39	1.48	none (novel)	False	True
+MBD3-RBBP7	known	not_tested	YGGGGGCGGGGCCDGG	-11.6	3.66	-1.73	1.63	KLF12.H12CORE.0.P.C	False	True
+MBD3-RBBP7	known	not_tested	MKAGCCCCGCCCCCTM	-11.0	9.27	-1.77	7.53	SP2.H12CORE.0.P.D	False	True
+MBD3-RBBP7	known	not_tested	GGTCGGGGCGGGGCTT	-9.7	17.75	-3.93	5.98	KLF12	False	True
+MBD3-RBBP7	known	not_tested	CAGCAGCAGCAGCAGG	-7.1	8.44	-2.33	3.62	ZNF93	False	True
+MBD3-RBBP7	known	not_tested	AAAGGGGC	-11.3	9.48	-2.85	2.52	none (novel)	False	True
+MBD3-RBBP7	known	not_tested	ACGCATGC	-6.4	1.56	-1.33	1.2	none (novel)	False	True
+MTF2-RBBP4	known	strong	CGCTGWDCGG	-15.2	24.37	-1.35	1.97	none (novel)	False	True
+MTF2-RBBP4	known	strong	CCACACACAC	-12.4	19.45	-1.56	2.67	KLF9	False	True
+MTF2-RBBP4	known	strong	AAGCCCAGGG	-11.2	9.01	-2.15	2.36	none (novel)	False	True
+MTF2-RBBP4	known	strong	AGARGGCCGA	-8.9	4.8	-2.2	2.24	none (novel)	False	True
+MTF2-RBBP4	known	strong	GCCAGAGAGTCT	-12.6	4.94	-2.66	2.79	none (novel)	False	True
+MTF2-RBBP4	known	strong	GACCACGCAGCT	-11.0	32.31	-3.56	11.31	none (novel)	False	True
+MTF2-RBBP4	known	strong	GCGGAGCDGAGG	-9.0	7.0	-3.0	3.64	none (novel)	False	True
+MTF2-RBBP4	known	strong	TCTGGATCTCCG	-6.8	6.53	-2.79	3.61	none (novel)	False	True
+MTF2-RBBP4	known	strong	GGGGCGAGGCGT	-5.8	7.19	-3.82	4.29	none (novel)	False	True
+MTF2-RBBP4	known	strong	GGAAGGGCGGGGCAAG	-12.4	13.12	-2.14	3.1	KLF15	False	True
+MTF2-RBBP4	known	strong	GTCACGAC	-9.0	4.21	-1.98	1.82	none (novel)	False	True
+MTF2-RBBP4	known	strong	GATCACGG	-7.9	4.25	-1.34	1.77	none (novel)	False	True
+MTF2-RBBP4	known	strong	ATTAACCT	-7.9	7.49	-2.12	2.84	none (novel)	False	True
+MTF2-RBBP4	known	strong	AGGMCGCG	-6.3	3.13	-1.43	1.92	none (novel)	False	True
+MTF2-RBBP7	known	not_tested	CTCGCCGGCG	-12.3	9.22	-2.84	2.7	none (novel)	False	True
+MTF2-RBBP7	known	not_tested	CGATTGGCCA	-11.1	9.01	-2.2	2.67	none (novel)	False	True
+MTF2-RBBP7	known	not_tested	TTTTGGAAAA	-9.9	8.89	-2.81	3.24	none (novel)	False	True
+MTF2-RBBP7	known	not_tested	AAATTWTTTG	-6.0	5.32	-1.34	1.98	none (novel)	False	True
+MTF2-RBBP7	known	not_tested	CAGCTGWGWGAC	-8.2	9.72	-3.64	6.27	Tcf12	False	True
+MTF2-RBBP7	known	not_tested	ACGACGGV	-19.7	16.35	-1.75	6.03	none (novel)	False	True
+MTF2-RBBP7	known	not_tested	CGTGSKTG	-13.6	15.22	-1.62	2.34	none (novel)	False	True
+RBBP4-RBBP7	known	none	ATTGGTGATG	-11.8	11.93	-2.65	2.96	none (novel)	False	True
+RBBP4-RBBP7	known	none	TTTCGCCTAT	-9.2	14.9	-1.71	3.11	none (novel)	False	True
+RBBP4-RBBP7	known	none	GCGGGAGCAT	-7.8	3.68	-1.97	1.83	none (novel)	False	True
+RBBP4-RBBP7	known	none	GCTGGGCCTTGC	-18.0	8.49	-1.54	2.58	none (novel)	False	True
+RBBP4-RBBP7	known	none	TGGCGAAGATCC	-14.6	23.11	-2.22	3.06	none (novel)	False	True
+RBBP4-RBBP7	known	none	CCCTGCTCCGCC	-8.4	9.94	-3.77	4.72	KLF15.H12CORE.1.P.C	False	True
+RBBP4-RBBP7	known	none	GCGCCGCTCTCC	-8.4	7.43	-1.56	3.55	none (novel)	False	True
+RBBP4-RBBP7	known	none	TCGGGGTGGGGCGGGC	-11.8	10.53	-1.71	3.28	SALL4.H12CORE.0.P.B	False	True
+RBBP4-RBBP7	known	none	CAGGTGGGGCGGGGCC	-8.7	4.26	-1.42	1.59	KLF12	False	True
+RBBP4-RBBP7	known	none	GGCCGCGCACGCGCAC	-8.4	7.78	-4.18	4.09	ZBTB14	False	True
+RBBP4-RBBP7	known	none	YCGACTKT	-11.4	6.0	-2.6	2.72	none (novel)	False	True
+RBBP4-RBBP7	known	none	CGCGAGAA	-10.8	2.73	-1.39	1.34	none (novel)	False	True
+RBBP4-RBBP7	known	none	ACCAACCG	-5.7	4.33	-5.67	8.06	none (novel)	False	True
+RBBP4-ZNF512B	known	not_tested	CCGGCCGTGG	-10.0	7.69	-1.71	2.57	none (novel)	False	True
+RBBP4-ZNF512B	known	not_tested	NNCACACANN	-5.9	8.36	-1.79	4.01	none (novel)	False	True
+RBBP4-ZNF512B	known	not_tested	TCCACCAG	-14.9	10.83	-1.85	2.31	none (novel)	False	True
+RBBP4-ZNF512B	known	not_tested	TGGTTCGT	-13.2	9.17	-1.71	2.35	none (novel)	False	True
+RBBP4-ZNF512B	known	not_tested	AACTAGAC	-12.4	21.83	-1.79	4.15	none (novel)	False	True
+DDIT3-MLX__null1	null_within	weak	ASGTGMCTGG	-14.1	9.49	-1.55	2.08	ARNT.H12CORE.1.P.B	False	True
+DDIT3-MLX__null1	null_within	weak	CATGCGTCAC	-9.5	600.0	-1.77	4.29	none (novel)	False	True
+DDIT3-MLX__null1	null_within	weak	AGRACGCGCC	-8.2	11.49	-1.77	210.0	none (novel)	False	True
+DDIT3-MLX__null1	null_within	weak	GAGAAAGACACC	-26.0	21.69	-1.37	2.14	none (novel)	False	True
+DDIT3-MLX__null1	null_within	weak	TTAATCCCGCCT	-11.9	9.44	-2.81	3.02	none (novel)	False	True
+DDIT3-MLX__null1	null_within	weak	GCTMCTGTTCCC	-8.8	7.35	-2.67	5.19	none (novel)	False	True
+DDIT3-MLX__null1	null_within	weak	TTTTATGC	-10.9	23.57	-2.67	6.51	none (novel)	False	True
+DDIT3-MLX__null1	null_within	weak	GAAACGTG	-8.5	4.38	-1.43	1.68	none (novel)	False	True
+DDIT3-MLX__null1	null_within	weak	ATTATGAG	-7.7	6.73	-2.67	3.89	none (novel)	False	True
+DDIT3-MLX__null2	null_within	weak	SGCAGCCAAT	-13.5	24.71	-1.62	2.36	none (novel)	False	True
+DDIT3-MLX__null2	null_within	weak	CACCAGGTGG	-8.7	7.68	-2.79	3.2	none (novel)	False	True
+DDIT3-MLX__null2	null_within	weak	CCGTGACCCA	-8.2	11.78	-1.34	1.88	none (novel)	False	True
+DDIT3-MLX__null2	null_within	weak	CCCCTCCCTCTC	-12.1	12.85	-2.5	2.19	MAZ	False	True
+DDIT3-MLX__null2	null_within	weak	GCCACCAGGTGG	-10.8	10.98	-2.31	3.35	CTCF	False	True
+DDIT3-MLX__null2	null_within	weak	GCTCACCCCTTT	-9.9	7.15	-1.77	2.13	none (novel)	False	True
+DDIT3-MLX__null2	null_within	weak	TCACGAGGACCC	-9.4	14.72	-2.65	4.64	none (novel)	False	True
+DDIT3-MLX__null2	null_within	weak	CAGCGTGGCCCT	-6.8	6.04	-1.92	2.19	none (novel)	False	True
+DDIT3-MLX__null2	null_within	weak	TYARTGAA	-9.8	7.82	-1.62	2.5	none (novel)	False	True
+DDIT3-NFYA__null1	null_within	weak	CGACACCACC	-25.9	20.32	-1.41	1.9	none (novel)	False	True
+DDIT3-NFYA__null1	null_within	weak	MGCAAGGTCC	-20.2	12.93	-2.14	2.12	none (novel)	False	True
+DDIT3-NFYA__null1	null_within	weak	CGTGCCCTCC	-18.0	5.54	-1.6	1.62	none (novel)	False	True
+DDIT3-NFYA__null1	null_within	weak	GCGCGRACGYTG	-15.1	8.19	-1.43	1.65	HINFP.H12CORE.2.S.B	False	True
+DDIT3-NFYA__null1	null_within	weak	GACAAAGCTCCT	-9.3	6.49	-2.82	2.86	none (novel)	False	True
+DDIT3-NFYA__null1	null_within	weak	CTGGCTCGGCCC	-7.5	5.52	-1.89	2.19	none (novel)	False	True
+DDIT3-NFYA__null1	null_within	weak	GATWMGCG	-22.6	11.22	-1.7	1.71	none (novel)	False	True
+DDIT3-NFYA__null1	null_within	weak	AAGAGCAG	-12.2	6.54	-1.84	1.95	none (novel)	False	True
+DDIT3-NFYA__null1	null_within	weak	CCACAGCA	-11.3	6.55	-2.03	2.27	none (novel)	False	True
+DDIT3-NFYA__null1	null_within	weak	GCGCCGGA	-9.0	4.52	-1.41	1.62	none (novel)	False	True
+DDIT3-NFYA__null2	null_within	weak	GTGCTCCTTT	-30.5	21.19	-1.33	1.77	none (novel)	False	True
+DDIT3-NFYA__null2	null_within	weak	RAAGAGTGGC	-17.5	11.24	-2.2	2.86	none (novel)	False	True
+DDIT3-NFYA__null2	null_within	weak	TTGGGGGTTG	-13.5	18.71	-2.03	4.19	none (novel)	False	True
+DDIT3-NFYA__null2	null_within	weak	TCGTCTCTTC	-10.3	6.52	-2.83	3.2	none (novel)	False	True
+DDIT3-NFYA__null2	null_within	weak	GTTTTTTTCC	-9.9	10.2	-1.43	2.09	none (novel)	False	True
+DDIT3-NFYA__null2	null_within	weak	CTGCCCTCTTCC	-21.4	13.44	-3.88	3.22	none (novel)	False	True
+DDIT3-NFYA__null2	null_within	weak	GAACCGTCGCGC	-13.5	9.09	-3.05	2.82	none (novel)	False	True
+DDIT3-NFYA__null2	null_within	weak	GCTGGCTGGCTG	-13.4	7.9	-3.72	3.84	none (novel)	False	True
+DDIT3-NFYA__null2	null_within	weak	CGGGGCCGCCAC	-12.3	297.0	-1.31	2.43	none (novel)	False	True
+DDIT3-NFYA__null2	null_within	weak	GTGCGGAGATGT	-9.3	6.62	-2.03	3.42	none (novel)	False	True
+DDIT3-NFYA__null2	null_within	weak	ATCGACCAATCG	-8.4	7.62	-1.92	2.59	none (novel)	False	True
+DDIT3-NFYA__null2	null_within	weak	GGGGAAGGAGGGARGG	-13.5	15.9	-1.76	2.23	ZN467.H12CORE.0.P.C	False	True
+DDIT3-NFYA__null2	null_within	weak	TCTGGGAATTGTAGTY	-13.4	7.33	-2.46	2.5	Thap11	False	True
+DDIT3-NFYA__null2	null_within	weak	GCCTGGAGGCGGGGCC	-11.3	7.35	-2.2	2.82	SP2.H12CORE.0.P.D	False	True
+DDIT3-NFYA__null2	null_within	weak	GTGCGCAGGCGCGGGC	-9.9	7.5	-3.72	3.76	Nrf1	False	True
+DDIT3-NFYA__null2	null_within	weak	GCGCGGCGCGGCGCKG	-5.5	4.84	-2.83	141.0	none (novel)	False	True
+DDIT3-NFYA__null2	null_within	weak	GCGCACGCACGCACGC	-5.5	170.0	-2.03	113.0	ZNF865.FL@CHS@lanky-violet-jellyfish@OFornes.ExplaiNN@filter96_1	False	True
+DDIT3-NFYA__null2	null_within	weak	GTTTMACC	-17.2	7.76	-1.75	1.83	none (novel)	False	True
+DDIT3-NFYA__null2	null_within	weak	GCTCATTT	-12.8	3.07	-3.65	1.75	none (novel)	False	True
+DDIT3-NFYA__null2	null_within	weak	CSGTCAGC	-12.4	6.95	-3.32	2.64	none (novel)	False	True
+DDIT3-RBBP4__null1	null_within	strong	ACGCCACAGG	-25.1	11.97	-2.07	2.02	none (novel)	False	True
+DDIT3-RBBP4__null1	null_within	strong	GACGTAGCGC	-9.9	5.92	-1.76	2.75	none (novel)	False	True
+DDIT3-RBBP4__null1	null_within	strong	CGCCTGCGCCTG	-19.1	8.87	-1.41	1.46	none (novel)	False	True
+DDIT3-RBBP4__null1	null_within	strong	TCCCCGCSCCCG	-18.4	355.0	-1.85	2.01	KLF12	False	True
+DDIT3-RBBP4__null1	null_within	strong	TTACCAACCTCC	-15.8	7.85	-3.15	2.35	none (novel)	False	True
+DDIT3-RBBP4__null1	null_within	strong	ACCTCCGCCCCC	-9.0	5.57	-1.65	1.78	PATZ1	False	True
+DDIT3-RBBP4__null1	null_within	strong	CGCGCGCGCSCGCGGC	-11.8	6.74	-2.33	2.91	ZBT14.H12CORE.0.P.C	False	True
+DDIT3-RBBP4__null1	null_within	strong	CGCCAGGGGGCGCTGT	-9.9	7.02	-6.94	6.61	CTCF.NA@AFS.Lys@sleepy-white-antelope@HughesLab.Homer@1000_fa_homer_minw3_maxw_40_Motif1	False	True
+DDIT3-RBBP4__null1	null_within	strong	CTCCGTCTCGCCCCGC	-6.7	5.93	-1.71	95.0	none (novel)	False	True
+DDIT3-RBBP4__null1	null_within	strong	KGGRGGRGGVGGRGGV	-6.6	3.74	-2.07	2.25	ZN263.H12CORE.1.P.B	False	True
+DDIT3-RBBP4__null1	null_within	strong	AACAGTAC	-15.8	8.0	-4.11	3.33	none (novel)	False	True
+DDIT3-RBBP4__null1	null_within	strong	AGCTCAGC	-9.7	4.86	-2.68	2.49	none (novel)	False	True
+DDIT3-RBBP4__null1	null_within	strong	CCGAGTCT	-8.3	4.05	-3.01	2.2	none (novel)	False	True
+DDIT3-RBBP4__null1	null_within	strong	TCCCCTCT	-7.8	3.69	-1.75	1.68	none (novel)	False	True
+DDIT3-RBBP4__null2	null_within	strong	CCGAAGGSTC	-24.8	8.94	-1.88	1.88	none (novel)	False	True
+DDIT3-RBBP4__null2	null_within	strong	CTAAAGCGGC	-14.7	6.71	-2.69	2.55	none (novel)	False	True
+DDIT3-RBBP4__null2	null_within	strong	CGGAGGCCTA	-6.9	4.15	-1.77	2.92	none (novel)	False	True
+DDIT3-RBBP4__null2	null_within	strong	GAGGTCGCTGTC	-16.8	6.6	-1.56	1.62	none (novel)	False	True
+DDIT3-RBBP4__null2	null_within	strong	GGGGGAGCGCGG	-13.7	4.98	-3.11	1.83	none (novel)	False	True
+DDIT3-RBBP4__null2	null_within	strong	CCGGAACCTTTG	-9.8	5.47	-1.66	2.14	none (novel)	False	True
+DDIT3-RBBP4__null2	null_within	strong	GGGGCCCGAGGC	-8.0	6.65	-2.08	2.0	none (novel)	False	True
+DDIT3-RBBP4__null2	null_within	strong	CCAGGGGGCGCTGCGG	-16.8	7.57	-5.29	3.1	CTCFL	False	True
+DDIT3-RBBP4__null2	null_within	strong	GGGCSGGGGGCGGGGC	-5.1	3.82	-2.43	7.0	SP3.H12CORE.0.P.B	False	True
+DDIT3-RBBP4__null2	null_within	strong	TTAGGCTG	-15.8	6.19	-1.75	1.77	none (novel)	False	True
+DDIT3-RBBP4__null2	null_within	strong	ACTKTTAA	-13.7	7.73	-7.7	4.81	none (novel)	False	True
+DDIT3-RBBP4__null2	null_within	strong	CTCGATGT	-11.3	6.17	-2.05	2.09	none (novel)	False	True
+DDIT3-RBBP4__null2	null_within	strong	CGGCTCCA	-9.8	5.28	-1.66	1.98	none (novel)	False	True
+DDIT3-RBBP4__null2	null_within	strong	CAGCGGGA	-8.9	7.26	-5.08	4.08	none (novel)	False	True
+DDIT3-RBBP7__null1	null_within	strong	CGGGCWCGAG	-20.7	16.16	-2.18	2.52	none (novel)	False	True
+DDIT3-RBBP7__null1	null_within	strong	CTGTCTTCCC	-14.8	12.86	-3.55	4.94	none (novel)	False	True
+DDIT3-RBBP7__null1	null_within	strong	GTCTCGGCTC	-13.4	14.58	-3.55	9.12	none (novel)	False	True
+DDIT3-RBBP7__null1	null_within	strong	GTTCTCTGGGTC	-9.7	7.95	-4.59	6.04	none (novel)	False	True
+DDIT3-RBBP7__null1	null_within	strong	GCTGCTCGGCTCGGCT	-5.3	3.33	-1.87	2.07	none (novel)	False	True
+DDIT3-RBBP7__null1	null_within	strong	YAGACCGC	-8.6	7.03	-2.99	3.69	none (novel)	False	True
+DDIT3-RBBP7__null1	null_within	strong	GGTACCTC	-7.5	8.4	-1.68	2.04	none (novel)	False	True
+DDIT3-RBBP7__null2	null_within	strong	TTCCGGCTGT	-7.5	7.18	-1.58	2.61	none (novel)	False	True
+DDIT3-RBBP7__null2	null_within	strong	CCCCCAAGTGCV	-13.4	23.86	-1.57	2.84	none (novel)	False	True
+DDIT3-RBBP7__null2	null_within	strong	GCAGGCCCCGGG	-10.6	10.35	-1.56	2.3	none (novel)	False	True
+DDIT3-RBBP7__null2	null_within	strong	TCCCGGCCCTCC	-5.6	6.28	-1.68	2.38	none (novel)	False	True
+DDIT3-RBBP7__null2	null_within	strong	GCCCCGCCCCCGCCCC	-10.8	8.98	-1.5	1.99	KLF16.H12CORE.1.P.B	False	True
+DDIT3-RBBP7__null2	null_within	strong	RVGCCCCGCCYCTCGC	-5.4	4.37	-2.69	3.54	KLF8.H12CORE.0.P.C	False	True
+DDIT3-RBBP7__null2	null_within	strong	TCTCGCTA	-11.9	10.1	-3.48	3.79	none (novel)	False	True
+DDIT3-RBBP7__null2	null_within	strong	TCGCGAGG	-6.5	5.86	-1.56	2.96	none (novel)	False	True
+DDIT3-XPA__null1	null_within	weak	CCTCTAGAGC	-17.1	18.09	-2.16	2.5	none (novel)	False	True
+DDIT3-XPA__null1	null_within	weak	SCTCTCTCTC	-6.3	4.98	-2.61	3.84	none (novel)	False	True
+DDIT3-XPA__null1	null_within	weak	GCCCCGCCCANS	-12.0	6.9	-2.11	1.93	KLF15	False	True
+DDIT3-XPA__null1	null_within	weak	CTCCTCTCTCTC	-6.3	4.98	-3.21	5.41	none (novel)	False	True
+DDIT3-XPA__null1	null_within	weak	GGTGGCGGGCGGGGGC	-13.1	11.4	-1.52	6.27	KLF15	False	True
+DDIT3-XPA__null1	null_within	weak	TTGCAAGG	-17.1	13.42	-2.09	2.3	none (novel)	False	True
+DDIT3-XPA__null1	null_within	weak	TCSTKCGT	-7.0	5.14	-4.18	5.87	none (novel)	False	True
+DDIT3-XPA__null2	null_within	weak	CATCTTGGGT	-19.2	13.71	-2.57	2.56	none (novel)	False	True
+DDIT3-XPA__null2	null_within	weak	TGACACCCCG	-13.4	11.28	-1.52	2.54	none (novel)	False	True
+DDIT3-XPA__null2	null_within	weak	GCTGTTCCCA	-11.2	6.98	-2.08	2.04	none (novel)	False	True
+DDIT3-XPA__null2	null_within	weak	CCCACTCCTT	-9.6	6.03	-2.22	2.59	none (novel)	False	True
+DDIT3-XPA__null2	null_within	weak	TCAGGACGAG	-8.2	5.89	-1.52	2.54	none (novel)	False	True
+DDIT3-XPA__null2	null_within	weak	CGCCSCTSCGGG	-18.0	11.21	-2.31	3.57	none (novel)	False	True
+DDIT3-XPA__null2	null_within	weak	GGCGCGGGACGC	-15.7	11.17	-1.68	1.99	none (novel)	False	True
+DDIT3-XPA__null2	null_within	weak	TACAGCCCCACA	-9.3	7.27	-1.52	4.95	none (novel)	False	True
+DDIT3-XPA__null2	null_within	weak	CCCCTGCCCCCG	-9.2	7.43	-1.78	2.72	PATZ1	False	True
+DDIT3-XPA__null2	null_within	weak	AGCAGCCGTCCGCGCC	-15.7	10.57	-2.31	3.29	none (novel)	False	True
+DDIT3-XPA__null2	null_within	weak	BTGGGAAVTGTAGTCY	-13.1	9.24	-1.72	2.17	CREM.H12CORE.1.P.C	False	True
+DDIT3-XPA__null2	null_within	weak	TACGCGCG	-17.6	8.86	-3.62	2.17	none (novel)	False	True
+DDIT3-XPA__null2	null_within	weak	ACAAGACT	-15.5	8.39	-1.41	1.64	none (novel)	False	True
+DDIT3-XPA__null2	null_within	weak	GGCYAAGS	-9.6	6.12	-3.19	2.78	ZNF682	False	True
+DDIT3-XPA__null2	null_within	weak	CCTGTAGG	-8.2	5.78	-1.72	2.17	none (novel)	False	True
+DR1-NFYA__null1	null_within	strong	GGACAGSGGA	-11.3	9.43	-1.8	2.18	none (novel)	False	True
+DR1-NFYA__null1	null_within	strong	GACTGAGGGG	-10.0	7.2	-1.38	2.57	none (novel)	False	True
+DR1-NFYA__null1	null_within	strong	GGCTGGCTVG	-6.4	36.56	-1.56	2.41	none (novel)	False	True
+DR1-NFYA__null1	null_within	strong	CGCCGGGATGCC	-14.0	1023.0	-2.71	3.97	none (novel)	False	True
+DR1-NFYA__null1	null_within	strong	CCTTGAAGCCTC	-12.6	13.38	-1.56	3.0	none (novel)	False	True
+DR1-NFYA__null1	null_within	strong	CTTCKTCCTGGG	-11.3	14.62	-2.38	7.79	none (novel)	False	True
+DR1-NFYA__null1	null_within	strong	GGCTGGCTGGCT	-8.9	7.36	-4.29	10.26	none (novel)	False	True
+DR1-NFYA__null1	null_within	strong	GCKGCAGCAGCA	-5.2	7.31	-2.71	3.19	none (novel)	False	True
+DR1-NFYA__null1	null_within	strong	HCCCMGCACCCA	-5.2	5.12	-2.01	3.63	none (novel)	False	True
+DR1-NFYA__null1	null_within	strong	TGACCCCGCTTC	-5.0	5.87	-4.59	4.1	none (novel)	False	True
+DR1-NFYA__null1	null_within	strong	TTTGGAGA	-18.3	13.46	-1.47	1.78	none (novel)	False	True
+DR1-NFYA__null1	null_within	strong	GCCCGGCT	-10.0	8.12	-3.47	4.27	none (novel)	False	True
+DR1-NFYA__null2	null_within	strong	AACGGCCGGG	-18.2	51.37	-1.37	2.47	none (novel)	False	True
+DR1-NFYA__null2	null_within	strong	CTGAGAGGCG	-12.3	6.0	-2.23	2.24	none (novel)	False	True
+DR1-NFYA__null2	null_within	strong	AAAAACYATG	-9.9	9.14	-2.44	2.92	none (novel)	False	True
+DR1-NFYA__null2	null_within	strong	GTGGTGGAGG	-7.8	6.7	-1.99	2.58	Wt1	False	True
+DR1-NFYA__null2	null_within	strong	CAAGCCAAGC	-7.5	6.8	-1.37	2.5	none (novel)	False	True
+DR1-NFYA__null2	null_within	strong	TGCACGGGGCTG	-19.6	18.38	-1.36	1.77	none (novel)	False	True
+DR1-NFYA__null2	null_within	strong	TCAGTGGTKGGG	-13.9	11.15	-1.55	330.0	none (novel)	False	True
+DR1-NFYA__null2	null_within	strong	TGACTCTCAGCC	-11.2	8.98	-1.79	1.96	none (novel)	False	True
+DR1-NFYA__null2	null_within	strong	GCGCGGGGGGCG	-11.0	8.5	-1.34	2.01	none (novel)	False	True
+DR1-NFYA__null2	null_within	strong	ATGAGGTGGGAG	-5.9	6.54	-1.37	2.13	none (novel)	False	True
+DR1-NFYA__null2	null_within	strong	AGCTATTG	-16.9	11.42	-3.74	2.97	none (novel)	False	True
+DR1-NFYA__null2	null_within	strong	GCAAAGCC	-15.7	9.84	-1.81	2.06	none (novel)	False	True
+DR1-NFYA__null2	null_within	strong	GGGCCAGA	-15.7	9.5	-3.09	3.18	none (novel)	False	True
+DR1-NFYA__null2	null_within	strong	GAGATGTC	-12.5	943.0	-1.99	2.72	none (novel)	False	True
+DR1-NFYA__null2	null_within	strong	GTAAAATG	-12.5	943.0	-1.55	2.48	none (novel)	False	True
+DR1-NFYA__null2	null_within	strong	GGGGCCGA	-6.9	5.78	-1.36	1.98	none (novel)	False	True
+DR1-NFYA__null2	null_within	strong	GGAAGGGT	-5.9	6.54	-3.27	4.73	none (novel)	False	True
+E2F3-MBD3__null1	null_within	weak	TGACAGTGGG	-25.0	20.41	-3.14	3.81	none (novel)	False	True
+E2F3-MBD3__null1	null_within	weak	TCCCACACCT	-23.4	32.81	-1.47	2.77	none (novel)	False	True
+E2F3-MBD3__null1	null_within	weak	GAGGTAACGG	-12.3	6.42	-1.83	1.96	none (novel)	False	True
+E2F3-MBD3__null1	null_within	weak	AGTCCGCCAA	-11.2	8.75	-1.98	2.55	none (novel)	False	True
+E2F3-MBD3__null1	null_within	weak	CCCCTACCGA	-10.2	7.64	-2.48	2.52	none (novel)	False	True
+E2F3-MBD3__null1	null_within	weak	CAGTGCCACG	-8.3	7.33	-1.3	1.8	none (novel)	False	True
+E2F3-MBD3__null1	null_within	weak	GAGGRSCGBTCC	-13.0	8.35	-2.48	2.45	none (novel)	False	True
+E2F3-MBD3__null1	null_within	weak	GCCGCGGCGCCA	-9.1	263.0	-1.66	3.96	ZNF417	False	True
+E2F3-MBD3__null1	null_within	weak	GCCCGSGCCASABCCC	-18.8	31.86	-2.51	137.0	none (novel)	False	True
+E2F3-MBD3__null1	null_within	weak	GGCCTGCAGGGGGCGC	-10.5	4.75	-2.49	2.37	CTCFL.H12CORE.0.P.B	False	True
+E2F3-MBD3__null1	null_within	weak	CGCCCGCCCCTCSCTC	-9.4	10.03	-2.15	3.82	MAZ.H12CORE.1.P.B	False	True
+E2F3-MBD3__null1	null_within	weak	CCCGCCCMGCCCMGCC	-5.5	5.94	-1.48	2.04	KLF12.H12CORE.0.P.C	False	True
+E2F3-MBD3__null1	null_within	weak	GAGGCGTG	-17.7	10.05	-2.96	2.42	none (novel)	False	True
+E2F3-MBD3__null1	null_within	weak	TCCTAAGA	-15.9	13.13	-2.87	4.58	none (novel)	False	True
+E2F3-MBD3__null1	null_within	weak	AKGCCTTT	-11.7	5.37	-2.24	1.97	none (novel)	False	True
+E2F3-MBD3__null1	null_within	weak	TGRGATCT	-7.9	8.17	-2.87	3.49	none (novel)	False	True
+E2F3-MBD3__null2	null_within	weak	TGCGGTCACA	-15.0	6.61	-2.47	2.48	none (novel)	False	True
+E2F3-MBD3__null2	null_within	weak	TCTCGCGAGA	-13.9	13.52	-3.3	3.62	ZBTB33	False	True
+E2F3-MBD3__null2	null_within	weak	GCGGCCGCGC	-13.9	9.49	-2.47	2.51	none (novel)	False	True
+E2F3-MBD3__null2	null_within	weak	CTACAGGGCG	-10.4	10.79	-3.65	4.3	none (novel)	False	True
+E2F3-MBD3__null2	null_within	weak	CAGSSSGCSGCC	-29.7	19.49	-1.81	1.99	none (novel)	False	True
+E2F3-MBD3__null2	null_within	weak	CCTCCCTCCGCAGCGG	-7.5	4.99	-2.47	3.0	SP5	False	True
+E2F3-RBBP4__null1	null_within	weak	CCGTCAGGGA	-16.5	4.8	-1.75	1.39	none (novel)	False	True
+E2F3-RBBP4__null1	null_within	weak	TCGCGCGGGT	-16.2	5.59	-4.69	2.78	none (novel)	False	True
+E2F3-RBBP4__null1	null_within	weak	GGTCTCTCTG	-14.8	6.07	-1.72	1.97	none (novel)	False	True
+E2F3-RBBP4__null1	null_within	weak	AGTCGGCCTG	-14.2	7.73	-7.1	214.0	none (novel)	False	True
+E2F3-RBBP4__null1	null_within	weak	GGCGGGGTAA	-11.9	4.12	-2.72	1.73	none (novel)	False	True
+E2F3-RBBP4__null1	null_within	weak	GCGTAGCCGA	-10.1	4.89	-1.32	1.65	none (novel)	False	True
+E2F3-RBBP4__null1	null_within	weak	CGGGCACCAA	-9.5	4.95	-2.9	2.24	none (novel)	False	True
+E2F3-RBBP4__null1	null_within	weak	GCCCTCTCTGAA	-28.8	9.7	-3.23	2.15	ZNF768	False	True
+E2F3-RBBP4__null1	null_within	weak	GCGGCTTTCCTG	-28.1	11.74	-4.08	2.78	none (novel)	False	True
+E2F3-RBBP4__null1	null_within	weak	CTCTCTGGCCCC	-24.2	8.98	-1.88	2.55	none (novel)	False	True
+E2F3-RBBP4__null1	null_within	weak	GGCTAGGCCTAT	-16.5	11.32	-3.72	4.61	none (novel)	False	True
+E2F3-RBBP4__null1	null_within	weak	ACGCTTCTCCAA	-16.5	12.3	-1.7	3.07	none (novel)	False	True
+E2F3-RBBP4__null1	null_within	weak	GTCCCGCCCAGC	-15.8	6.44	-3.03	2.2	none (novel)	False	True
+E2F3-RBBP4__null1	null_within	weak	MTGGCTCCGCCC	-9.8	5.38	-2.12	2.06	ZN441.H12CORE.0.P.C	False	True
+E2F3-RBBP4__null1	null_within	weak	CCGGGCGCGGGA	-8.4	4.3	-1.32	1.69	none (novel)	False	True
+E2F3-RBBP4__null1	null_within	weak	TCAACGCTCCCT	-8.4	4.46	-3.29	2.12	none (novel)	False	True
+E2F3-RBBP4__null1	null_within	weak	GGGGATGTGAGT	-6.6	3.7	-4.34	2.62	none (novel)	False	True
+E2F3-RBBP4__null1	null_within	weak	CHGGCCMCGCCCCCTC	-18.8	7.33	-1.32	1.7	SP4.H12CORE.0.P.C	False	True
+E2F3-RBBP4__null1	null_within	weak	GGCTCGGCTCGGCTCG	-17.1	6.27	-1.32	1.62	none (novel)	False	True
+E2F3-RBBP4__null1	null_within	weak	AGGGGAGGGGAAGGGG	-11.9	10.32	-2.31	2.89	KLF15.H12CORE.1.P.C	False	True
+E2F3-RBBP4__null1	null_within	weak	CGGGGAAGGCGGGRGG	-9.8	6.03	-3.72	143.0	KLF8.H12CORE.1.P.C	False	True
+E2F3-RBBP4__null1	null_within	weak	CCCTCGCTCGCTCGCT	-7.3	3.06	-1.87	1.57	none (novel)	False	True
+E2F3-RBBP4__null1	null_within	weak	TGGTCCTA	-36.0	11.92	-2.17	1.74	none (novel)	False	True
+E2F3-RBBP4__null1	null_within	weak	WCGACTAC	-29.0	8.0	-1.6	1.62	none (novel)	False	True
+E2F3-RBBP4__null1	null_within	weak	CAGCATGC	-25.4	21.22	-1.61	1.46	none (novel)	False	True
+E2F3-RBBP4__null1	null_within	weak	TCATGGTA	-22.8	23.6	-2.37	2.68	none (novel)	False	True
+E2F3-RBBP4__null1	null_within	weak	CTATTAAA	-18.7	5.82	-1.87	1.74	none (novel)	False	True
+E2F3-RBBP4__null1	null_within	weak	GACGCGGG	-11.9	5.42	-3.48	3.06	none (novel)	False	True
+E2F3-RBBP4__null1	null_within	weak	GAACGCCG	-11.0	4.96	-2.27	1.87	none (novel)	False	True
+E2F3-RBBP4__null1	null_within	weak	CCCGTCGC	-9.8	6.03	-1.72	1.64	none (novel)	False	True
+E2F3-RBBP4__null2	null_within	weak	AGGCCTGASK	-33.6	20.35	-1.35	1.43	none (novel)	False	True
+E2F3-RBBP4__null2	null_within	weak	ATCGCCGAGG	-16.8	6.59	-2.21	1.86	none (novel)	False	True
+E2F3-RBBP4__null2	null_within	weak	CAGGAAAGTG	-15.8	8.87	-2.68	1.97	none (novel)	False	True
+E2F3-RBBP4__null2	null_within	weak	TGATTGGATA	-11.9	9.46	-1.71	2.02	NFYC	False	True
+E2F3-RBBP4__null2	null_within	weak	SSCCGGGCACSS	-20.2	16.3	-4.53	3.43	none (novel)	False	True
+E2F3-RBBP4__null2	null_within	weak	CTCYCTGGCCCC	-19.0	17.33	-3.06	2.64	none (novel)	False	True
+E2F3-RBBP4__null2	null_within	weak	ATCACGGGCTGG	-17.7	9.03	-2.33	2.18	none (novel)	False	True
+E2F3-RBBP4__null2	null_within	weak	GGAAGCGGAAGG	-14.2	8.26	-3.74	7.15	none (novel)	False	True
+E2F3-RBBP4__null2	null_within	weak	CAAGCCACGCCC	-12.9	6.12	-3.74	8.41	SP1.H12CORE.1.SM.B	False	True
+E2F3-RBBP4__null2	null_within	weak	CKTCCCGSAGYC	-11.3	4.35	-4.4	2.57	none (novel)	False	True
+E2F3-RBBP4__null2	null_within	weak	GGCGGGGCTTAA	-11.0	5.92	-2.33	1.98	none (novel)	False	True
+E2F3-RBBP4__null2	null_within	weak	AGTGCCCGCCCC	-8.4	4.3	-1.74	2.08	none (novel)	False	True
+E2F3-RBBP4__null2	null_within	weak	AAGGCGGGGAGG	-7.7	4.75	-2.59	2.25	none (novel)	False	True
+E2F3-RBBP4__null2	null_within	weak	GCGGGGCGGGCGGCGG	-14.8	8.1	-2.39	2.82	KLF9.H12CORE.1.P.B	False	True
+E2F3-RBBP4__null2	null_within	weak	GTGTGWGTGDGKGDGG	-5.3	4.2	-3.01	2.31	ZNF646.DBD@HTS.GFPIVT@homely-violet-squirrel@AJolma.Autoseed@Multinom2_Onehit_Seed_HHMCACAAMNNNNNNNNNVRACMCACAAHBackgroundCyc1	False	True
+E2F3-RBBP4__null2	null_within	weak	GCCKTCTW	-26.7	10.73	-2.15	2.2	none (novel)	False	True
+E2F3-RBBP4__null2	null_within	weak	ACAGGCCT	-17.8	9.82	-3.5	3.38	none (novel)	False	True
+E2F3-RBBP4__null2	null_within	weak	CGGGGCTT	-17.5	2.78	-1.75	1.35	none (novel)	False	True
+E2F3-RBBP4__null2	null_within	weak	ACGTTCCT	-14.7	3.75	-1.92	1.58	none (novel)	False	True
+E2F3-RBBP4__null2	null_within	weak	GAGAGCCA	-14.0	4.45	-1.66	1.5	none (novel)	False	True
+E2F3-RBBP4__null2	null_within	weak	RKGGGGGK	-10.9	3.52	-1.43	1.34	none (novel)	False	True
+E2F3-RBBP7__null1	null_within	weak	TGCTGACGGC	-11.5	10.31	-2.04	2.84	none (novel)	False	True
+E2F3-RBBP7__null1	null_within	weak	GCTGAGATTA	-5.3	6.07	-1.53	2.36	none (novel)	False	True
+E2F3-RBBP7__null1	null_within	weak	TSACGGGACAGA	-15.8	18.56	-4.52	6.28	none (novel)	False	True
+E2F3-RBBP7__null1	null_within	weak	GTGAGGCAGGTT	-15.8	14.5	-2.54	3.77	none (novel)	False	True
+E2F3-RBBP7__null1	null_within	weak	AGAAACACAGCA	-10.3	9.22	-6.77	13.73	none (novel)	False	True
+E2F3-RBBP7__null1	null_within	weak	CCACCGCCACCG	-6.6	7.52	-7.44	7.28	none (novel)	False	True
+E2F3-RBBP7__null1	null_within	weak	GCTGCGMTTACAGGCG	-8.3	8.83	-2.54	5.03	none (novel)	False	True
+E2F3-RBBP7__null1	null_within	weak	VCTGGCTGGCTGGCTG	-6.6	16.53	-1.68	113.0	none (novel)	False	True
+E2F3-RBBP7__null1	null_within	weak	TTTAGTGC	-14.4	433.0	-1.56	2.08	none (novel)	False	True
+E2F3-RBBP7__null1	null_within	weak	CGGCCGTT	-11.5	10.55	-2.07	2.97	none (novel)	False	True
+E2F3-RBBP7__null1	null_within	weak	GTGTMTGT	-6.7	3.71	-1.46	1.66	none (novel)	False	True
+E2F3-RBBP7__null2	null_within	weak	CGGCAACCCG	-11.7	10.91	-2.18	3.71	none (novel)	False	True
+E2F3-RBBP7__null2	null_within	weak	AGGACGCAAG	-9.4	7.88	-2.07	3.01	none (novel)	False	True
+E2F3-RBBP7__null2	null_within	weak	ACCGGGTGGGAA	-20.3	18.57	-2.03	2.56	none (novel)	False	True
+E2F3-RBBP7__null2	null_within	weak	AGTCCCATTGCC	-18.8	14.22	-1.53	2.36	none (novel)	False	True
+E2F3-RBBP7__null2	null_within	weak	TCCCTTCCAAGC	-13.9	11.69	-1.5	2.25	none (novel)	False	True
+E2F3-RBBP7__null2	null_within	weak	TCTCTCGTGACG	-7.3	8.74	-5.62	13.2	Npas4	False	True
+E2F3-RBBP7__null2	null_within	weak	GCGGCTCGGGGG	-6.3	7.21	-2.7	3.94	none (novel)	False	True
+E2F3-RBBP7__null2	null_within	weak	TCTGCGGG	-5.9	4.37	-2.59	2.8	none (novel)	False	True
+E2F3-SOX4__null1	null_within	weak	CGCCCTTRTC	-27.2	14.0	-2.52	2.42	none (novel)	False	True
+E2F3-SOX4__null1	null_within	weak	CTGCGGCGAA	-16.9	7.0	-4.7	3.51	none (novel)	False	True
+E2F3-SOX4__null1	null_within	weak	TSAMGGGAGG	-16.6	8.68	-1.84	1.93	none (novel)	False	True
+E2F3-SOX4__null1	null_within	weak	GCCGGCGCCG	-15.0	6.61	-1.4	1.59	none (novel)	False	True
+E2F3-SOX4__null1	null_within	weak	GTGAMGCTTTCC	-20.0	15.82	-2.65	2.68	none (novel)	False	True
+E2F3-SOX4__null1	null_within	weak	AAAGCTCAGTCC	-16.0	14.8	-1.45	1.94	none (novel)	False	True
+E2F3-SOX4__null1	null_within	weak	CCGCGCCGGGGT	-9.2	5.67	-1.57	2.19	none (novel)	False	True
+E2F3-SOX4__null1	null_within	weak	GCGCGCCCCCTGGCGG	-9.4	6.39	-2.03	2.37	CTCFL.H12CORE.0.P.B	False	True
+E2F3-SOX4__null1	null_within	weak	TCCCACGG	-12.5	4.75	-2.66	1.9	none (novel)	False	True
+E2F3-SOX4__null1	null_within	weak	CCTGCACA	-12.2	6.96	-1.72	2.08	none (novel)	False	True
+E2F3-SOX4__null1	null_within	weak	CCCGGCGA	-9.0	2.58	-1.46	1.45	none (novel)	False	True
+E2F3-SOX4__null2	null_within	weak	TGCTGKCCAG	-23.6	15.16	-1.56	1.83	none (novel)	False	True
+E2F3-SOX4__null2	null_within	weak	GTTGGGAGGB	-15.0	4.81	-1.56	1.53	none (novel)	False	True
+E2F3-SOX4__null2	null_within	weak	TYTTGGGGAA	-14.2	4.32	-1.46	1.59	none (novel)	False	True
+E2F3-SOX4__null2	null_within	weak	CAGTGATGGG	-12.7	3.42	-2.23	1.67	none (novel)	False	True
+E2F3-SOX4__null2	null_within	weak	CTCCTCCTCCCT	-17.6	9.05	-1.89	1.89	ZNF263	False	True
+E2F3-SOX4__null2	null_within	weak	GGCAGGGCAGGA	-5.6	4.9	-2.65	3.57	THAP1	False	True
+E2F3-SOX4__null2	null_within	weak	GCCSCCGCCCBCCGCS	-28.6	16.67	-1.84	2.08	MAZ.H12CORE.0.P.B	False	True
+E2F3-SOX4__null2	null_within	weak	CTTGGGAGGCTGAGGC	-9.7	6.71	-2.68	6.69	ZNF460	False	True
+E2F3-SOX4__null2	null_within	weak	GTGAGGGGCGGGGCTA	-6.5	6.3	-1.9	2.36	KLF12	False	True
+E2F3-SOX4__null2	null_within	weak	GTTGAGGG	-14.0	5.84	-3.73	2.79	none (novel)	False	True
+E2F3-SOX4__null2	null_within	weak	GTCAGGCC	-5.4	3.24	-3.21	2.31	none (novel)	False	True
+E4F1-SOX4__null1	null_within	weak	CGAGCTTGGC	-15.5	11.86	-2.15	2.56	none (novel)	False	True
+E4F1-SOX4__null1	null_within	weak	GCCGAAAAGCCG	-24.0	27.36	-1.51	1.61	none (novel)	False	True
+E4F1-SOX4__null1	null_within	weak	TGGAAACAAGAC	-21.1	13.82	-3.96	4.13	none (novel)	False	True
+E4F1-SOX4__null1	null_within	weak	CTGGTTGGGCCC	-9.9	6.49	-4.0	3.08	none (novel)	False	True
+E4F1-SOX4__null1	null_within	weak	GCGCCCCGCCGC	-8.9	6.51	-1.79	1.9	none (novel)	False	True
+E4F1-SOX4__null1	null_within	weak	TAAMCCGA	-14.1	4.34	-1.65	1.56	none (novel)	False	True
+E4F1-SOX4__null1	null_within	weak	ATCCTGCA	-12.8	3.58	-3.86	2.17	none (novel)	False	True
+E4F1-SOX4__null2	null_within	weak	AGCAAWCGCC	-18.2	15.56	-1.77	2.62	none (novel)	False	True
+E4F1-SOX4__null2	null_within	weak	CCCCCCCCCC	-11.6	15.0	-1.53	2.06	ZNF740	False	True
+E4F1-SOX4__null2	null_within	weak	CAGGTCTCAG	-10.3	7.96	-1.61	2.31	none (novel)	False	True
+E4F1-SOX4__null2	null_within	weak	CCCCCCCCCCCC	-10.3	7.96	-2.51	2.91	ZN740.H12CORE.1.S.C	False	True
+E4F1-SOX4__null2	null_within	weak	GAGGGGCGGGAAGGGG	-9.1	7.98	-1.48	2.14	KLF8.H12CORE.1.P.C	False	True
+E4F1-SOX4__null2	null_within	weak	WTYTGAGG	-10.3	18.7	-2.41	2.77	none (novel)	False	True
+E4F1-SOX4__null2	null_within	weak	CCCCCCCC	-9.9	7.3	-1.48	2.0	ZNF740	False	True
+E4F1-SOX4__null2	null_within	weak	GCCTGGGG	-7.6	5.91	-1.47	1.66	none (novel)	False	True
+HOXA10-RBBP4__null1	null_within	strong	GGAGGCCACG	-14.3	14.84	-1.89	5.46	none (novel)	False	True
+HOXA10-RBBP4__null1	null_within	strong	NAHDTTTRNY	-11.8	12.11	-1.46	1.95	none (novel)	False	True
+HOXA10-RBBP4__null1	null_within	strong	GTCTCGGMGG	-11.8	11.0	-2.64	3.07	none (novel)	False	True
+HOXA10-RBBP4__null1	null_within	strong	GCAGCCAATC	-5.9	3.7	-1.44	2.0	none (novel)	False	True
+HOXA10-RBBP4__null1	null_within	strong	SCBGTGACGTCA	-18.3	9.95	-1.72	1.89	CREB3L4	False	True
+HOXA10-RBBP4__null1	null_within	strong	CTCGTCTCGGCT	-11.8	7.54	-1.55	2.22	none (novel)	False	True
+HOXA10-RBBP4__null1	null_within	strong	AGCCTCGGAGGY	-11.8	6.1	-2.24	2.56	none (novel)	False	True
+HOXA10-RBBP4__null1	null_within	strong	GCAGCCGAGGTG	-9.1	5.11	-3.01	2.68	none (novel)	False	True
+HOXA10-RBBP4__null1	null_within	strong	GCTCGCTCCTAC	-7.2	8.65	-1.89	2.43	none (novel)	False	True
+HOXA10-RBBP4__null1	null_within	strong	CGGCCCCGCCCYCTCC	-13.1	12.69	-2.66	3.86	KLF11.H12CORE.0.P.B	False	True
+HOXA10-RBBP4__null1	null_within	strong	CGGATTGT	-14.2	5.12	-1.86	1.57	none (novel)	False	True
+HOXA10-RBBP4__null1	null_within	strong	YAGCGTAC	-7.2	4.64	-1.36	1.62	none (novel)	False	True
+HOXA10-RBBP4__null1	null_within	strong	CCGGCCTC	-5.9	4.55	-2.8	2.92	none (novel)	False	True
+HOXA10-RBBP4__null2	null_within	strong	CCAGGTAAAT	-18.3	54.19	-2.59	2.15	none (novel)	False	True
+HOXA10-RBBP4__null2	null_within	strong	GGCTCCGCGA	-15.6	5.5	-1.4	1.4	none (novel)	False	True
+HOXA10-RBBP4__null2	null_within	strong	AAGGGGAGGC	-11.9	7.88	-1.34	1.58	none (novel)	False	True
+HOXA10-RBBP4__null2	null_within	strong	TAGGAGCAAT	-10.6	15.4	-2.55	2.55	none (novel)	False	True
+HOXA10-RBBP4__null2	null_within	strong	GAGCTCCGGGGT	-13.1	11.91	-1.4	2.4	none (novel)	False	True
+HOXA10-RBBP4__null2	null_within	strong	GTGGGCGGGGYC	-11.8	9.21	-1.46	1.86	KLF15	False	True
+HOXA10-RBBP4__null2	null_within	strong	GGAGGAGTTCTG	-10.9	6.03	-9.62	6.91	none (novel)	False	True
+HOXA10-RBBP4__null2	null_within	strong	TGGGCGGTACTT	-10.6	7.53	-2.55	2.86	none (novel)	False	True
+HOXA10-RBBP4__null2	null_within	strong	AGCCGCGCCGTC	-9.5	7.97	-1.64	2.32	none (novel)	False	True
+HOXA10-RBBP4__null2	null_within	strong	CGGGACTGGGAG	-8.7	4.92	-2.35	2.34	none (novel)	False	True
+HOXA10-RBBP4__null2	null_within	strong	GCCCGGGCAACC	-7.2	9.06	-1.64	2.07	none (novel)	False	True
+HOXA10-RBBP4__null2	null_within	strong	CGAGACGG	-18.7	6.86	-2.43	1.77	none (novel)	False	True
+HOXA10-RBBP4__null2	null_within	strong	CCCGAMKA	-14.2	5.24	-1.62	1.59	none (novel)	False	True
+HOXA10-XPA__null1	null_within	strong	TTTCGAAATC	-10.0	8.49	-1.35	1.97	none (novel)	False	True
+HOXA10-XPA__null1	null_within	strong	GCCAGGGTGR	-8.8	6.21	-1.38	1.93	none (novel)	False	True
+HOXA10-XPA__null1	null_within	strong	GAGGAGTGGA	-7.5	12.51	-1.57	2.35	none (novel)	False	True
+HOXA10-XPA__null1	null_within	strong	CGGGCGAGTG	-5.2	4.83	-2.39	3.14	none (novel)	False	True
+HOXA10-XPA__null1	null_within	strong	CGCCNTSGCC	-5.0	6.58	-2.02	3.86	none (novel)	False	True
+HOXA10-XPA__null1	null_within	strong	CCTGAACTCCAG	-6.4	13.81	-2.02	3.62	none (novel)	False	True
+HOXA10-XPA__null1	null_within	strong	TCCCCTCCCCTCCCCT	-6.9	5.73	-2.02	3.25	VEZF1.H12CORE.1.P.B	False	True
+HOXA10-XPA__null1	null_within	strong	ATGGCGGC	-9.0	6.47	-4.31	3.03	YY2	False	True
+HOXA10-XPA__null1	null_within	strong	ATTTATTT	-8.7	23.28	-2.39	3.46	none (novel)	False	True
+HOXA10-XPA__null1	null_within	strong	CCAACAAT	-6.0	5.32	-1.38	1.84	none (novel)	False	True
+HOXA10-XPA__null2	null_within	strong	GGATTGTCAC	-18.5	16.06	-4.2	3.78	none (novel)	False	True
+HOXA10-XPA__null2	null_within	strong	GCAGGGAGGC	-11.9	6.97	-2.33	2.01	SP5	False	True
+HOXA10-XPA__null2	null_within	strong	CGCCGCTGCT	-7.9	7.04	-1.37	1.77	none (novel)	False	True
+HOXA10-XPA__null2	null_within	strong	GCGCGAGGGC	-7.6	910.0	-2.37	5.46	none (novel)	False	True
+HOXA10-XPA__null2	null_within	strong	TCCCTGYCGGCC	-7.6	7.58	-1.8	2.66	none (novel)	False	True
+HOXA10-XPA__null2	null_within	strong	CAGGCAGTCAGC	-6.4	6.86	-1.33	1.94	none (novel)	False	True
+HOXA10-XPA__null2	null_within	strong	GCAGKCGA	-11.3	9.91	-3.2	2.55	none (novel)	False	True
+HOXA10-XPA__null2	null_within	strong	GGACGCTA	-10.1	11.46	-7.63	11.22	none (novel)	False	True
+HOXB9-RBBP4__null1	null_within	strong	AWGTCTTKTT	-8.3	4.82	-1.87	1.94	none (novel)	False	True
+HOXB9-RBBP4__null1	null_within	strong	GRTGCGCGCA	-7.3	9.94	-2.69	3.21	none (novel)	False	True
+HOXB9-RBBP4__null1	null_within	strong	GGTCCGGGTGGG	-11.9	6.27	-4.38	2.61	none (novel)	False	True
+HOXB9-RBBP4__null1	null_within	strong	GCCTCYAGCCCA	-9.9	6.48	-1.58	2.13	none (novel)	False	True
+HOXB9-RBBP4__null1	null_within	strong	CGCTTGGCCCAG	-9.5	7.06	-1.91	9.21	none (novel)	False	True
+HOXB9-RBBP4__null1	null_within	strong	TCCTCCTCCTCC	-6.2	4.77	-2.05	2.41	ZN263.H12CORE.1.P.B	False	True
+HOXB9-RBBP4__null1	null_within	strong	CTCCCCCTCCYCCTCC	-5.2	4.27	-1.58	2.15	ZN467.H12CORE.0.P.C	False	True
+HOXB9-RBBP4__null1	null_within	strong	CAGAGAAA	-10.0	5.1	-1.49	1.56	none (novel)	False	True
+HOXB9-RBBP4__null1	null_within	strong	AGCATTTC	-9.2	5.7	-1.67	1.88	none (novel)	False	True
+HOXB9-RBBP4__null2	null_within	strong	AATGCCTAGA	-17.2	10.52	-1.45	2.05	none (novel)	False	True
+HOXB9-RBBP4__null2	null_within	strong	CCGGAAGGAGAC	-13.3	12.26	-1.88	4.0	none (novel)	False	True
+HOXB9-RBBP4__null2	null_within	strong	GTGGCGCTGTCC	-7.2	5.95	-1.88	2.43	none (novel)	False	True
+HOXB9-RBBP4__null2	null_within	strong	CAGCACATGCGC	-5.5	5.37	-2.66	3.19	none (novel)	False	True
+HOXB9-RBBP4__null2	null_within	strong	GSCCAGGCBCCGCCYC	-8.5	15.46	-3.51	3.38	SP1.H12CORE.2.P.B	False	True
+HOXB9-RBBP4__null2	null_within	strong	CCAGCCAA	-16.6	10.48	-1.35	1.7	none (novel)	False	True
+HOXB9-RBBP4__null2	null_within	strong	AAGGGTGG	-12.0	7.63	-2.23	2.36	none (novel)	False	True
+HOXB9-RBBP4__null2	null_within	strong	CTGCTCCG	-8.4	5.74	-3.56	2.37	none (novel)	False	True
+HOXB9-RBBP4__null2	null_within	strong	GAGTTACC	-7.6	4.89	-2.38	2.16	none (novel)	False	True
+MLX-RBBP4__null1	null_within	weak	GGGCCTGGCCTG	-20.7	13.85	-1.62	2.03	HAND2.H12CORE.1.P.B	False	True
+MLX-RBBP4__null1	null_within	weak	GCACTTCCTGTT	-20.7	12.08	-3.79	4.01	ZNF175	False	True
+MLX-RBBP4__null1	null_within	weak	ACTCCAGGATTG	-19.3	12.8	-1.79	2.53	none (novel)	False	True
+MLX-RBBP4__null1	null_within	weak	AGCTRCCCTGCG	-12.9	18.72	-3.34	179.0	none (novel)	False	True
+MLX-RBBP4__null1	null_within	weak	CATGTGGGTGAG	-10.7	6.25	-2.24	2.41	none (novel)	False	True
+MLX-RBBP4__null1	null_within	weak	TCGGCTTTGCTT	-10.7	5.86	-1.87	2.21	none (novel)	False	True
+MLX-RBBP4__null1	null_within	weak	CGCGCACTCACG	-9.0	3.11	-1.37	1.51	none (novel)	False	True
+MLX-RBBP4__null1	null_within	weak	CCTGCCCCCGTC	-7.2	11.84	-1.79	2.16	none (novel)	False	True
+MLX-RBBP4__null1	null_within	weak	GCCCCGCCCCGCCCCG	-13.3	6.22	-1.57	2.13	KLF16.H12CORE.1.P.B	False	True
+MLX-RBBP4__null1	null_within	weak	TCTCTCTCTCTCYWTC	-8.2	13.0	-2.04	2.19	none (novel)	False	True
+MLX-RBBP4__null1	null_within	weak	CTGGAGGAGGAGGAGG	-5.2	4.86	-3.34	5.97	none (novel)	False	True
+MLX-RBBP4__null1	null_within	weak	TTGTCGCG	-22.7	9.65	-3.29	2.16	none (novel)	False	True
+MLX-RBBP4__null1	null_within	weak	ATAAATAT	-19.3	21.33	-2.52	3.17	none (novel)	False	True
+MLX-RBBP4__null1	null_within	weak	ATATATGC	-18.0	13.31	-2.46	2.94	none (novel)	False	True
+MLX-RBBP4__null1	null_within	weak	CCCGGCTT	-8.2	4.56	-2.56	3.06	none (novel)	False	True
+MLX-RBBP4__null2	null_within	weak	GSGCCTGCAG	-18.0	12.53	-4.21	3.87	none (novel)	False	True
+MLX-RBBP4__null2	null_within	weak	TCCCCCGCTT	-14.2	6.81	-1.49	1.84	none (novel)	False	True
+MLX-RBBP4__null2	null_within	weak	CMKCCAATCC	-13.7	7.34	-3.23	2.59	none (novel)	False	True
+MLX-RBBP4__null2	null_within	weak	CBCATCCAATCC	-19.4	12.11	-2.56	3.09	none (novel)	False	True
+MLX-RBBP4__null2	null_within	weak	NSSCACCCTSSN	-17.2	7.29	-3.12	2.72	none (novel)	False	True
+MLX-RBBP4__null2	null_within	weak	CTGCGCGGCCCC	-15.4	9.07	-1.4	1.68	none (novel)	False	True
+MLX-RBBP4__null2	null_within	weak	TGAAAACTGGAG	-11.7	12.08	-1.78	3.61	none (novel)	False	True
+MLX-RBBP4__null2	null_within	weak	CGTACGCTCGGG	-10.5	6.95	-1.38	1.94	none (novel)	False	True
+MLX-RBBP4__null2	null_within	weak	CGCGCGGCCCGGGGCC	-10.7	8.28	-3.33	3.73	ZNF454	False	True
+MLX-RBBP4__null2	null_within	weak	AGCATCTA	-19.4	17.92	-1.49	1.81	none (novel)	False	True
+MLX-RBBP4__null2	null_within	weak	GACGCTAG	-13.3	5.72	-1.32	1.45	none (novel)	False	True
+MLX-RBBP4__null2	null_within	weak	CAAGATGG	-13.3	6.14	-1.4	1.7	none (novel)	False	True
+MLX-RBBP7__null1	null_within	weak	CTAGCGACTGGA	-12.7	5.13	-1.69	2.2	none (novel)	False	True
+MLX-RBBP7__null1	null_within	weak	AGCGAGCGAGCG	-9.7	7.16	-4.67	20.26	none (novel)	False	True
+MLX-RBBP7__null1	null_within	weak	ACGTACTC	-13.6	25.61	-1.69	2.55	none (novel)	False	True
+MLX-RBBP7__null1	null_within	weak	RTGGTGCT	-9.7	7.23	-1.6	2.4	REST.H12CORE.0.P.B	False	True
+MLX-RBBP7__null2	null_within	weak	KCTGGCTGTC	-12.9	9.06	-1.8	2.16	none (novel)	False	True
+MLX-RBBP7__null2	null_within	weak	CTCAGGTGCC	-12.2	14.32	-1.63	2.96	none (novel)	False	True
+MLX-RBBP7__null2	null_within	weak	GGCACAAACGGG	-5.7	6.09	-1.77	7.46	none (novel)	False	True
+MLX-RBBP7__null2	null_within	weak	GADCCTCC	-13.1	4.4	-2.06	1.74	none (novel)	False	True
+MLX-RBBP7__null2	null_within	weak	AAGGGCTC	-12.2	9.19	-1.36	1.95	none (novel)	False	True
+MLX-RBBP7__null2	null_within	weak	ATATTTAG	-8.2	31.38	-1.77	5.39	none (novel)	False	True
+MLX-RBBP7__null2	null_within	weak	CCTGCATG	-6.9	5.61	-1.36	1.72	none (novel)	False	True
+RBBP4-SAFB__null2	null_within	weak	CTGCGCCTGC	-11.0	8.87	-1.77	2.38	Nrf1	False	True
+RBBP4-SAFB__null2	null_within	weak	GGGCACGAGA	-11.0	12.48	-3.99	4.92	none (novel)	False	True
+RBBP4-SAFB__null2	null_within	weak	CCCTGATCGAGC	-10.8	21.2	-1.79	5.49	none (novel)	False	True
+RBBP4-SAFB__null2	null_within	weak	GCGGGGCGGGGCATGA	-5.8	7.19	-2.36	4.02	KLF12	False	True
+RBBP4-SAFB__null2	null_within	weak	CTGTACAT	-13.4	11.0	-2.69	6.06	none (novel)	False	True
+RBBP4-SAFB__null2	null_within	weak	CTGCCTGC	-7.5	3.86	-1.31	1.8	none (novel)	False	True
+RBBP4-ZIC2__null1	null_within	strong	WGCCKGSHGS	-11.1	10.63	-1.41	2.13	none (novel)	False	True
+RBBP4-ZIC2__null1	null_within	strong	ACCCACCCCT	-6.4	4.71	-2.29	3.54	none (novel)	False	True
+RBBP4-ZIC2__null1	null_within	strong	TAGAGCCCGCGC	-12.5	28.83	-5.95	10.66	none (novel)	False	True
+RBBP4-ZIC2__null1	null_within	strong	GTCCTCCGCTCT	-9.7	841.0	-1.8	5.21	none (novel)	False	True
+RBBP4-ZIC2__null1	null_within	strong	CCGAGCCTGCTG	-8.4	6.19	-4.15	2.98	none (novel)	False	True
+RBBP4-ZIC2__null1	null_within	strong	CGTAGTCT	-13.9	1093.0	-1.32	2.13	none (novel)	False	True
+RBBP4-ZIC2__null2	null_within	strong	CGCAGAGGGH	-12.5	13.64	-1.69	2.84	none (novel)	False	True
+RBBP4-ZIC2__null2	null_within	strong	TCCCTCGGTC	-10.0	5.54	-1.45	1.74	none (novel)	False	True
+RBBP4-ZIC2__null2	null_within	strong	AGGGGCGGAGCCCKGG	-9.4	6.2	-1.75	2.49	SP4.H12CORE.2.P.B	False	True
+RBBP4-ZIC2__null2	null_within	strong	AAGGTCTT	-11.4	11.21	-2.36	2.14	none (novel)	False	True
+RBBP4-ZIC2__null2	null_within	strong	CKAGGGAC	-10.2	9.03	-1.54	1.95	none (novel)	False	True
+RBBP4-ZNF644__null1	null_within	strong	CTTCCCAGCT	-5.0	7.72	-2.67	8.8	none (novel)	False	True
+RBBP4-ZNF644__null1	null_within	strong	GCCTGGGTTACC	-8.5	12.13	-1.77	7.02	none (novel)	False	True
+RBBP4-ZNF644__null1	null_within	strong	GAGGACAGTCCC	-5.0	6.29	-1.68	2.28	none (novel)	False	True
+RBBP4-ZNF644__null1	null_within	strong	GCGGTTCC	-8.1	7.65	-2.25	3.05	none (novel)	False	True
+RBBP4-ZNF644__null2	null_within	strong	CGGCTGAGGT	-15.7	8.76	-1.84	1.97	none (novel)	False	True
+RBBP4-ZNF644__null2	null_within	strong	CCCCCTCCCCCGCCAG	-7.6	6.25	-2.34	3.46	ZNF148	False	True
+RBBP4-ZNF644__null2	null_within	strong	GGTACCTC	-11.1	13.93	-2.67	5.06	none (novel)	False	True
+RBBP4-ZNF644__null2	null_within	strong	CGASCCGC	-8.6	5.45	-1.54	1.65	none (novel)	False	True
+RBBP4-ZNF644__null2	null_within	strong	ATGAATGA	-8.4	8.78	-1.74	2.39	ZNF24	False	True
+RBBP4-ZNF703__null1	null_within	strong	GTCCACCATG	-19.5	16.8	-1.63	2.25	none (novel)	False	True
+RBBP4-ZNF703__null1	null_within	strong	GCTTCACTTT	-9.9	9.9	-2.84	3.89	none (novel)	False	True
+RBBP4-ZNF703__null1	null_within	strong	CTAGGCCCAA	-8.2	8.34	-1.74	3.68	none (novel)	False	True
+RBBP4-ZNF703__null1	null_within	strong	AGGCGGGGAA	-7.7	7.76	-2.29	3.15	none (novel)	False	True
+RBBP4-ZNF703__null1	null_within	strong	CACACGGGACGT	-9.9	10.72	-3.55	3.92	none (novel)	False	True
+RBBP4-ZNF703__null1	null_within	strong	TCCTGGACAGCC	-9.7	6.85	-2.75	3.14	none (novel)	False	True
+RBBP4-ZNF703__null1	null_within	strong	CCCCGCCGTGCG	-9.5	9.9	-2.18	2.78	none (novel)	False	True
+RBBP4-ZNF703__null1	null_within	strong	CCGCTCCACCCC	-8.7	6.92	-1.68	2.34	none (novel)	False	True
+RBBP4-ZNF703__null1	null_within	strong	GCGCTGCAGCGCCCCC	-19.5	19.38	-1.74	3.47	CTCF.NA@AFS.Lys@sleepy-white-antelope@HughesLab.Homer@1000_fa_homer_minw3_maxw_40_Motif1	False	True
+RBBP4-ZNF703__null1	null_within	strong	GTATCGTC	-12.2	356.0	-5.78	6.64	none (novel)	False	True
+RBBP4-ZNF703__null1	null_within	strong	ACGGRCGG	-6.8	4.06	-2.73	2.73	none (novel)	False	True
+RBBP4-ZNF703__null2	null_within	strong	KCAGGCCTTG	-13.3	11.07	-1.64	2.44	none (novel)	False	True
+RBBP4-ZNF703__null2	null_within	strong	GTGGTTCCGC	-12.1	12.05	-3.62	6.53	none (novel)	False	True
+RBBP4-ZNF703__null2	null_within	strong	GGAGTGGCGGGC	-9.5	11.04	-1.33	2.12	none (novel)	False	True
+RBBP4-ZNF703__null2	null_within	strong	CCCCGCCCCCSCCCSC	-11.8	8.02	-1.69	2.36	SP3.H12CORE.0.P.B	False	True
+RBBP4-ZNF703__null2	null_within	strong	TGGTTRTG	-5.8	2.46	-2.09	1.76	none (novel)	False	True
+RBBP7-SAFB__null1	null_within	weak	CTGATGCCGA	-13.9	16.81	-3.85	6.16	none (novel)	False	True
+RBBP7-SAFB__null1	null_within	weak	GGTGCTCGGG	-8.4	10.37	-1.79	3.15	none (novel)	False	True
+RBBP7-SAFB__null1	null_within	weak	CTMAACABTGKR	-15.3	16.12	-2.81	7.47	ZN627.H12CORE.0.P.C	False	True
+RBBP7-SAFB__null1	null_within	weak	CAGTGKGAGGTG	-9.7	21.45	-3.85	20.42	none (novel)	False	True
+RBBP7-SAFB__null1	null_within	weak	CCTTCCAGKTCT	-9.0	6.85	-1.87	3.09	none (novel)	False	True
+RBBP7-SAFB__null1	null_within	weak	CCACTGGCCTTC	-6.9	7.67	-2.81	21.78	none (novel)	False	True
+RBBP7-SAFB__null1	null_within	weak	MTSAGCCAATCR	-6.9	7.26	-1.79	2.78	none (novel)	False	True
+RBBP7-SAFB__null1	null_within	weak	GCTGTRGCCCCGCCCC	-8.4	11.97	-2.81	4.17	SP2	False	True
+RBBP7-SAFB__null1	null_within	weak	GCGGKCTC	-7.8	3.19	-1.42	1.68	none (novel)	False	True
+RBBP7-SAFB__null2	null_within	weak	GGGCAGAGGG	-15.0	12.07	-1.61	2.03	none (novel)	False	True
+RBBP7-SAFB__null2	null_within	weak	ATACCATCTT	-11.0	14.84	-1.84	8.61	none (novel)	False	True
+RBBP7-SAFB__null2	null_within	weak	GGGAACCAGG	-9.7	10.49	-1.74	2.59	none (novel)	False	True
+RBBP7-SAFB__null2	null_within	weak	CCGCCCTGCCCC	-11.3	8.81	-1.72	2.68	KLF16.H12CORE.1.P.B	False	True
+RBBP7-SAFB__null2	null_within	weak	CGCCTGCGTCHC	-9.3	6.77	-1.72	2.62	none (novel)	False	True
+RBBP7-SAFB__null2	null_within	weak	YTYCCATC	-5.8	5.94	-3.79	5.34	none (novel)	False	True
+RBBP7-ZNF703__null1	null_within	strong	CACAGCGCGC	-13.4	13.47	-1.6	2.73	none (novel)	False	True
+RBBP7-ZNF703__null1	null_within	strong	CCCTTTCCWG	-11.0	10.24	-1.75	3.25	none (novel)	False	True
+RBBP7-ZNF703__null1	null_within	strong	CCGTGCGGTC	-10.8	10.56	-2.3	4.03	none (novel)	False	True
+RBBP7-ZNF703__null1	null_within	strong	TCGCACGAGG	-9.5	10.59	-2.2	2.8	none (novel)	False	True
+RBBP7-ZNF703__null1	null_within	strong	AGGCCGCGYTCC	-13.6	14.53	-2.77	3.11	none (novel)	False	True
+RBBP7-ZNF703__null1	null_within	strong	CCGTGGAGACGC	-10.8	12.52	-1.69	2.15	none (novel)	False	True
+RBBP7-ZNF703__null1	null_within	strong	CTGCGCCGCAGC	-5.3	3.92	-3.9	4.41	none (novel)	False	True
+RBBP7-ZNF703__null2	null_within	strong	GACAGAGCGG	-6.0	6.16	-1.57	2.79	none (novel)	False	True
+RBBP7-ZNF703__null2	null_within	strong	GSGAGGTGCC	-5.1	5.6	-2.6	5.8	none (novel)	False	True
+RBBP7-ZNF703__null2	null_within	strong	SASCACCACCAC	-12.2	746.0	-1.72	3.59	none (novel)	False	True
+RBBP7-ZNF703__null2	null_within	strong	GGGASGCGGGGC	-10.8	12.44	-1.59	2.18	SP2.H12CORE.0.P.D	False	True
+RBBP7-ZNF703__null2	null_within	strong	TTAACTAA	-12.2	25.72	-2.26	3.63	none (novel)	False	True
+RBBP7-ZNF703__null2	null_within	strong	GGKAAGAC	-8.4	2.58	-1.35	1.46	none (novel)	False	True
+RBBP7-ZNF703__null2	null_within	strong	GATGCGGC	-6.7	7.32	-4.28	4.09	none (novel)	False	True
+EZH2-RBBP4__null1	null_within	not_tested	CCAGSCCCGC	-20.9	19.25	-1.47	1.78	none (novel)	False	True
+EZH2-RBBP4__null1	null_within	not_tested	CCCAGCTCCG	-19.5	1920.0	-2.48	2.43	none (novel)	False	True
+EZH2-RBBP4__null1	null_within	not_tested	CGGAACAYAA	-9.1	5.42	-1.59	1.92	none (novel)	False	True
+EZH2-RBBP4__null1	null_within	not_tested	CCTACCGCCT	-8.7	6.15	-1.38	1.87	none (novel)	False	True
+EZH2-RBBP4__null1	null_within	not_tested	CCGGGTCGGGCA	-12.6	8.47	-1.86	2.28	none (novel)	False	True
+EZH2-RBBP4__null1	null_within	not_tested	CGBGGCGGGGCT	-8.9	5.2	-3.53	2.71	SP1.H12CORE.2.P.B	False	True
+EZH2-RBBP4__null1	null_within	not_tested	CTGAVCTGGGGC	-7.8	7.07	-2.4	2.75	none (novel)	False	True
+EZH2-RBBP4__null1	null_within	not_tested	CCCSGCCCAGCCCCGC	-8.2	6.08	-1.38	2.27	KLF9.H12CORE.1.P.B	False	True
+EZH2-RBBP4__null1	null_within	not_tested	GSACWKTW	-11.3	12.06	-2.01	2.01	none (novel)	False	True
+EZH2-RBBP4__null1	null_within	not_tested	CAATTGGC	-8.9	1112.0	-2.8	3.11	none (novel)	False	True
+EZH2-RBBP4__null1	null_within	not_tested	ACTTAAGC	-5.0	4.23	-1.98	2.71	none (novel)	False	True
+EZH2-RBBP4__null2	null_within	not_tested	GGGACTCTGG	-7.6	11.92	-1.9	2.4	none (novel)	False	True
+EZH2-RBBP4__null2	null_within	not_tested	CAGGGGCGCACC	-13.7	8.63	-2.04	2.85	none (novel)	False	True
+EZH2-RBBP4__null2	null_within	not_tested	GGCGTGGTCAGA	-9.9	8.83	-2.27	2.6	none (novel)	False	True
+EZH2-RBBP4__null2	null_within	not_tested	GCCCGGYT	-14.9	8.93	-3.54	4.6	none (novel)	False	True
+EZH2-RBBP4__null2	null_within	not_tested	TACTCCGG	-13.7	1501.0	-4.83	3.43	none (novel)	False	True
+EZH2-RBBP4__null2	null_within	not_tested	GMTMGCTT	-9.9	7.51	-7.6	8.17	none (novel)	False	True
+MBD3-RBBP4__null1	null_within	not_tested	AACAGCAGCW	-23.2	9.57	-2.18	1.94	none (novel)	False	True
+MBD3-RBBP4__null1	null_within	not_tested	GCGCAGCAGT	-15.8	5.71	-7.42	213.0	none (novel)	False	True
+MBD3-RBBP4__null1	null_within	not_tested	ACTCAACGGGGC	-27.1	10.65	-1.5	1.62	none (novel)	False	True
+MBD3-RBBP4__null1	null_within	not_tested	GGCTCCGGCTSC	-20.8	7.63	-1.9	2.0	none (novel)	False	True
+MBD3-RBBP4__null1	null_within	not_tested	TGCTGGCTTCCA	-17.7	6.68	-1.9	2.31	ZN317.H12CORE.1.P.B	False	True
+MBD3-RBBP4__null1	null_within	not_tested	GTCTCCTCCCCC	-17.2	17.0	-1.5	1.61	WT1.H12CORE.0.P.B	False	True
+MBD3-RBBP4__null1	null_within	not_tested	AACCGGAAACCG	-12.1	6.71	-2.33	2.38	none (novel)	False	True
+MBD3-RBBP4__null1	null_within	not_tested	GCCCCCTGGGGGCAGG	-24.5	9.17	-3.72	2.79	ZN316.H12CORE.0.P.C	False	True
+MBD3-RBBP4__null1	null_within	not_tested	TGGGAAWTGTAGTCCC	-16.1	7.08	-2.45	3.57	Thap11	False	True
+MBD3-RBBP4__null1	null_within	not_tested	TGGAGGGGCTGGAGGG	-13.0	7.16	-1.85	1.77	KLF13.H12CORE.1.P.C	False	True
+MBD3-RBBP4__null1	null_within	not_tested	GGGCGGGGAAGAGGGG	-5.8	3.13	-1.85	1.94	KLF15	False	True
+MBD3-RBBP4__null1	null_within	not_tested	CGTCGGTA	-27.0	8.03	-2.51	1.83	none (novel)	False	True
+MBD3-RBBP4__null1	null_within	not_tested	TCCCCTTT	-22.7	5.06	-1.6	1.42	none (novel)	False	True
+MBD3-RBBP4__null1	null_within	not_tested	CACCGCKT	-9.5	2.25	-1.53	1.35	none (novel)	False	True
+MBD3-RBBP4__null1	null_within	not_tested	GGCACAAC	-7.4	3.78	-4.73	8.89	none (novel)	False	True
+MBD3-RBBP4__null2	null_within	not_tested	TGACGGCCAC	-28.3	12.72	-1.4	1.57	none (novel)	False	True
+MBD3-RBBP4__null2	null_within	not_tested	GGACCCCCGA	-27.0	10.94	-1.35	1.48	none (novel)	False	True
+MBD3-RBBP4__null2	null_within	not_tested	CCAKCGCCAG	-22.0	7.95	-2.68	2.28	none (novel)	False	True
+MBD3-RBBP4__null2	null_within	not_tested	CCTCCGGTTG	-21.6	7.61	-1.52	1.59	none (novel)	False	True
+MBD3-RBBP4__null2	null_within	not_tested	CGGTCGCTGC	-20.7	8.44	-2.22	1.8	none (novel)	False	True
+MBD3-RBBP4__null2	null_within	not_tested	NCTAAGAGGS	-19.2	3.98	-1.91	1.46	none (novel)	False	True
+MBD3-RBBP4__null2	null_within	not_tested	GGAGGCATAG	-10.4	4.38	-1.59	1.81	none (novel)	False	True
+MBD3-RBBP4__null2	null_within	not_tested	ACAGCGACTC	-9.6	4.05	-5.15	3.22	none (novel)	False	True
+MBD3-RBBP4__null2	null_within	not_tested	CGGAAAAGATGG	-29.9	6.89	-1.47	1.41	none (novel)	False	True
+MBD3-RBBP4__null2	null_within	not_tested	CGCCACGCCTCC	-19.5	8.32	-2.21	1.87	KLF16	False	True
+MBD3-RBBP4__null2	null_within	not_tested	CTTAGAGGCGCG	-17.6	6.93	-1.4	1.56	none (novel)	False	True
+MBD3-RBBP4__null2	null_within	not_tested	CAGCCACTGAGT	-16.0	11.5	-2.07	2.29	none (novel)	False	True
+MBD3-RBBP4__null2	null_within	not_tested	CAGCAGCAGCCG	-14.9	7.51	-3.18	3.21	none (novel)	False	True
+MBD3-RBBP4__null2	null_within	not_tested	ACCACTCCCATA	-13.8	6.1	-2.59	2.58	none (novel)	False	True
+MBD3-RBBP4__null2	null_within	not_tested	GGGAAGGMGGGGGAGG	-13.9	5.87	-1.87	1.75	VEZF1.H12CORE.1.P.B	False	True
+MBD3-RBBP4__null2	null_within	not_tested	CTGCGGCTGCGGCTGC	-9.7	5.66	-2.47	3.82	ZN519.H12CORE.0.P.C	False	True
+MBD3-RBBP4__null2	null_within	not_tested	GWGYGMCA	-17.6	8.28	-1.41	1.44	none (novel)	False	True
+MBD3-RBBP4__null2	null_within	not_tested	CTCGGMTG	-11.6	4.52	-2.53	1.83	none (novel)	False	True
+MBD3-RBBP4__null2	null_within	not_tested	GGACTCCG	-7.2	4.23	-2.84	2.35	none (novel)	False	True
+MBD3-RBBP7__null1	null_within	not_tested	CGCACCTTCA	-9.3	9.6	-2.2	3.05	none (novel)	False	True
+MBD3-RBBP7__null1	null_within	not_tested	GAGCGAGSGA	-8.4	3.41	-1.34	1.56	none (novel)	False	True
+MBD3-RBBP7__null1	null_within	not_tested	AAGTTAGGGGGC	-14.8	22.33	-1.62	2.53	none (novel)	False	True
+MBD3-RBBP7__null1	null_within	not_tested	BCGCTCGCTCGC	-13.4	20.72	-1.32	1.81	none (novel)	False	True
+MBD3-RBBP7__null1	null_within	not_tested	CGGTAGCGTTCC	-9.7	8.11	-1.5	1.83	none (novel)	False	True
+MBD3-RBBP7__null1	null_within	not_tested	CTCGGCGGGCGG	-7.5	6.72	-2.19	2.71	none (novel)	False	True
+MBD3-RBBP7__null1	null_within	not_tested	ACCGTTTT	-14.8	67.0	-1.33	1.87	none (novel)	False	True
+MBD3-RBBP7__null1	null_within	not_tested	CCTTTACA	-9.5	6.63	-1.64	2.5	none (novel)	False	True
+MBD3-RBBP7__null1	null_within	not_tested	GAGGCTCC	-6.7	2.92	-1.34	1.5	none (novel)	False	True
+MBD3-RBBP7__null1	null_within	not_tested	GTAGTGGT	-6.5	6.26	-2.77	3.02	none (novel)	False	True
+MBD3-RBBP7__null2	null_within	not_tested	TGGCTATTGGAG	-14.8	15.46	-3.58	9.7	none (novel)	False	True
+MBD3-RBBP7__null2	null_within	not_tested	TATTTTTATTTA	-5.8	4.94	-1.59	2.72	none (novel)	False	True
+MBD3-RBBP7__null2	null_within	not_tested	TTTTTTTTTTTTTTAA	-5.7	8.42	-1.73	4.3	ZN362.H12CORE.0.P.C	False	True
+MBD3-RBBP7__null2	null_within	not_tested	GTGCGCTA	-14.3	9.96	-1.98	2.09	none (novel)	False	True
+MBD3-RBBP7__null2	null_within	not_tested	CCATATAA	-13.3	20.72	-3.84	4.44	none (novel)	False	True
+MBD3-RBBP7__null2	null_within	not_tested	GTCGTMAG	-8.6	4.95	-1.53	1.87	none (novel)	False	True
+MBD3-RBBP7__null2	null_within	not_tested	TCCGGCTG	-8.6	4.87	-1.65	2.19	none (novel)	False	True
+MBD3-RBBP7__null2	null_within	not_tested	CTCTTTCG	-6.2	3.15	-1.52	1.6	none (novel)	False	True
+MTF2-RBBP4__null1	null_within	strong	BTGGCCGNGVGG	-16.9	10.34	-2.55	2.85	none (novel)	False	True
+MTF2-RBBP4__null1	null_within	strong	CATCTCTGCTCA	-13.1	8.83	-1.77	250.0	none (novel)	False	True
+MTF2-RBBP4__null1	null_within	strong	TCAGGCCCACCT	-10.8	7.65	-1.77	2.98	none (novel)	False	True
+MTF2-RBBP4__null1	null_within	strong	CAGCTCGCTGTC	-7.1	5.08	-1.33	2.38	none (novel)	False	True
+MTF2-RBBP4__null1	null_within	strong	TGAGGCGGGGCCGGRG	-16.2	9.99	-1.56	1.93	KLF12.H12CORE.0.P.C	False	True
+MTF2-RBBP4__null1	null_within	strong	GAGTATTG	-16.9	9.64	-4.38	3.69	none (novel)	False	True
+MTF2-RBBP4__null1	null_within	strong	TCGGCTGT	-15.1	11.0	-1.78	1.96	none (novel)	False	True
+MTF2-RBBP4__null1	null_within	strong	ATAAACAC	-11.7	5.96	-1.83	1.63	none (novel)	False	True
+MTF2-RBBP4__null1	null_within	strong	GTGTGTGS	-6.6	4.02	-2.0	1.92	none (novel)	False	True
+MTF2-RBBP4__null1	null_within	strong	GGCCGGCG	-6.2	4.54	-2.22	2.29	none (novel)	False	True
+MTF2-RBBP4__null1	null_within	strong	CGATTCAT	-6.2	4.47	-1.56	1.84	none (novel)	False	True
+MTF2-RBBP4__null1	null_within	strong	CACGCTTA	-6.0	3.17	-1.78	2.23	none (novel)	False	True
+MTF2-RBBP4__null2	null_within	strong	CCACTCAAAT	-9.9	6.69	-1.34	2.17	NKX2-2	False	True
+MTF2-RBBP4__null2	null_within	strong	GAGGACACAGCT	-21.1	35.75	-5.16	4.45	none (novel)	False	True
+MTF2-RBBP4__null2	null_within	strong	CTCCGCCCCCAR	-15.6	10.14	-1.78	3.19	SP4	False	True
+MTF2-RBBP4__null2	null_within	strong	SNCTCCAACNSS	-13.1	9.53	-3.26	2.58	none (novel)	False	True
+MTF2-RBBP4__null2	null_within	strong	TTTCTCTCTTTC	-13.1	10.07	-3.34	4.49	none (novel)	False	True
+MTF2-RBBP4__null2	null_within	strong	CCGTCTGCCCTG	-12.1	4.59	-1.59	1.56	none (novel)	False	True
+MTF2-RBBP4__null2	null_within	strong	GGCCGTCGGCST	-10.9	7.31	-2.04	2.59	none (novel)	False	True
+MTF2-RBBP4__null2	null_within	strong	TGTGGGTA	-19.7	13.61	-1.39	1.93	none (novel)	False	True
+MTF2-RBBP4__null2	null_within	strong	CARRTGAG	-14.0	7.17	-5.33	4.46	none (novel)	False	True
+MTF2-RBBP4__null2	null_within	strong	GTATTTTA	-10.9	7.87	-1.39	1.8	none (novel)	False	True
+MTF2-RBBP4__null2	null_within	strong	CATGTTCT	-10.7	12.65	-1.39	1.92	none (novel)	False	True
+MTF2-RBBP4__null2	null_within	strong	NATCTACB	-7.3	9.54	-1.34	1.9	none (novel)	False	True
+MTF2-RBBP4__null2	null_within	strong	CCTCGCGC	-6.2	4.54	-1.39	1.88	none (novel)	False	True
+MTF2-RBBP7__null1	null_within	not_tested	CCKGGGGCCC	-14.9	12.65	-4.31	4.37	none (novel)	False	True
+MTF2-RBBP7__null1	null_within	not_tested	AAAGTGAGTT	-12.0	10.29	-1.72	11.62	none (novel)	False	True
+MTF2-RBBP7__null1	null_within	not_tested	GYGCAGGGGGCG	-8.6	8.63	-2.15	2.41	CTCFL	False	True
+MTF2-RBBP7__null1	null_within	not_tested	MGCGATCA	-14.9	7.8	-1.71	2.19	none (novel)	False	True
+MTF2-RBBP7__null1	null_within	not_tested	CTRCCGCA	-8.6	9.21	-1.6	2.66	none (novel)	False	True
+MTF2-RBBP7__null1	null_within	not_tested	GTTGTCTA	-7.3	3.58	-1.88	1.84	none (novel)	False	True
+MTF2-RBBP7__null1	null_within	not_tested	GTGAGCCC	-5.2	4.35	-1.37	2.0	none (novel)	False	True
+MTF2-RBBP7__null2	null_within	not_tested	GGGAGAGGCG	-13.3	10.68	-3.14	2.47	none (novel)	False	True
+MTF2-RBBP7__null2	null_within	not_tested	AGGTAGGGAAGG	-12.1	17.25	-1.51	2.15	none (novel)	False	True
+MTF2-RBBP7__null2	null_within	not_tested	CGGCCCCGCCCCCGCC	-9.4	9.12	-1.67	3.32	KLF9.H12CORE.1.P.B	False	True
+MTF2-RBBP7__null2	null_within	not_tested	GTATGCCT	-9.8	8.85	-2.04	2.57	none (novel)	False	True
+RBBP4-RBBP7__null1	null_within	none	AGATGGCGAA	-20.5	16.84	-2.96	2.49	none (novel)	False	True
+RBBP4-RBBP7__null1	null_within	none	CATCCACCAC	-15.2	9.96	-1.46	2.27	none (novel)	False	True
+RBBP4-RBBP7__null1	null_within	none	CGTCACGCCA	-14.0	18.77	-1.95	1.85	none (novel)	False	True
+RBBP4-RBBP7__null1	null_within	none	AGCTCCTGAC	-12.8	229.0	-2.01	2.98	none (novel)	False	True
+RBBP4-RBBP7__null1	null_within	none	TAAGCGCGCT	-12.5	9.03	-1.69	1.81	none (novel)	False	True
+RBBP4-RBBP7__null1	null_within	none	TCWCACACAC	-11.5	8.3	-2.33	2.22	none (novel)	False	True
+RBBP4-RBBP7__null1	null_within	none	CGGAGCCTTTGT	-17.8	14.45	-1.89	2.34	none (novel)	False	True
+RBBP4-RBBP7__null1	null_within	none	GTCACCACCATC	-15.2	8.63	-2.22	2.3	none (novel)	False	True
+RBBP4-RBBP7__null1	null_within	none	CTGGACAGAGAT	-15.2	259.0	-1.46	1.96	none (novel)	False	True
+RBBP4-RBBP7__null1	null_within	none	SAGCGCCTCTGG	-14.6	10.0	-4.24	3.12	ZN611.H12CORE.1.P.C	False	True
+RBBP4-RBBP7__null1	null_within	none	CGGGGACTGCAG	-12.5	9.03	-1.46	2.49	none (novel)	False	True
+RBBP4-RBBP7__null1	null_within	none	CGSGGGCGTGGG	-12.5	5.39	-1.48	1.62	KLF2	False	True
+RBBP4-RBBP7__null1	null_within	none	CGCCCCCGTGCG	-11.6	213.0	-3.5	122.0	none (novel)	False	True
+RBBP4-RBBP7__null1	null_within	none	GCTCGCGGGGGC	-9.8	5.4	-1.86	1.95	none (novel)	False	True
+RBBP4-RBBP7__null1	null_within	none	CTCGGCTGGGCT	-7.9	4.71	-3.5	5.3	none (novel)	False	True
+RBBP4-RBBP7__null1	null_within	none	GCGCGGCGCTGC	-7.7	1.59	-2.73	1.3	none (novel)	False	True
+RBBP4-RBBP7__null1	null_within	none	GCATTCTGGGAAATGT	-19.0	10.0	-2.96	2.57	ZN143.H12CORE.0.P.B	False	True
+RBBP4-RBBP7__null1	null_within	none	GGRGGAGGGGARGRGG	-14.0	10.61	-1.35	1.84	SP5.H12CORE.1.P.B	False	True
+RBBP4-RBBP7__null1	null_within	none	GGCGGTGGTGGAGGCG	-9.3	6.78	-2.63	2.7	ZN148.H12CORE.0.P.B	False	True
+RBBP4-RBBP7__null1	null_within	none	GAGGCGGGGTCGGCGC	-8.2	6.0	-1.81	1.98	none (novel)	False	True
+RBBP4-RBBP7__null1	null_within	none	GCGCCGCCGCCGCGCA	-6.0	4.16	-2.45	2.4	KMT2B.H12CORE.0.P.B	False	True
+RBBP4-RBBP7__null1	null_within	none	TCAACCAC	-17.8	11.41	-3.36	3.19	none (novel)	False	True
+RBBP4-RBBP7__null1	null_within	none	GTCTCCTG	-11.6	7.34	-6.01	3.85	none (novel)	False	True
+RBBP4-RBBP7__null2	null_within	none	GAGGCGAGGC	-9.1	5.26	-4.12	2.58	none (novel)	False	True
+RBBP4-RBBP7__null2	null_within	none	CCGCCCCCGCTCCAGC	-8.7	7.19	-3.51	2.82	none (novel)	False	True
+RBBP4-RBBP7__null2	null_within	none	GGGGAGAGGGAGGAGG	-7.8	5.63	-1.43	1.75	VEZF1.H12CORE.1.P.B	False	True
+RBBP4-RBBP7__null2	null_within	none	CGTCCTAG	-15.0	7.21	-2.12	1.96	none (novel)	False	True
+RBBP4-ZNF512B__null1	null_within	not_tested	CTCGCCAGGY	-12.5	12.13	-1.62	2.55	none (novel)	False	True
+RBBP4-ZNF512B__null1	null_within	not_tested	CCCAGTCTGG	-9.0	8.84	-2.65	5.07	none (novel)	False	True
+RBBP4-ZNF512B__null1	null_within	not_tested	ARGCGGCTTCCT	-15.4	17.51	-2.65	482.0	none (novel)	False	True
+RBBP4-ZNF512B__null1	null_within	not_tested	AGCCACRCCCCC	-7.1	25.24	-1.62	2.51	KLF16	False	True
+RBBP4-ZNF512B__null1	null_within	not_tested	CGAGTCCAGGAC	-5.9	552.0	-1.76	3.31	none (novel)	False	True
+RBBP4-ZNF512B__null1	null_within	not_tested	ACYTCARCTCCCAGCA	-6.9	6.41	-1.62	2.52	Thap11	False	True
+RBBP4-ZNF512B__null1	null_within	not_tested	GGTTGGGG	-8.1	7.43	-5.86	7.66	none (novel)	False	True
+RBBP4-ZNF512B__null2	null_within	not_tested	CAGGCACCAG	-11.1	11.41	-3.58	8.36	none (novel)	False	True
+RBBP4-ZNF512B__null2	null_within	not_tested	CCCRCCAATCAG	-20.1	1340.0	-3.58	4.74	NFYA	False	True
+RBBP4-ZNF512B__null2	null_within	not_tested	CCCDSCGCCGCC	-15.6	10.32	-1.37	1.8	KMT2A.H12CORE.0.P.B	False	True
+RBBP4-ZNF512B__null2	null_within	not_tested	ARGTGGRCCTGC	-11.4	10.61	-1.58	2.59	none (novel)	False	True
+RBBP4-ZNF512B__null2	null_within	not_tested	CTCMGCTCCGCCCCCC	-8.4	10.92	-1.72	4.75	KLF8.H12CORE.0.P.C	False	True
+RBBP4-ZNF512B__null2	null_within	not_tested	AACATGCA	-20.1	24.81	-2.6	4.3	none (novel)	False	True
+RBBP4-ZNF512B__null2	null_within	not_tested	AATTCATC	-14.0	14.64	-1.57	2.26	none (novel)	False	True
+RBBP4-ZNF512B__null2	null_within	not_tested	TGGTGCCC	-9.4	6.47	-1.65	2.18	none (novel)	False	True
+RBBP4-ZNF512B__null2	null_within	not_tested	GTCAKTCC	-9.1	9.65	-1.6	2.32	none (novel)	False	True

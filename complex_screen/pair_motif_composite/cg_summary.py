@@ -7,7 +7,7 @@
 import os, re, glob, math, subprocess
 import numpy as np, pandas as pd
 X = "/work/users/d/y/dyy12/XuLab"; O = f"{X}/complex_screen/pair_motif_composite"; G = f"{O}/composite_gapped"
-P = pd.read_csv(f"{G}/pairs.tsv", sep="\t"); tasks = [l.strip() for l in open(f"{G}/tasks.tsv") if l.strip()]
+P = pd.read_csv(f"{G}/pairs.tsv", sep="\t"); tasks = [l.strip() for f in ["tasks.tsv", "tasks_null.tsv"] if os.path.exists(f"{G}/{f}") for l in open(f"{G}/{f}") if l.strip()]
 SUF = os.environ.get("SUFFIX", ""); tasks = [t for t in tasks if os.path.exists(f"{G}/results/{t}/known_val/knownResults.txt")]  # completed pairs only
 alt = {}
 for l in open(f"{O}/db/known.meme"):
@@ -15,7 +15,7 @@ for l in open(f"{O}/db/known.meme"):
 def toks(s): return set(re.split(r"[.@:|/_\- ]+", str(s).upper()))
 comp, gap, summ = [], [], []
 for pair in tasks:
-    R = f"{G}/results/{pair}"; a, b = pair.split("-"); info = P.set_index("pair").loc[pair].to_dict(); info["pair"] = pair
+    R = f"{G}/results/{pair}"; a, b = pair.split("__")[0].split("-"); info = P.set_index("pair").loc[pair].to_dict(); info["pair"] = pair
     ms = []
     for f in sorted(glob.glob(f"{R}/dn_L*/homerMotifs.all.motifs")):
         for blk in open(f).read().split(">")[1:]:
@@ -52,10 +52,10 @@ for pair in tasks:
         ctl = f.replace("_cob.tsv", "_aonly.tsv"); dc = pd.DataFrame()
         try: dc = pd.read_csv(ctl, sep="\t", comment="#"); dc = dc[dc[pc] <= 0.05]
         except Exception: pass
-        for r in d.itertuples():
-            sec = getattr(r, "secondary_id", None) or getattr(r, "secondary_motif", None); gp = getattr(r, "gap", None); ori = getattr(r, "orientation", None)
-            inctl = len(dc) and ((dc.get("secondary_id", pd.Series()) == sec) & (dc.get("gap", pd.Series()) == gp)).any()
-            gap.append(dict(pair=pair, set=info["set"], af3=info["af3"], primary_tf=t, part=pt, secondary=alt.get(sec, sec), gap=gp, orientation=ori, adj_p=getattr(r, pc.replace("-", "_"), None), in_aonly_control=bool(inctl)))
+        for _, r in d.iterrows():
+            sec, gp, ori = r.get("sec_id"), r.get("gap"), r.get("orient")
+            inctl = bool(len(dc)) and bool(((dc["sec_id"] == sec) & (dc["gap"] == gp) & (dc["orient"] == ori)).any()) if len(dc) else False
+            gap.append(dict(pair=pair, set=info["set"], af3=info["af3"], primary_tf=t, primary=r.get("prim_alt"), part=pt, secondary=alt.get(sec, sec), gap=gp, orientation=ori, count=r.get("count"), total=r.get("total"), adj_p=r.get(pc), in_aonly_control=inctl))
     summ.append(info)
 C = pd.DataFrame(comp); Gp = pd.DataFrame(gap); S = pd.DataFrame(summ)
 if len(Gp):
