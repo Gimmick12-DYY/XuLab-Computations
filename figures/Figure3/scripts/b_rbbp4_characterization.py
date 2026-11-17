@@ -137,7 +137,7 @@ def illustrator_text(svg):
         if size is None: return tag
         tag = tag.replace(sm.group(0), f'style="{"; ".join(keep)}"' if keep else "")
         return tag[:-1].rstrip() + f' font-family="Arial, {PS[(wt, "normal")]}, Helvetica, sans-serif" font-size="{float(size):.3f}"' + (' font-weight="bold"' if wt == "bold" else "") + ">"
-    return re.sub(r"<text\b[^>]*>", one, svg)
+    return re.sub(r"<(?:text|tspan)\b[^>]*>", one, svg)
 stem = OUT / "b_rbbp4_characterization"; fig.savefig(f"{stem}.svg"); fig.savefig(f"{stem}.png", dpi=300)
 p = Path(f"{stem}.svg"); p.write_text(illustrator_text(p.read_text()))
 print("pairs", len(pairs), "on loop", int(ploop.sum())); print(pd.DataFrame({"cat": cats, "edges": ne, "on_loop": nl}).to_string(index=False)); print(Ms)
