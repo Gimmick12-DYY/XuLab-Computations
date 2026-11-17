@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 from matplotlib.patches import Rectangle, FancyBboxPatch, FancyArrowPatch
 sys.path.insert(0, "/work/users/d/y/dyy12/XuLab/figures_paletteC"); import regulome_palette as rp
 P = rp.use()
-R34 = "/work/users/d/y/dyy12/XuLab/regulatome"; D = f"{R34}/m34_fig5_panels_v3"; O = f"{D}/out"; PL = f"{D}/plots"; os.makedirs(f"{PL}/paper", exist_ok=True); os.makedirs(f"{PL}/slide", exist_ok=True)
+R34 = "/work/users/d/y/dyy12/XuLab/regulatome"; D = f"{R34}/m34_fig5_panels_v3"; O = f"{D}/out_v2"; PL = f"{D}/plots"; os.makedirs(f"{PL}/paper", exist_ok=True); os.makedirs(f"{PL}/slide", exist_ok=True)
 NB = f"{R34}/m2c_abc_canonical/results/HEK293T_hicfixed"; V = "/vast/som/xujie_lab/TAGATG-293T/bigwig"; TABIX = "/nas/longleaf/rhel9/apps/samtools/1.25/htslib/bin/tabix"
 ATAC = f"{R34}/m2_abc/inputs/omniatac_merged.tn5.tagAlign.gz"; K27 = f"{R34}/m2b_abc_k27ac/inputs/h3k27ac_hek293t_srx18002015_16.tagAlign.gz"; GTF = "/work/users/d/y/dyy12/XuLab/data/gencode_v46/gencode.v46.basic.annotation.gtf.gz"
 OURS, BULK, ATACC, K27C = P.arms.raw, P.neutral.ink, P.arms.atac, P.neutral.mid
@@ -20,7 +20,7 @@ def save(fig, name, mode):
     if mode == "slide": fig.savefig(f"{PL}/slide/{name}.png", dpi=300); fig.savefig(f"{PL}/slide/{name}.svg")
     else: fig.savefig(f"{PL}/paper/{name}.png", dpi=600); fig.savefig(f"{PL}/paper/{name}.svg"); fig.savefig(f"{PL}/paper/{name}.pdf")
     plt.close(fig); print("saved", mode, name, flush=True)
-R = pd.read_csv(f"{O}/regulome_v1.tsv.gz", sep="\t", low_memory=False)
+R = pd.read_csv(f"{O}/regulome_v2_plotting.tsv.gz", sep="\t", low_memory=False)
 # ---------------- a: schematic
 def panel_a(mode):
     style(mode); fs = 14 if mode == "slide" else 7; fig = plt.figure(figsize=SLIDE if mode == "slide" else (7.0, 3.0)); ax = fig.add_axes([0, 0, 1, 1]); ax.set_xlim(0, 100); ax.set_ylim(0, 45); ax.axis("off")
@@ -32,14 +32,14 @@ def panel_a(mode):
     box(2, 30, 24, 8, "79 TFs\nHITAG peaks\n(top 5,000 per TF)", "#FBEBD3", OURS); box(38, 30, 24, 8, "Promoter or\nABC-linked element\n(Hi-C ABC)", "#F7F7F7", DARK); box(74, 30, 24, 8, "Target gene", "#F7F7F7", DARK)
     arrow(26.8, 34, 37.2, 34); arrow(62.8, 34, 73.2, 34)
     ax.text(2, 25, "Perturb-seq layer (external, HEK293T knockdowns)", fontsize=fs, fontweight="bold", color=ACT1, va="center")
-    box(2, 14, 34, 8, "Knockdown of the same TF\nchanges the gene (|z| ≥ 2)?", "#E8F1F8", ACT1); box(46, 14, 52, 8, "Support:  Tier 1 reproducible in both cell halves · Tier 2 · Tier 3 bound only\nDirection:  down on knockdown = activates · up = represses", "#E8F1F8", ACT1)
+    box(2, 14, 34, 8, "Knockdown of the same TF changes\nthe gene (|z| ≥ 2, top-25% sgRNA cells)?", "#E8F1F8", ACT1); box(46, 14, 52, 8, "Supported by Perturb-seq:  |z| ≥ 2  (confidence: |z| ≥ 3, |z| ≥ 4)\nDirection:  down on knockdown = activates · up = represses", "#E8F1F8", ACT1)
     arrow(36.8, 18, 45.2, 18); arrow(86, 29.2, 86, 22.8)
     ax.text(2, 9, "Combination layer", fontsize=fs, fontweight="bold", color=INK, va="center")
-    box(2, 1, 96, 5.5, "Regulome v1:  150,403 TF–gene edges · 79 TFs · 11,046 genes · 9,480 supported by Perturb-seq (796 Tier 1), each with a direction", "#FFFFFF", INK, bold=False)
+    box(2, 1, 96, 5.5, "Regulome:  150,403 TF–gene edges · 79 TFs · 11,046 genes · 11,337 supported by Perturb-seq (63 TFs), each with a direction", "#FFFFFF", INK, bold=False)
     save(fig, "Fig5a_layers", mode)
 # ---------------- b: at a glance
 def panel_b(mode):
-    style(mode); s = mode == "slide"; tb = pd.read_csv(f"{O}/panel_b_targets_per_tf.tsv", sep="\t"); tg = pd.read_csv(f"{O}/panel_b_tfs_per_gene.tsv", sep="\t")
+    style(mode); s = mode == "slide"; tb = pd.read_csv(f"{D}/out/panel_b_targets_per_tf.tsv", sep="\t"); tg = pd.read_csv(f"{D}/out/panel_b_tfs_per_gene.tsv", sep="\t")
     fig = plt.figure(figsize=SLIDE if s else (7.0, 2.3)); gs = fig.add_gridspec(1, 3, width_ratios=[2.3, 1.4, 0.75], wspace=0.45, left=0.07, right=0.98, bottom=0.14 if s else 0.2, top=0.9)
     ax = fig.add_subplot(gs[0]); x = np.arange(len(tb)); ax.bar(x, tb.promoter + tb.both, color=OURS, width=0.85, label="promoter peak"); ax.bar(x, tb.distal, bottom=tb.promoter + tb.both, color="#F2C48A", width=0.85, label="distal only")
     ax.set_xlim(-1, len(tb)); ax.set_xticks([]); ax.set_xlabel("79 TFs, ordered by number of target genes"); ax.set_ylabel("target genes per TF"); ax.legend(loc="upper right")
@@ -54,24 +54,20 @@ def panel_b(mode):
     save(fig, "Fig5b_at_a_glance", mode)
 # ---------------- c: ours vs bulk
 def panel_c(mode):
-    style(mode); s = mode == "slide"; C = pd.read_csv(f"{O}/panel_c_ours_vs_bulk.tsv", sep="\t"); order = ["NRF1", "NFYA", "E4F1", "CTCF", "MAZ", "ZNF777", "ZIC2", "ZBTB7A", "ZNF282", "SETDB1"]; order = [t for t in order if t in set(C.TF)]
-    C["ratio200"] = C.top200_hits_resp / C.top200_expected_resp
+    style(mode); s = mode == "slide"; T = pd.read_csv("/work/users/d/y/dyy12/XuLab/regulatome/m35_threshold_sweep/out/recovery_top25_per_tf.tsv", sep="\t")
+    order = ["NRF1", "NFYA", "E4F1", "CTCF", "MAZ", "ZNF777", "ZIC2", "ZBTB7A", "ZNF282", "SETDB1"]; order = [t for t in order if t in set(T[T.source == "bulk ChIP"].TF)]
     fig, axs = plt.subplots(1, 2, figsize=SLIDE if s else (7.0, 2.8), sharey=True, gridspec_kw=dict(wspace=0.08, left=0.1, right=0.83 if s else 0.86, bottom=0.17, top=0.86))
-    for ax, col, xl in ((axs[0], "fold_resp", "overlap with responding genes\n(fold over chance)"), (axs[1], "ratio200", "responders among the top 200\n(fold over chance)")):
+    for ax, th, xl in ((axs[0], "abs2", "responders found (|z| ≥ 2)\nfold over expected"), (axs[1], "top200", "top 200 responders per TF found\nfold over expected")):
+        g0 = T[T.threshold == th]
         for yi, t in enumerate(order):
-            g = C[C.TF == t]; o = g[g.source.str.startswith("our")]; b = g[g.source.str.startswith("bulk")]
-            vals = list(o[col]) + list(b[col]); ax.plot([min(vals), max(vals)], [yi, yi], color=PALE, lw=3 if s else 1.5, zorder=1)
-            ax.scatter(b[col], [yi] * len(b), s=90 if s else 14, facecolor="white", edgecolor=BULK, lw=1.4 if s else 0.7, zorder=3)
-            ax.scatter(o[col], [yi] * len(o), s=90 if s else 14, color=OURS, zorder=4)
-            if ax is axs[1]:
-                for v, cl in zip(b[col], b.reference_cell_line):
-                    pass
+            g = g0[g0.TF == t]; o = g[g.source.str.startswith("our")]; b = g[g.source == "bulk ChIP"]; vals = list(o.fold) + list(b.fold)
+            ax.plot([min(vals), max(vals)], [yi, yi], color=PALE, lw=3 if s else 1.5, zorder=1)
+            ax.scatter(b.fold, [yi] * len(b), s=90 if s else 14, facecolor="white", edgecolor=BULK, lw=1.4 if s else 0.7, zorder=3); ax.scatter(o.fold, [yi] * len(o), s=90 if s else 14, color=OURS, zorder=4)
         ax.axvline(1, color=MID, lw=1 if s else 0.5, ls="--", zorder=0); ax.set_xlabel(xl)
     axs[0].set_yticks(range(len(order))); axs[0].set_yticklabels(order); axs[0].invert_yaxis()
-    lab = []
-    for t in order:
-        b = C[(C.TF == t) & C.source.str.startswith("bulk")]; lab.append(" / ".join(b.reference_cell_line.str.replace(" ENCFF259YUE", "").str.replace(" ENCFF348EDE", "").str.replace(" ENCFF683WRK", "").str.replace(" GSE103651", "").str.replace(" ENCODE", "")))
-    for yi, l in enumerate(lab): axs[1].text(1.01, yi, l, transform=axs[1].get_yaxis_transform(), va="center", fontsize=12 if s else 6, color=DARK)
+    for yi, t in enumerate(order):
+        b = T[(T.TF == t) & (T.source == "bulk ChIP") & (T.threshold == "abs2")]; l = " / ".join(x.split(" ")[0] for x in b.reference_cell_line)
+        axs[1].text(1.01, yi, l, transform=axs[1].get_yaxis_transform(), va="center", fontsize=12 if s else 6, color=DARK)
     axs[1].text(1.01, -0.75, "bulk ChIP cell line", transform=axs[1].get_yaxis_transform(), va="center", fontsize=12 if s else 6, color=DARK, fontweight="bold")
     h1 = axs[0].scatter([], [], s=90 if s else 14, color=OURS, label="our HITAG (HEK293T)"); h2 = axs[0].scatter([], [], s=90 if s else 14, facecolor="white", edgecolor=BULK, label="bulk ChIP, same path")
     fig.legend(handles=[h1, h2], loc="upper left", bbox_to_anchor=(0.1, 0.995), ncol=2, frameon=False)
@@ -140,12 +136,12 @@ def panel_d(mode):
     hl = {(c, r.start, r.end) for r in Lg.itertuples() if ((sm >= r.start) & (sm < r.end)).any()}
     z = R[(R.tf == "NRF1") & (R.gene == gene)].knockdown_z.iloc[0]
     fig = plt.figure(figsize=SLIDE if s else (7.0, 2.8)); gs = fig.add_gridspec(1, 2, width_ratios=[1, 1.9], wspace=0.42, left=0.17, right=0.98, bottom=0.14, top=0.93)
-    ax = fig.add_subplot(gs[0]); labs = ["bound genes", "supported by\nPerturb-seq", "down on knockdown\n(activates)", "up on knockdown\n(represses)", "Tier 1\n(both halves)"]; vals = [F.bound, F.supported, F.down_activates, F.up_represses, F.tier1]
+    ax = fig.add_subplot(gs[0]); labs = ["bound genes", "supported by\nPerturb-seq", "down on knockdown\n(activates)", "up on knockdown\n(represses)", "|z| ≥ 4"]; vals = [F.bound, F.supported, F.down_activates, F.up_represses, F.tier1]
     cols = [OURS, DARK, ACT, REP, ACT1]; y = np.arange(len(vals))[::-1]; ax.barh(y, vals, color=cols, height=0.7)
     for yy, v in zip(y, vals): ax.text(v + 25, yy, f"{v:,}", va="center", fontsize=fs)
     ax.set_yticks(y); ax.set_yticklabels(labs); ax.set_xlabel("NRF1 target genes"); ax.set_xlim(0, F.bound * 1.25)
     sub = gs[1].subgridspec(6, 1, height_ratios=[1.0, 0.8, 0.8, 1.0, 0.35, 1.1], hspace=0.12)
-    a0 = fig.add_subplot(sub[0]); arcs(a0, Lg, tss, a, b, hl, fs); a0.set_title(f"{gene}: NRF1 knockdown z = {z:.1f} (Tier 1, activates)", fontsize=fs, loc="left")
+    a0 = fig.add_subplot(sub[0]); arcs(a0, Lg, tss, a, b, hl, fs); a0.set_title(f"{gene}: NRF1 knockdown z = {z:.1f} (|z| ≥ 4, activates)", fontsize=fs, loc="left")
     ax1 = fig.add_subplot(sub[1]); e = np.linspace(a, b, 301); h, _ = np.histogram(atac, bins=e); ax1.fill_between(e[:-1], h, step="post", color=ATACC, lw=0); ax1.set_xlim(a, b); ax1.axis("off"); ax1.text(-0.005, 0.5, "ATAC", transform=ax1.transAxes, ha="right", va="center", fontsize=fs, color=ATACC)
     ax2 = fig.add_subplot(sub[2]); h, _ = np.histogram(k27, bins=e); ax2.fill_between(e[:-1], h, step="post", color=K27C, lw=0); ax2.set_xlim(a, b); ax2.axis("off"); ax2.text(-0.005, 0.5, "H3K27ac", transform=ax2.transAxes, ha="right", va="center", fontsize=fs, color=K27C)
     ax3 = fig.add_subplot(sub[3]); h, _ = np.histogram(nrf, bins=e); ax3.fill_between(e[:-1], h / total("NRF1") * 1e6, step="post", color=OURS, lw=0); ax3.set_xlim(a, b); ax3.axis("off"); ax3.text(-0.005, 0.5, "NRF1\nHITAG", transform=ax3.transAxes, ha="right", va="center", fontsize=fs, color=OURS)
@@ -193,15 +189,14 @@ def panel_f(mode):
     fig = plt.figure(figsize=SLIDE if s else (7.0, 2.6)); gs = fig.add_gridspec(1, 2, width_ratios=[1.35, 1], wspace=0.28, left=0.07, right=0.98, bottom=0.2, top=0.93)
     ax = fig.add_subplot(gs[0]); x = np.arange(len(Fd)); ax.bar(x, Fd.pct_activates, color=[ACT1 if v >= 50 else ACT for v in Fd.pct_activates], width=0.85); ax.axhline(50, color=MID, lw=1 if s else 0.5, ls="--")
     ax.set_xlim(-1, len(Fd)); ax.set_ylim(0, 100); ax.set_xticks([]); ax.set_ylabel("% of supported edges that go down\non knockdown (TF activates)"); ax.set_xlabel(f"{len(Fd)} TFs with ≥ 20 supported edges, ordered")
-    named = [t for t in ("CTCF", "NRF1", "WIZ", "NFYA", "E4F1", "DNMT1", "NME2", "MBD3", "SRCAP") if t in set(Fd.tf)]
+    named = sorted([t for t in ("CTCF", "NRF1", "WIZ", "NFYA", "E4F1", "DNMT1", "NME2", "MBD3", "SRCAP") if t in set(Fd.tf)], key=lambda t: int(np.flatnonzero(Fd.tf.values == t)[0]))
     for j, t in enumerate(named):
-        k = int(np.flatnonzero(Fd.tf.values == t)[0]); v = Fd.pct_activates.values[k]; OFF = dict(CTCF=(4, 94), NRF1=(9, 86), NFYA=(0, 78), WIZ=(-5, 70), E4F1=(4, 64))
-        dx, yt = OFF.get(t, (0, min(97, v + 12 + (j % 2) * 9)))
-        ax.annotate(t, (k, v), xytext=(k + dx, yt), ha="center", va="bottom", fontsize=fs, arrowprops=dict(arrowstyle="-", lw=0.7 if s else 0.4, color=MID))
-    big = Fd[Fd.supported >= 130].sort_values("supported"); ax2 = fig.add_subplot(gs[1]); y = np.arange(len(big))
+        k = int(np.flatnonzero(Fd.tf.values == t)[0]); v = Fd.pct_activates.values[k]; yt = max(v + 6, 96 - 9 * (j % 4))
+        ax.annotate(t, (k, v), xytext=(k + 2.5, yt), ha="left", va="bottom", fontsize=fs, arrowprops=dict(arrowstyle="-", lw=0.7 if s else 0.4, color=MID))
+    big = Fd[Fd.supported >= 250].sort_values("supported"); ax2 = fig.add_subplot(gs[1]); y = np.arange(len(big))
     ax2.barh(y, -big.activates, color=ACT, height=0.7); ax2.barh(y, -big.tier1_activates, color=ACT1, height=0.7); ax2.barh(y, big.represses, color=REP, height=0.7); ax2.barh(y, big.tier1_represses, color=REP1, height=0.7)
     ax2.set_yticks(y); ax2.set_yticklabels(big.tf); ax2.axvline(0, color=INK, lw=0.8 if s else 0.4); m = max(big.activates.max(), big.represses.max()) * 1.05; ax2.set_xlim(-m, m)
-    tk = ax2.get_xticks(); ax2.set_xticks(tk); ax2.set_xticklabels([f"{abs(int(v))}" for v in tk]); ax2.set_xlim(-m, m); ax2.set_xlabel("supported edges (darker = Tier 1)")
+    tk = ax2.get_xticks(); ax2.set_xticks(tk); ax2.set_xticklabels([f"{abs(int(v))}" for v in tk]); ax2.set_xlim(-m, m); ax2.set_xlabel("supported edges (darker = |z| ≥ 4)")
     ax2.text(0.02, 1.0, "activates", transform=ax2.transAxes, color=ACT1, fontsize=fs, va="bottom"); ax2.text(0.98, 1.0, "represses", transform=ax2.transAxes, color=REP1, fontsize=fs, va="bottom", ha="right")
     save(fig, "Fig5f_activator_repressor", mode)
 # ---------------- g: Figure 4 pairs
@@ -218,13 +213,13 @@ def panel_g(mode):
         a_, b_ = r.pair.split("-")
         for side, t in (("a", a_), ("b", b_)):
             sh, oo = getattr(r, f"pct_shared_responding_{side}", np.nan), getattr(r, f"pct_own_only_targets_responding_{side}", np.nan)
-            if isinstance(getattr(r, f"kd_{side}"), str) and "too few" in getattr(r, f"kd_{side}"):
-                ax2.text(k, 0.5, f"{t} knockdown:\n18 cells, not used", ha="center", va="bottom", fontsize=fs * 0.85, color=MID, rotation=90)
+            if isinstance(getattr(r, f"kd_{side}"), str) and ("too few" in getattr(r, f"kd_{side}") or "no usable" in getattr(r, f"kd_{side}")):
+                ax2.text(k + 0.15, 0.5, f"{t}: no usable\ntop-25% knockdown", ha="center", va="bottom", fontsize=fs * 0.85, color=MID, rotation=90)
             else:
                 ax2.bar(k - 0.18, sh, width=0.34, color=OURS); ax2.bar(k + 0.18, oo, width=0.34, color=LIGHT)
             labs.append(t); xs.append(k); k += 1
         k += 0.6
-    ax2.set_xticks(xs); ax2.set_xticklabels(labs, fontsize=fs * 0.95); ax2.set_ylabel("% of targets that respond\nto the knockdown (|z| ≥ 2)"); ax2.set_ylim(0, 8.5); ax2.set_xlabel("knockdown of", labelpad=36 if s else 18)
+    ax2.set_xticks(xs); ax2.set_xticklabels(labs, fontsize=fs * 0.95); ax2.set_xlim(-0.7, max(xs) + 0.7); ax2.set_ylabel("% of targets that respond\nto the knockdown (|z| ≥ 2)"); ax2.set_ylim(0, 20); ax2.set_xlabel("knockdown of", labelpad=36 if s else 18)
     pass
     for j in range(0, len(xs), 2): ax2.text((xs[j] + xs[j + 1]) / 2, -0.11, Gt.pair.values[j // 2], transform=ax2.get_xaxis_transform(), ha="center", va="top", fontsize=fs, fontweight="bold")
     save(fig, "Fig5g_pairs", mode)

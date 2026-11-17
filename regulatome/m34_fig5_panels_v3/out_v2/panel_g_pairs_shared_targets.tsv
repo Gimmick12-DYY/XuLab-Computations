@@ -1,0 +1,24 @@
+pair	figure4_pair	af3_5seed_strong	n_bound_a	n_bound_b	n_shared_targets	kd_a	kd_b	n_shared_responding_a	pct_shared_responding_a	pct_own_only_targets_responding_a	n_shared_responding_b	pct_shared_responding_b	pct_own_only_targets_responding_b
+MLX-SREBF2	True	False	2690	663	251	no usable top-25% knockdown	no usable top-25% knockdown						
+ETS2-RBBP7	True	True	1036	5522	658	ETS2 knockdown	RBBP7 knockdown	45.00	6.84	6.08	116.00	17.63	16.32
+DR1-NFYA	True	True	1095	5311	648	DR1 knockdown	NFYA knockdown	46.00	7.10	9.40	83.00	12.81	11.19
+ADNP-MTF2	False	True	1430	1754	359	ADNP knockdown	MTF2 knockdown	73.00	20.33	19.51	30.00	8.36	6.45
+DDIT3-MTF2	False	True	5117	1754	1092	DDIT3 knockdown	MTF2 knockdown	94.00	8.61	9.89	80.00	7.33	6.04
+DDIT3-RBBP7	False	True	5117	5522	3276	DDIT3 knockdown	RBBP7 knockdown	317.00	9.68	9.51	539.00	16.45	16.52
+DDIT3-TBX3	False	True	5117	1241	772	DDIT3 knockdown	TBX3 knockdown	73.00	9.46	9.64	61.00	7.90	8.96
+EPAS1-HES1	False	True	392	1455	82	no usable top-25% knockdown	no usable top-25% knockdown						
+EPAS1-SREBF2	False	True	392	663	54	no usable top-25% knockdown	no usable top-25% knockdown						
+HOXA10-RBBP4	False	True	1673	6048	1173	HOXA10 knockdown	no usable top-25% knockdown	141.00	12.02	11.60			
+HOXA10-XPA	False	True	1673	5830	1151	HOXA10 knockdown	XPA knockdown	132.00	11.47	12.84	102.00	8.86	9.53
+HOXB9-RBBP4	False	True	1588	6048	1071	HOXB9 knockdown	no usable top-25% knockdown	35.00	3.27	5.61			
+HOXB9-RBBP7	False	True	1588	5522	1063	HOXB9 knockdown	RBBP7 knockdown	41.00	3.86	4.38	170.00	15.99	16.60
+HOXB9-XPA	False	True	1588	5830	1133	HOXB9 knockdown	XPA knockdown	39.00	3.44	5.49	89.00	7.86	9.77
+HOXC4-ZUFSP	False	True	710	993	122	HOXC4 knockdown	ZUFSP knockdown	6.00	4.92	5.27	14.00	11.48	10.79
+MEF2A-RBBP7	False	True	775	5522	509	MEF2A knockdown	RBBP7 knockdown	64.00	12.57	15.79	73.00	14.34	16.70
+NR1D2-TBX3	False	True	1458	1241	237	NR1D2 knockdown	TBX3 knockdown	12.00	5.06	6.96	14.00	5.91	8.86
+RBBP4-ZIC2	False	True	6048	1551	1053	no usable top-25% knockdown	ZIC2 knockdown				82.00	7.79	9.64
+RBBP4-ZNF644	False	True	6048	1644	1072	no usable top-25% knockdown	ZNF644 knockdown				46.00	4.29	2.97
+RBBP4-ZNF703	False	True	6048	4361	2971	no usable top-25% knockdown	no usable top-25% knockdown						
+RBBP7-ZIC2	False	True	5522	1551	1031	RBBP7 knockdown	ZIC2 knockdown	181.00	17.56	16.23	84.00	8.15	8.85
+RBBP7-ZNF644	False	True	5522	1644	1092	RBBP7 knockdown	ZNF644 knockdown	187.00	17.12	16.32	39.00	3.57	4.35
+RBBP7-ZNF703	False	True	5522	4361	2896	RBBP7 knockdown	no usable top-25% knockdown	468.00	16.16	16.83			

@@ -14,14 +14,14 @@ def save(fig, name, mode):
     if mode == "slide": fig.savefig(f"{PL}/slide/{name}.png", dpi=300); fig.savefig(f"{PL}/slide/{name}.svg")
     else: fig.savefig(f"{PL}/paper/{name}.png", dpi=600); fig.savefig(f"{PL}/paper/{name}.svg"); fig.savefig(f"{PL}/paper/{name}.pdf")
     plt.close(fig); print("saved", mode, name, flush=True)
-T = pd.read_csv(f"{S35}/per_tf_threshold_sweep.tsv", sep="\t"); Po = pd.read_csv(f"{S35}/pooled_threshold_sweep.tsv", sep="\t"); TH = ["abs2", "abs3", "abs4", "abs5"]; XL = ["|z| ≥ 2", "|z| ≥ 3", "|z| ≥ 4", "|z| ≥ 5"]
+T = pd.read_csv(f"{S35}/per_tf_threshold_sweep_top25_sgRNA.tsv", sep="\t"); Po = pd.read_csv(f"{S35}/pooled_threshold_sweep_top25_sgRNA.tsv", sep="\t"); TH = ["abs2", "abs3", "abs4", "abs5"]; XL = ["|z| ≥ 2", "|z| ≥ 3", "|z| ≥ 4", "|z| ≥ 5"]
 def panel_h(mode):
     style(mode); s = mode == "slide"; fs = 12 if s else 6
     fig = plt.figure(figsize=SLIDE if s else (7.0, 2.6)); gs = fig.add_gridspec(1, 2, width_ratios=[1.35, 1], wspace=0.28, left=0.08, right=0.98, bottom=0.2, top=0.88)
     ax = fig.add_subplot(gs[0]); g = Po[Po.set == "ours, all 75 TFs"].set_index("threshold").loc[TH]; x = np.arange(4)
     ax.plot(x, g.pooled_pct_recovered, "-o", color=OURS, ms=9 if s else 4, label="found in our Regulome (HEK293T)"); ax.plot(x, g.pooled_reference_pct, "--", color=MID, label="expected from the number of edges")
     for xi, (pc, nt, nl) in enumerate(zip(g.pooled_pct_recovered, g.n_tfs_ge10_responders, g.total_responders)): ax.text(xi, pc + 0.6, f"{nt} TFs\n{nl:,} links", ha="center", va="bottom", fontsize=fs * 0.9, color=DARK)
-    ax.set_xticks(x); ax.set_xticklabels(XL); ax.set_xlabel("knockdown threshold"); ax.set_ylabel("% of Perturb-seq links found"); ax.set_ylim(0, 30); ax.set_xlim(-0.4, 3.4); ax.set_title("all TFs with a knockdown (pooled)", loc="left", fontsize=fs * 1.05)
+    ax.set_xticks(x); ax.set_xticklabels(XL); ax.set_xlabel("knockdown threshold"); ax.set_ylabel("% of Perturb-seq links found"); ax.set_ylim(0, 30); ax.set_xlim(-0.4, 3.4); ax.set_title("all TFs with a usable knockdown (pooled, top-25% sgRNA cells)", loc="left", fontsize=fs * 1.05)
     ax.legend(loc="lower left", frameon=False)
     ax2 = fig.add_subplot(gs[1]); o = Po[Po.set == "ours, 10 TFs with bulk ChIP"].set_index("threshold").loc[TH]; b = Po[Po.set.str.startswith("bulk")].set_index("threshold").loc[TH]
     ax2.plot(x, o.pooled_pct_recovered, "-o", color=OURS, ms=9 if s else 4, label="ours"); ax2.plot(x, o.pooled_reference_pct, "--", color=OURS, alpha=0.6, label="ours, expected")
@@ -33,25 +33,27 @@ def panel_h(mode):
     save(fig, "Fig5h_threshold_sweep", mode)
 def panel_i(mode):
     style(mode); s = mode == "slide"; fs = 12 if s else 6; ours = T[T.source.str.startswith("our")]
-    fig = plt.figure(figsize=SLIDE if s else (7.0, 3.4)); gs = fig.add_gridspec(2, 1, height_ratios=[1.25, 1], hspace=0.62, left=0.07, right=0.99, bottom=0.12, top=0.93)
+    fig = plt.figure(figsize=SLIDE if s else (7.0, 3.4)); gs = fig.add_gridspec(2, 1, height_ratios=[1.25, 1], hspace=0.62, left=0.07, right=0.99, bottom=0.155, top=0.93)
     NAMED = {"NRF1", "DNMT1", "E4F1", "ZNF143", "CTCF"}
-    for row, (th, ttl) in enumerate((("rep2", "Tier-1 links (both cell halves |z| ≥ 2)"), ("abs4", "|z| ≥ 4"))):
+    for row, (th, ttl) in enumerate((("abs2", "|z| ≥ 2"), ("abs4", "|z| ≥ 4"))):
         g = ours[ours.threshold == th].copy()
         if th == "abs4": g = g[g.enough_responders]
         g["diff"] = g.pct_recovered - g.reference_pct; g = g.sort_values(["enough_responders", "diff"], ascending=[False, False]).reset_index(drop=True); ax = fig.add_subplot(gs[row]); x = np.arange(len(g))
         for xi, r in g.iterrows():
             c = OURS if r.enough_responders else LIGHT; ax.plot([xi, xi], [r.reference_pct, r.pct_recovered], color=PALE if r.enough_responders else "#F2F2F2", lw=3 if s else 1.5, zorder=1)
             ax.scatter(xi, r.reference_pct, marker="_", s=120 if s else 25, color=MID if r.enough_responders else LIGHT, zorder=2, lw=2 if s else 1); ax.scatter(xi, r.pct_recovered, s=45 if s else 8, color=c, zorder=3)
-        top6 = set(g[g.enough_responders].nlargest(6, "diff").TF); lab = [t if (t in NAMED or t in top6 or len(g) <= 20) else "" for t in g.TF]; ax.set_xticks(x); ax.set_xticklabels(lab, rotation=90 if len(g) > 20 else 45, ha="center" if len(g) > 20 else "right", fontsize=fs)
-        if len(g) > 20:
+        top6 = set(g[g.enough_responders].nlargest(6, "diff").TF); lab = [(t + "*" if t == "CTCF" else t) if (t in NAMED or t in top6 or len(g) <= 30) else "" for t in g.TF]; ax.set_xticks(x); ax.set_xticklabels(lab, rotation=90 if len(g) > 30 else 45, ha="center" if len(g) > 30 else "right", fontsize=fs)
+        if len(g) > 30:
             for xi, t in enumerate(g.TF):
                 if t in NAMED: ax.get_xticklabels()[xi].set_fontweight("bold")
             ax.tick_params(axis="x", length=0)
         ax.set_xlim(-1, len(g)); ax.set_ylabel("% of links found"); ax.set_title(f"{ttl}: {int(g.enough_responders.sum())} TFs with ≥ 10 links" + (f", grey = fewer" if (~g.enough_responders).any() else ""), loc="left", fontsize=fs * 1.05)
+        if row == 1: ax.text(1.0, 1.04, "* CTCF: known exception (untested)", transform=ax.transAxes, ha="right", va="bottom", fontsize=fs * 0.9, color=MID)
     from matplotlib.lines import Line2D
     fig.legend(handles=[Line2D([], [], marker="o", ls="", color=OURS, label="found in our Regulome"), Line2D([], [], marker="_", ls="", color=MID, markersize=12, mew=2, label="expected from the TF's number of edges")], loc="upper right", ncol=2, frameon=False, fontsize=fs)
     save(fig, "Fig5i_high_confidence_per_tf", mode)
 for m in ("paper", "slide"): panel_h(m); panel_i(m)
+raise SystemExit  # v2: the all-cells high-confidence link table below is kept as a reference and not rebuilt
 # high-confidence link table
 X34 = "/work/users/d/y/dyy12/XuLab"; TFL = list(TF); gi = {g: k for k, g in enumerate(UG)}; OWN = {"HP1": ["CBX1", "CBX3", "CBX5"], "ZUFSP": ["ZUP1"]}
 for i, t in enumerate(TFL):

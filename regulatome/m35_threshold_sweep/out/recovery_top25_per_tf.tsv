@@ -1,0 +1,526 @@
+label	version	threshold	threshold_label	source	TF	reference_cell_line	primary_reference	bulk_tf	links	found	pct_found	expected_pct	fold	ge10_links	top25_cells	usable_knockdown_ge25_cells
+descriptive	top25_sgRNA	abs2	|z| >= 2	our HITAG (HEK293T)	ADNP	HEK293T (ours)	True	False	2166	282	13.019	12.729	1.023	True	119	True
+descriptive	top25_sgRNA	abs3	|z| >= 3	our HITAG (HEK293T)	ADNP	HEK293T (ours)	True	False	626	85	13.578	12.729	1.067	True	119	True
+descriptive	top25_sgRNA	abs4	|z| >= 4	our HITAG (HEK293T)	ADNP	HEK293T (ours)	True	False	187	33	17.647	12.729	1.386	True	119	True
+descriptive	top25_sgRNA	abs5	|z| >= 5	our HITAG (HEK293T)	ADNP	HEK293T (ours)	True	False	54	12	22.222	12.729	1.746	True	119	True
+descriptive	top25_sgRNA	top50	top 50 by |z|	our HITAG (HEK293T)	ADNP	HEK293T (ours)	True	False	50	12	24.000	12.729	1.885	True	119	True
+descriptive	top25_sgRNA	top100	top 100 by |z|	our HITAG (HEK293T)	ADNP	HEK293T (ours)	True	False	100	15	15.000	12.729	1.178	True	119	True
+descriptive	top25_sgRNA	top200	top 200 by |z|	our HITAG (HEK293T)	ADNP	HEK293T (ours)	True	False	200	36	18.000	12.729	1.414	True	119	True
+descriptive	top25_sgRNA	abs2	|z| >= 2	our HITAG (HEK293T)	AKAP8L	HEK293T (ours)	True	False	563	88	15.631	12.881	1.213	True	29	True
+descriptive	top25_sgRNA	abs3	|z| >= 3	our HITAG (HEK293T)	AKAP8L	HEK293T (ours)	True	False	31	2	6.452	12.881	0.501	True	29	True
+descriptive	top25_sgRNA	abs4	|z| >= 4	our HITAG (HEK293T)	AKAP8L	HEK293T (ours)	True	False	0	0		12.881		False	29	True
+descriptive	top25_sgRNA	abs5	|z| >= 5	our HITAG (HEK293T)	AKAP8L	HEK293T (ours)	True	False	0	0		12.881		False	29	True
+descriptive	top25_sgRNA	top50	top 50 by |z|	our HITAG (HEK293T)	AKAP8L	HEK293T (ours)	True	False	50	7	14.000	12.881	1.087	True	29	True
+descriptive	top25_sgRNA	top100	top 100 by |z|	our HITAG (HEK293T)	AKAP8L	HEK293T (ours)	True	False	100	15	15.000	12.881	1.165	True	29	True
+descriptive	top25_sgRNA	top200	top 200 by |z|	our HITAG (HEK293T)	AKAP8L	HEK293T (ours)	True	False	200	26	13.000	12.881	1.009	True	29	True
+descriptive	top25_sgRNA	abs2	|z| >= 2	our HITAG (HEK293T)	CHAMP1	HEK293T (ours)	True	False	367	29	7.902	10.556	0.749	True	26	True
+descriptive	top25_sgRNA	abs3	|z| >= 3	our HITAG (HEK293T)	CHAMP1	HEK293T (ours)	True	False	16	2	12.500	10.556	1.184	True	26	True
+descriptive	top25_sgRNA	abs4	|z| >= 4	our HITAG (HEK293T)	CHAMP1	HEK293T (ours)	True	False	2	0	0.000	10.556	0.000	False	26	True
+descriptive	top25_sgRNA	abs5	|z| >= 5	our HITAG (HEK293T)	CHAMP1	HEK293T (ours)	True	False	0	0		10.556		False	26	True
+descriptive	top25_sgRNA	top50	top 50 by |z|	our HITAG (HEK293T)	CHAMP1	HEK293T (ours)	True	False	50	6	12.000	10.556	1.137	True	26	True
+descriptive	top25_sgRNA	top100	top 100 by |z|	our HITAG (HEK293T)	CHAMP1	HEK293T (ours)	True	False	100	8	8.000	10.556	0.758	True	26	True
+descriptive	top25_sgRNA	top200	top 200 by |z|	our HITAG (HEK293T)	CHAMP1	HEK293T (ours)	True	False	200	19	9.500	10.556	0.900	True	26	True
+descriptive	top25_sgRNA	abs2	|z| >= 2	our HITAG (HEK293T)	CTCF	HEK293T (ours)	True	True	1295	422	32.587	32.612	0.999	True	80	True
+descriptive	top25_sgRNA	abs3	|z| >= 3	our HITAG (HEK293T)	CTCF	HEK293T (ours)	True	True	272	78	28.676	32.612	0.879	True	80	True
+descriptive	top25_sgRNA	abs4	|z| >= 4	our HITAG (HEK293T)	CTCF	HEK293T (ours)	True	True	65	14	21.538	32.612	0.660	True	80	True
+descriptive	top25_sgRNA	abs5	|z| >= 5	our HITAG (HEK293T)	CTCF	HEK293T (ours)	True	True	20	3	15.000	32.612	0.460	True	80	True
+descriptive	top25_sgRNA	top50	top 50 by |z|	our HITAG (HEK293T)	CTCF	HEK293T (ours)	True	True	50	12	24.000	32.612	0.736	True	80	True
+descriptive	top25_sgRNA	top100	top 100 by |z|	our HITAG (HEK293T)	CTCF	HEK293T (ours)	True	True	100	25	25.000	32.612	0.767	True	80	True
+descriptive	top25_sgRNA	top200	top 200 by |z|	our HITAG (HEK293T)	CTCF	HEK293T (ours)	True	True	200	56	28.000	32.612	0.859	True	80	True
+descriptive	top25_sgRNA	abs2	|z| >= 2	our HITAG (HEK293T)	DDIT3	HEK293T (ours)	True	False	1036	492	47.490	45.573	1.042	True	67	True
+descriptive	top25_sgRNA	abs3	|z| >= 3	our HITAG (HEK293T)	DDIT3	HEK293T (ours)	True	False	184	93	50.543	45.573	1.109	True	67	True
+descriptive	top25_sgRNA	abs4	|z| >= 4	our HITAG (HEK293T)	DDIT3	HEK293T (ours)	True	False	24	11	45.833	45.573	1.006	True	67	True
+descriptive	top25_sgRNA	abs5	|z| >= 5	our HITAG (HEK293T)	DDIT3	HEK293T (ours)	True	False	1	0	0.000	45.573	0.000	False	67	True
+descriptive	top25_sgRNA	top50	top 50 by |z|	our HITAG (HEK293T)	DDIT3	HEK293T (ours)	True	False	50	26	52.000	45.573	1.141	True	67	True
+descriptive	top25_sgRNA	top100	top 100 by |z|	our HITAG (HEK293T)	DDIT3	HEK293T (ours)	True	False	100	54	54.000	45.573	1.185	True	67	True
+descriptive	top25_sgRNA	top200	top 200 by |z|	our HITAG (HEK293T)	DDIT3	HEK293T (ours)	True	False	200	104	52.000	45.573	1.141	True	67	True
+descriptive	top25_sgRNA	abs2	|z| >= 2	our HITAG (HEK293T)	DNMT1	HEK293T (ours)	True	False	1978	232	11.729	10.672	1.099	True	114	True
+descriptive	top25_sgRNA	abs3	|z| >= 3	our HITAG (HEK293T)	DNMT1	HEK293T (ours)	True	False	541	63	11.645	10.672	1.091	True	114	True
+descriptive	top25_sgRNA	abs4	|z| >= 4	our HITAG (HEK293T)	DNMT1	HEK293T (ours)	True	False	164	27	16.463	10.672	1.543	True	114	True
+descriptive	top25_sgRNA	abs5	|z| >= 5	our HITAG (HEK293T)	DNMT1	HEK293T (ours)	True	False	54	13	24.074	10.672	2.256	True	114	True
+descriptive	top25_sgRNA	top50	top 50 by |z|	our HITAG (HEK293T)	DNMT1	HEK293T (ours)	True	False	50	11	22.000	10.672	2.062	True	114	True
+descriptive	top25_sgRNA	top100	top 100 by |z|	our HITAG (HEK293T)	DNMT1	HEK293T (ours)	True	False	100	19	19.000	10.672	1.780	True	114	True
+descriptive	top25_sgRNA	top200	top 200 by |z|	our HITAG (HEK293T)	DNMT1	HEK293T (ours)	True	False	200	32	16.000	10.672	1.499	True	114	True
+descriptive	top25_sgRNA	abs2	|z| >= 2	our HITAG (HEK293T)	DR1	HEK293T (ours)	True	False	819	88	10.745	9.745	1.103	True	36	True
+descriptive	top25_sgRNA	abs3	|z| >= 3	our HITAG (HEK293T)	DR1	HEK293T (ours)	True	False	72	9	12.500	9.745	1.283	True	36	True
+descriptive	top25_sgRNA	abs4	|z| >= 4	our HITAG (HEK293T)	DR1	HEK293T (ours)	True	False	5	1	20.000	9.745	2.052	False	36	True
+descriptive	top25_sgRNA	abs5	|z| >= 5	our HITAG (HEK293T)	DR1	HEK293T (ours)	True	False	1	0	0.000	9.745	0.000	False	36	True
+descriptive	top25_sgRNA	top50	top 50 by |z|	our HITAG (HEK293T)	DR1	HEK293T (ours)	True	False	50	8	16.000	9.745	1.642	True	36	True
+descriptive	top25_sgRNA	top100	top 100 by |z|	our HITAG (HEK293T)	DR1	HEK293T (ours)	True	False	100	13	13.000	9.745	1.334	True	36	True
+descriptive	top25_sgRNA	top200	top 200 by |z|	our HITAG (HEK293T)	DR1	HEK293T (ours)	True	False	200	23	11.500	9.745	1.180	True	36	True
+descriptive	top25_sgRNA	abs2	|z| >= 2	our HITAG (HEK293T)	E2F3	HEK293T (ours)	True	False	474	224	47.257	46.749	1.011	True	30	True
+descriptive	top25_sgRNA	abs3	|z| >= 3	our HITAG (HEK293T)	E2F3	HEK293T (ours)	True	False	31	16	51.613	46.749	1.104	True	30	True
+descriptive	top25_sgRNA	abs4	|z| >= 4	our HITAG (HEK293T)	E2F3	HEK293T (ours)	True	False	2	1	50.000	46.749	1.070	False	30	True
+descriptive	top25_sgRNA	abs5	|z| >= 5	our HITAG (HEK293T)	E2F3	HEK293T (ours)	True	False	0	0		46.749		False	30	True
+descriptive	top25_sgRNA	top50	top 50 by |z|	our HITAG (HEK293T)	E2F3	HEK293T (ours)	True	False	50	25	50.000	46.749	1.070	True	30	True
+descriptive	top25_sgRNA	top100	top 100 by |z|	our HITAG (HEK293T)	E2F3	HEK293T (ours)	True	False	100	50	50.000	46.749	1.070	True	30	True
+descriptive	top25_sgRNA	top200	top 200 by |z|	our HITAG (HEK293T)	E2F3	HEK293T (ours)	True	False	200	93	46.500	46.749	0.995	True	30	True
+descriptive	top25_sgRNA	abs2	|z| >= 2	our HITAG (HEK293T)	E4F1	HEK293T (ours)	True	True	1750	347	19.829	19.909	0.996	True	105	True
+descriptive	top25_sgRNA	abs3	|z| >= 3	our HITAG (HEK293T)	E4F1	HEK293T (ours)	True	True	468	93	19.872	19.909	0.998	True	105	True
+descriptive	top25_sgRNA	abs4	|z| >= 4	our HITAG (HEK293T)	E4F1	HEK293T (ours)	True	True	168	46	27.381	19.909	1.375	True	105	True
+descriptive	top25_sgRNA	abs5	|z| >= 5	our HITAG (HEK293T)	E4F1	HEK293T (ours)	True	True	87	27	31.034	19.909	1.559	True	105	True
+descriptive	top25_sgRNA	top50	top 50 by |z|	our HITAG (HEK293T)	E4F1	HEK293T (ours)	True	True	50	16	32.000	19.909	1.607	True	105	True
+descriptive	top25_sgRNA	top100	top 100 by |z|	our HITAG (HEK293T)	E4F1	HEK293T (ours)	True	True	100	29	29.000	19.909	1.457	True	105	True
+descriptive	top25_sgRNA	top200	top 200 by |z|	our HITAG (HEK293T)	E4F1	HEK293T (ours)	True	True	200	50	25.000	19.909	1.256	True	105	True
+descriptive	top25_sgRNA	abs2	|z| >= 2	our HITAG (HEK293T)	ETS2	HEK293T (ours)	True	False	833	68	8.163	9.229	0.885	True	74	True
+descriptive	top25_sgRNA	abs3	|z| >= 3	our HITAG (HEK293T)	ETS2	HEK293T (ours)	True	False	127	10	7.874	9.229	0.853	True	74	True
+descriptive	top25_sgRNA	abs4	|z| >= 4	our HITAG (HEK293T)	ETS2	HEK293T (ours)	True	False	6	0	0.000	9.229	0.000	False	74	True
+descriptive	top25_sgRNA	abs5	|z| >= 5	our HITAG (HEK293T)	ETS2	HEK293T (ours)	True	False	0	0		9.229		False	74	True
+descriptive	top25_sgRNA	top50	top 50 by |z|	our HITAG (HEK293T)	ETS2	HEK293T (ours)	True	False	50	4	8.000	9.229	0.867	True	74	True
+descriptive	top25_sgRNA	top100	top 100 by |z|	our HITAG (HEK293T)	ETS2	HEK293T (ours)	True	False	100	7	7.000	9.229	0.759	True	74	True
+descriptive	top25_sgRNA	top200	top 200 by |z|	our HITAG (HEK293T)	ETS2	HEK293T (ours)	True	False	200	14	7.000	9.229	0.759	True	74	True
+descriptive	top25_sgRNA	abs2	|z| >= 2	our HITAG (HEK293T)	FLYWCH1	HEK293T (ours)	True	False	1026	136	13.255	13.896	0.954	True	59	True
+descriptive	top25_sgRNA	abs3	|z| >= 3	our HITAG (HEK293T)	FLYWCH1	HEK293T (ours)	True	False	154	30	19.481	13.896	1.402	True	59	True
+descriptive	top25_sgRNA	abs4	|z| >= 4	our HITAG (HEK293T)	FLYWCH1	HEK293T (ours)	True	False	14	4	28.571	13.896	2.056	True	59	True
+descriptive	top25_sgRNA	abs5	|z| >= 5	our HITAG (HEK293T)	FLYWCH1	HEK293T (ours)	True	False	1	1	100.000	13.896	7.196	False	59	True
+descriptive	top25_sgRNA	top50	top 50 by |z|	our HITAG (HEK293T)	FLYWCH1	HEK293T (ours)	True	False	50	12	24.000	13.896	1.727	True	59	True
+descriptive	top25_sgRNA	top100	top 100 by |z|	our HITAG (HEK293T)	FLYWCH1	HEK293T (ours)	True	False	100	19	19.000	13.896	1.367	True	59	True
+descriptive	top25_sgRNA	top200	top 200 by |z|	our HITAG (HEK293T)	FLYWCH1	HEK293T (ours)	True	False	200	33	16.500	13.896	1.187	True	59	True
+descriptive	top25_sgRNA	abs2	|z| >= 2	our HITAG (HEK293T)	FOXC1	HEK293T (ours)	True	False	873	174	19.931	18.742	1.063	True	38	True
+descriptive	top25_sgRNA	abs3	|z| >= 3	our HITAG (HEK293T)	FOXC1	HEK293T (ours)	True	False	113	31	27.434	18.742	1.464	True	38	True
+descriptive	top25_sgRNA	abs4	|z| >= 4	our HITAG (HEK293T)	FOXC1	HEK293T (ours)	True	False	2	0	0.000	18.742	0.000	False	38	True
+descriptive	top25_sgRNA	abs5	|z| >= 5	our HITAG (HEK293T)	FOXC1	HEK293T (ours)	True	False	0	0		18.742		False	38	True
+descriptive	top25_sgRNA	top50	top 50 by |z|	our HITAG (HEK293T)	FOXC1	HEK293T (ours)	True	False	50	13	26.000	18.742	1.387	True	38	True
+descriptive	top25_sgRNA	top100	top 100 by |z|	our HITAG (HEK293T)	FOXC1	HEK293T (ours)	True	False	100	27	27.000	18.742	1.441	True	38	True
+descriptive	top25_sgRNA	top200	top 200 by |z|	our HITAG (HEK293T)	FOXC1	HEK293T (ours)	True	False	200	47	23.500	18.742	1.254	True	38	True
+descriptive	top25_sgRNA	abs2	|z| >= 2	our HITAG (HEK293T)	FOXJ3	HEK293T (ours)	True	False	514	50	9.728	9.291	1.047	True	56	True
+descriptive	top25_sgRNA	abs3	|z| >= 3	our HITAG (HEK293T)	FOXJ3	HEK293T (ours)	True	False	26	2	7.692	9.291	0.828	True	56	True
+descriptive	top25_sgRNA	abs4	|z| >= 4	our HITAG (HEK293T)	FOXJ3	HEK293T (ours)	True	False	2	0	0.000	9.291	0.000	False	56	True
+descriptive	top25_sgRNA	abs5	|z| >= 5	our HITAG (HEK293T)	FOXJ3	HEK293T (ours)	True	False	0	0		9.291		False	56	True
+descriptive	top25_sgRNA	top50	top 50 by |z|	our HITAG (HEK293T)	FOXJ3	HEK293T (ours)	True	False	50	3	6.000	9.291	0.646	True	56	True
+descriptive	top25_sgRNA	top100	top 100 by |z|	our HITAG (HEK293T)	FOXJ3	HEK293T (ours)	True	False	100	8	8.000	9.291	0.861	True	56	True
+descriptive	top25_sgRNA	top200	top 200 by |z|	our HITAG (HEK293T)	FOXJ3	HEK293T (ours)	True	False	200	17	8.500	9.291	0.915	True	56	True
+descriptive	top25_sgRNA	abs2	|z| >= 2	our HITAG (HEK293T)	FOXK1	HEK293T (ours)	True	False	1760	89	5.057	4.570	1.107	True	86	True
+descriptive	top25_sgRNA	abs3	|z| >= 3	our HITAG (HEK293T)	FOXK1	HEK293T (ours)	True	False	453	19	4.194	4.570	0.918	True	86	True
+descriptive	top25_sgRNA	abs4	|z| >= 4	our HITAG (HEK293T)	FOXK1	HEK293T (ours)	True	False	124	6	4.839	4.570	1.059	True	86	True
+descriptive	top25_sgRNA	abs5	|z| >= 5	our HITAG (HEK293T)	FOXK1	HEK293T (ours)	True	False	22	1	4.545	4.570	0.995	True	86	True
+descriptive	top25_sgRNA	top50	top 50 by |z|	our HITAG (HEK293T)	FOXK1	HEK293T (ours)	True	False	50	2	4.000	4.570	0.875	True	86	True
+descriptive	top25_sgRNA	top100	top 100 by |z|	our HITAG (HEK293T)	FOXK1	HEK293T (ours)	True	False	100	5	5.000	4.570	1.094	True	86	True
+descriptive	top25_sgRNA	top200	top 200 by |z|	our HITAG (HEK293T)	FOXK1	HEK293T (ours)	True	False	200	8	4.000	4.570	0.875	True	86	True
+descriptive	top25_sgRNA	abs2	|z| >= 2	our HITAG (HEK293T)	HOXA10	HEK293T (ours)	True	False	1288	199	15.450	14.903	1.037	True	74	True
+descriptive	top25_sgRNA	abs3	|z| >= 3	our HITAG (HEK293T)	HOXA10	HEK293T (ours)	True	False	256	46	17.969	14.903	1.206	True	74	True
+descriptive	top25_sgRNA	abs4	|z| >= 4	our HITAG (HEK293T)	HOXA10	HEK293T (ours)	True	False	57	13	22.807	14.903	1.530	True	74	True
+descriptive	top25_sgRNA	abs5	|z| >= 5	our HITAG (HEK293T)	HOXA10	HEK293T (ours)	True	False	2	1	50.000	14.903	3.355	False	74	True
+descriptive	top25_sgRNA	top50	top 50 by |z|	our HITAG (HEK293T)	HOXA10	HEK293T (ours)	True	False	50	13	26.000	14.903	1.745	True	74	True
+descriptive	top25_sgRNA	top100	top 100 by |z|	our HITAG (HEK293T)	HOXA10	HEK293T (ours)	True	False	100	18	18.000	14.903	1.208	True	74	True
+descriptive	top25_sgRNA	top200	top 200 by |z|	our HITAG (HEK293T)	HOXA10	HEK293T (ours)	True	False	200	37	18.500	14.903	1.241	True	74	True
+descriptive	top25_sgRNA	abs2	|z| >= 2	our HITAG (HEK293T)	HOXA5	HEK293T (ours)	True	False	860	46	5.349	4.819	1.110	True	38	True
+descriptive	top25_sgRNA	abs3	|z| >= 3	our HITAG (HEK293T)	HOXA5	HEK293T (ours)	True	False	102	3	2.941	4.819	0.610	True	38	True
+descriptive	top25_sgRNA	abs4	|z| >= 4	our HITAG (HEK293T)	HOXA5	HEK293T (ours)	True	False	4	0	0.000	4.819	0.000	False	38	True
+descriptive	top25_sgRNA	abs5	|z| >= 5	our HITAG (HEK293T)	HOXA5	HEK293T (ours)	True	False	0	0		4.819		False	38	True
+descriptive	top25_sgRNA	top50	top 50 by |z|	our HITAG (HEK293T)	HOXA5	HEK293T (ours)	True	False	50	1	2.000	4.819	0.415	True	38	True
+descriptive	top25_sgRNA	top100	top 100 by |z|	our HITAG (HEK293T)	HOXA5	HEK293T (ours)	True	False	100	3	3.000	4.819	0.623	True	38	True
+descriptive	top25_sgRNA	top200	top 200 by |z|	our HITAG (HEK293T)	HOXA5	HEK293T (ours)	True	False	200	11	5.500	4.819	1.141	True	38	True
+descriptive	top25_sgRNA	abs2	|z| >= 2	our HITAG (HEK293T)	HOXB6	HEK293T (ours)	True	False	501	81	16.168	16.007	1.010	True	49	True
+descriptive	top25_sgRNA	abs3	|z| >= 3	our HITAG (HEK293T)	HOXB6	HEK293T (ours)	True	False	42	6	14.286	16.007	0.892	True	49	True
+descriptive	top25_sgRNA	abs4	|z| >= 4	our HITAG (HEK293T)	HOXB6	HEK293T (ours)	True	False	1	0	0.000	16.007	0.000	False	49	True
+descriptive	top25_sgRNA	abs5	|z| >= 5	our HITAG (HEK293T)	HOXB6	HEK293T (ours)	True	False	0	0		16.007		False	49	True
+descriptive	top25_sgRNA	top50	top 50 by |z|	our HITAG (HEK293T)	HOXB6	HEK293T (ours)	True	False	50	9	18.000	16.007	1.124	True	49	True
+descriptive	top25_sgRNA	top100	top 100 by |z|	our HITAG (HEK293T)	HOXB6	HEK293T (ours)	True	False	100	19	19.000	16.007	1.187	True	49	True
+descriptive	top25_sgRNA	top200	top 200 by |z|	our HITAG (HEK293T)	HOXB6	HEK293T (ours)	True	False	200	36	18.000	16.007	1.124	True	49	True
+descriptive	top25_sgRNA	abs2	|z| >= 2	our HITAG (HEK293T)	HOXB8	HEK293T (ours)	True	False	431	50	11.601	9.888	1.173	True	73	True
+descriptive	top25_sgRNA	abs3	|z| >= 3	our HITAG (HEK293T)	HOXB8	HEK293T (ours)	True	False	31	4	12.903	9.888	1.305	True	73	True
+descriptive	top25_sgRNA	abs4	|z| >= 4	our HITAG (HEK293T)	HOXB8	HEK293T (ours)	True	False	0	0		9.888		False	73	True
+descriptive	top25_sgRNA	abs5	|z| >= 5	our HITAG (HEK293T)	HOXB8	HEK293T (ours)	True	False	0	0		9.888		False	73	True
+descriptive	top25_sgRNA	top50	top 50 by |z|	our HITAG (HEK293T)	HOXB8	HEK293T (ours)	True	False	50	9	18.000	9.888	1.820	True	73	True
+descriptive	top25_sgRNA	top100	top 100 by |z|	our HITAG (HEK293T)	HOXB8	HEK293T (ours)	True	False	100	19	19.000	9.888	1.922	True	73	True
+descriptive	top25_sgRNA	top200	top 200 by |z|	our HITAG (HEK293T)	HOXB8	HEK293T (ours)	True	False	200	30	15.000	9.888	1.517	True	73	True
+descriptive	top25_sgRNA	abs2	|z| >= 2	our HITAG (HEK293T)	HOXB9	HEK293T (ours)	True	False	479	64	13.361	14.146	0.945	True	36	True
+descriptive	top25_sgRNA	abs3	|z| >= 3	our HITAG (HEK293T)	HOXB9	HEK293T (ours)	True	False	34	5	14.706	14.146	1.040	True	36	True
+descriptive	top25_sgRNA	abs4	|z| >= 4	our HITAG (HEK293T)	HOXB9	HEK293T (ours)	True	False	2	0	0.000	14.146	0.000	False	36	True
+descriptive	top25_sgRNA	abs5	|z| >= 5	our HITAG (HEK293T)	HOXB9	HEK293T (ours)	True	False	1	0	0.000	14.146	0.000	False	36	True
+descriptive	top25_sgRNA	top50	top 50 by |z|	our HITAG (HEK293T)	HOXB9	HEK293T (ours)	True	False	50	8	16.000	14.146	1.131	True	36	True
+descriptive	top25_sgRNA	top100	top 100 by |z|	our HITAG (HEK293T)	HOXB9	HEK293T (ours)	True	False	100	19	19.000	14.146	1.343	True	36	True
+descriptive	top25_sgRNA	top200	top 200 by |z|	our HITAG (HEK293T)	HOXB9	HEK293T (ours)	True	False	200	30	15.000	14.146	1.060	True	36	True
+descriptive	top25_sgRNA	abs2	|z| >= 2	our HITAG (HEK293T)	HOXC4	HEK293T (ours)	True	False	614	37	6.026	6.325	0.953	True	80	True
+descriptive	top25_sgRNA	abs3	|z| >= 3	our HITAG (HEK293T)	HOXC4	HEK293T (ours)	True	False	60	5	8.333	6.325	1.318	True	80	True
+descriptive	top25_sgRNA	abs4	|z| >= 4	our HITAG (HEK293T)	HOXC4	HEK293T (ours)	True	False	7	1	14.286	6.325	2.259	False	80	True
+descriptive	top25_sgRNA	abs5	|z| >= 5	our HITAG (HEK293T)	HOXC4	HEK293T (ours)	True	False	3	0	0.000	6.325	0.000	False	80	True
+descriptive	top25_sgRNA	top50	top 50 by |z|	our HITAG (HEK293T)	HOXC4	HEK293T (ours)	True	False	50	5	10.000	6.325	1.581	True	80	True
+descriptive	top25_sgRNA	top100	top 100 by |z|	our HITAG (HEK293T)	HOXC4	HEK293T (ours)	True	False	100	7	7.000	6.325	1.107	True	80	True
+descriptive	top25_sgRNA	top200	top 200 by |z|	our HITAG (HEK293T)	HOXC4	HEK293T (ours)	True	False	200	14	7.000	6.325	1.107	True	80	True
+descriptive	top25_sgRNA	abs2	|z| >= 2	our HITAG (HEK293T)	HOXC9	HEK293T (ours)	True	False	675	61	9.037	9.656	0.936	True	37	True
+descriptive	top25_sgRNA	abs3	|z| >= 3	our HITAG (HEK293T)	HOXC9	HEK293T (ours)	True	False	67	8	11.940	9.656	1.237	True	37	True
+descriptive	top25_sgRNA	abs4	|z| >= 4	our HITAG (HEK293T)	HOXC9	HEK293T (ours)	True	False	1	1	100.000	9.656	10.356	False	37	True
+descriptive	top25_sgRNA	abs5	|z| >= 5	our HITAG (HEK293T)	HOXC9	HEK293T (ours)	True	False	0	0		9.656		False	37	True
+descriptive	top25_sgRNA	top50	top 50 by |z|	our HITAG (HEK293T)	HOXC9	HEK293T (ours)	True	False	50	7	14.000	9.656	1.450	True	37	True
+descriptive	top25_sgRNA	top100	top 100 by |z|	our HITAG (HEK293T)	HOXC9	HEK293T (ours)	True	False	100	13	13.000	9.656	1.346	True	37	True
+descriptive	top25_sgRNA	top200	top 200 by |z|	our HITAG (HEK293T)	HOXC9	HEK293T (ours)	True	False	200	23	11.500	9.656	1.191	True	37	True
+descriptive	top25_sgRNA	abs2	|z| >= 2	our HITAG (HEK293T)	HOXD10	HEK293T (ours)	True	False	856	62	7.243	7.509	0.965	True	99	True
+descriptive	top25_sgRNA	abs3	|z| >= 3	our HITAG (HEK293T)	HOXD10	HEK293T (ours)	True	False	143	15	10.490	7.509	1.397	True	99	True
+descriptive	top25_sgRNA	abs4	|z| >= 4	our HITAG (HEK293T)	HOXD10	HEK293T (ours)	True	False	12	1	8.333	7.509	1.110	True	99	True
+descriptive	top25_sgRNA	abs5	|z| >= 5	our HITAG (HEK293T)	HOXD10	HEK293T (ours)	True	False	0	0		7.509		False	99	True
+descriptive	top25_sgRNA	top50	top 50 by |z|	our HITAG (HEK293T)	HOXD10	HEK293T (ours)	True	False	50	5	10.000	7.509	1.332	True	99	True
+descriptive	top25_sgRNA	top100	top 100 by |z|	our HITAG (HEK293T)	HOXD10	HEK293T (ours)	True	False	100	11	11.000	7.509	1.465	True	99	True
+descriptive	top25_sgRNA	top200	top 200 by |z|	our HITAG (HEK293T)	HOXD10	HEK293T (ours)	True	False	200	17	8.500	7.509	1.132	True	99	True
+descriptive	top25_sgRNA	abs2	|z| >= 2	our HITAG (HEK293T)	MAZ	HEK293T (ours)	True	True	1263	178	14.093	12.908	1.092	True	114	True
+descriptive	top25_sgRNA	abs3	|z| >= 3	our HITAG (HEK293T)	MAZ	HEK293T (ours)	True	True	251	35	13.944	12.908	1.080	True	114	True
+descriptive	top25_sgRNA	abs4	|z| >= 4	our HITAG (HEK293T)	MAZ	HEK293T (ours)	True	True	36	3	8.333	12.908	0.646	True	114	True
+descriptive	top25_sgRNA	abs5	|z| >= 5	our HITAG (HEK293T)	MAZ	HEK293T (ours)	True	True	5	0	0.000	12.908	0.000	False	114	True
+descriptive	top25_sgRNA	top50	top 50 by |z|	our HITAG (HEK293T)	MAZ	HEK293T (ours)	True	True	50	6	12.000	12.908	0.930	True	114	True
+descriptive	top25_sgRNA	top100	top 100 by |z|	our HITAG (HEK293T)	MAZ	HEK293T (ours)	True	True	100	11	11.000	12.908	0.852	True	114	True
+descriptive	top25_sgRNA	top200	top 200 by |z|	our HITAG (HEK293T)	MAZ	HEK293T (ours)	True	True	200	29	14.500	12.908	1.123	True	114	True
+descriptive	top25_sgRNA	abs2	|z| >= 2	our HITAG (HEK293T)	MEF2A	HEK293T (ours)	True	False	1486	106	7.133	6.904	1.033	True	44	True
+descriptive	top25_sgRNA	abs3	|z| >= 3	our HITAG (HEK293T)	MEF2A	HEK293T (ours)	True	False	282	27	9.574	6.904	1.387	True	44	True
+descriptive	top25_sgRNA	abs4	|z| >= 4	our HITAG (HEK293T)	MEF2A	HEK293T (ours)	True	False	51	4	7.843	6.904	1.136	True	44	True
+descriptive	top25_sgRNA	abs5	|z| >= 5	our HITAG (HEK293T)	MEF2A	HEK293T (ours)	True	False	4	0	0.000	6.904	0.000	False	44	True
+descriptive	top25_sgRNA	top50	top 50 by |z|	our HITAG (HEK293T)	MEF2A	HEK293T (ours)	True	False	50	4	8.000	6.904	1.159	True	44	True
+descriptive	top25_sgRNA	top100	top 100 by |z|	our HITAG (HEK293T)	MEF2A	HEK293T (ours)	True	False	100	5	5.000	6.904	0.724	True	44	True
+descriptive	top25_sgRNA	top200	top 200 by |z|	our HITAG (HEK293T)	MEF2A	HEK293T (ours)	True	False	200	16	8.000	6.904	1.159	True	44	True
+descriptive	top25_sgRNA	abs2	|z| >= 2	our HITAG (HEK293T)	MEF2D	HEK293T (ours)	True	False	510	54	10.588	9.451	1.120	True	68	True
+descriptive	top25_sgRNA	abs3	|z| >= 3	our HITAG (HEK293T)	MEF2D	HEK293T (ours)	True	False	37	3	8.108	9.451	0.858	True	68	True
+descriptive	top25_sgRNA	abs4	|z| >= 4	our HITAG (HEK293T)	MEF2D	HEK293T (ours)	True	False	3	1	33.333	9.451	3.527	False	68	True
+descriptive	top25_sgRNA	abs5	|z| >= 5	our HITAG (HEK293T)	MEF2D	HEK293T (ours)	True	False	0	0		9.451		False	68	True
+descriptive	top25_sgRNA	top50	top 50 by |z|	our HITAG (HEK293T)	MEF2D	HEK293T (ours)	True	False	50	4	8.000	9.451	0.846	True	68	True
+descriptive	top25_sgRNA	top100	top 100 by |z|	our HITAG (HEK293T)	MEF2D	HEK293T (ours)	True	False	100	8	8.000	9.451	0.846	True	68	True
+descriptive	top25_sgRNA	top200	top 200 by |z|	our HITAG (HEK293T)	MEF2D	HEK293T (ours)	True	False	200	18	9.000	9.451	0.952	True	68	True
+descriptive	top25_sgRNA	abs2	|z| >= 2	our HITAG (HEK293T)	MSX2	HEK293T (ours)	True	False	1567	217	13.848	12.480	1.110	True	111	True
+descriptive	top25_sgRNA	abs3	|z| >= 3	our HITAG (HEK293T)	MSX2	HEK293T (ours)	True	False	397	59	14.861	12.480	1.191	True	111	True
+descriptive	top25_sgRNA	abs4	|z| >= 4	our HITAG (HEK293T)	MSX2	HEK293T (ours)	True	False	129	26	20.155	12.480	1.615	True	111	True
+descriptive	top25_sgRNA	abs5	|z| >= 5	our HITAG (HEK293T)	MSX2	HEK293T (ours)	True	False	30	6	20.000	12.480	1.603	True	111	True
+descriptive	top25_sgRNA	top50	top 50 by |z|	our HITAG (HEK293T)	MSX2	HEK293T (ours)	True	False	50	10	20.000	12.480	1.603	True	111	True
+descriptive	top25_sgRNA	top100	top 100 by |z|	our HITAG (HEK293T)	MSX2	HEK293T (ours)	True	False	100	19	19.000	12.480	1.522	True	111	True
+descriptive	top25_sgRNA	top200	top 200 by |z|	our HITAG (HEK293T)	MSX2	HEK293T (ours)	True	False	200	36	18.000	12.480	1.442	True	111	True
+descriptive	top25_sgRNA	abs2	|z| >= 2	our HITAG (HEK293T)	MTF2	HEK293T (ours)	True	False	716	120	16.760	15.624	1.073	True	47	True
+descriptive	top25_sgRNA	abs3	|z| >= 3	our HITAG (HEK293T)	MTF2	HEK293T (ours)	True	False	102	11	10.784	15.624	0.690	True	47	True
+descriptive	top25_sgRNA	abs4	|z| >= 4	our HITAG (HEK293T)	MTF2	HEK293T (ours)	True	False	13	1	7.692	15.624	0.492	True	47	True
+descriptive	top25_sgRNA	abs5	|z| >= 5	our HITAG (HEK293T)	MTF2	HEK293T (ours)	True	False	2	0	0.000	15.624	0.000	False	47	True
+descriptive	top25_sgRNA	top50	top 50 by |z|	our HITAG (HEK293T)	MTF2	HEK293T (ours)	True	False	50	6	12.000	15.624	0.768	True	47	True
+descriptive	top25_sgRNA	top100	top 100 by |z|	our HITAG (HEK293T)	MTF2	HEK293T (ours)	True	False	100	11	11.000	15.624	0.704	True	47	True
+descriptive	top25_sgRNA	top200	top 200 by |z|	our HITAG (HEK293T)	MTF2	HEK293T (ours)	True	False	200	24	12.000	15.624	0.768	True	47	True
+descriptive	top25_sgRNA	abs2	|z| >= 2	our HITAG (HEK293T)	NEUROD4	HEK293T (ours)	True	False	833	87	10.444	10.804	0.967	True	40	True
+descriptive	top25_sgRNA	abs3	|z| >= 3	our HITAG (HEK293T)	NEUROD4	HEK293T (ours)	True	False	71	6	8.451	10.804	0.782	True	40	True
+descriptive	top25_sgRNA	abs4	|z| >= 4	our HITAG (HEK293T)	NEUROD4	HEK293T (ours)	True	False	2	0	0.000	10.804	0.000	False	40	True
+descriptive	top25_sgRNA	abs5	|z| >= 5	our HITAG (HEK293T)	NEUROD4	HEK293T (ours)	True	False	0	0		10.804		False	40	True
+descriptive	top25_sgRNA	top50	top 50 by |z|	our HITAG (HEK293T)	NEUROD4	HEK293T (ours)	True	False	50	4	8.000	10.804	0.740	True	40	True
+descriptive	top25_sgRNA	top100	top 100 by |z|	our HITAG (HEK293T)	NEUROD4	HEK293T (ours)	True	False	100	9	9.000	10.804	0.833	True	40	True
+descriptive	top25_sgRNA	top200	top 200 by |z|	our HITAG (HEK293T)	NEUROD4	HEK293T (ours)	True	False	200	26	13.000	10.804	1.203	True	40	True
+descriptive	top25_sgRNA	abs2	|z| >= 2	our HITAG (HEK293T)	NFYA	HEK293T (ours)	True	True	1338	605	45.217	47.301	0.956	True	34	True
+descriptive	top25_sgRNA	abs3	|z| >= 3	our HITAG (HEK293T)	NFYA	HEK293T (ours)	True	True	206	101	49.029	47.301	1.037	True	34	True
+descriptive	top25_sgRNA	abs4	|z| >= 4	our HITAG (HEK293T)	NFYA	HEK293T (ours)	True	True	13	7	53.846	47.301	1.138	True	34	True
+descriptive	top25_sgRNA	abs5	|z| >= 5	our HITAG (HEK293T)	NFYA	HEK293T (ours)	True	True	1	1	100.000	47.301	2.114	False	34	True
+descriptive	top25_sgRNA	top50	top 50 by |z|	our HITAG (HEK293T)	NFYA	HEK293T (ours)	True	True	50	22	44.000	47.301	0.930	True	34	True
+descriptive	top25_sgRNA	top100	top 100 by |z|	our HITAG (HEK293T)	NFYA	HEK293T (ours)	True	True	100	46	46.000	47.301	0.972	True	34	True
+descriptive	top25_sgRNA	top200	top 200 by |z|	our HITAG (HEK293T)	NFYA	HEK293T (ours)	True	True	200	100	50.000	47.301	1.057	True	34	True
+descriptive	top25_sgRNA	abs2	|z| >= 2	our HITAG (HEK293T)	NME2	HEK293T (ours)	True	False	1805	700	38.781	39.319	0.986	True	216	True
+descriptive	top25_sgRNA	abs3	|z| >= 3	our HITAG (HEK293T)	NME2	HEK293T (ours)	True	False	490	196	40.000	39.319	1.017	True	216	True
+descriptive	top25_sgRNA	abs4	|z| >= 4	our HITAG (HEK293T)	NME2	HEK293T (ours)	True	False	158	54	34.177	39.319	0.869	True	216	True
+descriptive	top25_sgRNA	abs5	|z| >= 5	our HITAG (HEK293T)	NME2	HEK293T (ours)	True	False	39	13	33.333	39.319	0.848	True	216	True
+descriptive	top25_sgRNA	top50	top 50 by |z|	our HITAG (HEK293T)	NME2	HEK293T (ours)	True	False	50	17	34.000	39.319	0.865	True	216	True
+descriptive	top25_sgRNA	top100	top 100 by |z|	our HITAG (HEK293T)	NME2	HEK293T (ours)	True	False	100	35	35.000	39.319	0.890	True	216	True
+descriptive	top25_sgRNA	top200	top 200 by |z|	our HITAG (HEK293T)	NME2	HEK293T (ours)	True	False	200	74	37.000	39.319	0.941	True	216	True
+descriptive	top25_sgRNA	abs2	|z| >= 2	our HITAG (HEK293T)	NR1D2	HEK293T (ours)	True	False	737	97	13.161	12.988	1.013	True	42	True
+descriptive	top25_sgRNA	abs3	|z| >= 3	our HITAG (HEK293T)	NR1D2	HEK293T (ours)	True	False	60	9	15.000	12.988	1.155	True	42	True
+descriptive	top25_sgRNA	abs4	|z| >= 4	our HITAG (HEK293T)	NR1D2	HEK293T (ours)	True	False	3	2	66.667	12.988	5.133	False	42	True
+descriptive	top25_sgRNA	abs5	|z| >= 5	our HITAG (HEK293T)	NR1D2	HEK293T (ours)	True	False	0	0		12.988		False	42	True
+descriptive	top25_sgRNA	top50	top 50 by |z|	our HITAG (HEK293T)	NR1D2	HEK293T (ours)	True	False	50	9	18.000	12.988	1.386	True	42	True
+descriptive	top25_sgRNA	top100	top 100 by |z|	our HITAG (HEK293T)	NR1D2	HEK293T (ours)	True	False	100	11	11.000	12.988	0.847	True	42	True
+descriptive	top25_sgRNA	top200	top 200 by |z|	our HITAG (HEK293T)	NR1D2	HEK293T (ours)	True	False	200	28	14.000	12.988	1.078	True	42	True
+descriptive	top25_sgRNA	abs2	|z| >= 2	our HITAG (HEK293T)	NRF1	HEK293T (ours)	True	True	2069	355	17.158	14.342	1.196	True	86	True
+descriptive	top25_sgRNA	abs3	|z| >= 3	our HITAG (HEK293T)	NRF1	HEK293T (ours)	True	True	729	136	18.656	14.342	1.301	True	86	True
+descriptive	top25_sgRNA	abs4	|z| >= 4	our HITAG (HEK293T)	NRF1	HEK293T (ours)	True	True	304	64	21.053	14.342	1.468	True	86	True
+descriptive	top25_sgRNA	abs5	|z| >= 5	our HITAG (HEK293T)	NRF1	HEK293T (ours)	True	True	143	31	21.678	14.342	1.512	True	86	True
+descriptive	top25_sgRNA	top50	top 50 by |z|	our HITAG (HEK293T)	NRF1	HEK293T (ours)	True	True	50	11	22.000	14.342	1.534	True	86	True
+descriptive	top25_sgRNA	top100	top 100 by |z|	our HITAG (HEK293T)	NRF1	HEK293T (ours)	True	True	100	21	21.000	14.342	1.464	True	86	True
+descriptive	top25_sgRNA	top200	top 200 by |z|	our HITAG (HEK293T)	NRF1	HEK293T (ours)	True	True	200	45	22.500	14.342	1.569	True	86	True
+descriptive	top25_sgRNA	abs2	|z| >= 2	our HITAG (HEK293T)	PA2G4	HEK293T (ours)	True	False	783	142	18.135	17.290	1.049	True	31	True
+descriptive	top25_sgRNA	abs3	|z| >= 3	our HITAG (HEK293T)	PA2G4	HEK293T (ours)	True	False	86	13	15.116	17.290	0.874	True	31	True
+descriptive	top25_sgRNA	abs4	|z| >= 4	our HITAG (HEK293T)	PA2G4	HEK293T (ours)	True	False	7	1	14.286	17.290	0.826	False	31	True
+descriptive	top25_sgRNA	abs5	|z| >= 5	our HITAG (HEK293T)	PA2G4	HEK293T (ours)	True	False	1	0	0.000	17.290	0.000	False	31	True
+descriptive	top25_sgRNA	top50	top 50 by |z|	our HITAG (HEK293T)	PA2G4	HEK293T (ours)	True	False	50	8	16.000	17.290	0.925	True	31	True
+descriptive	top25_sgRNA	top100	top 100 by |z|	our HITAG (HEK293T)	PA2G4	HEK293T (ours)	True	False	100	16	16.000	17.290	0.925	True	31	True
+descriptive	top25_sgRNA	top200	top 200 by |z|	our HITAG (HEK293T)	PA2G4	HEK293T (ours)	True	False	200	42	21.000	17.290	1.215	True	31	True
+descriptive	top25_sgRNA	abs2	|z| >= 2	our HITAG (HEK293T)	PCGF6	HEK293T (ours)	True	False	1000	31	3.100	3.875	0.800	True	83	True
+descriptive	top25_sgRNA	abs3	|z| >= 3	our HITAG (HEK293T)	PCGF6	HEK293T (ours)	True	False	129	4	3.101	3.875	0.800	True	83	True
+descriptive	top25_sgRNA	abs4	|z| >= 4	our HITAG (HEK293T)	PCGF6	HEK293T (ours)	True	False	7	0	0.000	3.875	0.000	False	83	True
+descriptive	top25_sgRNA	abs5	|z| >= 5	our HITAG (HEK293T)	PCGF6	HEK293T (ours)	True	False	1	0	0.000	3.875	0.000	False	83	True
+descriptive	top25_sgRNA	top50	top 50 by |z|	our HITAG (HEK293T)	PCGF6	HEK293T (ours)	True	False	50	1	2.000	3.875	0.516	True	83	True
+descriptive	top25_sgRNA	top100	top 100 by |z|	our HITAG (HEK293T)	PCGF6	HEK293T (ours)	True	False	100	3	3.000	3.875	0.774	True	83	True
+descriptive	top25_sgRNA	top200	top 200 by |z|	our HITAG (HEK293T)	PCGF6	HEK293T (ours)	True	False	200	6	3.000	3.875	0.774	True	83	True
+descriptive	top25_sgRNA	abs2	|z| >= 2	our HITAG (HEK293T)	POGK	HEK293T (ours)	True	False	823	78	9.478	8.739	1.085	True	31	True
+descriptive	top25_sgRNA	abs3	|z| >= 3	our HITAG (HEK293T)	POGK	HEK293T (ours)	True	False	93	9	9.677	8.739	1.107	True	31	True
+descriptive	top25_sgRNA	abs4	|z| >= 4	our HITAG (HEK293T)	POGK	HEK293T (ours)	True	False	6	0	0.000	8.739	0.000	False	31	True
+descriptive	top25_sgRNA	abs5	|z| >= 5	our HITAG (HEK293T)	POGK	HEK293T (ours)	True	False	1	0	0.000	8.739	0.000	False	31	True
+descriptive	top25_sgRNA	top50	top 50 by |z|	our HITAG (HEK293T)	POGK	HEK293T (ours)	True	False	50	5	10.000	8.739	1.144	True	31	True
+descriptive	top25_sgRNA	top100	top 100 by |z|	our HITAG (HEK293T)	POGK	HEK293T (ours)	True	False	100	10	10.000	8.739	1.144	True	31	True
+descriptive	top25_sgRNA	top200	top 200 by |z|	our HITAG (HEK293T)	POGK	HEK293T (ours)	True	False	200	18	9.000	8.739	1.030	True	31	True
+descriptive	top25_sgRNA	abs2	|z| >= 2	our HITAG (HEK293T)	RBBP7	HEK293T (ours)	True	False	1986	910	45.821	49.180	0.932	True	100	True
+descriptive	top25_sgRNA	abs3	|z| >= 3	our HITAG (HEK293T)	RBBP7	HEK293T (ours)	True	False	546	253	46.337	49.180	0.942	True	100	True
+descriptive	top25_sgRNA	abs4	|z| >= 4	our HITAG (HEK293T)	RBBP7	HEK293T (ours)	True	False	158	75	47.468	49.180	0.965	True	100	True
+descriptive	top25_sgRNA	abs5	|z| >= 5	our HITAG (HEK293T)	RBBP7	HEK293T (ours)	True	False	53	22	41.509	49.180	0.844	True	100	True
+descriptive	top25_sgRNA	top50	top 50 by |z|	our HITAG (HEK293T)	RBBP7	HEK293T (ours)	True	False	50	21	42.000	49.180	0.854	True	100	True
+descriptive	top25_sgRNA	top100	top 100 by |z|	our HITAG (HEK293T)	RBBP7	HEK293T (ours)	True	False	100	47	47.000	49.180	0.956	True	100	True
+descriptive	top25_sgRNA	top200	top 200 by |z|	our HITAG (HEK293T)	RBBP7	HEK293T (ours)	True	False	200	90	45.000	49.180	0.915	True	100	True
+descriptive	top25_sgRNA	abs2	|z| >= 2	our HITAG (HEK293T)	RBPJ	HEK293T (ours)	True	False	1524	211	13.845	13.068	1.059	True	86	True
+descriptive	top25_sgRNA	abs3	|z| >= 3	our HITAG (HEK293T)	RBPJ	HEK293T (ours)	True	False	327	42	12.844	13.068	0.983	True	86	True
+descriptive	top25_sgRNA	abs4	|z| >= 4	our HITAG (HEK293T)	RBPJ	HEK293T (ours)	True	False	59	10	16.949	13.068	1.297	True	86	True
+descriptive	top25_sgRNA	abs5	|z| >= 5	our HITAG (HEK293T)	RBPJ	HEK293T (ours)	True	False	5	0	0.000	13.068	0.000	False	86	True
+descriptive	top25_sgRNA	top50	top 50 by |z|	our HITAG (HEK293T)	RBPJ	HEK293T (ours)	True	False	50	7	14.000	13.068	1.071	True	86	True
+descriptive	top25_sgRNA	top100	top 100 by |z|	our HITAG (HEK293T)	RBPJ	HEK293T (ours)	True	False	100	14	14.000	13.068	1.071	True	86	True
+descriptive	top25_sgRNA	top200	top 200 by |z|	our HITAG (HEK293T)	RBPJ	HEK293T (ours)	True	False	200	24	12.000	13.068	0.918	True	86	True
+descriptive	top25_sgRNA	abs2	|z| >= 2	our HITAG (HEK293T)	RELA	HEK293T (ours)	True	False	1465	187	12.765	13.086	0.975	True	50	True
+descriptive	top25_sgRNA	abs3	|z| >= 3	our HITAG (HEK293T)	RELA	HEK293T (ours)	True	False	319	40	12.539	13.086	0.958	True	50	True
+descriptive	top25_sgRNA	abs4	|z| >= 4	our HITAG (HEK293T)	RELA	HEK293T (ours)	True	False	55	7	12.727	13.086	0.973	True	50	True
+descriptive	top25_sgRNA	abs5	|z| >= 5	our HITAG (HEK293T)	RELA	HEK293T (ours)	True	False	2	1	50.000	13.086	3.821	False	50	True
+descriptive	top25_sgRNA	top50	top 50 by |z|	our HITAG (HEK293T)	RELA	HEK293T (ours)	True	False	50	5	10.000	13.086	0.764	True	50	True
+descriptive	top25_sgRNA	top100	top 100 by |z|	our HITAG (HEK293T)	RELA	HEK293T (ours)	True	False	100	13	13.000	13.086	0.993	True	50	True
+descriptive	top25_sgRNA	top200	top 200 by |z|	our HITAG (HEK293T)	RELA	HEK293T (ours)	True	False	200	26	13.000	13.086	0.993	True	50	True
+descriptive	top25_sgRNA	abs2	|z| >= 2	our HITAG (HEK293T)	SAFB	HEK293T (ours)	True	False	835	261	31.257	32.300	0.968	True	80	True
+descriptive	top25_sgRNA	abs3	|z| >= 3	our HITAG (HEK293T)	SAFB	HEK293T (ours)	True	False	116	42	36.207	32.300	1.121	True	80	True
+descriptive	top25_sgRNA	abs4	|z| >= 4	our HITAG (HEK293T)	SAFB	HEK293T (ours)	True	False	12	6	50.000	32.300	1.548	True	80	True
+descriptive	top25_sgRNA	abs5	|z| >= 5	our HITAG (HEK293T)	SAFB	HEK293T (ours)	True	False	2	1	50.000	32.300	1.548	False	80	True
+descriptive	top25_sgRNA	top50	top 50 by |z|	our HITAG (HEK293T)	SAFB	HEK293T (ours)	True	False	50	19	38.000	32.300	1.176	True	80	True
+descriptive	top25_sgRNA	top100	top 100 by |z|	our HITAG (HEK293T)	SAFB	HEK293T (ours)	True	False	100	37	37.000	32.300	1.146	True	80	True
+descriptive	top25_sgRNA	top200	top 200 by |z|	our HITAG (HEK293T)	SAFB	HEK293T (ours)	True	False	200	70	35.000	32.300	1.084	True	80	True
+descriptive	top25_sgRNA	abs2	|z| >= 2	our HITAG (HEK293T)	SETDB1	HEK293T (ours)	True	True	994	94	9.457	9.674	0.978	True	59	True
+descriptive	top25_sgRNA	abs3	|z| >= 3	our HITAG (HEK293T)	SETDB1	HEK293T (ours)	True	True	164	16	9.756	9.674	1.008	True	59	True
+descriptive	top25_sgRNA	abs4	|z| >= 4	our HITAG (HEK293T)	SETDB1	HEK293T (ours)	True	True	20	2	10.000	9.674	1.034	True	59	True
+descriptive	top25_sgRNA	abs5	|z| >= 5	our HITAG (HEK293T)	SETDB1	HEK293T (ours)	True	True	2	0	0.000	9.674	0.000	False	59	True
+descriptive	top25_sgRNA	top50	top 50 by |z|	our HITAG (HEK293T)	SETDB1	HEK293T (ours)	True	True	50	4	8.000	9.674	0.827	True	59	True
+descriptive	top25_sgRNA	top100	top 100 by |z|	our HITAG (HEK293T)	SETDB1	HEK293T (ours)	True	True	100	11	11.000	9.674	1.137	True	59	True
+descriptive	top25_sgRNA	top200	top 200 by |z|	our HITAG (HEK293T)	SETDB1	HEK293T (ours)	True	True	200	19	9.500	9.674	0.982	True	59	True
+descriptive	top25_sgRNA	abs2	|z| >= 2	our HITAG (HEK293T)	SMARCA1	HEK293T (ours)	True	False	1124	93	8.274	9.050	0.914	True	25	True
+descriptive	top25_sgRNA	abs3	|z| >= 3	our HITAG (HEK293T)	SMARCA1	HEK293T (ours)	True	False	155	12	7.742	9.050	0.855	True	25	True
+descriptive	top25_sgRNA	abs4	|z| >= 4	our HITAG (HEK293T)	SMARCA1	HEK293T (ours)	True	False	2	0	0.000	9.050	0.000	False	25	True
+descriptive	top25_sgRNA	abs5	|z| >= 5	our HITAG (HEK293T)	SMARCA1	HEK293T (ours)	True	False	1	0	0.000	9.050	0.000	False	25	True
+descriptive	top25_sgRNA	top50	top 50 by |z|	our HITAG (HEK293T)	SMARCA1	HEK293T (ours)	True	False	50	5	10.000	9.050	1.105	True	25	True
+descriptive	top25_sgRNA	top100	top 100 by |z|	our HITAG (HEK293T)	SMARCA1	HEK293T (ours)	True	False	100	10	10.000	9.050	1.105	True	25	True
+descriptive	top25_sgRNA	top200	top 200 by |z|	our HITAG (HEK293T)	SMARCA1	HEK293T (ours)	True	False	200	18	9.000	9.050	0.994	True	25	True
+descriptive	top25_sgRNA	abs2	|z| >= 2	our HITAG (HEK293T)	SOX4	HEK293T (ours)	True	False	1073	443	41.286	44.477	0.928	True	66	True
+descriptive	top25_sgRNA	abs3	|z| >= 3	our HITAG (HEK293T)	SOX4	HEK293T (ours)	True	False	134	60	44.776	44.477	1.007	True	66	True
+descriptive	top25_sgRNA	abs4	|z| >= 4	our HITAG (HEK293T)	SOX4	HEK293T (ours)	True	False	10	5	50.000	44.477	1.124	True	66	True
+descriptive	top25_sgRNA	abs5	|z| >= 5	our HITAG (HEK293T)	SOX4	HEK293T (ours)	True	False	0	0		44.477		False	66	True
+descriptive	top25_sgRNA	top50	top 50 by |z|	our HITAG (HEK293T)	SOX4	HEK293T (ours)	True	False	50	23	46.000	44.477	1.034	True	66	True
+descriptive	top25_sgRNA	top100	top 100 by |z|	our HITAG (HEK293T)	SOX4	HEK293T (ours)	True	False	100	46	46.000	44.477	1.034	True	66	True
+descriptive	top25_sgRNA	top200	top 200 by |z|	our HITAG (HEK293T)	SOX4	HEK293T (ours)	True	False	200	88	44.000	44.477	0.989	True	66	True
+descriptive	top25_sgRNA	abs2	|z| >= 2	our HITAG (HEK293T)	SRCAP	HEK293T (ours)	True	False	536	72	13.433	11.055	1.215	True	80	True
+descriptive	top25_sgRNA	abs3	|z| >= 3	our HITAG (HEK293T)	SRCAP	HEK293T (ours)	True	False	49	9	18.367	11.055	1.661	True	80	True
+descriptive	top25_sgRNA	abs4	|z| >= 4	our HITAG (HEK293T)	SRCAP	HEK293T (ours)	True	False	0	0		11.055		False	80	True
+descriptive	top25_sgRNA	abs5	|z| >= 5	our HITAG (HEK293T)	SRCAP	HEK293T (ours)	True	False	0	0		11.055		False	80	True
+descriptive	top25_sgRNA	top50	top 50 by |z|	our HITAG (HEK293T)	SRCAP	HEK293T (ours)	True	False	50	9	18.000	11.055	1.628	True	80	True
+descriptive	top25_sgRNA	top100	top 100 by |z|	our HITAG (HEK293T)	SRCAP	HEK293T (ours)	True	False	100	13	13.000	11.055	1.176	True	80	True
+descriptive	top25_sgRNA	top200	top 200 by |z|	our HITAG (HEK293T)	SRCAP	HEK293T (ours)	True	False	200	29	14.500	11.055	1.312	True	80	True
+descriptive	top25_sgRNA	abs2	|z| >= 2	our HITAG (HEK293T)	TBX3	HEK293T (ours)	True	False	759	103	13.570	11.055	1.228	True	70	True
+descriptive	top25_sgRNA	abs3	|z| >= 3	our HITAG (HEK293T)	TBX3	HEK293T (ours)	True	False	105	16	15.238	11.055	1.378	True	70	True
+descriptive	top25_sgRNA	abs4	|z| >= 4	our HITAG (HEK293T)	TBX3	HEK293T (ours)	True	False	6	0	0.000	11.055	0.000	False	70	True
+descriptive	top25_sgRNA	abs5	|z| >= 5	our HITAG (HEK293T)	TBX3	HEK293T (ours)	True	False	0	0		11.055		False	70	True
+descriptive	top25_sgRNA	top50	top 50 by |z|	our HITAG (HEK293T)	TBX3	HEK293T (ours)	True	False	50	5	10.000	11.055	0.905	True	70	True
+descriptive	top25_sgRNA	top100	top 100 by |z|	our HITAG (HEK293T)	TBX3	HEK293T (ours)	True	False	100	16	16.000	11.055	1.447	True	70	True
+descriptive	top25_sgRNA	top200	top 200 by |z|	our HITAG (HEK293T)	TBX3	HEK293T (ours)	True	False	200	34	17.000	11.055	1.538	True	70	True
+descriptive	top25_sgRNA	abs2	|z| >= 2	our HITAG (HEK293T)	THAP6	HEK293T (ours)	True	False	634	73	11.514	8.436	1.365	True	45	True
+descriptive	top25_sgRNA	abs3	|z| >= 3	our HITAG (HEK293T)	THAP6	HEK293T (ours)	True	False	52	7	13.462	8.436	1.596	True	45	True
+descriptive	top25_sgRNA	abs4	|z| >= 4	our HITAG (HEK293T)	THAP6	HEK293T (ours)	True	False	4	1	25.000	8.436	2.964	False	45	True
+descriptive	top25_sgRNA	abs5	|z| >= 5	our HITAG (HEK293T)	THAP6	HEK293T (ours)	True	False	0	0		8.436		False	45	True
+descriptive	top25_sgRNA	top50	top 50 by |z|	our HITAG (HEK293T)	THAP6	HEK293T (ours)	True	False	50	7	14.000	8.436	1.660	True	45	True
+descriptive	top25_sgRNA	top100	top 100 by |z|	our HITAG (HEK293T)	THAP6	HEK293T (ours)	True	False	100	10	10.000	8.436	1.185	True	45	True
+descriptive	top25_sgRNA	top200	top 200 by |z|	our HITAG (HEK293T)	THAP6	HEK293T (ours)	True	False	200	16	8.000	8.436	0.948	True	45	True
+descriptive	top25_sgRNA	abs2	|z| >= 2	our HITAG (HEK293T)	WIZ	HEK293T (ours)	True	False	1008	132	13.095	13.585	0.964	True	26	True
+descriptive	top25_sgRNA	abs3	|z| >= 3	our HITAG (HEK293T)	WIZ	HEK293T (ours)	True	False	115	19	16.522	13.585	1.216	True	26	True
+descriptive	top25_sgRNA	abs4	|z| >= 4	our HITAG (HEK293T)	WIZ	HEK293T (ours)	True	False	10	2	20.000	13.585	1.472	True	26	True
+descriptive	top25_sgRNA	abs5	|z| >= 5	our HITAG (HEK293T)	WIZ	HEK293T (ours)	True	False	1	0	0.000	13.585	0.000	False	26	True
+descriptive	top25_sgRNA	top50	top 50 by |z|	our HITAG (HEK293T)	WIZ	HEK293T (ours)	True	False	50	10	20.000	13.585	1.472	True	26	True
+descriptive	top25_sgRNA	top100	top 100 by |z|	our HITAG (HEK293T)	WIZ	HEK293T (ours)	True	False	100	19	19.000	13.585	1.399	True	26	True
+descriptive	top25_sgRNA	top200	top 200 by |z|	our HITAG (HEK293T)	WIZ	HEK293T (ours)	True	False	200	31	15.500	13.585	1.141	True	26	True
+descriptive	top25_sgRNA	abs2	|z| >= 2	our HITAG (HEK293T)	XPA	HEK293T (ours)	True	False	1062	548	51.601	51.933	0.994	True	59	True
+descriptive	top25_sgRNA	abs3	|z| >= 3	our HITAG (HEK293T)	XPA	HEK293T (ours)	True	False	147	77	52.381	51.933	1.009	True	59	True
+descriptive	top25_sgRNA	abs4	|z| >= 4	our HITAG (HEK293T)	XPA	HEK293T (ours)	True	False	9	7	77.778	51.933	1.498	False	59	True
+descriptive	top25_sgRNA	abs5	|z| >= 5	our HITAG (HEK293T)	XPA	HEK293T (ours)	True	False	0	0		51.933		False	59	True
+descriptive	top25_sgRNA	top50	top 50 by |z|	our HITAG (HEK293T)	XPA	HEK293T (ours)	True	False	50	31	62.000	51.933	1.194	True	59	True
+descriptive	top25_sgRNA	top100	top 100 by |z|	our HITAG (HEK293T)	XPA	HEK293T (ours)	True	False	100	57	57.000	51.933	1.098	True	59	True
+descriptive	top25_sgRNA	top200	top 200 by |z|	our HITAG (HEK293T)	XPA	HEK293T (ours)	True	False	200	108	54.000	51.933	1.040	True	59	True
+descriptive	top25_sgRNA	abs2	|z| >= 2	our HITAG (HEK293T)	ZBTB43	HEK293T (ours)	True	False	710	73	10.282	9.701	1.060	True	43	True
+descriptive	top25_sgRNA	abs3	|z| >= 3	our HITAG (HEK293T)	ZBTB43	HEK293T (ours)	True	False	54	5	9.259	9.701	0.954	True	43	True
+descriptive	top25_sgRNA	abs4	|z| >= 4	our HITAG (HEK293T)	ZBTB43	HEK293T (ours)	True	False	0	0		9.701		False	43	True
+descriptive	top25_sgRNA	abs5	|z| >= 5	our HITAG (HEK293T)	ZBTB43	HEK293T (ours)	True	False	0	0		9.701		False	43	True
+descriptive	top25_sgRNA	top50	top 50 by |z|	our HITAG (HEK293T)	ZBTB43	HEK293T (ours)	True	False	50	5	10.000	9.701	1.031	True	43	True
+descriptive	top25_sgRNA	top100	top 100 by |z|	our HITAG (HEK293T)	ZBTB43	HEK293T (ours)	True	False	100	10	10.000	9.701	1.031	True	43	True
+descriptive	top25_sgRNA	top200	top 200 by |z|	our HITAG (HEK293T)	ZBTB43	HEK293T (ours)	True	False	200	23	11.500	9.701	1.185	True	43	True
+descriptive	top25_sgRNA	abs2	|z| >= 2	our HITAG (HEK293T)	ZBTB7A	HEK293T (ours)	True	True	111	25	22.523	18.136	1.242	True	90	True
+descriptive	top25_sgRNA	abs3	|z| >= 3	our HITAG (HEK293T)	ZBTB7A	HEK293T (ours)	True	True	3	1	33.333	18.136	1.838	False	90	True
+descriptive	top25_sgRNA	abs4	|z| >= 4	our HITAG (HEK293T)	ZBTB7A	HEK293T (ours)	True	True	0	0		18.136		False	90	True
+descriptive	top25_sgRNA	abs5	|z| >= 5	our HITAG (HEK293T)	ZBTB7A	HEK293T (ours)	True	True	0	0		18.136		False	90	True
+descriptive	top25_sgRNA	top50	top 50 by |z|	our HITAG (HEK293T)	ZBTB7A	HEK293T (ours)	True	True	50	12	24.000	18.136	1.323	True	90	True
+descriptive	top25_sgRNA	top100	top 100 by |z|	our HITAG (HEK293T)	ZBTB7A	HEK293T (ours)	True	True	100	23	23.000	18.136	1.268	True	90	True
+descriptive	top25_sgRNA	top200	top 200 by |z|	our HITAG (HEK293T)	ZBTB7A	HEK293T (ours)	True	True	200	48	24.000	18.136	1.323	True	90	True
+descriptive	top25_sgRNA	abs2	|z| >= 2	our HITAG (HEK293T)	ZIC2	HEK293T (ours)	True	True	1024	130	12.695	13.816	0.919	True	38	True
+descriptive	top25_sgRNA	abs3	|z| >= 3	our HITAG (HEK293T)	ZIC2	HEK293T (ours)	True	True	128	22	17.188	13.816	1.244	True	38	True
+descriptive	top25_sgRNA	abs4	|z| >= 4	our HITAG (HEK293T)	ZIC2	HEK293T (ours)	True	True	7	0	0.000	13.816	0.000	False	38	True
+descriptive	top25_sgRNA	abs5	|z| >= 5	our HITAG (HEK293T)	ZIC2	HEK293T (ours)	True	True	0	0		13.816		False	38	True
+descriptive	top25_sgRNA	top50	top 50 by |z|	our HITAG (HEK293T)	ZIC2	HEK293T (ours)	True	True	50	9	18.000	13.816	1.303	True	38	True
+descriptive	top25_sgRNA	top100	top 100 by |z|	our HITAG (HEK293T)	ZIC2	HEK293T (ours)	True	True	100	15	15.000	13.816	1.086	True	38	True
+descriptive	top25_sgRNA	top200	top 200 by |z|	our HITAG (HEK293T)	ZIC2	HEK293T (ours)	True	True	200	30	15.000	13.816	1.086	True	38	True
+descriptive	top25_sgRNA	abs2	|z| >= 2	our HITAG (HEK293T)	ZNF143	HEK293T (ours)	True	False	1130	89	7.876	8.169	0.964	True	67	True
+descriptive	top25_sgRNA	abs3	|z| >= 3	our HITAG (HEK293T)	ZNF143	HEK293T (ours)	True	False	213	20	9.390	8.169	1.149	True	67	True
+descriptive	top25_sgRNA	abs4	|z| >= 4	our HITAG (HEK293T)	ZNF143	HEK293T (ours)	True	False	37	6	16.216	8.169	1.985	True	67	True
+descriptive	top25_sgRNA	abs5	|z| >= 5	our HITAG (HEK293T)	ZNF143	HEK293T (ours)	True	False	6	2	33.333	8.169	4.081	False	67	True
+descriptive	top25_sgRNA	top50	top 50 by |z|	our HITAG (HEK293T)	ZNF143	HEK293T (ours)	True	False	50	6	12.000	8.169	1.469	True	67	True
+descriptive	top25_sgRNA	top100	top 100 by |z|	our HITAG (HEK293T)	ZNF143	HEK293T (ours)	True	False	100	10	10.000	8.169	1.224	True	67	True
+descriptive	top25_sgRNA	top200	top 200 by |z|	our HITAG (HEK293T)	ZNF143	HEK293T (ours)	True	False	200	19	9.500	8.169	1.163	True	67	True
+descriptive	top25_sgRNA	abs2	|z| >= 2	our HITAG (HEK293T)	ZNF282	HEK293T (ours)	True	True	1412	169	11.969	12.035	0.995	True	61	True
+descriptive	top25_sgRNA	abs3	|z| >= 3	our HITAG (HEK293T)	ZNF282	HEK293T (ours)	True	True	252	34	13.492	12.035	1.121	True	61	True
+descriptive	top25_sgRNA	abs4	|z| >= 4	our HITAG (HEK293T)	ZNF282	HEK293T (ours)	True	True	43	7	16.279	12.035	1.353	True	61	True
+descriptive	top25_sgRNA	abs5	|z| >= 5	our HITAG (HEK293T)	ZNF282	HEK293T (ours)	True	True	1	0	0.000	12.035	0.000	False	61	True
+descriptive	top25_sgRNA	top50	top 50 by |z|	our HITAG (HEK293T)	ZNF282	HEK293T (ours)	True	True	50	8	16.000	12.035	1.330	True	61	True
+descriptive	top25_sgRNA	top100	top 100 by |z|	our HITAG (HEK293T)	ZNF282	HEK293T (ours)	True	True	100	15	15.000	12.035	1.246	True	61	True
+descriptive	top25_sgRNA	top200	top 200 by |z|	our HITAG (HEK293T)	ZNF282	HEK293T (ours)	True	True	200	27	13.500	12.035	1.122	True	61	True
+descriptive	top25_sgRNA	abs2	|z| >= 2	our HITAG (HEK293T)	ZNF503	HEK293T (ours)	True	False	607	49	8.072	7.554	1.069	True	40	True
+descriptive	top25_sgRNA	abs3	|z| >= 3	our HITAG (HEK293T)	ZNF503	HEK293T (ours)	True	False	38	3	7.895	7.554	1.045	True	40	True
+descriptive	top25_sgRNA	abs4	|z| >= 4	our HITAG (HEK293T)	ZNF503	HEK293T (ours)	True	False	1	1	100.000	7.554	13.238	False	40	True
+descriptive	top25_sgRNA	abs5	|z| >= 5	our HITAG (HEK293T)	ZNF503	HEK293T (ours)	True	False	0	0		7.554		False	40	True
+descriptive	top25_sgRNA	top50	top 50 by |z|	our HITAG (HEK293T)	ZNF503	HEK293T (ours)	True	False	50	3	6.000	7.554	0.794	True	40	True
+descriptive	top25_sgRNA	top100	top 100 by |z|	our HITAG (HEK293T)	ZNF503	HEK293T (ours)	True	False	100	7	7.000	7.554	0.927	True	40	True
+descriptive	top25_sgRNA	top200	top 200 by |z|	our HITAG (HEK293T)	ZNF503	HEK293T (ours)	True	False	200	15	7.500	7.554	0.993	True	40	True
+descriptive	top25_sgRNA	abs2	|z| >= 2	our HITAG (HEK293T)	ZNF507	HEK293T (ours)	True	False	758	350	46.174	46.285	0.998	True	57	True
+descriptive	top25_sgRNA	abs3	|z| >= 3	our HITAG (HEK293T)	ZNF507	HEK293T (ours)	True	False	79	33	41.772	46.285	0.902	True	57	True
+descriptive	top25_sgRNA	abs4	|z| >= 4	our HITAG (HEK293T)	ZNF507	HEK293T (ours)	True	False	6	4	66.667	46.285	1.440	False	57	True
+descriptive	top25_sgRNA	abs5	|z| >= 5	our HITAG (HEK293T)	ZNF507	HEK293T (ours)	True	False	1	0	0.000	46.285	0.000	False	57	True
+descriptive	top25_sgRNA	top50	top 50 by |z|	our HITAG (HEK293T)	ZNF507	HEK293T (ours)	True	False	50	22	44.000	46.285	0.951	True	57	True
+descriptive	top25_sgRNA	top100	top 100 by |z|	our HITAG (HEK293T)	ZNF507	HEK293T (ours)	True	False	100	46	46.000	46.285	0.994	True	57	True
+descriptive	top25_sgRNA	top200	top 200 by |z|	our HITAG (HEK293T)	ZNF507	HEK293T (ours)	True	False	200	95	47.500	46.285	1.026	True	57	True
+descriptive	top25_sgRNA	abs2	|z| >= 2	our HITAG (HEK293T)	ZNF512	HEK293T (ours)	True	False	646	58	8.978	10.378	0.865	True	56	True
+descriptive	top25_sgRNA	abs3	|z| >= 3	our HITAG (HEK293T)	ZNF512	HEK293T (ours)	True	False	75	7	9.333	10.378	0.899	True	56	True
+descriptive	top25_sgRNA	abs4	|z| >= 4	our HITAG (HEK293T)	ZNF512	HEK293T (ours)	True	False	2	0	0.000	10.378	0.000	False	56	True
+descriptive	top25_sgRNA	abs5	|z| >= 5	our HITAG (HEK293T)	ZNF512	HEK293T (ours)	True	False	0	0		10.378		False	56	True
+descriptive	top25_sgRNA	top50	top 50 by |z|	our HITAG (HEK293T)	ZNF512	HEK293T (ours)	True	False	50	4	8.000	10.378	0.771	True	56	True
+descriptive	top25_sgRNA	top100	top 100 by |z|	our HITAG (HEK293T)	ZNF512	HEK293T (ours)	True	False	100	9	9.000	10.378	0.867	True	56	True
+descriptive	top25_sgRNA	top200	top 200 by |z|	our HITAG (HEK293T)	ZNF512	HEK293T (ours)	True	False	200	19	9.500	10.378	0.915	True	56	True
+descriptive	top25_sgRNA	abs2	|z| >= 2	our HITAG (HEK293T)	ZNF512B	HEK293T (ours)	True	False	728	120	16.484	15.268	1.080	True	36	True
+descriptive	top25_sgRNA	abs3	|z| >= 3	our HITAG (HEK293T)	ZNF512B	HEK293T (ours)	True	False	84	11	13.095	15.268	0.858	True	36	True
+descriptive	top25_sgRNA	abs4	|z| >= 4	our HITAG (HEK293T)	ZNF512B	HEK293T (ours)	True	False	1	1	100.000	15.268	6.550	False	36	True
+descriptive	top25_sgRNA	abs5	|z| >= 5	our HITAG (HEK293T)	ZNF512B	HEK293T (ours)	True	False	0	0		15.268		False	36	True
+descriptive	top25_sgRNA	top50	top 50 by |z|	our HITAG (HEK293T)	ZNF512B	HEK293T (ours)	True	False	50	5	10.000	15.268	0.655	True	36	True
+descriptive	top25_sgRNA	top100	top 100 by |z|	our HITAG (HEK293T)	ZNF512B	HEK293T (ours)	True	False	100	14	14.000	15.268	0.917	True	36	True
+descriptive	top25_sgRNA	top200	top 200 by |z|	our HITAG (HEK293T)	ZNF512B	HEK293T (ours)	True	False	200	34	17.000	15.268	1.113	True	36	True
+descriptive	top25_sgRNA	abs2	|z| >= 2	our HITAG (HEK293T)	ZNF581	HEK293T (ours)	True	False	562	76	13.523	12.997	1.041	True	42	True
+descriptive	top25_sgRNA	abs3	|z| >= 3	our HITAG (HEK293T)	ZNF581	HEK293T (ours)	True	False	39	6	15.385	12.997	1.184	True	42	True
+descriptive	top25_sgRNA	abs4	|z| >= 4	our HITAG (HEK293T)	ZNF581	HEK293T (ours)	True	False	0	0		12.997		False	42	True
+descriptive	top25_sgRNA	abs5	|z| >= 5	our HITAG (HEK293T)	ZNF581	HEK293T (ours)	True	False	0	0		12.997		False	42	True
+descriptive	top25_sgRNA	top50	top 50 by |z|	our HITAG (HEK293T)	ZNF581	HEK293T (ours)	True	False	50	7	14.000	12.997	1.077	True	42	True
+descriptive	top25_sgRNA	top100	top 100 by |z|	our HITAG (HEK293T)	ZNF581	HEK293T (ours)	True	False	100	14	14.000	12.997	1.077	True	42	True
+descriptive	top25_sgRNA	top200	top 200 by |z|	our HITAG (HEK293T)	ZNF581	HEK293T (ours)	True	False	200	28	14.000	12.997	1.077	True	42	True
+descriptive	top25_sgRNA	abs2	|z| >= 2	our HITAG (HEK293T)	ZNF644	HEK293T (ours)	True	False	466	63	13.519	14.645	0.923	True	25	True
+descriptive	top25_sgRNA	abs3	|z| >= 3	our HITAG (HEK293T)	ZNF644	HEK293T (ours)	True	False	30	6	20.000	14.645	1.366	True	25	True
+descriptive	top25_sgRNA	abs4	|z| >= 4	our HITAG (HEK293T)	ZNF644	HEK293T (ours)	True	False	3	0	0.000	14.645	0.000	False	25	True
+descriptive	top25_sgRNA	abs5	|z| >= 5	our HITAG (HEK293T)	ZNF644	HEK293T (ours)	True	False	0	0		14.645		False	25	True
+descriptive	top25_sgRNA	top50	top 50 by |z|	our HITAG (HEK293T)	ZNF644	HEK293T (ours)	True	False	50	10	20.000	14.645	1.366	True	25	True
+descriptive	top25_sgRNA	top100	top 100 by |z|	our HITAG (HEK293T)	ZNF644	HEK293T (ours)	True	False	100	16	16.000	14.645	1.093	True	25	True
+descriptive	top25_sgRNA	top200	top 200 by |z|	our HITAG (HEK293T)	ZNF644	HEK293T (ours)	True	False	200	25	12.500	14.645	0.854	True	25	True
+descriptive	top25_sgRNA	abs2	|z| >= 2	our HITAG (HEK293T)	ZNF746	HEK293T (ours)	True	False	1068	90	8.427	9.122	0.924	True	28	True
+descriptive	top25_sgRNA	abs3	|z| >= 3	our HITAG (HEK293T)	ZNF746	HEK293T (ours)	True	False	128	8	6.250	9.122	0.685	True	28	True
+descriptive	top25_sgRNA	abs4	|z| >= 4	our HITAG (HEK293T)	ZNF746	HEK293T (ours)	True	False	5	0	0.000	9.122	0.000	False	28	True
+descriptive	top25_sgRNA	abs5	|z| >= 5	our HITAG (HEK293T)	ZNF746	HEK293T (ours)	True	False	0	0		9.122		False	28	True
+descriptive	top25_sgRNA	top50	top 50 by |z|	our HITAG (HEK293T)	ZNF746	HEK293T (ours)	True	False	50	1	2.000	9.122	0.219	True	28	True
+descriptive	top25_sgRNA	top100	top 100 by |z|	our HITAG (HEK293T)	ZNF746	HEK293T (ours)	True	False	100	7	7.000	9.122	0.767	True	28	True
+descriptive	top25_sgRNA	top200	top 200 by |z|	our HITAG (HEK293T)	ZNF746	HEK293T (ours)	True	False	200	14	7.000	9.122	0.767	True	28	True
+descriptive	top25_sgRNA	abs2	|z| >= 2	our HITAG (HEK293T)	ZNF768	HEK293T (ours)	True	False	1700	371	21.824	20.889	1.045	True	93	True
+descriptive	top25_sgRNA	abs3	|z| >= 3	our HITAG (HEK293T)	ZNF768	HEK293T (ours)	True	False	360	89	24.722	20.889	1.184	True	93	True
+descriptive	top25_sgRNA	abs4	|z| >= 4	our HITAG (HEK293T)	ZNF768	HEK293T (ours)	True	False	56	14	25.000	20.889	1.197	True	93	True
+descriptive	top25_sgRNA	abs5	|z| >= 5	our HITAG (HEK293T)	ZNF768	HEK293T (ours)	True	False	1	0	0.000	20.889	0.000	False	93	True
+descriptive	top25_sgRNA	top50	top 50 by |z|	our HITAG (HEK293T)	ZNF768	HEK293T (ours)	True	False	50	12	24.000	20.889	1.149	True	93	True
+descriptive	top25_sgRNA	top100	top 100 by |z|	our HITAG (HEK293T)	ZNF768	HEK293T (ours)	True	False	100	25	25.000	20.889	1.197	True	93	True
+descriptive	top25_sgRNA	top200	top 200 by |z|	our HITAG (HEK293T)	ZNF768	HEK293T (ours)	True	False	200	50	25.000	20.889	1.197	True	93	True
+descriptive	top25_sgRNA	abs2	|z| >= 2	our HITAG (HEK293T)	ZNF777	HEK293T (ours)	True	True	1709	200	11.703	10.859	1.078	True	116	True
+descriptive	top25_sgRNA	abs3	|z| >= 3	our HITAG (HEK293T)	ZNF777	HEK293T (ours)	True	True	407	41	10.074	10.859	0.928	True	116	True
+descriptive	top25_sgRNA	abs4	|z| >= 4	our HITAG (HEK293T)	ZNF777	HEK293T (ours)	True	True	75	8	10.667	10.859	0.982	True	116	True
+descriptive	top25_sgRNA	abs5	|z| >= 5	our HITAG (HEK293T)	ZNF777	HEK293T (ours)	True	True	10	1	10.000	10.859	0.921	True	116	True
+descriptive	top25_sgRNA	top50	top 50 by |z|	our HITAG (HEK293T)	ZNF777	HEK293T (ours)	True	True	50	7	14.000	10.859	1.289	True	116	True
+descriptive	top25_sgRNA	top100	top 100 by |z|	our HITAG (HEK293T)	ZNF777	HEK293T (ours)	True	True	100	10	10.000	10.859	0.921	True	116	True
+descriptive	top25_sgRNA	top200	top 200 by |z|	our HITAG (HEK293T)	ZNF777	HEK293T (ours)	True	True	200	20	10.000	10.859	0.921	True	116	True
+descriptive	top25_sgRNA	abs2	|z| >= 2	our HITAG (HEK293T)	ZNF79	HEK293T (ours)	True	False	1279	148	11.572	11.723	0.987	True	50	True
+descriptive	top25_sgRNA	abs3	|z| >= 3	our HITAG (HEK293T)	ZNF79	HEK293T (ours)	True	False	213	27	12.676	11.723	1.081	True	50	True
+descriptive	top25_sgRNA	abs4	|z| >= 4	our HITAG (HEK293T)	ZNF79	HEK293T (ours)	True	False	16	3	18.750	11.723	1.599	True	50	True
+descriptive	top25_sgRNA	abs5	|z| >= 5	our HITAG (HEK293T)	ZNF79	HEK293T (ours)	True	False	0	0		11.723		False	50	True
+descriptive	top25_sgRNA	top50	top 50 by |z|	our HITAG (HEK293T)	ZNF79	HEK293T (ours)	True	False	50	8	16.000	11.723	1.365	True	50	True
+descriptive	top25_sgRNA	top100	top 100 by |z|	our HITAG (HEK293T)	ZNF79	HEK293T (ours)	True	False	100	14	14.000	11.723	1.194	True	50	True
+descriptive	top25_sgRNA	top200	top 200 by |z|	our HITAG (HEK293T)	ZNF79	HEK293T (ours)	True	False	200	25	12.500	11.723	1.066	True	50	True
+descriptive	top25_sgRNA	abs2	|z| >= 2	our HITAG (HEK293T)	ZUFSP	HEK293T (ours)	True	False	956	108	11.297	8.846	1.277	True	73	True
+descriptive	top25_sgRNA	abs3	|z| >= 3	our HITAG (HEK293T)	ZUFSP	HEK293T (ours)	True	False	123	18	14.634	8.846	1.654	True	73	True
+descriptive	top25_sgRNA	abs4	|z| >= 4	our HITAG (HEK293T)	ZUFSP	HEK293T (ours)	True	False	10	3	30.000	8.846	3.392	True	73	True
+descriptive	top25_sgRNA	abs5	|z| >= 5	our HITAG (HEK293T)	ZUFSP	HEK293T (ours)	True	False	0	0		8.846		False	73	True
+descriptive	top25_sgRNA	top50	top 50 by |z|	our HITAG (HEK293T)	ZUFSP	HEK293T (ours)	True	False	50	5	10.000	8.846	1.131	True	73	True
+descriptive	top25_sgRNA	top100	top 100 by |z|	our HITAG (HEK293T)	ZUFSP	HEK293T (ours)	True	False	100	13	13.000	8.846	1.470	True	73	True
+descriptive	top25_sgRNA	top200	top 200 by |z|	our HITAG (HEK293T)	ZUFSP	HEK293T (ours)	True	False	200	25	12.500	8.846	1.413	True	73	True
+descriptive	top25_sgRNA	abs2	|z| >= 2	bulk ChIP	CTCF	HEK293T GSE103651	True	True	1295	336	25.946	26.127	0.993	True	80	True
+descriptive	top25_sgRNA	abs3	|z| >= 3	bulk ChIP	CTCF	HEK293T GSE103651	True	True	272	71	26.103	26.127	0.999	True	80	True
+descriptive	top25_sgRNA	abs4	|z| >= 4	bulk ChIP	CTCF	HEK293T GSE103651	True	True	65	17	26.154	26.127	1.001	True	80	True
+descriptive	top25_sgRNA	abs5	|z| >= 5	bulk ChIP	CTCF	HEK293T GSE103651	True	True	20	6	30.000	26.127	1.148	True	80	True
+descriptive	top25_sgRNA	top50	top 50 by |z|	bulk ChIP	CTCF	HEK293T GSE103651	True	True	50	14	28.000	26.127	1.072	True	80	True
+descriptive	top25_sgRNA	top100	top 100 by |z|	bulk ChIP	CTCF	HEK293T GSE103651	True	True	100	23	23.000	26.127	0.880	True	80	True
+descriptive	top25_sgRNA	top200	top 200 by |z|	bulk ChIP	CTCF	HEK293T GSE103651	True	True	200	46	23.000	26.127	0.880	True	80	True
+descriptive	top25_sgRNA	abs2	|z| >= 2	bulk ChIP	CTCF	HEK293 ENCODE	False	True	1295	312	24.093	23.321	1.033	True	80	True
+descriptive	top25_sgRNA	abs3	|z| >= 3	bulk ChIP	CTCF	HEK293 ENCODE	False	True	272	63	23.162	23.321	0.993	True	80	True
+descriptive	top25_sgRNA	abs4	|z| >= 4	bulk ChIP	CTCF	HEK293 ENCODE	False	True	65	19	29.231	23.321	1.253	True	80	True
+descriptive	top25_sgRNA	abs5	|z| >= 5	bulk ChIP	CTCF	HEK293 ENCODE	False	True	20	7	35.000	23.321	1.501	True	80	True
+descriptive	top25_sgRNA	top50	top 50 by |z|	bulk ChIP	CTCF	HEK293 ENCODE	False	True	50	15	30.000	23.321	1.286	True	80	True
+descriptive	top25_sgRNA	top100	top 100 by |z|	bulk ChIP	CTCF	HEK293 ENCODE	False	True	100	26	26.000	23.321	1.115	True	80	True
+descriptive	top25_sgRNA	top200	top 200 by |z|	bulk ChIP	CTCF	HEK293 ENCODE	False	True	200	48	24.000	23.321	1.029	True	80	True
+descriptive	top25_sgRNA	abs2	|z| >= 2	bulk ChIP	MAZ	HEK293	True	True	1263	707	55.978	54.107	1.035	True	114	True
+descriptive	top25_sgRNA	abs3	|z| >= 3	bulk ChIP	MAZ	HEK293	True	True	251	142	56.574	54.107	1.046	True	114	True
+descriptive	top25_sgRNA	abs4	|z| >= 4	bulk ChIP	MAZ	HEK293	True	True	36	20	55.556	54.107	1.027	True	114	True
+descriptive	top25_sgRNA	abs5	|z| >= 5	bulk ChIP	MAZ	HEK293	True	True	5	3	60.000	54.107	1.109	False	114	True
+descriptive	top25_sgRNA	top50	top 50 by |z|	bulk ChIP	MAZ	HEK293	True	True	50	29	58.000	54.107	1.072	True	114	True
+descriptive	top25_sgRNA	top100	top 100 by |z|	bulk ChIP	MAZ	HEK293	True	True	100	57	57.000	54.107	1.053	True	114	True
+descriptive	top25_sgRNA	top200	top 200 by |z|	bulk ChIP	MAZ	HEK293	True	True	200	114	57.000	54.107	1.053	True	114	True
+descriptive	top25_sgRNA	abs2	|z| >= 2	bulk ChIP	ZIC2	HEK293	True	True	1024	270	26.367	27.089	0.973	True	38	True
+descriptive	top25_sgRNA	abs3	|z| >= 3	bulk ChIP	ZIC2	HEK293	True	True	128	42	32.812	27.089	1.211	True	38	True
+descriptive	top25_sgRNA	abs4	|z| >= 4	bulk ChIP	ZIC2	HEK293	True	True	7	2	28.571	27.089	1.055	False	38	True
+descriptive	top25_sgRNA	abs5	|z| >= 5	bulk ChIP	ZIC2	HEK293	True	True	0	0		27.089		False	38	True
+descriptive	top25_sgRNA	top50	top 50 by |z|	bulk ChIP	ZIC2	HEK293	True	True	50	14	28.000	27.089	1.034	True	38	True
+descriptive	top25_sgRNA	top100	top 100 by |z|	bulk ChIP	ZIC2	HEK293	True	True	100	34	34.000	27.089	1.255	True	38	True
+descriptive	top25_sgRNA	top200	top 200 by |z|	bulk ChIP	ZIC2	HEK293	True	True	200	69	34.500	27.089	1.274	True	38	True
+descriptive	top25_sgRNA	abs2	|z| >= 2	bulk ChIP	ZNF282	HEK293	True	True	1412	548	38.810	37.832	1.026	True	61	True
+descriptive	top25_sgRNA	abs3	|z| >= 3	bulk ChIP	ZNF282	HEK293	True	True	252	88	34.921	37.832	0.923	True	61	True
+descriptive	top25_sgRNA	abs4	|z| >= 4	bulk ChIP	ZNF282	HEK293	True	True	43	10	23.256	37.832	0.615	True	61	True
+descriptive	top25_sgRNA	abs5	|z| >= 5	bulk ChIP	ZNF282	HEK293	True	True	1	1	100.000	37.832	2.643	False	61	True
+descriptive	top25_sgRNA	top50	top 50 by |z|	bulk ChIP	ZNF282	HEK293	True	True	50	13	26.000	37.832	0.687	True	61	True
+descriptive	top25_sgRNA	top100	top 100 by |z|	bulk ChIP	ZNF282	HEK293	True	True	100	30	30.000	37.832	0.793	True	61	True
+descriptive	top25_sgRNA	top200	top 200 by |z|	bulk ChIP	ZNF282	HEK293	True	True	200	69	34.500	37.832	0.912	True	61	True
+descriptive	top25_sgRNA	abs2	|z| >= 2	bulk ChIP	ZNF777	HEK293	True	True	1709	750	43.885	46.152	0.951	True	116	True
+descriptive	top25_sgRNA	abs3	|z| >= 3	bulk ChIP	ZNF777	HEK293	True	True	407	199	48.894	46.152	1.059	True	116	True
+descriptive	top25_sgRNA	abs4	|z| >= 4	bulk ChIP	ZNF777	HEK293	True	True	75	39	52.000	46.152	1.127	True	116	True
+descriptive	top25_sgRNA	abs5	|z| >= 5	bulk ChIP	ZNF777	HEK293	True	True	10	5	50.000	46.152	1.083	True	116	True
+descriptive	top25_sgRNA	top50	top 50 by |z|	bulk ChIP	ZNF777	HEK293	True	True	50	26	52.000	46.152	1.127	True	116	True
+descriptive	top25_sgRNA	top100	top 100 by |z|	bulk ChIP	ZNF777	HEK293	True	True	100	53	53.000	46.152	1.148	True	116	True
+descriptive	top25_sgRNA	top200	top 200 by |z|	bulk ChIP	ZNF777	HEK293	True	True	200	106	53.000	46.152	1.148	True	116	True
+descriptive	top25_sgRNA	abs2	|z| >= 2	bulk ChIP	ZBTB7A	HEK293	True	True	111	59	53.153	48.076	1.106	True	90	True
+descriptive	top25_sgRNA	abs3	|z| >= 3	bulk ChIP	ZBTB7A	HEK293	True	True	3	1	33.333	48.076	0.693	False	90	True
+descriptive	top25_sgRNA	abs4	|z| >= 4	bulk ChIP	ZBTB7A	HEK293	True	True	0	0		48.076		False	90	True
+descriptive	top25_sgRNA	abs5	|z| >= 5	bulk ChIP	ZBTB7A	HEK293	True	True	0	0		48.076		False	90	True
+descriptive	top25_sgRNA	top50	top 50 by |z|	bulk ChIP	ZBTB7A	HEK293	True	True	50	26	52.000	48.076	1.082	True	90	True
+descriptive	top25_sgRNA	top100	top 100 by |z|	bulk ChIP	ZBTB7A	HEK293	True	True	100	54	54.000	48.076	1.123	True	90	True
+descriptive	top25_sgRNA	top200	top 200 by |z|	bulk ChIP	ZBTB7A	HEK293	True	True	200	111	55.500	48.076	1.154	True	90	True
+descriptive	top25_sgRNA	abs2	|z| >= 2	bulk ChIP	SETDB1	HEK293	True	True	994	31	3.119	2.280	1.368	True	59	True
+descriptive	top25_sgRNA	abs3	|z| >= 3	bulk ChIP	SETDB1	HEK293	True	True	164	3	1.829	2.280	0.802	True	59	True
+descriptive	top25_sgRNA	abs4	|z| >= 4	bulk ChIP	SETDB1	HEK293	True	True	20	1	5.000	2.280	2.193	True	59	True
+descriptive	top25_sgRNA	abs5	|z| >= 5	bulk ChIP	SETDB1	HEK293	True	True	2	0	0.000	2.280	0.000	False	59	True
+descriptive	top25_sgRNA	top50	top 50 by |z|	bulk ChIP	SETDB1	HEK293	True	True	50	1	2.000	2.280	0.877	True	59	True
+descriptive	top25_sgRNA	top100	top 100 by |z|	bulk ChIP	SETDB1	HEK293	True	True	100	2	2.000	2.280	0.877	True	59	True
+descriptive	top25_sgRNA	top200	top 200 by |z|	bulk ChIP	SETDB1	HEK293	True	True	200	5	2.500	2.280	1.096	True	59	True
+descriptive	top25_sgRNA	abs2	|z| >= 2	bulk ChIP	NFYA	K562	True	True	1338	553	41.330	45.377	0.911	True	34	True
+descriptive	top25_sgRNA	abs3	|z| >= 3	bulk ChIP	NFYA	K562	True	True	206	84	40.777	45.377	0.899	True	34	True
+descriptive	top25_sgRNA	abs4	|z| >= 4	bulk ChIP	NFYA	K562	True	True	13	6	46.154	45.377	1.017	True	34	True
+descriptive	top25_sgRNA	abs5	|z| >= 5	bulk ChIP	NFYA	K562	True	True	1	1	100.000	45.377	2.204	False	34	True
+descriptive	top25_sgRNA	top50	top 50 by |z|	bulk ChIP	NFYA	K562	True	True	50	23	46.000	45.377	1.014	True	34	True
+descriptive	top25_sgRNA	top100	top 100 by |z|	bulk ChIP	NFYA	K562	True	True	100	42	42.000	45.377	0.926	True	34	True
+descriptive	top25_sgRNA	top200	top 200 by |z|	bulk ChIP	NFYA	K562	True	True	200	80	40.000	45.377	0.882	True	34	True
+descriptive	top25_sgRNA	abs2	|z| >= 2	bulk ChIP	NRF1	K562 ENCFF259YUE	True	True	2069	1297	62.687	54.107	1.159	True	86	True
+descriptive	top25_sgRNA	abs3	|z| >= 3	bulk ChIP	NRF1	K562 ENCFF259YUE	True	True	729	517	70.919	54.107	1.311	True	86	True
+descriptive	top25_sgRNA	abs4	|z| >= 4	bulk ChIP	NRF1	K562 ENCFF259YUE	True	True	304	237	77.961	54.107	1.441	True	86	True
+descriptive	top25_sgRNA	abs5	|z| >= 5	bulk ChIP	NRF1	K562 ENCFF259YUE	True	True	143	112	78.322	54.107	1.448	True	86	True
+descriptive	top25_sgRNA	top50	top 50 by |z|	bulk ChIP	NRF1	K562 ENCFF259YUE	True	True	50	37	74.000	54.107	1.368	True	86	True
+descriptive	top25_sgRNA	top100	top 100 by |z|	bulk ChIP	NRF1	K562 ENCFF259YUE	True	True	100	75	75.000	54.107	1.386	True	86	True
+descriptive	top25_sgRNA	top200	top 200 by |z|	bulk ChIP	NRF1	K562 ENCFF259YUE	True	True	200	160	80.000	54.107	1.479	True	86	True
+descriptive	top25_sgRNA	abs2	|z| >= 2	bulk ChIP	NRF1	HepG2 ENCFF348EDE	False	True	2069	1299	62.784	53.759	1.168	True	86	True
+descriptive	top25_sgRNA	abs3	|z| >= 3	bulk ChIP	NRF1	HepG2 ENCFF348EDE	False	True	729	516	70.782	53.759	1.317	True	86	True
+descriptive	top25_sgRNA	abs4	|z| >= 4	bulk ChIP	NRF1	HepG2 ENCFF348EDE	False	True	304	237	77.961	53.759	1.450	True	86	True
+descriptive	top25_sgRNA	abs5	|z| >= 5	bulk ChIP	NRF1	HepG2 ENCFF348EDE	False	True	143	110	76.923	53.759	1.431	True	86	True
+descriptive	top25_sgRNA	top50	top 50 by |z|	bulk ChIP	NRF1	HepG2 ENCFF348EDE	False	True	50	39	78.000	53.759	1.451	True	86	True
+descriptive	top25_sgRNA	top100	top 100 by |z|	bulk ChIP	NRF1	HepG2 ENCFF348EDE	False	True	100	75	75.000	53.759	1.395	True	86	True
+descriptive	top25_sgRNA	top200	top 200 by |z|	bulk ChIP	NRF1	HepG2 ENCFF348EDE	False	True	200	160	80.000	53.759	1.488	True	86	True
+descriptive	top25_sgRNA	abs2	|z| >= 2	bulk ChIP	E4F1	K562 ENCFF683WRK	True	True	1750	836	47.771	46.713	1.023	True	105	True
+descriptive	top25_sgRNA	abs3	|z| >= 3	bulk ChIP	E4F1	K562 ENCFF683WRK	True	True	468	254	54.274	46.713	1.162	True	105	True
+descriptive	top25_sgRNA	abs4	|z| >= 4	bulk ChIP	E4F1	K562 ENCFF683WRK	True	True	168	106	63.095	46.713	1.351	True	105	True
+descriptive	top25_sgRNA	abs5	|z| >= 5	bulk ChIP	E4F1	K562 ENCFF683WRK	True	True	87	65	74.713	46.713	1.599	True	105	True
+descriptive	top25_sgRNA	top50	top 50 by |z|	bulk ChIP	E4F1	K562 ENCFF683WRK	True	True	50	36	72.000	46.713	1.541	True	105	True
+descriptive	top25_sgRNA	top100	top 100 by |z|	bulk ChIP	E4F1	K562 ENCFF683WRK	True	True	100	71	71.000	46.713	1.520	True	105	True
+descriptive	top25_sgRNA	top200	top 200 by |z|	bulk ChIP	E4F1	K562 ENCFF683WRK	True	True	200	122	61.000	46.713	1.306	True	105	True

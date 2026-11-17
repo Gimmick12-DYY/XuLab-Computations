@@ -1,0 +1,22 @@
+gene	tf	peak_location	promoter_signalValue	best_element	best_abc	knockdown_available	knockdown_z	knockdown_z_all_cells	tier	sign	confidence	tf_evidence
+MDK	NRF1	promoter and distal	3.43	chr11:46379567-46382229	1	True	4.28	6.12	1	represses	|z| >= 4	multiple lines
+MDK	AKAP8L	promoter	3.52	chr11:46379567-46382229	1	True	2.12	-0.746	2	represses	|z| >= 2	binding only
+MDK	ZNF507	distal	0	chr11:46243136-46244007	0.0335	True	2.36	-0.169	2	represses	|z| >= 2	binding only
+MDK	RBPJ	promoter	4.51	chr11:46379567-46382229	1	True	3.08	3.2	2	represses	|z| >= 3	binding only
+MDK	ZNF746	promoter	3.85	chr11:46379567-46382229	1	True	-1.04	-1.57	3	none	none	binding only
+MDK	ZNF581	distal	0	chr11:46243136-46244007	0.0335	True	-1.02	-0.198	3	none	none	binding only
+MDK	CHAMP1	distal	0	chr11:46361285-46362242	0.0331	True	-0.914	-1.94	3	none	none	binding only
+MDK	RBBP7	distal	0	chr11:46243136-46244007	0.0335	True	0.0487	0.227	3	none	none	binding only
+MDK	SOX4	distal	0	chr11:46243136-46244007	0.0335	True	0.406	-0.823	3	none	none	binding only
+MDK	E2F3	promoter	4.57	chr11:46379567-46382229	1	True	0.553	-0.678	3	none	none	one line
+MDK	ZNF79	promoter	2.79	chr11:46379567-46382229	1	True	0.593	-0.321	3	none	none	binding only
+MDK	THAP6	promoter	4.24	chr11:46379567-46382229	1	True	0.614	0.319	3	none	none	binding only
+MDK	XPA	distal	0	chr11:46367293-46368013	0.0228	True	1.09	-0.0762	3	none	none	binding only
+MDK	NFYA	distal	0	chr11:46347038-46347682	0.0221	True	1.64	1.5	3	none	none	multiple lines
+MDK	HOXA5	distal	0	chr11:46367293-46368013	0.0228	True	1.64	2.75	3	none	none	binding only
+MDK	MSX2	distal	0	chr11:46347038-46347682	0.0221	True	1.71	2.44	3	none	none	binding only
+MDK	PA2G4	distal	0	chr11:46347835-46348813	0.0209	True	1.87	1.66	3	none	none	binding only
+MDK	HP1	distal	0	chr11:46243136-46244007	0.0335	False		-0.252	3	none	none	binding only
+MDK	MBD3	distal	0	chr11:46347038-46347682	0.0221	False		3.05	3	none	none	binding only
+MDK	RBBP4	distal	0	chr11:46347038-46347682	0.0221	False		2.26	3	none	none	binding only
+MDK	TRAFD1	distal	0	chr11:46389111-46390317	0.069	False		2.46	3	none	none	binding only

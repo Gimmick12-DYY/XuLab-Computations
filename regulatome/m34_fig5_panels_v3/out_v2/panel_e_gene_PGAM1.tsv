@@ -1,0 +1,14 @@
+gene	tf	peak_location	promoter_signalValue	best_element	best_abc	knockdown_available	knockdown_z	knockdown_z_all_cells	tier	sign	confidence	tf_evidence
+PGAM1	NRF1	promoter	4.46	chr10:97425825-97426748	1	True	-7.27	-11.9	1	activates	|z| >= 4	multiple lines
+PGAM1	HOXA10	promoter	4.13	chr10:97425825-97426748	1	True	2.06	0.727	2	represses	|z| >= 2	binding only
+PGAM1	FLYWCH1	promoter	4.29	chr10:97425825-97426748	1	True	2.07	0.811	2	represses	|z| >= 2	binding only
+PGAM1	NFYA	promoter and distal	5.81	chr10:97425825-97426748	1	True	2.19	2.08	2	represses	|z| >= 2	multiple lines
+PGAM1	ZNF768	promoter	3.31	chr10:97425825-97426748	1	True	2.29	0.322	2	represses	|z| >= 2	binding only
+PGAM1	NME2	distal	0	chr10:97406828-97407852	0.0363	True	2.58	-2.78	2	represses	|z| >= 2	binding only
+PGAM1	SETDB1	distal	0	chr10:97433569-97434502	0.0328	True	0.12	-1.89	3	none	none	binding only
+PGAM1	ZNF581	distal	0	chr10:97400818-97402040	0.0396	True	0.343	0.377	3	none	none	binding only
+PGAM1	ZNF507	promoter	6.37	chr10:97425825-97426748	1	True	0.422	-1.21	3	none	none	binding only
+PGAM1	DDIT3	promoter	4.68	chr10:97425825-97426748	1	True	1.38	-0.864	3	none	none	binding only
+PGAM1	XPA	promoter and distal	5.35	chr10:97425825-97426748	1	True	1.45	-1.43	3	none	none	binding only
+PGAM1	EZH2	promoter	4.08	chr10:97425825-97426748	1	False		-0.313	3	none	none	binding only
+PGAM1	RBBP4	promoter	6.72	chr10:97425825-97426748	1	False		-2.12	3	none	none	binding only

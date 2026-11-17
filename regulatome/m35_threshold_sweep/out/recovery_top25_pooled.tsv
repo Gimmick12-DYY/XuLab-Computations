@@ -1,0 +1,22 @@
+label	version	set	threshold	threshold_label	n_tfs	n_tfs_ge10_links	links	found	pct_found	expected_pct	pooled_fold	median_fold_tfs_ge10	n_tfs_fold_gt_1_2	tfs_fold_gt_1_2
+descriptive	top25_sgRNA	ours, all TFs with a usable top-25% knockdown	abs2	|z| >= 2	63	63	63954	11337	17.727	17.539	1.011	1.013	6	AKAP8L,SRCAP,TBX3,THAP6,ZBTB7A,ZUFSP
+descriptive	top25_sgRNA	ours, 10 TFs with bulk ChIP	abs2	|z| >= 2	10	10	12965	2525	19.476	19.103	1.020	0.998	1	ZBTB7A
+descriptive	top25_sgRNA	bulk ChIP, same 10 TFs (one reference each)	abs2	|z| >= 2	10	10	12965	5387	41.550	40.433	1.028	1.024	1	SETDB1
+descriptive	top25_sgRNA	ours, all TFs with a usable top-25% knockdown	abs3	|z| >= 3	63	62	11237	2158	19.204	18.211	1.055	1.074	17	DR1,FLYWCH1,FOXC1,HOXA10,HOXB8,HOXC4,HOXC9,HOXD10,MEF2A,NRF1,SRCAP,TBX3,THAP6,WIZ,ZIC2,ZNF644,ZUFSP
+descriptive	top25_sgRNA	ours, 10 TFs with bulk ChIP	abs3	|z| >= 3	10	9	2880	557	19.340	18.225	1.061	1.037	2	NRF1,ZIC2
+descriptive	top25_sgRNA	bulk ChIP, same 10 TFs (one reference each)	abs3	|z| >= 3	10	9	2880	1401	48.646	42.932	1.133	1.046	2	ZIC2,NRF1
+descriptive	top25_sgRNA	ours, all TFs with a usable top-25% knockdown	abs4	|z| >= 4	63	29	2188	484	22.121	18.960	1.167	1.197	14	ADNP,DNMT1,E4F1,FLYWCH1,HOXA10,MSX2,NRF1,RBPJ,SAFB,WIZ,ZNF143,ZNF282,ZNF79,ZUFSP
+descriptive	top25_sgRNA	ours, 10 TFs with bulk ChIP	abs4	|z| >= 4	10	8	731	151	20.657	17.135	1.205	1.086	3	E4F1,NRF1,ZNF282
+descriptive	top25_sgRNA	bulk ChIP, same 10 TFs (one reference each)	abs4	|z| >= 4	10	8	731	438	59.918	46.314	1.294	1.077	3	SETDB1,NRF1,E4F1
+descriptive	top25_sgRNA	ours, all TFs with a usable top-25% knockdown	abs5	|z| >= 5	63	10	558	136	24.373	19.859	1.227	1.253	5	ADNP,DNMT1,E4F1,MSX2,NRF1
+descriptive	top25_sgRNA	ours, 10 TFs with bulk ChIP	abs5	|z| >= 5	10	4	269	63	23.420	17.424	1.344	1.216	2	E4F1,NRF1
+descriptive	top25_sgRNA	bulk ChIP, same 10 TFs (one reference each)	abs5	|z| >= 5	10	4	269	193	71.747	48.861	1.468	1.298	2	NRF1,E4F1
+descriptive	top25_sgRNA	ours, all TFs with a usable top-25% knockdown	top50	top 50 by |z|	63	63	3150	591	18.762	16.663	1.126	1.131	24	ADNP,DNMT1,DR1,E4F1,FLYWCH1,FOXC1,HOXA10,HOXB8,HOXC4,HOXC9,HOXD10,MSX2,NR1D2,NRF1,SRCAP,THAP6,WIZ,ZBTB7A,ZIC2,ZNF143,ZNF282,ZNF644,ZNF777,ZNF79
+descriptive	top25_sgRNA	ours, 10 TFs with bulk ChIP	top50	top 50 by |z|	10	10	500	107	21.400	19.159	1.117	1.296	6	E4F1,NRF1,ZBTB7A,ZIC2,ZNF282,ZNF777
+descriptive	top25_sgRNA	bulk ChIP, same 10 TFs (one reference each)	top50	top 50 by |z|	10	10	500	219	43.800	38.786	1.129	1.072	2	NRF1,E4F1
+descriptive	top25_sgRNA	ours, all TFs with a usable top-25% knockdown	top100	top 100 by |z|	63	63	6300	1149	18.238	16.663	1.095	1.098	18	DNMT1,DR1,E4F1,FLYWCH1,FOXC1,HOXA10,HOXB8,HOXB9,HOXC9,HOXD10,MSX2,NRF1,TBX3,WIZ,ZBTB7A,ZNF143,ZNF282,ZUFSP
+descriptive	top25_sgRNA	ours, 10 TFs with bulk ChIP	top100	top 100 by |z|	10	10	1000	206	20.600	19.159	1.075	1.111	4	E4F1,NRF1,ZBTB7A,ZNF282
+descriptive	top25_sgRNA	bulk ChIP, same 10 TFs (one reference each)	top100	top 100 by |z|	10	10	1000	441	44.100	38.786	1.137	1.088	3	ZIC2,NRF1,E4F1
+descriptive	top25_sgRNA	ours, all TFs with a usable top-25% knockdown	top200	top 200 by |z|	63	63	12600	2268	18.000	16.663	1.080	1.084	14	ADNP,DNMT1,E4F1,FOXC1,HOXA10,HOXB8,MSX2,NEUROD4,NRF1,PA2G4,SRCAP,TBX3,ZBTB7A,ZUFSP
+descriptive	top25_sgRNA	ours, 10 TFs with bulk ChIP	top200	top 200 by |z|	10	10	2000	424	21.200	19.159	1.107	1.104	3	E4F1,NRF1,ZBTB7A
+descriptive	top25_sgRNA	bulk ChIP, same 10 TFs (one reference each)	top200	top 200 by |z|	10	10	2000	882	44.100	38.786	1.137	1.122	3	ZIC2,NRF1,E4F1
