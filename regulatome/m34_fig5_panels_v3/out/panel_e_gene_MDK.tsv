@@ -1,0 +1,22 @@
+gene	tf	peak_location	promoter_signalValue	best_element	best_abc	knockdown_available	knockdown_z	z_half1	z_half2	tier	sign	tf_evidence
+MDK	NRF1	promoter and distal	3.43	chr11:46379567-46382229	1	True	6.12	5.61	2.73	1	represses	multiple lines
+MDK	RBBP4	distal	0	chr11:46347038-46347682	0.0221	True	2.26	1.5	1.78	2	represses	binding only
+MDK	MSX2	distal	0	chr11:46347038-46347682	0.0221	True	2.44	1.44	1.98	2	represses	binding only
+MDK	TRAFD1	distal	0	chr11:46389111-46390317	0.069	True	2.46	1.77	1.95	2	represses	binding only
+MDK	HOXA5	distal	0	chr11:46367293-46368013	0.0228	True	2.75	1.71	2.42	2	represses	binding only
+MDK	MBD3	distal	0	chr11:46347038-46347682	0.0221	True	3.05	1.37	2.73	2	represses	binding only
+MDK	RBPJ	promoter	4.51	chr11:46379567-46382229	1	True	3.2	2.67	1.77	2	represses	binding only
+MDK	CHAMP1	distal	0	chr11:46361285-46362242	0.0331	True	-1.94	-1.43	-1.46	3	none	binding only
+MDK	ZNF746	promoter	3.85	chr11:46379567-46382229	1	True	-1.57	-0.418	-1.54	3	none	binding only
+MDK	SOX4	distal	0	chr11:46243136-46244007	0.0335	True	-0.823	-0.0773	-1.57	3	none	binding only
+MDK	AKAP8L	promoter	3.52	chr11:46379567-46382229	1	True	-0.746	0.462	-1.1	3	none	binding only
+MDK	E2F3	promoter	4.57	chr11:46379567-46382229	1	True	-0.678	-1.64	0.28	3	none	one line
+MDK	ZNF79	promoter	2.79	chr11:46379567-46382229	1	True	-0.321	0.294	-1.04	3	none	binding only
+MDK	HP1	distal	0	chr11:46243136-46244007	0.0335	True	-0.252	0.653	-0.934	3	none	binding only
+MDK	ZNF581	distal	0	chr11:46243136-46244007	0.0335	True	-0.198	0.519	-0.575	3	none	binding only
+MDK	ZNF507	distal	0	chr11:46243136-46244007	0.0335	True	-0.169	-0.324	0.0128	3	none	binding only
+MDK	XPA	distal	0	chr11:46367293-46368013	0.0228	True	-0.0762	-0.0334	-0.0699	3	none	binding only
+MDK	RBBP7	distal	0	chr11:46243136-46244007	0.0335	True	0.227	0.262	0.0867	3	none	binding only
+MDK	THAP6	promoter	4.24	chr11:46379567-46382229	1	True	0.319	0.468	-0.156	3	none	binding only
+MDK	NFYA	distal	0	chr11:46347038-46347682	0.0221	True	1.5	1.6	0.792	3	none	multiple lines
+MDK	PA2G4	distal	0	chr11:46347835-46348813	0.0209	True	1.66	1.76	0.289	3	none	binding only

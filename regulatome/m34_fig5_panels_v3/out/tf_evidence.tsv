@@ -1,0 +1,80 @@
+tf	tf_motif_excess_points	tf_bulk_chip_ref	tf_bulk_recall_rank_of79	tf_bulk_precision_rank_of79	tf_ours_fold_same_path	tf_bulk_fold_same_path	tf_own_motif_fragment_enrichment	tf_fig2_r	tf_evidence_lines	tf_evidence
+ADNP									0	binding only
+AKAP8L									0	binding only
+CHAMP1									0	binding only
+CTCF	-1.99	CTCF|HEK293T (GSE103651, ChIP-nexus)	22	7	0.967	HEK293T GSE103651:1.08;HEK293 ENCODE:1.04	1.53 vs swap 1.32	0.45	3	multiple lines
+DDIT3	-0.299								0	binding only
+DNMT1									0	binding only
+DR1									0	binding only
+E2F3	5.15								1	one line
+E4F1	2.31				1.05	K562 ENCFF683WRK:1.04			0	binding only
+EPAS1	0.481								0	binding only
+ETS2	-0.203								0	binding only
+EZH2									0	binding only
+FLYWCH1									0	binding only
+FOXC1	-0.315								0	binding only
+FOXJ3	-0.629								0	binding only
+FOXK1	-1.89								0	binding only
+GLYR1									0	binding only
+HES1	-2.75								0	binding only
+HOXA10	0								0	binding only
+HOXA5	-0.389								0	binding only
+HOXB6	0.562								0	binding only
+HOXB8	-0.188								0	binding only
+HOXB9									0	binding only
+HOXC4									0	binding only
+HOXC9	-0.539								0	binding only
+HOXD10									0	binding only
+HP1									0	binding only
+MAZ	1.93	MAZ|HEK293	27	44	1.15	HEK293:1.04		-0.11	0	binding only
+MBD3									0	binding only
+MEF2A	-0.524								0	binding only
+MEF2D	-0.365								0	binding only
+MLX	0.069								0	binding only
+MSX2	0.741								0	binding only
+MTF2									0	binding only
+NEUROD4									0	binding only
+NFYA	16.8	NFYA|K562	3	10	0.977	K562:0.96	1.60 vs swap 1.36		3	multiple lines
+NME2									0	binding only
+NR1D2									0	binding only
+NRF1	11.2				1.25	K562 ENCFF259YUE:1.22;HepG2 ENCFF348EDE:1.23	1.64 vs swap 1.05		2	multiple lines
+PA2G4									0	binding only
+PCGF6									0	binding only
+POGK									0	binding only
+RBBP4									0	binding only
+RBBP7									0	binding only
+RBPJ	-1.28								0	binding only
+RELA	-2.1								0	binding only
+SAFB									0	binding only
+SETDB1		SETDB1|HEK293	74	74	0.945	HEK293:1.27			0	binding only
+SMARCA1									0	binding only
+SOX12									0	binding only
+SOX4	0.173								0	binding only
+SRCAP									0	binding only
+SREBF2									0	binding only
+STAG2									0	binding only
+TBX3	0.464								0	binding only
+THAP6									0	binding only
+TRAFD1									0	binding only
+WIZ									0	binding only
+XPA									0	binding only
+ZBTB40									0	binding only
+ZBTB43									0	binding only
+ZBTB7A	0.496	ZBTB7A|HEK293	18	37	0.919	HEK293:1.16		0	0	binding only
+ZIC2	-3.91	ZIC2|HEK293	26	38	0.954	HEK293:1.01		0.1	0	binding only
+ZNF143	-0.674						1.02 vs swap 1.06		0	binding only
+ZNF282	-0.457	ZNF282|HEK293	15	74	0.879	HEK293:1.06		0.1	0	binding only
+ZNF367									0	binding only
+ZNF503									0	binding only
+ZNF507									0	binding only
+ZNF512									0	binding only
+ZNF512B									0	binding only
+ZNF581									0	binding only
+ZNF606									0	binding only
+ZNF644									0	binding only
+ZNF703									0	binding only
+ZNF746									0	binding only
+ZNF768	-1.5								0	binding only
+ZNF777		ZNF777|HEK293	19	68	1.01	HEK293:1.03		0.03	0	binding only
+ZNF79									0	binding only
+ZUFSP									0	binding only

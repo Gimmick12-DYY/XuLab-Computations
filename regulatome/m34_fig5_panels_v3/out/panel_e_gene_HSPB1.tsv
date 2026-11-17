@@ -1,0 +1,54 @@
+gene	tf	peak_location	promoter_signalValue	best_element	best_abc	knockdown_available	knockdown_z	z_half1	z_half2	tier	sign	tf_evidence
+HSPB1	FLYWCH1	promoter	13.4	chr7:76302372-76303876	1	True	-17	-15	-8.2	1	activates	binding only
+HSPB1	NRF1	promoter	6.62	chr7:76302372-76303876	1	True	-8.39	-7.01	-4.65	1	activates	multiple lines
+HSPB1	E4F1	promoter and distal	13.2	chr7:76302372-76303876	1	True	-5.04	-4.81	-2.04	1	activates	binding only
+HSPB1	NME2	promoter and distal	4.91	chr7:76302372-76303876	1	True	-4.39	-3.41	-2.79	1	activates	binding only
+HSPB1	CHAMP1	promoter	6.19	chr7:76302372-76303876	1	True	-3.14	-2.4	-2.32	1	activates	binding only
+HSPB1	ETS2	promoter	4.96	chr7:76302372-76303876	1	True	3.61	2.2	2.87	1	represses	binding only
+HSPB1	ZNF79	distal	0	chr7:76317628-76318432	0.117	True	-2.08	-0.485	-3.09	2	activates	binding only
+HSPB1	FOXC1	promoter and distal	3.43	chr7:76302372-76303876	1	True	-2.04	-1.54	-1.42	2	activates	binding only
+HSPB1	ZNF703	distal	0	chr7:76379463-76380551	0.0208	True	2.59	-0.949	3.33	2	represses	binding only
+HSPB1	HOXC4	promoter and distal	6.45	chr7:76302372-76303876	1	True	-1.45	-1.47	-0.737	3	none	binding only
+HSPB1	NR1D2	distal	0	chr7:76317628-76318432	0.117	True	-1.45	-2.6	-0.0724	3	none	binding only
+HSPB1	DDIT3	promoter and distal	4.14	chr7:76302372-76303876	1	True	-1.22	0.67	-3.14	3	none	binding only
+HSPB1	FOXJ3	promoter	5.02	chr7:76302372-76303876	1	True	-1.22	-0.021	-2.21	3	none	binding only
+HSPB1	MEF2D	promoter	5.32	chr7:76302372-76303876	1	True	-1.1	-0.548	-0.966	3	none	binding only
+HSPB1	RBBP7	distal	0	chr7:76259706-76261054	0.039	True	-0.993	-2.09	0.341	3	none	binding only
+HSPB1	SOX4	promoter and distal	12.9	chr7:76302372-76303876	1	True	-0.703	-1.15	-0.255	3	none	binding only
+HSPB1	ZBTB43	promoter	6.27	chr7:76302372-76303876	1	True	-0.561	-0.434	-0.39	3	none	binding only
+HSPB1	ZNF768	distal	0	chr7:76379463-76380551	0.0208	True	-0.451	0.878	-1.78	3	none	binding only
+HSPB1	HOXB6	promoter	4.65	chr7:76302372-76303876	1	True	-0.373	-1.91	1.17	3	none	binding only
+HSPB1	PA2G4	distal	0	chr7:76379463-76380551	0.0208	True	-0.22	0.0677	-0.546	3	none	binding only
+HSPB1	MLX	promoter and distal	9.38	chr7:76302372-76303876	1	True	-0.167	-1.64	0.659	3	none	binding only
+HSPB1	TBX3	distal	0	chr7:76314233-76314733	0.0278	True	-0.153	-0.0554	-0.149	3	none	binding only
+HSPB1	ZNF143	promoter	3.8	chr7:76302372-76303876	1	True	-0.145	-1.21	1.47	3	none	binding only
+HSPB1	ZNF507	promoter and distal	6.73	chr7:76302372-76303876	1	True	-0.119	-2.06	1.23	3	none	binding only
+HSPB1	ZNF512	distal	0	chr7:76259706-76261054	0.039	True	-0.102	0.129	-0.378	3	none	binding only
+HSPB1	XPA	distal	0	chr7:76259706-76261054	0.039	True	-0.0995	0.263	-0.313	3	none	binding only
+HSPB1	ZBTB7A	promoter and distal	6.19	chr7:76302372-76303876	1	True	0.0492	-0.483	0.582	3	none	binding only
+HSPB1	RELA	distal	0	chr7:76392521-76394101	0.0379	True	0.129	-2.19	1.6	3	none	binding only
+HSPB1	HOXD10	distal	0	chr7:76306933-76307433	0.0288	True	0.208	0.839	-0.423	3	none	binding only
+HSPB1	FOXK1	promoter	3.57	chr7:76302372-76303876	1	True	0.215	-0.161	0.388	3	none	binding only
+HSPB1	POGK	promoter	6.31	chr7:76302372-76303876	1	True	0.224	0.411	-0.267	3	none	binding only
+HSPB1	RBBP4	distal	0	chr7:76317628-76318432	0.117	True	0.618	0.718	0.335	3	none	binding only
+HSPB1	ZBTB40	promoter	5.04	chr7:76302372-76303876	1	True	0.644	0.799	-0.204	3	none	binding only
+HSPB1	DR1	promoter	6.04	chr7:76302372-76303876	1	True	0.646	-0.287	0.919	3	none	binding only
+HSPB1	WIZ	promoter	7.01	chr7:76302372-76303876	1	True	0.672	0.524	0.482	3	none	binding only
+HSPB1	HOXA10	promoter	4.38	chr7:76302372-76303876	1	True	0.782	1.18	-0.299	3	none	binding only
+HSPB1	ZNF282	promoter	4.13	chr7:76302372-76303876	1	True	0.889	1.29	0.171	3	none	binding only
+HSPB1	THAP6	promoter	8.16	chr7:76302372-76303876	1	True	0.892	1.07	-0.0422	3	none	binding only
+HSPB1	HOXB9	promoter	4.59	chr7:76302372-76303876	1	True	0.928	1.05	0.0247	3	none	binding only
+HSPB1	TRAFD1	promoter and distal	4.18	chr7:76302372-76303876	1	True	0.975	-0.134	2.46	3	none	binding only
+HSPB1	MEF2A	promoter	8.21	chr7:76302372-76303876	1	True	0.977	0.886	0.427	3	none	binding only
+HSPB1	MAZ	promoter	6.51	chr7:76302372-76303876	1	True	1.19	1.2	0.398	3	none	binding only
+HSPB1	NFYA	promoter and distal	8.94	chr7:76302372-76303876	1	True	1.25	0.34	1.26	3	none	multiple lines
+HSPB1	HOXC9	promoter	7.37	chr7:76302372-76303876	1	True	1.37	1.69	-0.239	3	none	binding only
+HSPB1	SMARCA1	distal	0	chr7:76317628-76318432	0.117	True	1.41	1.64	-0.0931	3	none	binding only
+HSPB1	ZNF746	promoter	6.02	chr7:76302372-76303876	1	True	1.62	-0.283	1.92	3	none	binding only
+HSPB1	ZNF644	promoter	8.22	chr7:76302372-76303876	1	True	1.77	1.14	1.38	3	none	binding only
+HSPB1	MTF2	promoter and distal	6.72	chr7:76302372-76303876	1	True	1.79	1.35	1.28	3	none	binding only
+HSPB1	MBD3	promoter and distal	11	chr7:76302372-76303876	1	True	1.79	0.254	1.89	3	none	binding only
+HSPB1	ZIC2	promoter and distal	6.94	chr7:76302372-76303876	1	True	1.93	-0.484	2.61	3	none	binding only
+HSPB1	GLYR1	promoter and distal	7.71	chr7:76302372-76303876	1	False				3	none	binding only
+HSPB1	SREBF2	promoter	4.51	chr7:76302372-76303876	1	False				3	none	binding only
+HSPB1	ZNF367	distal	0	chr7:76259706-76261054	0.039	False				3	none	binding only

@@ -1,0 +1,24 @@
+pair	figure4_pair	af3_5seed_strong	n_bound_a	n_bound_b	n_shared_targets	kd_a	n_shared_responding_a	pct_shared_responding_a	pct_own_only_targets_responding_a	n_shared_down_a	n_shared_up_a	kd_b	n_shared_responding_b	pct_shared_responding_b	pct_own_only_targets_responding_b	n_shared_down_b	n_shared_up_b
+MLX-SREBF2	True	False	2690	663	251	MLX knockdown	9	3.59	5.17	6	3	knockdown has 18 cells: too few, not used					
+ETS2-RBBP7	True	True	1036	5522	658	ETS2 knockdown	43	6.53	6.88	12	31	RBBP7 knockdown	48.00	7.29	5.98	25.00	23.00
+DR1-NFYA	True	True	1095	5311	648	DR1 knockdown	31	4.78	5.59	17	14	NFYA knockdown	46.00	7.10	6.63	25.00	21.00
+ADNP-MTF2	False	True	1430	1754	359	ADNP knockdown	31	8.64	6.26	15	16	MTF2 knockdown	12.00	3.34	6.16	5.00	7.00
+DDIT3-MTF2	False	True	5117	1754	1092	DDIT3 knockdown	49	4.49	5.32	14	35	MTF2 knockdown	69.00	6.32	4.38	42.00	27.00
+DDIT3-RBBP7	False	True	5117	5522	3276	DDIT3 knockdown	168	5.13	5.16	73	95	RBBP7 knockdown	203.00	6.20	6.06	103.00	100.00
+DDIT3-TBX3	False	True	5117	1241	772	DDIT3 knockdown	43	5.57	5.06	18	25	TBX3 knockdown	42.00	5.44	5.54	26.00	16.00
+EPAS1-HES1	False	True	392	1455	82	EPAS1 knockdown	5	6.10	7.10	1	4	HES1 knockdown	4.00	4.88	4.81	2.00	2.00
+EPAS1-SREBF2	False	True	392	663	54	EPAS1 knockdown	4	7.41	6.80	0	4	knockdown has 18 cells: too few, not used					
+HOXA10-RBBP4	False	True	1673	6048	1173	HOXA10 knockdown	71	6.05	5.40	32	39	RBBP4 knockdown	70.00	5.97	5.52	31.00	39.00
+HOXA10-XPA	False	True	1673	5830	1151	HOXA10 knockdown	69	5.99	5.56	35	34	XPA knockdown	86.00	7.47	7.61	33.00	53.00
+HOXB9-RBBP4	False	True	1588	6048	1071	HOXB9 knockdown	66	6.16	6.19	36	30	RBBP4 knockdown	72.00	6.72	5.36	27.00	45.00
+HOXB9-RBBP7	False	True	1588	5522	1063	HOXB9 knockdown	70	6.59	5.33	39	31	RBBP7 knockdown	60.00	5.64	6.26	31.00	29.00
+HOXB9-XPA	False	True	1588	5830	1133	HOXB9 knockdown	64	5.65	7.47	35	29	XPA knockdown	72.00	6.35	7.88	31.00	41.00
+HOXC4-ZUFSP	False	True	710	993	122	HOXC4 knockdown	8	6.56	11.05	6	2	ZUFSP knockdown	5.00	4.10	5.97	4.00	1.00
+MEF2A-RBBP7	False	True	775	5522	509	MEF2A knockdown	26	5.11	5.64	10	16	RBBP7 knockdown	28.00	5.50	6.20	16.00	12.00
+NR1D2-TBX3	False	True	1458	1241	237	NR1D2 knockdown	17	7.17	6.80	5	12	TBX3 knockdown	13.00	5.49	5.48	7.00	6.00
+RBBP4-ZIC2	False	True	6048	1551	1053	RBBP4 knockdown	61	5.79	5.57	19	42	ZIC2 knockdown	41.00	3.89	5.02	21.00	20.00
+RBBP4-ZNF644	False	True	6048	1644	1072	RBBP4 knockdown	49	4.57	5.83	15	34	ZNF644 knockdown	62.00	5.78	6.29	32.00	30.00
+RBBP4-ZNF703	False	True	6048	4361	2971	RBBP4 knockdown	156	5.25	5.95	66	90	ZNF703 knockdown	107.00	3.60	5.68	48.00	59.00
+RBBP7-ZIC2	False	True	5522	1551	1031	RBBP7 knockdown	58	5.63	6.26	30	28	ZIC2 knockdown	41.00	3.98	4.81	20.00	21.00
+RBBP7-ZNF644	False	True	5522	1644	1092	RBBP7 knockdown	59	5.40	6.32	30	29	ZNF644 knockdown	64.00	5.86	6.16	29.00	35.00
+RBBP7-ZNF703	False	True	5522	4361	2896	RBBP7 knockdown	167	5.77	6.55	76	91	ZNF703 knockdown	124.00	4.28	4.23	58.00	66.00
