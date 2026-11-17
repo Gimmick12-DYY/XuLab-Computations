@@ -66,4 +66,4 @@ for i, t in enumerate(TFL):
                          found_in_regulome="yes" if hit else "no", peak_location=r.peak_location if hit else "", best_element=r.best_element if hit else "", ABC=r.best_abc if hit else np.nan))
 H = pd.DataFrame(rows).sort_values(["TF", "knockdown_z"]); H.to_csv(f"{S35}/high_confidence_links.tsv", sep="\t", index=False, float_format="%.4g")
 sys.path.insert(0, "/work/users/d/y/dyy12/envs/pptx_pydeps"); H.to_excel(f"{S35}/high_confidence_links.xlsx", index=False)
-print("links", len(H), "tier1-level", int(H.tier1_level.sum()), "found", int((H.found_in_regulome == "yes").sum()), "| |z|>=4", int(H.abs_z_ge_4.sum()), "found", int(((H.found_in_regulome == "yes") & H.abs_z_ge_4).sum()))
+print("links", len(H), "tier1-level", int(H.tier1_level.sum()), "found", int(((H.found_in_regulome == "yes") & H.tier1_level).sum()), "| any row found", int((H.found_in_regulome == "yes").sum()), "| |z|>=4", int(H.abs_z_ge_4.sum()), "found", int(((H.found_in_regulome == "yes") & H.abs_z_ge_4).sum()))
