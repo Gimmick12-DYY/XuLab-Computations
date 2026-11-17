@@ -57,12 +57,13 @@ for n, (p, a, b, ns, ips, ipt, extra) in enumerate(PAIRS):
         (x1, y1), (x2, y2) = ztomm(L["pA"]), ztomm(L["pB"])
         fax.plot([x1, x2], [y1, y2], color=P.neutral.ink, lw=0.9, ls=(0, (2.2, 1.4)), solid_capstyle="butt", zorder=6.5)
     for L in LAB:
-        items.append(dict(t=f"{L['dist']:.1f} Å", a=ztomm(L["mid"]), col=P.neutral.ink, bold=False, dist=True))
+        d_ = np.subtract(ztomm(L["pB"]), ztomm(L["pA"])); nrm = np.array([-d_[1], d_[0]]) / (np.linalg.norm(d_) + 1e-9)   # normal to the dash
+        items.append(dict(t=f"{L['dist']:.1f} Å", a=ztomm(L["mid"]), col=P.neutral.ink, bold=False, dist=True, nrm=nrm))
         for key, res, nm, col in (("labA", L["resA"], a, CA_), ("labB", L["resB"], b, CB_)):
             if (nm, res) not in done: done.add((nm, res)); items.append(dict(t=f"{nm} {res}", a=ztomm(L[key]), col=col, bold=True, dist=False))
     zc = np.array([zx + ZS / 2, zy + ZS / 2])
     for it in items:
-        v = np.array(it["a"]) - zc; v = v / (np.linalg.norm(v) + 1e-9); it["p"] = np.array(it["a"]) + (np.array([1.9, 1.2]) if it["dist"] else v * 2.0)   # distances beside, not on, the dash
+        v = np.array(it["a"]) - zc; v = v / (np.linalg.norm(v) + 1e-9); it["p"] = np.array(it["a"]) + ((it["nrm"] * np.sign(it["nrm"] @ v + 1e-9)) * 2.4 if it["dist"] else v * 2.0)   # distances beside, not on, the dash
         it["w"], it["h"] = 0.62 * 5.5 * 0.3528 * len(it["t"]) + 0.4, 5.5 * 0.3528 * 1.25
     for _ in range(300):
         moved = False
