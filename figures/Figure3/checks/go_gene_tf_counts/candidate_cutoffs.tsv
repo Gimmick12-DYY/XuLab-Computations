@@ -1,0 +1,5 @@
+cutoff	specific genes	specific annotated	conserved genes	conserved annotated	genes left out
+A: specific = 1 TF vs conserved >= 2 TFs	3692	3259	2453	2183	0
+B: specific = 1 TF vs conserved >= 3 TFs (gap: 2 TFs left out)	3692	3259	1169	1035	1284
+C: specific = 1 TF vs conserved = top 10% (>= 4 TFs)	3692	3259	600	533	1853
+D: specific = 1 TF vs conserved >= 5 TFs	3692	3259	306	274	2147
