@@ -121,6 +121,10 @@ for i, p in enumerate(PAIRS):
         vals.append(dict(pair=p, consensus=cons, source_motif=m if src == "H" else alt.get(name2id[m], m), source="HOMER" if src == "H" else "JASPAR/HOCOMOCO/Codebook", generic_flag=tag,
                          n_instances=n, max_p_of_4=pmax, **{f"p_{t}_{pt}": 10 ** lp[(t, pt)] for t in (a, b) for pt in ("disc", "val")}))
 fig.savefig(f"{OUT}/fig4c_motifs.svg"); fig.savefig(f"{OUT}/fig4c_motifs.png", dpi=600)
+# Illustrator reads the CSS font shorthand "700 7px" as a size; write explicit properties instead (same fix as Fig 3, commit 715c1a5)
+sv = open(f"{OUT}/fig4c_motifs.svg").read()
+sv = re.sub(r"font: (?:(\d{3}) )?([\d.]+)px '([^']+)'", lambda m: f"font-family: '{m.group(3)}'; font-size: {m.group(2)}px" + (f"; font-weight: {m.group(1)}" if m.group(1) else ""), sv)
+open(f"{OUT}/fig4c_motifs.svg", "w").write(sv)
 V = pd.DataFrame(vals); V.to_csv(f"{OUT}/fig4c_motifs_values.tsv", sep="\t", index=False); pd.set_option("display.width", 250); print(V.to_string(index=False))
 for f in os.listdir(OUT):
     if f.startswith("tmp_"): os.remove(f"{OUT}/{f}")
