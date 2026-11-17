@@ -8,7 +8,7 @@ from matplotlib.textpath import TextPath; from matplotlib.patches import PathPat
 from scipy.stats import norm
 X = "/work/users/d/y/dyy12/XuLab"; O = f"{X}/complex_screen/pair_motif_composite"; OUT = f"{O}/fig4"; os.makedirs(OUT, exist_ok=True)
 sys.path.insert(0, f"{X}/figures_paletteC"); import regulome_palette as rp; Pc = rp.use()
-PAIRS = ["DDIT3-RBBP7", "ADNP-MTF2", "DR1-NFYA"]; TOPN = int(os.environ.get("TOPN", "3")); TAG = os.environ.get("TAG", "")
+PAIRS = ["DDIT3-RBBP7", "ADNP-MTF2", "DR1-NFYA"]; TOPN = int(os.environ.get("TOPN", "3")); TAG = os.environ.get("TAG", ""); MODE = os.environ.get("MODE", "bars")
 T = pd.read_csv(f"{O}/motif_tables/pair_shared_motifs_p005.tsv", sep="\t").set_index("pair")
 hom = {}; cur = None; rows = []
 for l in list(open("/nas/longleaf/rhel9/apps/homer/5.1/data/knownTFs/vertebrates/known.motifs")) + [">end\tend\t0"]:
@@ -51,19 +51,27 @@ def worst(p, src, m):
     if src == "H": return max(homer_lp(t, pt, m) * -1 for t in (a_, b_) for pt in ("disc", "val"))
     return max(db_lp(t, pt, name2id[m]) * -1 for t in (a_, b_) for pt in ("disc", "val"))
 for p in PAIRS: sel[p] = sorted(sel[p], key=lambda x: worst(p, *x))[:TOPN]
-W, Hh = (7.1, 5.4) if TOPN == 3 else (4.7, 4.4)
-fig = plt.figure(figsize=(W, Hh)); gs = fig.add_gridspec(3, TOPN, hspace=.95, wspace=.5, left=.17 if TOPN < 3 else .14, right=.98, top=.9, bottom=.07); rows_out = []
+W, Hh = (7.1, 5.4) if TOPN == 3 else ((4.2, 3.0) if MODE == "logo" else (4.7, 4.4))
+fig = plt.figure(figsize=(W, Hh)); gs = fig.add_gridspec(3, TOPN, hspace=(.75 if MODE == "logo" else .95), wspace=.45, left=.17 if TOPN < 3 else .14, right=.98, top=(.86 if MODE == "logo" else .9), bottom=.07); rows_out = []
 for i, p in enumerate(PAIRS):
     a, b = p.split("-"); r = T.loc[p]
-    fig.text(.035, .9 - i * (.83 / 3) - .13, f"{p}\ncorr pct {r.correlation_pct:.2f} | AF3 {r.af3}", fontsize=6, rotation=90, va="center", ha="center", linespacing=1.6)
+    if MODE != "logo": fig.text(.035, .9 - i * (.83 / 3) - .13, f"{p}\ncorr pct {r.correlation_pct:.2f} | AF3 {r.af3}", fontsize=6, rotation=90, va="center", ha="center", linespacing=1.6)
     for j in range(TOPN):
-        sub = gs[i, j].subgridspec(2, 1, height_ratios=[1.1, 1], hspace=.35); ax1 = fig.add_subplot(sub[0]); ax2 = fig.add_subplot(sub[1])
-        if j >= len(sel[p]): ax1.axis("off"); ax2.axis("off"); continue
+        if MODE == "logo":
+            ax1 = fig.add_subplot(gs[i, j]); ax2 = None
+            if j == 0: ax1.text(-.38, .45, f"{p}\ncorr pct {r.correlation_pct:.2f}\nAF3 {r.af3}", transform=ax1.transAxes, fontsize=6, rotation=90, va="center", ha="center", linespacing=1.4)
+            if j >= len(sel[p]): ax1.axis("off"); continue
+        else:
+            sub = gs[i, j].subgridspec(2, 1, height_ratios=[1.1, 1], hspace=.35); ax1 = fig.add_subplot(sub[0]); ax2 = fig.add_subplot(sub[1])
+            if j >= len(sel[p]): ax1.axis("off"); ax2.axis("off"); continue
         src, m = sel[p][j]
         if src == "H": M = hom[m]; lp = {(t, pt): homer_lp(t, pt, m) for t in (a, b) for pt in ("disc", "val")}; label = m
         else: mid = name2id[m]; M = db[mid]; lp = {(t, pt): db_lp(t, pt, mid) for t in (a, b) for pt in ("disc", "val")}; label = alt.get(mid, m).split(".")[0]
         logo(ax1, M); ax1.set_title(f"{label}  ({'HOMER' if src == 'H' else 'JASPAR/HOCOMOCO/Codebook'})", fontsize=5.5)
         xs = np.arange(4); vals = [lp[(a, "disc")], lp[(a, "val")], lp[(b, "disc")], lp[(b, "val")]]
+        if MODE == "logo":
+            pw = 10 ** -min(vals); ax1.text(.5, -.16, f"{a} and {b}: all 4 tests p ≤ {pw:.2g}", transform=ax1.transAxes, ha="center", va="top", fontsize=5.5)
+            rows_out.append(dict(pair=p, motif=label, source="HOMER" if src == "H" else "DB", max_p_of_4=round(pw, 4), **{f"{t}_{pt}_p": round(10 ** -lp[(t, pt)], 4) for t in (a, b) for pt in ("disc", "val")})); continue
         ax2.bar(xs, vals, color=[Pc.neutral.dark, Pc.neutral.dark, Pc.neutral.light, Pc.neutral.light], edgecolor=Pc.neutral.ink, linewidth=.3, alpha=1, width=.7)
         for x_, v in zip(xs, vals): ax2.text(x_, v, f"{10 ** -v:.1g}", ha="center", va="bottom", fontsize=4.5)
         ax2.axhline(-math.log10(.05), color=Pc.neutral.mid, lw=.6, ls="--"); ax2.set_xticks(xs); ax2.set_xticklabels([f"{a}\ndisc", f"{a}\nheld-out", f"{b}\ndisc", f"{b}\nheld-out"], fontsize=4.5)
