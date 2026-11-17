@@ -16,9 +16,9 @@ rd, paldir, out = sys.argv[1:4]
 sys.path.insert(0, paldir)
 import regulome_palette as rp
 P = rp.use(); plt.rcParams.update({"savefig.dpi": 300})
-CA_, CB_ = "#2166AC", "#6E6E6E"
+CA_, CB_ = "#2166AC", "#B83A2E"            # chain A blue, chain B palette-C red (equal weight; no grey partner)
 J = json.load(open(f"{rd}/panels.json"))
-PAIRS = [("EPAS1_HES1", "EPAS1", "HES1", 5, 0.56, 0.41, "partner retained with DNA (AF3 + DNA test)"),
+PAIRS = [("RBBP4_ZNF644", "RBBP4", "ZNF644", 4, 0.53, 0.77, "one-sided interface (median 12 confident residues on ZNF644)"),
          ("ADNP_MTF2", "ADNP", "MTF2", 4, 0.46, 0.48, ""), ("DR1_NFYA", "DR1", "NFYA", 4, 0.45, 0.52, "")]
 mm = 1 / 25.4; W, H = 183, 88
 fig = plt.figure(figsize=(W * mm, H * mm))
@@ -37,7 +37,9 @@ for n, (p, a, b, ns, ips, ipt, extra) in enumerate(PAIRS):
     # chain names beside the full view, at the height of each chain's centre, outside the structure
     for nm, key, col, side in ((a, "anchorA", CA_, -1), (b, "anchorB", CB_, 1)):
         q = tomm(m["full"][key]); yq = min(max(q[1], fy + 2), ftop - 2)
-        fax.text(x0 + 1.5 if side < 0 else x0 + cw - 1.5, yq, nm, ha="left" if side < 0 else "right", va="center", fontsize=6.5, color=col, fontweight="bold", zorder=6)
+        tw = 0.62 * 6.5 * 0.3528 * len(nm)                  # beside the structure, kept inside its own column
+        xt = max(fx - 1.5, x0 + 1.5 + tw) if side < 0 else min(max(fx + iw, c[0] + r) + 1.5, x0 + cw - 1.5 - tw)
+        fax.text(xt, yq, nm, ha="right" if side < 0 else "left", va="center", fontsize=6.5, color=col, fontweight="bold", zorder=6)
     fax.text(cx, H - 4.5, f"{a}–{b}", ha="center", va="bottom", fontsize=7, fontweight="bold")
     # inset square below, lines from the circle to the inset's top corners
     zx, ztop = cx - ZS / 2, fy - 3.5; zy = ztop - ZS
@@ -50,7 +52,11 @@ for n, (p, a, b, ns, ips, ipt, extra) in enumerate(PAIRS):
     ztomm = lambda px: (zx + px[0] * zs, ztop - px[1] * zs)
     # labels: distances at the dash midpoints, residues near their CA, pushed apart so none overlap (thin leaders if moved)
     items, done = [], set()
-    for L in m["zoom"]["labels"]:
+    LAB = m["zoom"]["labels"][:2]                 # the 2 strongest contacts (salt bridges first, then shortest)
+    for L in LAB:
+        (x1, y1), (x2, y2) = ztomm(L["pA"]), ztomm(L["pB"])
+        fax.plot([x1, x2], [y1, y2], color=P.neutral.ink, lw=0.9, ls=(0, (2.2, 1.4)), solid_capstyle="butt", zorder=6.5)
+    for L in LAB:
         items.append(dict(t=f"{L['dist']:.1f} Å", a=ztomm(L["mid"]), col=P.neutral.ink, bold=False, dist=True))
         for key, res, nm, col in (("labA", L["resA"], a, CA_), ("labB", L["resB"], b, CB_)):
             if (nm, res) not in done: done.add((nm, res)); items.append(dict(t=f"{nm} {res}", a=ztomm(L[key]), col=col, bold=True, dist=False))
@@ -77,5 +83,5 @@ for n, (p, a, b, ns, ips, ipt, extra) in enumerate(PAIRS):
     lines = [f"{ns}/5 strong seeds · median ipSAE {ips:.2f} · ipTM {ipt:.2f}"] + ([extra] if extra else [])
     ZY.append(zy); fax.text(cx, zy - 1.8, "\n".join(lines), ha="center", va="top", fontsize=6, linespacing=1.35)
 fax.text(W / 2, min(ZY) - 9.5, "AF3 model: top-ranked sample of the strong seed with the highest ipSAE; residues with pLDDT < 50 hidden. Insets: contacting side chains "
-         "(≤ 5 Å, pLDDT ≥ 70); dashed lines, key contacts with heavy-atom distances.", ha="center", va="bottom", fontsize=5.5, color=P.neutral.dark)
+         "(≤ 5 Å, pLDDT ≥ 70); dashed lines, the two strongest contacts with heavy-atom distances.", ha="center", va="bottom", fontsize=5.5, color=P.neutral.dark)
 fig.savefig(out + ".png", dpi=300, bbox_inches="tight", pad_inches=0.02); fig.savefig(out + ".svg", bbox_inches="tight", pad_inches=0.02)

@@ -1,7 +1,7 @@
 """Fig 4b: the five ChromHMM element-set TF x TF correlation matrices that the candidate list was built from (accessibility-corrected,
 Pearson r, SpQN-normalised by cell count): all elements, non-quiescent, TSS, enhancer, repressive.
 One TF order for all five (average linkage on 1 - r of the all-elements matrix, optimal leaf order); shared diverging scale.
-The three Fig 4 example pairs are outlined on every matrix; only their six TFs are labelled. Under each matrix: each pair's percentile in
+All five matrices in one row (Yuyang 2026-11-17). The three Fig 4 example pairs are outlined on every matrix; their six TFs are labelled on the first. Under each matrix: each pair's percentile in
 that set (candidates_frozen_v1), bold with an asterisk where it is the pair's best set (the value that put it on the candidate list).
 Inputs: spqn_all / spqn_noquies / spqn_tss (b_export_spqn.py, exact code of r2_targets/chromhmm_corrected_sets.py) and
 repressive_chromhmm_corrected/data_min20/spqn_enhancer_biv / spqn_repressive; percentiles from candidates_all3081.tsv.
@@ -24,7 +24,7 @@ plt.rcParams.update({"axes.spines.top": True, "axes.spines.right": True, "savefi
 SETS = [("all", "spqn_all.tsv", "pct_all", "All elements"), ("no quiescent", "spqn_noquies.tsv", "pct_noquies", "Non-quiescent"),
         ("TSS", "spqn_tss.tsv", "pct_tss", "TSS / promoter"), ("enhancer", "spqn_enhancer_biv.tsv", "pct_enh", "Enhancer"),
         ("repressive", "spqn_repressive.tsv", "pct_repr", "Repressive")]
-PAIRS = [("EPAS1", "HES1"), ("ADNP", "MTF2"), ("DR1", "NFYA")]
+PAIRS = [("RBBP4", "ZNF644"), ("ADNP", "MTF2"), ("DR1", "NFYA")]   # 2026-11-17: RBBP4-ZNF644 replaced EPAS1-HES1
 ACC = [P.arms.raw, P.arms.imputed, P.arms.atac]
 VL = 0.06
 
@@ -39,46 +39,47 @@ order = [tfs[i] for i in leaves_list(Z)]; pos = {t: i for i, t in enumerate(orde
 A = pd.read_csv(tsv, sep="\t"); REC = {tuple(sorted(x)): r for x, (_, r) in zip(zip(A.tf_a, A.tf_b), A.iterrows())}
 cmap = LinearSegmentedColormap.from_list("div", P.div); cmap.set_bad(P.na)
 
-mm = 1 / 25.4; W, H = 183, 128
+mm = 1 / 25.4; W, H = 183, 50
 fig = plt.figure(figsize=(W * mm, H * mm))
 def box(x, y, w, h): return fig.add_axes([x / W, y / H, w / W, h / H])
-L, LAB, GAP = 46, 11.5, 2.5
-xs = [LAB, LAB + L + LAB + GAP, LAB + 2 * (L + LAB + GAP)]
-cells = [(xs[0], 72), (xs[1], 72), (xs[2], 72), (xs[0], 9), (xs[1], 9)]
+LAB, GAP, CBW = 10.5, 1.8, 13.5                      # TF-label band (first matrix only), gap between matrices, colourbar block
+L = (W - LAB - CBW - 4 * GAP) / 5; Y = 13             # matrix side (mm), bottom of the matrices
+xs = [LAB + i * (L + GAP) for i in range(5)]
 trio = sorted({t for p in PAIRS for t in p}, key=pos.get); cell = L / len(order)
-for (k, f, pc, title), (x, y) in zip(SETS, cells):
-    ax = box(x, y, L, L); Mo = Ms[k].loc[order, order].values.copy(); np.fill_diagonal(Mo, np.nan)
+for n_s, ((k, f, pc, title), x) in enumerate(zip(SETS, xs)):
+    ax = box(x, Y, L, L); Mo = Ms[k].loc[order, order].values.copy(); np.fill_diagonal(Mo, np.nan)
     im = ax.imshow(Mo, cmap=cmap, vmin=-VL, vmax=VL, interpolation="nearest")
     ax.set_xticks([]); ax.set_yticks([])
-    for s in ax.spines.values(): s.set_linewidth(0.4)
+    for s_ in ax.spines.values(): s_.set_linewidth(0.4)
     ax.set_title(title, fontsize=7, pad=2.5)
     for (a, b), c in zip(PAIRS, ACC):
-        for i, j in ((pos[a], pos[b]), (pos[b], pos[a])): ax.add_patch(Rectangle((j - .5, i - .5), 1, 1, fill=False, ec=c, lw=0.9))
-    ys = [pos[t] * cell for t in trio]
-    for q in range(1, len(ys)): ys[q] = max(ys[q], ys[q - 1] + 2.4)
-    sh = min(0, (L - cell) - ys[-1]); ys = [v + sh for v in ys]
-    for t, yy in zip(trio, ys):
-        yr = (pos[t] + 0.5) * cell
-        fig.add_artist(plt.Line2D([(x - 0.3) / W, (x - 1.8) / W, (x - 2.8) / W], [(y + L - yr) / H, (y + L - yr) / H, (y + L - yy - cell / 2) / H], lw=0.4, color=P.neutral.dark))
-        fig.text((x - 3.2) / W, (y + L - yy - cell / 2) / H, t, ha="right", va="center", fontsize=5.5)
-    # percentile row: one coloured square per pair
-    for n, ((a, b), c) in enumerate(zip(PAIRS, ACC)):
-        r = REC[tuple(sorted((a, b)))]; best = r.best_matrix == k; cx = x + 2 + n * (L / 3)
-        fig.add_artist(Rectangle((cx / W, (y - 4.6) / H), 1.8 / W, 1.8 / H, color=c, lw=0, transform=fig.transFigure))
-        fig.text((cx + 2.6) / W, (y - 3.7) / H, f"{r[pc]:.2f}" + ("*" if best else ""), ha="left", va="center", fontsize=6, fontweight="bold" if best else "normal")
-# legend + colourbar in the free slot (bottom right)
-lx, ly = xs[2], 9
-cax = box(lx, ly + 36, 34, 1.5)
-cb = fig.colorbar(im, cax=cax, orientation="horizontal", ticks=[-VL, 0, VL])
-cb.ax.set_xticklabels([f"≤ −{VL:.2f}", "0", f"≥ {VL:.2f}"]); cb.ax.tick_params(labelsize=6, length=1.5, width=0.4, pad=1); cb.outline.set_linewidth(0.4)
-cb.set_label("Pearson r (SpQN-normalised)", fontsize=6, labelpad=1.5)
+        for i, j in ((pos[a], pos[b]), (pos[b], pos[a])): ax.add_patch(Rectangle((j - .5, i - .5), 1, 1, fill=False, ec=c, lw=0.8))
+    if n_s == 0:                                      # the six TF labels once, on the first matrix (shared order)
+        ys = [pos[t] * cell for t in trio]
+        for q in range(1, len(ys)): ys[q] = max(ys[q], ys[q - 1] + 2.0)
+        sh = min(0, (L - cell) - ys[-1]); ys = [v + sh for v in ys]
+        for t, yy in zip(trio, ys):
+            yr = (pos[t] + 0.5) * cell
+            fig.add_artist(plt.Line2D([(x - 0.3) / W, (x - 1.5) / W, (x - 2.4) / W], [(Y + L - yr) / H, (Y + L - yr) / H, (Y + L - yy - cell / 2) / H], lw=0.4, color=P.neutral.dark))
+            fig.text((x - 2.7) / W, (Y + L - yy - cell / 2) / H, t, ha="right", va="center", fontsize=5)
+    for n, ((a, b), c) in enumerate(zip(PAIRS, ACC)):  # percentile row: one coloured square per pair
+        r = REC[tuple(sorted((a, b)))]; best = r.best_matrix == k; cx = x + 0.6 + n * (L / 3)
+        fig.add_artist(Rectangle((cx / W, (Y - 3.9) / H), 1.5 / W, 1.5 / H, color=c, lw=0, transform=fig.transFigure))
+        fig.text((cx + 2.1) / W, (Y - 3.15) / H, f"{r[pc]:.2f}" + ("*" if best else ""), ha="left", va="center", fontsize=5.5, fontweight="bold" if best else "normal")
+cx0 = xs[-1] + L + 2.2
+cax = box(cx0, Y + 3, 1.5, L - 6)
+cb = fig.colorbar(im, cax=cax, orientation="vertical", ticks=[-VL, 0, VL])
+cb.ax.set_yticklabels([f"≤ −{VL:.2f}", "0", f"≥ {VL:.2f}"]); cb.ax.tick_params(labelsize=5.5, length=1.5, width=0.4, pad=1); cb.outline.set_linewidth(0.4)
+cb.set_label("Pearson r (SpQN-normalised)", fontsize=5.5, labelpad=1.5)
+# pair key and notes in one line under the row
+kx = LAB
 for n, ((a, b), c) in enumerate(zip(PAIRS, ACC)):
-    yy = ly + 27 - n * 4.2
-    fig.add_artist(Rectangle((lx / W, yy / H), 2.6 / W, 2.6 / H, fill=False, ec=c, lw=1.0, transform=fig.transFigure))
-    fig.text((lx + 4) / W, (yy + 1.3) / H, f"{a}–{b}", ha="left", va="center", fontsize=6)
-fig.text(lx / W, (ly + 11.5) / H, "Numbers under each matrix: the pair's percentile\nin that element set; * = best set, which placed\nthe pair on the candidate list (≥ 0.60).",
-         ha="left", va="top", fontsize=5.5, color=P.neutral.dark, linespacing=1.3)
-fig.text(lx / W, (ly + 1) / H, f"TF order: clustering of the all-elements matrix,\napplied to all five; {len(order)} panel TFs.", ha="left", va="bottom", fontsize=5.5, color=P.neutral.dark, linespacing=1.3)
+    fig.add_artist(Rectangle((kx / W, 4.3 / H), 2.2 / W, 2.2 / H, fill=False, ec=c, lw=0.9, transform=fig.transFigure))
+    fig.text((kx + 3.0) / W, 5.4 / H, f"{a}–{b}", ha="left", va="center", fontsize=6); kx += 3.0 + 0.62 * 6 * 0.3528 * len(f"{a}–{b}") + 4
+fig.text(kx / W, 5.4 / H, "Numbers under each matrix: the pair's percentile in that element set; * = best set, which placed the pair on the candidate list (≥ 0.60).",
+         ha="left", va="center", fontsize=5.5, color=P.neutral.dark)
+fig.text(LAB / W, 1.2 / H, f"TF order: clustering of the all-elements matrix, applied to all five ({len(order)} panel TFs); the six TFs of the three pairs are labelled on the first matrix.",
+         ha="left", va="center", fontsize=5.5, color=P.neutral.dark)
 fig.savefig(out + ".png", dpi=300, bbox_inches="tight", pad_inches=0.02); fig.savefig(out + ".svg", bbox_inches="tight", pad_inches=0.02)
 rows = []
 for a, b in PAIRS:
