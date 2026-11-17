@@ -35,40 +35,40 @@ else:
     nul = {t: np.vstack([np.load(f)["null"] for f in sorted(glob.glob(str(NULL / f"{t}_*.npz")))])[:, 1] for t in E.index}
 E["q"] = multipletests(E.edge_p, method="fdr_bh")[1]; nsig = int((E.q < 0.05).sum())
 # ---- figure ----
-SP = pd.read_csv(ROOT / "hub_figures/basic/shared_pairs/shared_pairs.tsv", sep="\t"); SP = SP[(SP.n_tfs >= 3) & (SP.distance_kb > 25)].reset_index(drop=True)
+ED = pd.read_csv(Path(__file__).resolve().parents[1] / "checks/d_module_edges_shared.tsv.gz", sep="\t")   # scripts/d_module_edge_matrix.py (Longleaf)
 from collections import Counter
+from matplotlib.collections import PatchCollection
 from scipy.cluster.hierarchy import linkage, leaves_list
 from scipy.spatial.distance import pdist
-cnt = Counter(t for x in SP.tfs for t in x.split(",")); ROW0 = [t for t, n in cnt.most_common() if n >= 10]   # original heatmap rows (>=10 shared pairs)
-extra = [t for t in ROW0 if t not in Pt.index]                                   # heatmap TFs without a module bar: added at the bottom, bars n/a
+cnt = Counter(t for x in ED.tfs for t in x.split(","))
+extra = sorted([t for t in cnt if t not in Pt.index], key=lambda t: -cnt[t])      # TFs with shared module edges but no module bar: bottom rows, bars n/a
 Pt = pd.concat([pd.DataFrame(0, index=extra[::-1], columns=Pt.columns), Pt])
 rows = list(Pt.index); ri = {t: i for i, t in enumerate(rows)}
-M = np.zeros((len(rows), len(SP)), np.uint8)
-for j, x in enumerate(SP.tfs):
-    for t in x.split(","):
-        if t in ri: M[ri[t], j] = 1
-keep = M[[ri[t] for t in ROW0]].sum(0) >= 2; M = M[:, keep]; nt = SP.n_tfs.values[keep]   # same 1,423 pairs as the original heatmap
-Z = linkage(pdist(M[[ri[t] for t in ROW0]].T.astype(bool), "jaccard"), "average")      # original clustering (Jaccard, average linkage)
-nl = M.shape[1]; members = {i: [i] for i in range(nl)}; toprow = -(len(rows) - 1 - (M[::-1].argmax(0))).astype(float)   # -(topmost row index)
-for k in range(len(Z)):                                                          # rotate branches only: higher rows' pairs to the left, tree unchanged
+M = np.zeros((len(rows), len(ED)), np.uint8)                                      # 0 absent, 1 edge not on a loop, 2 edge on a loop
+for j, (x, lp) in enumerate(zip(ED.tfs, ED.on_loop)):
+    for t in x.split(","): M[ri[t], j] = 2 if lp else 1
+nt = ED.n_tfs.values
+Z = linkage(pdist((M > 0).T, "jaccard"), "average")                              # columns clustered (Jaccard, average linkage); tree not drawn
+nl = M.shape[1]; members = {i: [i] for i in range(nl)}; toprow = -(len(rows) - 1 - ((M > 0)[::-1].argmax(0))).astype(float)
+for k in range(len(Z)):                                                          # rotate branches only: higher rows' edges to the left
     l, r = int(Z[k, 0]), int(Z[k, 1])
     if toprow[members[r]].mean() < toprow[members[l]].mean(): Z[k, 0], Z[k, 1] = r, l
     members[nl + k] = members[int(Z[k, 0])] + members[int(Z[k, 1])]
-co = leaves_list(Z)
-ETS = {"ETS2 shared-pair columns": int(M[ri["ETS2"]].sum())}
-M = M[:, co]; nt = nt[co]
+co = leaves_list(Z); M = M[:, co]; nt = nt[co]; onl = ED.on_loop.values[co]
 fig = plt.figure(figsize=(WMM * MM, HMM * MM))
 gs = fig.add_gridspec(2, 3, width_ratios=[1.3, 1.1, 0.9], height_ratios=[0.07, 1], wspace=0.05, hspace=0.03, left=0.065, right=0.995, top=0.985, bottom=0.085)
 hm = fig.add_subplot(gs[1, 0]); top = fig.add_subplot(gs[0, 0], sharex=hm)
 ax = fig.add_subplot(gs[1, 1], sharey=hm); b = fig.add_subplot(gs[1, 2], sharey=hm)
-hm.imshow(M, aspect="auto", origin="lower", cmap=plt.matplotlib.colors.ListedColormap([N.faint, "#1F3F8F"]), interpolation="nearest",
-          extent=(-0.5, M.shape[1] - 0.5, -0.5, len(rows) - 0.5))
-hm.set_xticks([]); hm.set_xlabel(f"Cicero pairs >25 kb shared by ≥3 TFs (n = {M.shape[1]:,}), clustered")
+LOOPC, NOLOOPC = cols[-1], cols[0]                                               # same colours as the bars: 100% on a loop / no loop edge
+cells = [plt.Rectangle((j - 0.5, i - 0.36), 1, 0.72) for i, j in zip(*np.nonzero(M))]   # same row height as the bars (0.72)
+hm.add_collection(PatchCollection(cells, facecolors=[LOOPC if M[i, j] == 2 else NOLOOPC for i, j in zip(*np.nonzero(M))], edgecolors="#4D4D4D", linewidths=0.3))
+hm.set_xlim(-0.5, M.shape[1] - 0.5); hm.set_xticks([])
+hm.set_xlabel(f"Module edges >25 kb shared by ≥3 TFs\n(n = {M.shape[1]:,}, {int(onl.sum())} on a loop; clustered)")
 hm.tick_params(axis="y", length=0, pad=1.5)
 for sp in ("top", "right", "bottom"): hm.spines[sp].set_visible(False)
-top.bar(range(len(nt)), nt, width=1.0, color=N.dark, lw=0); top.set_xlim(-0.5, len(nt) - 0.5); top.set_ylim(0, nt.max())
+top.bar(range(len(nt)), nt, width=0.8, color=[LOOPC if o else NOLOOPC for o in onl], edgecolor="#4D4D4D", lw=0.3); top.set_xlim(-0.5, len(nt) - 0.5); top.set_ylim(0, nt.max())
 top.set_yticks([0, int(nt.max())]); top.tick_params(labelbottom=False, bottom=False, labelsize=5, length=1.5, pad=1)
-top.set_ylabel("TFs per\npair", fontsize=5, rotation=0, ha="right", va="center", labelpad=2)
+top.set_ylabel("TFs per\nedge", fontsize=5, rotation=0, ha="right", va="center", labelpad=2)
 for sp in ("top", "right", "bottom"): top.spines[sp].set_visible(False)
 cap = 2500; y = np.arange(len(Pt)); left = np.zeros(len(Pt)); scale = np.minimum(1.0, cap / Pt.sum(1).values)
 for l, c in zip(labs, cols):
@@ -79,7 +79,7 @@ for i, (t, s_) in enumerate(zip(tot, sup)):
     ax.text(cap * 1.01 if t > cap else t + 25, i, (f"// {t:,} ({100 * s_ / t:.0f}%)" if t > cap else f"{100 * s_ / t:.0f}%"), va="center", fontsize=5, color=N.dark)
 ax.set_xlim(0, cap * 1.38); hm.set_yticks(y); hm.set_yticklabels(Pt.index, fontsize=5); hm.set_ylim(-0.7, len(Pt) - 0.3); ax.tick_params(axis="y", left=False, labelleft=False)
 ax.set_xlabel("Modules with ≥1 edge >25 kb")
-ax.legend(title="Module edges on a loop", loc="lower right", ncol=1, fontsize=6, title_fontsize=6, handlelength=1.0, handleheight=0.8,
+ax.legend(title="Module edges on a loop\n(bars; heatmap: dark red = on a loop)", loc="lower right", ncol=1, fontsize=6, title_fontsize=6, handlelength=1.0, handleheight=0.8,
           labelspacing=0.25, borderaxespad=0.2, alignment="left")
 for i, tf in enumerate(Pt.index):
     if tf not in E.index:
@@ -118,5 +118,10 @@ def illustrator_text(svg):
 stem = "d_module_edges_hic_support"
 fig.savefig(OUT / f"{stem}.svg"); fig.savefig(OUT / f"{stem}.png", dpi=300)
 p = OUT / f"{stem}.svg"; p.write_text(illustrator_text(p.read_text()))
-print(ETS, "extra rows", extra); print(f"{len(rows)} TF rows; heatmap {M.shape[1]:,} pairs; {nsig} of {len(E)} TFs q < 0.05; TFs in heatmap source not in rows:",
-      sorted({t for x in SP.tfs for t in x.split(",")} - set(rows)))
+fig.canvas.draw(); tr = hm.transData                                             # alignment check: label y vs row centre in every panel
+lab_y = {t.get_text(): t.get_window_extent().y0 / 2 + t.get_window_extent().y1 / 2 for t in hm.get_yticklabels()}
+rowpx = abs(tr.transform((0, 1))[1] - tr.transform((0, 0))[1]); dev = []
+for i, t in enumerate(rows):
+    yc = [a_.transData.transform((0, i))[1] for a_ in (hm, ax, b)]; dev.append(max(abs(lab_y[t] - v) for v in yc) / rowpx)
+print(f"alignment: max |label - row centre| = {max(dev):.3f} rows over {len(rows)} rows (hm, bars, null)")
+print("extra rows", extra, f"; {len(rows)} TF rows; heatmap {M.shape[1]:,} module edges ({int(onl.sum())} on a loop); {nsig} of {len(E)} TFs q < 0.05")
