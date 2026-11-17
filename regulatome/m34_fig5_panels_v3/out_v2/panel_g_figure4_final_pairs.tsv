@@ -1,0 +1,4 @@
+pair	figure4_pair	af3_5seed_strong	n_bound_a	n_bound_b	n_shared_targets	kd_a	kd_b	n_shared_responding_a	pct_shared_responding_a	pct_own_only_targets_responding_a	n_shared_responding_b	pct_shared_responding_b	pct_own_only_targets_responding_b
+RBBP4-ZNF644	True	True	6048	1644	1072	no usable top-25% knockdown	ZNF644 knockdown				46.00	4.29	2.97
+ADNP-MTF2	True	True	1430	1754	359	ADNP knockdown	MTF2 knockdown	73.00	20.33	19.51	30.00	8.36	6.45
+DR1-NFYA	True	True	1095	5311	648	DR1 knockdown	NFYA knockdown	46.00	7.10	9.40	83.00	12.81	11.19

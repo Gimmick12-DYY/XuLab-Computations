@@ -201,7 +201,7 @@ def panel_f(mode):
     save(fig, "Fig5f_activator_repressor", mode)
 # ---------------- g: Figure 4 pairs
 def panel_g(mode):
-    style(mode); s = mode == "slide"; fs = 12 if s else 6; Gt = pd.read_csv(f"{O}/panel_g_pairs_shared_targets.tsv", sep="\t"); Gt = Gt[Gt.figure4_pair]
+    style(mode); s = mode == "slide"; fs = 12 if s else 6; Gt = pd.read_csv(f"{O}/panel_g_figure4_final_pairs.tsv", sep="\t")
     fig = plt.figure(figsize=SLIDE if s else (7.0, 2.4)); gs = fig.add_gridspec(1, 2, width_ratios=[0.8, 1.6], wspace=0.32, left=0.13, right=0.98, bottom=0.2, top=0.9)
     ax = fig.add_subplot(gs[0]); y = np.arange(len(Gt))[::-1]; ax.barh(y + 0.2, Gt.n_bound_a, height=0.38, color=LIGHT); ax.barh(y - 0.2, Gt.n_bound_b, height=0.38, color=LIGHT); ax.barh(y, Gt.n_shared_targets, height=0.25, color=OURS)
     ax.set_yticks(y); ax.set_yticklabels(Gt.pair); ax.set_xlabel("target genes"); 
@@ -219,7 +219,7 @@ def panel_g(mode):
                 ax2.bar(k - 0.18, sh, width=0.34, color=OURS); ax2.bar(k + 0.18, oo, width=0.34, color=LIGHT)
             labs.append(t); xs.append(k); k += 1
         k += 0.6
-    ax2.set_xticks(xs); ax2.set_xticklabels(labs, fontsize=fs * 0.95); ax2.set_xlim(-0.7, max(xs) + 0.7); ax2.set_ylabel("% of targets that respond\nto the knockdown (|z| ≥ 2)"); ax2.set_ylim(0, 20); ax2.set_xlabel("knockdown of", labelpad=36 if s else 18)
+    ax2.set_xticks(xs); ax2.set_xticklabels(labs, fontsize=fs * 0.95); ax2.set_xlim(-0.7, max(xs) + 0.7); ax2.set_ylabel("% of targets that respond\nto the knockdown (|z| ≥ 2)"); ax2.set_ylim(0, 24); ax2.set_xlabel("knockdown of", labelpad=36 if s else 18)
     pass
     for j in range(0, len(xs), 2): ax2.text((xs[j] + xs[j + 1]) / 2, -0.11, Gt.pair.values[j // 2], transform=ax2.get_xaxis_transform(), ha="center", va="top", fontsize=fs, fontweight="bold")
     save(fig, "Fig5g_pairs", mode)
