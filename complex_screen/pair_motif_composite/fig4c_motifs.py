@@ -8,7 +8,7 @@ from matplotlib.textpath import TextPath; from matplotlib.patches import PathPat
 from scipy.stats import norm
 X = "/work/users/d/y/dyy12/XuLab"; O = f"{X}/complex_screen/pair_motif_composite"; OUT = f"{O}/fig4"; os.makedirs(OUT, exist_ok=True)
 sys.path.insert(0, f"{X}/figures_paletteC"); import regulome_palette as rp; Pc = rp.use()
-PAIRS = ["DDIT3-RBBP7", "ADNP-MTF2", "DR1-NFYA"]; TOPN = int(os.environ.get("TOPN", "3")); TAG = os.environ.get("TAG", ""); MODE = os.environ.get("MODE", "bars")
+PAIRS = os.environ.get("PAIRS", "DDIT3-RBBP7,ADNP-MTF2,DR1-NFYA").split(","); TOPN = int(os.environ.get("TOPN", "3")); TAG = os.environ.get("TAG", ""); MODE = os.environ.get("MODE", "bars")
 T = pd.read_csv(f"{O}/motif_tables/pair_shared_motifs_p005.tsv", sep="\t").set_index("pair")
 hom = {}; cur = None; rows = []
 for l in list(open("/nas/longleaf/rhel9/apps/homer/5.1/data/knownTFs/vertebrates/known.motifs")) + [">end\tend\t0"]:
