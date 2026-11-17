@@ -35,41 +35,55 @@ else:
     nul = {t: np.vstack([np.load(f)["null"] for f in sorted(glob.glob(str(NULL / f"{t}_*.npz")))])[:, 1] for t in E.index}
 E["q"] = multipletests(E.edge_p, method="fdr_bh")[1]; nsig = int((E.q < 0.05).sum())
 # ---- figure ----
-ED = pd.read_csv(Path(__file__).resolve().parents[1] / "checks/d_module_edges_shared.tsv.gz", sep="\t")   # scripts/d_module_edge_matrix.py (Longleaf)
-from collections import Counter
-from matplotlib.collections import PatchCollection
+BINKB = int(os.environ.get("D_BIN_KB", 1000)); ORDER = os.environ.get("D_ORDER", "cluster")
+BD = pd.read_csv(Path(__file__).resolve().parents[1] / f"checks/d_module_edge_bins_{BINKB}kb.tsv.gz", sep="\t")   # scripts/d_module_edge_bins.py (Longleaf)
 from scipy.cluster.hierarchy import linkage, leaves_list
 from scipy.spatial.distance import pdist
-cnt = Counter(t for x in ED.tfs for t in x.split(","))
-extra = sorted([t for t in cnt if t not in Pt.index], key=lambda t: -cnt[t])      # TFs with shared module edges but no module bar: bottom rows, bars n/a
-Pt = pd.concat([pd.DataFrame(0, index=extra[::-1], columns=Pt.columns), Pt])
-rows = list(Pt.index); ri = {t: i for i, t in enumerate(rows)}
-M = np.zeros((len(rows), len(ED)), np.uint8)                                      # 0 absent, 1 edge not on a loop, 2 edge on a loop
-for j, (x, lp) in enumerate(zip(ED.tfs, ED.on_loop)):
-    for t in x.split(","): M[ri[t], j] = 2 if lp else 1
-nt = ED.n_tfs.values
-Z = linkage(pdist((M > 0).T, "jaccard"), "average")                              # columns clustered (Jaccard, average linkage); tree not drawn
-nl = M.shape[1]; members = {i: [i] for i in range(nl)}; toprow = -(len(rows) - 1 - ((M > 0)[::-1].argmax(0))).astype(float)
-for k in range(len(Z)):                                                          # rotate branches only: higher rows' edges to the left
-    l, r = int(Z[k, 0]), int(Z[k, 1])
-    if toprow[members[r]].mean() < toprow[members[l]].mean(): Z[k, 0], Z[k, 1] = r, l
-    members[nl + k] = members[int(Z[k, 0])] + members[int(Z[k, 1])]
-co = leaves_list(Z); M = M[:, co]; nt = nt[co]; onl = ED.on_loop.values[co]
+rows = list(Pt.index); ri = {t: i for i, t in enumerate(rows)}; BD = BD[BD.tf.isin(ri)]
+CHO = {f"chr{i}": i for i in range(1, 23)} | {"chrX": 23, "chrY": 24}
+bins = BD[["chrom", "bin"]].drop_duplicates(); bins = bins.assign(o=bins.chrom.map(CHO)).sort_values(["o", "bin"]).reset_index(drop=True)
+bi = {(c, x): j for j, (c, x) in enumerate(zip(bins.chrom, bins.bin))}
+S = np.full((len(rows), len(bins)), -1, int)                                     # -1 no module edge; else bars' stratum 0..5
+fr = BD.n_loop / BD.n_edges
+st = np.select([BD.n_loop == 0, fr <= .25, fr <= .5, fr <= .75, fr < 1], [0, 1, 2, 3, 4], 5)
+for t, c, x, v in zip(BD.tf, BD.chrom, BD.bin, st): S[ri[t], bi[(c, x)]] = v
+if ORDER == "cluster":                                                           # Jaccard on presence, average linkage; tree not drawn
+    Z = linkage(pdist((S >= 0).T, "jaccard"), "average"); nl = S.shape[1]; members = {i: [i] for i in range(nl)}
+    toprow = -(len(rows) - 1 - ((S >= 0)[::-1].argmax(0))).astype(float)
+    for k in range(len(Z)):
+        l, r = int(Z[k, 0]), int(Z[k, 1])
+        if toprow[members[r]].mean() < toprow[members[l]].mean(): Z[k, 0], Z[k, 1] = r, l
+        members[nl + k] = members[int(Z[k, 0])] + members[int(Z[k, 1])]
+    co = leaves_list(Z)
+else: co = np.arange(len(bins))
+S = S[:, co]; bins = bins.iloc[co].reset_index(drop=True); ntfb = (S >= 0).sum(0)
 fig = plt.figure(figsize=(WMM * MM, HMM * MM))
 gs = fig.add_gridspec(2, 3, width_ratios=[1.3, 1.1, 0.9], height_ratios=[0.07, 1], wspace=0.05, hspace=0.03, left=0.065, right=0.995, top=0.985, bottom=0.085)
 hm = fig.add_subplot(gs[1, 0]); top = fig.add_subplot(gs[0, 0], sharex=hm)
 ax = fig.add_subplot(gs[1, 1], sharey=hm); b = fig.add_subplot(gs[1, 2], sharey=hm)
-LOOPC, NOLOOPC = cols[-1], N.light                                             # loop = the bars' 100% red; no loop = palette grey (bars' no-loop grey is too pale without outlines)
-cells = [plt.Rectangle((j - 0.5, i - 0.36), 1, 0.72) for i, j in zip(*np.nonzero(M))]   # same row height as the bars (0.72)
-hm.add_collection(PatchCollection(cells, facecolors=[LOOPC if M[i, j] == 2 else NOLOOPC for i, j in zip(*np.nonzero(M))], linewidths=0))   # no outline: 626 narrow columns
-hm.set_xlim(-0.5, M.shape[1] - 0.5); hm.set_xticks([])
-hm.set_xlabel(f"Module edges >25 kb shared by ≥2 TFs\n(n = {M.shape[1]:,}, {int(onl.sum())} on a loop; clustered)")
+from matplotlib.colors import to_rgb
+PAL = np.array([to_rgb(c) for c in cols] + [(1, 1, 1)]); SUB = 25; FILL = 18     # each row = 25 sub-pixels, 18 coloured (= bar height 0.72)
+img = np.ones((len(rows) * SUB, S.shape[1], 3))
+for i in range(len(rows)):
+    y0 = i * SUB + (SUB - FILL) // 2; img[y0:y0 + FILL] = PAL[S[i]][None, :, :]
+hm.imshow(img, aspect="auto", origin="lower", interpolation="nearest", extent=(-0.5, S.shape[1] - 0.5, -0.5, len(rows) - 0.5))
+hm.set_xlim(-0.5, S.shape[1] - 0.5); hm.set_xticks([])
+if ORDER == "genome":
+    ch = bins.chrom.values; edges_ = [j for j in range(1, len(ch)) if ch[j] != ch[j - 1]]
+    for j in edges_: hm.axvline(j - 0.5, color=N.pale, lw=0.3, zorder=0)
+    starts = [0] + edges_; ends = edges_ + [len(ch)]
+    hm.set_xticks([(s0 + e0) / 2 - 0.5 for s0, e0 in zip(starts, ends)]); hm.set_xticklabels([ch[s0].replace("chr", "") for s0 in starts], fontsize=4)
+    hm.tick_params(axis="x", length=0, pad=1)
+ne = int(BD.n_edges.sum()); nl_ = int(BD.n_loop.sum())
+unit = f"{BINKB // 1000} Mb" if BINKB >= 1000 else f"{BINKB} kb"
+hm.set_xlabel(f"Module edges >25 kb, {unit} bins (n = {S.shape[1]:,}" + (", clustered)" if ORDER == "cluster" else ")") + f"\n{ne:,} edges, {100 * nl_ / ne:.0f}% on a loop")
 hm.tick_params(axis="y", length=0, pad=1.5)
 for sp in ("top", "right", "bottom"): hm.spines[sp].set_visible(False)
-top.bar(range(len(nt)), nt, width=1.0, color=[LOOPC if o else N.light for o in onl], lw=0); top.set_xlim(-0.5, len(nt) - 0.5); top.set_ylim(0, nt.max())
-top.set_yticks([0, int(nt.max())]); top.tick_params(labelbottom=False, bottom=False, labelsize=5, length=1.5, pad=1)
-top.set_ylabel("TFs per\nedge", fontsize=5, rotation=0, ha="right", va="center", labelpad=2)
+top.bar(range(len(ntfb)), ntfb, width=1.0, color=N.mid, lw=0); top.set_xlim(-0.5, len(ntfb) - 0.5); top.set_ylim(0, ntfb.max())
+top.set_yticks([0, int(ntfb.max())]); top.tick_params(labelbottom=False, bottom=False, labelsize=5, length=1.5, pad=1)
+top.set_ylabel("TFs per\nbin", fontsize=5, rotation=0, ha="right", va="center", labelpad=2)
 for sp in ("top", "right", "bottom"): top.spines[sp].set_visible(False)
+extra = []; onl = np.array([0]); M = S
 cap = 2500; y = np.arange(len(Pt)); left = np.zeros(len(Pt)); scale = np.minimum(1.0, cap / Pt.sum(1).values)
 for l, c in zip(labs, cols):
     v = Pt[l].values.astype(float) * scale; ax.barh(y, v, left=left, color=c, height=0.72, label=("No loop edge" if l == labs[0] else l), edgecolor="#4D4D4D", linewidth=0.3); left += v
@@ -79,7 +93,7 @@ for i, (t, s_) in enumerate(zip(tot, sup)):
     ax.text(cap * 1.01 if t > cap else t + 25, i, (f"// {t:,} ({100 * s_ / t:.0f}%)" if t > cap else f"{100 * s_ / t:.0f}%"), va="center", fontsize=5, color=N.dark)
 ax.set_xlim(0, cap * 1.38); hm.set_yticks(y); hm.set_yticklabels(Pt.index, fontsize=5); hm.set_ylim(-0.7, len(Pt) - 0.3); ax.tick_params(axis="y", left=False, labelleft=False)
 ax.set_xlabel("Modules with ≥1 edge >25 kb")
-ax.legend(title="Module edges on a loop\n(bars; heatmap: dark red = on a loop)", loc="lower right", ncol=1, fontsize=6, title_fontsize=6, handlelength=1.0, handleheight=0.8,
+ax.legend(title="Module edges on a loop\n(per module in bars, per bin in heatmap)", loc="lower right", ncol=1, fontsize=6, title_fontsize=6, handlelength=1.0, handleheight=0.8,
           labelspacing=0.25, borderaxespad=0.2, alignment="left")
 for i, tf in enumerate(Pt.index):
     if tf not in E.index:
@@ -115,7 +129,7 @@ def illustrator_text(svg):
         tag = tag.replace(sm.group(0), f'style="{"; ".join(keep)}"' if keep else "")
         return tag[:-1].rstrip() + f' font-family="Arial, {PS[(wt, "normal")]}, Helvetica, sans-serif" font-size="{float(size):.3f}"' + (' font-weight="bold"' if wt == "bold" else "") + ">"
     return re.sub(r"<text\b[^>]*>", one, svg)
-stem = "d_module_edges_hic_support"
+stem = os.environ.get("D_STEM", "d_module_edges_hic_support")
 fig.savefig(OUT / f"{stem}.svg"); fig.savefig(OUT / f"{stem}.png", dpi=300)
 p = OUT / f"{stem}.svg"; p.write_text(illustrator_text(p.read_text()))
 fig.canvas.draw(); tr = hm.transData                                             # alignment check: label y vs row centre in every panel
@@ -124,4 +138,5 @@ rowpx = abs(tr.transform((0, 1))[1] - tr.transform((0, 0))[1]); dev = []
 for i, t in enumerate(rows):
     yc = [a_.transData.transform((0, i))[1] for a_ in (hm, ax, b)]; dev.append(max(abs(lab_y[t] - v) for v in yc) / rowpx)
 print(f"alignment: max |label - row centre| = {max(dev):.3f} rows over {len(rows)} rows (hm, bars, null)")
-print("extra rows", extra, f"; {len(rows)} TF rows; heatmap {M.shape[1]:,} module edges ({int(onl.sum())} on a loop); {nsig} of {len(E)} TFs q < 0.05")
+dens = pd.Series((S >= 0).sum(1), index=rows).sort_values(ascending=False); edg = BD.groupby("tf").n_edges.sum().reindex(rows)
+print(f"{ORDER}: {len(rows)} rows, {S.shape[1]:,} bins, {ne:,} edges; bins per row top 5:", dens.head(5).to_dict(), "| ETS2", int(dens["ETS2"]), "ZNF282", int(dens["ZNF282"]), "RBBP4", int(dens["RBBP4"]), "| edges ETS2", int(edg["ETS2"]))
