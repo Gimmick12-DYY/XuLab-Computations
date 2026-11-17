@@ -11,7 +11,7 @@ import sys
 import numpy as np, pandas as pd, matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
-from matplotlib.patches import Rectangle
+from matplotlib.patches import Rectangle, Circle
 from matplotlib.colors import LinearSegmentedColormap
 from scipy.cluster.hierarchy import linkage, leaves_list, optimal_leaf_ordering
 from scipy.spatial.distance import squareform
@@ -38,12 +38,13 @@ Z = optimal_leaf_ordering(linkage(squareform(D, checks=False), "average"), squar
 order = [tfs[i] for i in leaves_list(Z)]; pos = {t: i for i, t in enumerate(order)}
 A = pd.read_csv(tsv, sep="\t"); REC = {tuple(sorted(x)): r for x, (_, r) in zip(zip(A.tf_a, A.tf_b), A.iterrows())}
 cmap = LinearSegmentedColormap.from_list("div", P.div); cmap.set_bad(P.na)
+CHK = []
 
-mm = 1 / 25.4; W, H = 183, 50
+mm = 1 / 25.4; W, H = 183, 53
 fig = plt.figure(figsize=(W * mm, H * mm))
 def box(x, y, w, h): return fig.add_axes([x / W, y / H, w / W, h / H])
 LAB, GAP, CBW = 10.5, 1.8, 13.5                      # TF-label band (first matrix only), gap between matrices, colourbar block
-L = (W - LAB - CBW - 4 * GAP) / 5; Y = 13             # matrix side (mm), bottom of the matrices
+L = (W - LAB - CBW - 4 * GAP) / 5; Y = 16             # matrix side (mm), bottom of the matrices
 xs = [LAB + i * (L + GAP) for i in range(5)]
 trio = sorted({t for p in PAIRS for t in p}, key=pos.get); cell = L / len(order)
 for n_s, ((k, f, pc, title), x) in enumerate(zip(SETS, xs)):
@@ -53,7 +54,9 @@ for n_s, ((k, f, pc, title), x) in enumerate(zip(SETS, xs)):
     for s_ in ax.spines.values(): s_.set_linewidth(0.4)
     ax.set_title(title, fontsize=7, pad=2.5)
     for (a, b), c in zip(PAIRS, ACC):
-        for i, j in ((pos[a], pos[b]), (pos[b], pos[a])): ax.add_patch(Rectangle((j - .5, i - .5), 1, 1, fill=False, ec=c, lw=0.8))
+        i, j = sorted((pos[a], pos[b]))                # upper-triangle cell only: hollow ring (white halo under pair colour), cell colour visible inside
+        for lw_, ec_ in ((2.2, "white"), (1.1, c)): ax.add_patch(Circle((j, i), 1.6, fill=False, ec=ec_, lw=lw_, zorder=3))
+        CHK.append(dict(pair=f"{a}-{b}", set=k, row=order[i], col=order[j], r_plot=float(Mo[i, j]), r_src=float(Ms[k].loc[a, b]), pct=float(REC[tuple(sorted((a, b)))][pc])))
     if n_s == 0:                                      # the six TF labels once, on the first matrix (shared order)
         ys = [pos[t] * cell for t in trio]
         for q in range(1, len(ys)): ys[q] = max(ys[q], ys[q - 1] + 2.0)
@@ -66,6 +69,7 @@ for n_s, ((k, f, pc, title), x) in enumerate(zip(SETS, xs)):
         r = REC[tuple(sorted((a, b)))]; best = r.best_matrix == k; cx = x + 0.6 + n * (L / 3)
         fig.add_artist(Rectangle((cx / W, (Y - 3.9) / H), 1.5 / W, 1.5 / H, color=c, lw=0, transform=fig.transFigure))
         fig.text((cx + 2.1) / W, (Y - 3.15) / H, f"{r[pc]:.2f}" + ("*" if best else ""), ha="left", va="center", fontsize=5.5, fontweight="bold" if best else "normal")
+        fig.text((cx + 2.1) / W, (Y - 5.4) / H, f"r {Ms[k].loc[a, b]:.3f}", ha="left", va="center", fontsize=5, color=P.neutral.dark)
 cx0 = xs[-1] + L + 2.2
 cax = box(cx0, Y + 3, 1.5, L - 6)
 cb = fig.colorbar(im, cax=cax, orientation="vertical", ticks=[-VL, 0, VL])
@@ -74,9 +78,10 @@ cb.set_label("Pearson r (SpQN-normalised)", fontsize=5.5, labelpad=1.5)
 # pair key and notes in one line under the row
 kx = LAB
 for n, ((a, b), c) in enumerate(zip(PAIRS, ACC)):
-    fig.add_artist(Rectangle((kx / W, 4.3 / H), 2.2 / W, 2.2 / H, fill=False, ec=c, lw=0.9, transform=fig.transFigure))
+    kax = box(kx, 4.3, 2.2, 2.2); kax.set_xlim(-1.1, 1.1); kax.set_ylim(-1.1, 1.1); kax.axis("off")    # key ring = the matrix marker
+    kax.add_patch(Circle((0, 0), 0.8, fill=False, ec=c, lw=1.1))
     fig.text((kx + 3.0) / W, 5.4 / H, f"{a}–{b}", ha="left", va="center", fontsize=6); kx += 3.0 + 0.62 * 6 * 0.3528 * len(f"{a}–{b}") + 4
-fig.text(kx / W, 5.4 / H, "Numbers under each matrix: the pair's percentile in that element set; * = best set, which placed the pair on the candidate list (≥ 0.60).",
+fig.text(kx / W, 5.4 / H, "Under each matrix: the pair's percentile in that element set and its r; * = best set, which placed the pair on the candidate list (≥ 0.60).",
          ha="left", va="center", fontsize=5.5, color=P.neutral.dark)
 fig.text(LAB / W, 1.2 / H, f"TF order: clustering of the all-elements matrix, applied to all five ({len(order)} panel TFs); the six TFs of the three pairs are labelled on the first matrix.",
          ha="left", va="center", fontsize=5.5, color=P.neutral.dark)
@@ -85,4 +90,5 @@ rows = []
 for a, b in PAIRS:
     r = REC[tuple(sorted((a, b)))]
     rows.append(dict(pair=f"{a}-{b}", **{f"r_{k}": round(float(Ms[k].loc[a, b]), 4) for k, *_ in SETS}, **{pc: r[pc] for _, _, pc, _ in SETS}, best_pct=r.best_pct, best_matrix=r.best_matrix))
+C = pd.DataFrame(CHK); C.to_csv(out + "_placement_check.tsv", sep="\t", index=False); print(C.to_string(index=False))
 pd.DataFrame(rows).to_csv(out + "_values.tsv", sep="\t", index=False); print(pd.DataFrame(rows).to_string(index=False))
