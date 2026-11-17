@@ -1,0 +1,37 @@
+label	set	threshold	threshold_label	n_tfs	n_tfs_ge10_responders	total_responders	total_recovered	pooled_pct_recovered	pooled_reference_pct	pooled_fold	median_fold_tfs_ge10	n_tfs_fold_gt_1_2	tfs_fold_gt_1_2
+descriptive	ours, all 75 TFs	abs2	|z| >= 2	75	75	54532	9480	17.384	17.295	1.005	0.992	4	EPAS1,HP1,NRF1,SRCAP
+descriptive	ours, 10 TFs with bulk ChIP	abs2	|z| >= 2	10	10	11647	2362	20.280	19.509	1.040	0.972	1	NRF1
+descriptive	bulk ChIP, same 10 TFs (one reference each)	abs2	|z| >= 2	10	10	11647	5192	44.578	41.095	1.085	1.050	2	SETDB1,NRF1
+descriptive	ours, all 75 TFs	abs3	|z| >= 3	75	67	7924	1516	19.132	18.419	1.039	1.000	19	CHAMP1,DDIT3,EPAS1,ETS2,FOXC1,FOXK1,HES1,HOXB9,HOXC4,MEF2A,MLX,NRF1,SOX12,TRAFD1,ZBTB40,ZNF143,ZNF282,ZNF503,ZNF703
+descriptive	ours, 10 TFs with bulk ChIP	abs3	|z| >= 3	10	9	3183	668	20.986	19.013	1.104	1.061	2	NRF1,ZNF282
+descriptive	bulk ChIP, same 10 TFs (one reference each)	abs3	|z| >= 3	10	9	3183	1764	55.419	44.918	1.234	1.222	6	CTCF,ZNF282,ZNF777,SETDB1,NFYA,NRF1
+descriptive	ours, all 75 TFs	abs4	|z| >= 4	75	17	1942	415	21.370	18.853	1.133	1.105	6	DNMT1,FOXC1,HOXC4,NRF1,ZNF143,ZNF507
+descriptive	ours, 10 TFs with bulk ChIP	abs4	|z| >= 4	10	6	1288	280	21.739	18.656	1.165	0.983	1	NRF1
+descriptive	bulk ChIP, same 10 TFs (one reference each)	abs4	|z| >= 4	10	6	1288	834	64.752	46.815	1.383	1.452	5	CTCF,ZNF777,SETDB1,NRF1,E4F1
+descriptive	ours, all 75 TFs	abs5	|z| >= 5	75	6	822	194	23.601	17.913	1.318	1.506	4	DNMT1,E4F1,NRF1,ZNF143
+descriptive	ours, 10 TFs with bulk ChIP	abs5	|z| >= 5	10	3	641	155	24.181	18.438	1.311	1.207	2	E4F1,NRF1
+descriptive	bulk ChIP, same 10 TFs (one reference each)	abs5	|z| >= 5	10	3	641	451	70.359	47.862	1.470	1.340	3	CTCF,NRF1,E4F1
+descriptive	ours, all 75 TFs	top50	top 50 by |z|	75	75	3750	635	16.933	17.034	0.994	0.926	19	AKAP8L,CHAMP1,DNMT1,E4F1,EPAS1,FOXC1,FOXK1,HES1,HOXB9,HOXC4,HP1,MEF2A,MLX,NRF1,TRAFD1,ZBTB40,ZNF143,ZNF503,ZNF703
+descriptive	ours, 10 TFs with bulk ChIP	top50	top 50 by |z|	10	10	500	103	20.600	19.159	1.075	1.024	2	E4F1,NRF1
+descriptive	bulk ChIP, same 10 TFs (one reference each)	top50	top 50 by |z|	10	10	500	270	54.000	38.782	1.392	1.361	8	CTCF,ZIC2,ZNF282,ZNF777,ZBTB7A,SETDB1,NRF1,E4F1
+descriptive	ours, all 75 TFs	top100	top 100 by |z|	75	75	7500	1297	17.293	17.034	1.015	0.994	16	AKAP8L,CHAMP1,DNMT1,E4F1,EPAS1,ETS2,FLYWCH1,FOXK1,HOXC4,MEF2A,MLX,NR1D2,NRF1,ZBTB40,ZNF143,ZNF503
+descriptive	ours, 10 TFs with bulk ChIP	top100	top 100 by |z|	10	10	1000	198	19.800	19.159	1.033	0.975	2	E4F1,NRF1
+descriptive	bulk ChIP, same 10 TFs (one reference each)	top100	top 100 by |z|	10	10	1000	495	49.500	38.782	1.276	1.215	7	CTCF,ZNF282,ZNF777,ZBTB7A,SETDB1,NRF1,E4F1
+descriptive	ours, all 75 TFs	top200	top 200 by |z|	75	75	15000	2562	17.080	17.034	1.003	0.994	9	DNMT1,EPAS1,HOXC4,MAZ,MEF2A,NEUROD4,NRF1,PCGF6,ZNF143
+descriptive	ours, 10 TFs with bulk ChIP	top200	top 200 by |z|	10	10	2000	395	19.750	19.159	1.031	0.987	2	MAZ,NRF1
+descriptive	bulk ChIP, same 10 TFs (one reference each)	top200	top 200 by |z|	10	10	2000	969	48.450	38.782	1.249	1.204	5	CTCF,ZNF282,SETDB1,NRF1,E4F1
+descriptive	ours, all 75 TFs	rep2	both halves |z| >= 2	75	68	4035	796	19.727	18.831	1.048	0.923	15	DDIT3,EPAS1,ETS2,FOXK1,HES1,HOXB9,MSX2,NFYA,NR1D2,NRF1,RBPJ,RELA,ZBTB43,ZNF143,ZNF703
+descriptive	ours, 10 TFs with bulk ChIP	rep2	both halves |z| >= 2	10	9	1850	396	21.405	18.830	1.137	1.057	2	NFYA,NRF1
+descriptive	bulk ChIP, same 10 TFs (one reference each)	rep2	both halves |z| >= 2	10	9	1850	1094	59.135	46.037	1.285	1.429	8	CTCF,MAZ,ZNF282,ZNF777,ZBTB7A,SETDB1,NFYA,NRF1
+descriptive	ours, all 75 TFs	rep3	both halves |z| >= 3	75	6	771	184	23.865	18.680	1.278	1.467	4	DNMT1,E4F1,NRF1,ZNF143
+descriptive	ours, 10 TFs with bulk ChIP	rep3	both halves |z| >= 3	10	3	584	142	24.315	18.658	1.303	1.218	2	E4F1,NRF1
+descriptive	bulk ChIP, same 10 TFs (one reference each)	rep3	both halves |z| >= 3	10	3	584	403	69.007	47.684	1.447	1.418	3	CTCF,NRF1,E4F1
+descriptive	ours, all 75 TFs	down2	down z <= -2	75	75	26279	4685	17.828	17.155	1.039	1.024	16	CHAMP1,DNMT1,EPAS1,HOXC4,HOXC9,HP1,MAZ,MEF2A,NEUROD4,NRF1,PA2G4,PCGF6,SETDB1,SOX4,ZNF143,ZUFSP
+descriptive	ours, 10 TFs with bulk ChIP	down2	down z <= -2	10	10	6513	1425	21.879	20.504	1.067	1.017	3	MAZ,NRF1,SETDB1
+descriptive	bulk ChIP, same 10 TFs (one reference each)	down2	down z <= -2	10	10	6513	3235	49.670	41.921	1.185	1.077	2	ZBTB7A,NRF1
+descriptive	ours, all 75 TFs	down3	down z <= -3	75	56	3875	811	20.929	18.608	1.125	1.017	20	AKAP8L,CHAMP1,DDIT3,FOXC1,HOXA10,HOXB9,HOXC4,MEF2A,MLX,NRF1,PCGF6,SETDB1,TBX3,TRAFD1,ZBTB40,ZBTB43,ZNF143,ZNF282,ZNF777,ZUFSP
+descriptive	ours, 10 TFs with bulk ChIP	down3	down z <= -3	10	9	1995	451	22.607	19.126	1.182	1.057	4	NRF1,SETDB1,ZNF282,ZNF777
+descriptive	bulk ChIP, same 10 TFs (one reference each)	down3	down z <= -3	10	9	1995	1270	63.659	46.245	1.377	1.315	6	CTCF,ZIC2,ZNF282,SETDB1,NRF1,E4F1
+descriptive	ours, all 75 TFs	down4	down z <= -4	75	8	1259	298	23.670	19.410	1.219	1.136	3	FOXC1,NRF1,ZNF143
+descriptive	ours, 10 TFs with bulk ChIP	down4	down z <= -4	10	3	963	224	23.261	18.644	1.248	1.136	1	NRF1
+descriptive	bulk ChIP, same 10 TFs (one reference each)	down4	down z <= -4	10	3	963	680	70.613	47.849	1.476	1.559	3	CTCF,NRF1,E4F1
