@@ -1,14 +1,14 @@
 # Fig 4c draft (2026-11-17, user: "draw it"): shared enriched motifs (exploratory) for the 3 chosen example pairs (DDIT3-RBBP7, ADNP-MTF2, DR1-NFYA).
 # Per pair up to 3 specific shared motifs from motif_tables/pair_shared_motifs_p005.tsv (HOMER first, then DB); each panel = logo (information
 # content) + -log10 p in each TF on discovery (odd chr) and held-out (even + X) halves, dashed line at p = 0.05. Palette C. Output fig4/fig4c_motifs.{svg,png}
-import sys, re, math
+import sys, re, math, os
 import numpy as np, pandas as pd, matplotlib
 matplotlib.use("Agg"); import matplotlib.pyplot as plt
 from matplotlib.textpath import TextPath; from matplotlib.patches import PathPatch; from matplotlib.transforms import Affine2D; from matplotlib.font_manager import FontProperties
 from scipy.stats import norm
-X = "/work/users/d/y/dyy12/XuLab"; O = f"{X}/complex_screen/pair_motif_composite"; OUT = f"{O}/fig4"; import os; os.makedirs(OUT, exist_ok=True)
+X = "/work/users/d/y/dyy12/XuLab"; O = f"{X}/complex_screen/pair_motif_composite"; OUT = f"{O}/fig4"; os.makedirs(OUT, exist_ok=True)
 sys.path.insert(0, f"{X}/figures_paletteC"); import regulome_palette as rp; Pc = rp.use()
-PAIRS = ["DDIT3-RBBP7", "ADNP-MTF2", "DR1-NFYA"]
+PAIRS = ["DDIT3-RBBP7", "ADNP-MTF2", "DR1-NFYA"]; TOPN = int(os.environ.get("TOPN", "3")); TAG = os.environ.get("TAG", "")
 T = pd.read_csv(f"{O}/motif_tables/pair_shared_motifs_p005.tsv", sep="\t").set_index("pair")
 hom = {}; cur = None; rows = []
 for l in list(open("/nas/longleaf/rhel9/apps/homer/5.1/data/knownTFs/vertebrates/known.motifs")) + [">end\tend\t0"]:
@@ -46,11 +46,17 @@ sel = {}
 for p in PAIRS:
     r = T.loc[p]; h = [x.strip() for x in str(r.shared_homer_specific).split(";") if x.strip() and x.strip() != "nan"]; d = [x.strip() for x in str(r.shared_db_specific).split(";") if x.strip() and x.strip() != "nan"]
     sel[p] = [("H", m) for m in h if m in hom][:3]; sel[p] += [("D", m) for m in d if name2id.get(m) in db][:3 - len(sel[p])]
-fig = plt.figure(figsize=(7.1, 5.4)); gs = fig.add_gridspec(3, 3, hspace=.9, wspace=.45, left=.14, right=.98, top=.9, bottom=.07); rows_out = []
+def worst(p, src, m):
+    a_, b_ = p.split("-")
+    if src == "H": return max(homer_lp(t, pt, m) * -1 for t in (a_, b_) for pt in ("disc", "val"))
+    return max(db_lp(t, pt, name2id[m]) * -1 for t in (a_, b_) for pt in ("disc", "val"))
+for p in PAIRS: sel[p] = sorted(sel[p], key=lambda x: worst(p, *x))[:TOPN]
+W, Hh = (7.1, 5.4) if TOPN == 3 else (4.7, 4.4)
+fig = plt.figure(figsize=(W, Hh)); gs = fig.add_gridspec(3, TOPN, hspace=.95, wspace=.5, left=.17 if TOPN < 3 else .14, right=.98, top=.9, bottom=.07); rows_out = []
 for i, p in enumerate(PAIRS):
     a, b = p.split("-"); r = T.loc[p]
     fig.text(.035, .9 - i * (.83 / 3) - .13, f"{p}\ncorr pct {r.correlation_pct:.2f} | AF3 {r.af3}", fontsize=6, rotation=90, va="center", ha="center", linespacing=1.6)
-    for j in range(3):
+    for j in range(TOPN):
         sub = gs[i, j].subgridspec(2, 1, height_ratios=[1.1, 1], hspace=.35); ax1 = fig.add_subplot(sub[0]); ax2 = fig.add_subplot(sub[1])
         if j >= len(sel[p]): ax1.axis("off"); ax2.axis("off"); continue
         src, m = sel[p][j]
@@ -63,6 +69,6 @@ for i, p in enumerate(PAIRS):
         ax2.axhline(-math.log10(.05), color=Pc.neutral.mid, lw=.6, ls="--"); ax2.set_xticks(xs); ax2.set_xticklabels([f"{a}\ndisc", f"{a}\nheld-out", f"{b}\ndisc", f"{b}\nheld-out"], fontsize=4.5)
         ax2.set_ylabel("-log10 p", fontsize=5); ax2.set_ylim(0, max(vals) * 1.35 + .2)
         rows_out.append(dict(pair=p, motif=label, source="HOMER" if src == "H" else "DB", **{f"{t}_{pt}_p": round(10 ** -lp[(t, pt)], 4) for t in (a, b) for pt in ("disc", "val")}))
-fig.suptitle("Shared enriched motifs in both TFs' single-cell binding sites (exploratory; p ≤ 0.05 on discovery and held-out chromosomes)", fontsize=6.5)
-fig.savefig(f"{OUT}/fig4c_motifs.svg"); fig.savefig(f"{OUT}/fig4c_motifs.png", dpi=300); pd.DataFrame(rows_out).to_csv(f"{OUT}/fig4c_motifs_values.tsv", sep="\t", index=False)
+fig.suptitle("Shared enriched motifs (exploratory)" if TOPN < 3 else "Shared enriched motifs in both TFs' single-cell binding sites (exploratory; p ≤ 0.05 on discovery and held-out chromosomes)", fontsize=6.5)
+fig.savefig(f"{OUT}/fig4c_motifs{TAG}.svg"); fig.savefig(f"{OUT}/fig4c_motifs{TAG}.png", dpi=300); pd.DataFrame(rows_out).to_csv(f"{OUT}/fig4c_motifs_values{TAG}.tsv", sep="\t", index=False)
 print(pd.DataFrame(rows_out).to_string(index=False))
