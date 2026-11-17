@@ -10,7 +10,7 @@ Illustrator-safe font attributes, cropped to content) and a 300 dpi `.png` (olde
 | b | RBBP4 example: network | `b1_rbbp4_network` | `hic/work_wt293t/loops/union_5k_10k_0.7/RBBP4_sweep_k50_i10000_s555_pad30kb/publication_plots_v2/tf_peak_network_cliques_loops.svg` (deck slide 169) | `hic/scripts/plot_clique_network_loops_v2.py`; text fix here |
 | b | RBBP4 example: Hi-C loop plot | `b2_rbbp4_hic_circos` | same folder, `RBBP4_clique_loop_edges_circos_tf_top.svg` (slide 170) | `hic/scripts/plot_clique_circos_tf_top.py` |
 | c | RBBP4 pairs along all chromosomes, module edges highlighted, only the Hi-C loops that support them | `c_rbbp4_chromosomes` (180 x 150 mm) | RBBP4_sweep_k50_i10000_s555: first-step Cicero pairs (peak_edges.tsv, pairs >25 kb, same set as panel d / S1D), modules from cliques.tsv; Peakachu 0.7 loops (5 kb + 10 kb), +-30 kb anchor rule | `scripts/c_rbbp4_chromosomes.py` |
-| d | Shared Cicero pairs (>25 kb, shared by >=3 TFs, n = 1,423; columns clustered Jaccard/average linkage, tree not drawn) + modules with >=1 edge >25 kb by loop coverage + per-edge shuffle null, one TF row axis | `d_module_edges_hic_support` (183 x 95 mm) | `hub_figures/basic/shared_pairs/shared_pairs.tsv`; bars/null as Fig 3 v7 panel a | `scripts/d_module_edges_hic_support.py` (Mac; bars/null code from `figures/fig3_v7/a_module_edges_v7.py`) |
+| d | Module edges >25 kb shared by >=2 TFs (n = 626, 194 on a Hi-C loop; cells dark red = on a loop, grey = not; columns clustered Jaccard/average linkage, tree not drawn) + modules with >=1 edge >25 kb by loop coverage + per-edge shuffle null, one TF row axis | `d_module_edges_hic_support` (183 x 95 mm) | `checks/d_module_edges_shared.tsv.gz` (tf_groups/results_cliques incidence; loop rule as the bars); bars/null as Fig 3 v7 panel a | `scripts/d_module_edge_matrix.py` (Longleaf) + `scripts/d_module_edges_hic_support.py` (Mac) |
 | e | All-TF module distribution (genomic class) | `e_module_genomic_class` | Fig 3 v7 panel b | `figures/fig3_v7/b_class_bars_v7.py` (9766509) |
 | f | Chord of the most widely shared module edges | `f_top_shared_edges_chord` | Mac `hub_figures/basic/clique_edge_overlap/fig_chord_tf_top_shared_edges.svg` (slide 72, md5 7902fef4 = deck) | title/subtitle dropped here |
 | g | Super-enhancer hub example (browser) | `g_se_browser` (print width 181 mm) | Fig 3 v7 panel c | `figures/fig3_v7/c_se_browser_v7.py` (1a3c955) |
@@ -22,7 +22,7 @@ Illustrator-safe font attributes, cropped to content) and a 300 dpi `.png` (olde
 g, h and i are drawn on larger canvases with fonts preset for the print sizes given; place them at 100% of the SVG/PDF size.
 b, c and f are slide-sized originals (b1 444 mm, b2 311 mm, c 419 mm, f 281 mm wide): scale them down when placing.
 
-**Missing:** none. Earlier options and drafts (a/c/d/j options, j by-TF-count and shared-vs-specific versions, old j_module_genes_go) were deleted 2026-11-16; superseded scripts stay in `scripts/` and git.
+**Missing:** none. Earlier options and drafts (a/c/d/j options, j by-TF-count and shared-vs-specific versions, old j_module_genes_go, pair_complex model) were deleted 2026-11-17; superseded scripts stay in `scripts/` and git.
 
 Panel c was redrawn on 2026-11-12 to the user's spec (all pairs; module edges in dark blue; only supporting loops below).
 
