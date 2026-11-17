@@ -80,7 +80,7 @@ emit("b1_rbbp4_network", glyph_text_to_live(s, drop=("RBBP4 co-binding clusters"
 s = (P2 / "RBBP4_clique_loop_edges_circos_tf_top.svg").read_text()
 emit("b2_rbbp4_hic_circos", glyph_text_to_live(drop_text_groups(s, ("Genome-wide RBBP4",)), drop=("Genome-wide RBBP4",)))
 # c: made by scripts/c_rbbp4_chromosomes.py (all RBBP4 pairs, module edges highlighted, only supporting loops; user 2026-11-12)
-# d: made by scripts/d_module_edges_hic_support.py (module edges shared by >=2 TFs heatmap + module bars + null, one TF axis; user 2026-11-17)
+# d: made by scripts/d_module_edges_hic_support.py (all module edges in 1 Mb bins + module bars + null, one TF axis; user 2026-11-17)
 # e, g, h, i: Fig 3 v7 panels (final-size renders, commits 9766509 / 1a3c955 / 715c1a5)
 for name, src, sc in (("e_module_genomic_class", "b_class_bars", 1.0), ("g_se_browser", "c_se_browser", 0.739),
                       ("h_se_3d_structure", "d_se_rosette", 0.421), ("i_se_flower", "e_se_flower", 0.367)):
