@@ -1,0 +1,6 @@
+cutoff	median_responders_per_tf	tfs_ge10_responders	total_responders	total_both	pooled_recovery_pct	expected_recovery_pct	pooled_precision_pct	expected_precision_pct
+|z| >= 2	873.00	63	63954	11337	17.73	17.54	9.62	9.52
+|z| >= 2.5	338.00	63	27196	5006	18.41	17.84	4.25	4.12
+|z| >= 3	123.00	62	11237	2158	19.20	18.21	1.83	1.74
+|z| >= 4	7.00	29	2188	484	22.12	18.96	0.41	0.35
+top 5% of genes per TF	561.00	63	35343	6062	17.15	16.66	5.14	5.00

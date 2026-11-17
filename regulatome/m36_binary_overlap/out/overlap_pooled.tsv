@@ -1,0 +1,3 @@
+label	cutoff	n_tfs	genes	ours	perturbseq	both	ours_only	perturbseq_only	neither	expected_both	recovery_pct	expected_recovery_pct	precision_pct	expected_precision_pct	fold_both_over_expected	jaccard
+descriptive	|z| >= 2	63	707239	117845	63954	11337	106508	52617	536777	11217.198	17.727	17.539	9.620	9.519	1.011	0.067
+descriptive	|z| >= 3	63	707239	117845	11237	2158	115687	9079	580315	2046.344	19.204	18.211	1.831	1.736	1.055	0.017
