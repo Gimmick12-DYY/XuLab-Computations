@@ -4,6 +4,13 @@ import numpy as np, pandas as pd
 RG_ = "/work/users/d/y/dyy12/XuLab/regulatome"
 sys.argv = ["m15.py", "raw"]; src = open(f"{RG_}/m15_gene_to_tf/m15.py").read(); exec(src[:src.index("# ---- binding percentiles")])  # TF, UG, Z1, Z2, ZA
 X35 = "/work/users/d/y/dyy12/XuLab"; R35 = f"{X35}/regulatome"; O35 = f"{R35}/m35_threshold_sweep/out"; LAB = "descriptive"
+
+VER35 = __import__("os").environ.get("M35_VERSION", "all_cells")
+if VER35 == "top25_sgRNA":
+    _T = pd.read_csv("/work/users/d/y/dyy12/XuLab/regulatome/m23_sgrna_top25/out/observed_kd_top25.tsv.gz", sep="\t")
+    _tf = sorted(set(_T.tf)); TF = [t for t in TF if t in _tf]
+    def _piv(c): return _T.pivot(index="tf", columns="gene", values=c).reindex(index=TF, columns=UG).values.astype(float)
+    ZA, Z1, Z2 = _piv("z_top25"), _piv("z_top25_half1"), _piv("z_top25_half2")
 TFL = list(TF); gi = {g: k for k, g in enumerate(UG)}; ti = {t: i for i, t in enumerate(TFL)}; NG = len(UG); OWN = {"HP1": ["CBX1", "CBX3", "CBX5"], "ZUFSP": ["ZUP1"]}
 for i, t in enumerate(TFL):
     for o in OWN.get(t, [t]):
@@ -52,7 +59,7 @@ for src, t, line, m in LISTS:
         r = resp(i, th); n = int(r.sum()); k = int((r & m).sum()); rec = 100 * k / n if n else np.nan
         ROWS.append(dict(label=LAB, threshold=th, threshold_label=THL[th], source=src, TF=t, reference_cell_line=line, primary_reference=PRIM.get((t, line), True), bulk_tf=t in BT, n_responders=n, n_shared=k,
                          pct_recovered=rec, reference_pct=ref, fold=rec / ref if n and ref else np.nan, enough_responders=n >= 10))
-T = pd.DataFrame(ROWS); T.to_csv(f"{O35}/per_tf_threshold_sweep.tsv", sep="\t", index=False, float_format="%.3f")
+T = pd.DataFrame(ROWS); T.insert(1, "version", VER35); T.to_csv(f"{O35}/per_tf_threshold_sweep_{VER35}.tsv", sep="\t", index=False, float_format="%.3f")
 def pool(g, name):
     e = g[g.enough_responders]; ws = (g.n_responders * g.reference_pct).sum() / max(g.n_responders.sum(), 1); hi = e[e.fold > 1.2]
     return dict(label=LAB, set=name, threshold=g.threshold.iloc[0], threshold_label=g.threshold_label.iloc[0], n_tfs=len(g), n_tfs_ge10_responders=len(e), total_responders=int(g.n_responders.sum()), total_recovered=int(g.n_shared.sum()),
@@ -64,9 +71,9 @@ for th in TH:
     P.append(pool(g[g.source == "our HITAG (HEK293T)"], "ours, all 75 TFs"))
     P.append(pool(g[(g.source == "our HITAG (HEK293T)") & g.bulk_tf], "ours, 10 TFs with bulk ChIP"))
     b = g[(g.source == "bulk ChIP") & g.primary_reference]; p = pool(b, "bulk ChIP, same 10 TFs (one reference each)"); p["tfs_fold_gt_1_2"] = ",".join(b[b.enough_responders & (b.fold > 1.2)].TF); P.append(p)
-P = pd.DataFrame(P); P.to_csv(f"{O35}/pooled_threshold_sweep.tsv", sep="\t", index=False, float_format="%.3f")
+P = pd.DataFrame(P); P.insert(1, "version", VER35); P.to_csv(f"{O35}/pooled_threshold_sweep_{VER35}.tsv", sep="\t", index=False, float_format="%.3f")
 pd.set_option("display.width", 300); pd.set_option("display.max_colwidth", 80)
-print(P.drop(columns=["label", "threshold"]).round(2).to_string(index=False))
+print(len(TF), "TFs in this version"); print(P.drop(columns=["label", "threshold"]).round(2).to_string(index=False))
 FOC = ["NRF1", "E4F1", "CTCF", "NFYA", "MAZ", "DNMT1", "NME2"]
 F = T[T.TF.isin(FOC)].copy(); F["name"] = np.where(F.source.str.startswith("our"), F.TF + " ours", F.TF + " bulk " + F.reference_cell_line)
 print(F.pivot_table(index="name", columns="threshold", values="fold", aggfunc="first")[TH].round(2).to_string())
