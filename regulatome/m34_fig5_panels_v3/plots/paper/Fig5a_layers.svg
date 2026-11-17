@@ -6,7 +6,7 @@
   <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
    <cc:Work>
     <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
-    <dc:date>2026-11-16T22:07:46.407285</dc:date>
+    <dc:date>2026-11-17T13:29:29.262194</dc:date>
     <dc:format>image/svg+xml</dc:format>
     <dc:creator>
      <cc:Agent>
@@ -40,7 +40,7 @@ Q 8.064 31.68 8.064 37.44
 L 8.064 68.16 
 Q 8.064 73.92 14.112 73.92 
 z
-" clip-path="url(#p873a4e6706)" style="fill: #fbebd3; stroke: #d98c1f; stroke-width: 0.6; stroke-linejoin: miter"/>
+" clip-path="url(#pbb4aab6ff0)" style="fill: #fbebd3; stroke: #d98c1f; stroke-width: 0.6; stroke-linejoin: miter"/>
    </g>
    <g id="patch_3">
     <path d="M 195.552 73.92 
@@ -53,7 +53,7 @@ Q 189.504 31.68 189.504 37.44
 L 189.504 68.16 
 Q 189.504 73.92 195.552 73.92 
 z
-" clip-path="url(#p873a4e6706)" style="fill: #f7f7f7; stroke: #4d4d4d; stroke-width: 0.6; stroke-linejoin: miter"/>
+" clip-path="url(#pbb4aab6ff0)" style="fill: #f7f7f7; stroke: #4d4d4d; stroke-width: 0.6; stroke-linejoin: miter"/>
    </g>
    <g id="patch_4">
     <path d="M 376.992 73.92 
@@ -66,27 +66,27 @@ Q 370.944 31.68 370.944 37.44
 L 370.944 68.16 
 Q 370.944 73.92 376.992 73.92 
 z
-" clip-path="url(#p873a4e6706)" style="fill: #f7f7f7; stroke: #4d4d4d; stroke-width: 0.6; stroke-linejoin: miter"/>
+" clip-path="url(#pbb4aab6ff0)" style="fill: #f7f7f7; stroke: #4d4d4d; stroke-width: 0.6; stroke-linejoin: miter"/>
    </g>
    <g id="patch_5">
     <path d="M 137.071512 52.8 
 Q 161.281212 52.8 184.708288 52.8 
-" clip-path="url(#p873a4e6706)" style="fill: none; stroke: #4d4d4d; stroke-width: 0.7; stroke-linecap: round"/>
+" clip-path="url(#pbb4aab6ff0)" style="fill: none; stroke: #4d4d4d; stroke-width: 0.7; stroke-linecap: round"/>
     <path d="M 181.508288 51.2 
 L 184.708288 52.8 
 L 181.508288 54.4 
 z
-" clip-path="url(#p873a4e6706)" style="fill: #4d4d4d; stroke: #4d4d4d; stroke-width: 0.7; stroke-linecap: round"/>
+" clip-path="url(#pbb4aab6ff0)" style="fill: #4d4d4d; stroke: #4d4d4d; stroke-width: 0.7; stroke-linecap: round"/>
    </g>
    <g id="patch_6">
     <path d="M 318.511512 52.8 
 Q 342.721212 52.8 366.148288 52.8 
-" clip-path="url(#p873a4e6706)" style="fill: none; stroke: #4d4d4d; stroke-width: 0.7; stroke-linecap: round"/>
+" clip-path="url(#pbb4aab6ff0)" style="fill: none; stroke: #4d4d4d; stroke-width: 0.7; stroke-linecap: round"/>
     <path d="M 362.948288 51.2 
 L 366.148288 52.8 
 L 362.948288 54.4 
 z
-" clip-path="url(#p873a4e6706)" style="fill: #4d4d4d; stroke: #4d4d4d; stroke-width: 0.7; stroke-linecap: round"/>
+" clip-path="url(#pbb4aab6ff0)" style="fill: #4d4d4d; stroke: #4d4d4d; stroke-width: 0.7; stroke-linecap: round"/>
    </g>
    <g id="patch_7">
     <path d="M 14.112 150.72 
@@ -99,7 +99,7 @@ Q 8.064 108.48 8.064 114.24
 L 8.064 144.96 
 Q 8.064 150.72 14.112 150.72 
 z
-" clip-path="url(#p873a4e6706)" style="fill: #e8f1f8; stroke: #2166ac; stroke-width: 0.6; stroke-linejoin: miter"/>
+" clip-path="url(#pbb4aab6ff0)" style="fill: #e8f1f8; stroke: #2166ac; stroke-width: 0.6; stroke-linejoin: miter"/>
    </g>
    <g id="patch_8">
     <path d="M 235.872 150.72 
@@ -112,27 +112,27 @@ Q 229.824 108.48 229.824 114.24
 L 229.824 144.96 
 Q 229.824 150.72 235.872 150.72 
 z
-" clip-path="url(#p873a4e6706)" style="fill: #e8f1f8; stroke: #2166ac; stroke-width: 0.6; stroke-linejoin: miter"/>
+" clip-path="url(#pbb4aab6ff0)" style="fill: #e8f1f8; stroke: #2166ac; stroke-width: 0.6; stroke-linejoin: miter"/>
    </g>
    <g id="patch_9">
     <path d="M 187.46942 129.6 
 Q 206.636647 129.6 225.02125 129.6 
-" clip-path="url(#p873a4e6706)" style="fill: none; stroke: #4d4d4d; stroke-width: 0.7; stroke-linecap: round"/>
+" clip-path="url(#pbb4aab6ff0)" style="fill: none; stroke: #4d4d4d; stroke-width: 0.7; stroke-linecap: round"/>
     <path d="M 221.82125 128 
 L 225.02125 129.6 
 L 221.82125 131.2 
 z
-" clip-path="url(#p873a4e6706)" style="fill: #4d4d4d; stroke: #4d4d4d; stroke-width: 0.7; stroke-linecap: round"/>
+" clip-path="url(#pbb4aab6ff0)" style="fill: #4d4d4d; stroke: #4d4d4d; stroke-width: 0.7; stroke-linecap: round"/>
    </g>
    <g id="patch_10">
     <path d="M 433.44 77.83875 
 Q 433.44 91.198409 433.44 103.775443 
-" clip-path="url(#p873a4e6706)" style="fill: none; stroke: #4d4d4d; stroke-width: 0.7; stroke-linecap: round"/>
+" clip-path="url(#pbb4aab6ff0)" style="fill: none; stroke: #4d4d4d; stroke-width: 0.7; stroke-linecap: round"/>
     <path d="M 435.04 100.575443 
 L 433.44 103.775443 
 L 431.84 100.575443 
 z
-" clip-path="url(#p873a4e6706)" style="fill: #4d4d4d; stroke: #4d4d4d; stroke-width: 0.7; stroke-linecap: round"/>
+" clip-path="url(#pbb4aab6ff0)" style="fill: #4d4d4d; stroke: #4d4d4d; stroke-width: 0.7; stroke-linecap: round"/>
    </g>
    <g id="patch_11">
     <path d="M 14.112 213.12 
@@ -145,7 +145,7 @@ Q 8.064 182.88 8.064 188.64
 L 8.064 207.36 
 Q 8.064 213.12 14.112 213.12 
 z
-" clip-path="url(#p873a4e6706)" style="fill: #ffffff; stroke: #1a1a1a; stroke-width: 0.6; stroke-linejoin: miter"/>
+" clip-path="url(#pbb4aab6ff0)" style="fill: #ffffff; stroke: #1a1a1a; stroke-width: 0.6; stroke-linejoin: miter"/>
    </g>
    <g id="text_1">
     <text style="font-weight: 700; font-size: 7px; font-family: 'Arial', 'Liberation Sans', 'Helvetica', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #d98c1f" x="10.08" y="18.594844" transform="rotate(-0 10.08 18.594844)">Binding layer (our data)</text>
@@ -167,23 +167,23 @@ z
     <text style="font-weight: 700; font-size: 7px; font-family: 'Arial', 'Liberation Sans', 'Helvetica', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #2166ac" x="10.08" y="97.810156" transform="rotate(-0 10.08 97.810156)">Perturb-seq layer (external, HEK293T knockdowns)</text>
    </g>
    <g id="text_6">
-    <text style="font-size: 7px; font-family: 'Arial', 'Liberation Sans', 'Helvetica', 'DejaVu Sans', sans-serif; fill: #1a1a1a" transform="translate(53.220781 127.371266)">Knockdown of the same TF</text>
-    <text style="font-size: 7px; font-family: 'Arial', 'Liberation Sans', 'Helvetica', 'DejaVu Sans', sans-serif; fill: #1a1a1a" transform="translate(53.302813 135.418422)">changes the gene (|z| ≥ 2)?</text>
+    <text style="font-size: 7px; font-family: 'Arial', 'Liberation Sans', 'Helvetica', 'DejaVu Sans', sans-serif; fill: #1a1a1a" transform="translate(39.016797 127.371266)">Knockdown of the same TF changes</text>
+    <text style="font-size: 7px; font-family: 'Arial', 'Liberation Sans', 'Helvetica', 'DejaVu Sans', sans-serif; fill: #1a1a1a" transform="translate(32.686719 135.418422)">the gene (|z| ≥ 2, top-25% sgRNA cells)?</text>
    </g>
    <g id="text_7">
-    <text style="font-size: 7px; font-family: 'Arial', 'Liberation Sans', 'Helvetica', 'DejaVu Sans', sans-serif; fill: #1a1a1a" transform="translate(248.102969 127.386578)">Support:  Tier 1 reproducible in both cell halves · Tier 2 · Tier 3 bound only</text>
-    <text style="font-size: 7px; font-family: 'Arial', 'Liberation Sans', 'Helvetica', 'DejaVu Sans', sans-serif; fill: #1a1a1a" transform="translate(270.282031 135.433734)">Direction:  down on knockdown = activates · up = represses</text>
+    <text style="font-size: 7px; font-family: 'Arial', 'Liberation Sans', 'Helvetica', 'DejaVu Sans', sans-serif; fill: #1a1a1a" transform="translate(266.650781 127.371266)">Supported by Perturb-seq:  |z| ≥ 2  (confidence: |z| ≥ 3, |z| ≥ 4)</text>
+    <text style="font-size: 7px; font-family: 'Arial', 'Liberation Sans', 'Helvetica', 'DejaVu Sans', sans-serif; fill: #1a1a1a" transform="translate(270.282031 135.449047)">Direction:  down on knockdown = activates · up = represses</text>
    </g>
    <g id="text_8">
     <text style="font-weight: 700; font-size: 7px; font-family: 'Arial', 'Liberation Sans', 'Helvetica', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #1a1a1a" x="10.08" y="174.610156" transform="rotate(-0 10.08 174.610156)">Combination layer</text>
    </g>
    <g id="text_9">
-    <text style="font-size: 7px; font-family: 'Arial', 'Liberation Sans', 'Helvetica', 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #1a1a1a" x="252" y="199.810156" transform="rotate(-0 252 199.810156)">Regulome v1:  150,403 TF–gene edges · 79 TFs · 11,046 genes · 9,480 supported by Perturb-seq (796 Tier 1), each with a direction</text>
+    <text style="font-size: 7px; font-family: 'Arial', 'Liberation Sans', 'Helvetica', 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #1a1a1a" x="252" y="199.810156" transform="rotate(-0 252 199.810156)">Regulome:  150,403 TF–gene edges · 79 TFs · 11,046 genes · 11,337 supported by Perturb-seq (63 TFs), each with a direction</text>
    </g>
   </g>
  </g>
  <defs>
-  <clipPath id="p873a4e6706">
+  <clipPath id="pbb4aab6ff0">
    <rect x="0" y="0" width="504" height="216"/>
   </clipPath>
  </defs>
