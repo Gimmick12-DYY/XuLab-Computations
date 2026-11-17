@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="504pt" height="216pt" viewBox="0 0 504 216" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <metadata>
+  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <cc:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:date>2026-11-16T22:07:46.407285</dc:date>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Matplotlib v3.10.9, https://matplotlib.org/</dc:title>
+     </cc:Agent>
+    </dc:creator>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="figure_1">
+  <g id="patch_1">
+   <path d="M 0 216 
+L 504 216 
+L 504 0 
+L 0 0 
+z
+" style="fill: #ffffff"/>
+  </g>
+  <g id="axes_1">
+   <g id="patch_2">
+    <path d="M 14.112 73.92 
+L 127.008 73.92 
+Q 133.056 73.92 133.056 68.16 
+L 133.056 37.44 
+Q 133.056 31.68 127.008 31.68 
+L 14.112 31.68 
+Q 8.064 31.68 8.064 37.44 
+L 8.064 68.16 
+Q 8.064 73.92 14.112 73.92 
+z
+" clip-path="url(#p873a4e6706)" style="fill: #fbebd3; stroke: #d98c1f; stroke-width: 0.6; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_3">
+    <path d="M 195.552 73.92 
+L 308.448 73.92 
+Q 314.496 73.92 314.496 68.16 
+L 314.496 37.44 
+Q 314.496 31.68 308.448 31.68 
+L 195.552 31.68 
+Q 189.504 31.68 189.504 37.44 
+L 189.504 68.16 
+Q 189.504 73.92 195.552 73.92 
+z
+" clip-path="url(#p873a4e6706)" style="fill: #f7f7f7; stroke: #4d4d4d; stroke-width: 0.6; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_4">
+    <path d="M 376.992 73.92 
+L 489.888 73.92 
+Q 495.936 73.92 495.936 68.16 
+L 495.936 37.44 
+Q 495.936 31.68 489.888 31.68 
+L 376.992 31.68 
+Q 370.944 31.68 370.944 37.44 
+L 370.944 68.16 
+Q 370.944 73.92 376.992 73.92 
+z
+" clip-path="url(#p873a4e6706)" style="fill: #f7f7f7; stroke: #4d4d4d; stroke-width: 0.6; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_5">
+    <path d="M 137.071512 52.8 
+Q 161.281212 52.8 184.708288 52.8 
+" clip-path="url(#p873a4e6706)" style="fill: none; stroke: #4d4d4d; stroke-width: 0.7; stroke-linecap: round"/>
+    <path d="M 181.508288 51.2 
+L 184.708288 52.8 
+L 181.508288 54.4 
+z
+" clip-path="url(#p873a4e6706)" style="fill: #4d4d4d; stroke: #4d4d4d; stroke-width: 0.7; stroke-linecap: round"/>
+   </g>
+   <g id="patch_6">
+    <path d="M 318.511512 52.8 
+Q 342.721212 52.8 366.148288 52.8 
+" clip-path="url(#p873a4e6706)" style="fill: none; stroke: #4d4d4d; stroke-width: 0.7; stroke-linecap: round"/>
+    <path d="M 362.948288 51.2 
+L 366.148288 52.8 
+L 362.948288 54.4 
+z
+" clip-path="url(#p873a4e6706)" style="fill: #4d4d4d; stroke: #4d4d4d; stroke-width: 0.7; stroke-linecap: round"/>
+   </g>
+   <g id="patch_7">
+    <path d="M 14.112 150.72 
+L 177.408 150.72 
+Q 183.456 150.72 183.456 144.96 
+L 183.456 114.24 
+Q 183.456 108.48 177.408 108.48 
+L 14.112 108.48 
+Q 8.064 108.48 8.064 114.24 
+L 8.064 144.96 
+Q 8.064 150.72 14.112 150.72 
+z
+" clip-path="url(#p873a4e6706)" style="fill: #e8f1f8; stroke: #2166ac; stroke-width: 0.6; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_8">
+    <path d="M 235.872 150.72 
+L 489.888 150.72 
+Q 495.936 150.72 495.936 144.96 
+L 495.936 114.24 
+Q 495.936 108.48 489.888 108.48 
+L 235.872 108.48 
+Q 229.824 108.48 229.824 114.24 
+L 229.824 144.96 
+Q 229.824 150.72 235.872 150.72 
+z
+" clip-path="url(#p873a4e6706)" style="fill: #e8f1f8; stroke: #2166ac; stroke-width: 0.6; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_9">
+    <path d="M 187.46942 129.6 
+Q 206.636647 129.6 225.02125 129.6 
+" clip-path="url(#p873a4e6706)" style="fill: none; stroke: #4d4d4d; stroke-width: 0.7; stroke-linecap: round"/>
+    <path d="M 221.82125 128 
+L 225.02125 129.6 
+L 221.82125 131.2 
+z
+" clip-path="url(#p873a4e6706)" style="fill: #4d4d4d; stroke: #4d4d4d; stroke-width: 0.7; stroke-linecap: round"/>
+   </g>
+   <g id="patch_10">
+    <path d="M 433.44 77.83875 
+Q 433.44 91.198409 433.44 103.775443 
+" clip-path="url(#p873a4e6706)" style="fill: none; stroke: #4d4d4d; stroke-width: 0.7; stroke-linecap: round"/>
+    <path d="M 435.04 100.575443 
+L 433.44 103.775443 
+L 431.84 100.575443 
+z
+" clip-path="url(#p873a4e6706)" style="fill: #4d4d4d; stroke: #4d4d4d; stroke-width: 0.7; stroke-linecap: round"/>
+   </g>
+   <g id="patch_11">
+    <path d="M 14.112 213.12 
+L 489.888 213.12 
+Q 495.936 213.12 495.936 207.36 
+L 495.936 188.64 
+Q 495.936 182.88 489.888 182.88 
+L 14.112 182.88 
+Q 8.064 182.88 8.064 188.64 
+L 8.064 207.36 
+Q 8.064 213.12 14.112 213.12 
+z
+" clip-path="url(#p873a4e6706)" style="fill: #ffffff; stroke: #1a1a1a; stroke-width: 0.6; stroke-linejoin: miter"/>
+   </g>
+   <g id="text_1">
+    <text style="font-weight: 700; font-size: 7px; font-family: 'Arial', 'Liberation Sans', 'Helvetica', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #d98c1f" x="10.08" y="18.594844" transform="rotate(-0 10.08 18.594844)">Binding layer (our data)</text>
+   </g>
+   <g id="text_2">
+    <text style="font-size: 7px; font-family: 'Arial', 'Liberation Sans', 'Helvetica', 'DejaVu Sans', sans-serif; fill: #1a1a1a" transform="translate(59.730781 46.563)">79 TFs</text>
+    <text style="font-size: 7px; font-family: 'Arial', 'Liberation Sans', 'Helvetica', 'DejaVu Sans', sans-serif; fill: #1a1a1a" transform="translate(49.812109 54.610156)">HITAG peaks</text>
+    <text style="font-size: 7px; font-family: 'Arial', 'Liberation Sans', 'Helvetica', 'DejaVu Sans', sans-serif; fill: #1a1a1a" transform="translate(42.417266 62.657313)">(top 5,000 per TF)</text>
+   </g>
+   <g id="text_3">
+    <text style="font-size: 7px; font-family: 'Arial', 'Liberation Sans', 'Helvetica', 'DejaVu Sans', sans-serif; fill: #1a1a1a" transform="translate(233.523828 46.563)">Promoter or</text>
+    <text style="font-size: 7px; font-family: 'Arial', 'Liberation Sans', 'Helvetica', 'DejaVu Sans', sans-serif; fill: #1a1a1a" transform="translate(221.070391 54.610156)">ABC-linked element</text>
+    <text style="font-size: 7px; font-family: 'Arial', 'Liberation Sans', 'Helvetica', 'DejaVu Sans', sans-serif; fill: #1a1a1a" transform="translate(234.694141 62.657313)">(Hi-C ABC)</text>
+   </g>
+   <g id="text_4">
+    <text style="font-size: 7px; font-family: 'Arial', 'Liberation Sans', 'Helvetica', 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #1a1a1a" x="433.44" y="54.610156" transform="rotate(-0 433.44 54.610156)">Target gene</text>
+   </g>
+   <g id="text_5">
+    <text style="font-weight: 700; font-size: 7px; font-family: 'Arial', 'Liberation Sans', 'Helvetica', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #2166ac" x="10.08" y="97.810156" transform="rotate(-0 10.08 97.810156)">Perturb-seq layer (external, HEK293T knockdowns)</text>
+   </g>
+   <g id="text_6">
+    <text style="font-size: 7px; font-family: 'Arial', 'Liberation Sans', 'Helvetica', 'DejaVu Sans', sans-serif; fill: #1a1a1a" transform="translate(53.220781 127.371266)">Knockdown of the same TF</text>
+    <text style="font-size: 7px; font-family: 'Arial', 'Liberation Sans', 'Helvetica', 'DejaVu Sans', sans-serif; fill: #1a1a1a" transform="translate(53.302813 135.418422)">changes the gene (|z| ≥ 2)?</text>
+   </g>
+   <g id="text_7">
+    <text style="font-size: 7px; font-family: 'Arial', 'Liberation Sans', 'Helvetica', 'DejaVu Sans', sans-serif; fill: #1a1a1a" transform="translate(248.102969 127.386578)">Support:  Tier 1 reproducible in both cell halves · Tier 2 · Tier 3 bound only</text>
+    <text style="font-size: 7px; font-family: 'Arial', 'Liberation Sans', 'Helvetica', 'DejaVu Sans', sans-serif; fill: #1a1a1a" transform="translate(270.282031 135.433734)">Direction:  down on knockdown = activates · up = represses</text>
+   </g>
+   <g id="text_8">
+    <text style="font-weight: 700; font-size: 7px; font-family: 'Arial', 'Liberation Sans', 'Helvetica', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #1a1a1a" x="10.08" y="174.610156" transform="rotate(-0 10.08 174.610156)">Combination layer</text>
+   </g>
+   <g id="text_9">
+    <text style="font-size: 7px; font-family: 'Arial', 'Liberation Sans', 'Helvetica', 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #1a1a1a" x="252" y="199.810156" transform="rotate(-0 252 199.810156)">Regulome v1:  150,403 TF–gene edges · 79 TFs · 11,046 genes · 9,480 supported by Perturb-seq (796 Tier 1), each with a direction</text>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="p873a4e6706">
+   <rect x="0" y="0" width="504" height="216"/>
+  </clipPath>
+ </defs>
+</svg>
