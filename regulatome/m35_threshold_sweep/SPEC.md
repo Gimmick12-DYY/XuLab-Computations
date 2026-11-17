@@ -1,0 +1,10 @@
+# m35: Perturb-seq threshold sweep for the Regulome vs Perturb-seq overlap (descriptive, no significance tests)
+
+User (2026-11-17): should the knockdown threshold be raised so only high-confidence targets count? All thresholds below are reported; none is chosen.
+
+Perturb-seq responder list per TF (Arm 2 raw per-TF z, all cells, own gene removed, m15 "raw"; halves Z1/Z2), all fixed here:
+abs2 |z| >= 2; abs3 |z| >= 3; abs4 |z| >= 4; abs5 |z| >= 5; top50, top100, top200 genes by |z|; rep2 |z| >= 2 in both halves, same sign; rep3 |z| >= 3 in both halves, same sign; down2 z <= -2; down3 z <= -3; down4 z <= -4.
+Binding lists: ours = frozen Regulome v1 (m34 regulome_v1.tsv.gz: top 5,000 HITAG peaks, promoter or canonical Hi-C ABC-linked element), 75 TFs with a knockdown; bulk ChIP = the m33 Part B references through the identical path (top 5,000 peaks by signal, strongest summit per element, canonical ABC links, same universe): CTCF HEK293T (GSE103651), CTCF HEK293 (ENCODE), MAZ HEK293, ZIC2 HEK293, ZNF282 HEK293, ZNF777 HEK293, ZBTB7A HEK293, SETDB1 HEK293, NFYA K562, NRF1 K562 (ENCFF259YUE), NRF1 HepG2 (ENCFF348EDE), E4F1 K562 (ENCFF683WRK).
+Per TF (and per bulk reference) x threshold: n responders, n shared, % of responders recovered, reference % (bound genes / genes with a z for that TF, i.e. of the 11,228), fold = recovered % / reference %.
+Pooled per source x threshold: total responders, total recovered, pooled % recovered, pooled reference % (reference weighted by responders), median per-TF fold over TFs with >= 10 responders (others flagged "too few" and left out of medians and counts), n TFs with >= 10 responders, n TFs with fold > 1.2 and their names.
+Restricted pooled rows: the 10 TFs with bulk ChIP, ours vs bulk side by side; for pooled bulk one reference per TF (CTCF HEK293T GSE103651, NRF1 K562); every reference is in the per-TF table.
