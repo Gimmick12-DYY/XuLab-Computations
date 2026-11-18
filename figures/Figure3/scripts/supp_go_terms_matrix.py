@@ -1,7 +1,8 @@
 """Supplementary: GO terms x TFs matrix from the GREAT-style region test (same term sets as j_go_specific_vs_conserved_summary.py:
 TF-specific = distal-vs-distal passing terms, conserved = all-element passing terms; all TFs beat their random-peak null).
 Rows = each TF's top 4 TF-specific and top 4 conserved terms (by q), union, grouped by GO-slim theme (light bands); near-duplicates
-merged: a term is dropped when another kept term is significant in exactly the same TFs (same group). Columns = all 79 panel TFs, ordered by status
+merged: a term is dropped when another kept term is significant in exactly the same TFs (same group). Columns = the TFs with >= 1 term (TFs without any term are
+listed in a note and in the status sheet, not drawn), ordered by status
 (TF-specific, then conserved) and number of terms; a status strip on top marks, per group: terms / tested, none / too few elements
 (< 20, minimum for a test) / no module elements (incl. the 11 TFs without Cicero pairs). Status table: checks/go_great_regions/tf_status_79.tsv.
 Cell: light hollow dot = TF-specific term, teal dot = conserved term, size = -log10 q (capped at 10). Full lists: go_per_tf_great_terms.xlsx.
@@ -50,10 +51,20 @@ ST = pd.DataFrame([dict(tf=t, cicero_peaks=int(ALL.peaks[t]) if t in ALL.index e
                         conserved_elements=int(ALL.conserved_elements[t]) if t in ALL.index else 0, specific_status=STL[status(t, "specific")],
                         conserved_status=STL[status(t, "conserved")], specific_terms=int(SP[SP.tf == t].term.nunique()), conserved_terms=int(CO[CO.tf == t].term.nunique())) for t in tfs])
 ST.to_csv(G / "tf_status_79.tsv", sep="\t", index=False)
+DROP = [t for t in tfs if t not in set(SP.tf) | set(CO.tf)]                       # no term on either side: listed in the status table, not drawn (user 2026-11-18)
+tfs = [t for t in tfs if t not in DROP]
+def why(t):
+    st_ = {status(t, "specific"), status(t, "conserved")}
+    return "tested, no term" if 2 in st_ else ("< 20 elements" if 1 in st_ else "no module elements")
+grp = {}
+for t in DROP: grp.setdefault(why(t), []).append(t)
+note = "Not shown (no term on either side; status of all 79 TFs in go_per_tf_great_terms.xlsx, sheet TF_status_79):\n" + "\n".join(
+    f"{k} ({len(grp[k])}): " + ", ".join(sorted(grp[k])) for k in ("tested, no term", "< 20 elements", "no module elements") if k in grp)
+print({k: len(v) for k, v in grp.items()})
 print(pd.crosstab(ST.specific_status, "TF-specific").join(pd.crosstab(ST.conserved_status, "conserved"), how="outer").fillna(0).astype(int))
 ti = {t: i for i, t in enumerate(terms.term)}; fi = {t: i for i, t in enumerate(tfs)}
 nr, nc = len(terms), len(tfs)
-RH = 2.4; HT = 44 + RH * (nr + 3); fig = plt.figure(figsize=(240 * MM, HT * MM)); ax = fig.add_axes([0.27, 12 / HT, 0.63, nr * RH / HT]); st = fig.add_axes([0.27, (12 + RH * (nr + 0.6)) / HT, 0.63, 2 * RH / HT], sharex=ax)
+RH = 2.4; HT = 58 + RH * (nr + 3); fig = plt.figure(figsize=(200 * MM, HT * MM)); ax = fig.add_axes([0.33, 28 / HT, 0.55, nr * RH / HT]); st = fig.add_axes([0.33, (28 + RH * (nr + 0.6)) / HT, 0.55, 2 * RH / HT], sharex=ax)
 sz = lambda q: 1.5 + 2.2 * np.minimum(-np.log10(q), 10)
 for d, kw, dx in ((CO, dict(color=TEAL, lw=0), 0.18), (SP, dict(color=LT, edgecolors=TEAL, linewidths=0.5), -0.18)):
     d = d[d.term.isin(ti)]; ax.scatter([fi[t] + dx for t in d.tf], [ti[t] for t in d.term], s=sz(d.q), zorder=3, **kw)
@@ -63,7 +74,7 @@ ax.set_yticks(range(nr)); ax.set_yticklabels([short(n) for n in terms.name], fon
 ax.set_xticks(range(nc)); ax.tick_params(labelbottom=False, labeltop=False); ax.set_xlim(-0.6, nc - 0.4)
 ax.tick_params(length=0); ax.grid(color="#EEEEEE", lw=0.3); ax.set_axisbelow(True)
 for sp in ax.spines.values(): sp.set_visible(False)
-ax.axvline(len(set(SP.tf)) - 0.5, color="#9E9E9E", lw=0.5); ax.axvline(len(set(SP.tf) | set(CO.tf)) - 0.5, color="#9E9E9E", lw=0.5)
+ax.axvline(len(set(SP.tf)) - 0.5, color="#9E9E9E", lw=0.5)
 st.xaxis.tick_top(); st.set_xticks(range(nc)); st.set_xticklabels(tfs, rotation=90, fontsize=6)
 SCOL = {3: TEAL, 2: "#D9D9D9", 1: "white", 0: "white"}
 for j, t in enumerate(tfs):
@@ -80,9 +91,10 @@ for i, th in enumerate(terms.theme):
         ax.text(nc - 0.1, i + k / 2 - 0.5, th.replace(" (muscle, heart, kidney, gut)", "").replace(" / ", "/\n", 1), fontsize=6, va="center", ha="left", color="#4D4D4D", clip_on=False, linespacing=0.95)
         prev = th
 hs = [plt.scatter([], [], s=sz(1e-3), color=LT, edgecolors=TEAL, linewidths=0.5), plt.scatter([], [], s=sz(1e-3), color=TEAL, lw=0)] + [plt.scatter([], [], s=sz(q), color="#BDBDBD", lw=0) for q in (1e-2, 1e-5, 1e-10)]
-hs += [plt.Rectangle((0, 0), 1, 1, color="#D9D9D9", ec="#BDBDBD", lw=0.3), plt.Rectangle((0, 0), 1, 1, color="white", ec="#BDBDBD", lw=0.3), plt.Rectangle((0, 0), 1, 1, color="white", lw=0)]
-fig.legend(hs, ["TF-specific elements (1–2 TFs)", "Conserved elements (≥3 TFs)", "q = 0.01", "1e-5", "≤1e-10", "tested, no term", "< 20 elements, not tested", "– no module elements"],
-           loc="lower left", bbox_to_anchor=(0.02, 0.0), ncol=8, fontsize=6, handlelength=1.0)
+hs += [plt.Rectangle((0, 0), 1, 1, color="#D9D9D9", ec="#BDBDBD", lw=0.3), plt.Rectangle((0, 0), 1, 1, color="white", ec="#BDBDBD", lw=0.3)]
+fig.text(0.02, 0.0, note, fontsize=5.5, color="#4D4D4D", va="bottom", linespacing=1.3)
+fig.legend(hs, ["TF-specific elements (1–2 TFs)", "Conserved elements (≥3 TFs)", "q = 0.01", "1e-5", "≤1e-10", "tested, no term", "< 20 elements, not tested"],
+           loc="lower left", bbox_to_anchor=(0.02, 0.03), ncol=7, fontsize=6, handlelength=1.0)
 def illustrator_text(svg):
     def one(m):
         tag = m.group(0); sm = re.search(r'style="([^"]*)"', tag)
