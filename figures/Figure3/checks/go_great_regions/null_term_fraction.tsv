@@ -1,0 +1,1831 @@
+tf	group	term	name	null_fraction
+DR1	specific	GO:0009394	2'-deoxyribonucleotide metabolic process	0.0
+DR1	specific	GO:0009223	pyrimidine deoxyribonucleotide catabolic process	0.0
+DR1	specific	GO:0039531	regulation of cytoplasmic pattern recognition receptor signaling pathway	0.0
+DR1	specific	GO:0062207	regulation of pattern recognition receptor signaling pathway	0.0
+DR1	specific	GO:0072529	pyrimidine-containing compound catabolic process	0.0
+DR1	specific	GO:0046386	deoxyribose phosphate catabolic process	0.0
+DR1	specific	GO:0016322	neuron remodeling	0.0
+DR1	specific	GO:0030516	regulation of axon extension	0.0
+DR1	specific	GO:0006656	phosphatidylcholine biosynthetic process	0.0
+DR1	specific	GO:0006244	pyrimidine nucleotide catabolic process	0.0
+DR1	specific	GO:0015871	choline transport	0.0
+DR1	specific	GO:0042551	neuron maturation	0.0
+DR1	specific	GO:0030517	negative regulation of axon extension	0.0
+DR1	specific	GO:0140888	interferon-mediated signaling pathway	0.0
+DR1	specific	GO:1990535	neuron projection maintenance	0.0
+DR1	specific	GO:0009219	pyrimidine deoxyribonucleotide metabolic process	0.0
+DR1	conserved	GO:0070884	regulation of calcineurin-NFAT signaling cascade	0.0
+DR1	conserved	GO:2000767	positive regulation of cytoplasmic translation	0.0
+DR1	conserved	GO:0045471	response to ethanol	0.0
+DR1	conserved	GO:0010608	post-transcriptional regulation of gene expression	0.0
+DR1	conserved	GO:0072583	clathrin-dependent endocytosis	0.0
+DR1	conserved	GO:2000316	regulation of T-helper 17 type immune response	0.0
+DR1	conserved	GO:0050870	positive regulation of T cell activation	0.0
+DR1	conserved	GO:0044788	host-mediated perturbation of viral process	0.0
+DR1	conserved	GO:0097305	response to alcohol	0.0
+DR1	conserved	GO:0090114	COPII-coated vesicle budding	0.0
+DR1	conserved	GO:0045582	positive regulation of T cell differentiation	0.0
+DR1	conserved	GO:0045739	positive regulation of DNA repair	0.0
+DR1	conserved	GO:0008380	RNA splicing	0.01
+DR1	conserved	GO:1903426	regulation of reactive oxygen species biosynthetic process	0.0
+DR1	conserved	GO:0071453	cellular response to oxygen levels	0.0
+DR1	conserved	GO:0006366	transcription by RNA polymerase II	0.0
+DR1	conserved	GO:0022407	regulation of cell-cell adhesion	0.0
+DR1	conserved	GO:0070886	positive regulation of calcineurin-NFAT signaling cascade	0.0
+DR1	conserved	GO:0050850	positive regulation of calcium-mediated signaling	0.0
+DR1	conserved	GO:0010453	regulation of cell fate commitment	0.0
+DR1	conserved	GO:0098840	protein transport along microtubule	0.0
+DR1	conserved	GO:1905168	positive regulation of double-strand break repair via homologous recombination	0.0
+DR1	conserved	GO:0071456	cellular response to hypoxia	0.0
+DR1	conserved	GO:0032785	negative regulation of DNA-templated transcription, elongation	0.0
+DR1	conserved	GO:1903311	regulation of mRNA metabolic process	0.0
+DR1	conserved	GO:0045621	positive regulation of lymphocyte differentiation	0.0
+DR1	conserved	GO:2000059	negative regulation of ubiquitin-dependent protein catabolic process	0.0
+DR1	conserved	GO:0000018	regulation of DNA recombination	0.0
+DR1	conserved	GO:2000319	regulation of T-helper 17 cell differentiation	0.0
+DR1	conserved	GO:0019081	viral translation	0.0
+DR1	conserved	GO:0034976	response to endoplasmic reticulum stress	0.0
+DR1	conserved	GO:0051493	regulation of cytoskeleton organization	0.0
+DR1	conserved	GO:0075294	positive regulation by symbiont of entry into host	0.0
+DR1	conserved	GO:0034728	nucleosome organization	0.01
+DR1	conserved	GO:0104004	cellular response to environmental stimulus	0.0
+DR1	conserved	GO:0002931	response to ischemia	0.0
+DR1	conserved	GO:1901990	regulation of mitotic cell cycle phase transition	0.0
+DR1	conserved	GO:2001242	regulation of intrinsic apoptotic signaling pathway	0.0
+DR1	conserved	GO:0006351	DNA-templated transcription	0.0
+DR1	conserved	GO:0048524	positive regulation of viral process	0.0
+DR1	conserved	GO:0010569	regulation of double-strand break repair via homologous recombination	0.0
+DR1	conserved	GO:0051251	positive regulation of lymphocyte activation	0.0
+DR1	conserved	GO:0006457	protein folding	0.0
+DR1	conserved	GO:0036293	response to decreased oxygen levels	0.0
+DR1	conserved	GO:0036294	cellular response to decreased oxygen levels	0.0
+DR1	conserved	GO:0045619	regulation of lymphocyte differentiation	0.0
+DR1	conserved	GO:1903428	positive regulation of reactive oxygen species biosynthetic process	0.0
+DR1	conserved	GO:0007599	hemostasis	0.0
+DR1	conserved	GO:0001666	response to hypoxia	0.0
+DR1	conserved	GO:0017148	negative regulation of translation	0.0
+DR1	conserved	GO:0046596	regulation of viral entry into host cell	0.0
+DR1	conserved	GO:0045622	regulation of T-helper cell differentiation	0.0
+DR1	conserved	GO:0033273	response to vitamin	0.0
+DR1	conserved	GO:1904628	cellular response to phorbol 13-acetate 12-myristate	0.0
+DR1	conserved	GO:0009266	response to temperature stimulus	0.0
+DR1	conserved	GO:0010586	miRNA metabolic process	0.0
+DR1	conserved	GO:0106058	positive regulation of calcineurin-mediated signaling	0.0
+DR1	conserved	GO:1903900	regulation of viral life cycle	0.0
+DR1	conserved	GO:0060251	regulation of glial cell proliferation	0.0
+DR1	conserved	GO:0051261	protein depolymerization	0.0
+DR1	conserved	GO:0030511	positive regulation of transforming growth factor beta receptor signaling pathway	0.0
+DR1	conserved	GO:0048208	COPII vesicle coat assembly	0.0
+DR1	conserved	GO:0006986	response to unfolded protein	0.0
+DR1	conserved	GO:0010660	regulation of muscle cell apoptotic process	0.0
+DR1	conserved	GO:0032968	positive regulation of transcription elongation by RNA polymerase II	0.0
+DR1	conserved	GO:0034109	homotypic cell-cell adhesion	0.0
+DR1	conserved	GO:0046635	positive regulation of alpha-beta T cell activation	0.0
+DR1	conserved	GO:0006397	mRNA processing	0.01
+DR1	conserved	GO:1904627	response to phorbol 13-acetate 12-myristate	0.0
+DR1	conserved	GO:0032984	protein-containing complex disassembly	0.0
+DR1	conserved	GO:0022409	positive regulation of cell-cell adhesion	0.0
+DR1	conserved	GO:0006356	regulation of transcription by RNA polymerase I	0.0
+DR1	conserved	GO:0046634	regulation of alpha-beta T cell activation	0.0
+DR1	conserved	GO:2000514	regulation of CD4-positive, alpha-beta T cell activation	0.0
+DR1	conserved	GO:0000377	RNA splicing, via transesterification reactions with bulged adenosine as nucleophile	0.01
+DR1	conserved	GO:0099188	postsynaptic cytoskeleton organization	0.0
+DR1	conserved	GO:0150105	protein localization to cell-cell junction	0.0
+DR1	conserved	GO:0010712	regulation of collagen metabolic process	0.0
+DR1	conserved	GO:0021762	substantia nigra development	0.0
+DR1	conserved	GO:0000375	RNA splicing, via transesterification reactions	0.01
+DR1	conserved	GO:2000058	regulation of ubiquitin-dependent protein catabolic process	0.0
+DR1	conserved	GO:0052372	modulation by symbiont of entry into host	0.0
+DR1	conserved	GO:1900182	positive regulation of protein localization to nucleus	0.0
+DR1	conserved	GO:1902175	regulation of oxidative stress-induced intrinsic apoptotic signaling pathway	0.0
+DR1	conserved	GO:0070482	response to oxygen levels	0.0
+DR1	conserved	GO:0034063	cytoplasmic stress granule assembly	0.0
+DR1	conserved	GO:0051222	positive regulation of protein transport	0.0
+DR1	conserved	GO:1901976	regulation of cell cycle checkpoint	0.0
+DR1	conserved	GO:1990090	cellular response to nerve growth factor stimulus	0.0
+DR1	conserved	GO:0071214	cellular response to abiotic stimulus	0.0
+DR1	conserved	GO:0007596	blood coagulation	0.0
+DR1	conserved	GO:0045911	positive regulation of DNA recombination	0.0
+DR1	conserved	GO:1990089	response to nerve growth factor	0.0
+DR1	conserved	GO:0051851	host-mediated perturbation of symbiont process	0.0
+DR1	conserved	GO:0071468	cellular response to acidic pH	0.0
+DR1	conserved	GO:0002699	positive regulation of immune effector process	0.0
+DR1	conserved	GO:0099118	microtubule-based protein transport	0.0
+DR1	conserved	GO:0032965	regulation of collagen biosynthetic process	0.0
+DR1	conserved	GO:0046598	positive regulation of viral entry into host cell	0.0
+DR1	conserved	GO:0050821	protein stabilization	0.0
+DR1	conserved	GO:1903312	negative regulation of mRNA metabolic process	0.0
+DR1	conserved	GO:2000765	regulation of cytoplasmic translation	0.0
+DR1	conserved	GO:1903846	positive regulation of cellular response to transforming growth factor beta stimulus	0.0
+DR1	conserved	GO:0010506	regulation of autophagy	0.0
+DR1	conserved	GO:0031647	regulation of protein stability	0.01
+DR1	conserved	GO:0035088	establishment or maintenance of apical/basal cell polarity	0.0
+DR1	conserved	GO:0046825	regulation of protein export from nucleus	0.0
+DR1	conserved	GO:0046638	positive regulation of alpha-beta T cell differentiation	0.0
+DR1	conserved	GO:0034243	regulation of transcription elongation by RNA polymerase II	0.0
+DR1	conserved	GO:0010389	regulation of G2/M transition of mitotic cell cycle	0.0
+DR1	conserved	GO:0043921	host-mediated perturbation of viral transcription	0.0
+DR1	conserved	GO:1902107	positive regulation of leukocyte differentiation	0.0
+DR1	conserved	GO:0002696	positive regulation of leukocyte activation	0.0
+DR1	conserved	GO:0008360	regulation of cell shape	0.0
+DR1	conserved	GO:0010720	positive regulation of cell development	0.0
+DR1	conserved	GO:0042307	positive regulation of protein import into nucleus	0.0
+DR1	conserved	GO:1903708	positive regulation of hemopoiesis	0.0
+DR1	conserved	GO:0001738	morphogenesis of a polarized epithelium	0.0
+DR1	conserved	GO:1903902	positive regulation of viral life cycle	0.0
+DR1	conserved	GO:1901532	regulation of hematopoietic progenitor cell differentiation	0.0
+DR1	conserved	GO:0090083	regulation of inclusion body assembly	0.0
+DR1	conserved	GO:0035966	response to topologically incorrect protein	0.0
+DR1	conserved	GO:0006417	regulation of translation	0.01
+DR1	conserved	GO:0032388	positive regulation of intracellular transport	0.0
+DR1	conserved	GO:2000819	regulation of nucleotide-excision repair	0.0
+DR1	conserved	GO:0042026	protein refolding	0.01
+DR1	conserved	GO:0009416	response to light stimulus	0.0
+DR1	conserved	GO:1903747	regulation of protein localization to mitochondrion	0.0
+DR1	conserved	GO:0042542	response to hydrogen peroxide	0.0
+DR1	conserved	GO:0043370	regulation of CD4-positive, alpha-beta T cell differentiation	0.0
+DR1	conserved	GO:0006368	transcription elongation by RNA polymerase II	0.0
+DR1	conserved	GO:0030168	platelet activation	0.0
+DR1	conserved	GO:0032386	regulation of intracellular transport	0.0
+DR1	conserved	GO:0007019	microtubule depolymerization	0.0
+DR1	conserved	GO:0050867	positive regulation of cell activation	0.0
+DR1	conserved	GO:0050817	coagulation	0.0
+DR1	conserved	GO:0050905	neuromuscular process	0.0
+DR1	conserved	GO:0031100	animal organ regeneration	0.0
+DR1	conserved	GO:0048857	neural nucleus development	0.0
+DR1	conserved	GO:0010656	negative regulation of muscle cell apoptotic process	0.0
+DR1	conserved	GO:0097306	cellular response to alcohol	0.0
+DR1	conserved	GO:0006886	intracellular protein transport	0.0
+DR1	conserved	GO:0009895	negative regulation of catabolic process	0.0
+DR1	conserved	GO:0006354	DNA-templated transcription elongation	0.0
+DR1	conserved	GO:0007043	cell-cell junction assembly	0.0
+DR1	conserved	GO:0045727	positive regulation of translation	0.0
+DR1	conserved	GO:0006282	regulation of DNA repair	0.0
+DR1	conserved	GO:0080135	regulation of cellular response to stress	0.0
+DR1	conserved	GO:0034605	cellular response to heat	0.0
+DR1	conserved	GO:0035821	modulation of process of another organism	0.0
+DR1	conserved	GO:1902751	positive regulation of cell cycle G2/M phase transition	0.0
+DR1	conserved	GO:0051148	negative regulation of muscle cell differentiation	0.0
+DR1	conserved	GO:0032530	regulation of microvillus organization	0.0
+DR1	conserved	GO:0043488	regulation of mRNA stability	0.0
+DR1	conserved	GO:1903039	positive regulation of leukocyte cell-cell adhesion	0.0
+DR1	conserved	GO:1900242	regulation of synaptic vesicle endocytosis	0.0
+DR1	conserved	GO:0032786	positive regulation of DNA-templated transcription, elongation	0.0
+DR1	conserved	GO:0046637	regulation of alpha-beta T cell differentiation	0.0
+DR1	conserved	GO:0071216	cellular response to biotic stimulus	0.0
+DR1	conserved	GO:1902749	regulation of cell cycle G2/M phase transition	0.0
+DR1	conserved	GO:0042177	negative regulation of protein catabolic process	0.0
+DR1	conserved	GO:0045580	regulation of T cell differentiation	0.0
+DR1	conserved	GO:0031109	microtubule polymerization or depolymerization	0.0
+DR1	conserved	GO:0061245	establishment or maintenance of bipolar cell polarity	0.0
+DR1	conserved	GO:0009408	response to heat	0.0
+DR1	conserved	GO:0050863	regulation of T cell activation	0.0
+DR1	conserved	GO:0032200	telomere organization	0.0
+DR1	conserved	GO:0030705	cytoskeleton-dependent intracellular transport	0.0
+DR1	conserved	GO:0007346	regulation of mitotic cell cycle	0.0
+DR1	conserved	GO:0032784	regulation of DNA-templated transcription elongation	0.0
+DR1	conserved	GO:0009411	response to UV	0.0
+DR1	conserved	GO:0000398	mRNA splicing, via spliceosome	0.01
+DR1	conserved	GO:0106056	regulation of calcineurin-mediated signaling	0.0
+DR1	conserved	GO:0061013	regulation of mRNA catabolic process	0.0
+DR1	conserved	GO:0006334	nucleosome assembly	0.01
+DR1	conserved	GO:2001135	regulation of endocytic recycling	0.0
+DR1	conserved	GO:0006901	vesicle coat assembly	0.0
+DR1	conserved	GO:0070527	platelet aggregation	0.0
+E2F3	conserved	GO:0098732	macromolecule deacylation	0.0
+E2F3	conserved	GO:0098734	macromolecule depalmitoylation	0.0
+E4F1	specific	GO:0031023	microtubule organizing center organization	0.0
+E4F1	specific	GO:0050433	regulation of catecholamine secretion	0.0
+E4F1	specific	GO:0002443	leukocyte mediated immunity	0.0
+E4F1	specific	GO:1903313	positive regulation of mRNA metabolic process	0.0
+E4F1	specific	GO:0106120	positive regulation of sterol biosynthetic process	0.0
+E4F1	specific	GO:0071230	cellular response to amino acid stimulus	0.0
+E4F1	specific	GO:0032868	response to insulin	0.0
+E4F1	specific	GO:1901524	regulation of mitophagy	0.0
+E4F1	specific	GO:0055117	regulation of cardiac muscle contraction	0.0
+E4F1	specific	GO:0022404	molting cycle process	0.0
+E4F1	specific	GO:0050810	regulation of steroid biosynthetic process	0.0
+E4F1	specific	GO:0000086	G2/M transition of mitotic cell cycle	0.0
+E4F1	specific	GO:0046470	phosphatidylcholine metabolic process	0.0
+E4F1	specific	GO:2000242	negative regulation of reproductive process	0.0
+E4F1	specific	GO:0002643	regulation of tolerance induction	0.0
+E4F1	specific	GO:0046928	regulation of neurotransmitter secretion	0.0
+E4F1	specific	GO:0022602	ovulation cycle process	0.0
+E4F1	specific	GO:1902930	regulation of alcohol biosynthetic process	0.0
+E4F1	specific	GO:0030808	regulation of nucleotide biosynthetic process	0.0
+E4F1	specific	GO:0090232	positive regulation of spindle checkpoint	0.0
+E4F1	specific	GO:0007517	muscle organ development	0.0
+E4F1	specific	GO:0051640	organelle localization	0.0
+E4F1	specific	GO:0043279	response to alkaloid	0.0
+E4F1	specific	GO:0060415	muscle tissue morphogenesis	0.0
+E4F1	specific	GO:0006656	phosphatidylcholine biosynthetic process	0.0
+E4F1	specific	GO:0010562	positive regulation of phosphorus metabolic process	0.0
+E4F1	specific	GO:1900373	positive regulation of purine nucleotide biosynthetic process	0.0
+E4F1	specific	GO:0006457	protein folding	0.0
+E4F1	specific	GO:0007018	microtubule-based movement	0.0
+E4F1	specific	GO:0045070	positive regulation of viral genome replication	0.0
+E4F1	specific	GO:2000253	positive regulation of feeding behavior	0.0
+E4F1	specific	GO:0061014	positive regulation of mRNA catabolic process	0.0
+E4F1	specific	GO:1903504	regulation of mitotic spindle checkpoint	0.0
+E4F1	specific	GO:0061061	muscle structure development	0.0
+E4F1	specific	GO:0070665	positive regulation of leukocyte proliferation	0.0
+E4F1	specific	GO:0006942	regulation of striated muscle contraction	0.0
+E4F1	specific	GO:0015908	fatty acid transport	0.0
+E4F1	specific	GO:0051174	regulation of phosphorus metabolic process	0.0
+E4F1	specific	GO:1903900	regulation of viral life cycle	0.0
+E4F1	specific	GO:0042633	hair cycle	0.0
+E4F1	specific	GO:1901978	positive regulation of cell cycle checkpoint	0.0
+E4F1	specific	GO:1903146	regulation of autophagy of mitochondrion	0.0
+E4F1	specific	GO:0070601	centromeric sister chromatid cohesion	0.0
+E4F1	specific	GO:0090231	regulation of spindle checkpoint	0.0
+E4F1	specific	GO:0046889	positive regulation of lipid biosynthetic process	0.0
+E4F1	specific	GO:0045540	regulation of cholesterol biosynthetic process	0.0
+E4F1	specific	GO:0055010	ventricular cardiac muscle tissue morphogenesis	0.0
+E4F1	specific	GO:0019882	antigen processing and presentation	0.0
+E4F1	specific	GO:0007064	mitotic sister chromatid cohesion	0.0
+E4F1	specific	GO:0042102	positive regulation of T cell proliferation	0.0
+E4F1	specific	GO:0002449	lymphocyte mediated immunity	0.0
+E4F1	specific	GO:0051952	regulation of amine transport	0.0
+E4F1	specific	GO:0048644	muscle organ morphogenesis	0.0
+E4F1	specific	GO:0051301	cell division	0.0
+E4F1	specific	GO:0014059	regulation of dopamine secretion	0.0
+E4F1	specific	GO:0010876	lipid localization	0.01
+E4F1	specific	GO:0009880	embryonic pattern specification	0.0
+E4F1	specific	GO:0045981	positive regulation of nucleotide metabolic process	0.0
+E4F1	specific	GO:1902932	positive regulation of alcohol biosynthetic process	0.0
+E4F1	specific	GO:0038003	G protein-coupled opioid receptor signaling pathway	0.0
+E4F1	specific	GO:0034063	cytoplasmic stress granule assembly	0.0
+E4F1	specific	GO:1901976	regulation of cell cycle checkpoint	0.0
+E4F1	specific	GO:0051954	positive regulation of amine transport	0.0
+E4F1	specific	GO:0090224	regulation of spindle organization	0.0
+E4F1	specific	GO:0015718	monocarboxylic acid transport	0.0
+E4F1	specific	GO:0051924	regulation of calcium ion transport	0.0
+E4F1	specific	GO:0042698	ovulation cycle	0.0
+E4F1	specific	GO:0007098	centrosome cycle	0.0
+E4F1	specific	GO:0032946	positive regulation of mononuclear cell proliferation	0.0
+E4F1	specific	GO:0042267	natural killer cell mediated cytotoxicity	0.0
+E4F1	specific	GO:0090267	positive regulation of mitotic cell cycle spindle assembly checkpoint	0.0
+E4F1	specific	GO:0036297	interstrand cross-link repair	0.0
+E4F1	specific	GO:0062013	positive regulation of small molecule metabolic process	0.0
+E4F1	specific	GO:0003229	ventricular cardiac muscle tissue development	0.0
+E4F1	specific	GO:0051480	regulation of cytosolic calcium ion concentration	0.0
+E4F1	specific	GO:0055008	cardiac muscle tissue morphogenesis	0.0
+E4F1	specific	GO:0010506	regulation of autophagy	0.0
+E4F1	specific	GO:0017156	calcium-ion regulated exocytosis	0.0
+E4F1	specific	GO:1900544	positive regulation of purine nucleotide metabolic process	0.0
+E4F1	specific	GO:0010965	regulation of mitotic sister chromatid separation	0.0
+E4F1	specific	GO:0034655	nucleobase-containing compound catabolic process	0.0
+E4F1	specific	GO:1903747	regulation of protein localization to mitochondrion	0.0
+E4F1	specific	GO:0106118	regulation of sterol biosynthetic process	0.0
+E4F1	specific	GO:0045940	positive regulation of steroid metabolic process	0.0
+E4F1	specific	GO:0048714	positive regulation of oligodendrocyte differentiation	0.0
+E4F1	specific	GO:0090266	regulation of mitotic cell cycle spindle assembly checkpoint	0.0
+E4F1	specific	GO:0042149	cellular response to glucose starvation	0.0
+E4F1	specific	GO:1903578	regulation of ATP metabolic process	0.0
+E4F1	specific	GO:0042303	molting cycle	0.0
+E4F1	specific	GO:2000300	regulation of synaptic vesicle exocytosis	0.0
+E4F1	specific	GO:0090181	regulation of cholesterol metabolic process	0.0
+E4F1	specific	GO:0007283	spermatogenesis	0.0
+E4F1	specific	GO:0010664	negative regulation of striated muscle cell apoptotic process	0.0
+E4F1	specific	GO:0043518	negative regulation of DNA damage response, signal transduction by p53 class mediator	0.0
+E4F1	specific	GO:0070507	regulation of microtubule cytoskeleton organization	0.0
+E4F1	specific	GO:0043269	regulation of monoatomic ion transport	0.0
+E4F1	specific	GO:0017157	regulation of exocytosis	0.0
+E4F1	specific	GO:2001171	positive regulation of ATP biosynthetic process	0.0
+E4F1	specific	GO:0006401	RNA catabolic process	0.0
+E4F1	specific	GO:0048284	organelle fusion	0.0
+E4F1	specific	GO:0022405	hair cycle process	0.0
+E4F1	specific	GO:0006140	regulation of nucleotide metabolic process	0.0
+E4F1	specific	GO:0045542	positive regulation of cholesterol biosynthetic process	0.0
+E4F1	specific	GO:1904375	regulation of protein localization to cell periphery	0.0
+E4F1	specific	GO:0141188	nucleic acid catabolic process	0.0
+E4F1	specific	GO:0050671	positive regulation of lymphocyte proliferation	0.0
+E4F1	specific	GO:0002577	regulation of antigen processing and presentation	0.0
+E4F1	specific	GO:0006310	DNA recombination	0.0
+E4F1	specific	GO:0099518	vesicle cytoskeletal trafficking	0.0
+E4F1	specific	GO:0006869	lipid transport	0.01
+E4F1	specific	GO:0002664	regulation of T cell tolerance induction	0.0
+E4F1	specific	GO:0001942	hair follicle development	0.0
+E4F1	specific	GO:0008630	intrinsic apoptotic signaling pathway in response to DNA damage	0.0
+E4F1	specific	GO:0046890	regulation of lipid biosynthetic process	0.0
+E4F1	specific	GO:2001244	positive regulation of intrinsic apoptotic signaling pathway	0.0
+E4F1	specific	GO:1902254	negative regulation of intrinsic apoptotic signaling pathway by p53 class mediator	0.0
+E4F1	specific	GO:0003228	atrial cardiac muscle tissue development	0.0
+E4F1	specific	GO:1903376	regulation of oxidative stress-induced neuron intrinsic apoptotic signaling pathway	0.0
+E4F1	specific	GO:0071229	cellular response to acid chemical	0.0
+E4F1	specific	GO:1900371	regulation of purine nucleotide biosynthetic process	0.0
+E4F1	specific	GO:0001909	leukocyte mediated cytotoxicity	0.0
+E4F1	specific	GO:0019218	regulation of steroid metabolic process	0.0
+E4F1	specific	GO:1903305	regulation of regulated secretory pathway	0.0
+E4F1	specific	GO:0002228	natural killer cell mediated immunity	0.0
+E4F1	specific	GO:1900542	regulation of purine nucleotide metabolic process	0.0
+E4F1	specific	GO:0010893	positive regulation of steroid biosynthetic process	0.0
+E4F1	specific	GO:1903580	positive regulation of ATP metabolic process	0.0
+E4F1	specific	GO:0030810	positive regulation of nucleotide biosynthetic process	0.0
+E4F1	specific	GO:0008203	cholesterol metabolic process	0.0
+E4F1	specific	GO:0031146	SCF-dependent proteasomal ubiquitin-dependent protein catabolic process	0.0
+E4F1	specific	GO:0008544	epidermis development	0.0
+E4F1	specific	GO:0051276	chromosome organization	0.0
+E4F1	specific	GO:0007131	reciprocal meiotic recombination	0.0
+E4F1	specific	GO:1902652	secondary alcohol metabolic process	0.0
+E4F1	specific	GO:0051656	establishment of organelle localization	0.0
+E4F1	specific	GO:0060537	muscle tissue development	0.0
+E4F1	specific	GO:1905475	regulation of protein localization to membrane	0.0
+E4F1	specific	GO:0062012	regulation of small molecule metabolic process	0.0
+E4F1	specific	GO:0044839	cell cycle G2/M phase transition	0.0
+E4F1	specific	GO:0035519	protein K29-linked ubiquitination	0.0
+E4F1	specific	GO:0010959	regulation of metal ion transport	0.0
+E4F1	specific	GO:0007062	sister chromatid cohesion	0.0
+E4F1	specific	GO:0035272	exocrine system development	0.0
+E4F1	specific	GO:2001169	regulation of ATP biosynthetic process	0.0
+E4F1	specific	GO:0023061	signal release	0.0
+E4F1	specific	GO:0140527	reciprocal homologous recombination	0.0
+E4F1	conserved	GO:0070884	regulation of calcineurin-NFAT signaling cascade	0.0
+E4F1	conserved	GO:2000767	positive regulation of cytoplasmic translation	0.0
+E4F1	conserved	GO:0006984	ER-nucleus signaling pathway	0.0
+E4F1	conserved	GO:2000328	regulation of T-helper 17 cell lineage commitment	0.0
+E4F1	conserved	GO:0014009	glial cell proliferation	0.0
+E4F1	conserved	GO:0061158	3'-UTR-mediated mRNA destabilization	0.0
+E4F1	conserved	GO:0015931	nucleobase-containing compound transport	0.0
+E4F1	conserved	GO:0030901	midbrain development	0.0
+E4F1	conserved	GO:0010608	post-transcriptional regulation of gene expression	0.03
+E4F1	conserved	GO:0072583	clathrin-dependent endocytosis	0.0
+E4F1	conserved	GO:2000316	regulation of T-helper 17 type immune response	0.0
+E4F1	conserved	GO:0050870	positive regulation of T cell activation	0.0
+E4F1	conserved	GO:0044788	host-mediated perturbation of viral process	0.0
+E4F1	conserved	GO:0000387	spliceosomal snRNP assembly	0.0
+E4F1	conserved	GO:0141086	negative regulation of inflammasome-mediated signaling pathway	0.0
+E4F1	conserved	GO:2000779	regulation of double-strand break repair	0.0
+E4F1	conserved	GO:0045582	positive regulation of T cell differentiation	0.0
+E4F1	conserved	GO:0045739	positive regulation of DNA repair	0.0
+E4F1	conserved	GO:1901524	regulation of mitophagy	0.0
+E4F1	conserved	GO:0032436	positive regulation of proteasomal ubiquitin-dependent protein catabolic process	0.0
+E4F1	conserved	GO:0060149	negative regulation of post-transcriptional gene silencing	0.0
+E4F1	conserved	GO:0008380	RNA splicing	0.0
+E4F1	conserved	GO:0006476	protein deacetylation	0.0
+E4F1	conserved	GO:0007020	microtubule nucleation	0.0
+E4F1	conserved	GO:1903426	regulation of reactive oxygen species biosynthetic process	0.0
+E4F1	conserved	GO:0035601	protein deacylation	0.0
+E4F1	conserved	GO:0071826	protein-RNA complex organization	0.0
+E4F1	conserved	GO:0006366	transcription by RNA polymerase II	0.01
+E4F1	conserved	GO:0006367	transcription initiation at RNA polymerase II promoter	0.0
+E4F1	conserved	GO:1903706	regulation of hemopoiesis	0.0
+E4F1	conserved	GO:0051054	positive regulation of DNA metabolic process	0.0
+E4F1	conserved	GO:0070886	positive regulation of calcineurin-NFAT signaling cascade	0.0
+E4F1	conserved	GO:0070316	regulation of G0 to G1 transition	0.0
+E4F1	conserved	GO:0010453	regulation of cell fate commitment	0.0
+E4F1	conserved	GO:1905168	positive regulation of double-strand break repair via homologous recombination	0.0
+E4F1	conserved	GO:0060966	regulation of gene silencing by regulatory ncRNA	0.0
+E4F1	conserved	GO:0071398	cellular response to fatty acid	0.0
+E4F1	conserved	GO:0006352	DNA-templated transcription initiation	0.0
+E4F1	conserved	GO:1903311	regulation of mRNA metabolic process	0.0
+E4F1	conserved	GO:0045621	positive regulation of lymphocyte differentiation	0.0
+E4F1	conserved	GO:0031648	protein destabilization	0.0
+E4F1	conserved	GO:1901264	carbohydrate derivative transport	0.0
+E4F1	conserved	GO:2000059	negative regulation of ubiquitin-dependent protein catabolic process	0.0
+E4F1	conserved	GO:0009267	cellular response to starvation	0.0
+E4F1	conserved	GO:0060828	regulation of canonical Wnt signaling pathway	0.0
+E4F1	conserved	GO:0000018	regulation of DNA recombination	0.0
+E4F1	conserved	GO:1900368	regulation of post-transcriptional gene silencing by regulatory ncRNA	0.0
+E4F1	conserved	GO:0043372	positive regulation of CD4-positive, alpha-beta T cell differentiation	0.0
+E4F1	conserved	GO:0033157	regulation of intracellular protein transport	0.0
+E4F1	conserved	GO:2000319	regulation of T-helper 17 cell differentiation	0.0
+E4F1	conserved	GO:0034976	response to endoplasmic reticulum stress	0.0
+E4F1	conserved	GO:0075294	positive regulation by symbiont of entry into host	0.0
+E4F1	conserved	GO:0002697	regulation of immune effector process	0.0
+E4F1	conserved	GO:1901990	regulation of mitotic cell cycle phase transition	0.0
+E4F1	conserved	GO:0002931	response to ischemia	0.0
+E4F1	conserved	GO:0006351	DNA-templated transcription	0.01
+E4F1	conserved	GO:0048524	positive regulation of viral process	0.0
+E4F1	conserved	GO:0043922	host-mediated suppression of viral transcription	0.0
+E4F1	conserved	GO:0010569	regulation of double-strand break repair via homologous recombination	0.0
+E4F1	conserved	GO:0051251	positive regulation of lymphocyte activation	0.0
+E4F1	conserved	GO:0006457	protein folding	0.0
+E4F1	conserved	GO:0048025	negative regulation of mRNA splicing, via spliceosome	0.0
+E4F1	conserved	GO:0061136	regulation of proteasomal protein catabolic process	0.0
+E4F1	conserved	GO:0009314	response to radiation	0.0
+E4F1	conserved	GO:0015802	basic amino acid transport	0.0
+E4F1	conserved	GO:0045619	regulation of lymphocyte differentiation	0.0
+E4F1	conserved	GO:0060965	negative regulation of miRNA-mediated gene silencing	0.0
+E4F1	conserved	GO:0048240	sperm capacitation	0.0
+E4F1	conserved	GO:0033045	regulation of sister chromatid segregation	0.0
+E4F1	conserved	GO:0042176	regulation of protein catabolic process	0.0
+E4F1	conserved	GO:0031669	cellular response to nutrient levels	0.0
+E4F1	conserved	GO:0060964	regulation of miRNA-mediated gene silencing	0.0
+E4F1	conserved	GO:0030071	regulation of mitotic metaphase/anaphase transition	0.0
+E4F1	conserved	GO:2000060	positive regulation of ubiquitin-dependent protein catabolic process	0.0
+E4F1	conserved	GO:0046596	regulation of viral entry into host cell	0.0
+E4F1	conserved	GO:0045622	regulation of T-helper cell differentiation	0.0
+E4F1	conserved	GO:0009266	response to temperature stimulus	0.0
+E4F1	conserved	GO:0010455	positive regulation of cell fate commitment	0.0
+E4F1	conserved	GO:0032434	regulation of proteasomal ubiquitin-dependent protein catabolic process	0.0
+E4F1	conserved	GO:0010586	miRNA metabolic process	0.0
+E4F1	conserved	GO:1903241	U2-type prespliceosome assembly	0.0
+E4F1	conserved	GO:0106058	positive regulation of calcineurin-mediated signaling	0.0
+E4F1	conserved	GO:0060251	regulation of glial cell proliferation	0.0
+E4F1	conserved	GO:0044793	host-mediated suppression of viral proces	0.0
+E4F1	conserved	GO:0006986	response to unfolded protein	0.0
+E4F1	conserved	GO:0030511	positive regulation of transforming growth factor beta receptor signaling pathway	0.0
+E4F1	conserved	GO:0046824	positive regulation of nucleocytoplasmic transport	0.0
+E4F1	conserved	GO:0032968	positive regulation of transcription elongation by RNA polymerase II	0.0
+E4F1	conserved	GO:0034109	homotypic cell-cell adhesion	0.0
+E4F1	conserved	GO:0046635	positive regulation of alpha-beta T cell activation	0.0
+E4F1	conserved	GO:0006397	mRNA processing	0.0
+E4F1	conserved	GO:0022409	positive regulation of cell-cell adhesion	0.0
+E4F1	conserved	GO:0046634	regulation of alpha-beta T cell activation	0.0
+E4F1	conserved	GO:2000514	regulation of CD4-positive, alpha-beta T cell activation	0.0
+E4F1	conserved	GO:0000377	RNA splicing, via transesterification reactions with bulged adenosine as nucleophile	0.01
+E4F1	conserved	GO:0099188	postsynaptic cytoskeleton organization	0.0
+E4F1	conserved	GO:0150105	protein localization to cell-cell junction	0.0
+E4F1	conserved	GO:0021762	substantia nigra development	0.0
+E4F1	conserved	GO:0000375	RNA splicing, via transesterification reactions	0.01
+E4F1	conserved	GO:2000058	regulation of ubiquitin-dependent protein catabolic process	0.0
+E4F1	conserved	GO:2000516	positive regulation of CD4-positive, alpha-beta T cell activation	0.0
+E4F1	conserved	GO:0060147	regulation of post-transcriptional gene silencing	0.0
+E4F1	conserved	GO:0052372	modulation by symbiont of entry into host	0.0
+E4F1	conserved	GO:0098974	postsynaptic actin cytoskeleton organization	0.0
+E4F1	conserved	GO:0033044	regulation of chromosome organization	0.0
+E4F1	conserved	GO:1900182	positive regulation of protein localization to nucleus	0.0
+E4F1	conserved	GO:0046785	microtubule polymerization	0.0
+E4F1	conserved	GO:0007088	regulation of mitotic nuclear division	0.0
+E4F1	conserved	GO:0034063	cytoplasmic stress granule assembly	0.0
+E4F1	conserved	GO:1901976	regulation of cell cycle checkpoint	0.0
+E4F1	conserved	GO:1990090	cellular response to nerve growth factor stimulus	0.0
+E4F1	conserved	GO:1990089	response to nerve growth factor	0.0
+E4F1	conserved	GO:0045911	positive regulation of DNA recombination	0.0
+E4F1	conserved	GO:0000393	spliceosomal conformational changes to generate catalytic conformation	0.0
+E4F1	conserved	GO:0048511	rhythmic process	0.0
+E4F1	conserved	GO:0051851	host-mediated perturbation of symbiont process	0.0
+E4F1	conserved	GO:0046598	positive regulation of viral entry into host cell	0.0
+E4F1	conserved	GO:0070972	protein localization to endoplasmic reticulum	0.0
+E4F1	conserved	GO:0046831	regulation of RNA export from nucleus	0.0
+E4F1	conserved	GO:0050821	protein stabilization	0.0
+E4F1	conserved	GO:1903312	negative regulation of mRNA metabolic process	0.0
+E4F1	conserved	GO:0046365	monosaccharide catabolic process	0.01
+E4F1	conserved	GO:1903846	positive regulation of cellular response to transforming growth factor beta stimulus	0.0
+E4F1	conserved	GO:0010506	regulation of autophagy	0.0
+E4F1	conserved	GO:0031647	regulation of protein stability	0.0
+E4F1	conserved	GO:2000036	regulation of stem cell population maintenance	0.0
+E4F1	conserved	GO:0141137	positive regulation of gene expression, epigenetic	0.0
+E4F1	conserved	GO:0046638	positive regulation of alpha-beta T cell differentiation	0.0
+E4F1	conserved	GO:0034243	regulation of transcription elongation by RNA polymerase II	0.01
+E4F1	conserved	GO:0032922	circadian regulation of gene expression	0.0
+E4F1	conserved	GO:0072348	sulfur compound transport	0.0
+E4F1	conserved	GO:0050686	negative regulation of mRNA processing	0.0
+E4F1	conserved	GO:1901800	positive regulation of proteasomal protein catabolic process	0.0
+E4F1	conserved	GO:0006991	response to sterol depletion	0.0
+E4F1	conserved	GO:1902105	regulation of leukocyte differentiation	0.0
+E4F1	conserved	GO:0043921	host-mediated perturbation of viral transcription	0.0
+E4F1	conserved	GO:1902107	positive regulation of leukocyte differentiation	0.0
+E4F1	conserved	GO:0002696	positive regulation of leukocyte activation	0.0
+E4F1	conserved	GO:1903902	positive regulation of viral life cycle	0.0
+E4F1	conserved	GO:0042307	positive regulation of protein import into nucleus	0.0
+E4F1	conserved	GO:1903708	positive regulation of hemopoiesis	0.0
+E4F1	conserved	GO:0001738	morphogenesis of a polarized epithelium	0.0
+E4F1	conserved	GO:0022618	protein-RNA complex assembly	0.0
+E4F1	conserved	GO:0090263	positive regulation of canonical Wnt signaling pathway	0.0
+E4F1	conserved	GO:0006622	protein targeting to lysosome	0.0
+E4F1	conserved	GO:0098732	macromolecule deacylation	0.0
+E4F1	conserved	GO:0035966	response to topologically incorrect protein	0.0
+E4F1	conserved	GO:0006417	regulation of translation	0.0
+E4F1	conserved	GO:0032388	positive regulation of intracellular transport	0.0
+E4F1	conserved	GO:2000819	regulation of nucleotide-excision repair	0.0
+E4F1	conserved	GO:0042026	protein refolding	0.0
+E4F1	conserved	GO:1903747	regulation of protein localization to mitochondrion	0.0
+E4F1	conserved	GO:0043370	regulation of CD4-positive, alpha-beta T cell differentiation	0.0
+E4F1	conserved	GO:0000244	spliceosomal tri-snRNP complex assembly	0.0
+E4F1	conserved	GO:0006368	transcription elongation by RNA polymerase II	0.0
+E4F1	conserved	GO:0030168	platelet activation	0.0
+E4F1	conserved	GO:0043484	regulation of RNA splicing	0.0
+E4F1	conserved	GO:0006892	post-Golgi vesicle-mediated transport	0.0
+E4F1	conserved	GO:0032386	regulation of intracellular transport	0.0
+E4F1	conserved	GO:0007019	microtubule depolymerization	0.0
+E4F1	conserved	GO:0050867	positive regulation of cell activation	0.0
+E4F1	conserved	GO:0043487	regulation of RNA stability	0.01
+E4F1	conserved	GO:0090316	positive regulation of intracellular protein transport	0.0
+E4F1	conserved	GO:0007623	circadian rhythm	0.0
+E4F1	conserved	GO:0048857	neural nucleus development	0.0
+E4F1	conserved	GO:0009895	negative regulation of catabolic process	0.0
+E4F1	conserved	GO:0006354	DNA-templated transcription elongation	0.0
+E4F1	conserved	GO:0006282	regulation of DNA repair	0.0
+E4F1	conserved	GO:0080135	regulation of cellular response to stress	0.0
+E4F1	conserved	GO:0034605	cellular response to heat	0.0
+E4F1	conserved	GO:0043123	positive regulation of canonical NF-kappaB signal transduction	0.0
+E4F1	conserved	GO:0035821	modulation of process of another organism	0.0
+E4F1	conserved	GO:0061621	canonical glycolysis	0.0
+E4F1	conserved	GO:0043488	regulation of mRNA stability	0.01
+E4F1	conserved	GO:1903039	positive regulation of leukocyte cell-cell adhesion	0.0
+E4F1	conserved	GO:0072526	pyridine-containing compound catabolic process	0.0
+E4F1	conserved	GO:0045815	transcription initiation-coupled chromatin remodeling	0.0
+E4F1	conserved	GO:0051052	regulation of DNA metabolic process	0.0
+E4F1	conserved	GO:0032786	positive regulation of DNA-templated transcription, elongation	0.0
+E4F1	conserved	GO:0046637	regulation of alpha-beta T cell differentiation	0.0
+E4F1	conserved	GO:1900242	regulation of synaptic vesicle endocytosis	0.0
+E4F1	conserved	GO:1903332	regulation of protein folding	0.0
+E4F1	conserved	GO:0089718	amino acid import across plasma membrane	0.0
+E4F1	conserved	GO:0042177	negative regulation of protein catabolic process	0.0
+E4F1	conserved	GO:1901739	regulation of myoblast fusion	0.0
+E4F1	conserved	GO:0032239	regulation of nucleobase-containing compound transport	0.0
+E4F1	conserved	GO:0045580	regulation of T cell differentiation	0.0
+E4F1	conserved	GO:1902475	L-alpha-amino acid transmembrane transport	0.0
+E4F1	conserved	GO:0031109	microtubule polymerization or depolymerization	0.0
+E4F1	conserved	GO:0051983	regulation of chromosome segregation	0.0
+E4F1	conserved	GO:0000101	sulfur amino acid transport	0.0
+E4F1	conserved	GO:0009408	response to heat	0.0
+E4F1	conserved	GO:1902459	positive regulation of stem cell population maintenance	0.0
+E4F1	conserved	GO:0050863	regulation of T cell activation	0.0
+E4F1	conserved	GO:1903421	regulation of synaptic vesicle recycling	0.0
+E4F1	conserved	GO:2000781	positive regulation of double-strand break repair	0.0
+E4F1	conserved	GO:0051249	regulation of lymphocyte activation	0.0
+E4F1	conserved	GO:0046822	regulation of nucleocytoplasmic transport	0.0
+E4F1	conserved	GO:1900226	negative regulation of NLRP3 inflammasome complex assembly	0.0
+E4F1	conserved	GO:0007346	regulation of mitotic cell cycle	0.0
+E4F1	conserved	GO:0032784	regulation of DNA-templated transcription elongation	0.01
+E4F1	conserved	GO:0009411	response to UV	0.0
+E4F1	conserved	GO:1902099	regulation of metaphase/anaphase transition of cell cycle	0.0
+E4F1	conserved	GO:0000398	mRNA splicing, via spliceosome	0.01
+E4F1	conserved	GO:0048193	Golgi vesicle transport	0.03
+E4F1	conserved	GO:0106056	regulation of calcineurin-mediated signaling	0.0
+E4F1	conserved	GO:0061013	regulation of mRNA catabolic process	0.01
+E4F1	conserved	GO:0019320	hexose catabolic process	0.01
+E4F1	conserved	GO:0000388	spliceosome conformational change to release U4 (or U4atac) and U1 (or U11)	0.0
+E4F1	conserved	GO:1900369	negative regulation of post-transcriptional gene silencing by regulatory ncRNA	0.0
+E4F1	conserved	GO:0060967	negative regulation of gene silencing by regulatory ncRNA	0.0
+E4F1	conserved	GO:0022613	ribonucleoprotein complex biogenesis	0.03
+E4F1	conserved	GO:0032495	response to muramyl dipeptide	0.0
+E4F1	conserved	GO:0007584	response to nutrient	0.0
+E4F1	conserved	GO:0070527	platelet aggregation	0.0
+E4F1	conserved	GO:0050684	regulation of mRNA processing	0.0
+ETS2	specific	GO:0044319	wound healing, spreading of cells	0.0
+ETS2	specific	GO:0032375	negative regulation of cholesterol transport	0.0
+ETS2	specific	GO:0030010	establishment of cell polarity	0.0
+ETS2	specific	GO:0007224	smoothened signaling pathway	0.0
+ETS2	specific	GO:0045744	negative regulation of G protein-coupled receptor signaling pathway	0.0
+ETS2	specific	GO:0045604	regulation of epidermal cell differentiation	0.0
+ETS2	specific	GO:0006937	regulation of muscle contraction	0.0
+ETS2	specific	GO:0090505	epiboly involved in wound healing	0.0
+ETS2	specific	GO:0002009	morphogenesis of an epithelium	0.0
+ETS2	specific	GO:0002092	positive regulation of receptor internalization	0.0
+ETS2	specific	GO:0002673	regulation of acute inflammatory response	0.0
+ETS2	specific	GO:0003143	embryonic heart tube morphogenesis	0.0
+ETS2	specific	GO:0090263	positive regulation of canonical Wnt signaling pathway	0.0
+ETS2	specific	GO:0045682	regulation of epidermis development	0.0
+ETS2	specific	GO:0048729	tissue morphogenesis	0.0
+ETS2	specific	GO:0002011	morphogenesis of an epithelial sheet	0.0
+ETS2	specific	GO:1900747	negative regulation of vascular endothelial growth factor signaling pathway	0.0
+ETS2	specific	GO:0042045	epithelial fluid transport	0.0
+ETS2	specific	GO:0045187	regulation of circadian sleep/wake cycle, sleep	0.0
+ETS2	specific	GO:0070633	transepithelial transport	0.0
+ETS2	specific	GO:0008015	blood circulation	0.0
+ETS2	specific	GO:0016540	protein autoprocessing	0.0
+ETS2	specific	GO:1902548	negative regulation of cellular response to vascular endothelial growth factor stimulus	0.0
+ETS2	specific	GO:0007163	establishment or maintenance of cell polarity	0.0
+ETS2	specific	GO:0072044	collecting duct development	0.0
+ETS2	specific	GO:0044092	negative regulation of molecular function	0.0
+ETS2	specific	GO:0030488	tRNA methylation	0.0
+ETS2	specific	GO:0010971	positive regulation of G2/M transition of mitotic cell cycle	0.0
+ETS2	specific	GO:0106072	negative regulation of adenylate cyclase-activating G protein-coupled receptor signaling pathway	0.0
+ETS2	specific	GO:0030148	sphingolipid biosynthetic process	0.0
+ETS2	specific	GO:0061303	cornea development in camera-type eye	0.0
+ETS2	specific	GO:0002675	positive regulation of acute inflammatory response	0.0
+ETS2	specific	GO:0071320	cellular response to cAMP	0.0
+ETS2	specific	GO:0090504	epiboly	0.0
+ETS2	specific	GO:0006513	protein monoubiquitination	0.0
+ETS2	specific	GO:0032355	response to estradiol	0.0
+ETS2	specific	GO:0008356	asymmetric cell division	0.0
+ETS2	specific	GO:0032372	negative regulation of sterol transport	0.0
+ETS2	specific	GO:0031114	regulation of microtubule depolymerization	0.0
+ETS2	conserved	GO:0051251	positive regulation of lymphocyte activation	0.0
+ETS2	conserved	GO:0006354	DNA-templated transcription elongation	0.0
+ETS2	conserved	GO:0006457	protein folding	0.0
+ETS2	conserved	GO:0006282	regulation of DNA repair	0.0
+ETS2	conserved	GO:0080135	regulation of cellular response to stress	0.0
+ETS2	conserved	GO:0034605	cellular response to heat	0.0
+ETS2	conserved	GO:0030497	fatty acid elongation	0.0
+ETS2	conserved	GO:0010608	post-transcriptional regulation of gene expression	0.05
+ETS2	conserved	GO:0050821	protein stabilization	0.0
+ETS2	conserved	GO:0051052	regulation of DNA metabolic process	0.0
+ETS2	conserved	GO:0090114	COPII-coated vesicle budding	0.0
+ETS2	conserved	GO:2000779	regulation of double-strand break repair	0.01
+ETS2	conserved	GO:0033148	positive regulation of intracellular estrogen receptor signaling pathway	0.0
+ETS2	conserved	GO:1903846	positive regulation of cellular response to transforming growth factor beta stimulus	0.0
+ETS2	conserved	GO:0010506	regulation of autophagy	0.02
+ETS2	conserved	GO:0031647	regulation of protein stability	0.0
+ETS2	conserved	GO:0017148	negative regulation of translation	0.0
+ETS2	conserved	GO:0006476	protein deacetylation	0.0
+ETS2	conserved	GO:0009266	response to temperature stimulus	0.0
+ETS2	conserved	GO:0008630	intrinsic apoptotic signaling pathway in response to DNA damage	0.02
+ETS2	conserved	GO:1903432	regulation of TORC1 signaling	0.0
+ETS2	conserved	GO:0010586	miRNA metabolic process	0.0
+ETS2	conserved	GO:2001243	negative regulation of intrinsic apoptotic signaling pathway	0.0
+ETS2	conserved	GO:0098732	macromolecule deacylation	0.0
+ETS2	conserved	GO:0048208	COPII vesicle coat assembly	0.0
+ETS2	conserved	GO:0006986	response to unfolded protein	0.0
+ETS2	conserved	GO:0030511	positive regulation of transforming growth factor beta receptor signaling pathway	0.0
+ETS2	conserved	GO:1904263	positive regulation of TORC1 signaling	0.0
+ETS2	conserved	GO:0035601	protein deacylation	0.0
+ETS2	conserved	GO:1903829	positive regulation of protein localization	0.0
+ETS2	conserved	GO:0006366	transcription by RNA polymerase II	0.0
+ETS2	conserved	GO:0009408	response to heat	0.0
+ETS2	conserved	GO:0006367	transcription initiation at RNA polymerase II promoter	0.0
+ETS2	conserved	GO:0006417	regulation of translation	0.04
+ETS2	conserved	GO:0032388	positive regulation of intracellular transport	0.0
+ETS2	conserved	GO:2000819	regulation of nucleotide-excision repair	0.0
+ETS2	conserved	GO:0006412	translation	0.04
+ETS2	conserved	GO:0002183	cytoplasmic translational initiation	0.0
+ETS2	conserved	GO:0042026	protein refolding	0.01
+ETS2	conserved	GO:1903747	regulation of protein localization to mitochondrion	0.0
+ETS2	conserved	GO:0043923	host-mediated activation of viral transcription	0.0
+ETS2	conserved	GO:0035966	response to topologically incorrect protein	0.0
+ETS2	conserved	GO:0006356	regulation of transcription by RNA polymerase I	0.0
+ETS2	conserved	GO:1905168	positive regulation of double-strand break repair via homologous recombination	0.02
+ETS2	conserved	GO:0046822	regulation of nucleocytoplasmic transport	0.0
+ETS2	conserved	GO:0006352	DNA-templated transcription initiation	0.0
+ETS2	conserved	GO:0160307	protein biosynthetic process	0.04
+ETS2	conserved	GO:0006368	transcription elongation by RNA polymerase II	0.0
+ETS2	conserved	GO:0043555	regulation of translation in response to stress	0.0
+ETS2	conserved	GO:0042254	ribosome biogenesis	0.05
+ETS2	conserved	GO:0032386	regulation of intracellular transport	0.0
+ETS2	conserved	GO:2000058	regulation of ubiquitin-dependent protein catabolic process	0.0
+ETS2	conserved	GO:0050867	positive regulation of cell activation	0.0
+ETS2	conserved	GO:0090316	positive regulation of intracellular protein transport	0.0
+ETS2	conserved	GO:0000466	maturation of 5.8S rRNA from tricistronic rRNA transcript (SSU-rRNA, 5.8S rRNA, LSU-rRNA)	0.0
+ETS2	conserved	GO:0002181	cytoplasmic translation	0.01
+ETS2	conserved	GO:1902176	negative regulation of oxidative stress-induced intrinsic apoptotic signaling pathway	0.0
+ETS2	conserved	GO:0000479	endonucleolytic cleavage of tricistronic rRNA transcript (SSU-rRNA, 5.8S rRNA, LSU-rRNA)	0.0
+ETS2	conserved	GO:1900182	positive regulation of protein localization to nucleus	0.0
+ETS2	conserved	GO:0007249	canonical NF-kappaB signal transduction	0.0
+ETS2	conserved	GO:1900180	regulation of protein localization to nucleus	0.0
+ETS2	conserved	GO:0000388	spliceosome conformational change to release U4 (or U4atac) and U1 (or U11)	0.01
+ETS2	conserved	GO:0060341	regulation of cellular localization	0.0
+ETS2	conserved	GO:0034976	response to endoplasmic reticulum stress	0.0
+ETS2	conserved	GO:0022613	ribonucleoprotein complex biogenesis	0.08
+ETS2	conserved	GO:0006888	endoplasmic reticulum to Golgi vesicle-mediated transport	0.0
+ETS2	conserved	GO:1902175	regulation of oxidative stress-induced intrinsic apoptotic signaling pathway	0.0
+ETS2	conserved	GO:1900034	regulation of cellular response to heat	0.01
+ETS2	conserved	GO:2001242	regulation of intrinsic apoptotic signaling pathway	0.0
+ETS2	conserved	GO:0006901	vesicle coat assembly	0.0
+ETS2	conserved	GO:0051222	positive regulation of protein transport	0.0
+ETS2	conserved	GO:0006351	DNA-templated transcription	0.01
+ETS2	conserved	GO:0010569	regulation of double-strand break repair via homologous recombination	0.02
+EZH2	conserved	GO:0006457	protein folding	0.01
+EZH2	conserved	GO:1900182	positive regulation of protein localization to nucleus	0.0
+EZH2	conserved	GO:0051493	regulation of cytoskeleton organization	0.0
+EZH2	conserved	GO:0030705	cytoskeleton-dependent intracellular transport	0.0
+EZH2	conserved	GO:0006986	response to unfolded protein	0.0
+EZH2	conserved	GO:0050821	protein stabilization	0.0
+EZH2	conserved	GO:0035966	response to topologically incorrect protein	0.0
+FLYWCH1	specific	GO:0048592	eye morphogenesis	0.0
+FLYWCH1	specific	GO:0001754	eye photoreceptor cell differentiation	0.0
+FLYWCH1	specific	GO:0046530	photoreceptor cell differentiation	0.0
+FLYWCH1	conserved	GO:1904951	positive regulation of establishment of protein localization	0.0
+FLYWCH1	conserved	GO:0034605	cellular response to heat	0.0
+FLYWCH1	conserved	GO:0009266	response to temperature stimulus	0.0
+FLYWCH1	conserved	GO:0003012	muscle system process	0.0
+FLYWCH1	conserved	GO:0051222	positive regulation of protein transport	0.0
+FLYWCH1	conserved	GO:0009408	response to heat	0.0
+GLYR1	specific	GO:1990869	cellular response to chemokine	0.0
+GLYR1	specific	GO:1900087	positive regulation of G1/S transition of mitotic cell cycle	0.0
+GLYR1	specific	GO:0070098	chemokine-mediated signaling pathway	0.0
+GLYR1	specific	GO:2000738	positive regulation of stem cell differentiation	0.0
+GLYR1	specific	GO:0050433	regulation of catecholamine secretion	0.0
+GLYR1	specific	GO:0031032	actomyosin structure organization	0.0
+GLYR1	specific	GO:0045666	positive regulation of neuron differentiation	0.0
+GLYR1	specific	GO:1902895	positive regulation of miRNA transcription	0.0
+GLYR1	specific	GO:0001956	positive regulation of neurotransmitter secretion	0.0
+GLYR1	specific	GO:0045931	positive regulation of mitotic cell cycle	0.0
+GLYR1	specific	GO:1990868	response to chemokine	0.0
+GLYR1	specific	GO:0002691	regulation of cellular extravasation	0.0
+GLYR1	specific	GO:1901987	regulation of cell cycle phase transition	0.0
+GLYR1	specific	GO:0051648	vesicle localization	0.0
+GLYR1	specific	GO:0045787	positive regulation of cell cycle	0.0
+GLYR1	specific	GO:0050982	detection of mechanical stimulus	0.0
+GLYR1	specific	GO:1903055	positive regulation of extracellular matrix organization	0.0
+GLYR1	specific	GO:0061053	somite development	0.0
+GLYR1	specific	GO:1901201	regulation of extracellular matrix assembly	0.0
+GLYR1	specific	GO:0001704	formation of primary germ layer	0.0
+GLYR1	specific	GO:0007605	sensory perception of sound	0.0
+GLYR1	specific	GO:0045786	negative regulation of cell cycle	0.0
+GLYR1	specific	GO:0045664	regulation of neuron differentiation	0.0
+GLYR1	specific	GO:0000027	ribosomal large subunit assembly	0.0
+GLYR1	specific	GO:0038084	vascular endothelial growth factor signaling pathway	0.0
+GLYR1	specific	GO:0030323	respiratory tube development	0.0
+GLYR1	specific	GO:0090068	positive regulation of cell cycle process	0.0
+GLYR1	specific	GO:0007498	mesoderm development	0.0
+GLYR1	specific	GO:0030324	lung development	0.0
+GLYR1	specific	GO:0007096	regulation of exit from mitosis	0.0
+GLYR1	specific	GO:0050892	intestinal absorption	0.0
+GLYR1	specific	GO:0051101	regulation of DNA binding	0.0
+GLYR1	specific	GO:0035331	negative regulation of hippo signaling	0.0
+GLYR1	specific	GO:0007346	regulation of mitotic cell cycle	0.0
+GLYR1	specific	GO:0047496	vesicle transport along microtubule	0.0
+GLYR1	specific	GO:0071880	adenylate cyclase-activating adrenergic receptor signaling pathway	0.0
+GLYR1	specific	GO:0014059	regulation of dopamine secretion	0.0
+GLYR1	specific	GO:0048598	embryonic morphogenesis	0.0
+GLYR1	specific	GO:0050954	sensory perception of mechanical stimulus	0.0
+GLYR1	specific	GO:0048705	skeletal system morphogenesis	0.0
+GLYR1	specific	GO:0030865	cortical cytoskeleton organization	0.0
+GLYR1	specific	GO:0035330	regulation of hippo signaling	0.0
+GLYR1	specific	GO:0050678	regulation of epithelial cell proliferation	0.0
+GLYR1	specific	GO:1901990	regulation of mitotic cell cycle phase transition	0.0
+GLYR1	specific	GO:0045930	negative regulation of mitotic cell cycle	0.0
+GLYR1	specific	GO:2000677	regulation of transcription regulatory region DNA binding	0.0
+GLYR1	conserved	GO:0006457	protein folding	0.0
+GLYR1	conserved	GO:0090207	regulation of triglyceride metabolic process	0.0
+GLYR1	conserved	GO:0046598	positive regulation of viral entry into host cell	0.0
+GLYR1	conserved	GO:0010867	positive regulation of triglyceride biosynthetic process	0.0
+GLYR1	conserved	GO:1903332	regulation of protein folding	0.0
+GLYR1	conserved	GO:0046596	regulation of viral entry into host cell	0.0
+GLYR1	conserved	GO:0046716	muscle cell cellular homeostasis	0.0
+GLYR1	conserved	GO:0016239	positive regulation of macroautophagy	0.0
+GLYR1	conserved	GO:0098732	macromolecule deacylation	0.0
+GLYR1	conserved	GO:1903902	positive regulation of viral life cycle	0.0
+GLYR1	conserved	GO:0090208	positive regulation of triglyceride metabolic process	0.0
+GLYR1	conserved	GO:0010660	regulation of muscle cell apoptotic process	0.0
+GLYR1	conserved	GO:0009408	response to heat	0.01
+GLYR1	conserved	GO:1903747	regulation of protein localization to mitochondrion	0.0
+GLYR1	conserved	GO:0106118	regulation of sterol biosynthetic process	0.0
+GLYR1	conserved	GO:1905168	positive regulation of double-strand break repair via homologous recombination	0.0
+GLYR1	conserved	GO:0098734	macromolecule depalmitoylation	0.0
+GLYR1	conserved	GO:0010866	regulation of triglyceride biosynthetic process	0.0
+GLYR1	conserved	GO:0045540	regulation of cholesterol biosynthetic process	0.0
+GLYR1	conserved	GO:0045292	mRNA cis splicing, via spliceosome	0.0
+GLYR1	conserved	GO:0043903	regulation of biological process involved in symbiotic interaction	0.0
+GLYR1	conserved	GO:0052372	modulation by symbiont of entry into host	0.0
+GLYR1	conserved	GO:1902175	regulation of oxidative stress-induced intrinsic apoptotic signaling pathway	0.0
+GLYR1	conserved	GO:0075294	positive regulation by symbiont of entry into host	0.0
+GLYR1	conserved	GO:0010656	negative regulation of muscle cell apoptotic process	0.0
+GLYR1	conserved	GO:2001135	regulation of endocytic recycling	0.0
+GLYR1	conserved	GO:0010569	regulation of double-strand break repair via homologous recombination	0.0
+HOXB6	specific	GO:0034393	positive regulation of smooth muscle cell apoptotic process	0.0
+HOXB6	specific	GO:0072175	epithelial tube formation	0.0
+HOXB6	specific	GO:0034391	regulation of smooth muscle cell apoptotic process	0.0
+HOXB6	specific	GO:0010906	regulation of glucose metabolic process	0.0
+HOXB6	specific	GO:0016331	morphogenesis of embryonic epithelium	0.0
+HOXB6	specific	GO:0007416	synapse assembly	0.0
+HOXB6	specific	GO:0043401	steroid hormone receptor signaling pathway	0.0
+HOXB6	specific	GO:0010660	regulation of muscle cell apoptotic process	0.0
+HOXB6	specific	GO:0030518	nuclear receptor-mediated steroid hormone signaling pathway	0.0
+HOXB6	specific	GO:0001838	embryonic epithelial tube formation	0.0
+HOXB6	conserved	GO:0000070	mitotic sister chromatid segregation	0.0
+HOXB6	conserved	GO:2000767	positive regulation of cytoplasmic translation	0.0
+HOXB6	conserved	GO:0000302	response to reactive oxygen species	0.0
+HOXB6	conserved	GO:0016441	post-transcriptional gene silencing	0.0
+HOXB6	conserved	GO:0006275	regulation of DNA replication	0.0
+HOXB6	conserved	GO:0010608	post-transcriptional regulation of gene expression	0.0
+HOXB6	conserved	GO:2000316	regulation of T-helper 17 type immune response	0.0
+HOXB6	conserved	GO:0044788	host-mediated perturbation of viral process	0.0
+HOXB6	conserved	GO:2000779	regulation of double-strand break repair	0.0
+HOXB6	conserved	GO:0045739	positive regulation of DNA repair	0.0
+HOXB6	conserved	GO:0032436	positive regulation of proteasomal ubiquitin-dependent protein catabolic process	0.0
+HOXB6	conserved	GO:0051653	spindle localization	0.0
+HOXB6	conserved	GO:1902850	microtubule cytoskeleton organization involved in mitosis	0.0
+HOXB6	conserved	GO:0006366	transcription by RNA polymerase II	0.0
+HOXB6	conserved	GO:0051054	positive regulation of DNA metabolic process	0.0
+HOXB6	conserved	GO:0071867	response to monoamine	0.0
+HOXB6	conserved	GO:1905168	positive regulation of double-strand break repair via homologous recombination	0.0
+HOXB6	conserved	GO:0060966	regulation of gene silencing by regulatory ncRNA	0.0
+HOXB6	conserved	GO:0001952	regulation of cell-matrix adhesion	0.0
+HOXB6	conserved	GO:0043122	regulation of canonical NF-kappaB signal transduction	0.0
+HOXB6	conserved	GO:0141156	cAMP/PKA signal transduction	0.0
+HOXB6	conserved	GO:0000018	regulation of DNA recombination	0.0
+HOXB6	conserved	GO:2000319	regulation of T-helper 17 cell differentiation	0.0
+HOXB6	conserved	GO:0051640	organelle localization	0.0
+HOXB6	conserved	GO:1900180	regulation of protein localization to nucleus	0.0
+HOXB6	conserved	GO:0033157	regulation of intracellular protein transport	0.0
+HOXB6	conserved	GO:1900368	regulation of post-transcriptional gene silencing by regulatory ncRNA	0.0
+HOXB6	conserved	GO:0034976	response to endoplasmic reticulum stress	0.0
+HOXB6	conserved	GO:0051493	regulation of cytoskeleton organization	0.0
+HOXB6	conserved	GO:0032886	regulation of microtubule-based process	0.0
+HOXB6	conserved	GO:2001242	regulation of intrinsic apoptotic signaling pathway	0.0
+HOXB6	conserved	GO:1901990	regulation of mitotic cell cycle phase transition	0.0
+HOXB6	conserved	GO:0071868	cellular response to monoamine stimulus	0.0
+HOXB6	conserved	GO:0010569	regulation of double-strand break repair via homologous recombination	0.0
+HOXB6	conserved	GO:0006457	protein folding	0.0
+HOXB6	conserved	GO:0061136	regulation of proteasomal protein catabolic process	0.0
+HOXB6	conserved	GO:0051053	negative regulation of DNA metabolic process	0.0
+HOXB6	conserved	GO:0007018	microtubule-based movement	0.0
+HOXB6	conserved	GO:1902414	protein localization to cell junction	0.0
+HOXB6	conserved	GO:2000060	positive regulation of ubiquitin-dependent protein catabolic process	0.0
+HOXB6	conserved	GO:0090235	regulation of metaphase plate congression	0.0
+HOXB6	conserved	GO:0042176	regulation of protein catabolic process	0.0
+HOXB6	conserved	GO:0060964	regulation of miRNA-mediated gene silencing	0.0
+HOXB6	conserved	GO:0017148	negative regulation of translation	0.0
+HOXB6	conserved	GO:0045622	regulation of T-helper cell differentiation	0.0
+HOXB6	conserved	GO:0009266	response to temperature stimulus	0.0
+HOXB6	conserved	GO:0051225	spindle assembly	0.0
+HOXB6	conserved	GO:0032434	regulation of proteasomal ubiquitin-dependent protein catabolic process	0.0
+HOXB6	conserved	GO:0060236	regulation of mitotic spindle organization	0.0
+HOXB6	conserved	GO:0150116	regulation of cell-substrate junction organization	0.0
+HOXB6	conserved	GO:0010810	regulation of cell-substrate adhesion	0.0
+HOXB6	conserved	GO:0006986	response to unfolded protein	0.0
+HOXB6	conserved	GO:2001233	regulation of apoptotic signaling pathway	0.0
+HOXB6	conserved	GO:0034109	homotypic cell-cell adhesion	0.0
+HOXB6	conserved	GO:1902903	regulation of supramolecular fiber organization	0.0
+HOXB6	conserved	GO:0006356	regulation of transcription by RNA polymerase I	0.0
+HOXB6	conserved	GO:0045732	positive regulation of protein catabolic process	0.0
+HOXB6	conserved	GO:2000058	regulation of ubiquitin-dependent protein catabolic process	0.0
+HOXB6	conserved	GO:0060147	regulation of post-transcriptional gene silencing	0.0
+HOXB6	conserved	GO:1903047	mitotic cell cycle process	0.0
+HOXB6	conserved	GO:1900182	positive regulation of protein localization to nucleus	0.0
+HOXB6	conserved	GO:0060341	regulation of cellular localization	0.0
+HOXB6	conserved	GO:1902175	regulation of oxidative stress-induced intrinsic apoptotic signaling pathway	0.0
+HOXB6	conserved	GO:0010638	positive regulation of organelle organization	0.0
+HOXB6	conserved	GO:0051495	positive regulation of cytoskeleton organization	0.0
+HOXB6	conserved	GO:0007088	regulation of mitotic nuclear division	0.0
+HOXB6	conserved	GO:0051222	positive regulation of protein transport	0.0
+HOXB6	conserved	GO:0010970	transport along microtubule	0.0
+HOXB6	conserved	GO:0051293	establishment of spindle localization	0.0
+HOXB6	conserved	GO:0045911	positive regulation of DNA recombination	0.0
+HOXB6	conserved	GO:0090224	regulation of spindle organization	0.0
+HOXB6	conserved	GO:0051851	host-mediated perturbation of symbiont process	0.0
+HOXB6	conserved	GO:0050821	protein stabilization	0.0
+HOXB6	conserved	GO:2000765	regulation of cytoplasmic translation	0.0
+HOXB6	conserved	GO:0010506	regulation of autophagy	0.0
+HOXB6	conserved	GO:0031647	regulation of protein stability	0.0
+HOXB6	conserved	GO:1901800	positive regulation of proteasomal protein catabolic process	0.0
+HOXB6	conserved	GO:0010389	regulation of G2/M transition of mitotic cell cycle	0.0
+HOXB6	conserved	GO:0008360	regulation of cell shape	0.0
+HOXB6	conserved	GO:0090263	positive regulation of canonical Wnt signaling pathway	0.0
+HOXB6	conserved	GO:1903829	positive regulation of protein localization	0.0
+HOXB6	conserved	GO:0035966	response to topologically incorrect protein	0.0
+HOXB6	conserved	GO:0006417	regulation of translation	0.0
+HOXB6	conserved	GO:0032388	positive regulation of intracellular transport	0.0
+HOXB6	conserved	GO:0042026	protein refolding	0.0
+HOXB6	conserved	GO:0034655	nucleobase-containing compound catabolic process	0.0
+HOXB6	conserved	GO:0007052	mitotic spindle organization	0.0
+HOXB6	conserved	GO:0042542	response to hydrogen peroxide	0.0
+HOXB6	conserved	GO:0033047	regulation of mitotic sister chromatid segregation	0.0
+HOXB6	conserved	GO:0030168	platelet activation	0.0
+HOXB6	conserved	GO:0051783	regulation of nuclear division	0.0
+HOXB6	conserved	GO:0032386	regulation of intracellular transport	0.0
+HOXB6	conserved	GO:0090316	positive regulation of intracellular protein transport	0.0
+HOXB6	conserved	GO:1904951	positive regulation of establishment of protein localization	0.0
+HOXB6	conserved	GO:0070507	regulation of microtubule cytoskeleton organization	0.0
+HOXB6	conserved	GO:0009895	negative regulation of catabolic process	0.0
+HOXB6	conserved	GO:0045727	positive regulation of translation	0.0
+HOXB6	conserved	GO:0006282	regulation of DNA repair	0.0
+HOXB6	conserved	GO:0080135	regulation of cellular response to stress	0.0
+HOXB6	conserved	GO:0034605	cellular response to heat	0.0
+HOXB6	conserved	GO:0035821	modulation of process of another organism	0.0
+HOXB6	conserved	GO:0051052	regulation of DNA metabolic process	0.0
+HOXB6	conserved	GO:1903008	organelle disassembly	0.0
+HOXB6	conserved	GO:1902749	regulation of cell cycle G2/M phase transition	0.0
+HOXB6	conserved	GO:0042177	negative regulation of protein catabolic process	0.0
+HOXB6	conserved	GO:1903351	cellular response to dopamine	0.0
+HOXB6	conserved	GO:0009408	response to heat	0.0
+HOXB6	conserved	GO:0099111	microtubule-based transport	0.0
+HOXB6	conserved	GO:0071869	response to catecholamine	0.0
+HOXB6	conserved	GO:0140694	membraneless organelle assembly	0.0
+HOXB6	conserved	GO:1903350	response to dopamine	0.0
+HOXB6	conserved	GO:0032956	regulation of actin cytoskeleton organization	0.0
+HOXB6	conserved	GO:2000781	positive regulation of double-strand break repair	0.0
+HOXB6	conserved	GO:0007051	spindle organization	0.0
+HOXB6	conserved	GO:0046822	regulation of nucleocytoplasmic transport	0.0
+HOXB6	conserved	GO:0030705	cytoskeleton-dependent intracellular transport	0.0
+HOXB6	conserved	GO:0071870	cellular response to catecholamine stimulus	0.0
+HOXB6	conserved	GO:0007346	regulation of mitotic cell cycle	0.0
+HOXB6	conserved	GO:0007059	chromosome segregation	0.0
+HOXB6	conserved	GO:0030177	positive regulation of Wnt signaling pathway	0.0
+HOXB6	conserved	GO:0070527	platelet aggregation	0.0
+HOXB9	specific	GO:0032892	positive regulation of organic acid transport	0.0
+HOXB9	specific	GO:0034243	regulation of transcription elongation by RNA polymerase II	0.0
+HOXB9	specific	GO:2000144	positive regulation of DNA-templated transcription initiation	0.0
+HOXB9	specific	GO:0060260	regulation of transcription initiation by RNA polymerase II	0.0
+HOXB9	specific	GO:0060261	positive regulation of transcription initiation by RNA polymerase II	0.0
+HOXB9	specific	GO:0032784	regulation of DNA-templated transcription elongation	0.0
+HOXC9	specific	GO:0071377	cellular response to glucagon stimulus	0.0
+HOXC9	specific	GO:0048841	regulation of axon extension involved in axon guidance	0.0
+HOXC9	specific	GO:0033762	response to glucagon	0.0
+HOXC9	specific	GO:0099601	regulation of neurotransmitter receptor activity	0.0
+HOXC9	specific	GO:0050806	positive regulation of synaptic transmission	0.0
+HOXC9	conserved	GO:0009895	negative regulation of catabolic process	0.0
+HOXC9	conserved	GO:0051251	positive regulation of lymphocyte activation	0.0
+HOXC9	conserved	GO:0050879	multicellular organismal movement	0.0
+HOXC9	conserved	GO:0006457	protein folding	0.0
+HOXC9	conserved	GO:0050881	musculoskeletal movement	0.0
+HOXC9	conserved	GO:0070571	negative regulation of neuron projection regeneration	0.0
+HOXC9	conserved	GO:0045727	positive regulation of translation	0.0
+HOXC9	conserved	GO:0080135	regulation of cellular response to stress	0.0
+HOXC9	conserved	GO:0034605	cellular response to heat	0.0
+HOXC9	conserved	GO:0050870	positive regulation of T cell activation	0.0
+HOXC9	conserved	GO:1903039	positive regulation of leukocyte cell-cell adhesion	0.0
+HOXC9	conserved	GO:0000381	regulation of alternative mRNA splicing, via spliceosome	0.0
+HOXC9	conserved	GO:2000765	regulation of cytoplasmic translation	0.0
+HOXC9	conserved	GO:0045582	positive regulation of T cell differentiation	0.0
+HOXC9	conserved	GO:0048681	negative regulation of axon regeneration	0.0
+HOXC9	conserved	GO:0033045	regulation of sister chromatid segregation	0.0
+HOXC9	conserved	GO:0010506	regulation of autophagy	0.0
+HOXC9	conserved	GO:0030071	regulation of mitotic metaphase/anaphase transition	0.0
+HOXC9	conserved	GO:0017148	negative regulation of translation	0.0
+HOXC9	conserved	GO:0003009	skeletal muscle contraction	0.0
+HOXC9	conserved	GO:0009266	response to temperature stimulus	0.0
+HOXC9	conserved	GO:0042177	negative regulation of protein catabolic process	0.0
+HOXC9	conserved	GO:2001243	negative regulation of intrinsic apoptotic signaling pathway	0.0
+HOXC9	conserved	GO:0002696	positive regulation of leukocyte activation	0.0
+HOXC9	conserved	GO:0030258	lipid modification	0.0
+HOXC9	conserved	GO:0006986	response to unfolded protein	0.0
+HOXC9	conserved	GO:0006941	striated muscle contraction	0.0
+HOXC9	conserved	GO:0090263	positive regulation of canonical Wnt signaling pathway	0.0
+HOXC9	conserved	GO:0051983	regulation of chromosome segregation	0.0
+HOXC9	conserved	GO:0009408	response to heat	0.0
+HOXC9	conserved	GO:0099111	microtubule-based transport	0.0
+HOXC9	conserved	GO:0034109	homotypic cell-cell adhesion	0.0
+HOXC9	conserved	GO:0001909	leukocyte mediated cytotoxicity	0.0
+HOXC9	conserved	GO:0035966	response to topologically incorrect protein	0.0
+HOXC9	conserved	GO:1903747	regulation of protein localization to mitochondrion	0.0
+HOXC9	conserved	GO:0030705	cytoskeleton-dependent intracellular transport	0.0
+HOXC9	conserved	GO:0030168	platelet activation	0.0
+HOXC9	conserved	GO:0099173	postsynapse organization	0.0
+HOXC9	conserved	GO:0007346	regulation of mitotic cell cycle	0.0
+HOXC9	conserved	GO:0050867	positive regulation of cell activation	0.0
+HOXC9	conserved	GO:0045621	positive regulation of lymphocyte differentiation	0.0
+HOXC9	conserved	GO:1902099	regulation of metaphase/anaphase transition of cell cycle	0.0
+HOXC9	conserved	GO:0002449	lymphocyte mediated immunity	0.0
+HOXC9	conserved	GO:0000018	regulation of DNA recombination	0.01
+HOXC9	conserved	GO:0034976	response to endoplasmic reticulum stress	0.0
+HOXC9	conserved	GO:2001242	regulation of intrinsic apoptotic signaling pathway	0.0
+HOXC9	conserved	GO:0034063	cytoplasmic stress granule assembly	0.0
+HOXC9	conserved	GO:1901990	regulation of mitotic cell cycle phase transition	0.0
+HOXC9	conserved	GO:0010970	transport along microtubule	0.0
+HOXC9	conserved	GO:0070527	platelet aggregation	0.0
+HOXC9	conserved	GO:0010569	regulation of double-strand break repair via homologous recombination	0.0
+MAZ	specific	GO:0002921	negative regulation of humoral immune response	0.0
+MAZ	specific	GO:0030449	regulation of complement activation	0.0
+MAZ	specific	GO:0045916	negative regulation of complement activation	0.0
+MAZ	conserved	GO:0010506	regulation of autophagy	0.0
+MBD3	specific	GO:0160257	complement activation, GZMK pathway	0.0
+MBD3	conserved	GO:0090235	regulation of metaphase plate congression	0.0
+MBD3	conserved	GO:0006457	protein folding	0.0
+MBD3	conserved	GO:2000767	positive regulation of cytoplasmic translation	0.0
+MBD3	conserved	GO:2000144	positive regulation of DNA-templated transcription initiation	0.0
+MBD3	conserved	GO:2000142	regulation of DNA-templated transcription initiation	0.0
+MBD3	conserved	GO:2000058	regulation of ubiquitin-dependent protein catabolic process	0.0
+MBD3	conserved	GO:0032968	positive regulation of transcription elongation by RNA polymerase II	0.0
+MBD3	conserved	GO:0008154	actin polymerization or depolymerization	0.0
+MBD3	conserved	GO:2000765	regulation of cytoplasmic translation	0.0
+MLX	specific	GO:0090141	positive regulation of mitochondrial fission	0.0
+MLX	specific	GO:0043086	negative regulation of catalytic activity	0.0
+MLX	specific	GO:0045954	positive regulation of natural killer cell mediated cytotoxicity	0.0
+MLX	specific	GO:0010907	positive regulation of glucose metabolic process	0.0
+MLX	specific	GO:0070977	bone maturation	0.0
+MLX	specific	GO:0097150	neuronal stem cell population maintenance	0.0
+MLX	specific	GO:0046835	carbohydrate phosphorylation	0.0
+MLX	specific	GO:0016241	regulation of macroautophagy	0.0
+MLX	specific	GO:0009798	axis specification	0.0
+MLX	specific	GO:0035633	maintenance of blood-brain barrier	0.0
+MLX	specific	GO:0009948	anterior/posterior axis specification	0.0
+MLX	specific	GO:0090140	regulation of mitochondrial fission	0.0
+MLX	specific	GO:0055081	monoatomic anion homeostasis	0.0
+MLX	specific	GO:0010827	regulation of D-glucose transmembrane transport	0.0
+MLX	specific	GO:0010001	glial cell differentiation	0.0
+MLX	specific	GO:0007369	gastrulation	0.0
+MLX	specific	GO:0051216	cartilage development	0.0
+MLX	conserved	GO:0045661	regulation of myoblast differentiation	0.0
+MLX	conserved	GO:2000328	regulation of T-helper 17 cell lineage commitment	0.0
+MLX	conserved	GO:0006284	base-excision repair	0.0
+MLX	conserved	GO:0045591	positive regulation of regulatory T cell differentiation	0.0
+MLX	conserved	GO:0010608	post-transcriptional regulation of gene expression	0.0
+MLX	conserved	GO:0072583	clathrin-dependent endocytosis	0.0
+MLX	conserved	GO:2000316	regulation of T-helper 17 type immune response	0.0
+MLX	conserved	GO:0050870	positive regulation of T cell activation	0.0
+MLX	conserved	GO:0044788	host-mediated perturbation of viral process	0.0
+MLX	conserved	GO:0000387	spliceosomal snRNP assembly	0.0
+MLX	conserved	GO:0071230	cellular response to amino acid stimulus	0.0
+MLX	conserved	GO:2000779	regulation of double-strand break repair	0.0
+MLX	conserved	GO:0045582	positive regulation of T cell differentiation	0.0
+MLX	conserved	GO:0048681	negative regulation of axon regeneration	0.0
+MLX	conserved	GO:0045739	positive regulation of DNA repair	0.0
+MLX	conserved	GO:0051653	spindle localization	0.0
+MLX	conserved	GO:0008380	RNA splicing	0.0
+MLX	conserved	GO:0051223	regulation of protein transport	0.0
+MLX	conserved	GO:0006366	transcription by RNA polymerase II	0.0
+MLX	conserved	GO:0022407	regulation of cell-cell adhesion	0.0
+MLX	conserved	GO:1903706	regulation of hemopoiesis	0.0
+MLX	conserved	GO:0051054	positive regulation of DNA metabolic process	0.0
+MLX	conserved	GO:0010453	regulation of cell fate commitment	0.0
+MLX	conserved	GO:1905168	positive regulation of double-strand break repair via homologous recombination	0.0
+MLX	conserved	GO:0003333	amino acid transmembrane transport	0.0
+MLX	conserved	GO:0032785	negative regulation of DNA-templated transcription, elongation	0.0
+MLX	conserved	GO:0141156	cAMP/PKA signal transduction	0.0
+MLX	conserved	GO:0045621	positive regulation of lymphocyte differentiation	0.0
+MLX	conserved	GO:0031648	protein destabilization	0.0
+MLX	conserved	GO:0090232	positive regulation of spindle checkpoint	0.0
+MLX	conserved	GO:0000018	regulation of DNA recombination	0.0
+MLX	conserved	GO:2000319	regulation of T-helper 17 cell differentiation	0.0
+MLX	conserved	GO:0007249	canonical NF-kappaB signal transduction	0.0
+MLX	conserved	GO:1900180	regulation of protein localization to nucleus	0.0
+MLX	conserved	GO:0033157	regulation of intracellular protein transport	0.0
+MLX	conserved	GO:0002697	regulation of immune effector process	0.0
+MLX	conserved	GO:1901990	regulation of mitotic cell cycle phase transition	0.0
+MLX	conserved	GO:0002931	response to ischemia	0.0
+MLX	conserved	GO:0048524	positive regulation of viral process	0.0
+MLX	conserved	GO:0010569	regulation of double-strand break repair via homologous recombination	0.0
+MLX	conserved	GO:0051251	positive regulation of lymphocyte activation	0.0
+MLX	conserved	GO:0006457	protein folding	0.0
+MLX	conserved	GO:0015802	basic amino acid transport	0.0
+MLX	conserved	GO:0045721	negative regulation of gluconeogenesis	0.0
+MLX	conserved	GO:1903504	regulation of mitotic spindle checkpoint	0.0
+MLX	conserved	GO:0045619	regulation of lymphocyte differentiation	0.0
+MLX	conserved	GO:0033045	regulation of sister chromatid segregation	0.0
+MLX	conserved	GO:0031669	cellular response to nutrient levels	0.0
+MLX	conserved	GO:0030071	regulation of mitotic metaphase/anaphase transition	0.0
+MLX	conserved	GO:0090235	regulation of metaphase plate congression	0.0
+MLX	conserved	GO:0017148	negative regulation of translation	0.0
+MLX	conserved	GO:0045622	regulation of T-helper cell differentiation	0.0
+MLX	conserved	GO:0046456	icosanoid biosynthetic process	0.0
+MLX	conserved	GO:0010455	positive regulation of cell fate commitment	0.0
+MLX	conserved	GO:0045785	positive regulation of cell adhesion	0.0
+MLX	conserved	GO:0070570	regulation of neuron projection regeneration	0.0
+MLX	conserved	GO:0060236	regulation of mitotic spindle organization	0.0
+MLX	conserved	GO:0060251	regulation of glial cell proliferation	0.0
+MLX	conserved	GO:0048208	COPII vesicle coat assembly	0.0
+MLX	conserved	GO:0006986	response to unfolded protein	0.0
+MLX	conserved	GO:0046824	positive regulation of nucleocytoplasmic transport	0.0
+MLX	conserved	GO:0032968	positive regulation of transcription elongation by RNA polymerase II	0.0
+MLX	conserved	GO:0010660	regulation of muscle cell apoptotic process	0.0
+MLX	conserved	GO:0034109	homotypic cell-cell adhesion	0.0
+MLX	conserved	GO:0015804	neutral amino acid transport	0.0
+MLX	conserved	GO:1901978	positive regulation of cell cycle checkpoint	0.0
+MLX	conserved	GO:0046635	positive regulation of alpha-beta T cell activation	0.0
+MLX	conserved	GO:0006397	mRNA processing	0.0
+MLX	conserved	GO:0022409	positive regulation of cell-cell adhesion	0.0
+MLX	conserved	GO:0045663	positive regulation of myoblast differentiation	0.0
+MLX	conserved	GO:0046634	regulation of alpha-beta T cell activation	0.0
+MLX	conserved	GO:0090231	regulation of spindle checkpoint	0.0
+MLX	conserved	GO:2000514	regulation of CD4-positive, alpha-beta T cell activation	0.0
+MLX	conserved	GO:0000723	telomere maintenance	0.0
+MLX	conserved	GO:1905039	carboxylic acid transmembrane transport	0.0
+MLX	conserved	GO:0033044	regulation of chromosome organization	0.0
+MLX	conserved	GO:1900182	positive regulation of protein localization to nucleus	0.0
+MLX	conserved	GO:0060341	regulation of cellular localization	0.0
+MLX	conserved	GO:0070482	response to oxygen levels	0.0
+MLX	conserved	GO:0007088	regulation of mitotic nuclear division	0.0
+MLX	conserved	GO:0051222	positive regulation of protein transport	0.0
+MLX	conserved	GO:0015803	branched-chain amino acid transport	0.0
+MLX	conserved	GO:1901976	regulation of cell cycle checkpoint	0.0
+MLX	conserved	GO:0051293	establishment of spindle localization	0.0
+MLX	conserved	GO:0042306	regulation of protein import into nucleus	0.0
+MLX	conserved	GO:0045911	positive regulation of DNA recombination	0.0
+MLX	conserved	GO:0000393	spliceosomal conformational changes to generate catalytic conformation	0.0
+MLX	conserved	GO:0051851	host-mediated perturbation of symbiont process	0.0
+MLX	conserved	GO:0090224	regulation of spindle organization	0.0
+MLX	conserved	GO:0002699	positive regulation of immune effector process	0.0
+MLX	conserved	GO:0090267	positive regulation of mitotic cell cycle spindle assembly checkpoint	0.0
+MLX	conserved	GO:0050821	protein stabilization	0.0
+MLX	conserved	GO:0010506	regulation of autophagy	0.0
+MLX	conserved	GO:0031647	regulation of protein stability	0.0
+MLX	conserved	GO:2000036	regulation of stem cell population maintenance	0.0
+MLX	conserved	GO:0072348	sulfur compound transport	0.0
+MLX	conserved	GO:0046825	regulation of protein export from nucleus	0.0
+MLX	conserved	GO:0034243	regulation of transcription elongation by RNA polymerase II	0.0
+MLX	conserved	GO:1901987	regulation of cell cycle phase transition	0.0
+MLX	conserved	GO:1902105	regulation of leukocyte differentiation	0.0
+MLX	conserved	GO:0043921	host-mediated perturbation of viral transcription	0.0
+MLX	conserved	GO:1902107	positive regulation of leukocyte differentiation	0.0
+MLX	conserved	GO:0002696	positive regulation of leukocyte activation	0.0
+MLX	conserved	GO:0010720	positive regulation of cell development	0.0
+MLX	conserved	GO:0042307	positive regulation of protein import into nucleus	0.0
+MLX	conserved	GO:1903708	positive regulation of hemopoiesis	0.0
+MLX	conserved	GO:0001738	morphogenesis of a polarized epithelium	0.0
+MLX	conserved	GO:1903829	positive regulation of protein localization	0.0
+MLX	conserved	GO:0048679	regulation of axon regeneration	0.0
+MLX	conserved	GO:0015807	L-amino acid transport	0.0
+MLX	conserved	GO:0035966	response to topologically incorrect protein	0.0
+MLX	conserved	GO:0006417	regulation of translation	0.0
+MLX	conserved	GO:0032388	positive regulation of intracellular transport	0.0
+MLX	conserved	GO:2000819	regulation of nucleotide-excision repair	0.0
+MLX	conserved	GO:1903747	regulation of protein localization to mitochondrion	0.0
+MLX	conserved	GO:0043370	regulation of CD4-positive, alpha-beta T cell differentiation	0.0
+MLX	conserved	GO:0090266	regulation of mitotic cell cycle spindle assembly checkpoint	0.0
+MLX	conserved	GO:0033047	regulation of mitotic sister chromatid segregation	0.0
+MLX	conserved	GO:0000244	spliceosomal tri-snRNP complex assembly	0.0
+MLX	conserved	GO:0030168	platelet activation	0.0
+MLX	conserved	GO:0051783	regulation of nuclear division	0.0
+MLX	conserved	GO:0070201	regulation of establishment of protein localization	0.0
+MLX	conserved	GO:0032386	regulation of intracellular transport	0.0
+MLX	conserved	GO:0050867	positive regulation of cell activation	0.0
+MLX	conserved	GO:0090316	positive regulation of intracellular protein transport	0.0
+MLX	conserved	GO:0018205	peptidyl-lysine modification	0.0
+MLX	conserved	GO:1904951	positive regulation of establishment of protein localization	0.0
+MLX	conserved	GO:0043200	response to amino acid	0.0
+MLX	conserved	GO:0010664	negative regulation of striated muscle cell apoptotic process	0.0
+MLX	conserved	GO:0006865	amino acid transport	0.0
+MLX	conserved	GO:0070507	regulation of microtubule cytoskeleton organization	0.0
+MLX	conserved	GO:0010656	negative regulation of muscle cell apoptotic process	0.0
+MLX	conserved	GO:0009895	negative regulation of catabolic process	0.0
+MLX	conserved	GO:0006282	regulation of DNA repair	0.0
+MLX	conserved	GO:0080135	regulation of cellular response to stress	0.0
+MLX	conserved	GO:0034605	cellular response to heat	0.0
+MLX	conserved	GO:0035821	modulation of process of another organism	0.0
+MLX	conserved	GO:1903039	positive regulation of leukocyte cell-cell adhesion	0.0
+MLX	conserved	GO:1900242	regulation of synaptic vesicle endocytosis	0.0
+MLX	conserved	GO:0051052	regulation of DNA metabolic process	0.0
+MLX	conserved	GO:0032786	positive regulation of DNA-templated transcription, elongation	0.0
+MLX	conserved	GO:0002819	regulation of adaptive immune response	0.0
+MLX	conserved	GO:0046637	regulation of alpha-beta T cell differentiation	0.0
+MLX	conserved	GO:0089718	amino acid import across plasma membrane	0.0
+MLX	conserved	GO:0098739	import across plasma membrane	0.0
+MLX	conserved	GO:0014850	response to muscle activity	0.0
+MLX	conserved	GO:0045580	regulation of T cell differentiation	0.0
+MLX	conserved	GO:1902475	L-alpha-amino acid transmembrane transport	0.0
+MLX	conserved	GO:0051983	regulation of chromosome segregation	0.0
+MLX	conserved	GO:0009408	response to heat	0.0
+MLX	conserved	GO:0046827	positive regulation of protein export from nucleus	0.0
+MLX	conserved	GO:0071229	cellular response to acid chemical	0.0
+MLX	conserved	GO:1902459	positive regulation of stem cell population maintenance	0.0
+MLX	conserved	GO:0050863	regulation of T cell activation	0.0
+MLX	conserved	GO:1903421	regulation of synaptic vesicle recycling	0.0
+MLX	conserved	GO:2000781	positive regulation of double-strand break repair	0.0
+MLX	conserved	GO:0032688	negative regulation of interferon-beta production	0.0
+MLX	conserved	GO:0032200	telomere organization	0.0
+MLX	conserved	GO:0051249	regulation of lymphocyte activation	0.0
+MLX	conserved	GO:0030705	cytoskeleton-dependent intracellular transport	0.0
+MLX	conserved	GO:0046822	regulation of nucleocytoplasmic transport	0.0
+MLX	conserved	GO:0010662	regulation of striated muscle cell apoptotic process	0.0
+MLX	conserved	GO:0007346	regulation of mitotic cell cycle	0.0
+MLX	conserved	GO:0032784	regulation of DNA-templated transcription elongation	0.0
+MLX	conserved	GO:1902099	regulation of metaphase/anaphase transition of cell cycle	0.0
+MLX	conserved	GO:1903037	regulation of leukocyte cell-cell adhesion	0.0
+MLX	conserved	GO:0000388	spliceosome conformational change to release U4 (or U4atac) and U1 (or U11)	0.0
+MLX	conserved	GO:0010507	negative regulation of autophagy	0.0
+MLX	conserved	GO:1900034	regulation of cellular response to heat	0.0
+MLX	conserved	GO:2001135	regulation of endocytic recycling	0.0
+MLX	conserved	GO:0070527	platelet aggregation	0.0
+MTF2	conserved	GO:2000328	regulation of T-helper 17 cell lineage commitment	0.0
+MTF2	conserved	GO:0043535	regulation of blood vessel endothelial cell migration	0.0
+MTF2	conserved	GO:0010608	post-transcriptional regulation of gene expression	0.0
+MTF2	conserved	GO:0072583	clathrin-dependent endocytosis	0.0
+MTF2	conserved	GO:2000316	regulation of T-helper 17 type immune response	0.0
+MTF2	conserved	GO:0050870	positive regulation of T cell activation	0.0
+MTF2	conserved	GO:0044788	host-mediated perturbation of viral process	0.0
+MTF2	conserved	GO:0090114	COPII-coated vesicle budding	0.0
+MTF2	conserved	GO:0141086	negative regulation of inflammasome-mediated signaling pathway	0.0
+MTF2	conserved	GO:0045582	positive regulation of T cell differentiation	0.0
+MTF2	conserved	GO:0008380	RNA splicing	0.01
+MTF2	conserved	GO:1903426	regulation of reactive oxygen species biosynthetic process	0.0
+MTF2	conserved	GO:0006366	transcription by RNA polymerase II	0.0
+MTF2	conserved	GO:0022407	regulation of cell-cell adhesion	0.0
+MTF2	conserved	GO:0006367	transcription initiation at RNA polymerase II promoter	0.0
+MTF2	conserved	GO:1903897	regulation of PERK-mediated unfolded protein response	0.0
+MTF2	conserved	GO:0010453	regulation of cell fate commitment	0.0
+MTF2	conserved	GO:1905168	positive regulation of double-strand break repair via homologous recombination	0.0
+MTF2	conserved	GO:2000318	positive regulation of T-helper 17 type immune response	0.0
+MTF2	conserved	GO:0006352	DNA-templated transcription initiation	0.0
+MTF2	conserved	GO:0043122	regulation of canonical NF-kappaB signal transduction	0.0
+MTF2	conserved	GO:0002822	regulation of adaptive immune response based on somatic recombination of immune receptors built from immunoglobulin superfamily domains	0.0
+MTF2	conserved	GO:0141156	cAMP/PKA signal transduction	0.0
+MTF2	conserved	GO:0045621	positive regulation of lymphocyte differentiation	0.0
+MTF2	conserved	GO:0031648	protein destabilization	0.0
+MTF2	conserved	GO:2000319	regulation of T-helper 17 cell differentiation	0.0
+MTF2	conserved	GO:0007249	canonical NF-kappaB signal transduction	0.0
+MTF2	conserved	GO:1900180	regulation of protein localization to nucleus	0.0
+MTF2	conserved	GO:0043372	positive regulation of CD4-positive, alpha-beta T cell differentiation	0.0
+MTF2	conserved	GO:0034976	response to endoplasmic reticulum stress	0.01
+MTF2	conserved	GO:0051493	regulation of cytoskeleton organization	0.0
+MTF2	conserved	GO:0075294	positive regulation by symbiont of entry into host	0.0
+MTF2	conserved	GO:2001242	regulation of intrinsic apoptotic signaling pathway	0.0
+MTF2	conserved	GO:0002697	regulation of immune effector process	0.0
+MTF2	conserved	GO:0002931	response to ischemia	0.0
+MTF2	conserved	GO:1903844	regulation of cellular response to transforming growth factor beta stimulus	0.0
+MTF2	conserved	GO:0048524	positive regulation of viral process	0.0
+MTF2	conserved	GO:0006351	DNA-templated transcription	0.0
+MTF2	conserved	GO:1904892	regulation of receptor signaling pathway via STAT	0.0
+MTF2	conserved	GO:0051251	positive regulation of lymphocyte activation	0.0
+MTF2	conserved	GO:0006457	protein folding	0.0
+MTF2	conserved	GO:0045619	regulation of lymphocyte differentiation	0.0
+MTF2	conserved	GO:0042176	regulation of protein catabolic process	0.0
+MTF2	conserved	GO:0031669	cellular response to nutrient levels	0.0
+MTF2	conserved	GO:0046596	regulation of viral entry into host cell	0.0
+MTF2	conserved	GO:0045622	regulation of T-helper cell differentiation	0.0
+MTF2	conserved	GO:0009266	response to temperature stimulus	0.0
+MTF2	conserved	GO:0010455	positive regulation of cell fate commitment	0.0
+MTF2	conserved	GO:0051225	spindle assembly	0.0
+MTF2	conserved	GO:0048208	COPII vesicle coat assembly	0.0
+MTF2	conserved	GO:0006986	response to unfolded protein	0.0
+MTF2	conserved	GO:0030511	positive regulation of transforming growth factor beta receptor signaling pathway	0.0
+MTF2	conserved	GO:0033146	regulation of intracellular estrogen receptor signaling pathway	0.0
+MTF2	conserved	GO:0046824	positive regulation of nucleocytoplasmic transport	0.0
+MTF2	conserved	GO:0032968	positive regulation of transcription elongation by RNA polymerase II	0.0
+MTF2	conserved	GO:0010660	regulation of muscle cell apoptotic process	0.0
+MTF2	conserved	GO:0034109	homotypic cell-cell adhesion	0.0
+MTF2	conserved	GO:1902903	regulation of supramolecular fiber organization	0.0
+MTF2	conserved	GO:0046635	positive regulation of alpha-beta T cell activation	0.0
+MTF2	conserved	GO:0006397	mRNA processing	0.0
+MTF2	conserved	GO:0006356	regulation of transcription by RNA polymerase I	0.0
+MTF2	conserved	GO:0046634	regulation of alpha-beta T cell activation	0.0
+MTF2	conserved	GO:2000514	regulation of CD4-positive, alpha-beta T cell activation	0.0
+MTF2	conserved	GO:1900102	negative regulation of endoplasmic reticulum unfolded protein response	0.0
+MTF2	conserved	GO:0099188	postsynaptic cytoskeleton organization	0.0
+MTF2	conserved	GO:0150105	protein localization to cell-cell junction	0.0
+MTF2	conserved	GO:0021762	substantia nigra development	0.0
+MTF2	conserved	GO:2000058	regulation of ubiquitin-dependent protein catabolic process	0.0
+MTF2	conserved	GO:2000516	positive regulation of CD4-positive, alpha-beta T cell activation	0.0
+MTF2	conserved	GO:0052372	modulation by symbiont of entry into host	0.0
+MTF2	conserved	GO:0098974	postsynaptic actin cytoskeleton organization	0.0
+MTF2	conserved	GO:0090109	regulation of cell-substrate junction assembly	0.0
+MTF2	conserved	GO:1902176	negative regulation of oxidative stress-induced intrinsic apoptotic signaling pathway	0.0
+MTF2	conserved	GO:1900182	positive regulation of protein localization to nucleus	0.0
+MTF2	conserved	GO:1902175	regulation of oxidative stress-induced intrinsic apoptotic signaling pathway	0.0
+MTF2	conserved	GO:0051495	positive regulation of cytoskeleton organization	0.0
+MTF2	conserved	GO:0007088	regulation of mitotic nuclear division	0.0
+MTF2	conserved	GO:0051893	regulation of focal adhesion assembly	0.0
+MTF2	conserved	GO:0051851	host-mediated perturbation of symbiont process	0.0
+MTF2	conserved	GO:0046598	positive regulation of viral entry into host cell	0.0
+MTF2	conserved	GO:0099159	regulation of modification of postsynaptic structure	0.0
+MTF2	conserved	GO:0050821	protein stabilization	0.0
+MTF2	conserved	GO:2000765	regulation of cytoplasmic translation	0.0
+MTF2	conserved	GO:1903898	negative regulation of PERK-mediated unfolded protein response	0.0
+MTF2	conserved	GO:1903846	positive regulation of cellular response to transforming growth factor beta stimulus	0.0
+MTF2	conserved	GO:0031647	regulation of protein stability	0.0
+MTF2	conserved	GO:0046638	positive regulation of alpha-beta T cell differentiation	0.0
+MTF2	conserved	GO:0034243	regulation of transcription elongation by RNA polymerase II	0.0
+MTF2	conserved	GO:1902105	regulation of leukocyte differentiation	0.0
+MTF2	conserved	GO:0043921	host-mediated perturbation of viral transcription	0.0
+MTF2	conserved	GO:1902107	positive regulation of leukocyte differentiation	0.0
+MTF2	conserved	GO:0002696	positive regulation of leukocyte activation	0.0
+MTF2	conserved	GO:1903902	positive regulation of viral life cycle	0.0
+MTF2	conserved	GO:0042307	positive regulation of protein import into nucleus	0.0
+MTF2	conserved	GO:1903708	positive regulation of hemopoiesis	0.0
+MTF2	conserved	GO:0001738	morphogenesis of a polarized epithelium	0.0
+MTF2	conserved	GO:1903829	positive regulation of protein localization	0.0
+MTF2	conserved	GO:2000321	positive regulation of T-helper 17 cell differentiation	0.0
+MTF2	conserved	GO:0035966	response to topologically incorrect protein	0.0
+MTF2	conserved	GO:0006417	regulation of translation	0.0
+MTF2	conserved	GO:0032388	positive regulation of intracellular transport	0.0
+MTF2	conserved	GO:2000819	regulation of nucleotide-excision repair	0.01
+MTF2	conserved	GO:0042026	protein refolding	0.0
+MTF2	conserved	GO:0043370	regulation of CD4-positive, alpha-beta T cell differentiation	0.0
+MTF2	conserved	GO:0006368	transcription elongation by RNA polymerase II	0.0
+MTF2	conserved	GO:0030168	platelet activation	0.0
+MTF2	conserved	GO:0051783	regulation of nuclear division	0.0
+MTF2	conserved	GO:0050867	positive regulation of cell activation	0.0
+MTF2	conserved	GO:0010664	negative regulation of striated muscle cell apoptotic process	0.0
+MTF2	conserved	GO:0048857	neural nucleus development	0.0
+MTF2	conserved	GO:0017015	regulation of transforming growth factor beta receptor signaling pathway	0.0
+MTF2	conserved	GO:0010656	negative regulation of muscle cell apoptotic process	0.0
+MTF2	conserved	GO:0006354	DNA-templated transcription elongation	0.0
+MTF2	conserved	GO:0006282	regulation of DNA repair	0.0
+MTF2	conserved	GO:0080135	regulation of cellular response to stress	0.0
+MTF2	conserved	GO:0034605	cellular response to heat	0.0
+MTF2	conserved	GO:0043123	positive regulation of canonical NF-kappaB signal transduction	0.0
+MTF2	conserved	GO:0035821	modulation of process of another organism	0.0
+MTF2	conserved	GO:0045624	positive regulation of T-helper cell differentiation	0.0
+MTF2	conserved	GO:0032786	positive regulation of DNA-templated transcription, elongation	0.0
+MTF2	conserved	GO:0051052	regulation of DNA metabolic process	0.01
+MTF2	conserved	GO:0002819	regulation of adaptive immune response	0.0
+MTF2	conserved	GO:0046637	regulation of alpha-beta T cell differentiation	0.0
+MTF2	conserved	GO:2001243	negative regulation of intrinsic apoptotic signaling pathway	0.0
+MTF2	conserved	GO:0045580	regulation of T cell differentiation	0.0
+MTF2	conserved	GO:0009408	response to heat	0.0
+MTF2	conserved	GO:1902459	positive regulation of stem cell population maintenance	0.0
+MTF2	conserved	GO:0050863	regulation of T cell activation	0.0
+MTF2	conserved	GO:0007051	spindle organization	0.0
+MTF2	conserved	GO:0051249	regulation of lymphocyte activation	0.0
+MTF2	conserved	GO:0010662	regulation of striated muscle cell apoptotic process	0.0
+MTF2	conserved	GO:1900226	negative regulation of NLRP3 inflammasome complex assembly	0.0
+MTF2	conserved	GO:0046425	regulation of receptor signaling pathway via JAK-STAT	0.0
+MTF2	conserved	GO:0032784	regulation of DNA-templated transcription elongation	0.0
+MTF2	conserved	GO:1900034	regulation of cellular response to heat	0.0
+MTF2	conserved	GO:0006901	vesicle coat assembly	0.0
+MTF2	conserved	GO:0070527	platelet aggregation	0.0
+NFYA	conserved	GO:0008334	histone mRNA metabolic process	0.0
+NFYA	conserved	GO:0060538	skeletal muscle organ development	0.0
+NFYA	conserved	GO:1900242	regulation of synaptic vesicle endocytosis	0.0
+NFYA	conserved	GO:0050821	protein stabilization	0.0
+NFYA	conserved	GO:0032091	negative regulation of protein binding	0.0
+NFYA	conserved	GO:2000779	regulation of double-strand break repair	0.0
+NFYA	conserved	GO:0031647	regulation of protein stability	0.0
+NFYA	conserved	GO:0008380	RNA splicing	0.0
+NFYA	conserved	GO:0051260	protein homooligomerization	0.0
+NFYA	conserved	GO:1903421	regulation of synaptic vesicle recycling	0.0
+NFYA	conserved	GO:0006397	mRNA processing	0.0
+NFYA	conserved	GO:0048489	synaptic vesicle transport	0.0
+NFYA	conserved	GO:1905168	positive regulation of double-strand break repair via homologous recombination	0.0
+NFYA	conserved	GO:0150105	protein localization to cell-cell junction	0.0
+NFYA	conserved	GO:0048168	regulation of neuronal synaptic plasticity	0.0
+NFYA	conserved	GO:0007519	skeletal muscle tissue development	0.0
+NFYA	conserved	GO:0000018	regulation of DNA recombination	0.0
+NFYA	conserved	GO:0045911	positive regulation of DNA recombination	0.0
+NFYA	conserved	GO:0010569	regulation of double-strand break repair via homologous recombination	0.0
+NME2	specific	GO:0006942	regulation of striated muscle contraction	0.0
+NME2	specific	GO:0010880	regulation of release of sequestered calcium ion into cytosol by sarcoplasmic reticulum	0.0
+NME2	specific	GO:0010881	regulation of cardiac muscle contraction by regulation of the release of sequestered calcium ion	0.0
+NME2	specific	GO:0010882	regulation of cardiac muscle contraction by calcium ion signaling	0.0
+NME2	specific	GO:0010649	regulation of cell communication by electrical coupling	0.0
+NME2	conserved	GO:1901568	fatty acid derivative metabolic process	0.0
+NME2	conserved	GO:0031647	regulation of protein stability	0.0
+NME2	conserved	GO:0010656	negative regulation of muscle cell apoptotic process	0.0
+NME2	conserved	GO:0015749	monosaccharide transmembrane transport	0.0
+NME2	conserved	GO:0050821	protein stabilization	0.0
+NME2	conserved	GO:0008645	hexose transmembrane transport	0.0
+NRF1	conserved	GO:0080135	regulation of cellular response to stress	0.0
+NRF1	conserved	GO:0006986	response to unfolded protein	0.0
+NRF1	conserved	GO:0035966	response to topologically incorrect protein	0.0
+POGK	specific	GO:0001890	placenta development	0.0
+POGK	specific	GO:1903779	regulation of cardiac conduction	0.0
+POGK	conserved	GO:0006457	protein folding	0.0
+POGK	conserved	GO:0080135	regulation of cellular response to stress	0.0
+POGK	conserved	GO:0030901	midbrain development	0.0
+POGK	conserved	GO:0032786	positive regulation of DNA-templated transcription, elongation	0.0
+POGK	conserved	GO:0034243	regulation of transcription elongation by RNA polymerase II	0.0
+POGK	conserved	GO:1902749	regulation of cell cycle G2/M phase transition	0.0
+POGK	conserved	GO:1901987	regulation of cell cycle phase transition	0.0
+POGK	conserved	GO:0009266	response to temperature stimulus	0.0
+POGK	conserved	GO:0010389	regulation of G2/M transition of mitotic cell cycle	0.0
+POGK	conserved	GO:0006986	response to unfolded protein	0.0
+POGK	conserved	GO:0032968	positive regulation of transcription elongation by RNA polymerase II	0.0
+POGK	conserved	GO:0009408	response to heat	0.0
+POGK	conserved	GO:0035966	response to topologically incorrect protein	0.0
+POGK	conserved	GO:0042026	protein refolding	0.0
+POGK	conserved	GO:0001894	tissue homeostasis	0.0
+POGK	conserved	GO:0007346	regulation of mitotic cell cycle	0.0
+POGK	conserved	GO:0021762	substantia nigra development	0.0
+POGK	conserved	GO:0032784	regulation of DNA-templated transcription elongation	0.0
+POGK	conserved	GO:0048857	neural nucleus development	0.0
+POGK	conserved	GO:0060249	anatomical structure homeostasis	0.0
+POGK	conserved	GO:1901990	regulation of mitotic cell cycle phase transition	0.0
+POGK	conserved	GO:1901976	regulation of cell cycle checkpoint	0.0
+POGK	conserved	GO:0070527	platelet aggregation	0.0
+RBBP4	conserved	GO:0032388	positive regulation of intracellular transport	0.0
+SMARCA1	specific	GO:0019221	cytokine-mediated signaling pathway	0.0
+SMARCA1	specific	GO:0060333	type II interferon-mediated signaling pathway	0.0
+SMARCA1	specific	GO:0071346	cellular response to type II interferon	0.0
+SMARCA1	specific	GO:0002052	positive regulation of neuroblast proliferation	0.0
+SMARCA1	specific	GO:0016358	dendrite development	0.0
+SMARCA1	specific	GO:0140888	interferon-mediated signaling pathway	0.0
+SMARCA1	specific	GO:0034341	response to type II interferon	0.0
+SMARCA1	conserved	GO:0010506	regulation of autophagy	0.0
+SMARCA1	conserved	GO:0034605	cellular response to heat	0.0
+SMARCA1	conserved	GO:0009266	response to temperature stimulus	0.0
+SMARCA1	conserved	GO:0006986	response to unfolded protein	0.0
+SMARCA1	conserved	GO:0050821	protein stabilization	0.0
+SMARCA1	conserved	GO:0009408	response to heat	0.0
+SMARCA1	conserved	GO:0035966	response to topologically incorrect protein	0.0
+SOX4	specific	GO:0046471	phosphatidylglycerol metabolic process	0.0
+SOX4	specific	GO:0072524	pyridine-containing compound metabolic process	0.0
+SOX4	specific	GO:0051156	glucose 6-phosphate metabolic process	0.0
+SOX4	specific	GO:0060766	negative regulation of androgen receptor signaling pathway	0.0
+SOX4	specific	GO:0033144	negative regulation of intracellular steroid hormone receptor signaling pathway	0.0
+SOX4	specific	GO:0006740	NADPH regeneration	0.0
+SOX4	specific	GO:0042158	lipoprotein biosynthetic process	0.0
+SOX4	specific	GO:0006497	protein lipidation	0.0
+SOX4	specific	GO:0006098	pentose-phosphate shunt	0.0
+SOX4	specific	GO:0046496	nicotinamide nucleotide metabolic process	0.0
+SOX4	specific	GO:0006739	NADP+ metabolic process	0.0
+SOX4	conserved	GO:0009314	response to radiation	0.0
+SOX4	conserved	GO:0080135	regulation of cellular response to stress	0.0
+SOX4	conserved	GO:0006282	regulation of DNA repair	0.0
+SOX4	conserved	GO:2000328	regulation of T-helper 17 cell lineage commitment	0.0
+SOX4	conserved	GO:0070828	heterochromatin organization	0.0
+SOX4	conserved	GO:0061621	canonical glycolysis	0.0
+SOX4	conserved	GO:0045624	positive regulation of T-helper cell differentiation	0.0
+SOX4	conserved	GO:0010867	positive regulation of triglyceride biosynthetic process	0.0
+SOX4	conserved	GO:2000316	regulation of T-helper 17 type immune response	0.0
+SOX4	conserved	GO:1900242	regulation of synaptic vesicle endocytosis	0.0
+SOX4	conserved	GO:0072526	pyridine-containing compound catabolic process	0.0
+SOX4	conserved	GO:0051052	regulation of DNA metabolic process	0.0
+SOX4	conserved	GO:2000779	regulation of double-strand break repair	0.0
+SOX4	conserved	GO:0034214	protein hexamerization	0.0
+SOX4	conserved	GO:0046689	response to mercury ion	0.0
+SOX4	conserved	GO:0009988	cell-cell recognition	0.0
+SOX4	conserved	GO:0045622	regulation of T-helper cell differentiation	0.0
+SOX4	conserved	GO:0008380	RNA splicing	0.0
+SOX4	conserved	GO:0010455	positive regulation of cell fate commitment	0.0
+SOX4	conserved	GO:0032008	positive regulation of TOR signaling	0.0
+SOX4	conserved	GO:1901844	regulation of cell communication by electrical coupling involved in cardiac conduction	0.0
+SOX4	conserved	GO:0043921	host-mediated perturbation of viral transcription	0.0
+SOX4	conserved	GO:1903432	regulation of TORC1 signaling	0.0
+SOX4	conserved	GO:0106058	positive regulation of calcineurin-mediated signaling	0.0
+SOX4	conserved	GO:0042307	positive regulation of protein import into nucleus	0.0
+SOX4	conserved	GO:0061615	glycolytic process through fructose-6-phosphate	0.0
+SOX4	conserved	GO:1904263	positive regulation of TORC1 signaling	0.0
+SOX4	conserved	GO:0090208	positive regulation of triglyceride metabolic process	0.0
+SOX4	conserved	GO:0046824	positive regulation of nucleocytoplasmic transport	0.0
+SOX4	conserved	GO:2000321	positive regulation of T-helper 17 cell differentiation	0.0
+SOX4	conserved	GO:0032388	positive regulation of intracellular transport	0.0
+SOX4	conserved	GO:1990116	ribosome-associated ubiquitin-dependent protein catabolic process	0.0
+SOX4	conserved	GO:0046635	positive regulation of alpha-beta T cell activation	0.0
+SOX4	conserved	GO:0009416	response to light stimulus	0.0
+SOX4	conserved	GO:0006397	mRNA processing	0.0
+SOX4	conserved	GO:0070886	positive regulation of calcineurin-NFAT signaling cascade	0.0
+SOX4	conserved	GO:0010453	regulation of cell fate commitment	0.0
+SOX4	conserved	GO:0046634	regulation of alpha-beta T cell activation	0.0
+SOX4	conserved	GO:1905168	positive regulation of double-strand break repair via homologous recombination	0.0
+SOX4	conserved	GO:0043370	regulation of CD4-positive, alpha-beta T cell differentiation	0.0
+SOX4	conserved	GO:0007339	binding of sperm to zona pellucida	0.0
+SOX4	conserved	GO:0051259	protein complex oligomerization	0.0
+SOX4	conserved	GO:2000514	regulation of CD4-positive, alpha-beta T cell activation	0.0
+SOX4	conserved	GO:2000318	positive regulation of T-helper 17 type immune response	0.0
+SOX4	conserved	GO:0010866	regulation of triglyceride biosynthetic process	0.0
+SOX4	conserved	GO:0051783	regulation of nuclear division	0.0
+SOX4	conserved	GO:0009411	response to UV	0.0
+SOX4	conserved	GO:0090316	positive regulation of intracellular protein transport	0.0
+SOX4	conserved	GO:2000516	positive regulation of CD4-positive, alpha-beta T cell activation	0.0
+SOX4	conserved	GO:0032006	regulation of TOR signaling	0.0
+SOX4	conserved	GO:0035036	sperm-egg recognition	0.0
+SOX4	conserved	GO:0000018	regulation of DNA recombination	0.0
+SOX4	conserved	GO:0031507	heterochromatin formation	0.0
+SOX4	conserved	GO:0033044	regulation of chromosome organization	0.0
+SOX4	conserved	GO:0019320	hexose catabolic process	0.0
+SOX4	conserved	GO:0043372	positive regulation of CD4-positive, alpha-beta T cell differentiation	0.0
+SOX4	conserved	GO:2000319	regulation of T-helper 17 cell differentiation	0.0
+SOX4	conserved	GO:0007088	regulation of mitotic nuclear division	0.0
+SOX4	conserved	GO:0061620	glycolytic process through glucose-6-phosphate	0.0
+SOX4	conserved	GO:0045911	positive regulation of DNA recombination	0.0
+SOX4	conserved	GO:0010569	regulation of double-strand break repair via homologous recombination	0.0
+SRCAP	conserved	GO:0006457	protein folding	0.0
+SRCAP	conserved	GO:0035966	response to topologically incorrect protein	0.0
+SRCAP	conserved	GO:0006986	response to unfolded protein	0.0
+THAP6	specific	GO:0035994	response to muscle stretch	0.0
+THAP6	specific	GO:0015931	nucleobase-containing compound transport	0.0
+THAP6	specific	GO:0050982	detection of mechanical stimulus	0.0
+THAP6	specific	GO:0090068	positive regulation of cell cycle process	0.0
+THAP6	specific	GO:0006399	tRNA metabolic process	0.0
+THAP6	conserved	GO:0051251	positive regulation of lymphocyte activation	0.0
+THAP6	conserved	GO:0006457	protein folding	0.0
+THAP6	conserved	GO:0080135	regulation of cellular response to stress	0.0
+THAP6	conserved	GO:0034605	cellular response to heat	0.0
+THAP6	conserved	GO:0007018	microtubule-based movement	0.0
+THAP6	conserved	GO:1902414	protein localization to cell junction	0.0
+THAP6	conserved	GO:0050870	positive regulation of T cell activation	0.0
+THAP6	conserved	GO:1903039	positive regulation of leukocyte cell-cell adhesion	0.0
+THAP6	conserved	GO:0050821	protein stabilization	0.0
+THAP6	conserved	GO:0033045	regulation of sister chromatid segregation	0.0
+THAP6	conserved	GO:0030071	regulation of mitotic metaphase/anaphase transition	0.0
+THAP6	conserved	GO:0007599	hemostasis	0.01
+THAP6	conserved	GO:0031647	regulation of protein stability	0.0
+THAP6	conserved	GO:1901987	regulation of cell cycle phase transition	0.0
+THAP6	conserved	GO:0045785	positive regulation of cell adhesion	0.0
+THAP6	conserved	GO:0009266	response to temperature stimulus	0.0
+THAP6	conserved	GO:0002696	positive regulation of leukocyte activation	0.0
+THAP6	conserved	GO:0045580	regulation of T cell differentiation	0.0
+THAP6	conserved	GO:0006986	response to unfolded protein	0.0
+THAP6	conserved	GO:0031109	microtubule polymerization or depolymerization	0.0
+THAP6	conserved	GO:0022407	regulation of cell-cell adhesion	0.0
+THAP6	conserved	GO:0009408	response to heat	0.0
+THAP6	conserved	GO:0099111	microtubule-based transport	0.0
+THAP6	conserved	GO:0032388	positive regulation of intracellular transport	0.0
+THAP6	conserved	GO:0034109	homotypic cell-cell adhesion	0.02
+THAP6	conserved	GO:2000819	regulation of nucleotide-excision repair	0.0
+THAP6	conserved	GO:0035966	response to topologically incorrect protein	0.0
+THAP6	conserved	GO:0050863	regulation of T cell activation	0.0
+THAP6	conserved	GO:0022409	positive regulation of cell-cell adhesion	0.0
+THAP6	conserved	GO:0046634	regulation of alpha-beta T cell activation	0.0
+THAP6	conserved	GO:0007051	spindle organization	0.0
+THAP6	conserved	GO:0051249	regulation of lymphocyte activation	0.0
+THAP6	conserved	GO:0030705	cytoskeleton-dependent intracellular transport	0.0
+THAP6	conserved	GO:0030168	platelet activation	0.02
+THAP6	conserved	GO:0150105	protein localization to cell-cell junction	0.01
+THAP6	conserved	GO:0007346	regulation of mitotic cell cycle	0.0
+THAP6	conserved	GO:0050867	positive regulation of cell activation	0.0
+THAP6	conserved	GO:0050817	coagulation	0.01
+THAP6	conserved	GO:1902099	regulation of metaphase/anaphase transition of cell cycle	0.0
+THAP6	conserved	GO:0042060	wound healing	0.0
+THAP6	conserved	GO:1903037	regulation of leukocyte cell-cell adhesion	0.0
+THAP6	conserved	GO:1900182	positive regulation of protein localization to nucleus	0.0
+THAP6	conserved	GO:1900180	regulation of protein localization to nucleus	0.0
+THAP6	conserved	GO:0046785	microtubule polymerization	0.0
+THAP6	conserved	GO:1901990	regulation of mitotic cell cycle phase transition	0.0
+THAP6	conserved	GO:0010970	transport along microtubule	0.0
+THAP6	conserved	GO:0070527	platelet aggregation	0.02
+THAP6	conserved	GO:0007596	blood coagulation	0.01
+TRAFD1	specific	GO:0099171	presynaptic modulation of chemical synaptic transmission	0.0
+TRAFD1	specific	GO:0022600	digestive system process	0.0
+TRAFD1	specific	GO:0043279	response to alkaloid	0.0
+TRAFD1	specific	GO:0007586	digestion	0.0
+TRAFD1	specific	GO:0007193	adenylate cyclase-inhibiting G protein-coupled receptor signaling pathway	0.0
+TRAFD1	specific	GO:1903531	negative regulation of secretion by cell	0.0
+WIZ	specific	GO:0072528	pyrimidine-containing compound biosynthetic process	0.0
+WIZ	specific	GO:0006221	pyrimidine nucleotide biosynthetic process	0.0
+WIZ	conserved	GO:0016236	macroautophagy	0.0
+WIZ	conserved	GO:0035966	response to topologically incorrect protein	0.01
+WIZ	conserved	GO:0046635	positive regulation of alpha-beta T cell activation	0.0
+WIZ	conserved	GO:0007033	vacuole organization	0.0
+WIZ	conserved	GO:0006457	protein folding	0.0
+WIZ	conserved	GO:0034605	cellular response to heat	0.0
+WIZ	conserved	GO:0000045	autophagosome assembly	0.0
+WIZ	conserved	GO:0009266	response to temperature stimulus	0.0
+WIZ	conserved	GO:0042306	regulation of protein import into nucleus	0.0
+WIZ	conserved	GO:0046822	regulation of nucleocytoplasmic transport	0.0
+WIZ	conserved	GO:0006986	response to unfolded protein	0.01
+WIZ	conserved	GO:0009408	response to heat	0.0
+WIZ	conserved	GO:1905037	autophagosome organization	0.0
+ZBTB7A	specific	GO:0080164	regulation of nitric oxide metabolic process	0.0
+ZBTB7A	specific	GO:0033121	regulation of purine nucleotide catabolic process	0.0
+ZBTB7A	specific	GO:0019693	ribose phosphate metabolic process	0.0
+ZBTB7A	specific	GO:0045429	positive regulation of nitric oxide biosynthetic process	0.0
+ZBTB7A	specific	GO:1900271	regulation of long-term synaptic potentiation	0.0
+ZBTB7A	specific	GO:0030520	estrogen receptor signaling pathway	0.0
+ZBTB7A	specific	GO:0001706	endoderm formation	0.0
+ZBTB7A	specific	GO:0051653	spindle localization	0.0
+ZBTB7A	specific	GO:0006091	generation of precursor metabolites and energy	0.0
+ZBTB7A	specific	GO:1990806	ligand-gated ion channel signaling pathway	0.0
+ZBTB7A	specific	GO:0070542	response to fatty acid	0.0
+ZBTB7A	specific	GO:0006044	N-acetylglucosamine metabolic process	0.0
+ZBTB7A	specific	GO:0072521	purine-containing compound metabolic process	0.0
+ZBTB7A	specific	GO:0032649	regulation of type II interferon production	0.0
+ZBTB7A	specific	GO:0009117	nucleotide metabolic process	0.0
+ZBTB7A	specific	GO:0009259	ribonucleotide metabolic process	0.0
+ZBTB7A	specific	GO:0097009	energy homeostasis	0.0
+ZBTB7A	specific	GO:0008344	adult locomotory behavior	0.0
+ZBTB7A	specific	GO:0007626	locomotory behavior	0.0
+ZBTB7A	specific	GO:0030534	adult behavior	0.0
+ZBTB7A	specific	GO:0072595	maintenance of protein localization in organelle	0.0
+ZBTB7A	specific	GO:1903911	positive regulation of receptor clustering	0.0
+ZBTB7A	specific	GO:1902905	positive regulation of supramolecular fiber organization	0.0
+ZBTB7A	specific	GO:0001819	positive regulation of cytokine production	0.0
+ZBTB7A	specific	GO:0051640	organelle localization	0.0
+ZBTB7A	specific	GO:0030811	regulation of nucleotide catabolic process	0.0
+ZBTB7A	specific	GO:0010562	positive regulation of phosphorus metabolic process	0.0
+ZBTB7A	specific	GO:2000406	positive regulation of T cell migration	0.0
+ZBTB7A	specific	GO:1903909	regulation of receptor clustering	0.0
+ZBTB7A	specific	GO:0009150	purine ribonucleotide metabolic process	0.0
+ZBTB7A	specific	GO:0051647	nucleus localization	0.0
+ZBTB7A	specific	GO:1902235	regulation of endoplasmic reticulum stress-induced intrinsic apoptotic signaling pathway	0.0
+ZBTB7A	specific	GO:1990000	amyloid fibril formation	0.0
+ZBTB7A	specific	GO:0030111	regulation of Wnt signaling pathway	0.0
+ZBTB7A	specific	GO:0060560	developmental growth involved in morphogenesis	0.0
+ZBTB7A	specific	GO:0045428	regulation of nitric oxide biosynthetic process	0.0
+ZBTB7A	specific	GO:1901796	regulation of signal transduction by p53 class mediator	0.0
+ZBTB7A	specific	GO:0050832	defense response to fungus	0.0
+ZBTB7A	specific	GO:0032689	negative regulation of type II interferon production	0.0
+ZBTB7A	specific	GO:0051235	maintenance of location	0.0
+ZBTB7A	specific	GO:0019732	antifungal humoral response	0.0
+ZBTB7A	specific	GO:0046034	ATP metabolic process	0.0
+ZBTB7A	specific	GO:0042116	macrophage activation	0.0
+ZBTB7A	specific	GO:0045821	positive regulation of glycolytic process	0.0
+ZBTB7A	specific	GO:0036315	cellular response to sterol	0.0
+ZBTB7A	specific	GO:0045333	cellular respiration	0.0
+ZBTB7A	specific	GO:2000404	regulation of T cell migration	0.0
+ZBTB7A	specific	GO:0009144	purine nucleoside triphosphate metabolic process	0.0
+ZBTB7A	specific	GO:0032652	regulation of interleukin-1 production	0.0
+ZBTB7A	specific	GO:0045913	positive regulation of carbohydrate metabolic process	0.0
+ZBTB7A	specific	GO:0002687	positive regulation of leukocyte migration	0.0
+ZBTB7A	specific	GO:0045981	positive regulation of nucleotide metabolic process	0.0
+ZBTB7A	specific	GO:1900272	negative regulation of long-term synaptic potentiation	0.0
+ZBTB7A	specific	GO:2000629	negative regulation of miRNA metabolic process	0.0
+ZBTB7A	specific	GO:0006110	regulation of glycolytic process	0.0
+ZBTB7A	specific	GO:0141161	regulation of cAMP/PKA signal transduction	0.0
+ZBTB7A	specific	GO:0051293	establishment of spindle localization	0.0
+ZBTB7A	specific	GO:0043516	regulation of DNA damage response, signal transduction by p53 class mediator	0.0
+ZBTB7A	specific	GO:0062013	positive regulation of small molecule metabolic process	0.0
+ZBTB7A	specific	GO:2000403	positive regulation of lymphocyte migration	0.0
+ZBTB7A	specific	GO:0048545	response to steroid hormone	0.01
+ZBTB7A	specific	GO:2000628	regulation of miRNA metabolic process	0.0
+ZBTB7A	specific	GO:1900544	positive regulation of purine nucleotide metabolic process	0.0
+ZBTB7A	specific	GO:0006164	purine nucleotide biosynthetic process	0.0
+ZBTB7A	specific	GO:1900181	negative regulation of protein localization to nucleus	0.0
+ZBTB7A	specific	GO:0090263	positive regulation of canonical Wnt signaling pathway	0.0
+ZBTB7A	specific	GO:2001238	positive regulation of extrinsic apoptotic signaling pathway	0.0
+ZBTB7A	specific	GO:0048260	positive regulation of receptor-mediated endocytosis	0.0
+ZBTB7A	specific	GO:1903578	regulation of ATP metabolic process	0.0
+ZBTB7A	specific	GO:0006163	purine nucleotide metabolic process	0.0
+ZBTB7A	specific	GO:0035235	ionotropic glutamate receptor signaling pathway	0.0
+ZBTB7A	specific	GO:0015980	energy derivation by oxidation of organic compounds	0.0
+ZBTB7A	specific	GO:0043470	regulation of carbohydrate catabolic process	0.0
+ZBTB7A	specific	GO:0033123	positive regulation of purine nucleotide catabolic process	0.0
+ZBTB7A	specific	GO:0046328	regulation of JNK cascade	0.0
+ZBTB7A	specific	GO:0006140	regulation of nucleotide metabolic process	0.0
+ZBTB7A	specific	GO:0006694	steroid biosynthetic process	0.0
+ZBTB7A	specific	GO:0032729	positive regulation of type II interferon production	0.0
+ZBTB7A	specific	GO:0035987	endodermal cell differentiation	0.0
+ZBTB7A	specific	GO:0009141	nucleoside triphosphate metabolic process	0.0
+ZBTB7A	specific	GO:0030813	positive regulation of nucleotide catabolic process	0.0
+ZBTB7A	specific	GO:0009620	response to fungus	0.0
+ZBTB7A	specific	GO:1905906	regulation of amyloid fibril formation	0.0
+ZBTB7A	specific	GO:0051642	centrosome localization	0.0
+ZBTB7A	specific	GO:0046330	positive regulation of JNK cascade	0.0
+ZBTB7A	specific	GO:0007492	endoderm development	0.0
+ZBTB7A	specific	GO:0051651	maintenance of location in cell	0.0
+ZBTB7A	specific	GO:0009205	purine ribonucleoside triphosphate metabolic process	0.0
+ZBTB7A	specific	GO:1905634	regulation of protein localization to chromatin	0.0
+ZBTB7A	specific	GO:0032642	regulation of chemokine production	0.0
+ZBTB7A	specific	GO:0016126	sterol biosynthetic process	0.0
+ZBTB7A	specific	GO:1900542	regulation of purine nucleotide metabolic process	0.0
+ZBTB7A	specific	GO:1903580	positive regulation of ATP metabolic process	0.0
+ZBTB7A	specific	GO:0051294	establishment of spindle orientation	0.0
+ZBTB7A	specific	GO:0071677	positive regulation of mononuclear cell migration	0.0
+ZBTB7A	specific	GO:0061842	microtubule organizing center localization	0.0
+ZBTB7A	specific	GO:1901654	response to ketone	0.0
+ZBTB7A	specific	GO:0002244	hematopoietic progenitor cell differentiation	0.0
+ZBTB7A	specific	GO:0032651	regulation of interleukin-1 beta production	0.0
+ZBTB7A	specific	GO:2001236	regulation of extrinsic apoptotic signaling pathway	0.0
+ZBTB7A	specific	GO:0021782	glial cell development	0.0
+ZBTB7A	conserved	GO:0034605	cellular response to heat	0.0
+ZBTB7A	conserved	GO:0006457	protein folding	0.0
+ZIC2	specific	GO:0032868	response to insulin	0.0
+ZIC2	specific	GO:0039531	regulation of cytoplasmic pattern recognition receptor signaling pathway	0.0
+ZIC2	specific	GO:0060998	regulation of dendritic spine development	0.0
+ZIC2	specific	GO:0008361	regulation of cell size	0.0
+ZIC2	specific	GO:0030177	positive regulation of Wnt signaling pathway	0.0
+ZIC2	specific	GO:0021954	central nervous system neuron development	0.0
+ZIC2	specific	GO:0051279	regulation of release of sequestered calcium ion into cytosol	0.0
+ZIC2	specific	GO:0051056	regulation of small GTPase mediated signal transduction	0.0
+ZIC2	conserved	GO:0009266	response to temperature stimulus	0.0
+ZIC2	conserved	GO:0070527	platelet aggregation	0.0
+ZIC2	conserved	GO:0009408	response to heat	0.0
+ZNF143	specific	GO:0050848	regulation of calcium-mediated signaling	0.0
+ZNF143	specific	GO:0032479	regulation of type I interferon production	0.0
+ZNF143	specific	GO:0032481	positive regulation of type I interferon production	0.0
+ZNF282	specific	GO:1902018	negative regulation of cilium assembly	0.0
+ZNF282	specific	GO:0061136	regulation of proteasomal protein catabolic process	0.0
+ZNF282	specific	GO:0043648	dicarboxylic acid metabolic process	0.0
+ZNF282	specific	GO:0080135	regulation of cellular response to stress	0.0
+ZNF282	specific	GO:0045088	regulation of innate immune response	0.0
+ZNF282	specific	GO:2001252	positive regulation of chromosome organization	0.0
+ZNF282	specific	GO:1902115	regulation of organelle assembly	0.0
+ZNF282	specific	GO:1902017	regulation of cilium assembly	0.0
+ZNF282	specific	GO:1902116	negative regulation of organelle assembly	0.0
+ZNF282	specific	GO:0048753	pigment granule organization	0.0
+ZNF282	specific	GO:0035774	positive regulation of insulin secretion involved in cellular response to glucose stimulus	0.0
+ZNF282	specific	GO:0051052	regulation of DNA metabolic process	0.0
+ZNF282	specific	GO:0050769	positive regulation of neurogenesis	0.0
+ZNF282	specific	GO:0099175	regulation of postsynapse organization	0.0
+ZNF282	specific	GO:0098877	neurotransmitter receptor transport to plasma membrane	0.0
+ZNF282	specific	GO:0045229	external encapsulating structure organization	0.0
+ZNF282	specific	GO:0002218	activation of innate immune response	0.0
+ZNF282	specific	GO:1900271	regulation of long-term synaptic potentiation	0.0
+ZNF282	specific	GO:1903540	establishment of protein localization to postsynaptic membrane	0.0
+ZNF282	specific	GO:0051960	regulation of nervous system development	0.0
+ZNF282	specific	GO:0099638	endosome to plasma membrane protein transport	0.0
+ZNF282	specific	GO:0032438	melanosome organization	0.0
+ZNF282	specific	GO:0006536	glutamate metabolic process	0.0
+ZNF282	specific	GO:0009084	glutamate family amino acid biosynthetic process	0.0
+ZNF282	specific	GO:0035315	hair cell differentiation	0.0
+ZNF282	specific	GO:0097193	intrinsic apoptotic signaling pathway	0.0
+ZNF282	specific	GO:0009636	response to toxic substance	0.0
+ZNF282	specific	GO:1902656	calcium ion import into cytosol	0.0
+ZNF282	specific	GO:0032434	regulation of proteasomal ubiquitin-dependent protein catabolic process	0.0
+ZNF282	specific	GO:1903573	negative regulation of response to endoplasmic reticulum stress	0.0
+ZNF282	specific	GO:0030595	leukocyte chemotaxis	0.0
+ZNF282	specific	GO:0050886	endocrine process	0.0
+ZNF282	specific	GO:1905508	protein localization to microtubule organizing center	0.0
+ZNF282	specific	GO:0010720	positive regulation of cell development	0.0
+ZNF282	specific	GO:0061951	establishment of protein localization to plasma membrane	0.0
+ZNF282	specific	GO:0009994	oocyte differentiation	0.0
+ZNF282	specific	GO:0007006	mitochondrial membrane organization	0.0
+ZNF282	specific	GO:0051965	positive regulation of synapse assembly	0.0
+ZNF282	specific	GO:0048536	spleen development	0.0
+ZNF282	specific	GO:0033555	multicellular organismal response to stress	0.0
+ZNF282	specific	GO:1902275	regulation of chromatin organization	0.0
+ZNF282	specific	GO:0044790	suppression of viral release by host	0.0
+ZNF282	specific	GO:1903729	regulation of plasma membrane organization	0.0
+ZNF282	specific	GO:0070661	leukocyte proliferation	0.0
+ZNF282	specific	GO:0042098	T cell proliferation	0.0
+ZNF282	specific	GO:0099637	neurotransmitter receptor transport	0.0
+ZNF282	specific	GO:0003044	regulation of systemic arterial blood pressure mediated by a chemical signal	0.0
+ZNF282	specific	GO:0002456	T cell mediated immunity	0.0
+ZNF282	specific	GO:0051962	positive regulation of nervous system development	0.0
+ZNF282	specific	GO:0061178	regulation of insulin secretion involved in cellular response to glucose stimulus	0.0
+ZNF282	specific	GO:0044380	protein localization to cytoskeleton	0.0
+ZNF282	specific	GO:0001990	regulation of systemic arterial blood pressure by hormone	0.0
+ZNF282	specific	GO:0098659	inorganic cation import across plasma membrane	0.0
+ZNF282	specific	GO:0007005	mitochondrion organization	0.0
+ZNF282	specific	GO:0090322	regulation of superoxide metabolic process	0.0
+ZNF282	specific	GO:0070585	protein localization to mitochondrion	0.0
+ZNF282	specific	GO:1905268	negative regulation of chromatin organization	0.0
+ZNF282	specific	GO:0006538	L-glutamate catabolic process	0.0
+ZNF282	specific	GO:0071539	protein localization to centrosome	0.0
+ZNF282	specific	GO:0098969	neurotransmitter receptor transport to postsynaptic membrane	0.0
+ZNF282	specific	GO:0042407	cristae formation	0.0
+ZNF282	specific	GO:0048167	regulation of synaptic plasticity	0.0
+ZNF282	specific	GO:0007007	inner mitochondrial membrane organization	0.0
+ZNF282	specific	GO:0032368	regulation of lipid transport	0.0
+ZNF282	specific	GO:0009615	response to virus	0.0
+ZNF282	specific	GO:0001991	regulation of systemic arterial blood pressure by circulatory renin-angiotensin	0.0
+ZNF282	specific	GO:0098754	detoxification	0.0
+ZNF282	specific	GO:0003081	regulation of systemic arterial blood pressure by renin-angiotensin	0.01
+ZNF282	specific	GO:0072698	protein localization to microtubule cytoskeleton	0.0
+ZNF282	specific	GO:0099587	inorganic ion import across plasma membrane	0.0
+ZNF282	specific	GO:0006886	intracellular protein transport	0.0
+ZNF282	specific	GO:0051607	defense response to virus	0.0
+ZNF282	specific	GO:1900452	regulation of long-term synaptic depression	0.0
+ZNF282	conserved	GO:0006457	protein folding	0.0
+ZNF282	conserved	GO:0006282	regulation of DNA repair	0.0
+ZNF282	conserved	GO:0080135	regulation of cellular response to stress	0.0
+ZNF282	conserved	GO:0034605	cellular response to heat	0.0
+ZNF282	conserved	GO:0046598	positive regulation of viral entry into host cell	0.0
+ZNF282	conserved	GO:0043123	positive regulation of canonical NF-kappaB signal transduction	0.0
+ZNF282	conserved	GO:0019319	hexose biosynthetic process	0.0
+ZNF282	conserved	GO:1900242	regulation of synaptic vesicle endocytosis	0.0
+ZNF282	conserved	GO:0032786	positive regulation of DNA-templated transcription, elongation	0.0
+ZNF282	conserved	GO:1902624	positive regulation of neutrophil migration	0.0
+ZNF282	conserved	GO:0031647	regulation of protein stability	0.0
+ZNF282	conserved	GO:0034243	regulation of transcription elongation by RNA polymerase II	0.0
+ZNF282	conserved	GO:0008380	RNA splicing	0.0
+ZNF282	conserved	GO:0032008	positive regulation of TOR signaling	0.0
+ZNF282	conserved	GO:1903432	regulation of TORC1 signaling	0.03
+ZNF282	conserved	GO:0048524	positive regulation of viral process	0.0
+ZNF282	conserved	GO:0044793	host-mediated suppression of viral proces	0.0
+ZNF282	conserved	GO:1903902	positive regulation of viral life cycle	0.0
+ZNF282	conserved	GO:0006986	response to unfolded protein	0.0
+ZNF282	conserved	GO:1904263	positive regulation of TORC1 signaling	0.02
+ZNF282	conserved	GO:0016064	immunoglobulin mediated immune response	0.0
+ZNF282	conserved	GO:0006366	transcription by RNA polymerase II	0.0
+ZNF282	conserved	GO:0035435	phosphate ion transmembrane transport	0.0
+ZNF282	conserved	GO:0035966	response to topologically incorrect protein	0.0
+ZNF282	conserved	GO:0042026	protein refolding	0.0
+ZNF282	conserved	GO:1902459	positive regulation of stem cell population maintenance	0.0
+ZNF282	conserved	GO:0006397	mRNA processing	0.0
+ZNF282	conserved	GO:0006094	gluconeogenesis	0.0
+ZNF282	conserved	GO:0046364	monosaccharide biosynthetic process	0.0
+ZNF282	conserved	GO:0019724	B cell mediated immunity	0.0
+ZNF282	conserved	GO:0006817	phosphate ion transport	0.0
+ZNF282	conserved	GO:0043122	regulation of canonical NF-kappaB signal transduction	0.0
+ZNF282	conserved	GO:0032785	negative regulation of DNA-templated transcription, elongation	0.0
+ZNF282	conserved	GO:0021762	substantia nigra development	0.0
+ZNF282	conserved	GO:0000375	RNA splicing, via transesterification reactions	0.0
+ZNF282	conserved	GO:0032784	regulation of DNA-templated transcription elongation	0.0
+ZNF282	conserved	GO:0002181	cytoplasmic translation	0.0
+ZNF282	conserved	GO:0034976	response to endoplasmic reticulum stress	0.0
+ZNF282	conserved	GO:0034975	protein folding in endoplasmic reticulum	0.0
+ZNF282	conserved	GO:0075294	positive regulation by symbiont of entry into host	0.0
+ZNF282	conserved	GO:2001242	regulation of intrinsic apoptotic signaling pathway	0.0
+ZNF282	conserved	GO:2000406	positive regulation of T cell migration	0.0
+ZNF282	conserved	GO:0006351	DNA-templated transcription	0.0
+ZNF282	conserved	GO:0070527	platelet aggregation	0.0
+ZNF282	conserved	GO:0043922	host-mediated suppression of viral transcription	0.0
+ZNF282	conserved	GO:0010569	regulation of double-strand break repair via homologous recombination	0.0
+ZNF507	conserved	GO:0006397	mRNA processing	0.01
+ZNF507	conserved	GO:0061844	antimicrobial humoral immune response mediated by antimicrobial peptide	0.0
+ZNF507	conserved	GO:0008380	RNA splicing	0.0
+ZNF507	conserved	GO:0040029	epigenetic regulation of gene expression	0.0
+ZNF507	conserved	GO:0048168	regulation of neuronal synaptic plasticity	0.0
+ZNF507	conserved	GO:2000779	regulation of double-strand break repair	0.0
+ZNF507	conserved	GO:0010569	regulation of double-strand break repair via homologous recombination	0.0
+ZNF512	conserved	GO:0002274	myeloid leukocyte activation	0.0
+ZNF512	conserved	GO:0009408	response to heat	0.0
+ZNF644	specific	GO:0061005	cell differentiation involved in kidney development	0.0
+ZNF644	specific	GO:0072164	mesonephric tubule development	0.0
+ZNF644	specific	GO:0001656	metanephros development	0.0
+ZNF644	specific	GO:0072273	metanephric nephron morphogenesis	0.0
+ZNF644	specific	GO:0001658	branching involved in ureteric bud morphogenesis	0.0
+ZNF644	specific	GO:0072073	kidney epithelium development	0.0
+ZNF644	specific	GO:0016485	protein processing	0.0
+ZNF644	specific	GO:0072009	nephron epithelium development	0.0
+ZNF644	specific	GO:0048729	tissue morphogenesis	0.0
+ZNF644	specific	GO:0060993	kidney morphogenesis	0.0
+ZNF644	specific	GO:0046635	positive regulation of alpha-beta T cell activation	0.0
+ZNF644	specific	GO:0016055	Wnt signaling pathway	0.0
+ZNF644	specific	GO:2000027	regulation of animal organ morphogenesis	0.0
+ZNF644	specific	GO:0072210	metanephric nephron development	0.0
+ZNF644	specific	GO:0007498	mesoderm development	0.0
+ZNF644	specific	GO:0072088	nephron epithelium morphogenesis	0.0
+ZNF644	specific	GO:0032509	endosome transport via multivesicular body sorting pathway	0.0
+ZNF644	specific	GO:0072006	nephron development	0.0
+ZNF644	specific	GO:0072074	kidney mesenchyme development	0.0
+ZNF644	specific	GO:0060795	cell fate commitment involved in formation of primary germ layer	0.0
+ZNF644	specific	GO:0001657	ureteric bud development	0.0
+ZNF644	specific	GO:0072163	mesonephric epithelium development	0.0
+ZNF644	specific	GO:0072028	nephron morphogenesis	0.0
+ZNF644	specific	GO:0035850	epithelial cell differentiation involved in kidney development	0.0
+ZNF644	specific	GO:0072087	renal vesicle development	0.0
+ZNF644	specific	GO:0001823	mesonephros development	0.0
+ZNF644	specific	GO:0046638	positive regulation of alpha-beta T cell differentiation	0.0
+ZNF644	conserved	GO:0010506	regulation of autophagy	0.0
+ZNF644	conserved	GO:0097190	apoptotic signaling pathway	0.0
+ZNF644	conserved	GO:0006457	protein folding	0.0
+ZNF644	conserved	GO:0034605	cellular response to heat	0.0
+ZNF644	conserved	GO:0009266	response to temperature stimulus	0.0
+ZNF644	conserved	GO:0006986	response to unfolded protein	0.0
+ZNF644	conserved	GO:0009408	response to heat	0.0
+ZNF644	conserved	GO:0035966	response to topologically incorrect protein	0.0
+ZNF746	specific	GO:0030834	regulation of actin filament depolymerization	0.0
+ZUFSP	conserved	GO:0051251	positive regulation of lymphocyte activation	0.0
+ZUFSP	conserved	GO:0002699	positive regulation of immune effector process	0.0
+ZUFSP	conserved	GO:0006457	protein folding	0.0
+ZUFSP	conserved	GO:0080135	regulation of cellular response to stress	0.0
+ZUFSP	conserved	GO:2000316	regulation of T-helper 17 type immune response	0.0
+ZUFSP	conserved	GO:0050821	protein stabilization	0.0
+ZUFSP	conserved	GO:0032786	positive regulation of DNA-templated transcription, elongation	0.0
+ZUFSP	conserved	GO:0045619	regulation of lymphocyte differentiation	0.0
+ZUFSP	conserved	GO:0002819	regulation of adaptive immune response	0.0
+ZUFSP	conserved	GO:0046637	regulation of alpha-beta T cell differentiation	0.0
+ZUFSP	conserved	GO:0045582	positive regulation of T cell differentiation	0.0
+ZUFSP	conserved	GO:0031647	regulation of protein stability	0.0
+ZUFSP	conserved	GO:0045622	regulation of T-helper cell differentiation	0.0
+ZUFSP	conserved	GO:0034243	regulation of transcription elongation by RNA polymerase II	0.0
+ZUFSP	conserved	GO:1902107	positive regulation of leukocyte differentiation	0.0
+ZUFSP	conserved	GO:0002696	positive regulation of leukocyte activation	0.0
+ZUFSP	conserved	GO:0045580	regulation of T cell differentiation	0.0
+ZUFSP	conserved	GO:1903708	positive regulation of hemopoiesis	0.0
+ZUFSP	conserved	GO:0006986	response to unfolded protein	0.0
+ZUFSP	conserved	GO:0032968	positive regulation of transcription elongation by RNA polymerase II	0.0
+ZUFSP	conserved	GO:0035966	response to topologically incorrect protein	0.0
+ZUFSP	conserved	GO:0046634	regulation of alpha-beta T cell activation	0.0
+ZUFSP	conserved	GO:0043370	regulation of CD4-positive, alpha-beta T cell differentiation	0.0
+ZUFSP	conserved	GO:2000514	regulation of CD4-positive, alpha-beta T cell activation	0.0
+ZUFSP	conserved	GO:0030705	cytoskeleton-dependent intracellular transport	0.0
+ZUFSP	conserved	GO:0002822	regulation of adaptive immune response based on somatic recombination of immune receptors built from immunoglobulin superfamily domains	0.0
+ZUFSP	conserved	GO:0050867	positive regulation of cell activation	0.0
+ZUFSP	conserved	GO:0032784	regulation of DNA-templated transcription elongation	0.0
+ZUFSP	conserved	GO:0045621	positive regulation of lymphocyte differentiation	0.0
+ZUFSP	conserved	GO:0090316	positive regulation of intracellular protein transport	0.0
+ZUFSP	conserved	GO:0001906	cell killing	0.0
+ZUFSP	conserved	GO:2000319	regulation of T-helper 17 cell differentiation	0.0
+ZUFSP	conserved	GO:1900182	positive regulation of protein localization to nucleus	0.0
+ZUFSP	conserved	GO:0003012	muscle system process	0.0
+ZUFSP	conserved	GO:0002697	regulation of immune effector process	0.0
+ZUFSP	conserved	GO:0051222	positive regulation of protein transport	0.0
