@@ -1,0 +1,222 @@
+term	name	candidates	chosen
+GO:0009394	2'-deoxyribonucleotide metabolic process	GO:0055086 nucleobase-containing small molecule metabolic process (683 genes);GO:1901135 carbohydrate derivative metabolic process (1014 genes)	GO:0055086
+GO:0062207	regulation of pattern recognition receptor signaling pathway	GO:0098542 defense response to other organism (1127 genes);GO:0002376 immune system process (2869 genes);GO:0023052 signaling (7085 genes)	GO:0098542
+GO:0009223	pyrimidine deoxyribonucleotide catabolic process	GO:0055086 nucleobase-containing small molecule metabolic process (683 genes);GO:1901135 carbohydrate derivative metabolic process (1014 genes)	GO:0055086
+GO:0042551	neuron maturation	GO:0030154 cell differentiation (3907 genes);GO:0048856 anatomical structure development (5381 genes)	GO:0030154
+GO:0016322	neuron remodeling	GO:0030154 cell differentiation (3907 genes);GO:0048856 anatomical structure development (5381 genes)	GO:0030154
+GO:0030516	regulation of axon extension	GO:0030154 cell differentiation (3907 genes);GO:0048856 anatomical structure development (5381 genes)	GO:0030154
+GO:0030517	negative regulation of axon extension	GO:0030154 cell differentiation (3907 genes);GO:0048856 anatomical structure development (5381 genes)	GO:0030154
+GO:0039531	regulation of cytoplasmic pattern recognition receptor signaling pathway	GO:0098542 defense response to other organism (1127 genes);GO:0002376 immune system process (2869 genes);GO:0023052 signaling (7085 genes)	GO:0098542
+GO:0009219	pyrimidine deoxyribonucleotide metabolic process	GO:0055086 nucleobase-containing small molecule metabolic process (683 genes);GO:1901135 carbohydrate derivative metabolic process (1014 genes)	GO:0055086
+GO:0070527	platelet aggregation	GO:0042060 wound healing (429 genes);GO:0007155 cell adhesion (1445 genes)	GO:0042060
+GO:2000321	positive regulation of T-helper 17 cell differentiation	GO:0007155 cell adhesion (1445 genes);GO:0002376 immune system process (2869 genes);GO:0030154 cell differentiation (3907 genes);GO:0048856 anatomical structure development (5381 genes)	GO:0007155
+GO:0045621	positive regulation of lymphocyte differentiation	GO:0002376 immune system process (2869 genes);GO:0030154 cell differentiation (3907 genes);GO:0048856 anatomical structure development (5381 genes)	GO:0002376
+GO:2000328	regulation of T-helper 17 cell lineage commitment	GO:0002376 immune system process (2869 genes);GO:0030154 cell differentiation (3907 genes);GO:0048856 anatomical structure development (5381 genes)	GO:0002376
+GO:0043306	positive regulation of mast cell degranulation	GO:0016192 vesicle-mediated transport (1396 genes);GO:0002376 immune system process (2869 genes)	GO:0016192
+GO:2000319	regulation of T-helper 17 cell differentiation	GO:0002376 immune system process (2869 genes);GO:0030154 cell differentiation (3907 genes);GO:0048856 anatomical structure development (5381 genes)	GO:0002376
+GO:0046635	positive regulation of alpha-beta T cell activation	GO:0007155 cell adhesion (1445 genes);GO:0002376 immune system process (2869 genes)	GO:0007155
+GO:0045624	positive regulation of T-helper cell differentiation	GO:0007155 cell adhesion (1445 genes);GO:0002376 immune system process (2869 genes);GO:0030154 cell differentiation (3907 genes);GO:0048856 anatomical structure development (5381 genes)	GO:0007155
+GO:0035914	skeletal muscle cell differentiation	GO:0030154 cell differentiation (3907 genes);GO:0048856 anatomical structure development (5381 genes)	GO:0030154
+GO:0050870	positive regulation of T cell activation	GO:0007155 cell adhesion (1445 genes);GO:0002376 immune system process (2869 genes)	GO:0007155
+GO:0043302	positive regulation of leukocyte degranulation	GO:0016192 vesicle-mediated transport (1396 genes);GO:0002376 immune system process (2869 genes)	GO:0016192
+GO:0045582	positive regulation of T cell differentiation	GO:0007155 cell adhesion (1445 genes);GO:0002376 immune system process (2869 genes);GO:0030154 cell differentiation (3907 genes);GO:0048856 anatomical structure development (5381 genes)	GO:0007155
+GO:0043372	positive regulation of CD4-positive, alpha-beta T cell differentiation	GO:0007155 cell adhesion (1445 genes);GO:0002376 immune system process (2869 genes);GO:0030154 cell differentiation (3907 genes);GO:0048856 anatomical structure development (5381 genes)	GO:0007155
+GO:0098840	protein transport along microtubule	GO:0007018 microtubule-based movement (522 genes);GO:0006886 intracellular protein transport (624 genes)	GO:0007018
+GO:0060251	regulation of glial cell proliferation	GO:0030154 cell differentiation (3907 genes);GO:0048856 anatomical structure development (5381 genes)	GO:0030154
+GO:0051148	negative regulation of muscle cell differentiation	GO:0030154 cell differentiation (3907 genes);GO:0048856 anatomical structure development (5381 genes)	GO:0030154
+GO:0010569	regulation of double-strand break repair via homologous recombination	GO:0006310 DNA recombination (340 genes);GO:0006281 DNA repair (663 genes)	GO:0006310
+GO:1905168	positive regulation of double-strand break repair via homologous recombination	GO:0006310 DNA recombination (340 genes);GO:0006281 DNA repair (663 genes)	GO:0006310
+GO:0003009	skeletal muscle contraction	GO:0003012 muscle system process (519 genes);GO:0050877 nervous system process (1296 genes)	GO:0003012
+GO:0006334	nucleosome assembly	GO:0006325 chromatin organization (1361 genes);GO:0065003 protein-containing complex assembly (4461 genes)	GO:0006325
+GO:2000001	regulation of DNA damage checkpoint	GO:0006950 response to stress (4119 genes);GO:0023052 signaling (7085 genes)	GO:0006950
+GO:0045622	regulation of T-helper cell differentiation	GO:0002376 immune system process (2869 genes);GO:0030154 cell differentiation (3907 genes);GO:0048856 anatomical structure development (5381 genes)	GO:0002376
+GO:0046827	positive regulation of protein export from nucleus	GO:0006913 nucleocytoplasmic transport (315 genes);GO:0006886 intracellular protein transport (624 genes)	GO:0006913
+GO:0043304	regulation of mast cell degranulation	GO:0016192 vesicle-mediated transport (1396 genes);GO:0002376 immune system process (2869 genes)	GO:0016192
+GO:0046825	regulation of protein export from nucleus	GO:0006913 nucleocytoplasmic transport (315 genes);GO:0006886 intracellular protein transport (624 genes)	GO:0006913
+GO:0010720	positive regulation of cell development	GO:0030154 cell differentiation (3907 genes);GO:0048856 anatomical structure development (5381 genes)	GO:0030154
+GO:2001242	regulation of intrinsic apoptotic signaling pathway	GO:0012501 programmed cell death (1814 genes);GO:0023052 signaling (7085 genes)	GO:0012501
+GO:0048208	COPII vesicle coat assembly	GO:0061024 membrane organization (825 genes);GO:0016192 vesicle-mediated transport (1396 genes);GO:0065003 protein-containing complex assembly (4461 genes)	GO:0061024
+GO:0014009	glial cell proliferation	GO:0030154 cell differentiation (3907 genes);GO:0048856 anatomical structure development (5381 genes)	GO:0030154
+GO:1903708	positive regulation of hemopoiesis	GO:0002376 immune system process (2869 genes);GO:0030154 cell differentiation (3907 genes);GO:0048856 anatomical structure development (5381 genes)	GO:0002376
+GO:1902107	positive regulation of leukocyte differentiation	GO:0002376 immune system process (2869 genes);GO:0030154 cell differentiation (3907 genes);GO:0048856 anatomical structure development (5381 genes)	GO:0002376
+GO:0043300	regulation of leukocyte degranulation	GO:0016192 vesicle-mediated transport (1396 genes);GO:0002376 immune system process (2869 genes)	GO:0016192
+GO:0045619	regulation of lymphocyte differentiation	GO:0002376 immune system process (2869 genes);GO:0030154 cell differentiation (3907 genes);GO:0048856 anatomical structure development (5381 genes)	GO:0002376
+GO:0046638	positive regulation of alpha-beta T cell differentiation	GO:0007155 cell adhesion (1445 genes);GO:0002376 immune system process (2869 genes);GO:0030154 cell differentiation (3907 genes);GO:0048856 anatomical structure development (5381 genes)	GO:0007155
+GO:0042307	positive regulation of protein import into nucleus	GO:0006913 nucleocytoplasmic transport (315 genes);GO:0006886 intracellular protein transport (624 genes)	GO:0006913
+GO:0099188	postsynaptic cytoskeleton organization	GO:0034330 cell junction organization (807 genes);GO:0007010 cytoskeleton organization (1549 genes)	GO:0034330
+GO:0010832	negative regulation of myotube differentiation	GO:0030154 cell differentiation (3907 genes);GO:0048856 anatomical structure development (5381 genes)	GO:0030154
+GO:2000516	positive regulation of CD4-positive, alpha-beta T cell activation	GO:0007155 cell adhesion (1445 genes);GO:0002376 immune system process (2869 genes)	GO:0007155
+GO:1902175	regulation of oxidative stress-induced intrinsic apoptotic signaling pathway	GO:0012501 programmed cell death (1814 genes);GO:0023052 signaling (7085 genes)	GO:0012501
+GO:0043370	regulation of CD4-positive, alpha-beta T cell differentiation	GO:0002376 immune system process (2869 genes);GO:0030154 cell differentiation (3907 genes);GO:0048856 anatomical structure development (5381 genes)	GO:0002376
+GO:0098974	postsynaptic actin cytoskeleton organization	GO:0034330 cell junction organization (807 genes);GO:0007010 cytoskeleton organization (1549 genes)	GO:0034330
+GO:1901532	regulation of hematopoietic progenitor cell differentiation	GO:0030154 cell differentiation (3907 genes);GO:0048856 anatomical structure development (5381 genes)	GO:0030154
+GO:0045580	regulation of T cell differentiation	GO:0002376 immune system process (2869 genes);GO:0030154 cell differentiation (3907 genes);GO:0048856 anatomical structure development (5381 genes)	GO:0002376
+GO:0090114	COPII-coated vesicle budding	GO:0061024 membrane organization (825 genes);GO:0016192 vesicle-mediated transport (1396 genes)	GO:0061024
+GO:0006901	vesicle coat assembly	GO:0061024 membrane organization (825 genes);GO:0016192 vesicle-mediated transport (1396 genes)	GO:0061024
+GO:0008625	extrinsic apoptotic signaling pathway via death domain receptors	GO:0012501 programmed cell death (1814 genes);GO:0023052 signaling (7085 genes)	GO:0012501
+GO:0046637	regulation of alpha-beta T cell differentiation	GO:0002376 immune system process (2869 genes);GO:0030154 cell differentiation (3907 genes);GO:0048856 anatomical structure development (5381 genes)	GO:0002376
+GO:0090266	regulation of mitotic cell cycle spindle assembly checkpoint	GO:0140014 mitotic nuclear division (295 genes);GO:0007059 chromosome segregation (468 genes);GO:0023052 signaling (7085 genes)	GO:0140014
+GO:1903504	regulation of mitotic spindle checkpoint	GO:0000278 mitotic cell cycle (966 genes);GO:0023052 signaling (7085 genes)	GO:0000278
+GO:2001171	positive regulation of ATP biosynthetic process	GO:0055086 nucleobase-containing small molecule metabolic process (683 genes);GO:1901135 carbohydrate derivative metabolic process (1014 genes)	GO:0055086
+GO:2001244	positive regulation of intrinsic apoptotic signaling pathway	GO:0012501 programmed cell death (1814 genes);GO:0023052 signaling (7085 genes)	GO:0012501
+GO:0055117	regulation of cardiac muscle contraction	GO:0003012 muscle system process (519 genes);GO:0003013 circulatory system process (576 genes)	GO:0003012
+GO:0002643	regulation of tolerance induction	GO:0002376 immune system process (2869 genes);GO:0048856 anatomical structure development (5381 genes)	GO:0002376
+GO:0090267	positive regulation of mitotic cell cycle spindle assembly checkpoint	GO:0140014 mitotic nuclear division (295 genes);GO:0007059 chromosome segregation (468 genes);GO:0023052 signaling (7085 genes)	GO:0140014
+GO:2001169	regulation of ATP biosynthetic process	GO:0055086 nucleobase-containing small molecule metabolic process (683 genes);GO:1901135 carbohydrate derivative metabolic process (1014 genes)	GO:0055086
+GO:0008630	intrinsic apoptotic signaling pathway in response to DNA damage	GO:0012501 programmed cell death (1814 genes);GO:0006950 response to stress (4119 genes);GO:0023052 signaling (7085 genes)	GO:0012501
+GO:0042267	natural killer cell mediated cytotoxicity	GO:0098542 defense response to other organism (1127 genes);GO:0002376 immune system process (2869 genes)	GO:0098542
+GO:0002228	natural killer cell mediated immunity	GO:0098542 defense response to other organism (1127 genes);GO:0002376 immune system process (2869 genes)	GO:0098542
+GO:0002664	regulation of T cell tolerance induction	GO:0002376 immune system process (2869 genes);GO:0048856 anatomical structure development (5381 genes)	GO:0002376
+GO:1903580	positive regulation of ATP metabolic process	GO:0055086 nucleobase-containing small molecule metabolic process (683 genes);GO:1901135 carbohydrate derivative metabolic process (1014 genes)	GO:0055086
+GO:1903578	regulation of ATP metabolic process	GO:0055086 nucleobase-containing small molecule metabolic process (683 genes);GO:1901135 carbohydrate derivative metabolic process (1014 genes)	GO:0055086
+GO:1902254	negative regulation of intrinsic apoptotic signaling pathway by p53 class mediator	GO:0012501 programmed cell death (1814 genes);GO:0023052 signaling (7085 genes)	GO:0012501
+GO:0043518	negative regulation of DNA damage response, signal transduction by p53 class mediator	GO:0006950 response to stress (4119 genes);GO:0023052 signaling (7085 genes)	GO:0006950
+GO:2000300	regulation of synaptic vesicle exocytosis	GO:0016192 vesicle-mediated transport (1396 genes);GO:0023052 signaling (7085 genes)	GO:0016192
+GO:0007131	reciprocal meiotic recombination	GO:0140013 meiotic nuclear division (176 genes);GO:0006310 DNA recombination (340 genes)	GO:0140013
+GO:1903376	regulation of oxidative stress-induced neuron intrinsic apoptotic signaling pathway	GO:0012501 programmed cell death (1814 genes);GO:0023052 signaling (7085 genes)	GO:0012501
+GO:0048714	positive regulation of oligodendrocyte differentiation	GO:0030154 cell differentiation (3907 genes);GO:0048856 anatomical structure development (5381 genes)	GO:0030154
+GO:0042102	positive regulation of T cell proliferation	GO:0007155 cell adhesion (1445 genes);GO:0002376 immune system process (2869 genes)	GO:0007155
+GO:0010965	regulation of mitotic sister chromatid separation	GO:0140014 mitotic nuclear division (295 genes);GO:0007059 chromosome segregation (468 genes)	GO:0140014
+GO:0000387	spliceosomal snRNP assembly	GO:0016071 mRNA metabolic process (1808 genes);GO:0065003 protein-containing complex assembly (4461 genes)	GO:0016071
+GO:0000388	spliceosome conformational change to release U4 (or U4atac) and U1 (or U11)	GO:0016071 mRNA metabolic process (1808 genes);GO:0065003 protein-containing complex assembly (4461 genes)	GO:0016071
+GO:0007020	microtubule nucleation	GO:0007010 cytoskeleton organization (1549 genes);GO:0065003 protein-containing complex assembly (4461 genes)	GO:0007010
+GO:0045815	transcription initiation-coupled chromatin remodeling	GO:0006325 chromatin organization (1361 genes);GO:0006351 DNA-templated transcription (3891 genes)	GO:0006325
+GO:0046785	microtubule polymerization	GO:0007010 cytoskeleton organization (1549 genes);GO:0065003 protein-containing complex assembly (4461 genes)	GO:0007010
+GO:0030071	regulation of mitotic metaphase/anaphase transition	GO:0007059 chromosome segregation (468 genes);GO:0000278 mitotic cell cycle (966 genes)	GO:0007059
+GO:0000393	spliceosomal conformational changes to generate catalytic conformation	GO:0016071 mRNA metabolic process (1808 genes);GO:0065003 protein-containing complex assembly (4461 genes)	GO:0016071
+GO:0000244	spliceosomal tri-snRNP complex assembly	GO:0016071 mRNA metabolic process (1808 genes);GO:0065003 protein-containing complex assembly (4461 genes)	GO:0016071
+GO:0141086	negative regulation of inflammasome-mediated signaling pathway	GO:0006954 inflammatory response (873 genes);GO:0098542 defense response to other organism (1127 genes);GO:0002376 immune system process (2869 genes);GO:0023052 signaling (7085 genes)	GO:0006954
+GO:0048240	sperm capacitation	GO:0022414 reproductive process (1282 genes);GO:0030154 cell differentiation (3907 genes);GO:0048856 anatomical structure development (5381 genes)	GO:0022414
+GO:1903706	regulation of hemopoiesis	GO:0002376 immune system process (2869 genes);GO:0030154 cell differentiation (3907 genes);GO:0048856 anatomical structure development (5381 genes)	GO:0002376
+GO:0061621	canonical glycolysis	GO:0006091 generation of precursor metabolites and energy (442 genes);GO:0005975 carbohydrate metabolic process (500 genes);GO:0055086 nucleobase-containing small molecule metabolic process (683 genes);GO:1901135 carbohydrate derivative metabolic process (1014 genes)	GO:0006091
+GO:1902105	regulation of leukocyte differentiation	GO:0002376 immune system process (2869 genes);GO:0030154 cell differentiation (3907 genes);GO:0048856 anatomical structure development (5381 genes)	GO:0002376
+GO:1901739	regulation of myoblast fusion	GO:0030154 cell differentiation (3907 genes);GO:0048856 anatomical structure development (5381 genes)	GO:0030154
+GO:1903241	U2-type prespliceosome assembly	GO:0016071 mRNA metabolic process (1808 genes);GO:0065003 protein-containing complex assembly (4461 genes)	GO:0016071
+GO:1900226	negative regulation of NLRP3 inflammasome complex assembly	GO:0006954 inflammatory response (873 genes);GO:0098542 defense response to other organism (1127 genes);GO:0002376 immune system process (2869 genes);GO:0065003 protein-containing complex assembly (4461 genes);GO:0023052 signaling (7085 genes)	GO:0006954
+GO:0045604	regulation of epidermal cell differentiation	GO:0030154 cell differentiation (3907 genes);GO:0048856 anatomical structure development (5381 genes)	GO:0030154
+GO:0044319	wound healing, spreading of cells	GO:0042060 wound healing (429 genes);GO:0048870 cell motility (1872 genes);GO:0048856 anatomical structure development (5381 genes)	GO:0042060
+GO:0090505	epiboly involved in wound healing	GO:0042060 wound healing (429 genes);GO:0048856 anatomical structure development (5381 genes)	GO:0042060
+GO:2001243	negative regulation of intrinsic apoptotic signaling pathway	GO:0012501 programmed cell death (1814 genes);GO:0023052 signaling (7085 genes)	GO:0012501
+GO:1902176	negative regulation of oxidative stress-induced intrinsic apoptotic signaling pathway	GO:0012501 programmed cell death (1814 genes);GO:0023052 signaling (7085 genes)	GO:0012501
+GO:0042306	regulation of protein import into nucleus	GO:0006913 nucleocytoplasmic transport (315 genes);GO:0006886 intracellular protein transport (624 genes)	GO:0006913
+GO:0001754	eye photoreceptor cell differentiation	GO:0030154 cell differentiation (3907 genes);GO:0048856 anatomical structure development (5381 genes)	GO:0030154
+GO:0046530	photoreceptor cell differentiation	GO:0030154 cell differentiation (3907 genes);GO:0048856 anatomical structure development (5381 genes)	GO:0030154
+GO:0097191	extrinsic apoptotic signaling pathway	GO:0012501 programmed cell death (1814 genes);GO:0023052 signaling (7085 genes)	GO:0012501
+GO:0045666	positive regulation of neuron differentiation	GO:0030154 cell differentiation (3907 genes);GO:0048856 anatomical structure development (5381 genes)	GO:0030154
+GO:0002691	regulation of cellular extravasation	GO:0048870 cell motility (1872 genes);GO:0002376 immune system process (2869 genes)	GO:0048870
+GO:0045664	regulation of neuron differentiation	GO:0030154 cell differentiation (3907 genes);GO:0048856 anatomical structure development (5381 genes)	GO:0030154
+GO:0000027	ribosomal large subunit assembly	GO:0042254 ribosome biogenesis (325 genes);GO:0065003 protein-containing complex assembly (4461 genes)	GO:0042254
+GO:1902036	regulation of hematopoietic stem cell differentiation	GO:0030154 cell differentiation (3907 genes);GO:0048856 anatomical structure development (5381 genes)	GO:0030154
+GO:0007416	synapse assembly	GO:0034330 cell junction organization (807 genes);GO:0048856 anatomical structure development (5381 genes)	GO:0034330
+GO:1902850	microtubule cytoskeleton organization involved in mitosis	GO:0000278 mitotic cell cycle (966 genes);GO:0007010 cytoskeleton organization (1549 genes)	GO:0000278
+GO:0007052	mitotic spindle organization	GO:0000278 mitotic cell cycle (966 genes);GO:0007010 cytoskeleton organization (1549 genes)	GO:0000278
+GO:0071346	cellular response to type II interferon	GO:0098542 defense response to other organism (1127 genes);GO:0002376 immune system process (2869 genes)	GO:0098542
+GO:0051225	spindle assembly	GO:0007059 chromosome segregation (468 genes);GO:0007010 cytoskeleton organization (1549 genes)	GO:0007059
+GO:0034341	response to type II interferon	GO:0098542 defense response to other organism (1127 genes);GO:0002376 immune system process (2869 genes)	GO:0098542
+GO:0060236	regulation of mitotic spindle organization	GO:0000278 mitotic cell cycle (966 genes);GO:0007010 cytoskeleton organization (1549 genes)	GO:0000278
+GO:0090307	mitotic spindle assembly	GO:0140014 mitotic nuclear division (295 genes);GO:0007059 chromosome segregation (468 genes);GO:0007010 cytoskeleton organization (1549 genes)	GO:0140014
+GO:0051893	regulation of focal adhesion assembly	GO:0034330 cell junction organization (807 genes);GO:0007155 cell adhesion (1445 genes)	GO:0034330
+GO:0007597	blood coagulation, intrinsic pathway	GO:0042060 wound healing (429 genes);GO:0051604 protein maturation (649 genes)	GO:0042060
+GO:0060008	Sertoli cell differentiation	GO:0022414 reproductive process (1282 genes);GO:0030154 cell differentiation (3907 genes);GO:0048856 anatomical structure development (5381 genes)	GO:0022414
+GO:0046949	fatty-acyl-CoA biosynthetic process	GO:0006790 sulfur compound metabolic process (283 genes);GO:0055086 nucleobase-containing small molecule metabolic process (683 genes);GO:0006629 lipid metabolic process (1306 genes)	GO:0006790
+GO:0072378	blood coagulation, fibrin clot formation	GO:0042060 wound healing (429 genes);GO:0051604 protein maturation (649 genes)	GO:0042060
+GO:0033047	regulation of mitotic sister chromatid segregation	GO:0140014 mitotic nuclear division (295 genes);GO:0007059 chromosome segregation (468 genes)	GO:0140014
+GO:2001233	regulation of apoptotic signaling pathway	GO:0012501 programmed cell death (1814 genes);GO:0023052 signaling (7085 genes)	GO:0012501
+GO:0009299	mRNA transcription	GO:0016071 mRNA metabolic process (1808 genes);GO:0006351 DNA-templated transcription (3891 genes)	GO:0016071
+GO:0042789	mRNA transcription by RNA polymerase II	GO:0016071 mRNA metabolic process (1808 genes);GO:0006351 DNA-templated transcription (3891 genes)	GO:0016071
+GO:0071616	acyl-CoA biosynthetic process	GO:0006790 sulfur compound metabolic process (283 genes);GO:0055086 nucleobase-containing small molecule metabolic process (683 genes)	GO:0006790
+GO:0000070	mitotic sister chromatid segregation	GO:0140014 mitotic nuclear division (295 genes);GO:0007059 chromosome segregation (468 genes)	GO:0140014
+GO:0048841	regulation of axon extension involved in axon guidance	GO:0030154 cell differentiation (3907 genes);GO:0048856 anatomical structure development (5381 genes)	GO:0030154
+GO:0070571	negative regulation of neuron projection regeneration	GO:0030154 cell differentiation (3907 genes);GO:0006950 response to stress (4119 genes);GO:0048856 anatomical structure development (5381 genes)	GO:0030154
+GO:0048681	negative regulation of axon regeneration	GO:0030154 cell differentiation (3907 genes);GO:0006950 response to stress (4119 genes);GO:0048856 anatomical structure development (5381 genes)	GO:0030154
+GO:0160257	complement activation, GZMK pathway	GO:0098542 defense response to other organism (1127 genes);GO:0002376 immune system process (2869 genes)	GO:0098542
+GO:0090141	positive regulation of mitochondrial fission	GO:0007005 mitochondrion organization (382 genes);GO:0048856 anatomical structure development (5381 genes)	GO:0007005
+GO:0090140	regulation of mitochondrial fission	GO:0007005 mitochondrion organization (382 genes);GO:0048856 anatomical structure development (5381 genes)	GO:0007005
+GO:0010001	glial cell differentiation	GO:0030154 cell differentiation (3907 genes);GO:0048856 anatomical structure development (5381 genes)	GO:0030154
+GO:0045954	positive regulation of natural killer cell mediated cytotoxicity	GO:0098542 defense response to other organism (1127 genes);GO:0002376 immune system process (2869 genes)	GO:0098542
+GO:0060252	positive regulation of glial cell proliferation	GO:0030154 cell differentiation (3907 genes);GO:0048856 anatomical structure development (5381 genes)	GO:0030154
+GO:0090169	regulation of spindle assembly	GO:0007059 chromosome segregation (468 genes);GO:0007010 cytoskeleton organization (1549 genes)	GO:0007059
+GO:0045663	positive regulation of myoblast differentiation	GO:0030154 cell differentiation (3907 genes);GO:0048856 anatomical structure development (5381 genes)	GO:0030154
+GO:0045661	regulation of myoblast differentiation	GO:0030154 cell differentiation (3907 genes);GO:0048856 anatomical structure development (5381 genes)	GO:0030154
+GO:2000406	positive regulation of T cell migration	GO:0048870 cell motility (1872 genes);GO:0002376 immune system process (2869 genes)	GO:0048870
+GO:0002223	stimulatory C-type lectin receptor signaling pathway	GO:0098542 defense response to other organism (1127 genes);GO:0002376 immune system process (2869 genes);GO:0023052 signaling (7085 genes)	GO:0098542
+GO:0048679	regulation of axon regeneration	GO:0030154 cell differentiation (3907 genes);GO:0006950 response to stress (4119 genes);GO:0048856 anatomical structure development (5381 genes)	GO:0030154
+GO:0045591	positive regulation of regulatory T cell differentiation	GO:0007155 cell adhesion (1445 genes);GO:0002376 immune system process (2869 genes);GO:0030154 cell differentiation (3907 genes);GO:0048856 anatomical structure development (5381 genes)	GO:0007155
+GO:0070570	regulation of neuron projection regeneration	GO:0030154 cell differentiation (3907 genes);GO:0006950 response to stress (4119 genes);GO:0048856 anatomical structure development (5381 genes)	GO:0030154
+GO:1903898	negative regulation of PERK-mediated unfolded protein response	GO:0006950 response to stress (4119 genes);GO:0023052 signaling (7085 genes)	GO:0006950
+GO:1900102	negative regulation of endoplasmic reticulum unfolded protein response	GO:0006950 response to stress (4119 genes);GO:0023052 signaling (7085 genes)	GO:0006950
+GO:1903897	regulation of PERK-mediated unfolded protein response	GO:0006950 response to stress (4119 genes);GO:0023052 signaling (7085 genes)	GO:0006950
+GO:0002227	innate immune response in mucosa	GO:0098542 defense response to other organism (1127 genes);GO:0002376 immune system process (2869 genes)	GO:0098542
+GO:0010881	regulation of cardiac muscle contraction by regulation of the release of sequestered calcium ion	GO:0003012 muscle system process (519 genes);GO:0003013 circulatory system process (576 genes);GO:0055085 transmembrane transport (1702 genes);GO:0023052 signaling (7085 genes)	GO:0003012
+GO:0010882	regulation of cardiac muscle contraction by calcium ion signaling	GO:0003012 muscle system process (519 genes);GO:0003013 circulatory system process (576 genes);GO:0023052 signaling (7085 genes)	GO:0003012
+GO:0019731	antibacterial humoral response	GO:0098542 defense response to other organism (1127 genes);GO:0002376 immune system process (2869 genes)	GO:0098542
+GO:0060333	type II interferon-mediated signaling pathway	GO:0098542 defense response to other organism (1127 genes);GO:0002376 immune system process (2869 genes);GO:0023052 signaling (7085 genes)	GO:0098542
+GO:0016358	dendrite development	GO:0030154 cell differentiation (3907 genes);GO:0048856 anatomical structure development (5381 genes)	GO:0030154
+GO:0002052	positive regulation of neuroblast proliferation	GO:0030154 cell differentiation (3907 genes);GO:0048856 anatomical structure development (5381 genes)	GO:0030154
+GO:0006098	pentose-phosphate shunt	GO:0006091 generation of precursor metabolites and energy (442 genes);GO:0055086 nucleobase-containing small molecule metabolic process (683 genes);GO:1901135 carbohydrate derivative metabolic process (1014 genes)	GO:0006091
+GO:0006740	NADPH regeneration	GO:0006091 generation of precursor metabolites and energy (442 genes);GO:0055086 nucleobase-containing small molecule metabolic process (683 genes)	GO:0006091
+GO:0061620	glycolytic process through glucose-6-phosphate	GO:0006091 generation of precursor metabolites and energy (442 genes);GO:0005975 carbohydrate metabolic process (500 genes);GO:0055086 nucleobase-containing small molecule metabolic process (683 genes);GO:1901135 carbohydrate derivative metabolic process (1014 genes)	GO:0006091
+GO:0061615	glycolytic process through fructose-6-phosphate	GO:0006091 generation of precursor metabolites and energy (442 genes);GO:0005975 carbohydrate metabolic process (500 genes);GO:0055086 nucleobase-containing small molecule metabolic process (683 genes);GO:1901135 carbohydrate derivative metabolic process (1014 genes)	GO:0006091
+GO:0070365	hepatocyte differentiation	GO:0030154 cell differentiation (3907 genes);GO:0048856 anatomical structure development (5381 genes)	GO:0030154
+GO:0001774	microglial cell activation	GO:0006954 inflammatory response (873 genes);GO:0002376 immune system process (2869 genes)	GO:0006954
+GO:0002269	leukocyte activation involved in inflammatory response	GO:0006954 inflammatory response (873 genes);GO:0002376 immune system process (2869 genes)	GO:0006954
+GO:0009150	purine ribonucleotide metabolic process	GO:0055086 nucleobase-containing small molecule metabolic process (683 genes);GO:1901135 carbohydrate derivative metabolic process (1014 genes)	GO:0055086
+GO:0043516	regulation of DNA damage response, signal transduction by p53 class mediator	GO:0006950 response to stress (4119 genes);GO:0023052 signaling (7085 genes)	GO:0006950
+GO:0045821	positive regulation of glycolytic process	GO:0006091 generation of precursor metabolites and energy (442 genes);GO:0005975 carbohydrate metabolic process (500 genes);GO:0055086 nucleobase-containing small molecule metabolic process (683 genes);GO:1901135 carbohydrate derivative metabolic process (1014 genes)	GO:0006091
+GO:0019732	antifungal humoral response	GO:0098542 defense response to other organism (1127 genes);GO:0002376 immune system process (2869 genes)	GO:0098542
+GO:0009259	ribonucleotide metabolic process	GO:0055086 nucleobase-containing small molecule metabolic process (683 genes);GO:1901135 carbohydrate derivative metabolic process (1014 genes)	GO:0055086
+GO:0021782	glial cell development	GO:0030154 cell differentiation (3907 genes);GO:0048856 anatomical structure development (5381 genes)	GO:0030154
+GO:0002244	hematopoietic progenitor cell differentiation	GO:0030154 cell differentiation (3907 genes);GO:0048856 anatomical structure development (5381 genes)	GO:0030154
+GO:0048143	astrocyte activation	GO:0006954 inflammatory response (873 genes);GO:0030154 cell differentiation (3907 genes);GO:0048856 anatomical structure development (5381 genes)	GO:0006954
+GO:0046034	ATP metabolic process	GO:0055086 nucleobase-containing small molecule metabolic process (683 genes);GO:1901135 carbohydrate derivative metabolic process (1014 genes)	GO:0055086
+GO:1902235	regulation of endoplasmic reticulum stress-induced intrinsic apoptotic signaling pathway	GO:0012501 programmed cell death (1814 genes);GO:0006950 response to stress (4119 genes);GO:0023052 signaling (7085 genes)	GO:0012501
+GO:0014002	astrocyte development	GO:0030154 cell differentiation (3907 genes);GO:0048856 anatomical structure development (5381 genes)	GO:0030154
+GO:2001238	positive regulation of extrinsic apoptotic signaling pathway	GO:0012501 programmed cell death (1814 genes);GO:0023052 signaling (7085 genes)	GO:0012501
+GO:2001236	regulation of extrinsic apoptotic signaling pathway	GO:0012501 programmed cell death (1814 genes);GO:0023052 signaling (7085 genes)	GO:0012501
+GO:0051294	establishment of spindle orientation	GO:0007163 establishment or maintenance of cell polarity (209 genes);GO:0007010 cytoskeleton organization (1549 genes)	GO:0007163
+GO:0090026	positive regulation of monocyte chemotaxis	GO:0048870 cell motility (1872 genes);GO:0002376 immune system process (2869 genes)	GO:0048870
+GO:2000404	regulation of T cell migration	GO:0048870 cell motility (1872 genes);GO:0002376 immune system process (2869 genes)	GO:0048870
+GO:0090025	regulation of monocyte chemotaxis	GO:0048870 cell motility (1872 genes);GO:0002376 immune system process (2869 genes)	GO:0048870
+GO:0035987	endodermal cell differentiation	GO:0030154 cell differentiation (3907 genes);GO:0048856 anatomical structure development (5381 genes)	GO:0030154
+GO:2000403	positive regulation of lymphocyte migration	GO:0048870 cell motility (1872 genes);GO:0002376 immune system process (2869 genes)	GO:0048870
+GO:0006110	regulation of glycolytic process	GO:0006091 generation of precursor metabolites and energy (442 genes);GO:0005975 carbohydrate metabolic process (500 genes);GO:0055086 nucleobase-containing small molecule metabolic process (683 genes);GO:1901135 carbohydrate derivative metabolic process (1014 genes)	GO:0006091
+GO:0061515	myeloid cell development	GO:0030154 cell differentiation (3907 genes);GO:0048856 anatomical structure development (5381 genes)	GO:0030154
+GO:0071677	positive regulation of mononuclear cell migration	GO:0048870 cell motility (1872 genes);GO:0002376 immune system process (2869 genes)	GO:0048870
+GO:0002687	positive regulation of leukocyte migration	GO:0048870 cell motility (1872 genes);GO:0002376 immune system process (2869 genes)	GO:0048870
+GO:0060998	regulation of dendritic spine development	GO:0030154 cell differentiation (3907 genes);GO:0048856 anatomical structure development (5381 genes)	GO:0030154
+GO:0021801	cerebral cortex radial glia-guided migration	GO:0048870 cell motility (1872 genes);GO:0030154 cell differentiation (3907 genes);GO:0048856 anatomical structure development (5381 genes)	GO:0048870
+GO:0022030	telencephalon glial cell migration	GO:0048870 cell motility (1872 genes);GO:0030154 cell differentiation (3907 genes);GO:0048856 anatomical structure development (5381 genes)	GO:0048870
+GO:0021799	cerebral cortex radially oriented cell migration	GO:0048870 cell motility (1872 genes);GO:0048856 anatomical structure development (5381 genes)	GO:0048870
+GO:0008347	glial cell migration	GO:0048870 cell motility (1872 genes);GO:0030154 cell differentiation (3907 genes);GO:0048856 anatomical structure development (5381 genes)	GO:0048870
+GO:0090128	regulation of synapse maturation	GO:0034330 cell junction organization (807 genes);GO:0048856 anatomical structure development (5381 genes)	GO:0034330
+GO:0021795	cerebral cortex cell migration	GO:0048870 cell motility (1872 genes);GO:0048856 anatomical structure development (5381 genes)	GO:0048870
+GO:0022029	telencephalon cell migration	GO:0048870 cell motility (1872 genes);GO:0048856 anatomical structure development (5381 genes)	GO:0048870
+GO:0021885	forebrain cell migration	GO:0048870 cell motility (1872 genes);GO:0048856 anatomical structure development (5381 genes)	GO:0048870
+GO:0021884	forebrain neuron development	GO:0030154 cell differentiation (3907 genes);GO:0048856 anatomical structure development (5381 genes)	GO:0030154
+GO:0021954	central nervous system neuron development	GO:0030154 cell differentiation (3907 genes);GO:0048856 anatomical structure development (5381 genes)	GO:0030154
+GO:0007006	mitochondrial membrane organization	GO:0007005 mitochondrion organization (382 genes);GO:0061024 membrane organization (825 genes)	GO:0007005
+GO:0045088	regulation of innate immune response	GO:0098542 defense response to other organism (1127 genes);GO:0002376 immune system process (2869 genes)	GO:0098542
+GO:0099638	endosome to plasma membrane protein transport	GO:0072659 protein localization to plasma membrane (273 genes);GO:0006886 intracellular protein transport (624 genes);GO:0016192 vesicle-mediated transport (1396 genes)	GO:0072659
+GO:0001990	regulation of systemic arterial blood pressure by hormone	GO:0050886 endocrine process (76 genes);GO:0003013 circulatory system process (576 genes)	GO:0050886
+GO:0007007	inner mitochondrial membrane organization	GO:0007005 mitochondrion organization (382 genes);GO:0061024 membrane organization (825 genes)	GO:0007005
+GO:0042407	cristae formation	GO:0007005 mitochondrion organization (382 genes);GO:0061024 membrane organization (825 genes)	GO:0007005
+GO:0035315	hair cell differentiation	GO:0030154 cell differentiation (3907 genes);GO:0048856 anatomical structure development (5381 genes)	GO:0030154
+GO:0001991	regulation of systemic arterial blood pressure by circulatory renin-angiotensin	GO:0050886 endocrine process (76 genes);GO:0003013 circulatory system process (576 genes)	GO:0050886
+GO:0002218	activation of innate immune response	GO:0098542 defense response to other organism (1127 genes);GO:0002376 immune system process (2869 genes)	GO:0098542
+GO:0003081	regulation of systemic arterial blood pressure by renin-angiotensin	GO:0050886 endocrine process (76 genes);GO:0003013 circulatory system process (576 genes)	GO:0050886
+GO:0050769	positive regulation of neurogenesis	GO:0030154 cell differentiation (3907 genes);GO:0048856 anatomical structure development (5381 genes)	GO:0030154
+GO:0051965	positive regulation of synapse assembly	GO:0034330 cell junction organization (807 genes);GO:0048856 anatomical structure development (5381 genes)	GO:0034330
+GO:0097193	intrinsic apoptotic signaling pathway	GO:0012501 programmed cell death (1814 genes);GO:0023052 signaling (7085 genes)	GO:0012501
+GO:0048536	spleen development	GO:0002376 immune system process (2869 genes);GO:0048856 anatomical structure development (5381 genes)	GO:0002376
+GO:0030595	leukocyte chemotaxis	GO:0048870 cell motility (1872 genes);GO:0002376 immune system process (2869 genes)	GO:0048870
+GO:0009994	oocyte differentiation	GO:0022414 reproductive process (1282 genes);GO:0030154 cell differentiation (3907 genes);GO:0048856 anatomical structure development (5381 genes)	GO:0022414
+GO:1902624	positive regulation of neutrophil migration	GO:0048870 cell motility (1872 genes);GO:0002376 immune system process (2869 genes)	GO:0048870
+GO:0005978	glycogen biosynthetic process	GO:0006091 generation of precursor metabolites and energy (442 genes);GO:0005975 carbohydrate metabolic process (500 genes)	GO:0006091
+GO:0061844	antimicrobial humoral immune response mediated by antimicrobial peptide	GO:0098542 defense response to other organism (1127 genes);GO:0002376 immune system process (2869 genes)	GO:0098542
+GO:0061005	cell differentiation involved in kidney development	GO:0030154 cell differentiation (3907 genes);GO:0048856 anatomical structure development (5381 genes)	GO:0030154
+GO:0060795	cell fate commitment involved in formation of primary germ layer	GO:0030154 cell differentiation (3907 genes);GO:0048856 anatomical structure development (5381 genes)	GO:0030154
+GO:0035850	epithelial cell differentiation involved in kidney development	GO:0030154 cell differentiation (3907 genes);GO:0048856 anatomical structure development (5381 genes)	GO:0030154
+GO:0051151	negative regulation of smooth muscle cell differentiation	GO:0030154 cell differentiation (3907 genes);GO:0048856 anatomical structure development (5381 genes)	GO:0030154
+GO:0045061	thymic T cell selection	GO:0002376 immune system process (2869 genes);GO:0030154 cell differentiation (3907 genes);GO:0048856 anatomical structure development (5381 genes)	GO:0002376
+GO:0097190	apoptotic signaling pathway	GO:0012501 programmed cell death (1814 genes);GO:0023052 signaling (7085 genes)	GO:0012501
+GO:0048813	dendrite morphogenesis	GO:0030154 cell differentiation (3907 genes);GO:0048856 anatomical structure development (5381 genes)	GO:0030154

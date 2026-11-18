@@ -1,0 +1,74 @@
+slim_term	slim_name	theme	annotated_genes
+GO:0000278	mitotic cell cycle	Cell cycle / DNA / chromatin	966
+GO:0000910	cytokinesis	Cell cycle / DNA / chromatin	202
+GO:0002181	cytoplasmic translation	Gene expression / RNA	229
+GO:0002376	immune system process	Immune / inflammation	2869
+GO:0003012	muscle system process	Organ physiology (muscle, heart, kidney, gut)	519
+GO:0003013	circulatory system process	Organ physiology (muscle, heart, kidney, gut)	576
+GO:0003014	renal system process	Organ physiology (muscle, heart, kidney, gut)	124
+GO:0003016	respiratory system process	Organ physiology (muscle, heart, kidney, gut)	16
+GO:0005975	carbohydrate metabolic process	Metabolism	500
+GO:0006091	generation of precursor metabolites and energy	Metabolism	442
+GO:0006260	DNA replication	Cell cycle / DNA / chromatin	336
+GO:0006281	DNA repair	Cell cycle / DNA / chromatin	663
+GO:0006310	DNA recombination	Cell cycle / DNA / chromatin	340
+GO:0006325	chromatin organization	Cell cycle / DNA / chromatin	1361
+GO:0006351	DNA-templated transcription	Gene expression / RNA	3891
+GO:0006355	regulation of DNA-templated transcription	Gene expression / RNA	3731
+GO:0006399	tRNA metabolic process	Gene expression / RNA	229
+GO:0006457	protein folding	Protein folding / stress	241
+GO:0006520	amino acid metabolic process	Metabolism	262
+GO:0006575	modified amino acid metabolic process	Metabolism	187
+GO:0006629	lipid metabolic process	Metabolism	1306
+GO:0006766	vitamin metabolic process	Metabolism	39
+GO:0006790	sulfur compound metabolic process	Metabolism	283
+GO:0006886	intracellular protein transport	Cell organization / transport / adhesion	624
+GO:0006913	nucleocytoplasmic transport	Cell organization / transport / adhesion	315
+GO:0006914	autophagy	Protein folding / stress	589
+GO:0006950	response to stress	Protein folding / stress	4119
+GO:0006954	inflammatory response	Immune / inflammation	873
+GO:0007005	mitochondrion organization	Cell organization / transport / adhesion	382
+GO:0007010	cytoskeleton organization	Cell organization / transport / adhesion	1549
+GO:0007018	microtubule-based movement	Cell organization / transport / adhesion	522
+GO:0007031	peroxisome organization	Cell organization / transport / adhesion	40
+GO:0007040	lysosome organization	Cell organization / transport / adhesion	95
+GO:0007059	chromosome segregation	Cell cycle / DNA / chromatin	468
+GO:0007155	cell adhesion	Cell organization / transport / adhesion	1445
+GO:0007163	establishment or maintenance of cell polarity	Cell organization / transport / adhesion	209
+GO:0009101	glycoprotein biosynthetic process	Metabolism	317
+GO:0012501	programmed cell death	Other	1814
+GO:0015979	photosynthesis	Other	0
+GO:0016071	mRNA metabolic process	Gene expression / RNA	1808
+GO:0016073	snRNA metabolic process	Gene expression / RNA	68
+GO:0016192	vesicle-mediated transport	Cell organization / transport / adhesion	1396
+GO:0022414	reproductive process	Development / differentiation	1282
+GO:0022600	digestive system process	Organ physiology (muscle, heart, kidney, gut)	92
+GO:0023052	signaling	Signalling	7085
+GO:0030154	cell differentiation	Development / differentiation	3907
+GO:0030163	protein catabolic process	Protein folding / stress	1286
+GO:0030198	extracellular matrix organization	Cell organization / transport / adhesion	303
+GO:0031047	regulatory ncRNA-mediated gene silencing	Gene expression / RNA	4144
+GO:0032200	telomere organization	Cell cycle / DNA / chromatin	180
+GO:0034330	cell junction organization	Cell organization / transport / adhesion	807
+GO:0042060	wound healing	Development / differentiation	429
+GO:0042254	ribosome biogenesis	Gene expression / RNA	325
+GO:0044782	cilium organization	Cell organization / transport / adhesion	435
+GO:0048856	anatomical structure development	Development / differentiation	5381
+GO:0048870	cell motility	Cell organization / transport / adhesion	1872
+GO:0050877	nervous system process	Neural	1296
+GO:0050886	endocrine process	Organ physiology (muscle, heart, kidney, gut)	76
+GO:0051604	protein maturation	Protein folding / stress	649
+GO:0055085	transmembrane transport	Cell organization / transport / adhesion	1702
+GO:0055086	nucleobase-containing small molecule metabolic process	Metabolism	683
+GO:0061007	hepaticobiliary system process	Organ physiology (muscle, heart, kidney, gut)	0
+GO:0061024	membrane organization	Cell organization / transport / adhesion	825
+GO:0065003	protein-containing complex assembly	Protein folding / stress	4461
+GO:0071554	cell wall organization or biogenesis	Cell organization / transport / adhesion	0
+GO:0071941	nitrogen cycle metabolic process	Metabolism	14
+GO:0072659	protein localization to plasma membrane	Cell organization / transport / adhesion	273
+GO:0098542	defense response to other organism	Immune / inflammation	1127
+GO:0098754	detoxification	Metabolism	176
+GO:0140013	meiotic nuclear division	Cell cycle / DNA / chromatin	176
+GO:0140014	mitotic nuclear division	Cell cycle / DNA / chromatin	295
+GO:0140053	mitochondrial gene expression	Gene expression / RNA	177
+GO:1901135	carbohydrate derivative metabolic process	Metabolism	1014
