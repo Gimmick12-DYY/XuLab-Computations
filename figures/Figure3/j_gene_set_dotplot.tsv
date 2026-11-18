@@ -1,14 +1,14 @@
 term	group	name	genes	list_annotated	term_size	fold	p	q	TFs_with_q005_alone	TFs_testable
-GO:0030001	TF-specific (1 TF)	metal ion transport	126	3259	342	1.2360588491787925	0.0026842867149515	1.0	0	23
-GO:0006488	TF-specific (1 TF)	dolichol-linked oligosaccharide biosynthetic process	10	3259	15	2.2366779175616243	0.0034431794031823	1.0	0	23
-GO:1903441	TF-specific (1 TF)	protein localization to ciliary membrane	9	3259	13	2.322703991313994	0.0038187118382931	1.0	0	23
-GO:0035330	TF-specific (1 TF)	regulation of hippo signaling	18	3259	34	1.7761854051224664	0.0039438260156263	1.0	0	23
-GO:0034765	TF-specific (1 TF)	regulation of monoatomic ion transmembrane transport	61	3259	152	1.3464212464268988	0.0039936443745371	1.0	0	23
-GO:0034220	TF-specific (1 TF)	monoatomic ion transmembrane transport	171	3259	484	1.1853468716003237	0.0042311326509486	1.0	0	23
-GO:0002183	TF-specific (1 TF)	cytoplasmic translational initiation	17	3259	32	1.7823527155569194	0.0048145757226949	1.0	0	23
-GO:0006970	TF-specific (1 TF)	response to osmotic stress	24	3259	50	1.6104081006443691	0.0050198266848497	1.0	0	23
-GO:0071675	TF-specific (1 TF)	regulation of mononuclear cell migration	30	3259	66	1.5250076710647438	0.0050520502269249	1.0	0	23
-GO:0032675	TF-specific (1 TF)	regulation of interleukin-6 production	31	3259	69	1.5073264227045728	0.0054577444689544	1.0	0	23
+GO:0032200	TF-specific (1-2 TFs)	telomere organization	51	4407	88	1.4378829135466302	0.0005914530851211	1.0	0	33
+GO:0071826	TF-specific (1-2 TFs)	protein-RNA complex organization	98	4407	192	1.266370735950382	0.0015406126077127	1.0	0	33
+GO:0002183	TF-specific (1-2 TFs)	cytoplasmic translational initiation	21	4407	32	1.6281909462219195	0.0033122816268352	1.0	0	33
+GO:0051276	TF-specific (1-2 TFs)	chromosome organization	156	4407	327	1.1836215528673109	0.0035162404866917	1.0	0	33
+GO:0036503	TF-specific (1-2 TFs)	ERAD pathway	47	4407	85	1.3718762930631747	0.0035762988097954	1.0	0	33
+GO:0009612	TF-specific (1-2 TFs)	response to mechanical stimulus	61	4407	115	1.3160367399690214	0.0036959012528143	1.0	0	33
+GO:1903077	TF-specific (1-2 TFs)	negative regulation of protein localization to plasma membrane	15	4407	21	1.7721806217381435	0.0038469985504914	1.0	0	33
+GO:0030866	TF-specific (1-2 TFs)	cortical actin cytoskeleton organization	18	4407	27	1.6540352469556008	0.0050357876592953	1.0	0	33
+GO:0043153	TF-specific (1-2 TFs)	entrainment of circadian clock by photoperiod	13	4407	18	1.7918715175352342	0.0061728445273778	1.0	0	33
+GO:0060122	TF-specific (1-2 TFs)	inner ear receptor cell stereocilium organization	9	4407	11	2.029952348536419	0.0062681185486329	1.0	0	33
 GO:1903047	conserved (>=3 TFs)	mitotic cell cycle process	70	1035	393	1.88167324310703	1.2118934148171633e-07	0.0002885613410076	1	37
 GO:0051052	conserved (>=3 TFs)	regulation of DNA metabolic process	66	1035	391	1.7832239890285038	2.026062919636081e-06	0.0029864167435435	1	37
 GO:0006282	conserved (>=3 TFs)	regulation of DNA repair	39	1035	201	2.0497800850818373	1.032364297795213e-05	0.011412787312126	0	37

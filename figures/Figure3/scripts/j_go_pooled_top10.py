@@ -1,4 +1,4 @@
-"""Fig 3 panel j (user 2026-11-18: pooled GO with the new split, top 10 terms per group): TF-specific (module genes of exactly 1 TF) and conserved (modules of >=3 TFs) gene
+"""Fig 3 panel j (user 2026-11-18: pooled GO with the new split, top 10 terms per group): TF-specific (module genes of 1-2 TFs; strict split at 3, user 2026-11-18) and conserved (modules of >=3 TFs) gene
 sets, each with its OWN top-10 GO BP terms (no shared term list). Values = pooled lists from scripts/go_per_tf.py (checks/go_per_tf):
 x = -log10 nominal p (same axis both sides), dashed line = p of the last term with BH q < 0.05 (0.05/m when none), teal = q < 0.05,
 hollow grey = q >= 0.05, size = genes in the term; per-TF counts only in go_per_tf.xlsx. Top 10 terms per group ranked by pooled p; near-duplicates dropped (background gene-set Jaccard > 0.6 with a
@@ -33,7 +33,7 @@ SHORT = {"dolichol-linked oligosaccharide biosynthetic process": "dolichol oligo
          "monoatomic ion transmembrane transport": "ion transmembrane transport", "monoatomic cation transmembrane transport": "cation transmembrane transport",
          "regulation of mononuclear cell migration": "reg. of mononuclear cell migration", "positive regulation of cell cycle phase transition": "pos. reg. of cell cycle phase transition",
          "positive regulation of triglyceride biosynthetic process": "pos. reg. of triglyceride biosynthesis", "positive regulation of TORC1 signaling": "pos. reg. of TORC1 signaling",
-         "positive regulation of catabolic process": "pos. reg. of catabolic process", "regulation of cellular response to stress": "reg. of response to stress", "endoplasmic reticulum to Golgi vesicle-mediated transport": "ER to Golgi vesicle transport"}
+         "positive regulation of catabolic process": "pos. reg. of catabolic process", "regulation of cellular response to stress": "reg. of response to stress", "endoplasmic reticulum to Golgi vesicle-mediated transport": "ER to Golgi vesicle transport", "negative regulation of protein localization to plasma membrane": "neg. reg. of protein localization to PM", "inner ear receptor cell stereocilium organization": "stereocilium organization (inner ear)", "entrainment of circadian clock by photoperiod": "circadian entrainment by photoperiod"}
 cap = lambda s: (lambda t: t[0].upper() + t[1:])(SHORT.get(s, s))
 SP, CO = top("specific"), top("conserved")
 TEAL, GREY = "#2C7A6B", "#9E9E9E"; sz = lambda n: 4 + 0.35 * n
@@ -48,7 +48,7 @@ for ax, T, ttl in ((axs[0], SP, "TF-specific module genes"), (axs[1], CO, "Conse
     ax.text(t + 0.08, len(T) - 0.55, "q = 0.05", ha="left", va="bottom", fontsize=5, color="#4D4D4D")
     ax.set_yticks(y); ax.set_yticklabels([cap(s_) for s_ in T.name], fontsize=6); ax.set_ylim(len(T) - 0.5, -0.6); ax.tick_params(axis="y", length=0)
     ax.set_xlim(0, xmax); ax.set_xlabel("−log10 p"); ax.xaxis.grid(True, color="#EEEEEE", lw=0.5); ax.set_axisbelow(True)
-    n_ = int(T.n_list.iloc[0]); ax.set_title(f"{ttl}\n({'1 TF' if 'specific' in ttl else '≥3 TFs'}, n = {n_:,})", fontsize=6.5, pad=9)
+    n_ = int(T.n_list.iloc[0]); ax.set_title(f"{ttl}\n({'1–2 TFs' if 'specific' in ttl else '≥3 TFs'}, n = {n_:,})", fontsize=6.5, pad=9)
 hs = [plt.scatter([], [], s=sz(n), color="#4D4D4D", lw=0) for n in (20, 50, 100)] + [plt.scatter([], [], s=sz(40), color=TEAL, lw=0), plt.scatter([], [], s=sz(40), facecolors="white", edgecolors=GREY, linewidths=0.6)]
 fig.legend(hs, ["20", "50", "100 genes", "q < 0.05", "q ≥ 0.05"], loc="lower center", ncol=5, fontsize=5.5, bbox_to_anchor=(0.6, 0.0), handletextpad=0.2, columnspacing=1.2)
 PS = {("normal", "normal"): "ArialMT"}
@@ -68,5 +68,5 @@ def illustrator_text(svg):
     return re.sub(r"<(?:text|tspan)\b[^>]*>", one, svg)
 stem = H / "j_gene_set_dotplot"; fig.savefig(f"{stem}.svg"); fig.savefig(f"{stem}.png", dpi=300)
 p = Path(f"{stem}.svg"); p.write_text(illustrator_text(p.read_text())); print("font shorthand left:", p.read_text().count("font: "))
-pd.concat([SP.assign(group="TF-specific (1 TF)"), CO.assign(group="conserved (>=3 TFs)")])[["group", "name", "k", "n_list", "K", "fold", "p", "q", "n_tfs_sig", "n_tfs_tested"]].rename(columns={"k": "genes", "n_list": "list_annotated", "K": "term_size", "n_tfs_sig": "TFs_with_q005_alone", "n_tfs_tested": "TFs_testable"}).to_csv(H / "j_gene_set_dotplot.tsv", sep="\t")
+pd.concat([SP.assign(group="TF-specific (1-2 TFs)"), CO.assign(group="conserved (>=3 TFs)")])[["group", "name", "k", "n_list", "K", "fold", "p", "q", "n_tfs_sig", "n_tfs_tested"]].rename(columns={"k": "genes", "n_list": "list_annotated", "K": "term_size", "n_tfs_sig": "TFs_with_q005_alone", "n_tfs_tested": "TFs_testable"}).to_csv(H / "j_gene_set_dotplot.tsv", sep="\t")
 print("thresholds p:", SP.thr.iloc[0], CO.thr.iloc[0]); print(SP[["name", "k", "p", "q", "n_tfs_sig"]].round(4).to_string()); print(CO[["name", "k", "p", "q", "n_tfs_sig"]].round(4).to_string())

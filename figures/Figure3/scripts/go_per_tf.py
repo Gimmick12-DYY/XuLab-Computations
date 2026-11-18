@@ -1,8 +1,8 @@
 """GO steps 2-3 (user 2026-11-17): GO BP of TF-specific vs conserved module genes, per TF and summarised across TFs.
 Module gene of a TF: protein-coding gene whose TSS +-1 kb overlaps an element of one of that TF's higher-order coordinated binding modules
 (>=3 elements, all pairs linked; nodes_annotated.tsv.gz clique == 1, as panel j). n_tfs(gene) = number of TFs whose modules contain it.
-Split (user, cutoff 3): conserved = n_tfs >= 3; TF-specific = n_tfs == 1; n_tfs == 2 left out (buffer).
-Sensitivity: TF-specific = n_tfs 1-2 (strict split at 3, no buffer).
+Split (user 2026-11-18, strict split at 3, no buffer): conserved = n_tfs >= 3; TF-specific = n_tfs 1-2. Every module gene is in one group.
+Sensitivity: TF-specific = n_tfs == 1 only (2-TF genes left out).
 Step 2: per TF, its TF-specific genes and its conserved genes, each tested separately. Step 3: per group, terms ranked by the number of TFs
 with q < 0.05 (ties: pooled q), plus the pooled lists (all TF-specific genes; all conserved genes).
 Test (as panel j / go_cliques.py): goa_human.gaf + go-basic.obo, BP, propagated to ancestors, NOT dropped; background = 12,388 network
@@ -77,8 +77,8 @@ def run(spec_set, tag):
         s = s.sort_values(["n_tfs_sig", "pooled_q"], ascending=[False, True]); s["top10"] = s.index.isin(dedup([t for t in s.index if s.n_tfs_sig[t] > 0 or s.pooled_q[t] < 0.05])[:10])
         S[grp] = s
     return per, S, pooled, pd.DataFrame(tested)
-per, S, pooled, tested = run(set(ntf.index[ntf == 1]), "main (specific = 1 TF)")
-per2, S2, pooled2, tested2 = run(set(ntf.index[ntf <= 2]), "sensitivity (specific = 1-2 TFs)")
+per, S, pooled, tested = run(set(ntf.index[ntf <= 2]), "main (specific = 1-2 TFs)")
+per2, S2, pooled2, tested2 = run(set(ntf.index[ntf == 1]), "sensitivity (specific = 1 TF)")
 top = lambda s, k=10: s[s.top10].head(k)
 for grp in ("specific", "conserved"):
     cols = ["tf", "term", "name", "k", "n_list", "fold", "q"]

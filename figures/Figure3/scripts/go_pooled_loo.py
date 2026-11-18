@@ -1,5 +1,5 @@
 """Leave-one-TF-out robustness of the pooled GO result (user 2026-11-18). Pooled lists as panel j draft: conserved = genes in modules of
->=3 TFs, TF-specific = genes in modules of exactly 1 TF (union across TFs, each gene once). For each TF with modules, that TF is removed
+>=3 TFs, TF-specific = genes in modules of 1-2 TFs (strict split at 3; union across TFs, each gene once). For each TF with modules, that TF is removed
 from the panel, TFs per gene are recounted over the remaining TFs, both pooled lists rebuilt and tested again (same GO files, background
 12,388 network promoter genes, terms 10-500, one-sided hypergeometric, BH). Recorded: fold/q of the 5 conserved terms of the draft, and
 the number of terms at q < 0.05 in each list.
@@ -56,7 +56,7 @@ FOCUS = {"GO:1903047": "Mitotic cell cycle process", "GO:0051052": "Regulation o
 rows, lrows = [], []
 for drop in ["(none)"] + sorted(MG.tf.unique()):
     M = MG[MG.tf != drop]; ntf = M.groupby("gene").tf.nunique()
-    cons, spec = sorted(ntf.index[ntf >= 3]), sorted(ntf.index[ntf == 1])
+    cons, spec = sorted(ntf.index[ntf >= 3]), sorted(ntf.index[ntf <= 2])
     Rc, Rs = enrich(cons), enrich(spec)
     lrows.append(dict(left_out=drop, conserved_genes=len(cons), conserved_annotated=int(Rc.n_list.iloc[0]), conserved_terms_q005=int((Rc.q < 0.05).sum()),
                       specific_genes=len(spec), specific_annotated=int(Rs.n_list.iloc[0]), specific_terms_q005=int((Rs.q < 0.05).sum()),
