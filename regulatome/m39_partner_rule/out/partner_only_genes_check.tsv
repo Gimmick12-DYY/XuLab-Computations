@@ -1,0 +1,13 @@
+base rule	partner set	genes in both found only through a partner	of these, a binding partner has a usable knockdown	partner's own knockdown also changes the gene (|z| >= 2)	share (%)
+A current	P1 Figure 4 trio	943	726	144	19.83
+A current	P2 AF3-supported (strong)	5355	4753	1473	30.99
+A current	P3 frozen candidate list	48930	47736	24634	51.60
+A current	P4 top 1 by co-binding	7787	4437	971	21.88
+A current	P4 top 3 by co-binding	17411	13458	3271	24.31
+A current	P4 top 5 by co-binding	25294	21494	5599	26.05
+G (A + 10 kb + coordinated binding)	P1 Figure 4 trio	1187	981	181	18.45
+G (A + 10 kb + coordinated binding)	P2 AF3-supported (strong)	5638	5137	1524	29.67
+G (A + 10 kb + coordinated binding)	P3 frozen candidate list	46132	45575	26171	57.42
+G (A + 10 kb + coordinated binding)	P4 top 1 by co-binding	10103	6733	1567	23.27
+G (A + 10 kb + coordinated binding)	P4 top 3 by co-binding	21743	18057	4702	26.04
+G (A + 10 kb + coordinated binding)	P4 top 5 by co-binding	30256	26989	7766	28.77

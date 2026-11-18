@@ -1,0 +1,9 @@
+base rule	partner set	Perturb-seq genes	TFs	n TFs	our genes (TF or partner, pooled)	Perturb-seq genes (pooled)	in both (pooled)	share of Perturb-seq genes found in our Regulome (%)	share of our Regulome genes found in Perturb-seq (%)
+A current	size reference: any of the 79 TFs bound	|z| >= 2	all 63 TFs	63	695773	63954	63083	98.64	9.07
+A current	size reference: any of the 79 TFs bound	|z| >= 3	all 63 TFs	63	695773	11237	11092	98.71	1.59
+A current	size reference: any of the 79 TFs bound	|z| >= 4	all 63 TFs	63	695773	2188	2153	98.40	0.31
+A current	size reference: any of the 79 TFs bound	|z| >= 5	all 63 TFs	63	695773	558	546	97.85	0.08
+G (A + 10 kb + coordinated binding)	size reference: any of the 79 TFs bound	|z| >= 2	all 63 TFs	63	702640	63954	63605	99.45	9.05
+G (A + 10 kb + coordinated binding)	size reference: any of the 79 TFs bound	|z| >= 3	all 63 TFs	63	702640	11237	11163	99.34	1.59
+G (A + 10 kb + coordinated binding)	size reference: any of the 79 TFs bound	|z| >= 4	all 63 TFs	63	702640	2188	2166	98.99	0.31
+G (A + 10 kb + coordinated binding)	size reference: any of the 79 TFs bound	|z| >= 5	all 63 TFs	63	702640	558	552	98.92	0.08

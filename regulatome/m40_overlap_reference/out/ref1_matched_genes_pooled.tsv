@@ -1,0 +1,17 @@
+rule	Perturb-seq genes	TFs	n TFs	changed genes	share bound, changed (%)	changed 95% interval over TFs	share bound, matched not-changed (%)	matched 95% interval over TFs	share bound, all not-changed (%)
+A	|z| >= 2	all TFs	63	63954	17.73	14.5-21.3	18.20	14.7-22.3	16.50
+A	|z| >= 2	without NRF1, E4F1, DNMT1	60	58157	17.89	14.4-21.6	18.57	14.5-22.8	16.58
+A	|z| >= 3	all TFs	63	11237	19.20	15.2-23.6	19.42	15.1-24.4	16.50
+A	|z| >= 3	without NRF1, E4F1, DNMT1	60	9499	19.64	14.9-24.8	20.29	15.3-25.7	16.58
+A	|z| >= 4	all TFs	57	2188	22.12	17.2-27.6	20.46	14.9-27.4	16.99
+A	|z| >= 4	without NRF1, E4F1, DNMT1	54	1552	22.36	16.0-29.4	22.55	14.8-31.3	17.10
+A	|z| >= 5	all TFs	33	558	24.37	19.0-29.2	21.35	14.1-32.0	18.19
+A	|z| >= 5	without NRF1, E4F1, DNMT1	30	274	23.72	13.6-31.8	27.07	14.1-39.5	18.51
+G	|z| >= 2	all TFs	63	63954	24.74	20.9-28.9	24.36	20.4-28.8	22.07
+G	|z| >= 2	without NRF1, E4F1, DNMT1	60	58157	24.74	20.9-29.0	24.50	20.1-29.1	22.04
+G	|z| >= 3	all TFs	63	11237	28.26	24.1-32.7	25.84	21.0-31.2	22.07
+G	|z| >= 3	without NRF1, E4F1, DNMT1	60	9499	28.54	23.7-33.9	26.33	21.2-32.4	22.04
+G	|z| >= 4	all TFs	57	2188	32.95	27.2-39.3	27.05	20.5-34.8	22.68
+G	|z| >= 4	without NRF1, E4F1, DNMT1	54	1552	32.60	26.1-38.5	28.10	20.2-37.0	22.68
+G	|z| >= 5	all TFs	33	558	37.46	28.1-50.0	29.17	19.8-39.9	23.94
+G	|z| >= 5	without NRF1, E4F1, DNMT1	30	274	35.04	26.0-41.6	32.13	18.6-44.3	24.04

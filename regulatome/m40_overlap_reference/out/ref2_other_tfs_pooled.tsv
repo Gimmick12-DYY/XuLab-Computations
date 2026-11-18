@@ -1,0 +1,17 @@
+rule	Perturb-seq genes	TFs	n TFs	share found, own lists (%)	own 95% interval over TFs	share found, 5 size-nearest TFs (%)	size-nearest 95% interval over TFs	median rank of own list	TFs whose own list ranks in the top 5 of 79
+A	|z| >= 2	all TFs	63	17.73	14.6-21.3	17.65	14.3-21.3	38.00	6
+A	|z| >= 2	without NRF1, E4F1, DNMT1	60	17.89	14.2-21.8	17.96	14.4-21.6	38.50	6
+A	|z| >= 3	all TFs	63	19.20	15.2-23.6	19.00	15.1-23.3	39.00	4
+A	|z| >= 3	without NRF1, E4F1, DNMT1	60	19.64	14.8-24.9	19.80	15.4-24.9	39.50	4
+A	|z| >= 4	all TFs	57	22.12	17.2-27.0	20.26	15.2-26.4	22.00	10
+A	|z| >= 4	without NRF1, E4F1, DNMT1	54	22.36	16.1-28.8	21.87	14.7-29.4	22.00	10
+A	|z| >= 5	all TFs	33	24.37	18.9-29.3	18.96	12.9-27.7	16.00	10
+A	|z| >= 5	without NRF1, E4F1, DNMT1	30	23.72	13.6-31.3	22.85	10.5-34.0	13.50	10
+G	|z| >= 2	all TFs	63	24.74	21.0-28.9	24.44	21.0-28.3	38.00	4
+G	|z| >= 2	without NRF1, E4F1, DNMT1	60	24.74	20.9-28.9	24.46	20.7-28.4	39.50	4
+G	|z| >= 3	all TFs	63	28.26	23.9-33.2	27.77	23.6-32.3	37.00	6
+G	|z| >= 3	without NRF1, E4F1, DNMT1	60	28.54	23.6-33.6	28.17	23.5-33.2	37.50	6
+G	|z| >= 4	all TFs	57	32.95	27.3-39.1	31.05	25.5-37.2	29.00	9
+G	|z| >= 4	without NRF1, E4F1, DNMT1	54	32.60	26.1-38.7	31.93	24.8-39.2	30.00	8
+G	|z| >= 5	all TFs	33	37.46	27.9-50.0	31.97	24.4-40.7	13.00	7
+G	|z| >= 5	without NRF1, E4F1, DNMT1	30	35.04	25.7-41.6	34.31	23.4-44.3	12.50	6
