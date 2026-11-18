@@ -5,12 +5,12 @@ regulates (regulation terms map to the process they regulate) (slim ancestors th
 ties -> the slim term with the fewest annotated genes, reported). Slim terms are merged into themes by the fixed table SLIM2THEME below,
 written out with the result so the grouping is auditable. Terms without a slim ancestor -> "Other".
 Writes per_TF_q005_themes.tsv, slim_to_theme.tsv, theme_ties.tsv.
-  python scripts/go_theme_map.py <go_great_regions dir>   (Longleaf)"""
+  python scripts/go_theme_map.py <go_great_regions dir> [input tsv, default per_TF_q005.tsv]   (Longleaf)"""
 import gzip, re, sys
 from collections import defaultdict
 from pathlib import Path
 import pandas as pd
-X = Path("/work/users/d/y/dyy12/XuLab"); D = X / "data/go"; G = Path(sys.argv[1])
+X = Path("/work/users/d/y/dyy12/XuLab"); D = X / "data/go"; G = Path(sys.argv[1]); IN = sys.argv[2] if len(sys.argv) > 2 else "per_TF_q005.tsv"
 TH = {"Development / differentiation": "0048856 0030154 0042060 0022414",
       "Immune / inflammation": "0002376 0006954 0098542",
       "Organ physiology (muscle, heart, kidney, gut)": "0003012 0003013 0003014 0003016 0022600 0050886 0061007",
@@ -50,7 +50,7 @@ for ln in gzip.open(D / "goa_human.gaf.gz", "rt"):
     x = ln.split("\t")
     if "NOT" in x[3] or x[8] != "P": continue
     for t in up(x[4]) & slim: ng[t].add(x[2])
-S = pd.read_csv(G / "per_TF_q005.tsv", sep="\t"); ties = []
+S = pd.read_csv(G / IN, sep="\t"); ties = []
 def m(t):
     sa = up(t) & slim
     if not sa: return "", "Other"
@@ -60,7 +60,7 @@ def m(t):
     return spec[0], SLIM2THEME[spec[0]]
 mp = {t: m(t) for t in S.term.unique()}
 S["slim"] = S.term.map(lambda t: mp[t][0]); S["slim_name"] = S.slim.map(lambda t: name.get(t, "")); S["theme"] = S.term.map(lambda t: mp[t][1])
-S.to_csv(G / "per_TF_q005_themes.tsv", sep="\t", index=False)
+S.to_csv(G / IN.replace(".tsv", "_themes.tsv"), sep="\t", index=False)
 pd.DataFrame([(t, name[t], SLIM2THEME[t], len(ng[t])) for t in sorted(slim)], columns=["slim_term", "slim_name", "theme", "annotated_genes"]).to_csv(G / "slim_to_theme.tsv", sep="\t", index=False)
 pd.DataFrame(ties).drop_duplicates("term").to_csv(G / "theme_ties.tsv", sep="\t", index=False)
 print("slim BP terms", len(slim), "; ties", len({d["term"] for d in ties}))
