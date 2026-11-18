@@ -4,9 +4,10 @@ TF-specific terms: per TF, module elements of 1-2 TFs, distal elements vs the TF
   >= 3 distinct genes, no paralog-cluster artifact (surviving_per_TF.tsv); all 22 such TFs also beat their random-peak null.
 Conserved terms: per TF, module elements of >= 3 TFs vs all the TF's peaks, same term filters (per_TF_controls.tsv.gz, comparison 'all');
   all TFs with terms beat their random-peak null.
-Themes: GO slim generic (+ response to stress), scripts/go_theme_map.py, table slim_to_theme.tsv. Bars = number of TFs with >= 1 term in
-the theme. Inset = pairwise Jaccard similarity of significant term sets between TFs. Also writes the supplementary per-TF matrix
-(supplementary/go_per_tf_great_terms.*) and the full term list (supplementary/go_per_tf_great_terms.xlsx).
+Left: top 10 TF-specific terms by q, at most one per TF (label 'term (TF)'); x = -log10 q, size = foreground regions. Right: top 10
+conserved terms by number of TFs with the term (near-duplicates = same TF set or same core name as a better-ranked term, dropped);
+colour = median -log10 q, size = median regions. Also writes the full term list (supplementary/go_per_tf_great_terms.xlsx);
+the supplementary matrix figure is scripts/supp_go_terms_matrix.py.
   python Figure3/scripts/j_go_specific_vs_conserved_summary.py   (Mac)"""
 import re
 from itertools import combinations
@@ -26,34 +27,45 @@ for d in (SP, CO): d["theme"] = d.term.map(TH).fillna("Other")
 THEMES = ["Protein folding / stress", "Cell cycle / DNA / chromatin", "Gene expression / RNA", "Immune / inflammation", "Signalling", "Metabolism",
           "Development / differentiation", "Organ physiology (muscle, heart, kidney, gut)", "Neural", "Cell organization / transport / adhesion"]
 LAB = {"Organ physiology (muscle, heart, kidney, gut)": "Organ physiology", "Cell organization / transport / adhesion": "Cell organization / transport"}
-ns = SP[SP.theme.isin(THEMES)].groupby("theme").tf.nunique().reindex(THEMES, fill_value=0); nc = CO[CO.theme.isin(THEMES)].groupby("theme").tf.nunique().reindex(THEMES, fill_value=0)
-order = list((nc - ns).sort_values(ascending=False).index)
-def short(s, n=30):
+def short(s, n=40):
     s = s.replace("positive regulation of", "pos. reg.").replace("negative regulation of", "neg. reg.").replace("regulation of", "reg.").replace(" process", "")
+    s = s.replace("biosynthetic", "biosynth.").replace("signaling pathway", "signaling").replace("type II interferon-mediated", "IFN-γ").replace("type I interferon", "type I IFN")
+    s = s.replace("double-strand break repair via homologous recombination", "HR repair").replace("intracellular transport", "intracell. transport"); s = s[0].upper() + s[1:]
     return s if len(s) <= n else s[:n - 1] + "…"
-ex = {}
-for t in order:
-    d = SP[SP.theme == t].sort_values("q").drop_duplicates("tf")
-    ex[t] = "; ".join(f"{r.tf} · {short(r['name'])}" for _, r in d.head(2).iterrows())
+def core(n):
+    n = n.lower().replace("torc1", "tor")
+    for w in ("positive regulation of ", "negative regulation of ", "regulation of ", "cellular "): n = n.replace(w, "")
+    return n.replace(" process", "").strip()
+# left: TF-specific, top 10 by q, one term per TF
+L = SP.sort_values("q").drop_duplicates("tf").head(10).reset_index(drop=True)
+# right: conserved, ranked by number of TFs; near-duplicates = same set of TFs or same core name as a better-ranked term
+R = CO.groupby(["term", "name"]).agg(n_tfs=("tf", "nunique"), tfset=("tf", lambda x: frozenset(x)), med_lq=("q", lambda q: float(np.median(-np.log10(q)))),
+                                      med_reg=("fg_regions", "median")).reset_index().sort_values(["n_tfs", "med_lq"], ascending=[False, False])
+keep, seen_sets, seen_core = [], set(), set()
+for _, r in R.iterrows():
+    if r.tfset in seen_sets or core(r["name"]) in seen_core: continue
+    keep.append(r); seen_sets.add(r.tfset); seen_core.add(core(r["name"]))
+    if len(keep) == 10: break
+R = pd.DataFrame(keep).reset_index(drop=True)
 NS, NC = SP.tf.nunique(), CO.tf.nunique()
-fig = plt.figure(figsize=(100 * MM, 62 * MM)); ax = fig.add_axes([0.3, 0.14, 0.4, 0.72]); ins = fig.add_axes([0.84, 0.2, 0.14, 0.45])
-y = np.arange(len(order)); h = 0.38
-ax.barh(y - h / 2, [ns[t] for t in order], h, color=LT, edgecolor=TEAL, lw=0.6, label=f"TF-specific elements (1–2 TFs; {NS} TFs)")
-ax.barh(y + h / 2, [nc[t] for t in order], h, color=TEAL, lw=0, label=f"Conserved elements (≥3 TFs; {NC} TFs)")
-xm = max(ns.max(), nc.max()) * 1.12
-for i, t in enumerate(order):
-    ax.text(ns[t] + 0.3, i - h / 2, str(ns[t]), va="center", fontsize=5); ax.text(nc[t] + 0.3, i + h / 2, str(nc[t]), va="center", fontsize=5, color=TEAL)
-ax.set_yticks(y); ax.set_yticklabels([LAB.get(t, t) for t in order]); ax.set_ylim(len(order) - 0.4, -0.6); ax.tick_params(axis="y", length=0)
-ax.set_xlim(0, xm); ax.set_xlabel("TFs with ≥1 significant GO term in the theme")
-ax.legend(loc="lower left", bbox_to_anchor=(-0.7, 1.01), ncol=1, fontsize=5.5, handlelength=1.0, columnspacing=1.0, borderaxespad=0)
-J = {}
-for nm, d in (("specific", SP), ("conserved", CO)):
-    sets = {t: set(g.term) for t, g in d.groupby("tf")}; J[nm] = np.array([len(sets[a] & sets[b]) / len(sets[a] | sets[b]) for a, b in combinations(sorted(sets), 2)])
-bp = ins.boxplot([J["specific"], J["conserved"]], widths=0.55, patch_artist=True, showfliers=False, medianprops=dict(color="black", lw=0.8),
-                 boxprops=dict(lw=0.5), whiskerprops=dict(lw=0.5), capprops=dict(lw=0.5))
-bp["boxes"][0].set_facecolor(LT); bp["boxes"][0].set_edgecolor(TEAL); bp["boxes"][1].set_facecolor(TEAL)
-ins.set_xticks([1, 2]); ins.set_xticklabels(["TF-\nspecific", "Con-\nserved"], fontsize=5.5); ins.tick_params(labelsize=5)
-ins.set_title("Term overlap\nbetween TFs", fontsize=5.5, pad=3); ins.set_ylabel("Jaccard", fontsize=5.5); ins.set_ylim(0, max(0.05, np.percentile(J["conserved"], 90) * 1.2))
+fig = plt.figure(figsize=(130 * MM, 58 * MM)); a1 = fig.add_axes([0.335, 0.23, 0.15, 0.61]); a2 = fig.add_axes([0.735, 0.23, 0.15, 0.61])
+sz = lambda n: 4 + 0.12 * np.asarray(n, float)
+y = np.arange(10)
+a1.scatter(-np.log10(L.q), y[:len(L)], s=sz(L.fg_regions), color=LT, edgecolors=TEAL, linewidths=0.6, zorder=3)
+a1.set_yticks(y[:len(L)]); a1.set_yticklabels([f"{short(n, 34)} ({t})" for n, t in zip(L.name, L.tf)], fontsize=5.5)
+a1.set_xlim(0, -np.log10(L.q.min()) * 1.15); a1.set_xlabel("−log10 q")
+a1.set_title(f"TF-specific elements (1–2 TFs)\ntop term per TF ({NS} TFs)", fontsize=6.5, pad=4)
+from matplotlib.colors import LinearSegmentedColormap
+cm = LinearSegmentedColormap.from_list("t", ["#C9E3DC", "#2C7A6B", "#0E3B33"])
+sc = a2.scatter(R.n_tfs, y[:len(R)], s=sz(R.med_reg), c=R.med_lq, cmap=cm, vmin=1.3, vmax=max(4, R.med_lq.max()), lw=0, zorder=3)
+a2.set_yticks(y[:len(R)]); a2.set_yticklabels([short(n, 32) for n in R.name], fontsize=5.5)
+a2.set_xlim(0, R.n_tfs.max() + 2); a2.set_xlabel("TFs with the term")
+a2.set_title(f"Conserved elements (≥3 TFs)\nmost shared terms ({NC} TFs)", fontsize=6.5, pad=4)
+for ax in (a1, a2):
+    ax.set_ylim(9.5, -0.6); ax.tick_params(axis="y", length=0); ax.xaxis.grid(True, color="#EEEEEE", lw=0.5); ax.set_axisbelow(True)
+cax = fig.add_axes([0.915, 0.5, 0.01, 0.3]); cb = fig.colorbar(sc, cax=cax); cb.set_label("median −log10 q", fontsize=5); cb.ax.tick_params(labelsize=4.5)
+hs = [plt.scatter([], [], s=sz(n), color="#BDBDBD", lw=0) for n in (20, 100, 400)]
+fig.legend(hs, ["20", "100", "400 regions"], loc="lower center", bbox_to_anchor=(0.55, -0.01), ncol=3, fontsize=5.5, handletextpad=0.2, columnspacing=1.0)
 def illustrator_text(svg):
     def one(m):
         tag = m.group(0); sm = re.search(r'style="([^"]*)"', tag)
@@ -70,25 +82,11 @@ def illustrator_text(svg):
 def save(fig, stem):
     fig.savefig(f"{stem}.svg"); fig.savefig(f"{stem}.png", dpi=300); p = Path(f"{stem}.svg"); p.write_text(illustrator_text(p.read_text()))
 save(fig, H / "j_go_specific_vs_conserved_summary")
-print(pd.DataFrame({"TF_specific_TFs": ns, "conserved_TFs": nc}).reindex(order).to_string()); print("Jaccard median specific", np.median(J["specific"]), "conserved", round(float(np.median(J["conserved"])), 4), "| TFs", NS, NC)
-# ---- supplementary: per-TF theme matrix + full term list ----
-B = pd.concat([SP.assign(group="specific"), CO.assign(group="conserved")]); B = B[B.theme.isin(THEMES)].groupby(["tf", "group", "theme"]).q.min().reset_index()
-rows = sorted(B.tf.unique(), key=lambda t: (-int((B[(B.tf == t) & (B.group == "specific")]).shape[0] > 0), -B[(B.tf == t) & (B.group == "specific")].shape[0], t))
-f2 = plt.figure(figsize=(120 * MM, (34 + 2.1 * len(rows)) * MM)); a2 = f2.add_axes([0.14, 0.23, 0.55, 0.72])
-sz = lambda q: 2 + 3.2 * np.minimum(-np.log10(q), 10)
-for grp, dx in (("specific", -0.17), ("conserved", 0.17)):
-    d = B[B.group == grp]; xx = [THEMES.index(t) + dx for t in d.theme]; yy = [rows.index(t) for t in d.tf]
-    if grp == "specific": a2.scatter(xx, yy, s=sz(d.q), color=LT, edgecolors=TEAL, linewidths=0.6, zorder=3)
-    else: a2.scatter(xx, yy, s=sz(d.q), color=TEAL, lw=0, zorder=3)
-a2.set_xticks(range(len(THEMES))); a2.set_xticklabels([LAB.get(t, t) for t in THEMES], rotation=45, ha="right", fontsize=5.5)
-a2.set_yticks(range(len(rows))); a2.set_yticklabels(rows, fontsize=5); a2.set_ylim(len(rows) - 0.5, -0.5); a2.tick_params(length=0); a2.grid(color="#EEEEEE", lw=0.4); a2.set_axisbelow(True)
-for sp in ("left", "bottom"): a2.spines[sp].set_visible(False)
-hs = [plt.scatter([], [], s=sz(1e-2), color=LT, edgecolors=TEAL, linewidths=0.6), plt.scatter([], [], s=sz(1e-2), color=TEAL, lw=0)] + [plt.scatter([], [], s=sz(q), color="#BDBDBD", lw=0) for q in (1e-2, 1e-5, 1e-10)]
-f2.legend(hs, ["TF-specific (1–2 TFs)", "Conserved (≥3 TFs)", "q = 0.01", "1e-5", "≤1e-10"], loc="upper left", bbox_to_anchor=(0.72, 0.9), fontsize=5.5, labelspacing=0.6)
-(H / "supplementary").mkdir(exist_ok=True); save(f2, H / "supplementary/go_per_tf_great_terms")
+print(L[["tf", "name", "q", "fg_regions", "distinct_genes"]].to_string(index=False)); print(R[["name", "n_tfs", "med_lq", "med_reg"]].round(2).to_string(index=False))
+(H / "supplementary").mkdir(exist_ok=True)
 cols = ["tf", "theme", "name", "term", "q", "fold", "fg_regions", "distinct_genes", "top_genes(regions)"]
 with pd.ExcelWriter(H / "supplementary/go_per_tf_great_terms.xlsx") as w:
     SP.sort_values(["tf", "q"])[cols].to_excel(w, sheet_name="TF_specific_terms", index=False); CO.sort_values(["tf", "q"])[cols].to_excel(w, sheet_name="conserved_terms", index=False)
-    pd.DataFrame({"TF_specific_TFs": ns, "conserved_TFs": nc}).reindex(order).to_excel(w, sheet_name="theme_counts")
+    L.to_excel(w, sheet_name="panel_left_top10", index=False); R.drop(columns=["tfset"]).to_excel(w, sheet_name="panel_right_top10", index=False)
     pd.read_csv(G / "slim_to_theme.tsv", sep="\t").to_excel(w, sheet_name="slim_to_theme", index=False)
-print("supp rows", len(rows))
+
