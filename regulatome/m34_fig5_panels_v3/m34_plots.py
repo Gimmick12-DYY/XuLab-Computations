@@ -32,10 +32,10 @@ def panel_a(mode):
     box(2, 30, 24, 8, "79 TFs\nHITAG peaks\n(top 5,000 per TF)", "#FBEBD3", OURS); box(38, 30, 24, 8, "Promoter or\nABC-linked element\n(Hi-C ABC)", "#F7F7F7", DARK); box(74, 30, 24, 8, "Target gene", "#F7F7F7", DARK)
     arrow(26.8, 34, 37.2, 34); arrow(62.8, 34, 73.2, 34)
     ax.text(2, 25, "Perturb-seq layer (external, HEK293T knockdowns)", fontsize=fs, fontweight="bold", color=ACT1, va="center")
-    box(2, 14, 34, 8, "Knockdown of the same TF changes\nthe gene (|z| ≥ 2, top-25% sgRNA cells)?", "#E8F1F8", ACT1); box(46, 14, 52, 8, "Supported by Perturb-seq:  |z| ≥ 2  (confidence: |z| ≥ 3, |z| ≥ 4)\nDirection:  down on knockdown = activates · up = represses", "#E8F1F8", ACT1)
+    box(2, 14, 34, 8, "Knockdown of the same TF changes\nthe gene (|z| ≥ 2, top-25% sgRNA cells)?", "#E8F1F8", ACT1); box(46, 14, 52, 8, "In both:  the TF binds the gene and its knockdown changes it\nDirection:  down on knockdown = activates · up = represses", "#E8F1F8", ACT1)
     arrow(36.8, 18, 45.2, 18); arrow(86, 29.2, 86, 22.8)
     ax.text(2, 9, "Combination layer", fontsize=fs, fontweight="bold", color=INK, va="center")
-    box(2, 1, 96, 5.5, "Regulome:  150,403 TF–gene edges · 79 TFs · 11,046 genes · 11,337 supported by Perturb-seq (63 TFs), each with a direction", "#FFFFFF", INK, bold=False)
+    box(2, 1, 96, 5.5, "Regulome:  150,403 TF–gene pairs · 79 TFs · 11,046 genes · 11,337 pairs in both (63 TFs), each with a direction", "#FFFFFF", INK, bold=False)
     save(fig, "Fig5a_layers", mode)
 # ---------------- b: at a glance
 def panel_b(mode):
@@ -136,7 +136,7 @@ def panel_d(mode):
     hl = {(c, r.start, r.end) for r in Lg.itertuples() if ((sm >= r.start) & (sm < r.end)).any()}
     z = R[(R.tf == "NRF1") & (R.gene == gene)].knockdown_z.iloc[0]
     fig = plt.figure(figsize=SLIDE if s else (7.0, 2.8)); gs = fig.add_gridspec(1, 2, width_ratios=[1, 1.9], wspace=0.42, left=0.17, right=0.98, bottom=0.14, top=0.93)
-    ax = fig.add_subplot(gs[0]); labs = ["bound genes", "supported by\nPerturb-seq", "down on knockdown\n(activates)", "up on knockdown\n(represses)", "|z| ≥ 4"]; vals = [F.bound, F.supported, F.down_activates, F.up_represses, F.tier1]
+    ax = fig.add_subplot(gs[0]); labs = ["our genes", "in both\n(also Perturb-seq)", "down on knockdown\n(activates)", "up on knockdown\n(represses)", "|z| ≥ 4"]; vals = [F.bound, F.supported, F.down_activates, F.up_represses, F.tier1]
     cols = [OURS, DARK, ACT, REP, ACT1]; y = np.arange(len(vals))[::-1]; ax.barh(y, vals, color=cols, height=0.7)
     for yy, v in zip(y, vals): ax.text(v + 25, yy, f"{v:,}", va="center", fontsize=fs)
     ax.set_yticks(y); ax.set_yticklabels(labs); ax.set_xlabel("NRF1 target genes"); ax.set_xlim(0, F.bound * 1.25)
@@ -188,7 +188,7 @@ def panel_f(mode):
     style(mode); s = mode == "slide"; fs = 12 if s else 6; Fd = pd.read_csv(f"{O}/panel_f_activator_repressor.tsv", sep="\t"); Fd = Fd[Fd.supported >= 20].sort_values("pct_activates", ascending=False).reset_index(drop=True)
     fig = plt.figure(figsize=SLIDE if s else (7.0, 2.6)); gs = fig.add_gridspec(1, 2, width_ratios=[1.35, 1], wspace=0.28, left=0.07, right=0.98, bottom=0.2, top=0.93)
     ax = fig.add_subplot(gs[0]); x = np.arange(len(Fd)); ax.bar(x, Fd.pct_activates, color=[ACT1 if v >= 50 else ACT for v in Fd.pct_activates], width=0.85); ax.axhline(50, color=MID, lw=1 if s else 0.5, ls="--")
-    ax.set_xlim(-1, len(Fd)); ax.set_ylim(0, 100); ax.set_xticks([]); ax.set_ylabel("% of supported edges that go down\non knockdown (TF activates)"); ax.set_xlabel(f"{len(Fd)} TFs with ≥ 20 supported edges, ordered")
+    ax.set_xlim(-1, len(Fd)); ax.set_ylim(0, 100); ax.set_xticks([]); ax.set_ylabel("% of genes in both that go down\non knockdown (TF activates)"); ax.set_xlabel(f"{len(Fd)} TFs with ≥ 20 genes in both, ordered")
     named = sorted([t for t in ("CTCF", "NRF1", "WIZ", "NFYA", "E4F1", "DNMT1", "NME2", "MBD3", "SRCAP") if t in set(Fd.tf)], key=lambda t: int(np.flatnonzero(Fd.tf.values == t)[0]))
     for j, t in enumerate(named):
         k = int(np.flatnonzero(Fd.tf.values == t)[0]); v = Fd.pct_activates.values[k]; yt = max(v + 6, 96 - 9 * (j % 4))
@@ -196,7 +196,7 @@ def panel_f(mode):
     big = Fd[Fd.supported >= 250].sort_values("supported"); ax2 = fig.add_subplot(gs[1]); y = np.arange(len(big))
     ax2.barh(y, -big.activates, color=ACT, height=0.7); ax2.barh(y, -big.tier1_activates, color=ACT1, height=0.7); ax2.barh(y, big.represses, color=REP, height=0.7); ax2.barh(y, big.tier1_represses, color=REP1, height=0.7)
     ax2.set_yticks(y); ax2.set_yticklabels(big.tf); ax2.axvline(0, color=INK, lw=0.8 if s else 0.4); m = max(big.activates.max(), big.represses.max()) * 1.05; ax2.set_xlim(-m, m)
-    tk = ax2.get_xticks(); ax2.set_xticks(tk); ax2.set_xticklabels([f"{abs(int(v))}" for v in tk]); ax2.set_xlim(-m, m); ax2.set_xlabel("supported edges (darker = |z| ≥ 4)")
+    tk = ax2.get_xticks(); ax2.set_xticks(tk); ax2.set_xticklabels([f"{abs(int(v))}" for v in tk]); ax2.set_xlim(-m, m); ax2.set_xlabel("genes in both (darker = |z| ≥ 4)")
     ax2.text(0.02, 1.0, "activates", transform=ax2.transAxes, color=ACT1, fontsize=fs, va="bottom"); ax2.text(0.98, 1.0, "represses", transform=ax2.transAxes, color=REP1, fontsize=fs, va="bottom", ha="right")
     save(fig, "Fig5f_activator_repressor", mode)
 # ---------------- g: Figure 4 pairs

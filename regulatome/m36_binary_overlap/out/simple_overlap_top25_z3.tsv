@@ -1,4 +1,4 @@
-TF	our_genes	perturbseq_genes	both	recovery_pct (both / Perturb-seq genes)	precision_pct (both / our genes)
+TF	our genes	Perturb-seq genes	in both	share of Perturb-seq genes found in our Regulome (%)	share of our Regulome genes found in Perturb-seq (%)
 RBBP7	5521	546	253	46.3	4.6
 NME2	4414	490	196	40.0	4.4
 NRF1	1610	729	136	18.7	8.4
