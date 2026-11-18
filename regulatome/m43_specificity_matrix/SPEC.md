@@ -14,5 +14,11 @@ Order: hierarchical clustering (average linkage) of the 63 TFs on Jaccard distan
 Summaries (adjusted version): median diagonal vs median off-diagonal value; per TF, rank of the diagonal within its row; TFs whose diagonal is in the top 5 of the row; with and without broad TFs.
 Style: Arial, palette option C (figures_paletteC/regulome_palette.py), diagonal cells outlined thinly; paper version with TF names >= 5 pt; slide version 13.33 x 7.5 in. Descriptive, no p-values.
 
-## Amendment 1: double standardisation (to make a diagonal easier to see)
-(d) Starting from the raw share matrix (rows = knocked-down TFs kept at that cutoff, columns = the square TF set), remove the column effect (list size / breadth) and the row effect (how broad the knockdown is) by double centring: x - row mean - column mean + grand mean (iterated to convergence, median polish style with means), then divide each row by its standard deviation. A cell then reads "how much better than expected for this list and this knockdown, in row SDs". Computed for all TFs and with broad TFs removed (rows and columns), rules A and G, |z| >= 2-5. Summaries as before (median diagonal vs off-diagonal, rank of own list in its row). Figures with the same order and diagonal outline; a compact printed version for |z| >= 4 without broad TFs (square: TFs that are both rows and columns).
+## Amendment 1: standardised square matrices (replaces the earlier draft of this amendment)
+Square matrices: rows = knocked-down TFs with >= 10 Perturb-seq genes at the cutoff; columns = the same TFs in the same order (tf_order.tsv), so the diagonal is a true diagonal. Rule A. |z| >= 2 and 4 (main), 3 and 5 (extra). Two TF sets: all TFs, and the 10 broad TFs removed. Built from the raw share matrix.
+- S1 double-centred: subtract column means and row means (double centring), divide by the overall SD. Diverging, symmetric, same limits (-3, 3) for all S1 figures.
+- S2 double z-score: z-score within each column across rows, then within each row across columns. Diverging, same limits (-3, 3) for all S2 figures.
+- S3 rank: column-adjusted matrix (raw minus column mean), then within each row the percentile rank of each cell (100 = the list that finds the largest share of this TF's Perturb-seq genes). Sequential 0-100.
+Subtitle of each figure: number of TFs, median diagonal vs median off-diagonal, number of TFs whose diagonal cell is highest / in the top 5 of its row. No outlines. TF names on both axes.
+Chat exports (<= 1,600 px long side, < 1.5 MB) in Figure5/specificity_matrix/for_chat/: S2 |z|>=2 all, S2 |z|>=4 all, S2 |z|>=4 without broad, S3 |z|>=4 without broad, and the existing adjusted |z|>=4 without-broad panel (b) alone.
+Script: m43_std.py.
