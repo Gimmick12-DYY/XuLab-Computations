@@ -1,0 +1,1261 @@
+rule	Perturb-seq genes	TF	our genes	Perturb-seq genes (n)	in both	share of Perturb-seq genes found in our Regulome (%)	share of our Regulome genes found in Perturb-seq (%)
+A current	|z| >= 2	ADNP	1429	2166	282	13.02	19.73
+A current	|z| >= 2	AKAP8L	1446	563	88	15.63	6.09
+A current	|z| >= 2	CHAMP1	1185	367	29	7.90	2.45
+A current	|z| >= 2	CTCF	3661	1295	422	32.59	11.53
+A current	|z| >= 2	DDIT3	5116	1036	492	47.49	9.62
+A current	|z| >= 2	DNMT1	1198	1978	232	11.73	19.37
+A current	|z| >= 2	DR1	1094	819	88	10.74	8.04
+A current	|z| >= 2	E2F3	5248	474	224	47.26	4.27
+A current	|z| >= 2	E4F1	2235	1750	347	19.83	15.53
+A current	|z| >= 2	ETS2	1036	833	68	8.16	6.56
+A current	|z| >= 2	FLYWCH1	1560	1026	136	13.26	8.72
+A current	|z| >= 2	FOXC1	2104	873	174	19.93	8.27
+A current	|z| >= 2	FOXJ3	1043	514	50	9.73	4.79
+A current	|z| >= 2	FOXK1	513	1760	89	5.06	17.35
+A current	|z| >= 2	HOXA10	1673	1288	199	15.45	11.89
+A current	|z| >= 2	HOXA5	541	860	46	5.35	8.50
+A current	|z| >= 2	HOXB6	1797	501	81	16.17	4.51
+A current	|z| >= 2	HOXB8	1110	431	50	11.60	4.50
+A current	|z| >= 2	HOXB9	1588	479	64	13.36	4.03
+A current	|z| >= 2	HOXC4	710	614	37	6.03	5.21
+A current	|z| >= 2	HOXC9	1084	675	61	9.04	5.63
+A current	|z| >= 2	HOXD10	843	856	62	7.24	7.35
+A current	|z| >= 2	MAZ	1449	1263	178	14.09	12.28
+A current	|z| >= 2	MEF2A	775	1486	106	7.13	13.68
+A current	|z| >= 2	MEF2D	1061	510	54	10.59	5.09
+A current	|z| >= 2	MSX2	1401	1567	217	13.85	15.49
+A current	|z| >= 2	MTF2	1754	716	120	16.76	6.84
+A current	|z| >= 2	NEUROD4	1213	833	87	10.44	7.17
+A current	|z| >= 2	NFYA	5310	1338	605	45.22	11.39
+A current	|z| >= 2	NME2	4414	1805	700	38.78	15.86
+A current	|z| >= 2	NR1D2	1458	737	97	13.16	6.65
+A current	|z| >= 2	NRF1	1610	2069	355	17.16	22.05
+A current	|z| >= 2	PA2G4	1941	783	142	18.14	7.32
+A current	|z| >= 2	PCGF6	435	1000	31	3.10	7.13
+A current	|z| >= 2	POGK	981	823	78	9.48	7.95
+A current	|z| >= 2	RBBP7	5521	1986	910	45.82	16.48
+A current	|z| >= 2	RBPJ	1467	1524	211	13.85	14.38
+A current	|z| >= 2	RELA	1469	1465	187	12.76	12.73
+A current	|z| >= 2	SAFB	3626	835	261	31.26	7.20
+A current	|z| >= 2	SETDB1	1086	994	94	9.46	8.66
+A current	|z| >= 2	SMARCA1	1016	1124	93	8.27	9.15
+A current	|z| >= 2	SOX4	4993	1073	443	41.29	8.87
+A current	|z| >= 2	SRCAP	1241	536	72	13.43	5.80
+A current	|z| >= 2	TBX3	1241	759	103	13.57	8.30
+A current	|z| >= 2	THAP6	947	634	73	11.51	7.71
+A current	|z| >= 2	WIZ	1525	1008	132	13.10	8.66
+A current	|z| >= 2	XPA	5830	1062	548	51.60	9.40
+A current	|z| >= 2	ZBTB43	1089	710	73	10.28	6.70
+A current	|z| >= 2	ZBTB7A	2036	111	25	22.52	1.23
+A current	|z| >= 2	ZIC2	1551	1024	130	12.70	8.38
+A current	|z| >= 2	ZNF143	917	1130	89	7.88	9.71
+A current	|z| >= 2	ZNF282	1351	1412	169	11.97	12.51
+A current	|z| >= 2	ZNF503	848	607	49	8.07	5.78
+A current	|z| >= 2	ZNF507	5196	758	350	46.17	6.74
+A current	|z| >= 2	ZNF512	1165	646	58	8.98	4.98
+A current	|z| >= 2	ZNF512B	1714	728	120	16.48	7.00
+A current	|z| >= 2	ZNF581	1459	562	76	13.52	5.21
+A current	|z| >= 2	ZNF644	1644	466	63	13.52	3.83
+A current	|z| >= 2	ZNF746	1024	1068	90	8.43	8.79
+A current	|z| >= 2	ZNF768	2345	1700	371	21.82	15.82
+A current	|z| >= 2	ZNF777	1219	1709	200	11.70	16.41
+A current	|z| >= 2	ZNF79	1316	1279	148	11.57	11.25
+A current	|z| >= 2	ZUFSP	993	956	108	11.30	10.88
+A current	|z| >= 3	ADNP	1429	626	85	13.58	5.95
+A current	|z| >= 3	AKAP8L	1446	31	2	6.45	0.14
+A current	|z| >= 3	CHAMP1	1185	16	2	12.50	0.17
+A current	|z| >= 3	CTCF	3661	272	78	28.68	2.13
+A current	|z| >= 3	DDIT3	5116	184	93	50.54	1.82
+A current	|z| >= 3	DNMT1	1198	541	63	11.65	5.26
+A current	|z| >= 3	DR1	1094	72	9	12.50	0.82
+A current	|z| >= 3	E2F3	5248	31	16	51.61	0.30
+A current	|z| >= 3	E4F1	2235	468	93	19.87	4.16
+A current	|z| >= 3	ETS2	1036	127	10	7.87	0.97
+A current	|z| >= 3	FLYWCH1	1560	154	30	19.48	1.92
+A current	|z| >= 3	FOXC1	2104	113	31	27.43	1.47
+A current	|z| >= 3	FOXJ3	1043	26	2	7.69	0.19
+A current	|z| >= 3	FOXK1	513	453	19	4.19	3.70
+A current	|z| >= 3	HOXA10	1673	256	46	17.97	2.75
+A current	|z| >= 3	HOXA5	541	102	3	2.94	0.55
+A current	|z| >= 3	HOXB6	1797	42	6	14.29	0.33
+A current	|z| >= 3	HOXB8	1110	31	4	12.90	0.36
+A current	|z| >= 3	HOXB9	1588	34	5	14.71	0.31
+A current	|z| >= 3	HOXC4	710	60	5	8.33	0.70
+A current	|z| >= 3	HOXC9	1084	67	8	11.94	0.74
+A current	|z| >= 3	HOXD10	843	143	15	10.49	1.78
+A current	|z| >= 3	MAZ	1449	251	35	13.94	2.42
+A current	|z| >= 3	MEF2A	775	282	27	9.57	3.48
+A current	|z| >= 3	MEF2D	1061	37	3	8.11	0.28
+A current	|z| >= 3	MSX2	1401	397	59	14.86	4.21
+A current	|z| >= 3	MTF2	1754	102	11	10.78	0.63
+A current	|z| >= 3	NEUROD4	1213	71	6	8.45	0.49
+A current	|z| >= 3	NFYA	5310	206	101	49.03	1.90
+A current	|z| >= 3	NME2	4414	490	196	40.00	4.44
+A current	|z| >= 3	NR1D2	1458	60	9	15.00	0.62
+A current	|z| >= 3	NRF1	1610	729	136	18.66	8.45
+A current	|z| >= 3	PA2G4	1941	86	13	15.12	0.67
+A current	|z| >= 3	PCGF6	435	129	4	3.10	0.92
+A current	|z| >= 3	POGK	981	93	9	9.68	0.92
+A current	|z| >= 3	RBBP7	5521	546	253	46.34	4.58
+A current	|z| >= 3	RBPJ	1467	327	42	12.84	2.86
+A current	|z| >= 3	RELA	1469	319	40	12.54	2.72
+A current	|z| >= 3	SAFB	3626	116	42	36.21	1.16
+A current	|z| >= 3	SETDB1	1086	164	16	9.76	1.47
+A current	|z| >= 3	SMARCA1	1016	155	12	7.74	1.18
+A current	|z| >= 3	SOX4	4993	134	60	44.78	1.20
+A current	|z| >= 3	SRCAP	1241	49	9	18.37	0.73
+A current	|z| >= 3	TBX3	1241	105	16	15.24	1.29
+A current	|z| >= 3	THAP6	947	52	7	13.46	0.74
+A current	|z| >= 3	WIZ	1525	115	19	16.52	1.25
+A current	|z| >= 3	XPA	5830	147	77	52.38	1.32
+A current	|z| >= 3	ZBTB43	1089	54	5	9.26	0.46
+A current	|z| >= 3	ZBTB7A	2036	3	1	33.33	0.05
+A current	|z| >= 3	ZIC2	1551	128	22	17.19	1.42
+A current	|z| >= 3	ZNF143	917	213	20	9.39	2.18
+A current	|z| >= 3	ZNF282	1351	252	34	13.49	2.52
+A current	|z| >= 3	ZNF503	848	38	3	7.89	0.35
+A current	|z| >= 3	ZNF507	5196	79	33	41.77	0.64
+A current	|z| >= 3	ZNF512	1165	75	7	9.33	0.60
+A current	|z| >= 3	ZNF512B	1714	84	11	13.10	0.64
+A current	|z| >= 3	ZNF581	1459	39	6	15.38	0.41
+A current	|z| >= 3	ZNF644	1644	30	6	20.00	0.36
+A current	|z| >= 3	ZNF746	1024	128	8	6.25	0.78
+A current	|z| >= 3	ZNF768	2345	360	89	24.72	3.80
+A current	|z| >= 3	ZNF777	1219	407	41	10.07	3.36
+A current	|z| >= 3	ZNF79	1316	213	27	12.68	2.05
+A current	|z| >= 3	ZUFSP	993	123	18	14.63	1.81
+B A + 10 kb	|z| >= 2	ADNP	1909	2166	398	18.37	20.85
+B A + 10 kb	|z| >= 2	AKAP8L	2010	563	129	22.91	6.42
+B A + 10 kb	|z| >= 2	CHAMP1	1693	367	43	11.72	2.54
+B A + 10 kb	|z| >= 2	CTCF	3984	1295	463	35.75	11.62
+B A + 10 kb	|z| >= 2	DDIT3	5324	1036	518	50.00	9.73
+B A + 10 kb	|z| >= 2	DNMT1	1709	1978	338	17.09	19.78
+B A + 10 kb	|z| >= 2	DR1	1622	819	153	18.68	9.43
+B A + 10 kb	|z| >= 2	E2F3	5449	474	231	48.73	4.24
+B A + 10 kb	|z| >= 2	E4F1	2788	1750	470	26.86	16.86
+B A + 10 kb	|z| >= 2	ETS2	1589	833	141	16.93	8.87
+B A + 10 kb	|z| >= 2	FLYWCH1	1960	1026	185	18.03	9.44
+B A + 10 kb	|z| >= 2	FOXC1	2509	873	211	24.17	8.41
+B A + 10 kb	|z| >= 2	FOXJ3	1520	514	74	14.40	4.87
+B A + 10 kb	|z| >= 2	FOXK1	946	1760	164	9.32	17.34
+B A + 10 kb	|z| >= 2	HOXA10	2093	1288	270	20.96	12.90
+B A + 10 kb	|z| >= 2	HOXA5	843	860	66	7.67	7.83
+B A + 10 kb	|z| >= 2	HOXB6	2349	501	122	24.35	5.19
+B A + 10 kb	|z| >= 2	HOXB8	1568	431	80	18.56	5.10
+B A + 10 kb	|z| >= 2	HOXB9	1956	479	82	17.12	4.19
+B A + 10 kb	|z| >= 2	HOXC4	1182	614	68	11.07	5.75
+B A + 10 kb	|z| >= 2	HOXC9	1703	675	114	16.89	6.69
+B A + 10 kb	|z| >= 2	HOXD10	1249	856	103	12.03	8.25
+B A + 10 kb	|z| >= 2	MAZ	1919	1263	231	18.29	12.04
+B A + 10 kb	|z| >= 2	MEF2A	1321	1486	193	12.99	14.61
+B A + 10 kb	|z| >= 2	MEF2D	1640	510	91	17.84	5.55
+B A + 10 kb	|z| >= 2	MSX2	1914	1567	297	18.95	15.52
+B A + 10 kb	|z| >= 2	MTF2	2182	716	173	24.16	7.93
+B A + 10 kb	|z| >= 2	NEUROD4	1708	833	120	14.41	7.03
+B A + 10 kb	|z| >= 2	NFYA	5538	1338	646	48.28	11.66
+B A + 10 kb	|z| >= 2	NME2	4686	1805	762	42.22	16.26
+B A + 10 kb	|z| >= 2	NR1D2	2018	737	146	19.81	7.23
+B A + 10 kb	|z| >= 2	NRF1	2099	2069	452	21.85	21.53
+B A + 10 kb	|z| >= 2	PA2G4	2250	783	173	22.09	7.69
+B A + 10 kb	|z| >= 2	PCGF6	828	1000	79	7.90	9.54
+B A + 10 kb	|z| >= 2	POGK	1539	823	142	17.25	9.23
+B A + 10 kb	|z| >= 2	RBBP7	5717	1986	945	47.58	16.53
+B A + 10 kb	|z| >= 2	RBPJ	1905	1524	293	19.23	15.38
+B A + 10 kb	|z| >= 2	RELA	1983	1465	262	17.88	13.21
+B A + 10 kb	|z| >= 2	SAFB	4014	835	283	33.89	7.05
+B A + 10 kb	|z| >= 2	SETDB1	1507	994	144	14.49	9.56
+B A + 10 kb	|z| >= 2	SMARCA1	1469	1124	159	14.15	10.82
+B A + 10 kb	|z| >= 2	SOX4	5292	1073	494	46.04	9.33
+B A + 10 kb	|z| >= 2	SRCAP	1675	536	100	18.66	5.97
+B A + 10 kb	|z| >= 2	TBX3	1580	759	126	16.60	7.97
+B A + 10 kb	|z| >= 2	THAP6	1452	634	117	18.45	8.06
+B A + 10 kb	|z| >= 2	WIZ	2121	1008	211	20.93	9.95
+B A + 10 kb	|z| >= 2	XPA	5977	1062	570	53.67	9.54
+B A + 10 kb	|z| >= 2	ZBTB43	1602	710	107	15.07	6.68
+B A + 10 kb	|z| >= 2	ZBTB7A	2527	111	35	31.53	1.39
+B A + 10 kb	|z| >= 2	ZIC2	2037	1024	195	19.04	9.57
+B A + 10 kb	|z| >= 2	ZNF143	1441	1130	161	14.25	11.17
+B A + 10 kb	|z| >= 2	ZNF282	1824	1412	252	17.85	13.82
+B A + 10 kb	|z| >= 2	ZNF503	1297	607	77	12.69	5.94
+B A + 10 kb	|z| >= 2	ZNF507	5434	758	374	49.34	6.88
+B A + 10 kb	|z| >= 2	ZNF512	1635	646	99	15.33	6.06
+B A + 10 kb	|z| >= 2	ZNF512B	2132	728	169	23.21	7.93
+B A + 10 kb	|z| >= 2	ZNF581	1940	562	93	16.55	4.79
+B A + 10 kb	|z| >= 2	ZNF644	2218	466	88	18.88	3.97
+B A + 10 kb	|z| >= 2	ZNF746	1562	1068	162	15.17	10.37
+B A + 10 kb	|z| >= 2	ZNF768	2712	1700	420	24.71	15.49
+B A + 10 kb	|z| >= 2	ZNF777	1706	1709	294	17.20	17.23
+B A + 10 kb	|z| >= 2	ZNF79	1770	1279	214	16.73	12.09
+B A + 10 kb	|z| >= 2	ZUFSP	1489	956	168	17.57	11.28
+B A + 10 kb	|z| >= 3	ADNP	1909	626	130	20.77	6.81
+B A + 10 kb	|z| >= 3	AKAP8L	2010	31	3	9.68	0.15
+B A + 10 kb	|z| >= 3	CHAMP1	1693	16	2	12.50	0.12
+B A + 10 kb	|z| >= 3	CTCF	3984	272	93	34.19	2.33
+B A + 10 kb	|z| >= 3	DDIT3	5324	184	100	54.35	1.88
+B A + 10 kb	|z| >= 3	DNMT1	1709	541	98	18.11	5.73
+B A + 10 kb	|z| >= 3	DR1	1622	72	21	29.17	1.29
+B A + 10 kb	|z| >= 3	E2F3	5449	31	18	58.06	0.33
+B A + 10 kb	|z| >= 3	E4F1	2788	468	152	32.48	5.45
+B A + 10 kb	|z| >= 3	ETS2	1589	127	25	19.69	1.57
+B A + 10 kb	|z| >= 3	FLYWCH1	1960	154	42	27.27	2.14
+B A + 10 kb	|z| >= 3	FOXC1	2509	113	39	34.51	1.55
+B A + 10 kb	|z| >= 3	FOXJ3	1520	26	3	11.54	0.20
+B A + 10 kb	|z| >= 3	FOXK1	946	453	44	9.71	4.65
+B A + 10 kb	|z| >= 3	HOXA10	2093	256	71	27.73	3.39
+B A + 10 kb	|z| >= 3	HOXA5	843	102	5	4.90	0.59
+B A + 10 kb	|z| >= 3	HOXB6	2349	42	9	21.43	0.38
+B A + 10 kb	|z| >= 3	HOXB8	1568	31	8	25.81	0.51
+B A + 10 kb	|z| >= 3	HOXB9	1956	34	6	17.65	0.31
+B A + 10 kb	|z| >= 3	HOXC4	1182	60	9	15.00	0.76
+B A + 10 kb	|z| >= 3	HOXC9	1703	67	19	28.36	1.12
+B A + 10 kb	|z| >= 3	HOXD10	1249	143	24	16.78	1.92
+B A + 10 kb	|z| >= 3	MAZ	1919	251	55	21.91	2.87
+B A + 10 kb	|z| >= 3	MEF2A	1321	282	51	18.09	3.86
+B A + 10 kb	|z| >= 3	MEF2D	1640	37	7	18.92	0.43
+B A + 10 kb	|z| >= 3	MSX2	1914	397	96	24.18	5.02
+B A + 10 kb	|z| >= 3	MTF2	2182	102	25	24.51	1.15
+B A + 10 kb	|z| >= 3	NEUROD4	1708	71	9	12.68	0.53
+B A + 10 kb	|z| >= 3	NFYA	5538	206	109	52.91	1.97
+B A + 10 kb	|z| >= 3	NME2	4686	490	221	45.10	4.72
+B A + 10 kb	|z| >= 3	NR1D2	2018	60	16	26.67	0.79
+B A + 10 kb	|z| >= 3	NRF1	2099	729	181	24.83	8.62
+B A + 10 kb	|z| >= 3	PA2G4	2250	86	13	15.12	0.58
+B A + 10 kb	|z| >= 3	PCGF6	828	129	10	7.75	1.21
+B A + 10 kb	|z| >= 3	POGK	1539	93	19	20.43	1.23
+B A + 10 kb	|z| >= 3	RBBP7	5717	546	262	47.99	4.58
+B A + 10 kb	|z| >= 3	RBPJ	1905	327	75	22.94	3.94
+B A + 10 kb	|z| >= 3	RELA	1983	319	58	18.18	2.92
+B A + 10 kb	|z| >= 3	SAFB	4014	116	46	39.66	1.15
+B A + 10 kb	|z| >= 3	SETDB1	1507	164	24	14.63	1.59
+B A + 10 kb	|z| >= 3	SMARCA1	1469	155	28	18.06	1.91
+B A + 10 kb	|z| >= 3	SOX4	5292	134	79	58.96	1.49
+B A + 10 kb	|z| >= 3	SRCAP	1675	49	11	22.45	0.66
+B A + 10 kb	|z| >= 3	TBX3	1580	105	21	20.00	1.33
+B A + 10 kb	|z| >= 3	THAP6	1452	52	11	21.15	0.76
+B A + 10 kb	|z| >= 3	WIZ	2121	115	37	32.17	1.74
+B A + 10 kb	|z| >= 3	XPA	5977	147	81	55.10	1.36
+B A + 10 kb	|z| >= 3	ZBTB43	1602	54	7	12.96	0.44
+B A + 10 kb	|z| >= 3	ZBTB7A	2527	3	2	66.67	0.08
+B A + 10 kb	|z| >= 3	ZIC2	2037	128	38	29.69	1.87
+B A + 10 kb	|z| >= 3	ZNF143	1441	213	38	17.84	2.64
+B A + 10 kb	|z| >= 3	ZNF282	1824	252	56	22.22	3.07
+B A + 10 kb	|z| >= 3	ZNF503	1297	38	6	15.79	0.46
+B A + 10 kb	|z| >= 3	ZNF507	5434	79	40	50.63	0.74
+B A + 10 kb	|z| >= 3	ZNF512	1635	75	12	16.00	0.73
+B A + 10 kb	|z| >= 3	ZNF512B	2132	84	19	22.62	0.89
+B A + 10 kb	|z| >= 3	ZNF581	1940	39	9	23.08	0.46
+B A + 10 kb	|z| >= 3	ZNF644	2218	30	10	33.33	0.45
+B A + 10 kb	|z| >= 3	ZNF746	1562	128	22	17.19	1.41
+B A + 10 kb	|z| >= 3	ZNF768	2712	360	98	27.22	3.61
+B A + 10 kb	|z| >= 3	ZNF777	1706	407	75	18.43	4.40
+B A + 10 kb	|z| >= 3	ZNF79	1770	213	45	21.13	2.54
+B A + 10 kb	|z| >= 3	ZUFSP	1489	123	31	25.20	2.08
+C A + 50 kb	|z| >= 2	ADNP	3648	2166	678	31.30	18.59
+C A + 50 kb	|z| >= 2	AKAP8L	3700	563	216	38.37	5.84
+C A + 50 kb	|z| >= 2	CHAMP1	3331	367	94	25.61	2.82
+C A + 50 kb	|z| >= 2	CTCF	5465	1295	625	48.26	11.44
+C A + 50 kb	|z| >= 2	DDIT3	6447	1036	617	59.56	9.57
+C A + 50 kb	|z| >= 2	DNMT1	3313	1978	608	30.74	18.35
+C A + 50 kb	|z| >= 2	DR1	3433	819	281	34.31	8.19
+C A + 50 kb	|z| >= 2	E2F3	6527	474	287	60.55	4.40
+C A + 50 kb	|z| >= 2	E4F1	4535	1750	731	41.77	16.12
+C A + 50 kb	|z| >= 2	ETS2	3381	833	276	33.13	8.16
+C A + 50 kb	|z| >= 2	FLYWCH1	3639	1026	353	34.41	9.70
+C A + 50 kb	|z| >= 2	FOXC1	3923	873	354	40.55	9.02
+C A + 50 kb	|z| >= 2	FOXJ3	3100	514	152	29.57	4.90
+C A + 50 kb	|z| >= 2	FOXK1	2283	1760	352	20.00	15.42
+C A + 50 kb	|z| >= 2	HOXA10	3711	1288	459	35.64	12.37
+C A + 50 kb	|z| >= 2	HOXA5	2128	860	155	18.02	7.28
+C A + 50 kb	|z| >= 2	HOXB6	3985	501	197	39.32	4.94
+C A + 50 kb	|z| >= 2	HOXB8	3169	431	145	33.64	4.58
+C A + 50 kb	|z| >= 2	HOXB9	3534	479	147	30.69	4.16
+C A + 50 kb	|z| >= 2	HOXC4	2650	614	166	27.04	6.26
+C A + 50 kb	|z| >= 2	HOXC9	3480	675	238	35.26	6.84
+C A + 50 kb	|z| >= 2	HOXD10	2580	856	210	24.53	8.14
+C A + 50 kb	|z| >= 2	MAZ	3572	1263	420	33.25	11.76
+C A + 50 kb	|z| >= 2	MEF2A	2930	1486	396	26.65	13.52
+C A + 50 kb	|z| >= 2	MEF2D	3421	510	178	34.90	5.20
+C A + 50 kb	|z| >= 2	MSX2	3469	1567	504	32.16	14.53
+C A + 50 kb	|z| >= 2	MTF2	3810	716	281	39.25	7.38
+C A + 50 kb	|z| >= 2	NEUROD4	3101	833	222	26.65	7.16
+C A + 50 kb	|z| >= 2	NFYA	6585	1338	749	55.98	11.37
+C A + 50 kb	|z| >= 2	NME2	5865	1805	975	54.02	16.62
+C A + 50 kb	|z| >= 2	NR1D2	3762	737	281	38.13	7.47
+C A + 50 kb	|z| >= 2	NRF1	3529	2069	721	34.85	20.43
+C A + 50 kb	|z| >= 2	PA2G4	3818	783	293	37.42	7.67
+C A + 50 kb	|z| >= 2	PCGF6	2080	1000	188	18.80	9.04
+C A + 50 kb	|z| >= 2	POGK	3353	823	291	35.36	8.68
+C A + 50 kb	|z| >= 2	RBBP7	6774	1986	1122	56.50	16.56
+C A + 50 kb	|z| >= 2	RBPJ	3605	1524	528	34.65	14.65
+C A + 50 kb	|z| >= 2	RELA	3982	1465	525	35.84	13.18
+C A + 50 kb	|z| >= 2	SAFB	5547	835	423	50.66	7.63
+C A + 50 kb	|z| >= 2	SETDB1	2792	994	262	26.36	9.38
+C A + 50 kb	|z| >= 2	SMARCA1	3117	1124	337	29.98	10.81
+C A + 50 kb	|z| >= 2	SOX4	6442	1073	614	57.22	9.53
+C A + 50 kb	|z| >= 2	SRCAP	3346	536	185	34.51	5.53
+C A + 50 kb	|z| >= 2	TBX3	3197	759	251	33.07	7.85
+C A + 50 kb	|z| >= 2	THAP6	3187	634	213	33.60	6.68
+C A + 50 kb	|z| >= 2	WIZ	3797	1008	363	36.01	9.56
+C A + 50 kb	|z| >= 2	XPA	6918	1062	664	62.52	9.60
+C A + 50 kb	|z| >= 2	ZBTB43	3298	710	213	30.00	6.46
+C A + 50 kb	|z| >= 2	ZBTB7A	4192	111	55	49.55	1.31
+C A + 50 kb	|z| >= 2	ZIC2	3764	1024	338	33.01	8.98
+C A + 50 kb	|z| >= 2	ZNF143	3225	1130	342	30.27	10.60
+C A + 50 kb	|z| >= 2	ZNF282	3511	1412	465	32.93	13.24
+C A + 50 kb	|z| >= 2	ZNF503	2350	607	150	24.71	6.38
+C A + 50 kb	|z| >= 2	ZNF507	6499	758	442	58.31	6.80
+C A + 50 kb	|z| >= 2	ZNF512	3343	646	202	31.27	6.04
+C A + 50 kb	|z| >= 2	ZNF512B	3732	728	272	37.36	7.29
+C A + 50 kb	|z| >= 2	ZNF581	3472	562	175	31.14	5.04
+C A + 50 kb	|z| >= 2	ZNF644	3866	466	156	33.48	4.04
+C A + 50 kb	|z| >= 2	ZNF746	3269	1068	320	29.96	9.79
+C A + 50 kb	|z| >= 2	ZNF768	4298	1700	661	38.88	15.38
+C A + 50 kb	|z| >= 2	ZNF777	3329	1709	534	31.25	16.04
+C A + 50 kb	|z| >= 2	ZNF79	3208	1279	371	29.01	11.56
+C A + 50 kb	|z| >= 2	ZUFSP	3215	956	309	32.32	9.61
+C A + 50 kb	|z| >= 3	ADNP	3648	626	221	35.30	6.06
+C A + 50 kb	|z| >= 3	AKAP8L	3700	31	15	48.39	0.41
+C A + 50 kb	|z| >= 3	CHAMP1	3331	16	2	12.50	0.06
+C A + 50 kb	|z| >= 3	CTCF	5465	272	133	48.90	2.43
+C A + 50 kb	|z| >= 3	DDIT3	6447	184	127	69.02	1.97
+C A + 50 kb	|z| >= 3	DNMT1	3313	541	188	34.75	5.67
+C A + 50 kb	|z| >= 3	DR1	3433	72	30	41.67	0.87
+C A + 50 kb	|z| >= 3	E2F3	6527	31	19	61.29	0.29
+C A + 50 kb	|z| >= 3	E4F1	4535	468	223	47.65	4.92
+C A + 50 kb	|z| >= 3	ETS2	3381	127	57	44.88	1.69
+C A + 50 kb	|z| >= 3	FLYWCH1	3639	154	66	42.86	1.81
+C A + 50 kb	|z| >= 3	FOXC1	3923	113	57	50.44	1.45
+C A + 50 kb	|z| >= 3	FOXJ3	3100	26	8	30.77	0.26
+C A + 50 kb	|z| >= 3	FOXK1	2283	453	90	19.87	3.94
+C A + 50 kb	|z| >= 3	HOXA10	3711	256	116	45.31	3.13
+C A + 50 kb	|z| >= 3	HOXA5	2128	102	13	12.75	0.61
+C A + 50 kb	|z| >= 3	HOXB6	3985	42	18	42.86	0.45
+C A + 50 kb	|z| >= 3	HOXB8	3169	31	18	58.06	0.57
+C A + 50 kb	|z| >= 3	HOXB9	3534	34	8	23.53	0.23
+C A + 50 kb	|z| >= 3	HOXC4	2650	60	23	38.33	0.87
+C A + 50 kb	|z| >= 3	HOXC9	3480	67	32	47.76	0.92
+C A + 50 kb	|z| >= 3	HOXD10	2580	143	40	27.97	1.55
+C A + 50 kb	|z| >= 3	MAZ	3572	251	97	38.65	2.72
+C A + 50 kb	|z| >= 3	MEF2A	2930	282	93	32.98	3.17
+C A + 50 kb	|z| >= 3	MEF2D	3421	37	14	37.84	0.41
+C A + 50 kb	|z| >= 3	MSX2	3469	397	150	37.78	4.32
+C A + 50 kb	|z| >= 3	MTF2	3810	102	40	39.22	1.05
+C A + 50 kb	|z| >= 3	NEUROD4	3101	71	21	29.58	0.68
+C A + 50 kb	|z| >= 3	NFYA	6585	206	124	60.19	1.88
+C A + 50 kb	|z| >= 3	NME2	5865	490	282	57.55	4.81
+C A + 50 kb	|z| >= 3	NR1D2	3762	60	24	40.00	0.64
+C A + 50 kb	|z| >= 3	NRF1	3529	729	286	39.23	8.10
+C A + 50 kb	|z| >= 3	PA2G4	3818	86	26	30.23	0.68
+C A + 50 kb	|z| >= 3	PCGF6	2080	129	24	18.60	1.15
+C A + 50 kb	|z| >= 3	POGK	3353	93	41	44.09	1.22
+C A + 50 kb	|z| >= 3	RBBP7	6774	546	324	59.34	4.78
+C A + 50 kb	|z| >= 3	RBPJ	3605	327	126	38.53	3.50
+C A + 50 kb	|z| >= 3	RELA	3982	319	119	37.30	2.99
+C A + 50 kb	|z| >= 3	SAFB	5547	116	58	50.00	1.05
+C A + 50 kb	|z| >= 3	SETDB1	2792	164	46	28.05	1.65
+C A + 50 kb	|z| >= 3	SMARCA1	3117	155	60	38.71	1.92
+C A + 50 kb	|z| >= 3	SOX4	6442	134	93	69.40	1.44
+C A + 50 kb	|z| >= 3	SRCAP	3346	49	18	36.73	0.54
+C A + 50 kb	|z| >= 3	TBX3	3197	105	33	31.43	1.03
+C A + 50 kb	|z| >= 3	THAP6	3187	52	19	36.54	0.60
+C A + 50 kb	|z| >= 3	WIZ	3797	115	49	42.61	1.29
+C A + 50 kb	|z| >= 3	XPA	6918	147	96	65.31	1.39
+C A + 50 kb	|z| >= 3	ZBTB43	3298	54	14	25.93	0.42
+C A + 50 kb	|z| >= 3	ZBTB7A	4192	3	2	66.67	0.05
+C A + 50 kb	|z| >= 3	ZIC2	3764	128	55	42.97	1.46
+C A + 50 kb	|z| >= 3	ZNF143	3225	213	75	35.21	2.33
+C A + 50 kb	|z| >= 3	ZNF282	3511	252	95	37.70	2.71
+C A + 50 kb	|z| >= 3	ZNF503	2350	38	9	23.68	0.38
+C A + 50 kb	|z| >= 3	ZNF507	6499	79	52	65.82	0.80
+C A + 50 kb	|z| >= 3	ZNF512	3343	75	27	36.00	0.81
+C A + 50 kb	|z| >= 3	ZNF512B	3732	84	38	45.24	1.02
+C A + 50 kb	|z| >= 3	ZNF581	3472	39	15	38.46	0.43
+C A + 50 kb	|z| >= 3	ZNF644	3866	30	10	33.33	0.26
+C A + 50 kb	|z| >= 3	ZNF746	3269	128	48	37.50	1.47
+C A + 50 kb	|z| >= 3	ZNF768	4298	360	158	43.89	3.68
+C A + 50 kb	|z| >= 3	ZNF777	3329	407	138	33.91	4.15
+C A + 50 kb	|z| >= 3	ZNF79	3208	213	69	32.39	2.15
+C A + 50 kb	|z| >= 3	ZUFSP	3215	123	55	44.72	1.71
+D100 A + nearest TSS (<= 100 kb)	|z| >= 2	ADNP	3065	2166	623	28.76	20.33
+D100 A + nearest TSS (<= 100 kb)	|z| >= 2	AKAP8L	3059	563	165	29.31	5.39
+D100 A + nearest TSS (<= 100 kb)	|z| >= 2	CHAMP1	2872	367	72	19.62	2.51
+D100 A + nearest TSS (<= 100 kb)	|z| >= 2	CTCF	4770	1295	549	42.39	11.51
+D100 A + nearest TSS (<= 100 kb)	|z| >= 2	DDIT3	5681	1036	535	51.64	9.42
+D100 A + nearest TSS (<= 100 kb)	|z| >= 2	DNMT1	2702	1978	512	25.88	18.95
+D100 A + nearest TSS (<= 100 kb)	|z| >= 2	DR1	2793	819	241	29.43	8.63
+D100 A + nearest TSS (<= 100 kb)	|z| >= 2	E2F3	5704	474	244	51.48	4.28
+D100 A + nearest TSS (<= 100 kb)	|z| >= 2	E4F1	3648	1750	605	34.57	16.58
+D100 A + nearest TSS (<= 100 kb)	|z| >= 2	ETS2	2788	833	215	25.81	7.71
+D100 A + nearest TSS (<= 100 kb)	|z| >= 2	FLYWCH1	3077	1026	272	26.51	8.84
+D100 A + nearest TSS (<= 100 kb)	|z| >= 2	FOXC1	3380	873	290	33.22	8.58
+D100 A + nearest TSS (<= 100 kb)	|z| >= 2	FOXJ3	2534	514	121	23.54	4.78
+D100 A + nearest TSS (<= 100 kb)	|z| >= 2	FOXK1	1840	1760	294	16.70	15.98
+D100 A + nearest TSS (<= 100 kb)	|z| >= 2	HOXA10	3151	1288	359	27.87	11.39
+D100 A + nearest TSS (<= 100 kb)	|z| >= 2	HOXA5	1876	860	144	16.74	7.68
+D100 A + nearest TSS (<= 100 kb)	|z| >= 2	HOXB6	3309	501	154	30.74	4.65
+D100 A + nearest TSS (<= 100 kb)	|z| >= 2	HOXB8	2587	431	108	25.06	4.17
+D100 A + nearest TSS (<= 100 kb)	|z| >= 2	HOXB9	3070	479	132	27.56	4.30
+D100 A + nearest TSS (<= 100 kb)	|z| >= 2	HOXC4	2173	614	119	19.38	5.48
+D100 A + nearest TSS (<= 100 kb)	|z| >= 2	HOXC9	2819	675	181	26.81	6.42
+D100 A + nearest TSS (<= 100 kb)	|z| >= 2	HOXD10	2170	856	166	19.39	7.65
+D100 A + nearest TSS (<= 100 kb)	|z| >= 2	MAZ	2979	1263	342	27.08	11.48
+D100 A + nearest TSS (<= 100 kb)	|z| >= 2	MEF2A	2292	1486	321	21.60	14.01
+D100 A + nearest TSS (<= 100 kb)	|z| >= 2	MEF2D	2739	510	122	23.92	4.45
+D100 A + nearest TSS (<= 100 kb)	|z| >= 2	MSX2	2863	1567	429	27.38	14.98
+D100 A + nearest TSS (<= 100 kb)	|z| >= 2	MTF2	3216	716	228	31.84	7.09
+D100 A + nearest TSS (<= 100 kb)	|z| >= 2	NEUROD4	2513	833	166	19.93	6.61
+D100 A + nearest TSS (<= 100 kb)	|z| >= 2	NFYA	5674	1338	653	48.80	11.51
+D100 A + nearest TSS (<= 100 kb)	|z| >= 2	NME2	5133	1805	840	46.54	16.36
+D100 A + nearest TSS (<= 100 kb)	|z| >= 2	NR1D2	3059	737	213	28.90	6.96
+D100 A + nearest TSS (<= 100 kb)	|z| >= 2	NRF1	2880	2069	583	28.18	20.24
+D100 A + nearest TSS (<= 100 kb)	|z| >= 2	PA2G4	3424	783	250	31.93	7.30
+D100 A + nearest TSS (<= 100 kb)	|z| >= 2	PCGF6	1774	1000	167	16.70	9.41
+D100 A + nearest TSS (<= 100 kb)	|z| >= 2	POGK	2742	823	208	25.27	7.59
+D100 A + nearest TSS (<= 100 kb)	|z| >= 2	RBBP7	5931	1986	991	49.90	16.71
+D100 A + nearest TSS (<= 100 kb)	|z| >= 2	RBPJ	3011	1524	431	28.28	14.31
+D100 A + nearest TSS (<= 100 kb)	|z| >= 2	RELA	3339	1465	453	30.92	13.57
+D100 A + nearest TSS (<= 100 kb)	|z| >= 2	SAFB	4734	835	351	42.04	7.41
+D100 A + nearest TSS (<= 100 kb)	|z| >= 2	SETDB1	2388	994	207	20.82	8.67
+D100 A + nearest TSS (<= 100 kb)	|z| >= 2	SMARCA1	2713	1124	298	26.51	10.98
+D100 A + nearest TSS (<= 100 kb)	|z| >= 2	SOX4	5533	1073	504	46.97	9.11
+D100 A + nearest TSS (<= 100 kb)	|z| >= 2	SRCAP	2864	536	138	25.75	4.82
+D100 A + nearest TSS (<= 100 kb)	|z| >= 2	TBX3	2861	759	222	29.25	7.76
+D100 A + nearest TSS (<= 100 kb)	|z| >= 2	THAP6	2669	634	188	29.65	7.04
+D100 A + nearest TSS (<= 100 kb)	|z| >= 2	WIZ	3125	1008	304	30.16	9.73
+D100 A + nearest TSS (<= 100 kb)	|z| >= 2	XPA	6097	1062	576	54.24	9.45
+D100 A + nearest TSS (<= 100 kb)	|z| >= 2	ZBTB43	2636	710	157	22.11	5.96
+D100 A + nearest TSS (<= 100 kb)	|z| >= 2	ZBTB7A	3513	111	36	32.43	1.02
+D100 A + nearest TSS (<= 100 kb)	|z| >= 2	ZIC2	3117	1024	277	27.05	8.89
+D100 A + nearest TSS (<= 100 kb)	|z| >= 2	ZNF143	2707	1130	293	25.93	10.82
+D100 A + nearest TSS (<= 100 kb)	|z| >= 2	ZNF282	3015	1412	402	28.47	13.33
+D100 A + nearest TSS (<= 100 kb)	|z| >= 2	ZNF503	1988	607	124	20.43	6.24
+D100 A + nearest TSS (<= 100 kb)	|z| >= 2	ZNF507	5642	758	390	51.45	6.91
+D100 A + nearest TSS (<= 100 kb)	|z| >= 2	ZNF512	2848	646	157	24.30	5.51
+D100 A + nearest TSS (<= 100 kb)	|z| >= 2	ZNF512B	3212	728	228	31.32	7.10
+D100 A + nearest TSS (<= 100 kb)	|z| >= 2	ZNF581	2942	562	138	24.56	4.69
+D100 A + nearest TSS (<= 100 kb)	|z| >= 2	ZNF644	3229	466	127	27.25	3.93
+D100 A + nearest TSS (<= 100 kb)	|z| >= 2	ZNF746	2707	1068	275	25.75	10.16
+D100 A + nearest TSS (<= 100 kb)	|z| >= 2	ZNF768	3669	1700	570	33.53	15.54
+D100 A + nearest TSS (<= 100 kb)	|z| >= 2	ZNF777	2763	1709	461	26.97	16.68
+D100 A + nearest TSS (<= 100 kb)	|z| >= 2	ZNF79	2704	1279	303	23.69	11.21
+D100 A + nearest TSS (<= 100 kb)	|z| >= 2	ZUFSP	2715	956	260	27.20	9.58
+D100 A + nearest TSS (<= 100 kb)	|z| >= 3	ADNP	3065	626	188	30.03	6.13
+D100 A + nearest TSS (<= 100 kb)	|z| >= 3	AKAP8L	3059	31	7	22.58	0.23
+D100 A + nearest TSS (<= 100 kb)	|z| >= 3	CHAMP1	2872	16	2	12.50	0.07
+D100 A + nearest TSS (<= 100 kb)	|z| >= 3	CTCF	4770	272	115	42.28	2.41
+D100 A + nearest TSS (<= 100 kb)	|z| >= 3	DDIT3	5681	184	104	56.52	1.83
+D100 A + nearest TSS (<= 100 kb)	|z| >= 3	DNMT1	2702	541	149	27.54	5.51
+D100 A + nearest TSS (<= 100 kb)	|z| >= 3	DR1	2793	72	28	38.89	1.00
+D100 A + nearest TSS (<= 100 kb)	|z| >= 3	E2F3	5704	31	19	61.29	0.33
+D100 A + nearest TSS (<= 100 kb)	|z| >= 3	E4F1	3648	468	187	39.96	5.13
+D100 A + nearest TSS (<= 100 kb)	|z| >= 3	ETS2	2788	127	39	30.71	1.40
+D100 A + nearest TSS (<= 100 kb)	|z| >= 3	FLYWCH1	3077	154	48	31.17	1.56
+D100 A + nearest TSS (<= 100 kb)	|z| >= 3	FOXC1	3380	113	45	39.82	1.33
+D100 A + nearest TSS (<= 100 kb)	|z| >= 3	FOXJ3	2534	26	4	15.38	0.16
+D100 A + nearest TSS (<= 100 kb)	|z| >= 3	FOXK1	1840	453	64	14.13	3.48
+D100 A + nearest TSS (<= 100 kb)	|z| >= 3	HOXA10	3151	256	75	29.30	2.38
+D100 A + nearest TSS (<= 100 kb)	|z| >= 3	HOXA5	1876	102	12	11.76	0.64
+D100 A + nearest TSS (<= 100 kb)	|z| >= 3	HOXB6	3309	42	10	23.81	0.30
+D100 A + nearest TSS (<= 100 kb)	|z| >= 3	HOXB8	2587	31	9	29.03	0.35
+D100 A + nearest TSS (<= 100 kb)	|z| >= 3	HOXB9	3070	34	6	17.65	0.20
+D100 A + nearest TSS (<= 100 kb)	|z| >= 3	HOXC4	2173	60	15	25.00	0.69
+D100 A + nearest TSS (<= 100 kb)	|z| >= 3	HOXC9	2819	67	26	38.81	0.92
+D100 A + nearest TSS (<= 100 kb)	|z| >= 3	HOXD10	2170	143	29	20.28	1.34
+D100 A + nearest TSS (<= 100 kb)	|z| >= 3	MAZ	2979	251	69	27.49	2.32
+D100 A + nearest TSS (<= 100 kb)	|z| >= 3	MEF2A	2292	282	72	25.53	3.14
+D100 A + nearest TSS (<= 100 kb)	|z| >= 3	MEF2D	2739	37	6	16.22	0.22
+D100 A + nearest TSS (<= 100 kb)	|z| >= 3	MSX2	2863	397	118	29.72	4.12
+D100 A + nearest TSS (<= 100 kb)	|z| >= 3	MTF2	3216	102	29	28.43	0.90
+D100 A + nearest TSS (<= 100 kb)	|z| >= 3	NEUROD4	2513	71	13	18.31	0.52
+D100 A + nearest TSS (<= 100 kb)	|z| >= 3	NFYA	5674	206	110	53.40	1.94
+D100 A + nearest TSS (<= 100 kb)	|z| >= 3	NME2	5133	490	241	49.18	4.70
+D100 A + nearest TSS (<= 100 kb)	|z| >= 3	NR1D2	3059	60	17	28.33	0.56
+D100 A + nearest TSS (<= 100 kb)	|z| >= 3	NRF1	2880	729	232	31.82	8.06
+D100 A + nearest TSS (<= 100 kb)	|z| >= 3	PA2G4	3424	86	24	27.91	0.70
+D100 A + nearest TSS (<= 100 kb)	|z| >= 3	PCGF6	1774	129	20	15.50	1.13
+D100 A + nearest TSS (<= 100 kb)	|z| >= 3	POGK	2742	93	22	23.66	0.80
+D100 A + nearest TSS (<= 100 kb)	|z| >= 3	RBBP7	5931	546	275	50.37	4.64
+D100 A + nearest TSS (<= 100 kb)	|z| >= 3	RBPJ	3011	327	92	28.13	3.06
+D100 A + nearest TSS (<= 100 kb)	|z| >= 3	RELA	3339	319	96	30.09	2.88
+D100 A + nearest TSS (<= 100 kb)	|z| >= 3	SAFB	4734	116	47	40.52	0.99
+D100 A + nearest TSS (<= 100 kb)	|z| >= 3	SETDB1	2388	164	34	20.73	1.42
+D100 A + nearest TSS (<= 100 kb)	|z| >= 3	SMARCA1	2713	155	47	30.32	1.73
+D100 A + nearest TSS (<= 100 kb)	|z| >= 3	SOX4	5533	134	80	59.70	1.45
+D100 A + nearest TSS (<= 100 kb)	|z| >= 3	SRCAP	2864	49	11	22.45	0.38
+D100 A + nearest TSS (<= 100 kb)	|z| >= 3	TBX3	2861	105	33	31.43	1.15
+D100 A + nearest TSS (<= 100 kb)	|z| >= 3	THAP6	2669	52	18	34.62	0.67
+D100 A + nearest TSS (<= 100 kb)	|z| >= 3	WIZ	3125	115	43	37.39	1.38
+D100 A + nearest TSS (<= 100 kb)	|z| >= 3	XPA	6097	147	79	53.74	1.30
+D100 A + nearest TSS (<= 100 kb)	|z| >= 3	ZBTB43	2636	54	10	18.52	0.38
+D100 A + nearest TSS (<= 100 kb)	|z| >= 3	ZBTB7A	3513	3	1	33.33	0.03
+D100 A + nearest TSS (<= 100 kb)	|z| >= 3	ZIC2	3117	128	45	35.16	1.44
+D100 A + nearest TSS (<= 100 kb)	|z| >= 3	ZNF143	2707	213	56	26.29	2.07
+D100 A + nearest TSS (<= 100 kb)	|z| >= 3	ZNF282	3015	252	75	29.76	2.49
+D100 A + nearest TSS (<= 100 kb)	|z| >= 3	ZNF503	1988	38	8	21.05	0.40
+D100 A + nearest TSS (<= 100 kb)	|z| >= 3	ZNF507	5642	79	38	48.10	0.67
+D100 A + nearest TSS (<= 100 kb)	|z| >= 3	ZNF512	2848	75	17	22.67	0.60
+D100 A + nearest TSS (<= 100 kb)	|z| >= 3	ZNF512B	3212	84	26	30.95	0.81
+D100 A + nearest TSS (<= 100 kb)	|z| >= 3	ZNF581	2942	39	10	25.64	0.34
+D100 A + nearest TSS (<= 100 kb)	|z| >= 3	ZNF644	3229	30	8	26.67	0.25
+D100 A + nearest TSS (<= 100 kb)	|z| >= 3	ZNF746	2707	128	34	26.56	1.26
+D100 A + nearest TSS (<= 100 kb)	|z| >= 3	ZNF768	3669	360	120	33.33	3.27
+D100 A + nearest TSS (<= 100 kb)	|z| >= 3	ZNF777	2763	407	114	28.01	4.13
+D100 A + nearest TSS (<= 100 kb)	|z| >= 3	ZNF79	2704	213	55	25.82	2.03
+D100 A + nearest TSS (<= 100 kb)	|z| >= 3	ZUFSP	2715	123	44	35.77	1.62
+Dall A + nearest TSS (no cap)	|z| >= 2	ADNP	3982	2166	868	40.07	21.80
+Dall A + nearest TSS (no cap)	|z| >= 2	AKAP8L	3894	563	199	35.35	5.11
+Dall A + nearest TSS (no cap)	|z| >= 2	CHAMP1	3846	367	106	28.88	2.76
+Dall A + nearest TSS (no cap)	|z| >= 2	CTCF	5317	1295	623	48.11	11.72
+Dall A + nearest TSS (no cap)	|z| >= 2	DDIT3	5947	1036	553	53.38	9.30
+Dall A + nearest TSS (no cap)	|z| >= 2	DNMT1	3461	1978	680	34.38	19.65
+Dall A + nearest TSS (no cap)	|z| >= 2	DR1	3745	819	324	39.56	8.65
+Dall A + nearest TSS (no cap)	|z| >= 2	E2F3	5968	474	252	53.16	4.22
+Dall A + nearest TSS (no cap)	|z| >= 2	E4F1	4342	1750	733	41.89	16.88
+Dall A + nearest TSS (no cap)	|z| >= 2	ETS2	3699	833	271	32.53	7.33
+Dall A + nearest TSS (no cap)	|z| >= 2	FLYWCH1	4025	1026	375	36.55	9.32
+Dall A + nearest TSS (no cap)	|z| >= 2	FOXC1	3989	873	347	39.75	8.70
+Dall A + nearest TSS (no cap)	|z| >= 2	FOXJ3	3237	514	138	26.85	4.26
+Dall A + nearest TSS (no cap)	|z| >= 2	FOXK1	2333	1760	388	22.05	16.63
+Dall A + nearest TSS (no cap)	|z| >= 2	HOXA10	4093	1288	491	38.12	12.00
+Dall A + nearest TSS (no cap)	|z| >= 2	HOXA5	2359	860	184	21.40	7.80
+Dall A + nearest TSS (no cap)	|z| >= 2	HOXB6	4162	501	187	37.33	4.49
+Dall A + nearest TSS (no cap)	|z| >= 2	HOXB8	3400	431	135	31.32	3.97
+Dall A + nearest TSS (no cap)	|z| >= 2	HOXB9	4009	479	170	35.49	4.24
+Dall A + nearest TSS (no cap)	|z| >= 2	HOXC4	2924	614	156	25.41	5.34
+Dall A + nearest TSS (no cap)	|z| >= 2	HOXC9	3748	675	236	34.96	6.30
+Dall A + nearest TSS (no cap)	|z| >= 2	HOXD10	2672	856	218	25.47	8.16
+Dall A + nearest TSS (no cap)	|z| >= 2	MAZ	3915	1263	458	36.26	11.70
+Dall A + nearest TSS (no cap)	|z| >= 2	MEF2A	3092	1486	476	32.03	15.39
+Dall A + nearest TSS (no cap)	|z| >= 2	MEF2D	3555	510	159	31.18	4.47
+Dall A + nearest TSS (no cap)	|z| >= 2	MSX2	3474	1567	536	34.21	15.43
+Dall A + nearest TSS (no cap)	|z| >= 2	MTF2	4113	716	279	38.97	6.78
+Dall A + nearest TSS (no cap)	|z| >= 2	NEUROD4	3037	833	205	24.61	6.75
+Dall A + nearest TSS (no cap)	|z| >= 2	NFYA	5922	1338	699	52.24	11.80
+Dall A + nearest TSS (no cap)	|z| >= 2	NME2	5559	1805	919	50.91	16.53
+Dall A + nearest TSS (no cap)	|z| >= 2	NR1D2	3739	737	267	36.23	7.14
+Dall A + nearest TSS (no cap)	|z| >= 2	NRF1	3547	2069	707	34.17	19.93
+Dall A + nearest TSS (no cap)	|z| >= 2	PA2G4	4270	783	297	37.93	6.96
+Dall A + nearest TSS (no cap)	|z| >= 2	PCGF6	2212	1000	208	20.80	9.40
+Dall A + nearest TSS (no cap)	|z| >= 2	POGK	3712	823	280	34.02	7.54
+Dall A + nearest TSS (no cap)	|z| >= 2	RBBP7	6131	1986	1037	52.22	16.91
+Dall A + nearest TSS (no cap)	|z| >= 2	RBPJ	3968	1524	563	36.94	14.19
+Dall A + nearest TSS (no cap)	|z| >= 2	RELA	4179	1465	606	41.37	14.50
+Dall A + nearest TSS (no cap)	|z| >= 2	SAFB	5210	835	388	46.47	7.45
+Dall A + nearest TSS (no cap)	|z| >= 2	SETDB1	2958	994	266	26.76	8.99
+Dall A + nearest TSS (no cap)	|z| >= 2	SMARCA1	3696	1124	428	38.08	11.58
+Dall A + nearest TSS (no cap)	|z| >= 2	SOX4	5782	1073	541	50.42	9.36
+Dall A + nearest TSS (no cap)	|z| >= 2	SRCAP	3865	536	177	33.02	4.58
+Dall A + nearest TSS (no cap)	|z| >= 2	TBX3	3820	759	298	39.26	7.80
+Dall A + nearest TSS (no cap)	|z| >= 2	THAP6	3643	634	230	36.28	6.31
+Dall A + nearest TSS (no cap)	|z| >= 2	WIZ	4060	1008	393	38.99	9.68
+Dall A + nearest TSS (no cap)	|z| >= 2	XPA	6275	1062	597	56.21	9.51
+Dall A + nearest TSS (no cap)	|z| >= 2	ZBTB43	3331	710	213	30.00	6.39
+Dall A + nearest TSS (no cap)	|z| >= 2	ZBTB7A	4298	111	42	37.84	0.98
+Dall A + nearest TSS (no cap)	|z| >= 2	ZIC2	4055	1024	384	37.50	9.47
+Dall A + nearest TSS (no cap)	|z| >= 2	ZNF143	3715	1130	406	35.93	10.93
+Dall A + nearest TSS (no cap)	|z| >= 2	ZNF282	3933	1412	535	37.89	13.60
+Dall A + nearest TSS (no cap)	|z| >= 2	ZNF503	2326	607	141	23.23	6.06
+Dall A + nearest TSS (no cap)	|z| >= 2	ZNF507	5878	758	406	53.56	6.91
+Dall A + nearest TSS (no cap)	|z| >= 2	ZNF512	3855	646	226	34.98	5.86
+Dall A + nearest TSS (no cap)	|z| >= 2	ZNF512B	4165	728	288	39.56	6.91
+Dall A + nearest TSS (no cap)	|z| >= 2	ZNF581	3592	562	163	29.00	4.54
+Dall A + nearest TSS (no cap)	|z| >= 2	ZNF644	4094	466	157	33.69	3.83
+Dall A + nearest TSS (no cap)	|z| >= 2	ZNF746	3686	1068	396	37.08	10.74
+Dall A + nearest TSS (no cap)	|z| >= 2	ZNF768	4396	1700	704	41.41	16.01
+Dall A + nearest TSS (no cap)	|z| >= 2	ZNF777	3501	1709	601	35.17	17.17
+Dall A + nearest TSS (no cap)	|z| >= 2	ZNF79	3323	1279	403	31.51	12.13
+Dall A + nearest TSS (no cap)	|z| >= 2	ZUFSP	3710	956	358	37.45	9.65
+Dall A + nearest TSS (no cap)	|z| >= 3	ADNP	3982	626	255	40.73	6.40
+Dall A + nearest TSS (no cap)	|z| >= 3	AKAP8L	3894	31	8	25.81	0.21
+Dall A + nearest TSS (no cap)	|z| >= 3	CHAMP1	3846	16	3	18.75	0.08
+Dall A + nearest TSS (no cap)	|z| >= 3	CTCF	5317	272	128	47.06	2.41
+Dall A + nearest TSS (no cap)	|z| >= 3	DDIT3	5947	184	106	57.61	1.78
+Dall A + nearest TSS (no cap)	|z| >= 3	DNMT1	3461	541	193	35.67	5.58
+Dall A + nearest TSS (no cap)	|z| >= 3	DR1	3745	72	29	40.28	0.77
+Dall A + nearest TSS (no cap)	|z| >= 3	E2F3	5968	31	21	67.74	0.35
+Dall A + nearest TSS (no cap)	|z| >= 3	E4F1	4342	468	218	46.58	5.02
+Dall A + nearest TSS (no cap)	|z| >= 3	ETS2	3699	127	44	34.65	1.19
+Dall A + nearest TSS (no cap)	|z| >= 3	FLYWCH1	4025	154	59	38.31	1.47
+Dall A + nearest TSS (no cap)	|z| >= 3	FOXC1	3989	113	48	42.48	1.20
+Dall A + nearest TSS (no cap)	|z| >= 3	FOXJ3	3237	26	6	23.08	0.19
+Dall A + nearest TSS (no cap)	|z| >= 3	FOXK1	2333	453	86	18.98	3.69
+Dall A + nearest TSS (no cap)	|z| >= 3	HOXA10	4093	256	88	34.38	2.15
+Dall A + nearest TSS (no cap)	|z| >= 3	HOXA5	2359	102	14	13.73	0.59
+Dall A + nearest TSS (no cap)	|z| >= 3	HOXB6	4162	42	13	30.95	0.31
+Dall A + nearest TSS (no cap)	|z| >= 3	HOXB8	3400	31	9	29.03	0.26
+Dall A + nearest TSS (no cap)	|z| >= 3	HOXB9	4009	34	9	26.47	0.22
+Dall A + nearest TSS (no cap)	|z| >= 3	HOXC4	2924	60	19	31.67	0.65
+Dall A + nearest TSS (no cap)	|z| >= 3	HOXC9	3748	67	27	40.30	0.72
+Dall A + nearest TSS (no cap)	|z| >= 3	HOXD10	2672	143	34	23.78	1.27
+Dall A + nearest TSS (no cap)	|z| >= 3	MAZ	3915	251	85	33.86	2.17
+Dall A + nearest TSS (no cap)	|z| >= 3	MEF2A	3092	282	100	35.46	3.23
+Dall A + nearest TSS (no cap)	|z| >= 3	MEF2D	3555	37	9	24.32	0.25
+Dall A + nearest TSS (no cap)	|z| >= 3	MSX2	3474	397	135	34.01	3.89
+Dall A + nearest TSS (no cap)	|z| >= 3	MTF2	4113	102	38	37.25	0.92
+Dall A + nearest TSS (no cap)	|z| >= 3	NEUROD4	3037	71	17	23.94	0.56
+Dall A + nearest TSS (no cap)	|z| >= 3	NFYA	5922	206	117	56.80	1.98
+Dall A + nearest TSS (no cap)	|z| >= 3	NME2	5559	490	260	53.06	4.68
+Dall A + nearest TSS (no cap)	|z| >= 3	NR1D2	3739	60	21	35.00	0.56
+Dall A + nearest TSS (no cap)	|z| >= 3	NRF1	3547	729	273	37.45	7.70
+Dall A + nearest TSS (no cap)	|z| >= 3	PA2G4	4270	86	26	30.23	0.61
+Dall A + nearest TSS (no cap)	|z| >= 3	PCGF6	2212	129	24	18.60	1.08
+Dall A + nearest TSS (no cap)	|z| >= 3	POGK	3712	93	28	30.11	0.75
+Dall A + nearest TSS (no cap)	|z| >= 3	RBBP7	6131	546	288	52.75	4.70
+Dall A + nearest TSS (no cap)	|z| >= 3	RBPJ	3968	327	114	34.86	2.87
+Dall A + nearest TSS (no cap)	|z| >= 3	RELA	4179	319	134	42.01	3.21
+Dall A + nearest TSS (no cap)	|z| >= 3	SAFB	5210	116	54	46.55	1.04
+Dall A + nearest TSS (no cap)	|z| >= 3	SETDB1	2958	164	40	24.39	1.35
+Dall A + nearest TSS (no cap)	|z| >= 3	SMARCA1	3696	155	64	41.29	1.73
+Dall A + nearest TSS (no cap)	|z| >= 3	SOX4	5782	134	83	61.94	1.44
+Dall A + nearest TSS (no cap)	|z| >= 3	SRCAP	3865	49	14	28.57	0.36
+Dall A + nearest TSS (no cap)	|z| >= 3	TBX3	3820	105	40	38.10	1.05
+Dall A + nearest TSS (no cap)	|z| >= 3	THAP6	3643	52	18	34.62	0.49
+Dall A + nearest TSS (no cap)	|z| >= 3	WIZ	4060	115	49	42.61	1.21
+Dall A + nearest TSS (no cap)	|z| >= 3	XPA	6275	147	80	54.42	1.27
+Dall A + nearest TSS (no cap)	|z| >= 3	ZBTB43	3331	54	13	24.07	0.39
+Dall A + nearest TSS (no cap)	|z| >= 3	ZBTB7A	4298	3	1	33.33	0.02
+Dall A + nearest TSS (no cap)	|z| >= 3	ZIC2	4055	128	58	45.31	1.43
+Dall A + nearest TSS (no cap)	|z| >= 3	ZNF143	3715	213	70	32.86	1.88
+Dall A + nearest TSS (no cap)	|z| >= 3	ZNF282	3933	252	94	37.30	2.39
+Dall A + nearest TSS (no cap)	|z| >= 3	ZNF503	2326	38	9	23.68	0.39
+Dall A + nearest TSS (no cap)	|z| >= 3	ZNF507	5878	79	38	48.10	0.65
+Dall A + nearest TSS (no cap)	|z| >= 3	ZNF512	3855	75	20	26.67	0.52
+Dall A + nearest TSS (no cap)	|z| >= 3	ZNF512B	4165	84	28	33.33	0.67
+Dall A + nearest TSS (no cap)	|z| >= 3	ZNF581	3592	39	10	25.64	0.28
+Dall A + nearest TSS (no cap)	|z| >= 3	ZNF644	4094	30	10	33.33	0.24
+Dall A + nearest TSS (no cap)	|z| >= 3	ZNF746	3686	128	44	34.38	1.19
+Dall A + nearest TSS (no cap)	|z| >= 3	ZNF768	4396	360	147	40.83	3.34
+Dall A + nearest TSS (no cap)	|z| >= 3	ZNF777	3501	407	142	34.89	4.06
+Dall A + nearest TSS (no cap)	|z| >= 3	ZNF79	3323	213	66	30.99	1.99
+Dall A + nearest TSS (no cap)	|z| >= 3	ZUFSP	3710	123	49	39.84	1.32
+E A + coordinated binding	|z| >= 2	ADNP	1440	2166	283	13.07	19.65
+E A + coordinated binding	|z| >= 2	AKAP8L	1449	563	88	15.63	6.07
+E A + coordinated binding	|z| >= 2	CHAMP1	1257	367	33	8.99	2.63
+E A + coordinated binding	|z| >= 2	CTCF	3664	1295	422	32.59	11.52
+E A + coordinated binding	|z| >= 2	DDIT3	5176	1036	498	48.07	9.62
+E A + coordinated binding	|z| >= 2	DNMT1	1199	1978	232	11.73	19.35
+E A + coordinated binding	|z| >= 2	DR1	1785	819	128	15.63	7.17
+E A + coordinated binding	|z| >= 2	E2F3	5614	474	235	49.58	4.19
+E A + coordinated binding	|z| >= 2	E4F1	3568	1750	538	30.74	15.08
+E A + coordinated binding	|z| >= 2	ETS2	2067	833	155	18.61	7.50
+E A + coordinated binding	|z| >= 2	FLYWCH1	1620	1026	140	13.65	8.64
+E A + coordinated binding	|z| >= 2	FOXC1	2104	873	174	19.93	8.27
+E A + coordinated binding	|z| >= 2	FOXJ3	1048	514	50	9.73	4.77
+E A + coordinated binding	|z| >= 2	FOXK1	513	1760	89	5.06	17.35
+E A + coordinated binding	|z| >= 2	HOXA10	1732	1288	208	16.15	12.01
+E A + coordinated binding	|z| >= 2	HOXA5	542	860	46	5.35	8.49
+E A + coordinated binding	|z| >= 2	HOXB6	1910	501	87	17.37	4.55
+E A + coordinated binding	|z| >= 2	HOXB8	1111	431	50	11.60	4.50
+E A + coordinated binding	|z| >= 2	HOXB9	1655	479	68	14.20	4.11
+E A + coordinated binding	|z| >= 2	HOXC4	713	614	38	6.19	5.33
+E A + coordinated binding	|z| >= 2	HOXC9	1211	675	76	11.26	6.28
+E A + coordinated binding	|z| >= 2	HOXD10	845	856	62	7.24	7.34
+E A + coordinated binding	|z| >= 2	MAZ	1601	1263	192	15.20	11.99
+E A + coordinated binding	|z| >= 2	MEF2A	778	1486	106	7.13	13.62
+E A + coordinated binding	|z| >= 2	MEF2D	1065	510	54	10.59	5.07
+E A + coordinated binding	|z| >= 2	MSX2	1401	1567	217	13.85	15.49
+E A + coordinated binding	|z| >= 2	MTF2	2538	716	174	24.30	6.86
+E A + coordinated binding	|z| >= 2	NEUROD4	1213	833	87	10.44	7.17
+E A + coordinated binding	|z| >= 2	NFYA	7204	1338	838	62.63	11.63
+E A + coordinated binding	|z| >= 2	NME2	4990	1805	806	44.65	16.15
+E A + coordinated binding	|z| >= 2	NR1D2	1458	737	97	13.16	6.65
+E A + coordinated binding	|z| >= 2	NRF1	1611	2069	355	17.16	22.04
+E A + coordinated binding	|z| >= 2	PA2G4	1941	783	142	18.14	7.32
+E A + coordinated binding	|z| >= 2	PCGF6	435	1000	31	3.10	7.13
+E A + coordinated binding	|z| >= 2	POGK	1067	823	84	10.21	7.87
+E A + coordinated binding	|z| >= 2	RBBP7	5604	1986	930	46.83	16.60
+E A + coordinated binding	|z| >= 2	RBPJ	1519	1524	219	14.37	14.42
+E A + coordinated binding	|z| >= 2	RELA	1469	1465	187	12.76	12.73
+E A + coordinated binding	|z| >= 2	SAFB	3626	835	261	31.26	7.20
+E A + coordinated binding	|z| >= 2	SETDB1	1086	994	94	9.46	8.66
+E A + coordinated binding	|z| >= 2	SMARCA1	1098	1124	98	8.72	8.93
+E A + coordinated binding	|z| >= 2	SOX4	7258	1073	688	64.12	9.48
+E A + coordinated binding	|z| >= 2	SRCAP	1320	536	78	14.55	5.91
+E A + coordinated binding	|z| >= 2	TBX3	1241	759	103	13.57	8.30
+E A + coordinated binding	|z| >= 2	THAP6	1019	634	77	12.15	7.56
+E A + coordinated binding	|z| >= 2	WIZ	1670	1008	142	14.09	8.50
+E A + coordinated binding	|z| >= 2	XPA	6528	1062	611	57.53	9.36
+E A + coordinated binding	|z| >= 2	ZBTB43	1091	710	73	10.28	6.69
+E A + coordinated binding	|z| >= 2	ZBTB7A	2206	111	25	22.52	1.13
+E A + coordinated binding	|z| >= 2	ZIC2	1674	1024	140	13.67	8.36
+E A + coordinated binding	|z| >= 2	ZNF143	940	1130	92	8.14	9.79
+E A + coordinated binding	|z| >= 2	ZNF282	2280	1412	276	19.55	12.11
+E A + coordinated binding	|z| >= 2	ZNF503	848	607	49	8.07	5.78
+E A + coordinated binding	|z| >= 2	ZNF507	6202	758	418	55.15	6.74
+E A + coordinated binding	|z| >= 2	ZNF512	1173	646	58	8.98	4.94
+E A + coordinated binding	|z| >= 2	ZNF512B	1844	728	126	17.31	6.83
+E A + coordinated binding	|z| >= 2	ZNF581	1459	562	76	13.52	5.21
+E A + coordinated binding	|z| >= 2	ZNF644	1760	466	65	13.95	3.69
+E A + coordinated binding	|z| >= 2	ZNF746	1142	1068	99	9.27	8.67
+E A + coordinated binding	|z| >= 2	ZNF768	2345	1700	371	21.82	15.82
+E A + coordinated binding	|z| >= 2	ZNF777	1517	1709	245	14.34	16.15
+E A + coordinated binding	|z| >= 2	ZNF79	1316	1279	148	11.57	11.25
+E A + coordinated binding	|z| >= 2	ZUFSP	1056	956	115	12.03	10.89
+E A + coordinated binding	|z| >= 3	ADNP	1440	626	85	13.58	5.90
+E A + coordinated binding	|z| >= 3	AKAP8L	1449	31	2	6.45	0.14
+E A + coordinated binding	|z| >= 3	CHAMP1	1257	16	2	12.50	0.16
+E A + coordinated binding	|z| >= 3	CTCF	3664	272	78	28.68	2.13
+E A + coordinated binding	|z| >= 3	DDIT3	5176	184	93	50.54	1.80
+E A + coordinated binding	|z| >= 3	DNMT1	1199	541	63	11.65	5.25
+E A + coordinated binding	|z| >= 3	DR1	1785	72	11	15.28	0.62
+E A + coordinated binding	|z| >= 3	E2F3	5614	31	19	61.29	0.34
+E A + coordinated binding	|z| >= 3	E4F1	3568	468	136	29.06	3.81
+E A + coordinated binding	|z| >= 3	ETS2	2067	127	18	14.17	0.87
+E A + coordinated binding	|z| >= 3	FLYWCH1	1620	154	30	19.48	1.85
+E A + coordinated binding	|z| >= 3	FOXC1	2104	113	31	27.43	1.47
+E A + coordinated binding	|z| >= 3	FOXJ3	1048	26	2	7.69	0.19
+E A + coordinated binding	|z| >= 3	FOXK1	513	453	19	4.19	3.70
+E A + coordinated binding	|z| >= 3	HOXA10	1732	256	46	17.97	2.66
+E A + coordinated binding	|z| >= 3	HOXA5	542	102	3	2.94	0.55
+E A + coordinated binding	|z| >= 3	HOXB6	1910	42	7	16.67	0.37
+E A + coordinated binding	|z| >= 3	HOXB8	1111	31	4	12.90	0.36
+E A + coordinated binding	|z| >= 3	HOXB9	1655	34	5	14.71	0.30
+E A + coordinated binding	|z| >= 3	HOXC4	713	60	5	8.33	0.70
+E A + coordinated binding	|z| >= 3	HOXC9	1211	67	9	13.43	0.74
+E A + coordinated binding	|z| >= 3	HOXD10	845	143	15	10.49	1.78
+E A + coordinated binding	|z| >= 3	MAZ	1601	251	41	16.33	2.56
+E A + coordinated binding	|z| >= 3	MEF2A	778	282	27	9.57	3.47
+E A + coordinated binding	|z| >= 3	MEF2D	1065	37	3	8.11	0.28
+E A + coordinated binding	|z| >= 3	MSX2	1401	397	59	14.86	4.21
+E A + coordinated binding	|z| >= 3	MTF2	2538	102	19	18.63	0.75
+E A + coordinated binding	|z| >= 3	NEUROD4	1213	71	6	8.45	0.49
+E A + coordinated binding	|z| >= 3	NFYA	7204	206	138	66.99	1.92
+E A + coordinated binding	|z| >= 3	NME2	4990	490	230	46.94	4.61
+E A + coordinated binding	|z| >= 3	NR1D2	1458	60	9	15.00	0.62
+E A + coordinated binding	|z| >= 3	NRF1	1611	729	136	18.66	8.44
+E A + coordinated binding	|z| >= 3	PA2G4	1941	86	13	15.12	0.67
+E A + coordinated binding	|z| >= 3	PCGF6	435	129	4	3.10	0.92
+E A + coordinated binding	|z| >= 3	POGK	1067	93	10	10.75	0.94
+E A + coordinated binding	|z| >= 3	RBBP7	5604	546	257	47.07	4.59
+E A + coordinated binding	|z| >= 3	RBPJ	1519	327	46	14.07	3.03
+E A + coordinated binding	|z| >= 3	RELA	1469	319	40	12.54	2.72
+E A + coordinated binding	|z| >= 3	SAFB	3626	116	42	36.21	1.16
+E A + coordinated binding	|z| >= 3	SETDB1	1086	164	16	9.76	1.47
+E A + coordinated binding	|z| >= 3	SMARCA1	1098	155	13	8.39	1.18
+E A + coordinated binding	|z| >= 3	SOX4	7258	134	89	66.42	1.23
+E A + coordinated binding	|z| >= 3	SRCAP	1320	49	9	18.37	0.68
+E A + coordinated binding	|z| >= 3	TBX3	1241	105	16	15.24	1.29
+E A + coordinated binding	|z| >= 3	THAP6	1019	52	7	13.46	0.69
+E A + coordinated binding	|z| >= 3	WIZ	1670	115	20	17.39	1.20
+E A + coordinated binding	|z| >= 3	XPA	6528	147	83	56.46	1.27
+E A + coordinated binding	|z| >= 3	ZBTB43	1091	54	5	9.26	0.46
+E A + coordinated binding	|z| >= 3	ZBTB7A	2206	3	1	33.33	0.05
+E A + coordinated binding	|z| >= 3	ZIC2	1674	128	24	18.75	1.43
+E A + coordinated binding	|z| >= 3	ZNF143	940	213	21	9.86	2.23
+E A + coordinated binding	|z| >= 3	ZNF282	2280	252	48	19.05	2.11
+E A + coordinated binding	|z| >= 3	ZNF503	848	38	3	7.89	0.35
+E A + coordinated binding	|z| >= 3	ZNF507	6202	79	50	63.29	0.81
+E A + coordinated binding	|z| >= 3	ZNF512	1173	75	7	9.33	0.60
+E A + coordinated binding	|z| >= 3	ZNF512B	1844	84	12	14.29	0.65
+E A + coordinated binding	|z| >= 3	ZNF581	1459	39	6	15.38	0.41
+E A + coordinated binding	|z| >= 3	ZNF644	1760	30	6	20.00	0.34
+E A + coordinated binding	|z| >= 3	ZNF746	1142	128	9	7.03	0.79
+E A + coordinated binding	|z| >= 3	ZNF768	2345	360	89	24.72	3.80
+E A + coordinated binding	|z| >= 3	ZNF777	1517	407	50	12.29	3.30
+E A + coordinated binding	|z| >= 3	ZNF79	1316	213	27	12.68	2.05
+E A + coordinated binding	|z| >= 3	ZUFSP	1056	123	21	17.07	1.99
+F10k top 10,000 peaks	|z| >= 2	ADNP	2493	2166	489	22.58	19.61
+F10k top 10,000 peaks	|z| >= 2	AKAP8L	1585	563	91	16.16	5.74
+F10k top 10,000 peaks	|z| >= 2	CHAMP1	2614	367	76	20.71	2.91
+F10k top 10,000 peaks	|z| >= 2	CTCF	6094	1295	708	54.67	11.62
+F10k top 10,000 peaks	|z| >= 2	DDIT3	6701	1036	636	61.39	9.49
+F10k top 10,000 peaks	|z| >= 2	DNMT1	1322	1978	252	12.74	19.06
+F10k top 10,000 peaks	|z| >= 2	DR1	2395	819	166	20.27	6.93
+F10k top 10,000 peaks	|z| >= 2	E2F3	7655	474	327	68.99	4.27
+F10k top 10,000 peaks	|z| >= 2	E4F1	3378	1750	524	29.94	15.51
+F10k top 10,000 peaks	|z| >= 2	ETS2	1280	833	86	10.32	6.72
+F10k top 10,000 peaks	|z| >= 2	FLYWCH1	2809	1026	265	25.83	9.43
+F10k top 10,000 peaks	|z| >= 2	FOXC1	2208	873	185	21.19	8.38
+F10k top 10,000 peaks	|z| >= 2	FOXJ3	1175	514	57	11.09	4.85
+F10k top 10,000 peaks	|z| >= 2	FOXK1	746	1760	129	7.33	17.29
+F10k top 10,000 peaks	|z| >= 2	HOXA10	2845	1288	346	26.86	12.16
+F10k top 10,000 peaks	|z| >= 2	HOXA5	806	860	65	7.56	8.06
+F10k top 10,000 peaks	|z| >= 2	HOXB6	2321	501	100	19.96	4.31
+F10k top 10,000 peaks	|z| >= 2	HOXB8	1185	431	53	12.30	4.47
+F10k top 10,000 peaks	|z| >= 2	HOXB9	2799	479	108	22.55	3.86
+F10k top 10,000 peaks	|z| >= 2	HOXC4	869	614	41	6.68	4.72
+F10k top 10,000 peaks	|z| >= 2	HOXC9	1572	675	93	13.78	5.92
+F10k top 10,000 peaks	|z| >= 2	HOXD10	1032	856	74	8.64	7.17
+F10k top 10,000 peaks	|z| >= 2	MAZ	2183	1263	246	19.48	11.27
+F10k top 10,000 peaks	|z| >= 2	MEF2A	939	1486	132	8.88	14.06
+F10k top 10,000 peaks	|z| >= 2	MEF2D	1167	510	58	11.37	4.97
+F10k top 10,000 peaks	|z| >= 2	MSX2	1687	1567	255	16.27	15.12
+F10k top 10,000 peaks	|z| >= 2	MTF2	2938	716	195	27.23	6.64
+F10k top 10,000 peaks	|z| >= 2	NEUROD4	1553	833	120	14.41	7.73
+F10k top 10,000 peaks	|z| >= 2	NFYA	7388	1338	862	64.42	11.67
+F10k top 10,000 peaks	|z| >= 2	NME2	5653	1805	898	49.75	15.89
+F10k top 10,000 peaks	|z| >= 2	NR1D2	1722	737	116	15.74	6.74
+F10k top 10,000 peaks	|z| >= 2	NRF1	1763	2069	381	18.41	21.61
+F10k top 10,000 peaks	|z| >= 2	PA2G4	2757	783	201	25.67	7.29
+F10k top 10,000 peaks	|z| >= 2	PCGF6	761	1000	62	6.20	8.15
+F10k top 10,000 peaks	|z| >= 2	POGK	1855	823	134	16.28	7.22
+F10k top 10,000 peaks	|z| >= 2	RBBP7	7389	1986	1253	63.09	16.96
+F10k top 10,000 peaks	|z| >= 2	RBPJ	3439	1524	475	31.17	13.81
+F10k top 10,000 peaks	|z| >= 2	RELA	2527	1465	321	21.91	12.70
+F10k top 10,000 peaks	|z| >= 2	SAFB	5039	835	363	43.47	7.20
+F10k top 10,000 peaks	|z| >= 2	SETDB1	1544	994	130	13.08	8.42
+F10k top 10,000 peaks	|z| >= 2	SMARCA1	2118	1124	195	17.35	9.21
+F10k top 10,000 peaks	|z| >= 2	SOX4	7078	1073	662	61.70	9.35
+F10k top 10,000 peaks	|z| >= 2	SRCAP	2533	536	129	24.07	5.09
+F10k top 10,000 peaks	|z| >= 2	TBX3	2254	759	169	22.27	7.50
+F10k top 10,000 peaks	|z| >= 2	THAP6	1676	634	106	16.72	6.32
+F10k top 10,000 peaks	|z| >= 2	WIZ	2164	1008	196	19.44	9.06
+F10k top 10,000 peaks	|z| >= 2	XPA	8123	1062	762	71.75	9.38
+F10k top 10,000 peaks	|z| >= 2	ZBTB43	1212	710	83	11.69	6.85
+F10k top 10,000 peaks	|z| >= 2	ZBTB7A	2568	111	33	29.73	1.29
+F10k top 10,000 peaks	|z| >= 2	ZIC2	2342	1024	209	20.41	8.92
+F10k top 10,000 peaks	|z| >= 2	ZNF143	1786	1130	183	16.19	10.25
+F10k top 10,000 peaks	|z| >= 2	ZNF282	1846	1412	237	16.78	12.84
+F10k top 10,000 peaks	|z| >= 2	ZNF503	1397	607	85	14.00	6.08
+F10k top 10,000 peaks	|z| >= 2	ZNF507	6315	758	434	57.26	6.87
+F10k top 10,000 peaks	|z| >= 2	ZNF512	2241	646	129	19.97	5.76
+F10k top 10,000 peaks	|z| >= 2	ZNF512B	2530	728	166	22.80	6.56
+F10k top 10,000 peaks	|z| >= 2	ZNF581	1738	562	91	16.19	5.24
+F10k top 10,000 peaks	|z| >= 2	ZNF644	2100	466	85	18.24	4.05
+F10k top 10,000 peaks	|z| >= 2	ZNF746	1713	1068	150	14.04	8.76
+F10k top 10,000 peaks	|z| >= 2	ZNF768	2850	1700	442	26.00	15.51
+F10k top 10,000 peaks	|z| >= 2	ZNF777	1338	1709	215	12.58	16.07
+F10k top 10,000 peaks	|z| >= 2	ZNF79	1593	1279	176	13.76	11.05
+F10k top 10,000 peaks	|z| >= 2	ZUFSP	1780	956	173	18.10	9.72
+F10k top 10,000 peaks	|z| >= 3	ADNP	2493	626	159	25.40	6.38
+F10k top 10,000 peaks	|z| >= 3	AKAP8L	1585	31	2	6.45	0.13
+F10k top 10,000 peaks	|z| >= 3	CHAMP1	2614	16	3	18.75	0.11
+F10k top 10,000 peaks	|z| >= 3	CTCF	6094	272	145	53.31	2.38
+F10k top 10,000 peaks	|z| >= 3	DDIT3	6701	184	123	66.85	1.84
+F10k top 10,000 peaks	|z| >= 3	DNMT1	1322	541	69	12.75	5.22
+F10k top 10,000 peaks	|z| >= 3	DR1	2395	72	17	23.61	0.71
+F10k top 10,000 peaks	|z| >= 3	E2F3	7655	31	26	83.87	0.34
+F10k top 10,000 peaks	|z| >= 3	E4F1	3378	468	137	29.27	4.06
+F10k top 10,000 peaks	|z| >= 3	ETS2	1280	127	15	11.81	1.17
+F10k top 10,000 peaks	|z| >= 3	FLYWCH1	2809	154	49	31.82	1.74
+F10k top 10,000 peaks	|z| >= 3	FOXC1	2208	113	32	28.32	1.45
+F10k top 10,000 peaks	|z| >= 3	FOXJ3	1175	26	3	11.54	0.26
+F10k top 10,000 peaks	|z| >= 3	FOXK1	746	453	26	5.74	3.49
+F10k top 10,000 peaks	|z| >= 3	HOXA10	2845	256	66	25.78	2.32
+F10k top 10,000 peaks	|z| >= 3	HOXA5	806	102	4	3.92	0.50
+F10k top 10,000 peaks	|z| >= 3	HOXB6	2321	42	6	14.29	0.26
+F10k top 10,000 peaks	|z| >= 3	HOXB8	1185	31	4	12.90	0.34
+F10k top 10,000 peaks	|z| >= 3	HOXB9	2799	34	7	20.59	0.25
+F10k top 10,000 peaks	|z| >= 3	HOXC4	869	60	6	10.00	0.69
+F10k top 10,000 peaks	|z| >= 3	HOXC9	1572	67	12	17.91	0.76
+F10k top 10,000 peaks	|z| >= 3	HOXD10	1032	143	17	11.89	1.65
+F10k top 10,000 peaks	|z| >= 3	MAZ	2183	251	51	20.32	2.34
+F10k top 10,000 peaks	|z| >= 3	MEF2A	939	282	30	10.64	3.19
+F10k top 10,000 peaks	|z| >= 3	MEF2D	1167	37	4	10.81	0.34
+F10k top 10,000 peaks	|z| >= 3	MSX2	1687	397	65	16.37	3.85
+F10k top 10,000 peaks	|z| >= 3	MTF2	2938	102	23	22.55	0.78
+F10k top 10,000 peaks	|z| >= 3	NEUROD4	1553	71	9	12.68	0.58
+F10k top 10,000 peaks	|z| >= 3	NFYA	7388	206	139	67.48	1.88
+F10k top 10,000 peaks	|z| >= 3	NME2	5653	490	252	51.43	4.46
+F10k top 10,000 peaks	|z| >= 3	NR1D2	1722	60	10	16.67	0.58
+F10k top 10,000 peaks	|z| >= 3	NRF1	1763	729	145	19.89	8.22
+F10k top 10,000 peaks	|z| >= 3	PA2G4	2757	86	22	25.58	0.80
+F10k top 10,000 peaks	|z| >= 3	PCGF6	761	129	9	6.98	1.18
+F10k top 10,000 peaks	|z| >= 3	POGK	1855	93	20	21.51	1.08
+F10k top 10,000 peaks	|z| >= 3	RBBP7	7389	546	349	63.92	4.72
+F10k top 10,000 peaks	|z| >= 3	RBPJ	3439	327	106	32.42	3.08
+F10k top 10,000 peaks	|z| >= 3	RELA	2527	319	71	22.26	2.81
+F10k top 10,000 peaks	|z| >= 3	SAFB	5039	116	57	49.14	1.13
+F10k top 10,000 peaks	|z| >= 3	SETDB1	1544	164	24	14.63	1.55
+F10k top 10,000 peaks	|z| >= 3	SMARCA1	2118	155	28	18.06	1.32
+F10k top 10,000 peaks	|z| >= 3	SOX4	7078	134	86	64.18	1.22
+F10k top 10,000 peaks	|z| >= 3	SRCAP	2533	49	16	32.65	0.63
+F10k top 10,000 peaks	|z| >= 3	TBX3	2254	105	24	22.86	1.06
+F10k top 10,000 peaks	|z| >= 3	THAP6	1676	52	9	17.31	0.54
+F10k top 10,000 peaks	|z| >= 3	WIZ	2164	115	25	21.74	1.16
+F10k top 10,000 peaks	|z| >= 3	XPA	8123	147	108	73.47	1.33
+F10k top 10,000 peaks	|z| >= 3	ZBTB43	1212	54	6	11.11	0.50
+F10k top 10,000 peaks	|z| >= 3	ZBTB7A	2568	3	2	66.67	0.08
+F10k top 10,000 peaks	|z| >= 3	ZIC2	2342	128	30	23.44	1.28
+F10k top 10,000 peaks	|z| >= 3	ZNF143	1786	213	44	20.66	2.46
+F10k top 10,000 peaks	|z| >= 3	ZNF282	1846	252	46	18.25	2.49
+F10k top 10,000 peaks	|z| >= 3	ZNF503	1397	38	4	10.53	0.29
+F10k top 10,000 peaks	|z| >= 3	ZNF507	6315	79	47	59.49	0.74
+F10k top 10,000 peaks	|z| >= 3	ZNF512	2241	75	16	21.33	0.71
+F10k top 10,000 peaks	|z| >= 3	ZNF512B	2530	84	18	21.43	0.71
+F10k top 10,000 peaks	|z| >= 3	ZNF581	1738	39	7	17.95	0.40
+F10k top 10,000 peaks	|z| >= 3	ZNF644	2100	30	6	20.00	0.29
+F10k top 10,000 peaks	|z| >= 3	ZNF746	1713	128	13	10.16	0.76
+F10k top 10,000 peaks	|z| >= 3	ZNF768	2850	360	106	29.44	3.72
+F10k top 10,000 peaks	|z| >= 3	ZNF777	1338	407	43	10.57	3.21
+F10k top 10,000 peaks	|z| >= 3	ZNF79	1593	213	30	14.08	1.88
+F10k top 10,000 peaks	|z| >= 3	ZUFSP	1780	123	24	19.51	1.35
+F20k top 20,000 peaks	|z| >= 2	ADNP	2755	2166	535	24.70	19.42
+F20k top 20,000 peaks	|z| >= 2	AKAP8L	1894	563	105	18.65	5.54
+F20k top 20,000 peaks	|z| >= 2	CHAMP1	2916	367	85	23.16	2.91
+F20k top 20,000 peaks	|z| >= 2	CTCF	6322	1295	733	56.60	11.59
+F20k top 20,000 peaks	|z| >= 2	DDIT3	8232	1036	772	74.52	9.38
+F20k top 20,000 peaks	|z| >= 2	DNMT1	1600	1978	294	14.86	18.38
+F20k top 20,000 peaks	|z| >= 2	DR1	3142	819	212	25.89	6.75
+F20k top 20,000 peaks	|z| >= 2	E2F3	8627	474	364	76.79	4.22
+F20k top 20,000 peaks	|z| >= 2	E4F1	5026	1750	786	44.91	15.64
+F20k top 20,000 peaks	|z| >= 2	ETS2	1634	833	113	13.57	6.92
+F20k top 20,000 peaks	|z| >= 2	FLYWCH1	3867	1026	375	36.55	9.70
+F20k top 20,000 peaks	|z| >= 2	FOXC1	2399	873	200	22.91	8.34
+F20k top 20,000 peaks	|z| >= 2	FOXJ3	1398	514	64	12.45	4.58
+F20k top 20,000 peaks	|z| >= 2	FOXK1	1134	1760	185	10.51	16.31
+F20k top 20,000 peaks	|z| >= 2	HOXA10	4437	1288	547	42.47	12.33
+F20k top 20,000 peaks	|z| >= 2	HOXA5	1607	860	133	15.47	8.28
+F20k top 20,000 peaks	|z| >= 2	HOXB6	4194	501	178	35.53	4.24
+F20k top 20,000 peaks	|z| >= 2	HOXB8	1403	431	55	12.76	3.92
+F20k top 20,000 peaks	|z| >= 2	HOXB9	4228	479	170	35.49	4.02
+F20k top 20,000 peaks	|z| >= 2	HOXC4	1294	614	66	10.75	5.10
+F20k top 20,000 peaks	|z| >= 2	HOXC9	3098	675	191	28.30	6.17
+F20k top 20,000 peaks	|z| >= 2	HOXD10	1470	856	100	11.68	6.80
+F20k top 20,000 peaks	|z| >= 2	MAZ	4000	1263	473	37.45	11.82
+F20k top 20,000 peaks	|z| >= 2	MEF2A	1438	1486	186	12.52	12.93
+F20k top 20,000 peaks	|z| >= 2	MEF2D	1538	510	71	13.92	4.62
+F20k top 20,000 peaks	|z| >= 2	MSX2	2401	1567	356	22.72	14.83
+F20k top 20,000 peaks	|z| >= 2	MTF2	4436	716	282	39.39	6.36
+F20k top 20,000 peaks	|z| >= 2	NEUROD4	2548	833	193	23.17	7.57
+F20k top 20,000 peaks	|z| >= 2	NFYA	8986	1338	1055	78.85	11.74
+F20k top 20,000 peaks	|z| >= 2	NME2	7510	1805	1221	67.65	16.26
+F20k top 20,000 peaks	|z| >= 2	NR1D2	2433	737	163	22.12	6.70
+F20k top 20,000 peaks	|z| >= 2	NRF1	2172	2069	471	22.76	21.69
+F20k top 20,000 peaks	|z| >= 2	PA2G4	5945	783	424	54.15	7.13
+F20k top 20,000 peaks	|z| >= 2	PCGF6	1115	1000	89	8.90	7.98
+F20k top 20,000 peaks	|z| >= 2	POGK	2783	823	216	26.25	7.76
+F20k top 20,000 peaks	|z| >= 2	RBBP7	8759	1986	1520	76.54	17.35
+F20k top 20,000 peaks	|z| >= 2	RBPJ	3828	1524	546	35.83	14.26
+F20k top 20,000 peaks	|z| >= 2	RELA	3027	1465	392	26.76	12.95
+F20k top 20,000 peaks	|z| >= 2	SAFB	5451	835	392	46.95	7.19
+F20k top 20,000 peaks	|z| >= 2	SETDB1	2418	994	218	21.93	9.02
+F20k top 20,000 peaks	|z| >= 2	SMARCA1	2912	1124	276	24.56	9.48
+F20k top 20,000 peaks	|z| >= 2	SOX4	8521	1073	798	74.37	9.37
+F20k top 20,000 peaks	|z| >= 2	SRCAP	3403	536	182	33.96	5.35
+F20k top 20,000 peaks	|z| >= 2	TBX3	4840	759	370	48.75	7.64
+F20k top 20,000 peaks	|z| >= 2	THAP6	2332	634	147	23.19	6.30
+F20k top 20,000 peaks	|z| >= 2	WIZ	4162	1008	386	38.29	9.27
+F20k top 20,000 peaks	|z| >= 2	XPA	9521	1062	894	84.18	9.39
+F20k top 20,000 peaks	|z| >= 2	ZBTB43	1512	710	102	14.37	6.75
+F20k top 20,000 peaks	|z| >= 2	ZBTB7A	4197	111	49	44.14	1.17
+F20k top 20,000 peaks	|z| >= 2	ZIC2	4186	1024	384	37.50	9.17
+F20k top 20,000 peaks	|z| >= 2	ZNF143	2003	1130	205	18.14	10.23
+F20k top 20,000 peaks	|z| >= 2	ZNF282	2096	1412	264	18.70	12.60
+F20k top 20,000 peaks	|z| >= 2	ZNF503	2611	607	144	23.72	5.52
+F20k top 20,000 peaks	|z| >= 2	ZNF507	8436	758	572	75.46	6.78
+F20k top 20,000 peaks	|z| >= 2	ZNF512	2470	646	148	22.91	5.99
+F20k top 20,000 peaks	|z| >= 2	ZNF512B	4497	728	295	40.52	6.56
+F20k top 20,000 peaks	|z| >= 2	ZNF581	2483	562	128	22.78	5.16
+F20k top 20,000 peaks	|z| >= 2	ZNF644	3982	466	159	34.12	3.99
+F20k top 20,000 peaks	|z| >= 2	ZNF746	3131	1068	291	27.25	9.29
+F20k top 20,000 peaks	|z| >= 2	ZNF768	4796	1700	736	43.29	15.35
+F20k top 20,000 peaks	|z| >= 2	ZNF777	1551	1709	257	15.04	16.57
+F20k top 20,000 peaks	|z| >= 2	ZNF79	2352	1279	265	20.72	11.27
+F20k top 20,000 peaks	|z| >= 2	ZUFSP	2650	956	248	25.94	9.36
+F20k top 20,000 peaks	|z| >= 3	ADNP	2755	626	171	27.32	6.21
+F20k top 20,000 peaks	|z| >= 3	AKAP8L	1894	31	2	6.45	0.11
+F20k top 20,000 peaks	|z| >= 3	CHAMP1	2916	16	3	18.75	0.10
+F20k top 20,000 peaks	|z| >= 3	CTCF	6322	272	152	55.88	2.40
+F20k top 20,000 peaks	|z| >= 3	DDIT3	8232	184	141	76.63	1.71
+F20k top 20,000 peaks	|z| >= 3	DNMT1	1600	541	87	16.08	5.44
+F20k top 20,000 peaks	|z| >= 3	DR1	3142	72	20	27.78	0.64
+F20k top 20,000 peaks	|z| >= 3	E2F3	8627	31	27	87.10	0.31
+F20k top 20,000 peaks	|z| >= 3	E4F1	5026	468	201	42.95	4.00
+F20k top 20,000 peaks	|z| >= 3	ETS2	1634	127	21	16.54	1.29
+F20k top 20,000 peaks	|z| >= 3	FLYWCH1	3867	154	69	44.81	1.78
+F20k top 20,000 peaks	|z| >= 3	FOXC1	2399	113	34	30.09	1.42
+F20k top 20,000 peaks	|z| >= 3	FOXJ3	1398	26	3	11.54	0.21
+F20k top 20,000 peaks	|z| >= 3	FOXK1	1134	453	43	9.49	3.79
+F20k top 20,000 peaks	|z| >= 3	HOXA10	4437	256	124	48.44	2.79
+F20k top 20,000 peaks	|z| >= 3	HOXA5	1607	102	12	11.76	0.75
+F20k top 20,000 peaks	|z| >= 3	HOXB6	4194	42	14	33.33	0.33
+F20k top 20,000 peaks	|z| >= 3	HOXB8	1403	31	4	12.90	0.29
+F20k top 20,000 peaks	|z| >= 3	HOXB9	4228	34	11	32.35	0.26
+F20k top 20,000 peaks	|z| >= 3	HOXC4	1294	60	8	13.33	0.62
+F20k top 20,000 peaks	|z| >= 3	HOXC9	3098	67	26	38.81	0.84
+F20k top 20,000 peaks	|z| >= 3	HOXD10	1470	143	20	13.99	1.36
+F20k top 20,000 peaks	|z| >= 3	MAZ	4000	251	107	42.63	2.67
+F20k top 20,000 peaks	|z| >= 3	MEF2A	1438	282	37	13.12	2.57
+F20k top 20,000 peaks	|z| >= 3	MEF2D	1538	37	5	13.51	0.33
+F20k top 20,000 peaks	|z| >= 3	MSX2	2401	397	92	23.17	3.83
+F20k top 20,000 peaks	|z| >= 3	MTF2	4436	102	36	35.29	0.81
+F20k top 20,000 peaks	|z| >= 3	NEUROD4	2548	71	11	15.49	0.43
+F20k top 20,000 peaks	|z| >= 3	NFYA	8986	206	175	84.95	1.95
+F20k top 20,000 peaks	|z| >= 3	NME2	7510	490	334	68.16	4.45
+F20k top 20,000 peaks	|z| >= 3	NR1D2	2433	60	12	20.00	0.49
+F20k top 20,000 peaks	|z| >= 3	NRF1	2172	729	174	23.87	8.01
+F20k top 20,000 peaks	|z| >= 3	PA2G4	5945	86	51	59.30	0.86
+F20k top 20,000 peaks	|z| >= 3	PCGF6	1115	129	11	8.53	0.99
+F20k top 20,000 peaks	|z| >= 3	POGK	2783	93	28	30.11	1.01
+F20k top 20,000 peaks	|z| >= 3	RBBP7	8759	546	427	78.21	4.87
+F20k top 20,000 peaks	|z| >= 3	RBPJ	3828	327	122	37.31	3.19
+F20k top 20,000 peaks	|z| >= 3	RELA	3027	319	80	25.08	2.64
+F20k top 20,000 peaks	|z| >= 3	SAFB	5451	116	58	50.00	1.06
+F20k top 20,000 peaks	|z| >= 3	SETDB1	2418	164	36	21.95	1.49
+F20k top 20,000 peaks	|z| >= 3	SMARCA1	2912	155	45	29.03	1.55
+F20k top 20,000 peaks	|z| >= 3	SOX4	8521	134	99	73.88	1.16
+F20k top 20,000 peaks	|z| >= 3	SRCAP	3403	49	20	40.82	0.59
+F20k top 20,000 peaks	|z| >= 3	TBX3	4840	105	52	49.52	1.07
+F20k top 20,000 peaks	|z| >= 3	THAP6	2332	52	11	21.15	0.47
+F20k top 20,000 peaks	|z| >= 3	WIZ	4162	115	43	37.39	1.03
+F20k top 20,000 peaks	|z| >= 3	XPA	9521	147	129	87.76	1.35
+F20k top 20,000 peaks	|z| >= 3	ZBTB43	1512	54	8	14.81	0.53
+F20k top 20,000 peaks	|z| >= 3	ZBTB7A	4197	3	2	66.67	0.05
+F20k top 20,000 peaks	|z| >= 3	ZIC2	4186	128	49	38.28	1.17
+F20k top 20,000 peaks	|z| >= 3	ZNF143	2003	213	46	21.60	2.30
+F20k top 20,000 peaks	|z| >= 3	ZNF282	2096	252	53	21.03	2.53
+F20k top 20,000 peaks	|z| >= 3	ZNF503	2611	38	12	31.58	0.46
+F20k top 20,000 peaks	|z| >= 3	ZNF507	8436	79	65	82.28	0.77
+F20k top 20,000 peaks	|z| >= 3	ZNF512	2470	75	17	22.67	0.69
+F20k top 20,000 peaks	|z| >= 3	ZNF512B	4497	84	30	35.71	0.67
+F20k top 20,000 peaks	|z| >= 3	ZNF581	2483	39	8	20.51	0.32
+F20k top 20,000 peaks	|z| >= 3	ZNF644	3982	30	9	30.00	0.23
+F20k top 20,000 peaks	|z| >= 3	ZNF746	3131	128	31	24.22	0.99
+F20k top 20,000 peaks	|z| >= 3	ZNF768	4796	360	168	46.67	3.50
+F20k top 20,000 peaks	|z| >= 3	ZNF777	1551	407	55	13.51	3.55
+F20k top 20,000 peaks	|z| >= 3	ZNF79	2352	213	44	20.66	1.87
+F20k top 20,000 peaks	|z| >= 3	ZUFSP	2650	123	35	28.46	1.32
+Fq all q<0.05 peaks	|z| >= 2	ADNP	1438	2166	288	13.30	20.03
+Fq all q<0.05 peaks	|z| >= 2	AKAP8L	705	563	40	7.10	5.67
+Fq all q<0.05 peaks	|z| >= 2	CHAMP1	1553	367	44	11.99	2.83
+Fq all q<0.05 peaks	|z| >= 2	CTCF	2459	1295	283	21.85	11.51
+Fq all q<0.05 peaks	|z| >= 2	DDIT3	5870	1036	547	52.80	9.32
+Fq all q<0.05 peaks	|z| >= 2	DNMT1	532	1978	104	5.26	19.55
+Fq all q<0.05 peaks	|z| >= 2	DR1	4008	819	278	33.94	6.94
+Fq all q<0.05 peaks	|z| >= 2	E2F3	7565	474	311	65.61	4.11
+Fq all q<0.05 peaks	|z| >= 2	E4F1	6630	1750	1004	57.37	15.14
+Fq all q<0.05 peaks	|z| >= 2	ETS2	4476	833	326	39.14	7.28
+Fq all q<0.05 peaks	|z| >= 2	FLYWCH1	2070	1026	184	17.93	8.89
+Fq all q<0.05 peaks	|z| >= 2	FOXC1	890	873	64	7.33	7.19
+Fq all q<0.05 peaks	|z| >= 2	FOXJ3	616	514	29	5.64	4.71
+Fq all q<0.05 peaks	|z| >= 2	FOXK1	180	1760	30	1.70	16.67
+Fq all q<0.05 peaks	|z| >= 2	HOXA10	2175	1288	257	19.95	11.82
+Fq all q<0.05 peaks	|z| >= 2	HOXA5	115	860	12	1.40	10.43
+Fq all q<0.05 peaks	|z| >= 2	HOXB6	2761	501	136	27.15	4.93
+Fq all q<0.05 peaks	|z| >= 2	HOXB8	554	431	32	7.42	5.78
+Fq all q<0.05 peaks	|z| >= 2	HOXB9	1985	479	77	16.08	3.88
+Fq all q<0.05 peaks	|z| >= 2	HOXC4	395	614	22	3.58	5.57
+Fq all q<0.05 peaks	|z| >= 2	HOXC9	2016	675	118	17.48	5.85
+Fq all q<0.05 peaks	|z| >= 2	HOXD10	341	856	21	2.45	6.16
+Fq all q<0.05 peaks	|z| >= 2	MAZ	2423	1263	270	21.38	11.14
+Fq all q<0.05 peaks	|z| >= 2	MEF2A	448	1486	66	4.44	14.73
+Fq all q<0.05 peaks	|z| >= 2	MEF2D	578	510	28	5.49	4.84
+Fq all q<0.05 peaks	|z| >= 2	MSX2	0	1567	0	0.00	
+Fq all q<0.05 peaks	|z| >= 2	MTF2	5170	716	322	44.97	6.23
+Fq all q<0.05 peaks	|z| >= 2	NEUROD4	0	833	0	0.00	
+Fq all q<0.05 peaks	|z| >= 2	NFYA	10330	1338	1227	91.70	11.88
+Fq all q<0.05 peaks	|z| >= 2	NME2	7360	1805	1196	66.26	16.25
+Fq all q<0.05 peaks	|z| >= 2	NR1D2	0	737	0	0.00	
+Fq all q<0.05 peaks	|z| >= 2	NRF1	602	2069	126	6.09	20.93
+Fq all q<0.05 peaks	|z| >= 2	PA2G4	329	783	29	3.70	8.81
+Fq all q<0.05 peaks	|z| >= 2	PCGF6	83	1000	5	0.50	6.02
+Fq all q<0.05 peaks	|z| >= 2	POGK	1532	823	111	13.49	7.25
+Fq all q<0.05 peaks	|z| >= 2	RBBP7	6513	1986	1105	55.64	16.97
+Fq all q<0.05 peaks	|z| >= 2	RBPJ	1976	1524	268	17.59	13.56
+Fq all q<0.05 peaks	|z| >= 2	RELA	15	1465	0	0.00	0.00
+Fq all q<0.05 peaks	|z| >= 2	SAFB	1722	835	113	13.53	6.56
+Fq all q<0.05 peaks	|z| >= 2	SETDB1	0	994	0	0.00	
+Fq all q<0.05 peaks	|z| >= 2	SMARCA1	1571	1124	136	12.10	8.66
+Fq all q<0.05 peaks	|z| >= 2	SOX4	10308	1073	986	91.89	9.57
+Fq all q<0.05 peaks	|z| >= 2	SRCAP	1732	536	99	18.47	5.72
+Fq all q<0.05 peaks	|z| >= 2	TBX3	269	759	14	1.84	5.20
+Fq all q<0.05 peaks	|z| >= 2	THAP6	1325	634	87	13.72	6.57
+Fq all q<0.05 peaks	|z| >= 2	WIZ	2491	1008	215	21.33	8.63
+Fq all q<0.05 peaks	|z| >= 2	XPA	9272	1062	871	82.02	9.39
+Fq all q<0.05 peaks	|z| >= 2	ZBTB43	507	710	35	4.93	6.90
+Fq all q<0.05 peaks	|z| >= 2	ZBTB7A	3303	111	37	33.33	1.12
+Fq all q<0.05 peaks	|z| >= 2	ZIC2	2369	1024	211	20.61	8.91
+Fq all q<0.05 peaks	|z| >= 2	ZNF143	986	1130	89	7.88	9.03
+Fq all q<0.05 peaks	|z| >= 2	ZNF282	4466	1412	543	38.46	12.16
+Fq all q<0.05 peaks	|z| >= 2	ZNF503	0	607	0	0.00	
+Fq all q<0.05 peaks	|z| >= 2	ZNF507	8585	758	590	77.84	6.87
+Fq all q<0.05 peaks	|z| >= 2	ZNF512	1199	646	60	9.29	5.00
+Fq all q<0.05 peaks	|z| >= 2	ZNF512B	2547	728	164	22.53	6.44
+Fq all q<0.05 peaks	|z| >= 2	ZNF581	0	562	0	0.00	
+Fq all q<0.05 peaks	|z| >= 2	ZNF644	2476	466	107	22.96	4.32
+Fq all q<0.05 peaks	|z| >= 2	ZNF746	1837	1068	159	14.89	8.66
+Fq all q<0.05 peaks	|z| >= 2	ZNF768	650	1700	97	5.71	14.92
+Fq all q<0.05 peaks	|z| >= 2	ZNF777	3077	1709	487	28.50	15.83
+Fq all q<0.05 peaks	|z| >= 2	ZNF79	0	1279	0	0.00	
+Fq all q<0.05 peaks	|z| >= 2	ZUFSP	1409	956	137	14.33	9.72
+Fq all q<0.05 peaks	|z| >= 3	ADNP	1438	626	85	13.58	5.91
+Fq all q<0.05 peaks	|z| >= 3	AKAP8L	705	31	0	0.00	0.00
+Fq all q<0.05 peaks	|z| >= 3	CHAMP1	1553	16	2	12.50	0.13
+Fq all q<0.05 peaks	|z| >= 3	CTCF	2459	272	57	20.96	2.32
+Fq all q<0.05 peaks	|z| >= 3	DDIT3	5870	184	106	57.61	1.81
+Fq all q<0.05 peaks	|z| >= 3	DNMT1	532	541	34	6.28	6.39
+Fq all q<0.05 peaks	|z| >= 3	DR1	4008	72	20	27.78	0.50
+Fq all q<0.05 peaks	|z| >= 3	E2F3	7565	31	23	74.19	0.30
+Fq all q<0.05 peaks	|z| >= 3	E4F1	6630	468	259	55.34	3.91
+Fq all q<0.05 peaks	|z| >= 3	ETS2	4476	127	49	38.58	1.09
+Fq all q<0.05 peaks	|z| >= 3	FLYWCH1	2070	154	34	22.08	1.64
+Fq all q<0.05 peaks	|z| >= 3	FOXC1	890	113	14	12.39	1.57
+Fq all q<0.05 peaks	|z| >= 3	FOXJ3	616	26	2	7.69	0.32
+Fq all q<0.05 peaks	|z| >= 3	FOXK1	180	453	6	1.32	3.33
+Fq all q<0.05 peaks	|z| >= 3	HOXA10	2175	256	54	21.09	2.48
+Fq all q<0.05 peaks	|z| >= 3	HOXA5	115	102	0	0.00	0.00
+Fq all q<0.05 peaks	|z| >= 3	HOXB6	2761	42	11	26.19	0.40
+Fq all q<0.05 peaks	|z| >= 3	HOXB8	554	31	3	9.68	0.54
+Fq all q<0.05 peaks	|z| >= 3	HOXB9	1985	34	7	20.59	0.35
+Fq all q<0.05 peaks	|z| >= 3	HOXC4	395	60	4	6.67	1.01
+Fq all q<0.05 peaks	|z| >= 3	HOXC9	2016	67	17	25.37	0.84
+Fq all q<0.05 peaks	|z| >= 3	HOXD10	341	143	7	4.90	2.05
+Fq all q<0.05 peaks	|z| >= 3	MAZ	2423	251	55	21.91	2.27
+Fq all q<0.05 peaks	|z| >= 3	MEF2A	448	282	17	6.03	3.79
+Fq all q<0.05 peaks	|z| >= 3	MEF2D	578	37	1	2.70	0.17
+Fq all q<0.05 peaks	|z| >= 3	MSX2	0	397	0	0.00	
+Fq all q<0.05 peaks	|z| >= 3	MTF2	5170	102	38	37.25	0.74
+Fq all q<0.05 peaks	|z| >= 3	NEUROD4	0	71	0	0.00	
+Fq all q<0.05 peaks	|z| >= 3	NFYA	10330	206	197	95.63	1.91
+Fq all q<0.05 peaks	|z| >= 3	NME2	7360	490	327	66.73	4.44
+Fq all q<0.05 peaks	|z| >= 3	NR1D2	0	60	0	0.00	
+Fq all q<0.05 peaks	|z| >= 3	NRF1	602	729	49	6.72	8.14
+Fq all q<0.05 peaks	|z| >= 3	PA2G4	329	86	0	0.00	0.00
+Fq all q<0.05 peaks	|z| >= 3	PCGF6	83	129	0	0.00	0.00
+Fq all q<0.05 peaks	|z| >= 3	POGK	1532	93	15	16.13	0.98
+Fq all q<0.05 peaks	|z| >= 3	RBBP7	6513	546	298	54.58	4.58
+Fq all q<0.05 peaks	|z| >= 3	RBPJ	1976	327	57	17.43	2.88
+Fq all q<0.05 peaks	|z| >= 3	RELA	15	319	0	0.00	0.00
+Fq all q<0.05 peaks	|z| >= 3	SAFB	1722	116	16	13.79	0.93
+Fq all q<0.05 peaks	|z| >= 3	SETDB1	0	164	0	0.00	
+Fq all q<0.05 peaks	|z| >= 3	SMARCA1	1571	155	16	10.32	1.02
+Fq all q<0.05 peaks	|z| >= 3	SOX4	10308	134	121	90.30	1.17
+Fq all q<0.05 peaks	|z| >= 3	SRCAP	1732	49	13	26.53	0.75
+Fq all q<0.05 peaks	|z| >= 3	TBX3	269	105	2	1.90	0.74
+Fq all q<0.05 peaks	|z| >= 3	THAP6	1325	52	7	13.46	0.53
+Fq all q<0.05 peaks	|z| >= 3	WIZ	2491	115	26	22.61	1.04
+Fq all q<0.05 peaks	|z| >= 3	XPA	9272	147	127	86.39	1.37
+Fq all q<0.05 peaks	|z| >= 3	ZBTB43	507	54	0	0.00	0.00
+Fq all q<0.05 peaks	|z| >= 3	ZBTB7A	3303	3	2	66.67	0.06
+Fq all q<0.05 peaks	|z| >= 3	ZIC2	2369	128	30	23.44	1.27
+Fq all q<0.05 peaks	|z| >= 3	ZNF143	986	213	23	10.80	2.33
+Fq all q<0.05 peaks	|z| >= 3	ZNF282	4466	252	93	36.90	2.08
+Fq all q<0.05 peaks	|z| >= 3	ZNF503	0	38	0	0.00	
+Fq all q<0.05 peaks	|z| >= 3	ZNF507	8585	79	66	83.54	0.77
+Fq all q<0.05 peaks	|z| >= 3	ZNF512	1199	75	8	10.67	0.67
+Fq all q<0.05 peaks	|z| >= 3	ZNF512B	2547	84	18	21.43	0.71
+Fq all q<0.05 peaks	|z| >= 3	ZNF581	0	39	0	0.00	
+Fq all q<0.05 peaks	|z| >= 3	ZNF644	2476	30	6	20.00	0.24
+Fq all q<0.05 peaks	|z| >= 3	ZNF746	1837	128	14	10.94	0.76
+Fq all q<0.05 peaks	|z| >= 3	ZNF768	650	360	19	5.28	2.92
+Fq all q<0.05 peaks	|z| >= 3	ZNF777	3077	407	104	25.55	3.38
+Fq all q<0.05 peaks	|z| >= 3	ZNF79	0	213	0	0.00	
+Fq all q<0.05 peaks	|z| >= 3	ZUFSP	1409	123	19	15.45	1.35
+G B + E	|z| >= 2	ADNP	1913	2166	399	18.42	20.86
+G B + E	|z| >= 2	AKAP8L	2010	563	129	22.91	6.42
+G B + E	|z| >= 2	CHAMP1	1753	367	47	12.81	2.68
+G B + E	|z| >= 2	CTCF	3984	1295	463	35.75	11.62
+G B + E	|z| >= 2	DDIT3	5374	1036	522	50.39	9.71
+G B + E	|z| >= 2	DNMT1	1709	1978	338	17.09	19.78
+G B + E	|z| >= 2	DR1	2268	819	189	23.08	8.33
+G B + E	|z| >= 2	E2F3	5794	474	242	51.05	4.18
+G B + E	|z| >= 2	E4F1	4020	1750	642	36.69	15.97
+G B + E	|z| >= 2	ETS2	2564	833	220	26.41	8.58
+G B + E	|z| >= 2	FLYWCH1	2011	1026	189	18.42	9.40
+G B + E	|z| >= 2	FOXC1	2509	873	211	24.17	8.41
+G B + E	|z| >= 2	FOXJ3	1520	514	74	14.40	4.87
+G B + E	|z| >= 2	FOXK1	946	1760	164	9.32	17.34
+G B + E	|z| >= 2	HOXA10	2143	1288	277	21.51	12.93
+G B + E	|z| >= 2	HOXA5	843	860	66	7.67	7.83
+G B + E	|z| >= 2	HOXB6	2447	501	127	25.35	5.19
+G B + E	|z| >= 2	HOXB8	1568	431	80	18.56	5.10
+G B + E	|z| >= 2	HOXB9	2016	479	86	17.95	4.27
+G B + E	|z| >= 2	HOXC4	1182	614	68	11.07	5.75
+G B + E	|z| >= 2	HOXC9	1817	675	126	18.67	6.93
+G B + E	|z| >= 2	HOXD10	1249	856	103	12.03	8.25
+G B + E	|z| >= 2	MAZ	2055	1263	244	19.32	11.87
+G B + E	|z| >= 2	MEF2A	1321	1486	193	12.99	14.61
+G B + E	|z| >= 2	MEF2D	1640	510	91	17.84	5.55
+G B + E	|z| >= 2	MSX2	1914	1567	297	18.95	15.52
+G B + E	|z| >= 2	MTF2	2928	716	222	31.01	7.58
+G B + E	|z| >= 2	NEUROD4	1708	833	120	14.41	7.03
+G B + E	|z| >= 2	NFYA	7338	1338	865	64.65	11.79
+G B + E	|z| >= 2	NME2	5234	1805	861	47.70	16.45
+G B + E	|z| >= 2	NR1D2	2018	737	146	19.81	7.23
+G B + E	|z| >= 2	NRF1	2099	2069	452	21.85	21.53
+G B + E	|z| >= 2	PA2G4	2250	783	173	22.09	7.69
+G B + E	|z| >= 2	PCGF6	828	1000	79	7.90	9.54
+G B + E	|z| >= 2	POGK	1614	823	148	17.98	9.17
+G B + E	|z| >= 2	RBBP7	5792	1986	964	48.54	16.64
+G B + E	|z| >= 2	RBPJ	1947	1524	298	19.55	15.31
+G B + E	|z| >= 2	RELA	1983	1465	262	17.88	13.21
+G B + E	|z| >= 2	SAFB	4014	835	283	33.89	7.05
+G B + E	|z| >= 2	SETDB1	1507	994	144	14.49	9.56
+G B + E	|z| >= 2	SMARCA1	1543	1124	163	14.50	10.56
+G B + E	|z| >= 2	SOX4	7425	1073	713	66.45	9.60
+G B + E	|z| >= 2	SRCAP	1745	536	105	19.59	6.02
+G B + E	|z| >= 2	TBX3	1580	759	126	16.60	7.97
+G B + E	|z| >= 2	THAP6	1505	634	121	19.09	8.04
+G B + E	|z| >= 2	WIZ	2243	1008	221	21.92	9.85
+G B + E	|z| >= 2	XPA	6648	1062	629	59.23	9.46
+G B + E	|z| >= 2	ZBTB43	1602	710	107	15.07	6.68
+G B + E	|z| >= 2	ZBTB7A	2682	111	35	31.53	1.30
+G B + E	|z| >= 2	ZIC2	2149	1024	203	19.82	9.45
+G B + E	|z| >= 2	ZNF143	1451	1130	162	14.34	11.16
+G B + E	|z| >= 2	ZNF282	2693	1412	349	24.72	12.96
+G B + E	|z| >= 2	ZNF503	1297	607	77	12.69	5.94
+G B + E	|z| >= 2	ZNF507	6394	758	436	57.52	6.82
+G B + E	|z| >= 2	ZNF512	1640	646	99	15.33	6.04
+G B + E	|z| >= 2	ZNF512B	2256	728	175	24.04	7.76
+G B + E	|z| >= 2	ZNF581	1940	562	93	16.55	4.79
+G B + E	|z| >= 2	ZNF644	2312	466	89	19.10	3.85
+G B + E	|z| >= 2	ZNF746	1668	1068	171	16.01	10.25
+G B + E	|z| >= 2	ZNF768	2712	1700	420	24.71	15.49
+G B + E	|z| >= 2	ZNF777	1983	1709	336	19.66	16.94
+G B + E	|z| >= 2	ZNF79	1770	1279	214	16.73	12.09
+G B + E	|z| >= 2	ZUFSP	1543	956	173	18.10	11.21
+G B + E	|z| >= 3	ADNP	1913	626	130	20.77	6.80
+G B + E	|z| >= 3	AKAP8L	2010	31	3	9.68	0.15
+G B + E	|z| >= 3	CHAMP1	1753	16	2	12.50	0.11
+G B + E	|z| >= 3	CTCF	3984	272	93	34.19	2.33
+G B + E	|z| >= 3	DDIT3	5374	184	100	54.35	1.86
+G B + E	|z| >= 3	DNMT1	1709	541	98	18.11	5.73
+G B + E	|z| >= 3	DR1	2268	72	22	30.56	0.97
+G B + E	|z| >= 3	E2F3	5794	31	21	67.74	0.36
+G B + E	|z| >= 3	E4F1	4020	468	186	39.74	4.63
+G B + E	|z| >= 3	ETS2	2564	127	33	25.98	1.29
+G B + E	|z| >= 3	FLYWCH1	2011	154	42	27.27	2.09
+G B + E	|z| >= 3	FOXC1	2509	113	39	34.51	1.55
+G B + E	|z| >= 3	FOXJ3	1520	26	3	11.54	0.20
+G B + E	|z| >= 3	FOXK1	946	453	44	9.71	4.65
+G B + E	|z| >= 3	HOXA10	2143	256	71	27.73	3.31
+G B + E	|z| >= 3	HOXA5	843	102	5	4.90	0.59
+G B + E	|z| >= 3	HOXB6	2447	42	10	23.81	0.41
+G B + E	|z| >= 3	HOXB8	1568	31	8	25.81	0.51
+G B + E	|z| >= 3	HOXB9	2016	34	6	17.65	0.30
+G B + E	|z| >= 3	HOXC4	1182	60	9	15.00	0.76
+G B + E	|z| >= 3	HOXC9	1817	67	20	29.85	1.10
+G B + E	|z| >= 3	HOXD10	1249	143	24	16.78	1.92
+G B + E	|z| >= 3	MAZ	2055	251	60	23.90	2.92
+G B + E	|z| >= 3	MEF2A	1321	282	51	18.09	3.86
+G B + E	|z| >= 3	MEF2D	1640	37	7	18.92	0.43
+G B + E	|z| >= 3	MSX2	1914	397	96	24.18	5.02
+G B + E	|z| >= 3	MTF2	2928	102	30	29.41	1.02
+G B + E	|z| >= 3	NEUROD4	1708	71	9	12.68	0.53
+G B + E	|z| >= 3	NFYA	7338	206	143	69.42	1.95
+G B + E	|z| >= 3	NME2	5234	490	254	51.84	4.85
+G B + E	|z| >= 3	NR1D2	2018	60	16	26.67	0.79
+G B + E	|z| >= 3	NRF1	2099	729	181	24.83	8.62
+G B + E	|z| >= 3	PA2G4	2250	86	13	15.12	0.58
+G B + E	|z| >= 3	PCGF6	828	129	10	7.75	1.21
+G B + E	|z| >= 3	POGK	1614	93	20	21.51	1.24
+G B + E	|z| >= 3	RBBP7	5792	546	266	48.72	4.59
+G B + E	|z| >= 3	RBPJ	1947	327	77	23.55	3.95
+G B + E	|z| >= 3	RELA	1983	319	58	18.18	2.92
+G B + E	|z| >= 3	SAFB	4014	116	46	39.66	1.15
+G B + E	|z| >= 3	SETDB1	1507	164	24	14.63	1.59
+G B + E	|z| >= 3	SMARCA1	1543	155	29	18.71	1.88
+G B + E	|z| >= 3	SOX4	7425	134	97	72.39	1.31
+G B + E	|z| >= 3	SRCAP	1745	49	11	22.45	0.63
+G B + E	|z| >= 3	TBX3	1580	105	21	20.00	1.33
+G B + E	|z| >= 3	THAP6	1505	52	11	21.15	0.73
+G B + E	|z| >= 3	WIZ	2243	115	38	33.04	1.69
+G B + E	|z| >= 3	XPA	6648	147	87	59.18	1.31
+G B + E	|z| >= 3	ZBTB43	1602	54	7	12.96	0.44
+G B + E	|z| >= 3	ZBTB7A	2682	3	2	66.67	0.07
+G B + E	|z| >= 3	ZIC2	2149	128	40	31.25	1.86
+G B + E	|z| >= 3	ZNF143	1451	213	39	18.31	2.69
+G B + E	|z| >= 3	ZNF282	2693	252	69	27.38	2.56
+G B + E	|z| >= 3	ZNF503	1297	38	6	15.79	0.46
+G B + E	|z| >= 3	ZNF507	6394	79	55	69.62	0.86
+G B + E	|z| >= 3	ZNF512	1640	75	12	16.00	0.73
+G B + E	|z| >= 3	ZNF512B	2256	84	20	23.81	0.89
+G B + E	|z| >= 3	ZNF581	1940	39	9	23.08	0.46
+G B + E	|z| >= 3	ZNF644	2312	30	10	33.33	0.43
+G B + E	|z| >= 3	ZNF746	1668	128	23	17.97	1.38
+G B + E	|z| >= 3	ZNF768	2712	360	98	27.22	3.61
+G B + E	|z| >= 3	ZNF777	1983	407	84	20.64	4.24
+G B + E	|z| >= 3	ZNF79	1770	213	45	21.13	2.54
+G B + E	|z| >= 3	ZUFSP	1543	123	33	26.83	2.14
