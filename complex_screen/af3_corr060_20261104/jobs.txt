@@ -1,0 +1,9 @@
+regular 8275252
+big 8275253
+regular_s5 8667715
+big_s5 8667716
+pickup_big_late 8667717
+rescore_chain 8767850
+nm_chain 8767851
+rescore_5seed 8769572
+# 2026-11-18: 8767851 af3nm_chain (near-miss 5-seed, nm5), 8753795 iph_sum, 8753794 iph cancelled by user (Yuyang) decision; never ran; scripts kept for resubmission

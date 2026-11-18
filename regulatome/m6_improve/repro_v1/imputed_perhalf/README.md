@@ -20,3 +20,6 @@ Jobs: 12 GPU tasks (perhalf.sbatch, l40-gpu/a100-gpu, gpu_access, 1 GPU, 4 CPU, 
 
 ## Amendment (2026-11-10, before any output)
 If outcome B (pass) lands, the accessibility-only neighbour-graph control is REQUIRED, not optional, and must be declared before its result is read. Reason: the motif thread found motif z scales with cell count more strongly on imputed signal (Spearman 0.60) than raw (0.43/0.37), which is consistent with imputation amplifying depth convergence.
+
+## Cancelled (2026-11-18)
+8753794 (iph), 8753795 (iph_sum) and the chained 8767851 (af3nm_chain) cancelled by user (Yuyang) decision; never ran (no task started, no OUTCOME.txt); scripts kept for resubmission.
