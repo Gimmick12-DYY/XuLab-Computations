@@ -13,7 +13,7 @@ import numpy as np, pandas as pd
 import matplotlib; matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 H = Path(__file__).resolve().parents[1]; G = H / "checks/go_great_regions"; MM = 1 / 25.4
-plt.rcParams.update({"font.family": "sans-serif", "font.sans-serif": ["Arial"], "font.size": 6, "svg.fonttype": "none", "axes.linewidth": 0.5, "legend.frameon": False})
+plt.rcParams.update({"font.family": "sans-serif", "font.sans-serif": ["Arial"], "font.size": 7, "svg.fonttype": "none", "axes.linewidth": 0.5, "legend.frameon": False})
 TEAL, LT = "#2C7A6B", "#C9E3DC"
 TH = pd.concat([pd.read_csv(G / f, sep="\t")[["term", "theme"]] for f in ("surviving_per_TF_themes.tsv", "per_TF_q005_themes.tsv")]).drop_duplicates("term").set_index("term").theme
 SP = pd.read_csv(G / "surviving_per_TF.tsv", sep="\t"); SP = SP[SP.group == "specific"].copy()
@@ -59,42 +59,46 @@ def why(t):
 grp = {}
 for t in DROP: grp.setdefault(why(t), []).append(t)
 note = "Not shown (no term on either side; status of all 79 TFs in go_per_tf_great_terms.xlsx, sheet TF_status_79):\n" + "\n".join(
-    f"{k} ({len(grp[k])}): " + ", ".join(sorted(grp[k])) for k in ("tested, no term", "< 20 elements", "no module elements") if k in grp)
+    {"tested, no term": "Tested, no significant term", "< 20 elements": "Fewer than 20 elements, not tested", "no module elements": "No module elements"}[k] + f" ({len(grp[k])}): " + ", ".join(sorted(grp[k])) for k in ("tested, no term", "< 20 elements", "no module elements") if k in grp)
 print({k: len(v) for k, v in grp.items()})
 print(pd.crosstab(ST.specific_status, "TF-specific").join(pd.crosstab(ST.conserved_status, "conserved"), how="outer").fillna(0).astype(int))
 ti = {t: i for i, t in enumerate(terms.term)}; fi = {t: i for i, t in enumerate(tfs)}
 nr, nc = len(terms), len(tfs)
-RH = 2.4; HT = 58 + RH * (nr + 3); fig = plt.figure(figsize=(200 * MM, HT * MM)); ax = fig.add_axes([0.33, 28 / HT, 0.55, nr * RH / HT]); st = fig.add_axes([0.33, (28 + RH * (nr + 0.6)) / HT, 0.55, 2 * RH / HT], sharex=ax)
-sz = lambda q: 1.5 + 2.2 * np.minimum(-np.log10(q), 10)
+RH = 2.7; CW = RH * nr / nc                                                       # square grid: width = height
+LM, GW, RM, BM, TM = 105, CW * nc, 45, 34, 32                                       # mm: term labels | grid | theme labels; footnote | TF labels
+WD, HT = LM + GW + RM, BM + RH * nr + RH * 2.6 + TM
+fig = plt.figure(figsize=(WD * MM, HT * MM)); ax = fig.add_axes([LM / WD, BM / HT, GW / WD, nr * RH / HT])
+st = fig.add_axes([LM / WD, (BM + RH * (nr + 0.6)) / HT, GW / WD, 2 * RH / HT], sharex=ax)
+sz = lambda q: 3 + 3.2 * np.minimum(-np.log10(q), 10)
 for d, kw, dx in ((CO, dict(color=TEAL, lw=0), 0.18), (SP, dict(color=LT, edgecolors=TEAL, linewidths=0.5), -0.18)):
     d = d[d.term.isin(ti)]; ax.scatter([fi[t] + dx for t in d.tf], [ti[t] for t in d.term], s=sz(d.q), zorder=3, **kw)
-def short(s, n=58):
-    s = s[0].upper() + s[1:]; return s if len(s) <= n else s[:n - 1] + "…"
-ax.set_yticks(range(nr)); ax.set_yticklabels([short(n) for n in terms.name], fontsize=6); ax.set_ylim(nr - 0.5, -0.5)
+def short(s, n=None):
+    return s[0].upper() + s[1:]                                                      # full names (user 2026-11-18)
+ax.set_yticks(range(nr)); ax.set_yticklabels([short(n) for n in terms.name], fontsize=7); ax.set_ylim(nr - 0.5, -0.5)
 ax.set_xticks(range(nc)); ax.tick_params(labelbottom=False, labeltop=False); ax.set_xlim(-0.6, nc - 0.4)
 ax.tick_params(length=0); ax.grid(color="#EEEEEE", lw=0.3); ax.set_axisbelow(True)
 for sp in ax.spines.values(): sp.set_visible(False)
 ax.axvline(len(set(SP.tf)) - 0.5, color="#9E9E9E", lw=0.5)
-st.xaxis.tick_top(); st.set_xticks(range(nc)); st.set_xticklabels(tfs, rotation=90, fontsize=6)
+st.xaxis.tick_top(); st.set_xticks(range(nc)); st.set_xticklabels(tfs, rotation=90, fontsize=7)
 SCOL = {3: TEAL, 2: "#D9D9D9", 1: "white", 0: "white"}
 for j, t in enumerate(tfs):
     for i, (g, d) in enumerate((("specific", SP), ("conserved", CO))):
         v = status(t, g); st.add_patch(plt.Rectangle((j - 0.45, i - 0.4), 0.9, 0.8, facecolor=LT if (g == "specific" and v == 3) else SCOL[v], edgecolor="#BDBDBD" if v else "none", lw=0.3))
         if v == 0: st.text(j, i, "–", ha="center", va="center", fontsize=5, color="#9E9E9E")
-st.set_ylim(1.6, -0.6); st.set_yticks([0, 1]); st.set_yticklabels(["TF-specific", "Conserved"], fontsize=6); st.tick_params(length=0, labelbottom=False)
+st.set_ylim(1.6, -0.6); st.set_yticks([0, 1]); st.set_yticklabels(["TF-specific elements", "Conserved elements"], fontsize=7); st.tick_params(length=0, labelbottom=False)
 for sp_ in st.spines.values(): sp_.set_visible(False)
 prev = None
 for i, th in enumerate(terms.theme):
     if th != prev:
         k = (terms.theme == th).sum()
         if THEMES.index(th) % 2 == 0: ax.axhspan(i - 0.5, i + k - 0.5, color="#F4F4F4", zorder=0, lw=0)
-        ax.text(nc - 0.1, i + k / 2 - 0.5, th.replace(" (muscle, heart, kidney, gut)", "").replace(" / ", "/\n", 1), fontsize=6, va="center", ha="left", color="#4D4D4D", clip_on=False, linespacing=0.95)
+        ax.text(nc - 0.1, i + k / 2 - 0.5, (th.replace(" (", "\n(").replace(" / ", " /\n", 1) if len(th) > 18 and k > 2 else th), fontsize=7, va="center", ha="left", color="#4D4D4D", clip_on=False, linespacing=0.95)
         prev = th
 hs = [plt.scatter([], [], s=sz(1e-3), color=LT, edgecolors=TEAL, linewidths=0.5), plt.scatter([], [], s=sz(1e-3), color=TEAL, lw=0)] + [plt.scatter([], [], s=sz(q), color="#BDBDBD", lw=0) for q in (1e-2, 1e-5, 1e-10)]
 hs += [plt.Rectangle((0, 0), 1, 1, color="#D9D9D9", ec="#BDBDBD", lw=0.3), plt.Rectangle((0, 0), 1, 1, color="white", ec="#BDBDBD", lw=0.3)]
-fig.text(0.02, 0.0, note, fontsize=5.5, color="#4D4D4D", va="bottom", linespacing=1.3)
-fig.legend(hs, ["TF-specific elements (1–2 TFs)", "Conserved elements (≥3 TFs)", "q = 0.01", "1e-5", "≤1e-10", "tested, no term", "< 20 elements, not tested"],
-           loc="lower left", bbox_to_anchor=(0.02, 0.03), ncol=7, fontsize=6, handlelength=1.0)
+fig.text(6 / WD, 2 / HT, note, fontsize=7, color="#4D4D4D", va="bottom", linespacing=1.3)
+fig.legend(hs, ["TF-specific elements (1–2 TFs)", "Conserved elements (≥3 TFs)", "q = 0.01", "1e-5", "≤1e-10", "tested, no significant term", "fewer than 20 elements, not tested"],
+           loc="lower left", bbox_to_anchor=(6 / WD, 17 / HT), ncol=4, fontsize=7, handlelength=1.0)
 def illustrator_text(svg):
     def one(m):
         tag = m.group(0); sm = re.search(r'style="([^"]*)"', tag)
