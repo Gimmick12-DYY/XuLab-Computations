@@ -1,0 +1,9 @@
+rule	Perturb-seq genes cutoff	test	TFs	median p	share of TFs with p < 0.05	share with p < 0.5
+A	|z| >= 2	Perm 1	63	0.5574	0.03175	0.4286
+A	|z| >= 2	Perm 2	63	0.4915	0.04762	0.5079
+A	|z| >= 3	Perm 1	63	0.5435	0.04762	0.4444
+A	|z| >= 3	Perm 2	63	0.5475	0.03175	0.4921
+G	|z| >= 2	Perm 1	63	0.4436	0.03175	0.5238
+G	|z| >= 2	Perm 2	63	0.5345	0.06349	0.4762
+G	|z| >= 3	Perm 1	63	0.6194	0.04762	0.4444
+G	|z| >= 3	Perm 2	63	0.4525	0.06349	0.5397

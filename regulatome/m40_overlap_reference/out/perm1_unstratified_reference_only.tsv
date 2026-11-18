@@ -1,0 +1,17 @@
+rule	Perturb-seq genes cutoff	note	TFs	n TFs	Perturb-seq genes	in both	share found, observed (%)	permutation mean (%)	permutation 2.5-97.5 (%)	p (one-sided)
+A	|z| >= 2	reference only (unstratified gene shuffle)	all TFs	63	63954	11337	17.73	17.54	17.3-17.8	0.06993
+A	|z| >= 2	reference only (unstratified gene shuffle)	without NRF1, E4F1, DNMT1	60	58157	10403	17.89	17.81	17.5-18.1	0.2827
+A	|z| >= 3	reference only (unstratified gene shuffle)	all TFs	63	11237	2158	19.2	18.22	17.5-18.9	0.002997
+A	|z| >= 3	reference only (unstratified gene shuffle)	without NRF1, E4F1, DNMT1	60	9499	1866	19.64	18.86	18.2-19.6	0.02498
+A	|z| >= 4	reference only (unstratified gene shuffle)	all TFs	57	2188	484	22.12	19.01	17.5-20.6	0.000999
+A	|z| >= 4	reference only (unstratified gene shuffle)	without NRF1, E4F1, DNMT1	54	1552	347	22.36	20.69	18.9-22.6	0.04396
+A	|z| >= 5	reference only (unstratified gene shuffle)	all TFs	33	558	136	24.37	19.94	16.8-22.9	0.004995
+A	|z| >= 5	reference only (unstratified gene shuffle)	without NRF1, E4F1, DNMT1	30	274	65	23.72	24.6	20.1-29.6	0.6833
+G	|z| >= 2	reference only (unstratified gene shuffle)	all TFs	63	63954	15821	24.74	23.44	23.1-23.7	0.000999
+G	|z| >= 2	reference only (unstratified gene shuffle)	without NRF1, E4F1, DNMT1	60	58157	14389	24.74	23.51	23.2-23.8	0.000999
+G	|z| >= 3	reference only (unstratified gene shuffle)	all TFs	63	11237	3176	28.26	24.02	23.3-24.7	0.000999
+G	|z| >= 3	reference only (unstratified gene shuffle)	without NRF1, E4F1, DNMT1	60	9499	2711	28.54	24.35	23.6-25.1	0.000999
+G	|z| >= 4	reference only (unstratified gene shuffle)	all TFs	57	2188	721	32.95	24.71	23.1-26.4	0.000999
+G	|z| >= 4	reference only (unstratified gene shuffle)	without NRF1, E4F1, DNMT1	54	1552	506	32.6	25.71	23.7-27.6	0.000999
+G	|z| >= 5	reference only (unstratified gene shuffle)	all TFs	33	558	209	37.46	26.1	22.8-29.7	0.000999
+G	|z| >= 5	reference only (unstratified gene shuffle)	without NRF1, E4F1, DNMT1	30	274	96	35.04	29.13	24.1-34.3	0.007992
