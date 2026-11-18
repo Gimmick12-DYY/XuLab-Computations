@@ -1,0 +1,33 @@
+partner set	TF	partner with a knockdown	partner is broad	partner's Perturb-seq genes (|z| >= 2)
+P1 Figure 4 trio	ADNP	MTF2	False	716
+P1 Figure 4 trio	DR1	NFYA	True	1338
+P1 Figure 4 trio	MTF2	ADNP	False	2166
+P1 Figure 4 trio	NFYA	DR1	False	819
+P2 AF3-supported (strong)	ADNP	MTF2	False	716
+P2 AF3-supported (strong)	DDIT3	MTF2	False	716
+P2 AF3-supported (strong)	DDIT3	RBBP7	True	1986
+P2 AF3-supported (strong)	DDIT3	TBX3	False	759
+P2 AF3-supported (strong)	DR1	NFYA	True	1338
+P2 AF3-supported (strong)	ETS2	RBBP7	True	1986
+P2 AF3-supported (strong)	HOXA10	XPA	True	1062
+P2 AF3-supported (strong)	HOXB9	RBBP7	True	1986
+P2 AF3-supported (strong)	HOXB9	XPA	True	1062
+P2 AF3-supported (strong)	HOXC4	ZUFSP	False	956
+P2 AF3-supported (strong)	MEF2A	RBBP7	True	1986
+P2 AF3-supported (strong)	MTF2	ADNP	False	2166
+P2 AF3-supported (strong)	MTF2	DDIT3	True	1036
+P2 AF3-supported (strong)	NFYA	DR1	False	819
+P2 AF3-supported (strong)	NR1D2	TBX3	False	759
+P2 AF3-supported (strong)	RBBP7	DDIT3	True	1036
+P2 AF3-supported (strong)	RBBP7	ETS2	False	833
+P2 AF3-supported (strong)	RBBP7	HOXB9	False	479
+P2 AF3-supported (strong)	RBBP7	MEF2A	False	1486
+P2 AF3-supported (strong)	RBBP7	ZIC2	False	1024
+P2 AF3-supported (strong)	RBBP7	ZNF644	False	466
+P2 AF3-supported (strong)	TBX3	DDIT3	True	1036
+P2 AF3-supported (strong)	TBX3	NR1D2	False	737
+P2 AF3-supported (strong)	XPA	HOXA10	False	1288
+P2 AF3-supported (strong)	XPA	HOXB9	False	479
+P2 AF3-supported (strong)	ZIC2	RBBP7	True	1986
+P2 AF3-supported (strong)	ZNF644	RBBP7	True	1986
+P2 AF3-supported (strong)	ZUFSP	HOXC4	False	614

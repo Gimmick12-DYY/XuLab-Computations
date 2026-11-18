@@ -1,0 +1,25 @@
+rule	cutoff	partner set	pairs	n pairs	genes added	real: share changed on partner knockdown (%)	non-partners: same (%)	non-partners 5th-95th	real: share changed on both (%)	non-partners: changed on both (%)	non-partners 5th-95th (both)	real: same direction (%)	non-partners: same direction (%)	real: observed / expected (both)	non-partners: observed / expected (mean)	non-partners: observed / expected 5th-95th	pairs where matching fell back
+A	|z| >= 2	P1 Figure 4 trio	all pairs	4	7573	11.4	10.07	9.56-10.65	1.901	1.837	1.69-2.02	97.92	96.44	1.968	2.097	1.95-2.26	0
+A	|z| >= 2	P1 Figure 4 trio	pairs involving RBBP7 removed	4	7573	11.4	10.07	9.56-10.65	1.901	1.837	1.69-2.02	97.92	96.44	1.968	2.097	1.95-2.26	0
+A	|z| >= 2	P1 Figure 4 trio	pairs with a broad partner removed	3	2911	11.71	11.96	10.66-13.47	2.508	2.575	2.20-3.01	100	94.92	1.986	2.042	1.79-2.32	0
+A	|z| >= 2	P2 AF3-supported (strong)	all pairs	28	60688	12.5	11.51	11.40-11.64	2.528	2.385	2.32-2.45	97.91	97.81	2.442	2.455	2.41-2.51	8
+A	|z| >= 2	P2 AF3-supported (strong)	pairs involving RBBP7 removed	16	31108	9.83	8.986	8.77-9.26	1.893	1.76	1.65-1.88	97.62	97.44	2.506	2.569	2.45-2.70	8
+A	|z| >= 2	P2 AF3-supported (strong)	pairs with a broad partner removed	16	10944	8.882	8.579	8.03-9.16	2.211	2.324	2.13-2.50	97.52	97.57	2.351	2.447	2.30-2.63	8
+A	|z| >= 3	P1 Figure 4 trio	all pairs	4	7573	2.113	2.241	1.89-2.66	0.1585	0.1478	0.14-0.16	100	100	7.799	5.922	4.52-7.26	0
+A	|z| >= 3	P1 Figure 4 trio	pairs involving RBBP7 removed	4	7573	2.113	2.241	1.89-2.66	0.1585	0.1478	0.14-0.16	100	100	7.799	5.922	4.52-7.26	0
+A	|z| >= 3	P1 Figure 4 trio	pairs with a broad partner removed	3	2911	2.473	2.929	2.05-4.02	0.3779	0.3078	0.27-0.34	100	100	9.323	6.108	4.36-7.83	0
+A	|z| >= 3	P2 AF3-supported (strong)	all pairs	28	60688	2.862	2.639	2.56-2.71	0.4086	0.3343	0.32-0.35	100	99.36	11.58	9.681	9.33-10.08	9
+A	|z| >= 3	P2 AF3-supported (strong)	pairs involving RBBP7 removed	16	31108	1.659	1.652	1.54-1.76	0.2315	0.194	0.18-0.21	100	100	13.79	10.9	9.85-12.05	9
+A	|z| >= 3	P2 AF3-supported (strong)	pairs with a broad partner removed	16	10944	1.562	1.555	1.22-1.85	0.3107	0.2928	0.22-0.35	100	99.57	9.57	8.757	6.93-10.78	9
+G	|z| >= 2	P1 Figure 4 trio	all pairs	4	9604	11.03	10.02	9.72-10.34	1.885	1.917	1.85-1.98	97.79	96.39	1.945	2.113	2.01-2.20	0
+G	|z| >= 2	P1 Figure 4 trio	pairs involving RBBP7 removed	4	9604	11.03	10.02	9.72-10.34	1.885	1.917	1.85-1.98	97.79	96.39	1.945	2.113	2.01-2.20	0
+G	|z| >= 2	P1 Figure 4 trio	pairs with a broad partner removed	3	3999	10.68	11.24	10.49-12.02	2.726	3.006	2.81-3.19	100	95.97	2.128	2.22	2.04-2.36	0
+G	|z| >= 2	P2 AF3-supported (strong)	all pairs	28	66016	12.08	11.41	11.32-11.51	2.48	2.462	2.42-2.51	98.17	97.19	2.415	2.461	2.43-2.49	3
+G	|z| >= 2	P2 AF3-supported (strong)	pairs involving RBBP7 removed	16	35708	9.592	9.238	9.08-9.40	1.848	1.808	1.75-1.88	97.88	96.94	2.458	2.485	2.42-2.55	3
+G	|z| >= 2	P2 AF3-supported (strong)	pairs with a broad partner removed	16	15635	8.788	8.764	8.42-9.20	2.59	2.762	2.64-2.96	98.52	97.6	2.493	2.576	2.49-2.69	3
+G	|z| >= 3	P1 Figure 4 trio	all pairs	4	9604	1.999	2.036	1.85-2.31	0.2291	0.2558	0.23-0.28	100	100	8.469	7.985	6.77-8.91	1
+G	|z| >= 3	P1 Figure 4 trio	pairs involving RBBP7 removed	4	9604	1.999	2.036	1.85-2.31	0.2291	0.2558	0.23-0.28	100	100	8.469	7.985	6.77-8.91	1
+G	|z| >= 3	P1 Figure 4 trio	pairs with a broad partner removed	3	3999	2.251	2.647	2.26-3.20	0.4751	0.5231	0.46-0.58	100	100	8.943	8.351	6.99-9.38	1
+G	|z| >= 3	P2 AF3-supported (strong)	all pairs	28	66016	2.61	2.539	2.50-2.59	0.4196	0.3895	0.38-0.41	100	99.55	11.68	9.624	9.35-9.83	6
+G	|z| >= 3	P2 AF3-supported (strong)	pairs involving RBBP7 removed	16	35708	1.577	1.602	1.53-1.68	0.2408	0.2414	0.22-0.26	100	100	13.02	11.94	11.12-12.72	6
+G	|z| >= 3	P2 AF3-supported (strong)	pairs with a broad partner removed	16	15635	1.618	1.623	1.44-1.83	0.4989	0.4785	0.42-0.55	100	99.76	10.51	9.607	8.65-10.37	6
