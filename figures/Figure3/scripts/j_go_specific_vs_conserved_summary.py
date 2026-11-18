@@ -57,7 +57,7 @@ a1.scatter(-np.log10(L.q), y[:len(L)], s=sz(L.distinct_genes), color=LT, edgecol
 a1.set_yticks(y[:len(L)]); a1.set_yticklabels([f"{short(n, 60)}  ({t})" for n, t in zip(L.name, L.tf)], fontsize=6.5)
 a1.set_title(f"TF-specific module elements (1–2 TFs)\nbest term of each TF (10 of {NS} TFs with terms)", fontsize=7, pad=5)
 a2.scatter(-np.log10(R.q), y[:len(R)], s=sz(R.genes), color=TEAL, lw=0, zorder=3)
-for ax, D, gc in ((a1, L, "distinct_genes"), (a2, R, "genes")):
+for ax, D, gc in ((a2, R, "genes"),):                                       # "n TFs" only on the conserved side (user)
     for i, (f, n, g) in enumerate(zip(-np.log10(D.q), D.n_tfs, D[gc])):
         ax.annotate(f"{n} TF" + ("s" if n > 1 else ""), (f, i), xytext=(np.sqrt(sz(g)) / 2 + 2.5, 0), textcoords="offset points", va="center", ha="left", fontsize=6, color=GREY)
 a2.set_yticks(y[:len(R)]); a2.set_yticklabels([short(n, 60) for n in R.name], fontsize=6.5)
