@@ -86,23 +86,22 @@ SHOW = [("promoter-promoter", "P–P"), ("promoter-enhancer", "P–E"), ("enhanc
 seg = [(lab, int(pc.get(k, 0))) for k, lab in SHOW]; seg.append(("Rest", len(pairs) - sum(v for _, v in seg)))
 SEGC = {"P–P": "#2B5C9E", "P–E": "#7FA6CE", "E–E": "#E8821E", "P–R": "#8E7CC3", "E–R": "#F6CB8F", "R–R": "#55606E", "Rest": "#E3E3E3"}
 LOOP, NOLOOP = "#B83A2E", "#E3E3E3"
-# ---- figure: top = 100% bars (on a Hi-C loop vs not) per edge set; bottom = one strand of pair classes, same x range and left edge ----
-fig = plt.figure(figsize=(120 * MM, 60 * MM)); X0, XW = 0.25, 0.53
-a1 = fig.add_axes([X0, 0.47, XW, 0.38]); a3 = fig.add_axes([X0, 0.335, XW, 0.07])
-nmod = {s: int((M.sz == s).sum()) for s in SZ}
-ROWS = [("Pairs", ne[0], nl[0], f"n = {ne[0]:,}")] + [(f"{s}-region module edges", e, l, f"n = {e:,} ({nmod[s]} module{'s' if nmod[s] != 1 else ''})" if e else "none")
-                                                     for s, e, l in zip(SZ, ne[1:], nl[1:])]
-for i, (lab, e, l, nt) in enumerate(ROWS):
-    if e:
-        f = l / e; a1.barh(i, f, 0.78, color=LOOP, lw=0); a1.barh(i, 1 - f, 0.78, left=f, color=NOLOOP, lw=0)
-        a1.text(f / 2, i, f"{100 * f:.0f}%", va="center", ha="center", fontsize=7, color="white")
-    a1.text(1.02, i, nt, va="center", ha="left", fontsize=6.5, color=N.dark, clip_on=False)
-a1.set_yticks(range(len(ROWS))); a1.set_yticklabels([r[0] for r in ROWS], fontsize=7); a1.set_ylim(len(ROWS) - 0.5, -0.5)
-a1.set_xlim(0, 1); a1.set_xticks([]); a1.tick_params(axis="y", length=0)
-for sp in ("left", "bottom"): a1.spines[sp].set_visible(False)
+# ---- figure: top = % of edges on a Hi-C loop per group (vertical bars, n under labels; >=5-region dropped: RBBP4 has none);
+#      grey tick = shuffled expectation where an existing null covers the group (pairs: S_rbbp4_permutation, null median 14.8%);
+#      bottom = one strand of pair classes ----
+NULL = {"Pairs": 0.148, "3-region": 0.158, "4-region": 0.158}   # supplementary/S_rbbp4_permutation (10,000 shuffles): pairs 14.8%; all module edges >25 kb 15.8% (one null for both sizes)
+fig = plt.figure(figsize=(120 * MM, 70 * MM)); X0, XW = 0.25, 0.53
+a1 = fig.add_axes([X0, 0.53, 0.42, 0.36]); a3 = fig.add_axes([X0, 0.27, XW, 0.065])
+ROWS = [("Pairs", ne[0], nl[0])] + [(f"{s}-region\nmodule edges", e, l) for s, e, l in zip(SZ, ne[1:], nl[1:]) if e > 0]
+for i, (lab, e, l) in enumerate(ROWS):
+    f = 100 * l / e; a1.bar(i, f, 0.6, color=LOOP, lw=0); a1.text(i, f + 1, f"{f:.0f}%", ha="center", va="bottom", fontsize=7)
+    k = lab.split("\n")[0] if "\n" in lab else lab
+    if k in NULL: a1.plot([i - 0.38, i + 0.38], [100 * NULL[k]] * 2, color=N.ink, lw=1.0, zorder=3)
+a1.set_xticks(range(len(ROWS))); a1.set_xticklabels([f"{lab}\nn = {e:,}" for lab, e, _ in ROWS], fontsize=6.5, linespacing=1.05); a1.tick_params(axis="x", length=0)
+a1.set_ylim(0, 40); a1.set_yticks([0, 10, 20, 30, 40]); a1.set_ylabel("% on a Hi-C loop", fontsize=7); a1.set_xlim(-0.6, len(ROWS) - 0.4)
+a1.yaxis.grid(True, color=N.faint, lw=0.5); a1.set_axisbelow(True)
+a1.legend([plt.Line2D([], [], color=N.ink, lw=1.0)], ["Shuffled expectation\n(median, 10,000 shuffles)"], loc="upper left", bbox_to_anchor=(1.03, 1.0), fontsize=6.5, handlelength=1.2, borderaxespad=0)
 fig.text(0.02, 0.965, "RBBP4 coordinated binding", fontsize=7.5, va="top")
-hl = [plt.Rectangle((0, 0), 1, 1, color=LOOP), plt.Rectangle((0, 0), 1, 1, color=NOLOOP)]
-a1.legend(hl, ["On a Hi-C loop", "Not on a loop"], loc="lower left", bbox_to_anchor=(0, 1.0), ncol=2, fontsize=6.5, handlelength=0.9, handleheight=0.8, borderaxespad=0.2)
 left, tot = 0, len(pairs); pct = []
 for lab, v in seg:
     f = v / tot; a3.barh(0, f, 1.0, left=left, color=SEGC[lab], lw=0)
@@ -113,10 +112,10 @@ a3.set_xticks([0, .25, .5, .75, 1]); a3.set_xticklabels(["0", "25", "50", "75", 
 a3.spines["left"].set_visible(False)
 fmt = lambda x: f"{x:.0f}%" if x >= 8 else f"{x:.1f}%"
 hs = [plt.Rectangle((0, 0), 1, 1, color=SEGC[lab]) for lab, _ in seg]
-fig.legend(hs, [f"{lab} {fmt(x)}" for (lab, _), x in zip(seg, pct)], loc="lower left", bbox_to_anchor=(0.02, 0.075), ncol=7, fontsize=6.5, handlelength=0.8,
+fig.legend(hs, [f"{lab} {fmt(x)}" for (lab, _), x in zip(seg, pct)], loc="lower left", bbox_to_anchor=(0.02, 0.07), ncol=7, fontsize=6.5, handlelength=0.8,
            handleheight=0.8, handletextpad=0.3, columnspacing=0.8, borderaxespad=0)
 fig.text(0.02, 0.012, "P promoter, E enhancer, R repressive (ChromHMM); Rest: all other combinations", fontsize=6, color=N.dark)
-print("strand %:", {lab: round(x, 2) for (lab, _), x in zip(seg, pct)}, "sum", round(sum(pct), 2), "| rows:", ROWS)
+print("strand %:", {lab: round(x, 2) for (lab, _), x in zip(seg, pct)}, "sum", round(sum(pct), 2), "| bars:", [(r[0], r[1], round(100 * r[2] / r[1], 1)) for r in ROWS])
 PS = {("normal", "normal"): "ArialMT", ("bold", "normal"): "Arial-BoldMT"}
 def illustrator_text(svg):
     def one(m):
