@@ -82,46 +82,41 @@ for p, q in pairs:
     a, b = sorted([cls(*p), cls(*q)], key=["promoter", "enhancer", "repressive", "other"].index); pc.append(f"{a}-{b}")
 pc = pd.Series(pc).value_counts()
 SHOW = [("promoter-promoter", "P–P"), ("promoter-enhancer", "P–E"), ("enhancer-enhancer", "E–E"), ("promoter-repressive", "P–R"),
-        ("enhancer-repressive", "E–R"), ("repressive-repressive", "R–R"), ("promoter-other", "P–O"), ("enhancer-other", "E–O")]
+        ("enhancer-repressive", "E–R"), ("repressive-repressive", "R–R")]                                     # user's classes; all the rest = one part
 seg = [(lab, int(pc.get(k, 0))) for k, lab in SHOW]; seg.append(("Rest", len(pairs) - sum(v for _, v in seg)))
-PC, EC, RC, OC = "#3B6FB6", "#E8821E", "#55606E", "#E3E3E3"
-SEGC = {"P–P": (PC, PC), "P–E": (PC, EC), "E–E": (EC, EC), "P–R": (PC, RC), "E–R": (EC, RC), "R–R": (RC, RC), "P–O": (PC, OC), "E–O": (EC, OC), "Rest": (OC, OC)}
-# ---- figure ----
-fig = plt.figure(figsize=(120 * MM, 80 * MM))
-gs = fig.add_gridspec(2, 2, height_ratios=[1, 0.42], width_ratios=[1.15, 1], hspace=1.0, wspace=0.3, left=0.09, right=0.98, top=0.88, bottom=0.15)
-a1 = fig.add_subplot(gs[0, 0]); a2 = fig.add_subplot(gs[0, 1]); a3 = fig.add_subplot(gs[1, :])
-x = np.arange(4); nn = np.array(ne) - np.array(nl)
-a1.bar(x, nn, 0.66, color=cols[0], edgecolor=N.dark, lw=0.3, label="Not on a loop"); a1.bar(x, nl, 0.66, bottom=nn, color=cols[-1], edgecolor=N.dark, lw=0.3, label="On a Hi-C loop")
-a1.set_yscale("log"); a1.set_ylim(10, max(ne) * 4)
-for i in range(4): a1.text(i, max(ne[i], 10) * 1.25, (f"{ne[i]:,}\n{100 * nl[i] / ne[i]:.0f}% on loop" if ne[i] else "none"), ha="center", va="bottom", fontsize=5, linespacing=0.95)
-a1.set_xticks(x); a1.set_xticklabels(cats, fontsize=5.5, linespacing=0.95); a1.tick_params(axis="x", length=0); a1.set_ylabel("Edges >25 kb (log)")
-a1.legend(loc="upper right", fontsize=5.5, handlelength=0.9, handleheight=0.8, borderaxespad=0, bbox_to_anchor=(1.02, 1.12), ncol=2, columnspacing=0.8)
-a1.set_title("RBBP4 pairs and module edges", fontsize=6.5, loc="left", pad=11)
-bottom = np.zeros(3)
-for l, c in zip(labs, cols):
-    v = Ms[l].values; a2.bar(range(3), v, 0.66, bottom=bottom, color=c, edgecolor=N.dark, lw=0.3, label=l[0].upper() + l[1:]); bottom += v
-for i, s in enumerate(SZ):
-    t = int(Ms.loc[s].sum()); sup = t - int(Ms.loc[s, labs[0]]); a2.text(i, t + bottom.max() * 0.02, (f"{t:,}\n{100 * sup / t:.0f}% ≥1 loop" if t else "none"), ha="center", va="bottom", fontsize=5, linespacing=0.95)
-a2.set_xticks(range(3)); a2.set_xticklabels([f"{s} regions" for s in SZ], fontsize=5.5); a2.tick_params(axis="x", length=0); a2.set_ylabel("Modules"); a2.set_ylim(0, bottom.max() * 1.3)
-a2.legend(title="Module edges on a loop", loc="upper right", bbox_to_anchor=(1.0, 1.0), fontsize=5, title_fontsize=5.5, handlelength=0.9, handleheight=0.8, labelspacing=0.25, borderaxespad=0)
-a2.set_title("Modules by size", fontsize=6.5, loc="left", pad=11)
-left = 0; tot = len(pairs); smalls = []
+SEGC = {"P–P": "#2B5C9E", "P–E": "#7FA6CE", "E–E": "#E8821E", "P–R": "#8E7CC3", "E–R": "#F6CB8F", "R–R": "#55606E", "Rest": "#E3E3E3"}
+LOOP, NOLOOP = "#B83A2E", "#E3E3E3"
+# ---- figure: top = 100% bars (on a Hi-C loop vs not) per edge set; bottom = one strand of pair classes, same x range and left edge ----
+fig = plt.figure(figsize=(120 * MM, 60 * MM)); X0, XW = 0.25, 0.53
+a1 = fig.add_axes([X0, 0.47, XW, 0.38]); a3 = fig.add_axes([X0, 0.335, XW, 0.07])
+nmod = {s: int((M.sz == s).sum()) for s in SZ}
+ROWS = [("Pairs", ne[0], nl[0], f"n = {ne[0]:,}")] + [(f"{s}-region module edges", e, l, f"n = {e:,} ({nmod[s]} module{'s' if nmod[s] != 1 else ''})" if e else "none")
+                                                     for s, e, l in zip(SZ, ne[1:], nl[1:])]
+for i, (lab, e, l, nt) in enumerate(ROWS):
+    if e:
+        f = l / e; a1.barh(i, f, 0.78, color=LOOP, lw=0); a1.barh(i, 1 - f, 0.78, left=f, color=NOLOOP, lw=0)
+        a1.text(f / 2, i, f"{100 * f:.0f}%", va="center", ha="center", fontsize=7, color="white")
+    a1.text(1.02, i, nt, va="center", ha="left", fontsize=6.5, color=N.dark, clip_on=False)
+a1.set_yticks(range(len(ROWS))); a1.set_yticklabels([r[0] for r in ROWS], fontsize=7); a1.set_ylim(len(ROWS) - 0.5, -0.5)
+a1.set_xlim(0, 1); a1.set_xticks([]); a1.tick_params(axis="y", length=0)
+for sp in ("left", "bottom"): a1.spines[sp].set_visible(False)
+fig.text(0.02, 0.965, "RBBP4 coordinated binding", fontsize=7.5, va="top")
+hl = [plt.Rectangle((0, 0), 1, 1, color=LOOP), plt.Rectangle((0, 0), 1, 1, color=NOLOOP)]
+a1.legend(hl, ["On a Hi-C loop", "Not on a loop"], loc="lower left", bbox_to_anchor=(0, 1.0), ncol=2, fontsize=6.5, handlelength=0.9, handleheight=0.8, borderaxespad=0.2)
+left, tot = 0, len(pairs); pct = []
 for lab, v in seg:
-    f = v / tot; c1, c2 = SEGC[lab]
-    a3.barh(0, f, left=left, height=0.5, color=c1, lw=0)
-    if c2 != c1: a3.barh(-0.125, f, left=left, height=0.25, color=c2, lw=0)    # two-tone: lower half = second element class
-    a3.barh(0, f, left=left, height=0.5, color="none", edgecolor=N.dark, lw=0.3)
-    if f >= 0.05: a3.text(left + f / 2, 0.3, f"{lab}\n{100 * f:.0f}%", ha="center", va="bottom", fontsize=5.5, linespacing=0.95)
-    else: smalls.append((left + f / 2, lab, f))
-    left += f
-xs = np.linspace(0.27, 0.47, len(smalls))                                        # small segments: labels fanned out, leader lines
-for xl, (xc, lab, f) in zip(xs, smalls):
-    a3.plot([xc, xc, xl], [0.26, 0.5, 0.72], color=N.mid, lw=0.4, clip_on=False)
-    a3.text(xl, 0.74, f"{lab}\n{100 * f:.1f}%" if f < 0.01 else f"{lab}\n{100 * f:.0f}%", ha="center", va="bottom", fontsize=5, linespacing=0.95)
-a3.set_xlim(0, 1); a3.set_ylim(-0.3, 1.3); a3.set_yticks([]); a3.spines["left"].set_visible(False)
-a3.set_xticks([0, .25, .5, .75, 1]); a3.set_xticklabels(["0", "25", "50", "75", "100"]); a3.set_xlabel(f"% of RBBP4 pairs >25 kb, by element class of the two ends (n = {tot:,})")
-hs = [plt.Rectangle((0, 0), 1, 1, color=c, ec=N.dark, lw=0.3) for c in (PC, EC, RC, OC)]
-a3.legend(hs, ["Promoter", "Enhancer", "Repressive", "Other (TSS flank, transcribed, quiescent)"], loc="upper center", bbox_to_anchor=(0.5, -0.75), ncol=4, fontsize=5.5, handlelength=0.9, handleheight=0.8, columnspacing=1.2, borderaxespad=0)
+    f = v / tot; a3.barh(0, f, 1.0, left=left, color=SEGC[lab], lw=0)
+    if f >= 0.08: a3.text(left + f / 2, 0, f"{100 * f:.0f}%", ha="center", va="center", fontsize=7, color="white" if lab in ("P–P", "R–R") else N.ink)
+    left += f; pct.append(100 * f)
+a3.set_xlim(0, 1); a3.set_ylim(-0.5, 0.5); a3.set_yticks([0]); a3.set_yticklabels(["Pair classes"], fontsize=7); a3.tick_params(axis="y", length=0)
+a3.set_xticks([0, .25, .5, .75, 1]); a3.set_xticklabels(["0", "25", "50", "75", "100"], fontsize=6.5); a3.set_xlabel(f"% of RBBP4 pairs >25 kb (n = {tot:,})", fontsize=7, labelpad=2)
+a3.spines["left"].set_visible(False)
+fmt = lambda x: f"{x:.0f}%" if x >= 8 else f"{x:.1f}%"
+hs = [plt.Rectangle((0, 0), 1, 1, color=SEGC[lab]) for lab, _ in seg]
+fig.legend(hs, [f"{lab} {fmt(x)}" for (lab, _), x in zip(seg, pct)], loc="lower left", bbox_to_anchor=(0.02, 0.075), ncol=7, fontsize=6.5, handlelength=0.8,
+           handleheight=0.8, handletextpad=0.3, columnspacing=0.8, borderaxespad=0)
+fig.text(0.02, 0.012, "P promoter, E enhancer, R repressive (ChromHMM); Rest: all other combinations", fontsize=6, color=N.dark)
+print("strand %:", {lab: round(x, 2) for (lab, _), x in zip(seg, pct)}, "sum", round(sum(pct), 2), "| rows:", ROWS)
 PS = {("normal", "normal"): "ArialMT", ("bold", "normal"): "Arial-BoldMT"}
 def illustrator_text(svg):
     def one(m):
