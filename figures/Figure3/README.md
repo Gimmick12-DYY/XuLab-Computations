@@ -17,7 +17,7 @@ Illustrator-safe font attributes, cropped to content) and a 300 dpi `.png` (olde
 | h | SE 3D structure | `h_se_3d_structure` (91 mm) | Fig 3 v7 panel d (approved rosette, slide 22) | `figures/fig3_v7/prep_panels_v7.py` |
 | i | SE network illustration (flower) | `i_se_flower` (84 mm) | Fig 3 v7 panel e | `figures/fig3_v7/flower_v7.py` |
 | g-i | Shared legend for g, h, i | `ghi_shared_legend` | Fig 3 v7 legend strip, letters updated | `figures/fig3_v7/cde_legend_v7.py` |
-| j | Module genes / function: conserved module pairs (promoter in modules of >=3 TFs, 1,035 annotated genes; original panel, unchanged) next to TF-specific module pairs (modules of exactly 1 TF, 3,259), same 8 GO terms, shared y axis | `j_gene_set_dotplot` (+ .tsv) | left: `figures/fig3_v7/panels_extra/fig3_geneset_dotplot.tsv`; right: same GO test | `scripts/j_conserved_vs_specific_modules.py` (bf82e8d) |
+| j | Pooled GO BP of module genes, own top 10 terms per group: TF-specific (promoter in modules of exactly 1 TF; 3,259 annotated) vs conserved (modules of >=3 TFs; 1,035 annotated); 2-TF genes excluded. Shared x = -log10 p, dashed line = BH q 0.05, teal = q < 0.05, size = genes; background 12,388 network promoter genes; near-duplicates merged (gene overlap > 60%) | `j_gene_set_dotplot` (+ .tsv) | `checks/go_per_tf/pooled_*.tsv` (scripts/go_per_tf.py), `checks/go_per_tf/top_term_jaccard.tsv`; robustness `checks/go_pooled_robustness/` | `scripts/j_go_pooled_top10.py` (Mac) |
 
 g, h and i are drawn on larger canvases with fonts preset for the print sizes given; place them at 100% of the SVG/PDF size.
 b, c and f are slide-sized originals (b1 444 mm, b2 311 mm, c 419 mm, f 281 mm wide): scale them down when placing.
