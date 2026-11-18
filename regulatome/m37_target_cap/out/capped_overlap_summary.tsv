@@ -1,0 +1,13 @@
+version	cutoff	TFs	our genes (pooled)	Perturb-seq genes (pooled)	in both (pooled)	share of Perturb-seq genes found in our Regulome (%), pooled	share of our Regulome genes found in Perturb-seq (%), pooled	median per TF, share of Perturb-seq genes found (%)	median per TF, share of our genes found (%)	median our genes per TF
+uncapped (current Regulome)	|z| >= 2	63	117845	63954	11337	17.73	9.62	13.10	8.30	1429.00
+uncapped (current Regulome)	|z| >= 3	63	117845	11237	2158	19.20	1.83	13.49	1.18	1429.00
+top 2,000 genes	|z| >= 2	63	88207	63954	8333	13.03	9.45	13.10	8.30	1429.00
+top 2,000 genes	|z| >= 3	63	88207	11237	1594	14.19	1.81	13.46	1.10	1429.00
+top 1,000 genes	|z| >= 2	63	60493	63954	5700	8.91	9.42	9.24	8.50	1000.00
+top 1,000 genes	|z| >= 3	63	60493	11237	1070	9.52	1.77	9.56	1.10	1000.00
+top 500 genes	|z| >= 2	63	31428	63954	2961	4.63	9.42	4.58	8.20	500.00
+top 500 genes	|z| >= 3	63	31428	11237	555	4.94	1.77	4.69	1.00	500.00
+top 250 genes	|z| >= 2	63	15746	63954	1509	2.36	9.58	2.35	8.40	250.00
+top 250 genes	|z| >= 3	63	15746	11237	291	2.59	1.85	2.50	1.20	250.00
+promoter-only	|z| >= 2	63	49161	63954	4952	7.74	10.07	4.98	8.23	501.00
+promoter-only	|z| >= 3	63	49161	11237	998	8.88	2.03	5.31	1.10	501.00
