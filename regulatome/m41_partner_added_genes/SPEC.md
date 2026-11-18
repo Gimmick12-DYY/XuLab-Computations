@@ -15,3 +15,11 @@ Real-partner pairs are also reported split by whether the partner is one of the 
 4. Shared targets: genes bound by X and P vs genes bound by X only: share of X's Perturb-seq genes. Non-partners matched on number of shared genes (+/-20%, else 5 nearest).
 5. Co-regulation (P with a usable knockdown, non-partner pool also restricted to the 63 with a knockdown, scheme (b)): among added genes, share that change on P's knockdown, share that change on both, and sign agreement of the two knockdowns among genes changed in both.
 Pooled = sum over pairs / sum over pairs; non-partners as mean of draws and 5th-95th range. Per-pair tables for P1 and P2. Plain wording; no p-values in the headline.
+
+## Amendment 1 (co-regulation, part 5 only)
+Concern: AF3 partners with a knockdown are dominated by RBBP7 and XPA, whose knockdowns change many genes, so "changed on partner's knockdown" can be higher for that reason alone.
+Redo part 5 for P1 (trio) and P2 (AF3 pairs), |z| >= 2 and 3, rules A and G (script m41_coreg.py). Added genes = in P's list, not in X's list, usable in both knockdowns.
+Non-partners (100 draws per pair, seed 20261118): TFs with a knockdown, not X, not X's partners, same broad / non-broad class as P (broad = rule A list > 4,000 genes), number of Perturb-seq genes within +/-20% of P's, and number of added genes within +/-20% of P's. If none: drop the added-genes condition; if still none: the 5 nearest in Perturb-seq gene count within the class.
+Report pooled (sum over pairs): share of added genes changed on P's knockdown, share changed on both, same-direction share; non-partners as mean and 5th-95th of draws. Subsets: all pairs; pairs involving RBBP7 removed; pairs with a broad partner removed.
+Per pair: observed "changed on both" count beside expected = added x (share changed on X's knockdown) x (share changed on P's knockdown) within the added genes, and observed / expected. Pooled observed / expected also given (sum / sum).
+List the AF3 pairs with a partner knockdown and their partners.
