@@ -70,7 +70,7 @@ from matplotlib.ticker import FixedLocator, FuncFormatter
 tk = [t for t in (2, 3, 4, 5, 6, 8, 10, 12, 14, 16) if t <= a1.get_xlim()[1]]
 for ax in (a1, a2):
     ax.xaxis.set_major_locator(FixedLocator(tk)); ax.xaxis.set_major_formatter(FuncFormatter(lambda v, _: f"1e-{int(v)}"))
-    ax.text(-np.log10(0.05) + 0.08, 9.4, "q = 0.05", ha="left", va="bottom", fontsize=5.5, color="#7F7F7F")
+    ax.text(-np.log10(0.05) + 0.08, -0.55, "q = 0.05", ha="left", va="top", fontsize=5.5, color="#7F7F7F")
 a1.set_xlabel("q-value (BH)"); a2.set_xlabel("q-value (BH), median over the TFs sharing the term")
 hs = [plt.scatter([], [], s=sz(n), color="#BDBDBD", lw=0) for n in (5, 20, 50)]
 fig.legend(hs, ["5", "20", "50 genes"], title="Genes behind the term (right: median per TF)", loc="lower center", bbox_to_anchor=(0.5, 0.01), ncol=3, fontsize=6,
