@@ -1,0 +1,61 @@
+rule	version	|z| bin	TFs	genes	share bound (%)
+A	(i) all TFs	0-1	63	431215	16.5
+A	(i) all TFs	1-2	63	212070	16.67
+A	(i) all TFs	2-3	63	52717	17.41
+A	(i) all TFs	3-4	63	9049	18.5
+A	(i) all TFs	4-5	57	1630	21.35
+A	(i) all TFs	>= 5	33	558	24.37
+A	(ii) without broad TFs [list > 4,000 genes]	0-1	55	378718	12.31
+A	(ii) without broad TFs [list > 4,000 genes]	1-2	55	184291	12.24
+A	(ii) without broad TFs [list > 4,000 genes]	2-3	55	45002	12.75
+A	(ii) without broad TFs [list > 4,000 genes]	3-4	55	7612	13.26
+A	(ii) without broad TFs [list > 4,000 genes]	4-5	49	1345	16.36
+A	(ii) without broad TFs [list > 4,000 genes]	>= 5	28	463	21.6
+A	(ii) without broad TFs [> 40% peaks in promoters]	0-1	56	384559	12.72
+A	(ii) without broad TFs [> 40% peaks in promoters]	1-2	56	187871	12.76
+A	(ii) without broad TFs [> 40% peaks in promoters]	2-3	56	46317	13.47
+A	(ii) without broad TFs [> 40% peaks in promoters]	3-4	56	7944	14.49
+A	(ii) without broad TFs [> 40% peaks in promoters]	4-5	50	1464	17.83
+A	(ii) without broad TFs [> 40% peaks in promoters]	>= 5	29	502	22.51
+A	(iii) only broad TFs [list > 4,000 genes]	0-1	8	52497	46.75
+A	(iii) only broad TFs [list > 4,000 genes]	1-2	8	27779	46.12
+A	(iii) only broad TFs [list > 4,000 genes]	2-3	8	7715	44.63
+A	(iii) only broad TFs [list > 4,000 genes]	3-4	8	1437	46.28
+A	(iii) only broad TFs [list > 4,000 genes]	4-5	8	285	44.91
+A	(iii) only broad TFs [list > 4,000 genes]	>= 5	5	95	37.89
+A	(iii) only broad TFs [> 40% peaks in promoters]	0-1	7	46656	47.68
+A	(iii) only broad TFs [> 40% peaks in promoters]	1-2	7	24199	47.09
+A	(iii) only broad TFs [> 40% peaks in promoters]	2-3	7	6400	45.92
+A	(iii) only broad TFs [> 40% peaks in promoters]	3-4	7	1105	47.33
+A	(iii) only broad TFs [> 40% peaks in promoters]	4-5	7	166	52.41
+A	(iii) only broad TFs [> 40% peaks in promoters]	>= 5	4	56	41.07
+G	(i) all TFs	0-1	63	431215	22.07
+G	(i) all TFs	1-2	63	212070	22.45
+G	(i) all TFs	2-3	63	52717	23.99
+G	(i) all TFs	3-4	63	9049	27.13
+G	(i) all TFs	4-5	57	1630	31.41
+G	(i) all TFs	>= 5	33	558	37.46
+G	(ii) without broad TFs [list > 4,000 genes]	0-1	55	378718	17.36
+G	(ii) without broad TFs [list > 4,000 genes]	1-2	55	184291	17.51
+G	(ii) without broad TFs [list > 4,000 genes]	2-3	55	45002	18.75
+G	(ii) without broad TFs [list > 4,000 genes]	3-4	55	7612	21.45
+G	(ii) without broad TFs [list > 4,000 genes]	4-5	49	1345	26.47
+G	(ii) without broad TFs [list > 4,000 genes]	>= 5	28	463	35.42
+G	(ii) without broad TFs [> 40% peaks in promoters]	0-1	56	384559	17.81
+G	(ii) without broad TFs [> 40% peaks in promoters]	1-2	56	187871	18.06
+G	(ii) without broad TFs [> 40% peaks in promoters]	2-3	56	46317	19.52
+G	(ii) without broad TFs [> 40% peaks in promoters]	3-4	56	7944	22.76
+G	(ii) without broad TFs [> 40% peaks in promoters]	4-5	50	1464	28.35
+G	(ii) without broad TFs [> 40% peaks in promoters]	>= 5	29	502	36.65
+G	(iii) only broad TFs [list > 4,000 genes]	0-1	8	52497	56.05
+G	(iii) only broad TFs [list > 4,000 genes]	1-2	8	27779	55.24
+G	(iii) only broad TFs [list > 4,000 genes]	2-3	8	7715	54.56
+G	(iii) only broad TFs [list > 4,000 genes]	3-4	8	1437	57.2
+G	(iii) only broad TFs [list > 4,000 genes]	4-5	8	285	54.74
+G	(iii) only broad TFs [list > 4,000 genes]	>= 5	5	95	47.37
+G	(iii) only broad TFs [> 40% peaks in promoters]	0-1	7	46656	57.24
+G	(iii) only broad TFs [> 40% peaks in promoters]	1-2	7	24199	56.56
+G	(iii) only broad TFs [> 40% peaks in promoters]	2-3	7	6400	56.28
+G	(iii) only broad TFs [> 40% peaks in promoters]	3-4	7	1105	58.55
+G	(iii) only broad TFs [> 40% peaks in promoters]	4-5	7	166	58.43
+G	(iii) only broad TFs [> 40% peaks in promoters]	>= 5	4	56	44.64
