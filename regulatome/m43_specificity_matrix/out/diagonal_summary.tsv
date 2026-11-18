@@ -1,0 +1,43 @@
+figure	value	rule	cutoff	rows (knocked-down TFs)	columns (Regulome lists)	median diagonal	median off-diagonal	TFs with own list ranked first in its row	TFs with own list in top 5 of its row	those TFs	median rank of own list in its row
+specificity_matrix_ruleA_absz2	raw	A	|z| >= 2	63	63	13.1	12.69	1	6	DDIT3,E2F3,RBBP7,ZNF507,XPA,NFYA	31
+specificity_matrix_ruleA_absz2	adjusted	A	|z| >= 2	63	63	0.2367	0.3172	1	6	ZUFSP,TBX3,MSX2,NRF1,ZNF768,DDIT3	32
+specificity_matrix_ruleA_absz2_without_broad_TFs	raw	A	|z| >= 2	55	55	11.97	11.92	1	5	FOXC1,E4F1,ZNF768,SAFB,CTCF	26
+specificity_matrix_ruleA_absz2_without_broad_TFs	adjusted	A	|z| >= 2	55	55	0.4312	0.4561	1	6	ZUFSP,TBX3,MSX2,AKAP8L,NRF1,ZNF768	27
+specificity_matrix_ruleA_absz2_column_standardised	columnz	A	|z| >= 2	63	63	-0.123	-0.07545	1	3	ZNF777,MSX2,NRF1	34
+specificity_matrix_ruleA_absz3	raw	A	|z| >= 3	62	63	13.48	13.59	1	6	DDIT3,E2F3,RBBP7,XPA,NFYA,SOX4	31
+specificity_matrix_ruleA_absz3	adjusted	A	|z| >= 3	62	63	0.7677	1.039	2	3	ZUFSP,NRF1,FOXC1	33
+specificity_matrix_ruleA_absz3_without_broad_TFs	raw	A	|z| >= 3	54	55	12.76	12.85	1	5	FOXC1,E4F1,ZNF768,SAFB,CTCF	25
+specificity_matrix_ruleA_absz3_without_broad_TFs	adjusted	A	|z| >= 3	54	55	0.9339	1.164	2	4	ZUFSP,TBX3,NRF1,FOXC1	30
+specificity_matrix_ruleA_absz3_column_standardised	columnz	A	|z| >= 3	62	63	-0.06834	-0.04458	0	1	NRF1	30.5
+specificity_matrix_ruleA_absz4	raw	A	|z| >= 4	29	63	20	15.24	0	5	SAFB,DDIT3,RBBP7,NFYA,SOX4	17
+specificity_matrix_ruleA_absz4	adjusted	A	|z| >= 4	29	63	4.765	1.636	2	3	MSX2,NRF1,E4F1	17
+specificity_matrix_ruleA_absz4_without_broad_TFs	raw	A	|z| >= 4	24	55	17.3	13.93	1	6	ZUFSP,NRF1,E4F1,ZNF768,SAFB,CTCF	12.5
+specificity_matrix_ruleA_absz4_without_broad_TFs	adjusted	A	|z| >= 4	24	55	4.848	2.213	2	5	ZUFSP,MSX2,NRF1,E4F1,SAFB	16
+specificity_matrix_ruleA_absz4_column_standardised	columnz	A	|z| >= 4	29	63	0.1262	-0.1011	1	3	ZNF143,ZNF777,E4F1	27
+specificity_matrix_ruleA_absz5	raw	A	|z| >= 5	10	63	21.95	13.79	0	0		14
+specificity_matrix_ruleA_absz5	adjusted	A	|z| >= 5	10	63	3.97	0.8751	3	4	DNMT1,ADNP,NRF1,E4F1	21
+specificity_matrix_ruleA_absz5_without_broad_TFs	raw	A	|z| >= 5	8	55	20.84	12.96	0	2	DNMT1,E4F1	8
+specificity_matrix_ruleA_absz5_without_broad_TFs	adjusted	A	|z| >= 5	8	55	8.3	1.188	3	4	DNMT1,ADNP,NRF1,E4F1	10
+specificity_matrix_ruleA_absz5_column_standardised	columnz	A	|z| >= 5	10	63	0.2678	0.03367	1	3	DNMT1,ADNP,E4F1	25.5
+specificity_matrix_ruleG_absz2	raw	G	|z| >= 2	63	63	19.1	19.26	1	5	E2F3,ZNF507,XPA,NFYA,SOX4	33
+specificity_matrix_ruleG_absz2	adjusted	G	|z| >= 2	63	63	1.219	1.697	1	5	ZUFSP,THAP6,DR1,NRF1,MTF2	35
+specificity_matrix_ruleG_absz2_without_broad_TFs	raw	G	|z| >= 2	55	55	18.56	18.56	1	4	MTF2,E4F1,SAFB,CTCF	29
+specificity_matrix_ruleG_absz2_without_broad_TFs	adjusted	G	|z| >= 2	55	55	1.409	1.895	1	5	ZUFSP,THAP6,DR1,NRF1,MTF2	30
+specificity_matrix_ruleG_absz2_column_standardised	columnz	G	|z| >= 2	63	63	-0.2466	-0.07166	2	4	THAP6,ZNF777,AKAP8L,NRF1	36
+specificity_matrix_ruleG_absz3	raw	G	|z| >= 3	62	63	23.68	23.01	1	5	E2F3,ZNF507,XPA,NFYA,SOX4	32
+specificity_matrix_ruleG_absz3	adjusted	G	|z| >= 3	62	63	4.562	4.493	0	6	DR1,HOXC9,WIZ,ZNF644,NRF1,E2F3	32
+specificity_matrix_ruleG_absz3_without_broad_TFs	raw	G	|z| >= 3	54	55	21.33	21.62	1	7	DR1,WIZ,ZNF644,FOXC1,E4F1,SAFB,CTCF	25.5
+specificity_matrix_ruleG_absz3_without_broad_TFs	adjusted	G	|z| >= 3	54	55	4.466	4.7	0	5	DR1,HOXC9,WIZ,ZNF644,NRF1	29.5
+specificity_matrix_ruleG_absz3_column_standardised	columnz	G	|z| >= 3	62	63	-0.007503	-0.01254	0	5	ZNF777,MSX2,HOXA10,SAFB,E2F3	31.5
+specificity_matrix_ruleG_absz4	raw	G	|z| >= 4	29	63	30	27.78	1	3	E4F1,NFYA,SOX4	25
+specificity_matrix_ruleG_absz4	adjusted	G	|z| >= 4	29	63	7.714	7.777	1	3	ZNF282,E4F1,SOX4	38
+specificity_matrix_ruleG_absz4_without_broad_TFs	raw	G	|z| >= 4	24	55	27.7	25.44	1	3	ZNF282,E4F1,SAFB	18
+specificity_matrix_ruleG_absz4_without_broad_TFs	adjusted	G	|z| >= 4	24	55	8.283	8.604	1	2	ZNF282,E4F1	26
+specificity_matrix_ruleG_absz4_column_standardised	columnz	G	|z| >= 4	29	63	-0.09239	-0.06942	1	3	ZNF777,MSX2,ZNF282	37
+specificity_matrix_ruleG_absz5	raw	G	|z| >= 5	10	63	31.66	26.42	0	1	E4F1	16.5
+specificity_matrix_ruleG_absz5	adjusted	G	|z| >= 5	10	63	8.968	7.084	2	2	DNMT1,E4F1	23
+specificity_matrix_ruleG_absz5_without_broad_TFs	raw	G	|z| >= 5	8	55	30	24.14	1	3	DNMT1,ZNF777,E4F1	10.5
+specificity_matrix_ruleG_absz5_without_broad_TFs	adjusted	G	|z| >= 5	8	55	11.19	7.273	2	2	DNMT1,E4F1	11
+specificity_matrix_ruleG_absz5_column_standardised	columnz	G	|z| >= 5	10	63	0.2933	0.02134	0	1	DNMT1	29.5
+spearman_matrix_ruleA	spearman	A	all genes	63	63	-0.0001658	0.001146	1	4	POGK,ZUFSP,AKAP8L,NRF1	35
+spearman_matrix_ruleA_without_broad_TFs	spearman	A	all genes	55	55	0.0003669	0.001828	1	5	POGK,ZUFSP,AKAP8L,NRF1,ZNF768	30
