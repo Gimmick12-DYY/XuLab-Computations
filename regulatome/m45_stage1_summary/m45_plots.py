@@ -76,7 +76,7 @@ def recall(mode):
 
 def background(mode):
     P = style(mode); s = mode == "slide"; fs = 12 if s else 5.5; C3 = [P.arms.raw, P.neutral.dark, P.neutral.light]; LB = ["changed genes (recall)", "matched background", "all non-changing genes"]; x = np.arange(4); w = 0.26
-    fig, axs = plt.subplots(1, 2, figsize=SZ(s), sharey=True, gridspec_kw=dict(wspace=0.08, left=0.075, right=0.99, bottom=0.16, top=0.83))
+    fig, axs = plt.subplots(1, 2, figsize=SZ(s, 2.9), sharey=True, gridspec_kw=dict(wspace=0.08, left=0.075, right=0.99, bottom=0.25, top=0.85))
     for ax, pad in zip(axs, ["0", "10 kb"]):
         g = g2(pad, ALL)
         for k, (col, c) in enumerate(zip(["recall, changed genes (%)", "matched background (%)", "all non-changing genes (%)"], C3)):
@@ -85,7 +85,7 @@ def background(mode):
                 for xi, v in zip(x, g[col]): ax.text(xi - w, v + 0.6, f"{v:.1f}", ha="center", va="bottom", fontsize=fs, color=P.neutral.ink)
             if k == 1:
                 for xi, v in zip(x, g[col]): ax.text(xi, v + 0.6, f"{v:.1f}", ha="center", va="bottom", fontsize=fs, color=P.neutral.dark)
-        ax.set_xticks(x); ax.set_xticklabels(CL); ax.set_xlabel("Perturb-seq cutoff"); ax.set_title(PADL[pad], loc="left", fontweight="bold"); ax.set_ylim(0, 40)
+        g1_ = g1(pad, ALL); ax.set_xticks(x); ax.set_xticklabels([f"{c}\n{n:,} genes\n{t} TFs" for c, n, t in zip(CL, g1_["Perturb-seq genes"], g1_["TFs left (>= 1 Perturb-seq gene)"])]); ax.set_xlabel("Perturb-seq cutoff"); ax.set_title(PADL[pad], loc="left", fontweight="bold"); ax.set_ylim(0, 40)
     axs[0].set_ylabel("share of genes in our Regulome (%)"); h, l = axs[0].get_legend_handles_labels(); fig.legend(h, l, loc="upper center", ncol=3, frameon=False, bbox_to_anchor=(0.53, 1.0))
     save(fig, "S3_recall_vs_background", mode)
 
