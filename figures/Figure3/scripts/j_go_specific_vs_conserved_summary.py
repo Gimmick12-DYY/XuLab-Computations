@@ -55,13 +55,13 @@ sz = lambda n: 6 + 1.6 * np.asarray(n, float)                                  #
 y = np.arange(10)
 a1.scatter(-np.log10(L.q), y[:len(L)], s=sz(L.distinct_genes), color=LT, edgecolors=TEAL, linewidths=0.7, zorder=3)
 a1.set_yticks(y[:len(L)]); a1.set_yticklabels([f"{short(n, 60)}  ({t})" for n, t in zip(L.name, L.tf)], fontsize=6.5)
-a1.set_title(f"TF-specific module elements (1–2 TFs)\nbest term of each TF (10 of {NS} TFs with terms)", fontsize=7, pad=5)
+a1.set_title("TF-specific module elements (1–2 TFs)", fontsize=7, pad=5)
 a2.scatter(-np.log10(R.q), y[:len(R)], s=sz(R.genes), color=TEAL, lw=0, zorder=3)
 for ax, D, gc in ((a2, R, "genes"),):                                       # "n TFs" only on the conserved side (user)
     for i, (f, n, g) in enumerate(zip(-np.log10(D.q), D.n_tfs, D[gc])):
         ax.annotate(f"{n} TF" + ("s" if n > 1 else ""), (f, i), xytext=(np.sqrt(sz(g)) / 2 + 2.5, 0), textcoords="offset points", va="center", ha="left", fontsize=6, color=GREY)
 a2.set_yticks(y[:len(R)]); a2.set_yticklabels([short(n, 60) for n in R.name], fontsize=6.5)
-a2.set_title(f"Conserved module elements (≥3 TFs)\nterms shared by the most TFs ({NC} TFs with terms)", fontsize=7, pad=5)
+a2.set_title("Conserved module elements (≥3 TFs)", fontsize=7, pad=5)
 for ax in (a1, a2):
     ax.set_ylim(9.5, -0.6); ax.tick_params(axis="y", length=0); ax.xaxis.grid(True, color="#EEEEEE", lw=0.5); ax.set_axisbelow(True)
     ax.axvline(-np.log10(0.05), color="#9E9E9E", lw=0.6, ls=(0, (3, 2)), zorder=0); ax.set_xlabel("q-value (BH)")
@@ -71,9 +71,9 @@ tk = [t for t in (2, 3, 4, 5, 6, 8, 10, 12, 14, 16) if t <= a1.get_xlim()[1]]
 for ax in (a1, a2):
     ax.xaxis.set_major_locator(FixedLocator(tk)); ax.xaxis.set_major_formatter(FuncFormatter(lambda v, _: f"1e-{int(v)}"))
     ax.text(-np.log10(0.05) + 0.08, -0.55, "q = 0.05", ha="left", va="top", fontsize=5.5, color="#7F7F7F")
-a1.set_xlabel("q-value (BH)"); a2.set_xlabel("q-value (BH), median over the TFs sharing the term")
+a1.set_xlabel("q-value (BH)"); a2.set_xlabel("q-value (BH)")
 hs = [plt.scatter([], [], s=sz(n), color="#BDBDBD", lw=0) for n in (5, 20, 50)]
-fig.legend(hs, ["5", "20", "50 genes"], title="Genes behind the term (right: median per TF)", loc="lower center", bbox_to_anchor=(0.5, 0.01), ncol=3, fontsize=6,
+fig.legend(hs, ["5", "20", "50 genes"], title="Genes", loc="lower center", bbox_to_anchor=(0.5, 0.01), ncol=3, fontsize=6,
            title_fontsize=6, handletextpad=0.3, columnspacing=1.5)
 def illustrator_text(svg):
     def one(m):
