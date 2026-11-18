@@ -16,3 +16,10 @@ Tables per padding x cutoff x version, pooled (sum over TFs) and per TF:
 
 Checks: padding 0 must reproduce recall 17.7 / 19.2 / 22.1 / 24.4 % and matched 18.2 / 19.4 / 20.5 / 21.4 (m42); padding 10 kb recall 22.7 / 26.5 / 31.6 / 36.6 (m38 B); median genes per TF 1,429 / 1,909 / 3,511; Perturb-seq genes 63,954 / 11,237 / 2,188 / 558 and TFs 63 / 63 / 57 / 33.
 Descriptive; no expected/fold/precision wording.
+
+## Amendment 1 (2026-11-18, written before any number): matched gene shuffle by TF set
+Same matched gene shuffle as table 5 (expression x promoter-ATAC strata, exact hypergeometric draw per TF and stratum, 1,000 shuffles, seed 20261118). Per padding and cutoff the per-TF observed counts and shuffle draws are made once; every TF set is the sum over its TFs.
+Sets: all 63; without NRF1, E4F1, DNMT1 (60); without the broad TFs (55); without both (52). Paddings 0, 10 kb, 50 kb; |z| >= 2, 3, 4, 5.
+Leave-one-TF-out (padding 10 kb, |z| >= 3 and >= 4): for each of the 63 TFs, the all-63 set without that TF; report the range of p and of observed minus shuffle mean (points) and the TF whose removal lowers the gap most.
+Bulk ChIP side by side (padding 10 kb, |z| >= 2-5): the 10 bulk ChIP lists of m40 (m35 references, top 5,000 peaks, same link path, + 10 kb) vs our HITAG lists for the same 10 TFs; per list and pooled.
+Report observed recall, shuffle mean, 2.5-97.5 range, one-sided p = (1 + #shuffles >= observed) / 1001.
