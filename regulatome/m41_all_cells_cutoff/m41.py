@@ -1,6 +1,6 @@
 import numpy as np, pandas as pd
 R = "/work/users/d/y/dyy12/XuLab/regulatome"
-s15 = open(f"{R}/m15_gene_to_tf/m15.py").read() if __import__("os").path.exists(f"{R}/m15_gene_to_tf/m15.py") else open(__import__("glob").glob(f"{R}/m15_gene_to_tf/*.py")[0]).read()
+import sys; sys.argv = ["m15.py", "raw"]; s15 = open(f"{R}/m15_gene_to_tf/m15.py").read()
 exec(s15[:s15.index("# ---- binding percentiles")]); TFA, ZALL, UGA = list(TF), ZA.copy(), list(UG)
 src = open(f"{R}/m38_link_rules/m38.py").read(); exec(src[:src.index("T25 = pd.read_csv")])
 assert list(UG) == UGA
