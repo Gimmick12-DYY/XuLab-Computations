@@ -1,0 +1,80 @@
+tf	cicero_peaks	specific_elements	conserved_elements	specific_status	conserved_status	specific_terms	conserved_terms
+E4F1	22834	3949	796	terms	terms	130	216
+DR1	14072	3049	437	terms	terms	12	178
+MLX	13601	1424	520	terms	terms	10	171
+HOXB6	4206	525	173	terms	terms	12	121
+ZNF282	47262	21997	515	terms	terms	79	46
+ETS2	69837	47851	639	terms	terms	36	73
+GLYR1	13199	1494	378	terms	terms	51	27
+ZBTB7A	4439	542	123	terms	terms	66	2
+HOXC9	4200	534	156	terms	terms	4	51
+THAP6	2389	346	90	terms	terms	3	48
+ZNF644	3172	354	106	terms	terms	24	8
+SMARCA1	2053	221	54	terms	terms	7	7
+ZNF507	14894	1379	575	terms	terms	4	7
+ZIC2	2717	277	77	terms	terms	6	3
+FLYWCH1	1570	139	61	terms	terms	2	6
+MAZ	3568	565	108	terms	terms	3	1
+HOXB9	1546	134	37	terms	tested, none	5	0
+ZNF143	1431	203	60	terms	tested, none	4	0
+ZNF746	3486	542	110	terms	tested, none	4	0
+ADNP	1233	137	55	terms	tested, none	1	0
+XPA	5773	245	140	terms	tested, none	1	0
+TRAFD1	515	51	15	terms	too few elements (< 20)	6	0
+MTF2	14834	2665	437	tested, none	terms	0	137
+SOX4	24264	1934	935	tested, none	terms	0	61
+ZUFSP	2436	339	86	tested, none	terms	0	36
+POGK	3050	551	126	tested, none	terms	0	23
+NFYA	16660	1069	710	tested, none	terms	0	19
+WIZ	4007	584	121	tested, none	terms	0	13
+MBD3	11760	1165	517	tested, none	terms	0	9
+EZH2	2764	340	72	tested, none	terms	0	7
+NME2	5979	458	326	tested, none	terms	0	6
+NRF1	334	35	27	tested, none	terms	0	3
+SRCAP	2140	270	50	tested, none	terms	0	3
+E2F3	4315	177	117	tested, none	terms	0	2
+ZNF512	1221	110	30	tested, none	terms	0	2
+RBBP4	22666	762	257	tested, none	terms	0	1
+CHAMP1	2070	268	68	tested, none	tested, none	0	0
+DDIT3	1935	68	56	tested, none	tested, none	0	0
+HOXA10	1665	114	49	tested, none	tested, none	0	0
+RBBP7	1990	51	63	tested, none	tested, none	0	0
+ZNF512B	2785	349	83	tested, none	tested, none	0	0
+ZNF777	10922	2388	112	tested, none	tested, none	0	0
+AKAP8L	518	31	7	tested, none	too few elements (< 20)	0	0
+CTCF	514	22	16	tested, none	too few elements (< 20)	0	0
+FOXJ3	390	45	15	tested, none	too few elements (< 20)	0	0
+HOXC4	323	33	12	tested, none	too few elements (< 20)	0	0
+MEF2A	435	29	19	tested, none	too few elements (< 20)	0	0
+MEF2D	484	40	12	tested, none	too few elements (< 20)	0	0
+RBPJ	1210	57	16	tested, none	too few elements (< 20)	0	0
+ZBTB40	552	52	14	tested, none	too few elements (< 20)	0	0
+ZBTB43	402	22	10	tested, none	too few elements (< 20)	0	0
+DNMT1	344	11	4	too few elements (< 20)	too few elements (< 20)	0	0
+FOXK1	97	1	5	too few elements (< 20)	too few elements (< 20)	0	0
+HOXB8	258	19	4	too few elements (< 20)	too few elements (< 20)	0	0
+SAFB	259	4	8	too few elements (< 20)	too few elements (< 20)	0	0
+SREBF2	201	11	4	too few elements (< 20)	too few elements (< 20)	0	0
+ZNF703	542	13	13	too few elements (< 20)	too few elements (< 20)	0	0
+FOXC1	196	12	0	too few elements (< 20)	no module elements	0	0
+HP1	100	6	0	too few elements (< 20)	no module elements	0	0
+EPAS1	27	0	0	no module elements	no module elements	0	0
+HES1	0	0	0	no module elements	no module elements	0	0
+HOXA5	15	0	0	no module elements	no module elements	0	0
+HOXD10	166	0	0	no module elements	no module elements	0	0
+MSX2	0	0	0	no module elements	no module elements	0	0
+NEUROD4	0	0	0	no module elements	no module elements	0	0
+NR1D2	0	0	0	no module elements	no module elements	0	0
+PA2G4	16	0	0	no module elements	no module elements	0	0
+PCGF6	14	0	0	no module elements	no module elements	0	0
+RELA	0	0	0	no module elements	no module elements	0	0
+SETDB1	0	0	0	no module elements	no module elements	0	0
+SOX12	0	0	0	no module elements	no module elements	0	0
+STAG2	26	0	0	no module elements	no module elements	0	0
+TBX3	26	0	0	no module elements	no module elements	0	0
+ZNF367	20	0	0	no module elements	no module elements	0	0
+ZNF503	0	0	0	no module elements	no module elements	0	0
+ZNF581	0	0	0	no module elements	no module elements	0	0
+ZNF606	0	0	0	no module elements	no module elements	0	0
+ZNF768	42	0	0	no module elements	no module elements	0	0
+ZNF79	0	0	0	no module elements	no module elements	0	0
