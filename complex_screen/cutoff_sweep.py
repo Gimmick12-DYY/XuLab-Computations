@@ -1,5 +1,5 @@
 """Candidate-cutoff sweep 2026-11-20 (read-only; candidates_frozen_v1 unchanged).
-Cutoffs 0.60/0.70/0.80/0.90 on the per-set percentile of TF-TF Pearson r (5 ChromHMM sets: all, non-quiescent, TSS, enhancer, repressive).
+Cutoffs 0.60/0.70/0.75/0.80/0.90 on the per-set percentile of TF-TF Pearson r (5 ChromHMM sets: all, non-quiescent, TSS, enhancer, repressive).
 Per set: pairs >= cutoff (of 3,081) and after known-pair removal (same exclusion as the frozen list: known=True).
 Combined frozen rule: best of 5 >= cutoff (must give 1,784 / 1,732 at 0.60). Strict reference: >= cutoff in all 5 sets.
 AF3 5-seed strong (24, rescore_5seed/tiers_5seed.tsv) and triple-support (18, funnel_20261120/pair_funnel_20261120_triple.tsv) surviving;
@@ -49,7 +49,7 @@ excl = D.known
 assert ((D.best_pct >= 0.60) & ~excl).sum() == 1732 and (((D.best_pct >= 0.60) & ~excl) == D.candidate).all(), "known removal does not reproduce the frozen list"
 FIG = {"RBBP4-ZNF644": key("RBBP4", "ZNF644"), "ADNP-MTF2": key("ADNP", "MTF2"), "DR1-NFYA": key("DR1", "NFYA")}
 rows, fish = [], []
-for c in (0.60, 0.70, 0.80, 0.90):
+for c in (0.60, 0.70, 0.75, 0.80, 0.90):
     r = dict(cutoff=f"{c:.2f}")
     for lab, col in SETS:
         p = D[col] >= c; r[f"{lab}_pairs"] = int(p.sum()); r[f"{lab}_candidates"] = int((p & ~excl).sum())
@@ -70,6 +70,6 @@ NOTE = "AF3 (5 seeds) was run only on pairs with best-of-5 percentile >= 0.60, s
 R.to_csv(out + ".tsv", sep="\t", index=False); Fi.to_csv(out + "_fisher.tsv", sep="\t", index=False)
 with pd.ExcelWriter(out + ".xlsx") as w:
     R.to_excel(w, "sweep", index=False); Fi.to_excel(w, "fisher_motif_vs_AF3", index=False); RE.to_excel(w, "known_removed_at_0.60", index=False); pd.DataFrame({"note": [NOTE]}).to_excel(w, "note", index=False)
-for c in (0.70, 0.80, 0.90):
+for c in (0.70, 0.75, 0.80, 0.90):
     cand = (D.best_pct >= c) & ~excl; print(f"strong lost at {c}:", sorted(D[D.s5 & ~cand].pair), "| triple lost:", sorted(D[D.tri & ~cand].pair))
 print(R.T.to_string()); print(Fi.to_string(index=False)); print(NOTE)
