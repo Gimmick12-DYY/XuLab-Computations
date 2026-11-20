@@ -45,3 +45,8 @@ ATAC union). A region's imputed count = sum over the 1 kb bins it overlaps.
   with summed counts); M1 unchanged.
 - Versions: I1 = D-I sets with imputed scores (M1, M2a, M2b) and I2 = the raw-called D-B sets with imputed scores (M2a, M2b;
   M1 would repeat D-B), x 2 sizes x 2 CTCF references = 12 + 8 = 20 matrices, each also on the two chromosome halves.
+- Sanity check (added before results): I3 = the D-I sets scored with raw single-cell reads (M2a, M2b) x 2 sizes x 2 CTCF
+  references = 8 matrices, to see whether raw agrees with imputed on which TF a region belongs to. Total imputed round: 28.
+- Not used: the continuous / re-thresholded imputer scores (imputed_audit). They exist only at bins around the bulk ChIP
+  summits used in Fig 2 rounds 2-3 and for 26 of 79 TFs, so selecting differential bins from them would let the bulk
+  ChIP choose the regions.
