@@ -86,35 +86,39 @@ SHOW = [("promoter-promoter", "P–P"), ("promoter-enhancer", "P–E"), ("enhanc
 seg = [(lab, int(pc.get(k, 0))) for k, lab in SHOW]; seg.append(("Rest", len(pairs) - sum(v for _, v in seg)))
 SEGC = {"P–P": "#2B5C9E", "P–E": "#7FA6CE", "E–E": "#E8821E", "P–R": "#8E7CC3", "E–R": "#F6CB8F", "R–R": "#55606E", "Rest": "#E3E3E3"}
 LOOP, NOLOOP = "#B83A2E", "#E3E3E3"
-# ---- square layout for the Figure 3 top-row slot (~60 x 60 mm): top half = % on a Hi-C loop bars with shuffled-expectation ticks,
-#      bottom half = pair-class strip with a 2-row legend ----
-NULL = {"Pairs": 0.148, "3-region": 0.158, "4-region": 0.158}   # supplementary/S_rbbp4_permutation (10,000 shuffles)
-plt.rcParams.update({"font.size": 6})
-fig = plt.figure(figsize=(60 * MM, 60 * MM))
-a1 = fig.add_axes([0.2, 0.53, 0.76, 0.38]); a3 = fig.add_axes([0.06, 0.26, 0.9, 0.075])
-ROWS = [("Pairs", ne[0], nl[0])] + [(f"{s}-region\nedges", e, l) for s, e, l in zip(SZ, ne[1:], nl[1:]) if e > 0]
-for i, (lab, e, l) in enumerate(ROWS):
-    f = 100 * l / e; a1.bar(i, f, 0.6, color=LOOP, lw=0); a1.text(i, f + 1, f"{f:.0f}%", ha="center", va="bottom", fontsize=6)
-    k = lab.split("\n")[0]
-    if k in NULL: a1.plot([i - 0.38, i + 0.38], [100 * NULL[k]] * 2, color=N.ink, lw=0.9, zorder=3)
-a1.set_xticks(range(len(ROWS))); a1.set_xticklabels([f"{lab}\nn = {e:,}" for lab, e, _ in ROWS], fontsize=5.5, linespacing=1.0); a1.tick_params(axis="x", length=0, pad=1.5)
-a1.set_ylim(0, 40); a1.set_yticks([0, 20, 40]); a1.tick_params(axis="y", labelsize=5.5, length=2, pad=1); a1.set_ylabel("% on Hi-C loop", fontsize=6, labelpad=1)
-a1.set_xlim(-0.55, len(ROWS) - 0.45); a1.yaxis.grid(True, color=N.faint, lw=0.4); a1.set_axisbelow(True)
-a1.legend([plt.Line2D([], [], color=N.ink, lw=0.9)], ["shuffled"], loc="upper right", bbox_to_anchor=(1.0, 1.12), fontsize=5.5, handlelength=1.0, borderaxespad=0)
-fig.text(0.03, 0.975, "RBBP4", fontsize=7, va="top", weight="bold")
-left, tot = 0, len(pairs); pct = []
-for lab, v in seg:
-    f = v / tot; a3.barh(0, f, 1.0, left=left, color=SEGC[lab], lw=0)
-    if f >= 0.08: a3.text(left + f / 2, 0, f"{100 * f:.0f}%", ha="center", va="center", fontsize=6, color="white" if lab in ("P–P", "R–R") else N.ink)
-    left += f; pct.append(100 * f)
-a3.set_xlim(0, 1); a3.set_ylim(-0.5, 0.5); a3.set_yticks([]); a3.set_xticks([0, .5, 1]); a3.set_xticklabels(["0", "50", "100"], fontsize=5.5)
-a3.tick_params(axis="x", length=2, pad=1); a3.spines["left"].set_visible(False)
-a3.set_title(f"Pair classes, % of pairs (n = {tot:,})", fontsize=6, loc="left", pad=2)
-fmt = lambda x: f"{x:.0f}%" if x >= 8 else f"{x:.1f}%"
-hs = [plt.Rectangle((0, 0), 1, 1, color=SEGC[lab]) for lab, _ in seg]
-fig.legend(hs, [f"{lab} {fmt(x)}" for (lab, _), x in zip(seg, pct)], loc="lower left", bbox_to_anchor=(0.04, 0.07), ncol=4, fontsize=5.5, handlelength=0.8,
-           handleheight=0.8, handletextpad=0.25, columnspacing=0.6, labelspacing=0.3, borderaxespad=0)
-print("A strand", {lab: round(x, 2) for (lab, _), x in zip(seg, pct)})
+# ---- square layout v2 (user 2026-11-20, our RBBP4 run): three equal 100% bars, labels inside the segments ----
+# Pairs = first-step Cicero pairs >25 kb, unique by unordered region pair; module edges = pairs of regions inside one module (>25 kb),
+# unique by unordered region pair across modules; on a loop = panel d rule. P/D = the pipeline's peak type (build_pairs_from_matrix.py:
+# ChromHMM-18 promoter states Tss* = proximal, else distal), taken from the peak_edges type columns.
+E2 = pd.read_csv(I / "RBBP4.peak_edges.tsv", sep="\t"); E2 = E2[E2.pval <= 0.05]
+pk = {}
+for a_, b_, t1, t2 in zip(E2.peak1, E2.peak2, E2.type1, E2.type2):
+    p_, q_ = iv(a_), iv(b_)
+    if p_[0] != q_[0] or abs(mid(p_) - mid(q_)) <= 25000: continue
+    k = tuple(sorted([a_, b_])); pk[k] = (p_, q_, "".join(sorted([t1[0].upper(), t2[0].upper()])))
+pl = {k: on_loop(p_, q_) for k, (p_, q_, _) in pk.items()}
+ME = {}
+for rr in C.regions.astype(str):
+    regs = [x.strip() for x in rr.split(";")]
+    for x, y in combinations(regs, 2):
+        p_, q_ = iv(x), iv(y)
+        if abs(mid(p_) - mid(q_)) > 25000: ME[tuple(sorted([x, y]))] = on_loop(p_, q_)
+cls = pd.Series([v[2] for v in pk.values()]).value_counts(); NP = len(pk)
+BARS = [("Pairs", [("on loop", sum(pl.values()), LOOP, "white"), ("", NP - sum(pl.values()), NOLOOP, N.dark)]),
+        ("Module\nedges", [("on loop", sum(ME.values()), LOOP, "white"), ("", len(ME) - sum(ME.values()), NOLOOP, N.dark)]),
+        ("Pair\nclasses", [("P–P", int(cls.get("PP", 0)), "#2B5C9E", "white"), ("P–D", int(cls.get("DP", 0)), "#7B5EA7", "white"), ("D–D", int(cls.get("DD", 0)), "#E8821E", "white")])]
+plt.rcParams.update({"font.size": 6.5})
+fig = plt.figure(figsize=(60 * MM, 60 * MM)); ax = fig.add_axes([0.17, 0.13, 0.8, 0.8])
+for i, (lab, segs) in enumerate(BARS):
+    tot, left = sum(v for _, v, _, _ in segs), 0
+    for nm, v, col, tc in segs:
+        f = v / tot; ax.barh(i, f, 0.74, left=left, color=col, lw=0.8, edgecolor="white")
+        ax.text(left + f / 2, i, (f"{nm}\n" if nm else "") + f"{100 * f:.1f}%\nn = {v:,}", ha="center", va="center", fontsize=6, color=tc, linespacing=1.1)
+        left += f
+ax.set_yticks(range(len(BARS))); ax.set_yticklabels([b[0] for b in BARS], fontsize=7, linespacing=1.0); ax.set_ylim(len(BARS) - 0.5, -0.5)
+ax.set_xlim(0, 1); ax.set_xticks([0, .5, 1]); ax.set_xticklabels(["0", "50", "100"], fontsize=6); ax.set_xlabel("%", fontsize=6, labelpad=1); ax.tick_params(axis="y", length=0); ax.tick_params(axis="x", length=2, pad=1)
+for sp_ in ("left", "top", "right"): ax.spines[sp_].set_visible(False)
+print("pairs", NP, "on loop", sum(pl.values()), "| module edges unique", len(ME), "on loop", sum(ME.values()), "| classes", cls.to_dict())
 PS = {("normal", "normal"): "ArialMT", ("bold", "normal"): "Arial-BoldMT"}
 def illustrator_text(svg):
     def one(m):
