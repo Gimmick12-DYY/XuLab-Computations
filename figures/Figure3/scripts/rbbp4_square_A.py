@@ -104,21 +104,30 @@ for rr in C.regions.astype(str):
         p_, q_ = iv(x), iv(y)
         if abs(mid(p_) - mid(q_)) > 25000: ME[tuple(sorted([x, y]))] = on_loop(p_, q_)
 cls = pd.Series([v[2] for v in pk.values()]).value_counts(); NP = len(pk)
+# pair classes (user 2026-11-20): element class of the two ends (panel e rule: promoter = RefSeq Select TSS +-1 kb, else ChromHMM state at the
+# midpoint; enhancer = EnhA1/A2/G1/G2/Wk/Biv, repressive = ReprPC/ReprPCWk/Het/ZNF-Rpts); all other combinations = Rest
+CLS5 = [("promoter-promoter", "P–P", "#2B5C9E"), ("promoter-enhancer", "P–E", "#7FA6CE"), ("enhancer-enhancer", "E–E", "#E8821E"),
+        ("promoter-repressive", "P–R", "#7B5EA7"), ("repressive-repressive", "R–R", "#55606E")]; NP5 = len(pairs)
 BARS = [("Pairs", [("on loop", sum(pl.values()), LOOP, "white"), ("", NP - sum(pl.values()), NOLOOP, N.dark)]),
         ("Module\nedges", [("on loop", sum(ME.values()), LOOP, "white"), ("", len(ME) - sum(ME.values()), NOLOOP, N.dark)]),
-        ("Pair\nclasses", [("P–P", int(cls.get("PP", 0)), "#2B5C9E", "white"), ("P–D", int(cls.get("DP", 0)), "#7B5EA7", "white"), ("D–D", int(cls.get("DD", 0)), "#E8821E", "white")])]
+        ("Pair\nclasses", [(lab, int(pc.get(k, 0)), col, "white") for k, lab, col in CLS5] + [("Rest", NP5 - sum(int(pc.get(k, 0)) for k, _, _ in CLS5), "#E3E3E3", N.dark)])]
 plt.rcParams.update({"font.size": 6.5})
-fig = plt.figure(figsize=(60 * MM, 60 * MM)); ax = fig.add_axes([0.17, 0.13, 0.8, 0.8])
+fig = plt.figure(figsize=(60 * MM, 60 * MM)); ax = fig.add_axes([0.17, 0.24, 0.8, 0.74])
 for i, (lab, segs) in enumerate(BARS):
     tot, left = sum(v for _, v, _, _ in segs), 0
     for nm, v, col, tc in segs:
         f = v / tot; ax.barh(i, f, 0.74, left=left, color=col, lw=0.8, edgecolor="white")
-        ax.text(left + f / 2, i, (f"{nm}\n" if nm else "") + f"{100 * f:.1f}%\nn = {v:,}", ha="center", va="center", fontsize=6, color=tc, linespacing=1.1)
+        if f >= 0.12: ax.text(left + f / 2, i, (f"{nm}\n" if nm else "") + f"{100 * f:.1f}%\nn = {v:,}", ha="center", va="center", fontsize=6, color=tc, linespacing=1.1)
         left += f
 ax.set_yticks(range(len(BARS))); ax.set_yticklabels([b[0] for b in BARS], fontsize=7, linespacing=1.0); ax.set_ylim(len(BARS) - 0.5, -0.5)
-ax.set_xlim(0, 1); ax.set_xticks([0, .5, 1]); ax.set_xticklabels(["0", "50", "100"], fontsize=6); ax.set_xlabel("%", fontsize=6, labelpad=1); ax.tick_params(axis="y", length=0); ax.tick_params(axis="x", length=2, pad=1)
+ax.set_xlim(0, 1); ax.set_xticks([]); ax.spines["bottom"].set_visible(False); ax.tick_params(axis="y", length=0); ax.tick_params(axis="x", length=2, pad=1)
 for sp_ in ("left", "top", "right"): ax.spines[sp_].set_visible(False)
-print("pairs", NP, "on loop", sum(pl.values()), "| module edges unique", len(ME), "on loop", sum(ME.values()), "| classes", cls.to_dict())
+segs5 = BARS[2][1]; tot5 = sum(v for _, v, _, _ in segs5); small = [(nm, v, col) for nm, v, col, _ in segs5 if v / tot5 < 0.12]
+hs = [plt.Rectangle((0, 0), 1, 1, color=col) for _, _, col in small]
+fig.legend(hs, [f"{nm} {100 * v / tot5:.1f}%" for nm, v, _ in small], loc="upper left", bbox_to_anchor=(0.155, 0.235), ncol=len(small), fontsize=6, handlelength=0.7,
+           handleheight=0.7, handletextpad=0.25, columnspacing=0.55, borderaxespad=0)
+fig.text(0.17, 0.12, "P promoter, E enhancer, R repressive", fontsize=6, color=N.dark, va="top")
+print("classes5", {nm: (v, round(100 * v / sum(x[1] for x in BARS[2][1]), 1)) for nm, v, _, _ in BARS[2][1]}); print("pairs", NP, "on loop", sum(pl.values()), "| module edges unique", len(ME), "on loop", sum(ME.values()), "| classes", cls.to_dict())
 PS = {("normal", "normal"): "ArialMT", ("bold", "normal"): "Arial-BoldMT"}
 def illustrator_text(svg):
     def one(m):
