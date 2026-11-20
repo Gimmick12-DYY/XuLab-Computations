@@ -1,5 +1,7 @@
 # candidates_frozen_v1: the frozen candidate list
 
+**SUPERSEDED 2026-11-20 by candidates_frozen_v2 (cutoff .75, user decision); kept because AF3 runs and earlier tables reference it.**
+
 Single source of candidates for all layers (correlation → motif → AF3), per Yuyang 2026-11-11.
 
 ## Rule (build_candidates.py; the selection logic of af3_corr060_20261104/build_list.py)
