@@ -5,7 +5,9 @@ CORR  best-of-5 percentile >= .60 (1,784) and candidate=True (1,732, known pairs
 MOTIF pair_motif_composite/motif_tables/pair_shared_motifs_p005.tsv (pair_table_p005.py, 2026-11-12, built on the frozen 3,081/1,732 list):
       a motif shared at p <= .05 in BOTH TFs on BOTH chromosome halves (HOMER known + 2,528-motif DB).
       incl. flagged = any shared motif; specific = >= 1 shared motif not flagged generic (> 10 TFs) or Tn5 background;
-      specific_noCB = specific after also dropping Codebook artifact motifs (codebook_artifacts.meme; flagged in the script header but not applied there).
+      specific_noCB (MAIN) = specific after dropping every motif that Tomtom-matches one of the 37 Codebook artifact PWMs (funnel_20261120/art_match.sbatch:
+      tomtom -dist pearson -min-overlap 5 -thresh 0.05, as pair_motif_composite/codebook_full.py; includes the endogenous NFI / SP-KLF / ETS / NR categories).
+      HOMER shared sets are taken from the table (complete); DB shared sets are recomputed with pair_table_p005.py's rule (the table truncates DB lists to 15).
 AF3   af3_corr060_20261104/rescore_5seed/tiers_5seed.tsv (97 pairs run at 5 seeds: strong / weak / none); 1-seed tier (af3_1seed_tier) for context.
 Also: provenance/overlap of the uploaded pair_motif_lookup_candidates_final.tsv (114 pairs).
 usage: pair_funnel.py out_prefix
@@ -19,17 +21,33 @@ key = lambda a, b: tuple(sorted((norm(a), norm(b))))
 A = pd.read_csv(f"{C}/candidates_frozen_v1/candidates_all3081.tsv", sep="\t"); A["k"] = [key(a, b) for a, b in zip(A.tf_a, A.tf_b)]
 A["candidate"] = A.candidate.astype(str) == "True"; A["corr60"] = A.best_pct >= 0.60
 M = pd.read_csv(f"{C}/pair_motif_composite/motif_tables/pair_shared_motifs_p005.tsv", sep="\t"); M["k"] = [key(a, b) for a, b in zip(M.tf_a, M.tf_b)]
-cbl = set(l.split()[2].upper() for l in open(f"{X}/motif_analysis/cache/motifdb/codebook_artifacts.meme") if l.startswith("MOTIF ") and len(l.split()) > 2)
+from scipy.stats import norm as _n
+FU = f"{C}/funnel_20261120"; PM = f"{C}/pair_motif_composite"
+artH = set(pd.read_csv(f"{FU}/tomtom_homer_known.tsv", sep="\t").iloc[:, 0].str.replace(r"__\d+$", "", regex=True))
+artD = set(pd.read_csv(f"{FU}/tomtom_known.tsv", sep="\t").iloc[:, 0])
+alt = {}
+for l in open(f"{PM}/db/known.meme"):
+    if l.startswith("MOTIF "): x = l.split(); alt[x[1]] = x[2] if len(x) > 2 else x[1]
+Fd = pd.read_csv(f"{PM}/motif_valid/scores_fisher_disc.tsv", sep="\t", index_col=0); Fv = pd.read_csv(f"{PM}/motif_valid/scores_fisher_val.tsv", sep="\t", index_col=0); zc = _n.isf(0.05)
+dp = {norm(t): set(Fd.index[(Fd[t] >= zc) & (Fv[t] >= zc)]) for t in Fd.columns}; dgen = pd.Series([m for t in dp for m in dp[t]]).value_counts()
 def clean(s):
     return [x.strip() for x in str(s).split(";") if x.strip() and x.strip() != "nan"]
-M["db_spec_noCB"] = [[x for x in clean(s) if x.upper() not in cbl] for s in M.shared_db_specific]
+def db_spec(a, b, drop_art):
+    ms = [m for m in dp.get(norm(a), set()) & dp.get(norm(b), set()) if dgen.get(m, 0) <= 10 and not (drop_art and m in artD)]
+    return sorted(ms, key=lambda m: -float(Fd.at[m, a] + Fd.at[m, b]))
+M["h_spec"] = [clean(s) for s in M.shared_homer_specific]; M["h_spec_noCB"] = [[x for x in h if x not in artH] for h in M.h_spec]
+M["d_spec"] = [db_spec(a, b, False) for a, b in zip(M.tf_a, M.tf_b)]; M["d_spec_noCB"] = [db_spec(a, b, True) for a, b in zip(M.tf_a, M.tf_b)]
+assert (M.d_spec.str.len() == M.n_shared_db_specific).all(), "DB recompute does not reproduce the table"
 M["motif_any"] = (M.n_shared_homer + M.n_shared_db) > 0; M["motif_spec"] = M.any_specific_shared.astype(str) == "True"
-M["motif_spec_noCB"] = (M.n_shared_homer_specific > 0) | (M.db_spec_noCB.str.len() > 0)
-M["top_specific"] = [(clean(h) + clean(d))[0] if (clean(h) + clean(d)) else "" for h, d in zip(M.shared_homer_specific, M.shared_db_specific)]
+M["motif_spec_noCB"] = (M.h_spec_noCB.str.len() + M.d_spec_noCB.str.len()) > 0
+M["top_specific"] = [(h + [alt.get(m, m) for m in d])[0] if (h + d) else "" for h, d in zip(M.h_spec_noCB, M.d_spec_noCB)]
+M["top_specific_incl_CB"] = [(h + [alt.get(m, m) for m in d])[0] if (h + d) else "" for h, d in zip(M.h_spec, M.d_spec)]
+M["n_specific_noCB"] = M.h_spec_noCB.str.len() + M.d_spec_noCB.str.len()
+print("artifact-matched motifs: HOMER", len(artH), "DB", len(artD))
 M["top_any"] = [(clean(h) + clean(d))[0] if (clean(h) + clean(d)) else "" for h, d in zip(M.shared_homer_all, M.shared_db_all)]
 T = pd.read_csv(f"{C}/af3_corr060_20261104/rescore_5seed/tiers_5seed.tsv", sep="\t"); T = T[T.iloc[:, 0] == "DESCRIPTIVE"]
 T["k"] = [key(*p.split("-")) for p in T.panel_pair]
-D = A.merge(M[["k", "motif_any", "motif_spec", "motif_spec_noCB", "top_specific", "top_any"]], on="k", how="left").merge(
+D = A.merge(M[["k", "motif_any", "motif_spec", "motif_spec_noCB", "n_specific_noCB", "top_specific", "top_specific_incl_CB", "top_any"]], on="k", how="left").merge(
     T[["k", "tier_5seed", "seeds_strong", "ipsae_max_5seed", "iptm_top_5seed"]], on="k", how="left")
 assert len(D) == 3081 and D.motif_any.notna().all()
 D["af3_5"] = D.tier_5seed.fillna("not_run"); D["af3_1"] = D.af3_1seed_tier.fillna("not_run")
@@ -39,29 +57,30 @@ def add(step, n, note=""): rows.append(dict(step=step, n_pairs=int(n), note=note
 add("1 ALL panel pairs", len(D))
 add("2a CORR best-of-5 percentile >= 0.60", D.corr60.sum())
 add("2b CORR candidates (known pairs removed)", corr.sum(), "candidates_frozen_v1 candidate=True")
-for lab, col in (("incl. generic/Tn5-flagged motifs", "motif_any"), ("specific (no generic/Tn5)", "motif_spec"), ("specific, Codebook artifacts also dropped", "motif_spec_noCB")):
+for lab, col in (("MAIN specific, Codebook-artifact matches dropped", "motif_spec_noCB"), ("specific, Codebook artifacts kept", "motif_spec"), ("incl. generic/Tn5-flagged motifs", "motif_any")):
     add(f"3 MOTIF {lab}", D[col].sum()); add(f"3 MOTIF {lab} ∩ CORR", (D[col] & corr).sum())
 add("4 AF3 5-seed strong", S5.sum(), "of 97 pairs run at 5 seeds"); add("4 AF3 5-seed strong ∩ CORR", (S5 & corr).sum())
 add("4 AF3 5-seed weak", W5.sum()); add("4 AF3 5-seed none", (D.af3_5 == "none").sum())
 for t in ("strong", "weak", "none"): add(f"4 context: AF3 1-seed {t} (full sweep)", (D.af3_1 == t).sum())
-for lab, col in (("specific", "motif_spec"), ("specific, no Codebook", "motif_spec_noCB"), ("incl. flagged", "motif_any")):
+for lab, col in (("MAIN specific, no Codebook", "motif_spec_noCB"), ("specific, Codebook kept", "motif_spec"), ("incl. flagged", "motif_any")):
     add(f"5 CORR ∩ MOTIF {lab} ∩ AF3 5-seed strong", (corr & D[col] & S5).sum())
     add(f"5 CORR ∩ MOTIF {lab} ∩ AF3 5-seed strong-or-weak", (corr & D[col] & (S5 | W5)).sum())
 F = pd.DataFrame(rows); F.to_csv(out + ".tsv", sep="\t", index=False); print(F.to_string(index=False))
 fish = []
 for scope, m in (("within CORR (1,732)", corr), ("within the 97 run at 5 seeds", corr & (D.af3_5 != "not_run"))):
-    for col in ("motif_spec", "motif_spec_noCB"):
+    for col in ("motif_spec_noCB", "motif_spec"):
         x = D[m]; t = [[int((x[col] & (x.af3_5 == "strong")).sum()), int((x[col] & (x.af3_5 != "strong")).sum())],
                       [int((~x[col] & (x.af3_5 == "strong")).sum()), int((~x[col] & (x.af3_5 != "strong")).sum())]]
         o, p = fisher_exact(t); fish.append(dict(scope=scope, motif=col, motif_AF3strong=t[0][0], motif_notStrong=t[0][1], noMotif_AF3strong=t[1][0], noMotif_notStrong=t[1][1], odds_ratio=round(o, 3), fisher_p=round(p, 4)))
 Fi = pd.DataFrame(fish); Fi.to_csv(out + "_fisher.tsv", sep="\t", index=False); print(Fi.to_string(index=False))
-tri = D[corr & D.motif_spec & (S5 | W5)].copy().sort_values(["af3_5", "best_pct"], ascending=[True, False])
-tri = tri[["pair", "best_pct", "best_matrix", "af3_5", "seeds_strong", "ipsae_max_5seed", "iptm_top_5seed", "motif_spec_noCB", "top_specific", "top_any"]]
+tri = D[corr & D.motif_spec_noCB & (S5 | W5)].copy().sort_values(["af3_5", "best_pct"], ascending=[True, False])
+tri = tri[["pair", "best_pct", "best_matrix", "af3_5", "seeds_strong", "ipsae_max_5seed", "iptm_top_5seed", "n_specific_noCB", "top_specific", "top_specific_incl_CB", "top_any"]]
 tri.to_csv(out + "_triple.tsv", sep="\t", index=False); print(tri.to_string(index=False))
 # uploaded table
 U = pd.read_csv(f"{C}/pair_motif_lookup/uploaded_candidates_final_20261120.tsv", sep="\t"); U["k"] = [key(a, b) for a, b in zip(U.a, U.b)]
 Up = U.groupby("k").af3_tier.first().reset_index(); Up = Up.merge(D[["k", "pair", "candidate", "known_reason", "best_pct", "af3_5", "af3_1"]], on="k", how="left")
 Up.to_csv(out + "_uploaded114.tsv", sep="\t", index=False)
+lost = D[corr & D.motif_spec & ~D.motif_spec_noCB & (S5 | W5)]; print("lost from strong/weak triple by the artifact drop:", lost[["pair", "af3_5", "top_specific_incl_CB"]].to_string(index=False))
 print("uploaded pairs", len(Up), "| in 3081:", Up.pair.notna().sum(), "| candidate True:", int((Up.candidate == True).sum()))
 print("not candidate:", Up[Up.candidate != True][["k", "known_reason", "best_pct"]].to_string(index=False))
 print("5-seed tiers among uploaded:", Up.af3_5.value_counts().to_dict()); print("1-seed tiers among uploaded not in 97:", Up[Up.af3_5 == "not_run"].af3_1.value_counts().to_dict())
