@@ -11,7 +11,7 @@ H = Path(__file__).resolve().parents[1]; OUT = H / "Figure3_PDF_pack"; (OUT / "s
 CHROME = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
 PANELS = ["a_coordinated_binding_schematic", "b1_rbbp4_network", "b2_rbbp4_hic_circos", "b_rbbp4_characterization", "c_rbbp4_chromosomes",
           "d_module_edges_hic_support", "e_module_genomic_class", "f_top_shared_edges_chord", "g_se_browser", "h_se_3d_structure", "i_se_flower",
-          "ghi_shared_legend", "j_go_specific_vs_conserved_summary", "supplementary/go_per_tf_great_terms", "supplementary/j_gene_set_dotplot"]
+          "ghi_shared_legend", "j_go_specific_vs_conserved_summary", "hic_ets2_locus", "supplementary/go_per_tf_great_terms", "supplementary/j_gene_set_dotplot"]
 SRC = {"supplementary/j_gene_set_dotplot": "j_gene_set_dotplot"}
 def size_pt(svg):
     m = re.search(r'<svg[^>]*?\swidth="([\d.]+)(pt|mm|px)?"[^>]*?\sheight="([\d.]+)(pt|mm|px)?"', svg, re.S)

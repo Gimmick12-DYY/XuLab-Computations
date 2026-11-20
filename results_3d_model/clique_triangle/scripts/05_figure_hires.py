@@ -28,7 +28,7 @@ for a, b in ((t.mA, t.mB), (t.mB, t.mC), (t.mA, t.mC)):
     q = np.linspace(a, b, 100) / 1e6; ax2.plot(q, 0.5 + (0.65 * (b - a) / (t.mC - t.mA)) * np.sin(np.pi * (q - a / 1e6) / ((b - a) / 1e6)), color=BLUE, lw=2)
 for nm, m in AN:
     ax2.plot(m / 1e6, 0.5, "v", ms=10, color=INK, zorder=4); ax2.text(m / 1e6, 0.33, nm, ha="center", va="top", fontsize=14, fontweight="bold")
-ax2.text(XL[1], 1.17, "Cicero clique edges (ETS2)", color=BLUE, fontsize=12, va="top", ha="right")
+ax2.text(XL[1], 1.17, "Coordinated binding (ETS2)", color=BLUE, fontsize=12, va="top", ha="right")
 # anchor labels + TF bars
 y3 = y2 - 0.86; ax3 = fig.add_axes([L, y3 / H, AW, 0.68 / H], sharex=ax); ed = np.arange(X0 // 5000 * 5000, X1 + 5000, 5000); cnt = np.array([P[(P.sm >= e) & (P.sm < e + 5000)].tf.nunique() for e in ed])
 ax3.bar((ed + 2500) / 1e6, cnt, width=0.0048, color="#BFBFBF", lw=0); ax3.set_ylabel("TFs", fontsize=14); ax3.set_ylim(0, 26); ax3.set_yticks([0, 20]); ax3.tick_params(bottom=False, labelbottom=False)

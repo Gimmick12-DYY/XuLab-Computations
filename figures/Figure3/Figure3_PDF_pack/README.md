@@ -17,11 +17,12 @@ Made from the approved SVGs by `Figure3/scripts/pdf_pack.py` (headless Chrome pr
 | h_se_3d_structure.pdf | h – SE 3D structure |
 | i_se_flower.pdf | i – SE network (flower) |
 | ghi_shared_legend.pdf | legend shared by g, h, i |
+| hic_ets2_locus.pdf | Hi-C locus: WT HEK293T Hi-C 10 kb triangle with A–B / A–C / B–C contacts, coordinated binding edges of an ETS2 3-region module (ACBD6 promoter – distal – LINC01732 promoter), TF counts, genes |
 | j_go_specific_vs_conserved_summary.pdf | j – GO terms of TF-specific vs conserved module elements |
 | supplementary/go_per_tf_great_terms.pdf | GO term x TF matrix (all TFs with terms) |
 | supplementary/j_gene_set_dotplot.pdf | earlier pooled promoter GO comparison |
 
 Panel b has two options (b1 + b2, or b_rbbp4_characterization); choose one.
-Raster parts (embedded images, everything else vector): d – heatmap cells; g – Hi-C contact triangle; h – 3D structure render.
+Raster parts (embedded images, everything else vector): d – heatmap cells; g – Hi-C contact triangle; h – 3D structure render; hic_ets2_locus – Hi-C contact triangle (600 dpi).
 Place g, h, i at 100% (drawn at print size); b1, b2, c and f are large originals and can be scaled down.
 Figure legend notes: `Figure3/figure_legend_notes.md`.
