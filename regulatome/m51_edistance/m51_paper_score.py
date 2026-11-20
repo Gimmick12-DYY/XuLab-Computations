@@ -5,7 +5,9 @@ from scipy.stats import spearmanr
 SRC50 = open("/work/users/d/y/dyy12/XuLab/regulatome/m50_stage1_log2fc/m50_stage1.py").read()
 exec(SRC50[:SRC50.index("# ---- responder counts")]); exec(SRC50[SRC50.index("# ---- Stage 1"):SRC50.index("ST, LOO = stage1(")])
 O = "/work/users/d/y/dyy12/XuLab/regulatome/m51_edistance/out"; M23 = "/work/users/d/y/dyy12/XuLab/regulatome/m23_sgrna_top25/out/matrices"
-GS = np.load(f"{O}/ntc_gem_stats.npz", allow_pickle=True); sym = GS["genes"].astype(str); gp = pd.Series(np.arange(len(sym)), index=sym); gp = gp[~gp.index.duplicated(keep="last")]; col = gp.reindex(UG).values.astype(int)
+GS = np.load(f"{O}/ntc_gem_stats.npz", allow_pickle=True); sym = GS["genes"].astype(str)
+det_ = GS["detected"].sum(0) / GS["n"].sum(); cg_ = np.flatnonzero((det_ >= .01) & (sym != "."))  # Amendment 2: same column mapping as m23 (last duplicate symbol among genes with NTC detection >= 1%)
+gp = pd.Series(cg_, index=sym[cg_]); gp = gp[~gp.index.duplicated(keep="last")]; col = gp.reindex(UG).values.astype(int)
 KD = sp.load_npz(f"{O}/kd_cells.npz")[:, col].toarray().astype(np.float32); KO = pd.read_csv(f"{O}/kd_cells.tsv.gz", sep="\t")
 Q = pd.read_csv(f"{M23}/top25_own/guide_qc.tsv", sep="\t"); KEPT = set(Q[(Q.kept == 1) & Q.kind.isin(["all", "construct"])].unit); dual = set(Q[Q.kind == "construct"].tf); cn = {}
 for g in dual:
