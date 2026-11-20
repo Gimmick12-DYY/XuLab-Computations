@@ -50,3 +50,23 @@ ATAC union). A region's imputed count = sum over the 1 kb bins it overlaps.
 - Not used: the continuous / re-thresholded imputer scores (imputed_audit). They exist only at bins around the bulk ChIP
   summits used in Fig 2 rounds 2-3 and for 26 of 79 TFs, so selecting differential bins from them would let the bulk
   ChIP choose the regions.
+
+## Addendum 6c (declared 2026-11-20, before any result): correlation over union peaks
+- **Regions.** U1 = merged union of the 6 bulk reference peak sets (CTCF = ENCODE HEK293 ENCFF314ZAL; MAZ, ZBTB7A, ZIC2,
+  ZNF777 = ENCODE HEK293; ZNF282 = GSM2466515 HEK293T), chr1-22 + X. U2 = U1 plus the 6 panel TFs' lab MACS2 peaks
+  (q < 0.05), merged.
+- **Values per peak.**
+  - Bulk: log2(CPM + 1), with CPM over the region set (CTCF = ENCODE HEK293 BAM).
+  - Raw sc: log2(CPM + 1) of 5' ends at full depth, and thinned to ZNF777 depth (3 seeds, r averaged).
+  - Imputed: log2(CPM + 1) of cells-positive summed over the overlapped 1 kb bins. Peaks with no ATAC-mask bin are excluded
+    from the imputed matrices (n reported).
+- **Correlations** (6x6, rows sc, columns bulk):
+  - (a) Pearson across peaks.
+  - (b) The same after centring each peak: subtract its mean across the 6 TFs, separately for sc and bulk. This removes the
+    open-chromatin / promoter signal that all TFs share.
+  - (c) Grouped: for each reference j, the union peaks overlapping j's peaks, ranked by bulk j signal and split into 33
+    groups (198 groups in total; counts summed per group, then log2(CPM + 1)).
+  - Raw also gets Spearman for (a) and (b).
+- **Versions.** 2 region sets x {raw full, raw ZNF777-depth, imputed} x {a, b, c} plus raw Spearman {full, depth} x {a, b}
+  = 2 x 13 = 26 matrices, each also on the chromosome halves.
+- **Statistics.** As above. Output round6_diffpeaks/union_6c/.
