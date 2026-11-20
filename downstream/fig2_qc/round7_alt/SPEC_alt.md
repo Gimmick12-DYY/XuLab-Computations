@@ -23,3 +23,7 @@ Raw single-cell reads only (5' ends, inputs/five). Imputed is excluded until the
 Statistics for every 6x6: diagonal minus off-diagonal, exact 720-permutation p of row labels; the same on the 5x5 without
 CTCF (120 permutations); own-best rows/columns; each half separately. A visible diagonal = own cell the row maximum.
 Outputs results_293T_analysis/fig2_qc/round7_alt/; Mac figures_fig2_qc/round7_alt/.
+
+Addendum (2026-11-20, before results): inputs/unique_<TF>.bed was built from the CTCF majority set, not ENCFF314ZAL, so
+reference-unique peaks for tests 2 and 3 are recomputed from the peak files listed above (A peaks overlapping no peak of
+the other 5 references, bedtools intersect -v).
