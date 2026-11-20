@@ -34,3 +34,14 @@ Versions run (no others): 2 differential sets (D-A, D-B) x 2 sizes (1,000, 5,000
 references (ENCODE HEK293, HEK293T nexus) = 24 matrices, each also on the two halves.
 Rendering: M1 and M2 6x6 like corr_matrix_6x6 (raw values in cells, own cells outlined, palette C, Arial 7 pt, cell lines
 in labels, colour range stated). Outputs results_293T_analysis/fig2_qc/round6_diffpeaks/, Mac figures_fig2_qc/round6_diffpeaks/.
+
+## Addendum (declared 2026-11-20, before any imputed result): imputed data
+Requested after the raw results. Imputed track = cells positive per 1 kb bin (unified imputation, binarised, masked to the
+ATAC union). A region's imputed count = sum over the 1 kb bins it overlaps.
+- **D-I (imputed-called differential set):** the D-B test on the same candidate regions, with imputed counts in place of reads:
+  one-sided binomial of the TF's count given the TF + other-78 count, expected fraction = the TF's genome-wide imputed total /
+  the 79-TF total; log2FC with +0.5; BH q < 0.05 and log2FC > 1; top 1,000 and top 5,000 by p.
+- **Scoring with imputed values:** sc value = the same log2FC computed from imputed counts (M2a per region, M2b summit groups
+  with summed counts); M1 unchanged.
+- Versions: I1 = D-I sets with imputed scores (M1, M2a, M2b) and I2 = the raw-called D-B sets with imputed scores (M2a, M2b;
+  M1 would repeat D-B), x 2 sizes x 2 CTCF references = 12 + 8 = 20 matrices, each also on the two chromosome halves.
