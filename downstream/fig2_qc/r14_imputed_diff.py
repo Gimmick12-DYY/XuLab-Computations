@@ -177,13 +177,19 @@ for ver, dset, kind, mets in PLAN:
     for Nn, ctcf in itertools.product((1000, 5000), ("ENCODE_HEK293", "nexus")):
         fig, axs = plt.subplots(1, len(mets), figsize=(3.2 * len(mets), 3.2), layout="constrained")
         for ax, met in zip(np.atleast_1d(axs), mets):
-            Bm = store[(ver, Nn, ctcf, met, "all")]
+            Bm = store[(ver, Nn, ctcf, met, "all")].copy()
+            if dset == "D-I" and met in ("M1", "M2a"):   # rows built from the TF's own set: empty set -> grey n/a (M2b rows use all groups; statistics unchanged)
+                for i, t in enumerate(TFS):
+                    if int(cdf.loc[cdf.tf == t, f"DI_top{Nn}"].iloc[0]) == 0:
+                        Bm[i] = np.nan
             r = sm[(sm.version == ver) & (sm.top_n == Nn) & (sm.ctcf_ref == ctcf) & (sm.metric == met) & (sm.half == "all")].iloc[0]
             lim = float(np.ceil(max(0.1, np.nanmax(np.abs(Bm))) * 10) / 10)
-            im = ax.imshow(Bm, cmap=P.div_cmap(), vmin=-lim, vmax=lim)
+            cmap_ = P.div_cmap().copy() if hasattr(P.div_cmap(), "copy") else P.div_cmap(); cmap_.set_bad(P.neutral.pale)
+            im = ax.imshow(np.ma.masked_invalid(Bm), cmap=cmap_, vmin=-lim, vmax=lim)
             for i in range(6):
                 for j in range(6):
-                    ax.text(j, i, f"{Bm[i, j]:+.2f}", ha="center", va="center", fontsize=5.5, color="white" if abs(Bm[i, j]) > 0.6 * lim else P.neutral.ink)
+                    ax.text(j, i, "n/a" if not np.isfinite(Bm[i, j]) else f"{Bm[i, j]:+.2f}", ha="center", va="center", fontsize=5.5,
+                            color="white" if np.isfinite(Bm[i, j]) and abs(Bm[i, j]) > 0.6 * lim else P.neutral.ink)
                 ax.add_patch(Rectangle((i - .5, i - .5), 1, 1, fill=False, ec=P.neutral.ink, lw=0.8))
             cl = dict(CELL); cl["CTCF"] = "HEK293T nexus" if ctcf == "nexus" else "HEK293"
             ax.set_xticks(range(6), [f"{t} ChIP\n({cl[t]})" for t in TFS], rotation=90, fontsize=5.5)
