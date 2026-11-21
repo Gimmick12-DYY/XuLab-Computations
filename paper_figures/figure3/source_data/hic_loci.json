@@ -1,0 +1,70 @@
+{
+ "ets2": {
+  "tf": "ETS2",
+  "module": "ETS2 module, cobinding/results/ourrun_k50/ETS2/cliques.tsv",
+  "regions": [
+   "chr1:180502204-180502470",
+   "chr1:180896339-180896797",
+   "chr1:181172243-181172539"
+  ],
+  "circles": [
+   180512337,
+   180876568,
+   181162391
+  ],
+  "genes": {
+   "ACBD6": 0,
+   "XPR1": 0,
+   "MR1": 0,
+   "KIAA1614": 1,
+   "STX6": 0,
+   "IER5": 1,
+   "LINC01732": 1
+  },
+  "yticks": [
+   0,
+   100,
+   200,
+   300,
+   400
+  ],
+  "xticks": [
+   180.5,
+   180.7,
+   180.9,
+   181.1
+  ],
+  "peaks": "macs2",
+  "promoter_window": 2500,
+  "chrom": "chr1",
+  "window": [
+   180420000,
+   181260000
+  ]
+ },
+ "rbbp4": {
+  "tf": "RBBP4",
+  "module": "RBBP4 module C00057, cobinding/results/RBBP4_sweep_k50_i10000_s555/cliques.tsv (top-ranked in source_scripts/hic_rbbp4_locus_screen.py)",
+  "regions": [
+   "chr1:155084785-155085291",
+   "chr1:155208474-155208893",
+   "chr1:155308050-155308950"
+  ],
+  "clique": "C00057",
+  "circles": [
+   155085038,
+   155208683,
+   155308500
+  ],
+  "genes": null,
+  "yticks": null,
+  "xticks": null,
+  "peaks": "cicero",
+  "promoter_window": 1000,
+  "chrom": "chr1",
+  "window": [
+   155000000,
+   155390000
+  ]
+ }
+}

@@ -1,33 +1,5 @@
-# Figure 3: final panels (updated 2026-11-16)
+# Figure 3 (analysis checks)
 
-One folder for Fig 3, collected for the new plan (a-j). No layout: arrange the panels yourself. Each panel has `.svg` (live Arial text,
-Illustrator-safe font attributes, cropped to content) and a 300 dpi `.png` (older panels also have a `.pdf`). Figure text says "higher-order coordinated binding module"
-/ "module edge", never "clique". Rebuild everything with `collect_figure3.py` on Longleaf (`XuLab/figures/Figure3/`).
-
-| Panel | Plan | File(s) | Source (Longleaf XuLab unless noted) | Script / commit |
-|---|---|---|---|---|
-| a | What coordinated binding is: four illustrated steps (single-cell binding of one TF; independent vs coordinated binding across cells; higher-order module; tested against 3D contacts) and the seven-step per-TF pipeline | `a_coordinated_binding_schematic` (.svg master 183 x 103 mm, full page width; .png 300 dpi via headless Chrome, rsvg drops the drop-shadow TF glyphs) | original drawing, no data; numbers checked: 79 TFs, median 5,211 MACS2 q<=0.05 peaks per TF | `scripts/a_schematic.py` |
-| b | RBBP4 example: network | `b1_rbbp4_network` | `hic/work_wt293t/loops/union_5k_10k_0.7/RBBP4_sweep_k50_i10000_s555_pad30kb/publication_plots_v2/tf_peak_network_cliques_loops.svg` (deck slide 169) | `hic/scripts/plot_clique_network_loops_v2.py`; text fix here |
-| b | RBBP4 example: Hi-C loop plot | `b2_rbbp4_hic_circos` | same folder, `RBBP4_clique_loop_edges_circos_tf_top.svg` (slide 170) | `hic/scripts/plot_clique_circos_tf_top.py` |
-| c | RBBP4 pairs along all chromosomes, module edges highlighted, only the Hi-C loops that support them | `c_rbbp4_chromosomes` (180 x 150 mm) | RBBP4_sweep_k50_i10000_s555: first-step Cicero pairs (peak_edges.tsv, pairs >25 kb, same set as panel d / S1D), modules from cliques.tsv; Peakachu 0.7 loops (5 kb + 10 kb), +-30 kb anchor rule | `scripts/c_rbbp4_chromosomes.py` |
-| d | Left: all module edges >25 kb of each TF (the bars' edge set; 224,932 edges) in 1 Mb bins of the edge midpoint (2,843 bins, columns clustered Jaccard/average linkage, tree not drawn); cell colour = the bars' loop-fraction classes for that TF's edges in that bin, white = no edge; top strip = TFs per bin. Middle/right unchanged: modules with >=1 edge >25 kb by loop coverage + per-edge shuffle null. One TF row axis | `d_module_edges_hic_support` (183 x 95 mm) | `checks/d_module_edge_bins_1000kb.tsv.gz` (loop rule = clique_coverage.py of the bars); bars/null as Fig 3 v7 panel a | `scripts/d_module_edge_bins.py` (Longleaf) + `scripts/d_module_edges_hic_support.py` (Mac) |
-| e | All-TF module distribution (genomic class) | `e_module_genomic_class` | Fig 3 v7 panel b | `figures/fig3_v7/b_class_bars_v7.py` (9766509) |
-| f | Chord of the most widely shared module edges | `f_top_shared_edges_chord` | Mac `hub_figures/basic/clique_edge_overlap/fig_chord_tf_top_shared_edges.svg` (slide 72, md5 7902fef4 = deck) | title/subtitle dropped here |
-| g | Super-enhancer hub example (browser) | `g_se_browser` (print width 181 mm) | Fig 3 v7 panel c | `figures/fig3_v7/c_se_browser_v7.py` (1a3c955) |
-| h | SE 3D structure | `h_se_3d_structure` (91 mm) | Fig 3 v7 panel d (approved rosette, slide 22) | `figures/fig3_v7/prep_panels_v7.py` |
-| i | SE network illustration (flower) | `i_se_flower` (84 mm) | Fig 3 v7 panel e | `figures/fig3_v7/flower_v7.py` |
-| g-i | Shared legend for g, h, i | `ghi_shared_legend` | Fig 3 v7 legend strip, letters updated | `figures/fig3_v7/cde_legend_v7.py` |
-| j | Pooled GO BP of module genes, own top 10 terms per group: TF-specific (promoter in modules of 1-2 TFs; 4,407 annotated) vs conserved (modules of >=3 TFs; 1,035 annotated); strict split at 3, every module gene in one group. Shared x = -log10 p, dashed line = BH q 0.05, teal = q < 0.05, size = genes; background 12,388 network promoter genes; near-duplicates merged (gene overlap > 60%) | `j_gene_set_dotplot` (+ .tsv) | `checks/go_per_tf/pooled_*.tsv` (scripts/go_per_tf.py), `checks/go_per_tf/top_term_jaccard.tsv`; robustness `checks/go_pooled_robustness/` | `scripts/j_go_pooled_top10.py` (Mac) |
-
-g, h and i are drawn on larger canvases with fonts preset for the print sizes given; place them at 100% of the SVG/PDF size.
-b, c and f are slide-sized originals (b1 444 mm, b2 311 mm, c 419 mm, f 281 mm wide): scale them down when placing.
-
-**Missing:** none. Earlier options and drafts (a/c/d/j options, j by-TF-count and shared-vs-specific versions, old j_module_genes_go, pair_complex model) were deleted 2026-11-17; superseded scripts stay in `scripts/` and git.
-
-Panel c was redrawn on 2026-11-12 to the user's spec (all pairs; module edges in dark blue; only supporting loops below).
-
-`supplementary/`: pairs with Hi-C loop support + per-pair null (approved D1), whole-module block-shuffle null (stricter; 35/40),
-RBBP4 pair/edge permutation (S1D, slide 16), SE edge-count table (slide 21).
-`checks/`: ATAC + promoter (and peak-density) matched null for d (27/40 and 26/40 TFs, median O/E 1.19), HOT-region check for e (promoter
-rise = matched expectation), per-edge vs block null per TF, SVG-vs-PDF render check, input dependency audit (panel letters there are v7's).
-`figure_legend_notes.md`: draft legend text with the new letters.
+Figure 3 panels are built from code and versioned source data in `paper_figures/figure3/` (one script per panel, editable text in
+PDF/SVG; see its README). This folder keeps the analysis outputs the panels draw on (`checks/`: GO tests, module-edge bins,
+RBBP4 locus screen, robustness checks); the scripts that make them are in `paper_figures/figure3/source_scripts/`.

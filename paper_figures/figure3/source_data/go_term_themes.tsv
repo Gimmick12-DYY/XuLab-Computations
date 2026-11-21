@@ -1,0 +1,1246 @@
+term	theme
+GO:1903312	Gene expression / RNA
+GO:0009394	Metabolism
+GO:0015871	Other
+GO:0140888	Signalling
+GO:0046386	Metabolism
+GO:0072529	Other
+GO:0006244	Metabolism
+GO:0009223	Metabolism
+GO:0009219	Metabolism
+GO:1990535	Other
+GO:0062207	Immune / inflammation
+GO:0030516	Development / differentiation
+GO:0030517	Development / differentiation
+GO:0006457	Protein folding / stress
+GO:0006986	Protein folding / stress
+GO:0035966	Protein folding / stress
+GO:0070527	Development / differentiation
+GO:0034243	Gene expression / RNA
+GO:0032784	Gene expression / RNA
+GO:0010608	Other
+GO:0080135	Protein folding / stress
+GO:0034109	Cell organization / transport / adhesion
+GO:0032786	Gene expression / RNA
+GO:0008360	Development / differentiation
+GO:0010656	Other
+GO:0034976	Protein folding / stress
+GO:0032968	Gene expression / RNA
+GO:2000767	Gene expression / RNA
+GO:0010453	Development / differentiation
+GO:0008380	Other
+GO:0021762	Development / differentiation
+GO:0051493	Cell organization / transport / adhesion
+GO:0043921	Other
+GO:0048857	Development / differentiation
+GO:0150105	Other
+GO:0031100	Development / differentiation
+GO:0031647	Other
+GO:0010720	Development / differentiation
+GO:0060251	Development / differentiation
+GO:1905168	Cell cycle / DNA / chromatin
+GO:0046634	Immune / inflammation
+GO:0050870	Cell organization / transport / adhesion
+GO:0046635	Cell organization / transport / adhesion
+GO:0045621	Immune / inflammation
+GO:0010569	Cell cycle / DNA / chromatin
+GO:0006397	Gene expression / RNA
+GO:0050821	Other
+GO:0106058	Signalling
+GO:0070886	Signalling
+GO:0048524	Other
+GO:0045582	Cell organization / transport / adhesion
+GO:0045727	Other
+GO:2000765	Gene expression / RNA
+GO:0009895	Other
+GO:0030168	Development / differentiation
+GO:0010660	Other
+GO:1903039	Cell organization / transport / adhesion
+GO:0031109	Cell organization / transport / adhesion
+GO:0002699	Immune / inflammation
+GO:0000375	Other
+GO:0045911	Cell cycle / DNA / chromatin
+GO:1990090	Other
+GO:0006282	Cell cycle / DNA / chromatin
+GO:1903900	Other
+GO:0010712	Other
+GO:0046598	Other
+GO:0075294	Other
+GO:0051251	Immune / inflammation
+GO:0006368	Gene expression / RNA
+GO:0045739	Cell cycle / DNA / chromatin
+GO:0007043	Cell organization / transport / adhesion
+GO:0009408	Protein folding / stress
+GO:1990089	Other
+GO:0000018	Cell cycle / DNA / chromatin
+GO:0032388	Other
+GO:1902903	Other
+GO:0042542	Protein folding / stress
+GO:0045471	Other
+GO:0099188	Cell organization / transport / adhesion
+GO:0009266	Other
+GO:0051851	Other
+GO:2000059	Protein folding / stress
+GO:0034063	Other
+GO:0044788	Other
+GO:0022407	Cell organization / transport / adhesion
+GO:0035821	Other
+GO:0007346	Cell cycle / DNA / chromatin
+GO:0032355	Other
+GO:0050867	Other
+GO:0043488	Gene expression / RNA
+GO:0032965	Other
+GO:0007596	Development / differentiation
+GO:0050817	Other
+GO:0010389	Cell cycle / DNA / chromatin
+GO:0051148	Development / differentiation
+GO:0007599	Other
+GO:0070482	Other
+GO:0070884	Signalling
+GO:0022409	Cell organization / transport / adhesion
+GO:0006354	Gene expression / RNA
+GO:0106056	Signalling
+GO:0051223	Other
+GO:1903708	Immune / inflammation
+GO:1902107	Immune / inflammation
+GO:0010506	Protein folding / stress
+GO:0043487	Other
+GO:0002696	Immune / inflammation
+GO:1900242	Cell organization / transport / adhesion
+GO:0034332	Cell organization / transport / adhesion
+GO:1903829	Other
+GO:2000514	Immune / inflammation
+GO:0033273	Other
+GO:0006417	Other
+GO:1902749	Other
+GO:0017148	Other
+GO:1903421	Cell organization / transport / adhesion
+GO:0032785	Gene expression / RNA
+GO:0050863	Immune / inflammation
+GO:0050792	Other
+GO:0051222	Other
+GO:0043123	Signalling
+GO:0002821	Immune / inflammation
+GO:0032984	Other
+GO:0070168	Development / differentiation
+GO:0046596	Other
+GO:0061013	Gene expression / RNA
+GO:0007519	Development / differentiation
+GO:0045216	Cell organization / transport / adhesion
+GO:0070507	Cell organization / transport / adhesion
+GO:2000819	Cell cycle / DNA / chromatin
+GO:0097305	Other
+GO:1901990	Cell cycle / DNA / chromatin
+GO:0045619	Immune / inflammation
+GO:0032956	Cell organization / transport / adhesion
+GO:1903902	Other
+GO:0070201	Other
+GO:0090109	Cell organization / transport / adhesion
+GO:0051893	Cell organization / transport / adhesion
+GO:0000377	Other
+GO:0000398	Gene expression / RNA
+GO:0045580	Immune / inflammation
+GO:2000779	Cell cycle / DNA / chromatin
+GO:0010810	Cell organization / transport / adhesion
+GO:0022604	Development / differentiation
+GO:0071456	Protein folding / stress
+GO:1903037	Cell organization / transport / adhesion
+GO:1903311	Gene expression / RNA
+GO:0042177	Protein folding / stress
+GO:0036294	Other
+GO:2001242	Other
+GO:0006412	Other
+GO:0160307	Other
+GO:0006366	Gene expression / RNA
+GO:0150116	Cell organization / transport / adhesion
+GO:1904951	Other
+GO:0045661	Development / differentiation
+GO:0052372	Other
+GO:0072348	Other
+GO:0032386	Other
+GO:0071216	Other
+GO:0045785	Cell organization / transport / adhesion
+GO:2000781	Cell cycle / DNA / chromatin
+GO:0051261	Other
+GO:0006796	Other
+GO:1903053	Cell organization / transport / adhesion
+GO:0002697	Immune / inflammation
+GO:0060249	Other
+GO:0001894	Other
+GO:0050905	Neural
+GO:0071453	Other
+GO:0031507	Cell cycle / DNA / chromatin
+GO:0060538	Development / differentiation
+GO:0030705	Other
+GO:1903747	Other
+GO:0003012	Organ physiology (muscle, heart, kidney, gut)
+GO:0071346	Immune / inflammation
+GO:0032970	Other
+GO:0010714	Other
+GO:0061462	Other
+GO:0000302	Protein folding / stress
+GO:0045070	Other
+GO:0007163	Cell organization / transport / adhesion
+GO:0042307	Cell organization / transport / adhesion
+GO:0070828	Cell cycle / DNA / chromatin
+GO:0061245	Cell organization / transport / adhesion
+GO:0035088	Cell organization / transport / adhesion
+GO:1900182	Other
+GO:0001666	Protein folding / stress
+GO:0050850	Signalling
+GO:0050769	Development / differentiation
+GO:0043903	Other
+GO:0036293	Other
+GO:0051249	Immune / inflammation
+GO:0030071	Cell cycle / DNA / chromatin
+GO:0043068	Other
+GO:1902099	Cell cycle / DNA / chromatin
+GO:0006984	Signalling
+GO:0006356	Gene expression / RNA
+GO:0030901	Development / differentiation
+GO:0043200	Other
+GO:0045814	Cell cycle / DNA / chromatin
+GO:0006468	Other
+GO:0044092	Other
+GO:0090316	Cell organization / transport / adhesion
+GO:0072665	Other
+GO:0090263	Signalling
+GO:0006886	Cell organization / transport / adhesion
+GO:0098732	Other
+GO:0007517	Development / differentiation
+GO:0061061	Development / differentiation
+GO:0006869	Other
+GO:0010876	Other
+GO:0046890	Metabolism
+GO:0055010	Development / differentiation
+GO:1902652	Other
+GO:0046889	Metabolism
+GO:0050810	Metabolism
+GO:0002449	Immune / inflammation
+GO:1903305	Cell organization / transport / adhesion
+GO:1903504	Cell cycle / DNA / chromatin
+GO:0090266	Cell cycle / DNA / chromatin
+GO:0032868	Other
+GO:0019882	Immune / inflammation
+GO:1903313	Gene expression / RNA
+GO:0141188	Other
+GO:0007062	Other
+GO:0003229	Development / differentiation
+GO:0010893	Metabolism
+GO:0051924	Other
+GO:0010959	Other
+GO:0035272	Development / differentiation
+GO:0044839	Other
+GO:0106118	Metabolism
+GO:0045540	Metabolism
+GO:0000086	Cell cycle / DNA / chromatin
+GO:0006401	Other
+GO:0045940	Metabolism
+GO:0019218	Metabolism
+GO:0062012	Other
+GO:0090231	Signalling
+GO:0008203	Metabolism
+GO:0002643	Immune / inflammation
+GO:0002664	Immune / inflammation
+GO:0062013	Other
+GO:0008630	Other
+GO:0090232	Signalling
+GO:0090267	Cell cycle / DNA / chromatin
+GO:0055117	Organ physiology (muscle, heart, kidney, gut)
+GO:0006656	Metabolism
+GO:1901978	Signalling
+GO:0051276	Other
+GO:2000253	Other
+GO:0106120	Metabolism
+GO:0036297	Cell cycle / DNA / chromatin
+GO:0045542	Metabolism
+GO:0070601	Other
+GO:0035519	Other
+GO:0061014	Gene expression / RNA
+GO:0071229	Other
+GO:0055008	Development / differentiation
+GO:1902930	Other
+GO:0071230	Other
+GO:0090181	Metabolism
+GO:1902932	Other
+GO:0099518	Other
+GO:0010965	Cell cycle / DNA / chromatin
+GO:1905818	Cell cycle / DNA / chromatin
+GO:0001909	Immune / inflammation
+GO:0042267	Immune / inflammation
+GO:0002228	Immune / inflammation
+GO:0033047	Cell cycle / DNA / chromatin
+GO:1900373	Metabolism
+GO:0030810	Metabolism
+GO:2001171	Metabolism
+GO:0000077	Protein folding / stress
+GO:0043518	Protein folding / stress
+GO:1901976	Signalling
+GO:0015908	Other
+GO:0031146	Protein folding / stress
+GO:0007064	Other
+GO:0031570	Signalling
+GO:0090224	Cell organization / transport / adhesion
+GO:0038003	Signalling
+GO:1900371	Metabolism
+GO:0030808	Metabolism
+GO:0032886	Other
+GO:0043484	Other
+GO:0007051	Cell organization / transport / adhesion
+GO:0048284	Other
+GO:0160240	Gene expression / RNA
+GO:0007018	Cell organization / transport / adhesion
+GO:2000300	Cell organization / transport / adhesion
+GO:0048714	Development / differentiation
+GO:0048024	Gene expression / RNA
+GO:2001169	Metabolism
+GO:0090205	Metabolism
+GO:0070665	Other
+GO:0051954	Other
+GO:0002443	Immune / inflammation
+GO:0060415	Development / differentiation
+GO:0048644	Development / differentiation
+GO:0043269	Other
+GO:0001101	Other
+GO:2001244	Other
+GO:0006289	Cell cycle / DNA / chromatin
+GO:1903432	Signalling
+GO:0031023	Cell organization / transport / adhesion
+GO:1900542	Metabolism
+GO:0009880	Development / differentiation
+GO:0006140	Metabolism
+GO:0042149	Protein folding / stress
+GO:0034377	Protein folding / stress
+GO:0034655	Other
+GO:0022404	Other
+GO:0001942	Development / differentiation
+GO:0022405	Other
+GO:0098840	Cell organization / transport / adhesion
+GO:0099118	Other
+GO:0042770	Protein folding / stress
+GO:0015718	Other
+GO:0006991	Protein folding / stress
+GO:0007088	Cell cycle / DNA / chromatin
+GO:0060236	Cell cycle / DNA / chromatin
+GO:1904375	Other
+GO:0006275	Cell cycle / DNA / chromatin
+GO:1903077	Cell organization / transport / adhesion
+GO:0042303	Other
+GO:0042633	Other
+GO:0071025	Other
+GO:0051480	Other
+GO:0008202	Metabolism
+GO:1903578	Metabolism
+GO:0007098	Cell organization / transport / adhesion
+GO:0010586	Other
+GO:2000058	Protein folding / stress
+GO:0042176	Protein folding / stress
+GO:0006367	Gene expression / RNA
+GO:0070316	Other
+GO:1902459	Other
+GO:0033045	Cell cycle / DNA / chromatin
+GO:0032434	Protein folding / stress
+GO:0098974	Cell organization / transport / adhesion
+GO:0061136	Protein folding / stress
+GO:2000319	Immune / inflammation
+GO:0015802	Other
+GO:0006352	Gene expression / RNA
+GO:0006897	Other
+GO:0051983	Cell cycle / DNA / chromatin
+GO:0051052	Other
+GO:1902105	Immune / inflammation
+GO:2000316	Immune / inflammation
+GO:0045622	Immune / inflammation
+GO:0043370	Immune / inflammation
+GO:0014009	Development / differentiation
+GO:2000036	Other
+GO:0072583	Cell organization / transport / adhesion
+GO:0051054	Other
+GO:0032495	Other
+GO:1901800	Protein folding / stress
+GO:0070972	Other
+GO:1901799	Protein folding / stress
+GO:0060828	Signalling
+GO:0089718	Cell organization / transport / adhesion
+GO:0033044	Other
+GO:0006351	Gene expression / RNA
+GO:0002931	Protein folding / stress
+GO:0032435	Protein folding / stress
+GO:0000387	Gene expression / RNA
+GO:2000060	Protein folding / stress
+GO:2001233	Other
+GO:0030177	Signalling
+GO:0051783	Other
+GO:0007020	Cell organization / transport / adhesion
+GO:0043122	Signalling
+GO:0046637	Immune / inflammation
+GO:0032436	Protein folding / stress
+GO:0035437	Other
+GO:0048193	Cell organization / transport / adhesion
+GO:1903706	Immune / inflammation
+GO:0046785	Cell organization / transport / adhesion
+GO:0046365	Metabolism
+GO:0031669	Other
+GO:0009267	Protein folding / stress
+GO:0032922	Other
+GO:0046642	Cell organization / transport / adhesion
+GO:0141086	Immune / inflammation
+GO:1902475	Cell organization / transport / adhesion
+GO:0022613	Other
+GO:0141156	Signalling
+GO:0045663	Development / differentiation
+GO:0000244	Gene expression / RNA
+GO:0000388	Gene expression / RNA
+GO:0022618	Protein folding / stress
+GO:0071826	Other
+GO:0006816	Other
+GO:0016032	Other
+GO:1901987	Other
+GO:1901264	Other
+GO:0034605	Protein folding / stress
+GO:0051293	Cell organization / transport / adhesion
+GO:0051701	Other
+GO:0019320	Metabolism
+GO:0051653	Other
+GO:0002824	Immune / inflammation
+GO:0033157	Cell organization / transport / adhesion
+GO:1903846	Other
+GO:0030511	Signalling
+GO:0001919	Signalling
+GO:0051640	Other
+GO:0032688	Other
+GO:0006094	Metabolism
+GO:0007029	Other
+GO:0007623	Other
+GO:0070588	Cell organization / transport / adhesion
+GO:0071470	Protein folding / stress
+GO:1901532	Development / differentiation
+GO:0046034	Metabolism
+GO:2001234	Other
+GO:0006898	Cell organization / transport / adhesion
+GO:0044403	Other
+GO:0140694	Other
+GO:0046434	Other
+GO:0002819	Immune / inflammation
+GO:0000393	Gene expression / RNA
+GO:2001243	Other
+GO:0051131	Protein folding / stress
+GO:0019319	Metabolism
+GO:1903573	Protein folding / stress
+GO:0015807	Other
+GO:0046824	Cell organization / transport / adhesion
+GO:0046364	Metabolism
+GO:2000045	Cell cycle / DNA / chromatin
+GO:0030111	Signalling
+GO:0000723	Cell cycle / DNA / chromatin
+GO:0016052	Metabolism
+GO:0045333	Metabolism
+GO:0045732	Protein folding / stress
+GO:0039532	Immune / inflammation
+GO:0098739	Cell organization / transport / adhesion
+GO:0045665	Development / differentiation
+GO:0032200	Cell cycle / DNA / chromatin
+GO:0006893	Cell organization / transport / adhesion
+GO:0030100	Other
+GO:0009205	Metabolism
+GO:0050766	Other
+GO:0048511	Other
+GO:0007224	Signalling
+GO:0002673	Immune / inflammation
+GO:1900747	Signalling
+GO:0008356	Other
+GO:0006513	Other
+GO:0048729	Development / differentiation
+GO:0045744	Signalling
+GO:0032375	Other
+GO:0032372	Other
+GO:0071320	Other
+GO:0002009	Development / differentiation
+GO:0045187	Other
+GO:0070633	Other
+GO:0061303	Development / differentiation
+GO:0006937	Organ physiology (muscle, heart, kidney, gut)
+GO:0072044	Development / differentiation
+GO:0016540	Protein folding / stress
+GO:0106072	Signalling
+GO:0040013	Other
+GO:0042045	Other
+GO:2000146	Cell organization / transport / adhesion
+GO:0030336	Cell organization / transport / adhesion
+GO:1902548	Other
+GO:0070269	Immune / inflammation
+GO:0090504	Development / differentiation
+GO:0030148	Metabolism
+GO:0099638	Cell organization / transport / adhesion
+GO:0045682	Development / differentiation
+GO:0030488	Gene expression / RNA
+GO:0090505	Development / differentiation
+GO:0044319	Development / differentiation
+GO:0010971	Cell cycle / DNA / chromatin
+GO:0002181	Gene expression / RNA
+GO:0002183	Gene expression / RNA
+GO:0009416	Other
+GO:0007249	Signalling
+GO:1901740	Development / differentiation
+GO:0000479	Gene expression / RNA
+GO:1903426	Other
+GO:0034242	Other
+GO:1900180	Other
+GO:0006413	Other
+GO:0000466	Gene expression / RNA
+GO:0002886	Immune / inflammation
+GO:0006888	Cell organization / transport / adhesion
+GO:0045947	Other
+GO:0009314	Other
+GO:1901739	Development / differentiation
+GO:0046822	Cell organization / transport / adhesion
+GO:0034644	Other
+GO:0141137	Cell cycle / DNA / chromatin
+GO:0060142	Other
+GO:0009411	Other
+GO:1902895	Gene expression / RNA
+GO:1902229	Other
+GO:0006414	Other
+GO:0001754	Development / differentiation
+GO:0046530	Development / differentiation
+GO:0007096	Cell cycle / DNA / chromatin
+GO:0045787	Other
+GO:1990869	Other
+GO:1990868	Other
+GO:0038084	Signalling
+GO:0045786	Other
+GO:0090068	Other
+GO:0045930	Cell cycle / DNA / chromatin
+GO:0050954	Neural
+GO:0047496	Cell organization / transport / adhesion
+GO:0050982	Other
+GO:0051648	Other
+GO:0008089	Cell organization / transport / adhesion
+GO:0035331	Signalling
+GO:0070098	Signalling
+GO:0050433	Other
+GO:0031032	Cell organization / transport / adhesion
+GO:0045666	Development / differentiation
+GO:0007498	Development / differentiation
+GO:0071880	Signalling
+GO:0051101	Other
+GO:0030865	Cell organization / transport / adhesion
+GO:0051781	Other
+GO:0000027	Gene expression / RNA
+GO:0090161	Other
+GO:0002691	Cell organization / transport / adhesion
+GO:0097479	Other
+GO:0010866	Metabolism
+GO:2000738	Development / differentiation
+GO:0045606	Development / differentiation
+GO:0048705	Development / differentiation
+GO:0035330	Signalling
+GO:0045618	Development / differentiation
+GO:0014059	Signalling
+GO:0007605	Neural
+GO:0010256	Other
+GO:0010867	Metabolism
+GO:0051650	Other
+GO:0032570	Other
+GO:0048598	Development / differentiation
+GO:0010463	Other
+GO:1901342	Development / differentiation
+GO:0090207	Metabolism
+GO:0050892	Organ physiology (muscle, heart, kidney, gut)
+GO:0030323	Development / differentiation
+GO:0045684	Development / differentiation
+GO:0071364	Other
+GO:2000515	Cell organization / transport / adhesion
+GO:0046636	Cell organization / transport / adhesion
+GO:2000406	Cell organization / transport / adhesion
+GO:2000403	Cell organization / transport / adhesion
+GO:2001135	Cell organization / transport / adhesion
+GO:2000404	Cell organization / transport / adhesion
+GO:0022408	Cell organization / transport / adhesion
+GO:0002695	Immune / inflammation
+GO:0010906	Metabolism
+GO:0001838	Development / differentiation
+GO:0016331	Development / differentiation
+GO:0072175	Development / differentiation
+GO:0007416	Cell organization / transport / adhesion
+GO:0035282	Development / differentiation
+GO:0034391	Other
+GO:0030518	Signalling
+GO:0043401	Signalling
+GO:0035148	Development / differentiation
+GO:1990839	Other
+GO:0007052	Cell cycle / DNA / chromatin
+GO:1902850	Cell cycle / DNA / chromatin
+GO:1903350	Other
+GO:1903351	Other
+GO:0071870	Other
+GO:0071867	Other
+GO:0071869	Other
+GO:0071868	Other
+GO:0060341	Other
+GO:0051495	Cell organization / transport / adhesion
+GO:0017015	Signalling
+GO:1903047	Cell cycle / DNA / chromatin
+GO:1903844	Other
+GO:0007584	Other
+GO:1903034	Protein folding / stress
+GO:0032892	Other
+GO:0060261	Gene expression / RNA
+GO:0060260	Gene expression / RNA
+GO:0033762	Other
+GO:0071377	Other
+GO:0050806	Signalling
+GO:0048841	Development / differentiation
+GO:0003009	Organ physiology (muscle, heart, kidney, gut)
+GO:0050881	Neural
+GO:0050879	Other
+GO:0006941	Organ physiology (muscle, heart, kidney, gut)
+GO:0099173	Cell organization / transport / adhesion
+GO:0070571	Development / differentiation
+GO:0048681	Development / differentiation
+GO:0048679	Development / differentiation
+GO:0070570	Development / differentiation
+GO:0006936	Organ physiology (muscle, heart, kidney, gut)
+GO:0002921	Immune / inflammation
+GO:0045916	Immune / inflammation
+GO:0030449	Immune / inflammation
+GO:2000144	Gene expression / RNA
+GO:2000142	Gene expression / RNA
+GO:0019081	Other
+GO:0010970	Cell organization / transport / adhesion
+GO:0019080	Other
+GO:0099111	Other
+GO:0071824	Other
+GO:0065004	Protein folding / stress
+GO:0051656	Other
+GO:0070897	Gene expression / RNA
+GO:0051289	Protein folding / stress
+GO:1902117	Other
+GO:0009395	Metabolism
+GO:0051123	Gene expression / RNA
+GO:0006284	Cell cycle / DNA / chromatin
+GO:0090141	Cell organization / transport / adhesion
+GO:0090140	Cell organization / transport / adhesion
+GO:0010907	Metabolism
+GO:0046835	Metabolism
+GO:0051216	Development / differentiation
+GO:0010827	Cell organization / transport / adhesion
+GO:0016241	Protein folding / stress
+GO:0097150	Other
+GO:0009798	Development / differentiation
+GO:0055081	Other
+GO:0010455	Development / differentiation
+GO:2000328	Immune / inflammation
+GO:0003333	Cell organization / transport / adhesion
+GO:0001738	Development / differentiation
+GO:0010664	Other
+GO:0015804	Other
+GO:0006865	Other
+GO:1905039	Cell organization / transport / adhesion
+GO:1900034	Protein folding / stress
+GO:0010662	Other
+GO:0046825	Cell organization / transport / adhesion
+GO:0015849	Other
+GO:0046942	Other
+GO:0006970	Protein folding / stress
+GO:0032479	Other
+GO:0046456	Other
+GO:0042306	Cell organization / transport / adhesion
+GO:0031648	Other
+GO:0032649	Other
+GO:0014015	Development / differentiation
+GO:0014013	Development / differentiation
+GO:0050714	Other
+GO:0032480	Other
+GO:0002822	Immune / inflammation
+GO:0010232	Organ physiology (muscle, heart, kidney, gut)
+GO:0150104	Organ physiology (muscle, heart, kidney, gut)
+GO:0010507	Protein folding / stress
+GO:2000321	Cell organization / transport / adhesion
+GO:0043372	Cell organization / transport / adhesion
+GO:2000318	Immune / inflammation
+GO:0045624	Cell organization / transport / adhesion
+GO:2000516	Cell organization / transport / adhesion
+GO:0046425	Signalling
+GO:0090100	Signalling
+GO:0046638	Cell organization / transport / adhesion
+GO:1904892	Signalling
+GO:0034341	Immune / inflammation
+GO:0046503	Metabolism
+GO:0046427	Signalling
+GO:0071482	Other
+GO:0051225	Cell cycle / DNA / chromatin
+GO:0071478	Other
+GO:1904894	Signalling
+GO:1905037	Protein folding / stress
+GO:0051258	Protein folding / stress
+GO:0097190	Other
+GO:1902175	Other
+GO:0097193	Other
+GO:0046777	Other
+GO:1903332	Protein folding / stress
+GO:0042063	Development / differentiation
+GO:0016310	Other
+GO:0014706	Development / differentiation
+GO:0060333	Immune / inflammation
+GO:0019221	Signalling
+GO:0016358	Development / differentiation
+GO:0002052	Development / differentiation
+GO:1905155	Cell organization / transport / adhesion
+GO:0060100	Cell organization / transport / adhesion
+GO:0001952	Cell organization / transport / adhesion
+GO:0010882	Organ physiology (muscle, heart, kidney, gut)
+GO:0051259	Protein folding / stress
+GO:0008625	Other
+GO:0060099	Cell organization / transport / adhesion
+GO:0002327	Immune / inflammation
+GO:1905153	Cell organization / transport / adhesion
+GO:0035994	Other
+GO:1902414	Other
+GO:0007589	Other
+GO:0099171	Signalling
+GO:0050878	Other
+GO:0007586	Other
+GO:0022600	Organ physiology (muscle, heart, kidney, gut)
+GO:0007193	Signalling
+GO:1903035	Protein folding / stress
+GO:0045428	Other
+GO:0080164	Other
+GO:0045429	Other
+GO:0006163	Metabolism
+GO:0019693	Metabolism
+GO:0009150	Metabolism
+GO:0009117	Metabolism
+GO:1905906	Other
+GO:1903911	Other
+GO:0051235	Other
+GO:0051651	Other
+GO:0002244	Development / differentiation
+GO:1900181	Other
+GO:1903909	Other
+GO:0009259	Metabolism
+GO:0032651	Other
+GO:1903580	Metabolism
+GO:0008344	Other
+GO:0006694	Metabolism
+GO:0043516	Protein folding / stress
+GO:0006091	Metabolism
+GO:0033123	Metabolism
+GO:0045821	Metabolism
+GO:0030813	Metabolism
+GO:1900544	Metabolism
+GO:0045981	Metabolism
+GO:0070542	Other
+GO:0072521	Other
+GO:0009144	Metabolism
+GO:0032689	Other
+GO:0021782	Development / differentiation
+GO:0032729	Other
+GO:0097009	Other
+GO:0061842	Other
+GO:0051642	Other
+GO:0042116	Immune / inflammation
+GO:0048545	Other
+GO:0009141	Other
+GO:0015980	Metabolism
+GO:0010562	Other
+GO:1902235	Other
+GO:0019732	Immune / inflammation
+GO:0072595	Other
+GO:0030534	Other
+GO:1990000	Other
+GO:0035987	Development / differentiation
+GO:0036315	Other
+GO:0051294	Cell organization / transport / adhesion
+GO:0045913	Metabolism
+GO:1901796	Signalling
+GO:1905634	Other
+GO:0007626	Other
+GO:0006164	Metabolism
+GO:0030520	Signalling
+GO:0040001	Cell cycle / DNA / chromatin
+GO:0050832	Protein folding / stress
+GO:0035235	Signalling
+GO:0001706	Development / differentiation
+GO:0060998	Development / differentiation
+GO:0008361	Other
+GO:0021954	Development / differentiation
+GO:0051279	Cell organization / transport / adhesion
+GO:0032481	Other
+GO:0050848	Signalling
+GO:0032648	Other
+GO:1900452	Signalling
+GO:0006536	Metabolism
+GO:0007006	Cell organization / transport / adhesion
+GO:0051962	Development / differentiation
+GO:1902017	Cell organization / transport / adhesion
+GO:0035774	Signalling
+GO:1902275	Cell cycle / DNA / chromatin
+GO:0045088	Immune / inflammation
+GO:0099637	Other
+GO:0099587	Cell organization / transport / adhesion
+GO:0098659	Cell organization / transport / adhesion
+GO:1902018	Cell organization / transport / adhesion
+GO:0050886	Organ physiology (muscle, heart, kidney, gut)
+GO:0001990	Organ physiology (muscle, heart, kidney, gut)
+GO:0009636	Other
+GO:0098877	Cell organization / transport / adhesion
+GO:0098969	Cell organization / transport / adhesion
+GO:0007007	Cell organization / transport / adhesion
+GO:0061951	Other
+GO:0072698	Other
+GO:0099175	Cell organization / transport / adhesion
+GO:0009615	Other
+GO:0001991	Organ physiology (muscle, heart, kidney, gut)
+GO:1903540	Other
+GO:0042407	Cell organization / transport / adhesion
+GO:0003044	Organ physiology (muscle, heart, kidney, gut)
+GO:0070585	Other
+GO:0051960	Development / differentiation
+GO:0042098	Immune / inflammation
+GO:1902116	Other
+GO:0003081	Organ physiology (muscle, heart, kidney, gut)
+GO:0035315	Development / differentiation
+GO:0048536	Immune / inflammation
+GO:0032368	Other
+GO:0033555	Protein folding / stress
+GO:0009084	Metabolism
+GO:0051607	Protein folding / stress
+GO:0044380	Other
+GO:0043648	Other
+GO:0032438	Other
+GO:0048753	Other
+GO:0090322	Other
+GO:0071539	Other
+GO:1905508	Other
+GO:0044790	Protein folding / stress
+GO:0006538	Metabolism
+GO:1903729	Cell organization / transport / adhesion
+GO:0061178	Signalling
+GO:0002218	Immune / inflammation
+GO:0006525	Metabolism
+GO:0031503	Other
+GO:0002456	Immune / inflammation
+GO:0030595	Cell organization / transport / adhesion
+GO:0048167	Signalling
+GO:2001252	Other
+GO:0098754	Metabolism
+GO:1902115	Other
+GO:0009994	Development / differentiation
+GO:0045229	Other
+GO:0051602	Other
+GO:0000209	Other
+GO:1905268	Cell cycle / DNA / chromatin
+GO:0051965	Cell organization / transport / adhesion
+GO:0043062	Other
+GO:0030198	Cell organization / transport / adhesion
+GO:0002687	Cell organization / transport / adhesion
+GO:1902624	Cell organization / transport / adhesion
+GO:0035435	Cell organization / transport / adhesion
+GO:1902622	Cell organization / transport / adhesion
+GO:0071677	Cell organization / transport / adhesion
+GO:0006817	Other
+GO:0046697	Development / differentiation
+GO:0001893	Development / differentiation
+GO:0002685	Cell organization / transport / adhesion
+GO:1900026	Cell organization / transport / adhesion
+GO:0016064	Immune / inflammation
+GO:0019724	Immune / inflammation
+GO:1900024	Cell organization / transport / adhesion
+GO:2000401	Cell organization / transport / adhesion
+GO:0071675	Cell organization / transport / adhesion
+GO:0060135	Development / differentiation
+GO:0005975	Metabolism
+GO:0001819	Other
+GO:0032677	Other
+GO:0050727	Immune / inflammation
+GO:0019318	Metabolism
+GO:0034612	Other
+GO:0045103	Other
+GO:0046850	Other
+GO:0044042	Metabolism
+GO:0005977	Metabolism
+GO:0048311	Other
+GO:0048168	Signalling
+GO:0052547	Other
+GO:0031098	Protein folding / stress
+GO:0001656	Development / differentiation
+GO:0072088	Development / differentiation
+GO:0072028	Development / differentiation
+GO:0072073	Development / differentiation
+GO:2000027	Development / differentiation
+GO:0072210	Development / differentiation
+GO:0016485	Protein folding / stress
+GO:0016055	Signalling
+GO:0060993	Development / differentiation
+GO:0072074	Development / differentiation
+GO:0001657	Development / differentiation
+GO:0072163	Development / differentiation
+GO:0072164	Development / differentiation
+GO:0072009	Development / differentiation
+GO:0061005	Development / differentiation
+GO:0072006	Development / differentiation
+GO:0001823	Development / differentiation
+GO:0060795	Development / differentiation
+GO:0001658	Development / differentiation
+GO:0072273	Development / differentiation
+GO:0060675	Development / differentiation
+GO:0051321	Development / differentiation
+GO:0061982	Development / differentiation
+GO:0030834	Cell organization / transport / adhesion
+GO:1903046	Development / differentiation
+GO:0042551	Development / differentiation
+GO:0016322	Development / differentiation
+GO:0039531	Immune / inflammation
+GO:0043922	Other
+GO:0044793	Other
+GO:1902751	Other
+GO:0075522	Other
+GO:0042026	Protein folding / stress
+GO:0043306	Cell organization / transport / adhesion
+GO:0046716	Other
+GO:0035914	Development / differentiation
+GO:0043302	Cell organization / transport / adhesion
+GO:0051593	Other
+GO:0090083	Other
+GO:0006334	Cell cycle / DNA / chromatin
+GO:2000001	Protein folding / stress
+GO:0046827	Cell organization / transport / adhesion
+GO:0034333	Cell organization / transport / adhesion
+GO:1904628	Other
+GO:0043304	Cell organization / transport / adhesion
+GO:0000101	Other
+GO:1903054	Cell organization / transport / adhesion
+GO:1904627	Other
+GO:0048208	Cell organization / transport / adhesion
+GO:0015820	Other
+GO:0034728	Cell cycle / DNA / chromatin
+GO:0035089	Cell organization / transport / adhesion
+GO:0061162	Cell organization / transport / adhesion
+GO:0001921	Signalling
+GO:0043300	Cell organization / transport / adhesion
+GO:0061339	Cell organization / transport / adhesion
+GO:0046839	Metabolism
+GO:0010832	Development / differentiation
+GO:1903428	Other
+GO:0071214	Other
+GO:0104004	Other
+GO:0015803	Other
+GO:0032530	Other
+GO:0007019	Cell organization / transport / adhesion
+GO:0048025	Gene expression / RNA
+GO:0090114	Cell organization / transport / adhesion
+GO:0070327	Other
+GO:0071468	Other
+GO:0006901	Cell organization / transport / adhesion
+GO:0097306	Other
+GO:0098734	Other
+GO:1903146	Protein folding / stress
+GO:1901524	Protein folding / stress
+GO:0051952	Other
+GO:0046928	Signalling
+GO:0023061	Signalling
+GO:0022602	Development / differentiation
+GO:0043279	Other
+GO:0008544	Development / differentiation
+GO:1902254	Other
+GO:0042698	Development / differentiation
+GO:0006942	Organ physiology (muscle, heart, kidney, gut)
+GO:1905475	Other
+GO:0051301	Other
+GO:0007131	Cell cycle / DNA / chromatin
+GO:0140527	Cell cycle / DNA / chromatin
+GO:2000242	Development / differentiation
+GO:0007283	Development / differentiation
+GO:0051174	Other
+GO:1903376	Other
+GO:0042102	Cell organization / transport / adhesion
+GO:0017156	Cell organization / transport / adhesion
+GO:0060537	Development / differentiation
+GO:0050671	Immune / inflammation
+GO:0006310	Cell cycle / DNA / chromatin
+GO:0002577	Immune / inflammation
+GO:0046470	Metabolism
+GO:0003228	Development / differentiation
+GO:0017157	Cell organization / transport / adhesion
+GO:0032946	Other
+GO:0060964	Gene expression / RNA
+GO:1900368	Gene expression / RNA
+GO:0060147	Other
+GO:0060149	Other
+GO:1900369	Gene expression / RNA
+GO:0060965	Gene expression / RNA
+GO:0060966	Gene expression / RNA
+GO:0060967	Gene expression / RNA
+GO:0010587	Other
+GO:0140627	Protein folding / stress
+GO:1990116	Protein folding / stress
+GO:2000104	Cell cycle / DNA / chromatin
+GO:0006892	Cell organization / transport / adhesion
+GO:0045815	Cell cycle / DNA / chromatin
+GO:0006476	Other
+GO:0046689	Other
+GO:0050686	Gene expression / RNA
+GO:0051133	Immune / inflammation
+GO:0090235	Cell cycle / DNA / chromatin
+GO:0008156	Cell cycle / DNA / chromatin
+GO:0050684	Gene expression / RNA
+GO:0032328	Other
+GO:0048240	Development / differentiation
+GO:0061158	Gene expression / RNA
+GO:0015931	Other
+GO:0090209	Metabolism
+GO:0045176	Other
+GO:0046831	Cell organization / transport / adhesion
+GO:0061621	Metabolism
+GO:0015801	Other
+GO:0090208	Metabolism
+GO:0006622	Cell organization / transport / adhesion
+GO:0072531	Cell organization / transport / adhesion
+GO:0010989	Other
+GO:0032239	Other
+GO:0035601	Other
+GO:0072526	Other
+GO:1903241	Gene expression / RNA
+GO:0071398	Other
+GO:1900226	Immune / inflammation
+GO:0160020	Other
+GO:0002092	Cell organization / transport / adhesion
+GO:0045604	Development / differentiation
+GO:0008015	Organ physiology (muscle, heart, kidney, gut)
+GO:0031114	Cell organization / transport / adhesion
+GO:0030010	Cell organization / transport / adhesion
+GO:0002675	Immune / inflammation
+GO:0003143	Development / differentiation
+GO:0002011	Development / differentiation
+GO:0033148	Signalling
+GO:1904263	Signalling
+GO:0042254	Gene expression / RNA
+GO:0043923	Other
+GO:0030497	Metabolism
+GO:1902176	Other
+GO:0043555	Protein folding / stress
+GO:0051209	Cell organization / transport / adhesion
+GO:0048592	Development / differentiation
+GO:0097191	Other
+GO:0045931	Cell cycle / DNA / chromatin
+GO:0045664	Development / differentiation
+GO:1900087	Cell cycle / DNA / chromatin
+GO:0061053	Development / differentiation
+GO:1902036	Development / differentiation
+GO:0001704	Development / differentiation
+GO:1903055	Cell organization / transport / adhesion
+GO:1901201	Cell organization / transport / adhesion
+GO:0001956	Signalling
+GO:2000677	Other
+GO:0050678	Other
+GO:0030324	Development / differentiation
+GO:0018126	Other
+GO:0071349	Other
+GO:0070671	Other
+GO:0016239	Protein folding / stress
+GO:0045292	Gene expression / RNA
+GO:0072079	Development / differentiation
+GO:0072070	Development / differentiation
+GO:0009954	Development / differentiation
+GO:0007379	Development / differentiation
+GO:0034393	Other
+GO:0016441	Other
+GO:0007212	Signalling
+GO:0090307	Cell cycle / DNA / chromatin
+GO:0007597	Development / differentiation
+GO:0060008	Development / differentiation
+GO:0051053	Other
+GO:0046949	Metabolism
+GO:0072378	Development / differentiation
+GO:0072376	Protein folding / stress
+GO:0043457	Metabolism
+GO:0006940	Organ physiology (muscle, heart, kidney, gut)
+GO:0007059	Cell cycle / DNA / chromatin
+GO:0009299	Gene expression / RNA
+GO:0042789	Gene expression / RNA
+GO:0010638	Other
+GO:0071616	Metabolism
+GO:0000070	Cell cycle / DNA / chromatin
+GO:1903008	Other
+GO:0010459	Organ physiology (muscle, heart, kidney, gut)
+GO:0099601	Signalling
+GO:0035633	Other
+GO:0030258	Metabolism
+GO:0000381	Gene expression / RNA
+GO:0160257	Immune / inflammation
+GO:0008154	Cell organization / transport / adhesion
+GO:0010001	Development / differentiation
+GO:0009948	Development / differentiation
+GO:0045954	Immune / inflammation
+GO:0070977	Development / differentiation
+GO:0043086	Other
+GO:0007369	Development / differentiation
+GO:0010958	Cell organization / transport / adhesion
+GO:1903789	Cell organization / transport / adhesion
+GO:0034975	Protein folding / stress
+GO:0055093	Protein folding / stress
+GO:0060252	Development / differentiation
+GO:0018205	Other
+GO:0090169	Cell cycle / DNA / chromatin
+GO:0036296	Other
+GO:0097421	Development / differentiation
+GO:0033962	Other
+GO:0034392	Other
+GO:0045721	Metabolism
+GO:0051957	Other
+GO:0002223	Immune / inflammation
+GO:1990840	Other
+GO:1990858	Other
+GO:1901142	Other
+GO:0014850	Other
+GO:0061154	Development / differentiation
+GO:0045591	Cell organization / transport / adhesion
+GO:0003159	Development / differentiation
+GO:0008090	Cell organization / transport / adhesion
+GO:0042762	Metabolism
+GO:2000623	Gene expression / RNA
+GO:1903898	Protein folding / stress
+GO:1900102	Protein folding / stress
+GO:1903897	Protein folding / stress
+GO:0033146	Signalling
+GO:1903427	Other
+GO:0010985	Other
+GO:1901836	Gene expression / RNA
+GO:0010988	Other
+GO:0043535	Cell organization / transport / adhesion
+GO:0099159	Cell organization / transport / adhesion
+GO:0048172	Signalling
+GO:0032091	Other
+GO:0002227	Immune / inflammation
+GO:0071459	Other
+GO:0048489	Other
+GO:0008334	Gene expression / RNA
+GO:0051260	Protein folding / stress
+GO:0010881	Organ physiology (muscle, heart, kidney, gut)
+GO:0010649	Other
+GO:0010880	Cell organization / transport / adhesion
+GO:0046348	Metabolism
+GO:0006054	Metabolism
+GO:1901568	Metabolism
+GO:0015749	Cell organization / transport / adhesion
+GO:0008645	Cell organization / transport / adhesion
+GO:0042761	Metabolism
+GO:1903779	Organ physiology (muscle, heart, kidney, gut)
+GO:0001890	Development / differentiation
+GO:0019731	Immune / inflammation
+GO:0006739	Metabolism
+GO:0006098	Metabolism
+GO:0006740	Metabolism
+GO:0072524	Other
+GO:0006497	Other
+GO:0060766	Signalling
+GO:0046496	Metabolism
+GO:0033144	Signalling
+GO:0042158	Other
+GO:0046471	Metabolism
+GO:0051156	Metabolism
+GO:0032008	Signalling
+GO:0007339	Development / differentiation
+GO:0032006	Signalling
+GO:0035036	Development / differentiation
+GO:1901844	Organ physiology (muscle, heart, kidney, gut)
+GO:0009988	Other
+GO:0061620	Metabolism
+GO:0061615	Metabolism
+GO:0034214	Protein folding / stress
+GO:0006399	Gene expression / RNA
+GO:0042060	Development / differentiation
+GO:1903531	Other
+GO:0006221	Metabolism
+GO:0072528	Other
+GO:0000045	Protein folding / stress
+GO:0007033	Other
+GO:0016236	Protein folding / stress
+GO:0070365	Development / differentiation
+GO:1900272	Signalling
+GO:0051580	Other
+GO:0071287	Other
+GO:0010042	Other
+GO:0001774	Immune / inflammation
+GO:0002269	Immune / inflammation
+GO:0061900	Immune / inflammation
+GO:0048143	Immune / inflammation
+GO:0055070	Other
+GO:0150076	Immune / inflammation
+GO:0046330	Signalling
+GO:0046328	Signalling
+GO:1902905	Other
+GO:0009620	Other
+GO:1902950	Cell organization / transport / adhesion
+GO:0070206	Protein folding / stress
+GO:0014002	Development / differentiation
+GO:0010288	Other
+GO:0006878	Other
+GO:0141161	Signalling
+GO:2001238	Other
+GO:2001236	Other
+GO:0048260	Cell organization / transport / adhesion
+GO:0032642	Other
+GO:0001878	Other
+GO:2000629	Other
+GO:0090026	Cell organization / transport / adhesion
+GO:0051341	Other
+GO:1903523	Organ physiology (muscle, heart, kidney, gut)
+GO:0032222	Signalling
+GO:0032652	Other
+GO:1990806	Signalling
+GO:1901654	Other
+GO:1902992	Other
+GO:0051044	Protein folding / stress
+GO:1902430	Other
+GO:1900221	Other
+GO:0090025	Cell organization / transport / adhesion
+GO:0051647	Other
+GO:0030811	Metabolism
+GO:0006110	Metabolism
+GO:0033121	Metabolism
+GO:0043470	Metabolism
+GO:0016126	Metabolism
+GO:1900273	Signalling
+GO:0071280	Other
+GO:0061515	Development / differentiation
+GO:0060560	Development / differentiation
+GO:1900271	Signalling
+GO:0006044	Metabolism
+GO:0141163	Signalling
+GO:0007492	Development / differentiation
+GO:2000628	Other
+GO:1905515	Cell organization / transport / adhesion
+GO:0021801	Cell organization / transport / adhesion
+GO:0022030	Cell organization / transport / adhesion
+GO:0021846	Development / differentiation
+GO:0021799	Cell organization / transport / adhesion
+GO:0008347	Cell organization / transport / adhesion
+GO:0090128	Cell organization / transport / adhesion
+GO:0021795	Cell organization / transport / adhesion
+GO:0022029	Cell organization / transport / adhesion
+GO:0021885	Cell organization / transport / adhesion
+GO:0021884	Development / differentiation
+GO:0031929	Signalling
+GO:0061351	Other
+GO:0051056	Signalling
+GO:0070661	Other
+GO:1902656	Other
+GO:0007005	Cell organization / transport / adhesion
+GO:0009250	Metabolism
+GO:0005978	Metabolism
+GO:0040029	Cell cycle / DNA / chromatin
+GO:0061844	Immune / inflammation
+GO:0002274	Immune / inflammation
+GO:1904036	Other
+GO:1903672	Development / differentiation
+GO:0035850	Development / differentiation
+GO:0032509	Cell organization / transport / adhesion
+GO:0072087	Development / differentiation
+GO:0051151	Development / differentiation
+GO:0045061	Immune / inflammation
+GO:0048813	Development / differentiation
+GO:0001906	Other
+GO:0021510	Development / differentiation
+GO:1901992	Cell cycle / DNA / chromatin

@@ -1,0 +1,7 @@
+number	name	coordinates	old_label	bin_10kb	on_hi_c_loop_to_se
+1	enhancer 1	chr19:780000-780249	PTBP1 -17 kb	78	1
+2	enhancer 2	chr19:991342-991947	WDR18 +7 kb	99	1
+3	enhancer 3	chr19:1009653-1010112	GRIN3B +9 kb	100	1
+4	enhancer 4	chr19:1045128-1045546	ABCA7 +5 kb	104	1
+5	enhancer 5	chr19:1434706-1434882	RPS15 -3 kb	143	1
+6	enhancer 6	chr19:1503606-1503854	ADAMTSL5 -9 kb	150	0
