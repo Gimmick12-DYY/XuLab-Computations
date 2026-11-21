@@ -103,7 +103,7 @@ for rr in C.regions.astype(str):
     for x, y in combinations(regs, 2):
         p_, q_ = iv(x), iv(y)
         if abs(mid(p_) - mid(q_)) > 25000: ME[tuple(sorted([x, y]))] = on_loop(p_, q_)
-cls = pd.Series([v[2] for v in pk.values()]).value_counts(); NP = len(pk)
+pdcls = pd.Series([v[2] for v in pk.values()]).value_counts(); NP = len(pk)
 # pair classes (user 2026-11-20): element class of the two ends (panel e rule: promoter = RefSeq Select TSS +-1 kb, else ChromHMM state at the
 # midpoint; enhancer = EnhA1/A2/G1/G2/Wk/Biv, repressive = ReprPC/ReprPCWk/Het/ZNF-Rpts); all other combinations = Rest
 CLS5 = [("promoter-promoter", "P–P", "#2B5C9E"), ("promoter-enhancer", "P–E", "#7FA6CE"), ("enhancer-enhancer", "E–E", "#E8821E"),
@@ -112,22 +112,42 @@ BARS = [("Pairs", [("on loop", sum(pl.values()), LOOP, "white"), ("", NP - sum(p
         ("Module\nedges", [("on loop", sum(ME.values()), LOOP, "white"), ("", len(ME) - sum(ME.values()), NOLOOP, N.dark)]),
         ("Pair\nclasses", [(lab, int(pc.get(k, 0)), col, "white") for k, lab, col in CLS5] + [("Rest", NP5 - sum(int(pc.get(k, 0)) for k, _, _ in CLS5), "#E3E3E3", N.dark)])]
 plt.rcParams.update({"font.size": 6.5})
-fig = plt.figure(figsize=(60 * MM, 60 * MM)); ax = fig.add_axes([0.17, 0.24, 0.8, 0.74])
-for i, (lab, segs) in enumerate(BARS):
-    tot, left = sum(v for _, v, _, _ in segs), 0
-    for nm, v, col, tc in segs:
-        f = v / tot; ax.barh(i, f, 0.74, left=left, color=col, lw=0.8, edgecolor="white")
-        if f >= 0.12: ax.text(left + f / 2, i, (f"{nm}\n" if nm else "") + f"{100 * f:.1f}%\nn = {v:,}", ha="center", va="center", fontsize=6, color=tc, linespacing=1.1)
-        left += f
-ax.set_yticks(range(len(BARS))); ax.set_yticklabels([b[0] for b in BARS], fontsize=7, linespacing=1.0); ax.set_ylim(len(BARS) - 0.5, -0.5)
-ax.set_xlim(0, 1); ax.set_xticks([]); ax.spines["bottom"].set_visible(False); ax.tick_params(axis="y", length=0); ax.tick_params(axis="x", length=2, pad=1)
-for sp_ in ("left", "top", "right"): ax.spines[sp_].set_visible(False)
-segs5 = BARS[2][1]; tot5 = sum(v for _, v, _, _ in segs5); small = [(nm, v, col) for nm, v, col, _ in segs5 if v / tot5 < 0.12]
-hs = [plt.Rectangle((0, 0), 1, 1, color=col) for _, _, col in small]
-fig.legend(hs, [f"{nm} {100 * v / tot5:.1f}%" for nm, v, _ in small], loc="upper left", bbox_to_anchor=(0.155, 0.235), ncol=len(small), fontsize=6, handlelength=0.7,
-           handleheight=0.7, handletextpad=0.25, columnspacing=0.55, borderaxespad=0)
-fig.text(0.17, 0.12, "P promoter, E enhancer, R repressive", fontsize=6, color=N.dark, va="top")
-print("classes5", {nm: (v, round(100 * v / sum(x[1] for x in BARS[2][1]), 1)) for nm, v, _, _ in BARS[2][1]}); print("pairs", NP, "on loop", sum(pl.values()), "| module edges unique", len(ME), "on loop", sum(ME.values()), "| classes", cls.to_dict())
+# ---- two-ring donut (user 2026-11-20): inner = pair class (element classes of the two ends); outer = within each class, on a Hi-C loop
+#      (dark shade) vs not (light tint). Palette validated with the dataviz validator (all checks pass; orange contrast relieved by labels). ----
+from matplotlib.colors import to_rgb
+CL6 = [("promoter-promoter", "Promoter–promoter", "#2B5C9E"), ("promoter-enhancer", "Promoter–enhancer", "#2A9D8F"), ("enhancer-enhancer", "Enhancer–enhancer", "#E8821E"),
+       ("promoter-repressive", "Promoter–repressive", "#7E57C2"), ("repressive-repressive", "Repressive–repressive", "#C0392B"), ("rest", "Rest", "#BDBDBD")]
+def klass(p_, q_):
+    a_, b_ = sorted([cls(*p_), cls(*q_)], key=["promoter", "enhancer", "repressive", "other"].index); k = f"{a_}-{b_}"
+    return k if k in {c[0] for c in CL6[:5]} else "rest"
+mekeys = set(ME)
+T = pd.DataFrame([(klass(p_, q_), pl[k], k in mekeys) for k, (p_, q_, _) in pk.items()], columns=["cls", "loop", "module"])
+SUM = T.groupby("cls").agg(n=("loop", "size"), on_loop=("loop", "sum"), module=("module", "sum")).reindex([c[0] for c in CL6])
+SUM["pct"] = 100 * SUM.n / SUM.n.sum(); SUM["pct_loop"] = 100 * SUM.on_loop / SUM.n; SUM["pct_module"] = 100 * SUM.module / SUM.n
+print(SUM.round(1).to_string()); print("module edges matched to pairs:", int(T.module.sum()), "of", len(ME))
+shade = lambda c, f: tuple(np.array(to_rgb(c)) * (1 - f))                       # darker
+tint = lambda c, f: tuple(np.array(to_rgb(c)) + (1 - np.array(to_rgb(c))) * f)    # lighter
+fig = plt.figure(figsize=(60 * MM, 60 * MM)); pa = fig.add_axes([0.0, 0.22, 0.57, 0.74]); pa.set_aspect("equal"); pa.axis("off")
+vals = SUM.n.values; cols6 = [c[2] for c in CL6]
+pa.pie(vals, colors=cols6, startangle=90, counterclock=False, radius=0.8, wedgeprops=dict(width=0.32, edgecolor="white", linewidth=0.8))
+outer, ocol = [], []
+for (k, nm, c), (_, r) in zip(CL6, SUM.iterrows()):
+    outer += [r.on_loop, r.n - r.on_loop]; ocol += [shade(c, 0.35), tint(c, 0.6)]
+pa.pie(outer, colors=ocol, startangle=90, counterclock=False, radius=1.0, wedgeprops=dict(width=0.17, edgecolor="white", linewidth=0.6))
+ang0 = 90; tot = vals.sum()
+for (k, nm, c), (_, r) in zip(CL6, SUM.iterrows()):
+    span = 360 * r.n / tot; mid_ = np.deg2rad(ang0 - span / 2); ang0 -= span
+    if r.pct >= 8: pa.text(0.64 * np.cos(mid_), 0.64 * np.sin(mid_), f"{r.pct:.0f}%", ha="center", va="center", fontsize=6, color="white" if k != "rest" else N.ink)
+pa.text(0, 0.07, f"{int(tot):,}", ha="center", va="center", fontsize=7, color=N.dark, weight="bold"); pa.text(0, -0.13, "RBBP4 pairs", ha="center", va="center", fontsize=6, color=N.dark)
+pa.set_xlim(-1.03, 1.03); pa.set_ylim(-1.03, 1.03)
+# legend/table: class, % of pairs, % on a Hi-C loop
+tx = fig.add_axes([0.59, 0.28, 0.39, 0.62]); tx.axis("off"); tx.set_xlim(0, 1); tx.set_ylim(len(CL6) - 0.4, -1.1)
+tx.text(0.66, -0.75, "pairs", ha="right", va="center", fontsize=6, color=N.dark); tx.text(1.0, -0.75, "on loop", ha="right", va="center", fontsize=6, color=N.dark)
+for i, ((k, nm, c), (_, r)) in enumerate(zip(CL6, SUM.iterrows())):
+    tx.add_patch(plt.Rectangle((0.0, i - 0.27), 0.08, 0.54, color=c, lw=0))
+    tx.text(0.12, i, {"Promoter–promoter": "P–P", "Promoter–enhancer": "P–E", "Enhancer–enhancer": "E–E", "Promoter–repressive": "P–R", "Repressive–repressive": "R–R"}.get(nm, nm), va="center", fontsize=6)
+    tx.text(0.66, i, f"{r.pct:.1f}%", ha="right", va="center", fontsize=6); tx.text(1.0, i, f"{r.pct_loop:.0f}%", ha="right", va="center", fontsize=6)
+fig.text(0.04, 0.165, "Inner ring: element classes of the two pair ends\n(P promoter, E enhancer, R repressive; Rest: other).\nOuter ring: dark = on a Hi-C loop, light = not.", fontsize=6, color=N.dark, va="top", linespacing=1.2)
 PS = {("normal", "normal"): "ArialMT", ("bold", "normal"): "Arial-BoldMT"}
 def illustrator_text(svg):
     def one(m):
