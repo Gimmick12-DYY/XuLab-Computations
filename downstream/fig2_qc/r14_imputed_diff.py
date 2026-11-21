@@ -3,6 +3,7 @@
 regions; I1 = D-I sets with imputed scores (M1, M2a, M2b); I2 = raw-called D-B sets with imputed scores (M2a, M2b);
 I3 = D-I sets with raw scores (M2a, M2b). 2 sizes x 2 CTCF references; halves. Outputs OUT/round6_diffpeaks/imputed/."""
 import itertools
+import os
 import sys
 
 import matplotlib
@@ -18,8 +19,9 @@ from scipy.stats import binom
 from fig2_common import INP, OUT, ROOT, TFS, bin_index
 
 O6 = OUT / "round6_diffpeaks"
-OI = O6 / "imputed"
+OI = O6 / os.environ.get("R14_OUT", "imputed")   # R14_OUT / R14_IMP select an alternative imputed input (round 6b reruns)
 (OI / "figs").mkdir(parents=True, exist_ok=True)
+print("imputed input", os.environ.get("R14_IMP", "imp79.npz"), "->", OI, flush=True)
 G = 30
 R = pd.read_csv(O6 / "rows.tsv", sep="\t")
 z = np.load(O6 / "regions.npz", allow_pickle=True)
@@ -36,7 +38,7 @@ DB = np.load(O6 / "diff_sets.npz")
 bi, off, N = bin_index()
 fr = np.load(INP / "frame.npz", allow_pickle=True)
 assert list(fr["tf79"]) == tf79
-imp = sp.load_npz(INP / "imp79.npz").tocsr()
+imp = sp.load_npz(INP / os.environ.get("R14_IMP", "imp79.npz")).tocsr()
 o = np.array([off[c][0] for c in R.chrom.values])
 a = o + R.start.values // 1000
 b = o + (R.end.values - 1) // 1000
@@ -152,8 +154,8 @@ for ver, dset, kind, mets in PLAN:
                                  diag_minus_off=ob, perm_p=pv, noCTCF_perm_p=p5, **{f"n_{t}": ns[t] for t in TFS}))
                 for i, t in enumerate(TFS):
                     oth = np.delete(Bm[i], i)
-                    pertf.append(dict(version=ver, top_n=Nn, ctcf_ref=ctcf, metric=met, half=half, tf=t, own=Bm[i, i], best_other=np.nanmax(oth),
-                                      best_other_ref=np.delete(np.array(TFS), i)[int(np.nanargmax(oth))]))
+                    pertf.append(dict(version=ver, top_n=Nn, ctcf_ref=ctcf, metric=met, half=half, tf=t, own=Bm[i, i], best_other=(np.nanmax(oth) if np.isfinite(oth).any() else np.nan),
+                                      best_other_ref=(np.delete(np.array(TFS), i)[int(np.nanargmax(oth))] if np.isfinite(oth).any() else "none (empty set)")))
                 pd.DataFrame(Bm, [f"{t} sc" for t in TFS], [f"{t} ChIP" for t in TFS]).to_csv(OI / f"m_{ver}_top{Nn}_{ctcf}_{met}_{half}.tsv", sep="\t", float_format="%.4f")
 sm = pd.DataFrame(rows); pt = pd.DataFrame(pertf)
 sm.to_csv(OI / "summary.tsv", sep="\t", index=False, float_format="%.4f"); pt.to_csv(OI / "pertf.tsv", sep="\t", index=False, float_format="%.4f")
