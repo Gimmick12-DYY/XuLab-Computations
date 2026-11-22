@@ -20,8 +20,8 @@ HERE = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(HERE.parent))
 from common import style  # noqa: E402
 
-BLUE, INK = "#4A6FA5", "#222222"
-W, H = 8.30, 6.60
+BLUE, INK, PROM = "#4A6FA5", "#222222", "#0072B2"
+W, H = 8.30, 7.50
 
 
 def draw(src, out, name, L):
@@ -57,7 +57,7 @@ def draw(src, out, name, L):
     XL = (X0 / 1e6, X1 / 1e6)
     ymax = span / 2
     hh = 6.90 * ymax / span                               # equal x and y scale: pixels are true diamonds
-    top = 6.32
+    top = H - 0.28
     ax = fig.add_axes([Lx, (top - hh) / H, AW, hh / H])
     xs = X0 + np.arange(n + 1) * r0
     XX, YY = np.meshgrid(xs, xs, indexing="ij")
@@ -76,7 +76,7 @@ def draw(src, out, name, L):
         ax.set_yticks(L["yticks"])
     else:
         ax.yaxis.set_major_locator(plt.MaxNLocator(5, integer=True))
-    ax.set_title("WT HEK293T Hi-C, 10 kb", loc="left", fontsize=14, fontweight="bold", pad=6)
+    ax.set_title(f"WT HEK293T Hi-C, 10 kb   {c}:{X0 + 1:,}–{X1:,} (hg38)", loc="left", fontsize=14, fontweight="bold", pad=6)
     cb = fig.add_axes([Lx + AW - 1.45 / W, (top - 0.42) / H, 1.4 / W, 0.14 / H])
     plt.colorbar(pc, cax=cb, orientation="horizontal")
     cb.set_title("log10 contact", fontsize=12, pad=3)
@@ -114,36 +114,62 @@ def draw(src, out, name, L):
         ax3.bar(m / 1e6, max(k, 0.8), width=bw, color=INK, lw=0)
         ax3.text(m / 1e6 if nm != "C" else XL[1], ymx * 1.06, f"{lab}, {k} TF" + ("s" if k != 1 else ""), fontsize=12, ha=ha, va="bottom", clip_on=False)
 
-    y4 = y3 - 0.62
-    ax4 = fig.add_axes([Lx, y4 / H, AW, 0.56 / H], sharex=ax)
-    ax4.set_ylim(1.75, -0.65)
+    # genes, genome-browser style: canonical-transcript exons (boxes), introns (line with strand chevrons), TSS arrow = promoter
+    y4 = y3 - 1.36
+    ax4 = fig.add_axes([Lx, y4 / H, AW, 1.30 / H], sharex=ax)
+    NR, RS = 3, 1.25                                         # rows, row spacing
+    ax4.set_ylim((NR - 1) * RS + 0.85, -0.55)
     ax4.set_yticks([])
     ax4.spines["left"].set_visible(False)
-    if L.get("genes"):                                   # genes and rows given in the locus config
-        rows = L["genes"]
-        for nm, rw in rows.items():
-            g = GG[GG.gene == nm].iloc[0]
-            a, b = max(g.start, X0) / 1e6, min(g.end, X1) / 1e6
-            ax4.plot([a, b], [rw + 0.32] * 2, color=INK, lw=2.2, solid_capstyle="butt")
-            ax4.text(max((a + b) / 2, XL[0] + 0.03), rw + 0.2, nm, fontsize=12, fontstyle="italic", ha="center", va="bottom")
-    else:                                                # anchor-promoter genes first, then protein-coding genes by length
-        key = [g for g in anchor_genes if g]
-        rest = GG[(GG.type == "pc") & ~GG.gene.isin(key) & ~GG.gene.str.startswith("ENSG") & ~GG.gene.str.contains("-")]
-        rest = rest.assign(L=rest.end - rest.start).sort_values("L", ascending=False, kind="stable").gene.tolist()
-        names = list(dict.fromkeys(key + rest))[:9]
-        occ = {0: [], 1: []}
-        cw = 0.092 * span / 1e3 / 6.9                    # Mb per character of 12 pt italic Arial
-        for nm in sorted(names, key=lambda g: GG[GG.gene == g].start.iloc[0]):
-            g = GG[GG.gene == nm].iloc[0]
-            a, b = max(g.start, X0) / 1e6, min(g.end, X1) / 1e6
-            xc = min(max((a + b) / 2, XL[0] + 0.5 * cw * len(nm)), XL[1] - 0.5 * cw * len(nm))
-            half = 0.5 * cw * len(nm) + cw
-            rw = next((r_ for r_ in (0, 1) if all(xc - half > hi or xc + half < lo for lo, hi in occ[r_])), None)
-            if rw is None:
-                continue
-            occ[rw].append((xc - half, xc + half))
-            ax4.plot([a, b], [rw + 0.32] * 2, color=INK, lw=2.2, solid_capstyle="butt")
-            ax4.text(xc, rw + 0.2, nm, fontsize=12, fontstyle="italic", ha="center", va="bottom")
+    # named genes only; read-through genes (two gene names joined by "-") are left out, antisense/divergent (-AS, -DT) kept
+    named = ~GG.gene.str.startswith("ENSG") & (~GG.gene.str.contains("-") | GG.gene.str.contains(r"-(?:AS|DT|IT|OT)\d*$"))
+    show = GG[named].copy()
+    if L.get("genes"):
+        show = show[show.gene.isin(L["genes"])]
+    key = {g for g in anchor_genes if g}
+    show["key"] = show.gene.isin(key)
+    show["L"] = show.end - show.start
+    show = show.sort_values(["key", "type", "L"], ascending=[False, False, False], kind="stable")
+    rnd = fig.canvas.get_renderer()
+    mb_per_in = span / 1e3 / 6.90
+
+    def text_w(t, **kw):
+        o = fig.text(0, 0, t, **kw)
+        w_ = o.get_window_extent(rnd).width / fig.dpi * mb_per_in
+        o.remove()
+        return w_
+
+    occ = {k: [] for k in range(NR)}
+    chev = span / 1e3 / 45                                  # chevron spacing (Mb)
+    for g in show.itertuples():
+        a, b = max(g.start, X0) / 1e6, min(g.end, X1) / 1e6
+        col = PROM if g.key else INK
+        kw = dict(fontsize=11, fontstyle="italic", fontweight="bold" if g.key else "normal")
+        w_ = text_w(g.gene, **kw)
+        c_ = min(max((a + b) / 2, XL[0] + w_ / 2), XL[1] - w_ / 2)
+        lo_, hi_ = min(a, c_ - w_ / 2) - 0.004 * span / 840, max(b, c_ + w_ / 2) + 0.004 * span / 840
+        rw = next((k for k in range(NR) if all(hi_ < u or lo_ > v for u, v in occ[k])), None)
+        if rw is None:
+            continue
+        occ[rw].append((lo_, hi_))
+        y_ = rw * RS + 0.30
+        ax4.plot([a, b], [y_, y_], color=col, lw=0.9, solid_capstyle="butt", zorder=2)
+        sgn = 1 if g.strand == "+" else -1
+        for x in np.arange(a + chev / 2, b - chev / 4, chev):         # strand chevrons along the gene body
+            ax4.plot([x - sgn * 0.0018 * span / 840 * 2, x, x - sgn * 0.0018 * span / 840 * 2], [y_ - 0.09, y_, y_ + 0.09], color=col, lw=0.7, zorder=2)
+        es = [int(v) for v in str(g.exon_starts).split(",") if v not in ("", "nan")]
+        ee = [int(v) for v in str(g.exon_ends).split(",") if v not in ("", "nan")]
+        for s0, e0 in zip(es, ee):
+            if e0 > X0 and s0 < X1:
+                ax4.add_patch(plt.Rectangle((max(s0, X0) / 1e6, y_ - 0.14), max((min(e0, X1) - max(s0, X0)) / 1e6, 0.0006 * span / 840), 0.28,
+                                            color=col, lw=0, zorder=3))
+        tss = (g.start if g.strand == "+" else g.end) / 1e6
+        if XL[0] <= tss <= XL[1]:                                   # promoter: bent TSS arrow in the direction of transcription
+            d_ = sgn * 0.012 * span / 840
+            ax4.plot([tss, tss, tss + d_ * 0.6], [y_ - 0.14, y_ - 0.42, y_ - 0.42], color=col, lw=1.0, zorder=4)
+            ax4.annotate("", xy=(tss + d_, y_ - 0.42), xytext=(tss + d_ * 0.55, y_ - 0.42),
+                         arrowprops=dict(arrowstyle="-|>", color=col, lw=1.0, mutation_scale=8, shrinkA=0, shrinkB=0), zorder=4)
+        ax4.text(c_, y_ + 0.20, g.gene, ha="center", va="top", color=col, zorder=5, **kw)
     ax4.set_xlim(*XL)
     if L.get("xticks"):
         ax4.set_xticks(L["xticks"])

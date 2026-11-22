@@ -128,7 +128,7 @@ LOCI = {   # Hi-C locus panels: one 3-region module each; windows = module span 
                  # circles on the refined Hi-C dot centres (results_3d_model/clique_triangle/scripts/03_refine_null.py: best 10 kb
                  # offset of each anchor within +-20 kb, ref_sA/B/C = +10/-20/-10 kb)
                  circles=[180512337, 180876568, 181162391],
-                 genes=dict(ACBD6=0, XPR1=0, MR1=0, KIAA1614=1, STX6=0, IER5=1, LINC01732=1), yticks=[0, 100, 200, 300, 400],
+                 genes=None, yticks=[0, 100, 200, 300, 400],
                  xticks=[180.5, 180.7, 180.9, 181.1],
                  # as approved (clique-triangle screen): TF track = MACS2 q <= 0.05 peaks of every TF; promoter = TSS within +-2.5 kb
                  peaks="macs2", promoter_window=2500),
@@ -144,7 +144,7 @@ MACS2_Q005 = Path(os.environ.get("MACS2_Q005", "/vast/som/xujie_lab/TAGATG-293T/
 
 def derive_hic_loci(dst):
     """Per locus: balanced 10 kb Hi-C window (ICE weights of the wild-type HEK293T mcool), all TFs' Cicero peaks in the window
-    (ourrun_k50 + RBBP4 peak_annot.tsv) or MACS2 q <= 0.05 peaks of every TF (per locus config), GENCODE v46 basic protein-coding / lncRNA genes in the window; config in hic_loci.json."""
+    (ourrun_k50 + RBBP4 peak_annot.tsv) or MACS2 q <= 0.05 peaks of every TF (per locus config), GENCODE v46 basic protein-coding / lncRNA genes in the window (with the exons of each gene's Ensembl canonical transcript); config in hic_loci.json."""
     import glob
     import json
     import h5py
@@ -165,18 +165,23 @@ def derive_hic_loci(dst):
         d = pd.read_csv(f, sep="\t", header=None, usecols=[0, 1, 2])
         mp.append(pd.DataFrame({"chrom": d[0], "start": d[1], "end": d[2], "tf": f.name[3:].split("_peaks")[0]}))
     PKS["macs2"] = pd.concat(mp, ignore_index=True)
-    G = []
+    G, EX = [], {}   # genes (protein-coding, lncRNA) + exons of each gene's Ensembl canonical transcript (for the gene track)
     with gzip.open(X / "data/gencode_v46/gencode.v46.basic.annotation.gtf.gz", "rt") as fh:
         for ln in fh:
             if ln[0] == "#":
                 continue
             x = ln.split("\t")
-            if x[2] != "gene":
-                continue
-            ty = re.search('gene_type "([^"]+)"', x[8]).group(1)
-            if ty in ("protein_coding", "lncRNA"):
-                G.append((x[0], int(x[3]), int(x[4]), x[6], re.search('gene_name "([^"]+)"', x[8]).group(1), "pc" if ty == "protein_coding" else "lnc"))
-    G = pd.DataFrame(G, columns=["chrom", "start", "end", "strand", "gene", "type"])
+            if x[2] == "gene":
+                ty = re.search('gene_type "([^"]+)"', x[8]).group(1)
+                if ty in ("protein_coding", "lncRNA"):
+                    G.append((x[0], int(x[3]), int(x[4]), x[6], re.search('gene_name "([^"]+)"', x[8]).group(1),
+                              "pc" if ty == "protein_coding" else "lnc", re.search('gene_id "([^"]+)"', x[8]).group(1)))
+            elif x[2] == "exon" and 'tag "Ensembl_canonical"' in x[8]:
+                gid = re.search('gene_id "([^"]+)"', x[8]).group(1)
+                EX.setdefault(gid, []).append((int(x[3]) - 1, int(x[4])))
+    G = pd.DataFrame(G, columns=["chrom", "start", "end", "strand", "gene", "type", "gene_id"])
+    G["exon_starts"] = [",".join(str(a) for a, _ in sorted(EX.get(g, []))) for g in G.gene_id]
+    G["exon_ends"] = [",".join(str(b) for _, b in sorted(EX.get(g, []))) for g in G.gene_id]
     M = pd.read_csv(X / RB / "cliques.tsv", sep="\t").set_index("clique_id")
     f = h5py.File(X / MCOOL, "r")
     g = f["resolutions/10000"]
