@@ -127,12 +127,11 @@ def build(src, out, ver, tfs, name, w_mm, h_mm, ncol, profile=False):
 
 
 def main(src, out):
+    """Main: K_M (all panels on the 1 kb grid, +-10 kb, imputed under MASK, profile row), overview + per TF.
+    Supplement: V3 (ChIP/raw at 50 bp, +-1 kb; the CTCF footprint) and K_B (genome-wide pre-mask imputed)."""
     style.use()
-    for ver in ("V3", "V3_smoothed", "K_M", "K_B"):   # V1/V2 (old ATAC-peak mask) no longer built
-        for prof in (False, True):
-            if (ver in ("K_M", "K_B") and not prof) or (ver in ("V2", "V1") and prof):
-                continue
-            tag = f"{ver}_profile" if prof else ver
-            build(src, out, ver, TFS, f"fig2_heatmaps_{tag}_all", 183, 245 if prof else 230, 3, profile=prof)
-            for t in TFS:
-                build(src, out, ver, [t], f"fig2_heatmaps_{tag}_{t}", 89, 125 if prof else 115, 1, profile=prof)
+    build(src, out, "K_M", TFS, "fig2_main_heatmap", 183, 245, 3, profile=True)
+    for t in TFS:
+        build(src, out, "K_M", [t], f"fig2_main_heatmap_{t}", 89, 125, 1, profile=True)
+    build(src, out, "V3", TFS, "fig2_supp_heatmap_50bp", 183, 245, 3, profile=True)
+    build(src, out, "K_B", TFS, "fig2_supp_heatmap_premask", 183, 245, 3, profile=True)

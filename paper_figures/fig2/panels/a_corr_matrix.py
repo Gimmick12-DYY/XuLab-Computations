@@ -28,6 +28,11 @@ def main(src, out):
     draw(src, out, "corr_matrix_6x6.tsv", "fig2_corr_matrix_6x6", 0.2, "Pearson r (colour clipped at ±0.2)", None)
     draw(src, out, "corr_10kb_6x6.tsv", "fig2_supp_corr_10kb_6x6", 0.6, "Pearson r, genome-wide 10 kb bins",
          "log2 CPM per 10 kb bin, genome-wide (Paired-Tag style)")
+    for arm, lab in (("all", "imputed (raw-positive cells + model calls)"), ("added", "imputed, model-added calls only")):
+        f = Path(src) / f"corr_imputed_Mdrop5_{arm}_6x6.tsv"
+        if f.exists():
+            draw(src, out, f.name, f"fig2_supp_corr_6x6_imputed_mdrop5{'' if arm == 'all' else '_added'}", 0.2,
+                 "Pearson r (colour clipped at ±0.2)", f"sc {lab}, Mdrop5 mask, 1 kb")
 
 
 def draw(src, out, fn, name, lim, cblabel, subtitle):
@@ -46,7 +51,7 @@ def draw(src, out, fn, name, lim, cblabel, subtitle):
                     color="white" if abs(M[i, j]) > 0.75 * lim else P.neutral.ink)
         ax.add_patch(Rectangle((i - .5, i - .5), 1, 1, fill=False, ec=P.neutral.ink, lw=0.8))
     ax.set_xticks(range(6), [f"{t} ChIP\n({CELL[t]})" for t in tfs], rotation=90)
-    ax.set_yticks(range(6), [f"{t} sc" for t in tfs])
+    ax.set_yticks(range(6), [f"{t} sc{' imputed' if 'imputed' in fn else ''}" for t in tfs])
     ax.tick_params(length=0)
     for s in ax.spines.values():
         s.set_visible(False)
