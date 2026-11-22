@@ -88,7 +88,7 @@ def standardised(src, out, which=STANDARDIZE):
         X, kind, lim, lab = spec[w]
         res[w] = X
         fig = style.figure_mm(89, 80)
-        ax = fig.add_axes([0.25, 0.30, 0.56, 0.56])
+        ax = fig.add_axes([0.22, 0.30, 0.54, 0.56])
         if kind == "div":
             cm = LinearSegmentedColormap.from_list("div", DIV); vmin, vmax = -lim, lim
         else:
@@ -104,7 +104,7 @@ def standardised(src, out, which=STANDARDIZE):
         ax.set_yticks(range(6), [f"{t} sc" for t in tfs]); ax.tick_params(length=0)
         for s in ax.spines.values():
             s.set_visible(False)
-        cax = fig.add_axes([0.84, 0.30, 0.03, 0.56])
+        cax = fig.add_axes([0.79, 0.30, 0.03, 0.56])
         cb = fig.colorbar(im, cax=cax); cb.outline.set_linewidth(0.4); cb.set_label(lab)
         style.save(fig, out, f"fig2_corr_matrix_6x6_{w}")
         rank = [int(1 + (X[i] > X[i, i]).sum()) for i in range(6)] if w != "colz" else [int(1 + (X[:, i] > X[i, i]).sum()) for i in range(6)]
