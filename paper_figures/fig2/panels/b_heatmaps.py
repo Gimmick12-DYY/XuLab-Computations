@@ -5,8 +5,8 @@ colour bar with unit and number of sites underneath, rows sorted top to bottom b
   V2 (supplement): ChIP summits + our raw peaks > 500 bp from any ChIP peak, same rows, sorted by ChIP.
   V1 (supplement): each dataset on its own peaks, sorted by its own signal.
 Variants: _profile adds the mean signal per bin over all rows on top of each panel (Kaya-Okur Fig 2g; y from 0, own
-axis per panel). V3_smoothed: raw re-binned to 200 bp (sum of four 50 bp bins, then a 3-bin running mean) and rows
-averaged in groups of 20 consecutive sorted rows; ChIP and imputed as V3 (legend note, not on the panel).
+axis per panel). V3_smoothed: raw from the unsmoothed 50 bp counts (V3_raw50), summed to 200 bp bins, one 3-bin running mean, and rows
+averaged in groups of 20 consecutive sorted rows (smoothed once); ChIP and imputed as V3 (legend note, not on the panel).
 Raw = aggregated 5' ends, CPM, 3-bin running mean; imputed = fraction of cells positive in the 1 kb bin covering each
 position (imputation is at 1 kb). Heatmap bodies are rasterised. Input source_data/heatmaps_<TF>.npz."""
 import sys
@@ -91,7 +91,7 @@ def build(src, out, ver, tfs, name, w_mm, h_mm, ncol, profile=False):
             X = z[f"{base}_{ty}"]
             n = len(X)
             if ver == "V3_smoothed" and ty == "raw":
-                X = smooth_raw(X)
+                X = smooth_raw(z["V3_raw50"])
             panel(fig, sub[j], X, TTL[ty], UNIT[ty], profile=profile, nsites=n)
         pos = gs[r, c].get_position(fig)
         fig.text((pos.x0 + pos.x1) / 2, pos.y1 + (0.02 if nrow > 1 else 0.05), f"{t} ({CELL[t]} ChIP)", ha="center",
