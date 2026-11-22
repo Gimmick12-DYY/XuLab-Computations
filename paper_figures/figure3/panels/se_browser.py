@@ -93,6 +93,7 @@ def main(src, out):
     ax.set_ylim(0, ymax)
     ax.set_axis_off()
     label(b_h + hh * 0.5, "Hi-C\n10 kb")
+    fig.text(Lx, (H - 0.04) / H, f"chr19:{L0 + 1:,}–{XR:,} (hg38)", ha="left", va="top", fontsize=F_LAB, fontweight="bold")
 
     # Peakachu loops
     loops = set()
