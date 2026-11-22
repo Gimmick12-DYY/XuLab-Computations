@@ -12,6 +12,14 @@
 - Reference cell lines: CTCF, MAZ, ZBTB7A, ZIC2 and ZNF777 are ENCODE HEK293 (the last four are eGFP-tagged with
   anti-GFP); ZNF282 is GSM2466515, HEK293T HA ChIP-exo.
 
+## Display-only standardised versions of the main matrix (same values, no recomputation)
+- fig2_corr_matrix_6x6_rowz: each sc row standardised, (r − row mean) / row SD (population SD); diverging, ±2.
+  Same definition as the 11-12 S2 version.
+- fig2_corr_matrix_6x6_rowminmax: each sc row scaled to 0–1, (r − row min) / (row max − row min); sequential.
+- fig2_corr_matrix_6x6_colz: each ChIP column standardised; same definition as the 11-12 S3 version.
+- The statistics belong to the unstandardised matrix: diagonal − off-diagonal = +0.151, p = 0.006 (720 permutations);
+  without CTCF p = 0.033 (120). Row standardisation cannot create a diagonal; it only rescales each row.
+
 ## Main: peak heatmap (fig2_main_heatmap; per TF fig2_main_heatmap_<TF>)
 - **Rows:** the reference's top 10,000 ChIP summits by signalValue (fewer when the file has fewer peaks: ZBTB7A 8,400,
   ZNF282 7,989, ZNF777 6,223). Rows are in the same order in every panel, sorted top to bottom by bulk ChIP signal
