@@ -13,6 +13,8 @@
   Arrays: <ver>_<track> (rows x 40, already in display order), plus counts. V3_raw50 = unsmoothed raw 5' end CPM per
   50 bp bin at the V3 rows (computed here from inputs/five), used for the V3_smoothed variant (smoothed once there).
 3 heatmap_counts.tsv: number of sites per TF and version.
+MASK: every imputed panel in Fig 2 uses the accessibility mask MASK = "Mdrop5" (1 kb bins with mean ATAC CPM > 0.0781542);
+its arrays are added by r24_fig2_mask_source.py (the V1/V2 50 bp imputed arrays here are supplementary, current mask).
 4 corr_10kb_6x6.tsv: genome-wide 10 kb bins (chr1-22, X; blacklist bins dropped), Pearson of log2 CPM+1, sc raw (rows)
   vs bulk ChIP (columns), Paired-Tag (Zhu 2021) style; from input_audit/input_audit.xlsx sheet B2 (r18_input_audit.py)."""
 import pickle
@@ -26,6 +28,7 @@ sys.path.insert(0, "/work/users/d/y/dyy12/XuLab/downstream/fig2_qc")
 from fig2_common import INP, OUT, REF, ROOT, TFS, bin_index  # noqa: E402
 
 SD = ROOT / "paper_figures/fig2/source_data"; SD.mkdir(parents=True, exist_ok=True)
+MASK = "Mdrop5"   # imputed mask for Fig 2 (applied in r24_fig2_mask_source.py)
 KO = OUT / "round6_diffpeaks/heatmaps/kayaokur_style"
 shutil.copy(OUT / "round2/pearson/r2p_corr_preferred_top5000_znf777.tsv", SD / "corr_matrix_6x6_source.tsv")
 B = pd.read_csv(OUT / "round2/pearson/r2p_corr_preferred_top5000_znf777.tsv", sep="\t", index_col=0)
