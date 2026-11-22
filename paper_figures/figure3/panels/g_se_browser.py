@@ -80,11 +80,14 @@ def main(src, out):
     ax = fig.add_axes([Lx, b_h / H, AW, hh / H])
     first = ax
     Mx = np.load(src / "se_hic_10kb.npz")["ice"]
-    Z = np.log10(np.nan_to_num(Mx) + 1e-5)
-    xs = L0 + np.arange(Mx.shape[0] + 1) * 10000
+    Zfull = np.log10(np.nan_to_num(Mx) + 1e-5)
+    vmin, vmax = np.nanpercentile(Zfull, 50), np.nanpercentile(Zfull, 99.5)   # colour scale of the full 0.43-2.25 Mb matrix
+    k = (XR - L0) // 10000                                                    # draw only bins inside the shown window,
+    Z = Zfull[:k, :k]                                                         # so the triangle is complete and centred
+    xs = L0 + np.arange(k + 1) * 10000
     XX, YY = np.meshgrid(xs, xs, indexing="ij")
     Zm = np.ma.masked_where(np.tril(np.ones_like(Z), -1) > 0, Z)
-    ax.pcolormesh((XX + YY) / 2e6, (YY - XX) / 2e3, Zm, cmap="Reds", vmin=np.nanpercentile(Z, 50), vmax=np.nanpercentile(Z, 99.5),
+    ax.pcolormesh((XX + YY) / 2e6, (YY - XX) / 2e3, Zm, cmap="Reds", vmin=vmin, vmax=vmax,
                   shading="flat", rasterized=True, lw=0, edgecolors="none", antialiased=False)
     ax.set_xlim(*XL)
     ax.set_ylim(0, ymax)
