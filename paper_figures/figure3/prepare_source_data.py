@@ -32,6 +32,8 @@ GO = "figures/Figure3/checks/go_great_regions"
 SOURCES = {   # name : (origin in $XULAB, made by)
     "rbbp4_peak_edges.tsv.gz": ("cobinding/work/RBBP4_sweep_k50_i10000_s555/RBBP4.peak_edges.tsv", "Cicero (k = 50) on the RBBP4 peak matrix, cobinding/"),
     "rbbp4_modules.tsv": (f"{RB}/cliques.tsv", "cobinding/scripts/cluster_peaks.py (cliques of the Cicero pair graph)"),
+    "ets2_peak_edges.tsv.gz": ("cobinding/work/ourrun_k50/ETS2/ETS2.peak_edges.tsv", "Cicero (k = 50) on the ETS2 peak matrix, cobinding/"),
+    "ets2_modules.tsv": ("cobinding/results/ourrun_k50/ETS2/cliques.tsv", "cobinding/scripts/cluster_peaks.py (cliques of the Cicero pair graph)"),
     "rbbp4_pairs_on_loops.tsv": (f"{RBL}/RBBP4_pairs_as_loops.0.7.tsv", "hic/scripts/compare_union_pairs_and_clique_edges.py"),
     "rbbp4_module_edges_on_loops.tsv": (f"{RBL}/RBBP4_clique_edges_as_loops.0.7.tsv", "hic/scripts/compare_union_pairs_and_clique_edges.py"),
     "peakachu_5000.loops.0.7.bedpe.gz": (f"{LP}/peakachu_5000.loops.0.7.bedpe", "Peakachu, GSE216399 wild-type HEK293T Hi-C, score >= 0.7"),
