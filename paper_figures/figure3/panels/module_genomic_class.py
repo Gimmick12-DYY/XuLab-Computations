@@ -5,7 +5,7 @@ Stacked 100 % bars; values printed on segments >= 10 %.
 Inputs (source_data/):
   class_annotation_counts_chromhmm.tsv   per TF and class: Cicero peaks, module regions
   class_module_regions_chromhmm.tsv.gz   union module regions: class (cls) and number of TFs (n_tfs)
-Output: e_module_genomic_class.{pdf,svg,png}, axes 62 x 58 mm (print size).
+Output: module_genomic_class.{pdf,svg,png}, axes 62 x 58 mm (print size).
 """
 import sys
 from pathlib import Path
@@ -40,7 +40,7 @@ def main(src, out):
         bars[lab], ns[lab] = d.cls.value_counts(), len(d)
     B = pd.DataFrame(bars).reindex(CLASSES).fillna(0)
     B = B / B.sum()
-    B.to_csv(Path(out) / "e_module_genomic_class_values.tsv", sep="\t", float_format="%.4f")
+    B.to_csv(Path(out) / "module_genomic_class_values.tsv", sep="\t", float_format="%.4f")
 
     fig, ax = plt.subplots(figsize=(62 * style.MM, 58 * style.MM))
     left = np.zeros(B.shape[1])
@@ -60,7 +60,7 @@ def main(src, out):
     ax.set_xlabel("Fraction of regions")
     ax.legend(ncol=2, loc="upper center", bbox_to_anchor=(0.35, -0.2), fontsize=6, handlelength=1.0, handleheight=0.8,
               columnspacing=0.8, labelspacing=0.25)
-    style.save(fig, out, "e_module_genomic_class", bbox_inches="tight", pad_inches=0.02)
+    style.save(fig, out, "module_genomic_class", bbox_inches="tight", pad_inches=0.02)
 
 
 if __name__ == "__main__":

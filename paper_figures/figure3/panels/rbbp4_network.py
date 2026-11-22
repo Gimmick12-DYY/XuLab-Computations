@@ -6,7 +6,7 @@ colour each (hue wheel, overlapping modules pushed apart); hinge regions shared 
 all other pairs light grey. Labels: chromosome span and number of regions of the 24 largest components.
 
 Inputs (source_data/):  rbbp4_peak_edges.tsv.gz, rbbp4_modules.tsv
-Output: b1_rbbp4_network.{pdf,svg,png}. Drawn on a 24 x 24 in canvas (large original; scale it down when placing).
+Output: rbbp4_network.{pdf,svg,png}. Drawn on a 24 x 24 in canvas (large original; scale it down when placing).
 Layout: Fruchterman-Reingold per component (python-igraph, fixed seed, nodes in sorted order), so the layout is reproducible.
 """
 import random
@@ -187,7 +187,7 @@ def main(src, out):
         if i < 24:
             ax.text(cx[i], cy[i] + radii[i] + 0.12, lab, ha="center", va="bottom", fontsize=6.5, color=INK, zorder=6, linespacing=1.15,
                     bbox=dict(boxstyle="round,pad=0.15", facecolor="white", edgecolor="none", alpha=0.75))
-    pd.DataFrame(rows, columns=["rank", "n_regions", "label"]).to_csv(Path(out) / "b1_rbbp4_network_components.tsv", sep="\t", index=False)
+    pd.DataFrame(rows, columns=["rank", "n_regions", "label"]).to_csv(Path(out) / "rbbp4_network_components.tsv", sep="\t", index=False)
 
     handles = [Line2D([0], [0], color="#E8433F", lw=2.4, label="one higher-order coordinated binding module"),
                Line2D([0], [0], color="#33B5E5", lw=2.4, label="another module"),
@@ -201,7 +201,7 @@ def main(src, out):
     ax.axis("off")
     ax.legend(handles=handles, loc="lower right", fontsize=11, labelcolor=INK)
     print(f"b1: {G.number_of_nodes()} nodes, {len(comps)} components >= 10, {len(live)} modules")
-    style.save(fig, out, "b1_rbbp4_network", bbox_inches="tight", pad_inches=0.05)
+    style.save(fig, out, "rbbp4_network", bbox_inches="tight", pad_inches=0.05)
 
 
 if __name__ == "__main__":

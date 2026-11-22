@@ -6,7 +6,7 @@ All Cicero edges of the hub (union over TFs): edges from the SE are radial spoke
 dashed = Cicero only. Partner dots coloured by class; promoter and enhancer partners labelled.
 
 Inputs (source_data/):  se_hub_edges.tsv (hub edges), se_partners.tsv (partner class), se_enhancer_names.tsv
-Output: i_se_flower.{pdf,svg,png}, 89 mm wide (print size); labels 6 pt, "SE" 7 pt.
+Output: se_flower.{pdf,svg,png}, 89 mm wide (print size); labels 6 pt, "SE" 7 pt.
 """
 import sys
 from pathlib import Path
@@ -108,7 +108,7 @@ def main(src, out):
                     [cy + (Rg + PIE) * np.sin(t[4]), cy + rout * np.sin(t[4]), ty], color="#AAAAAA", lw=0.5 * S, zorder=0)
             ax.text(lx + side * 0.04, ty, t[2], ha="left" if side > 0 else "right", va="center", fontsize=6, fontstyle="italic",
                     color=NODE.enhancer if t[3] == "enhancer" else "#222222")
-    style.save(fig, out, "i_se_flower", bbox_inches=style.content_bbox(fig, 0.01))
+    style.save(fig, out, "se_flower", bbox_inches=style.content_bbox(fig, 0.01))
 
 
 if __name__ == "__main__":

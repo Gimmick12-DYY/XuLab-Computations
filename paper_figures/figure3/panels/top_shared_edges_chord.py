@@ -5,7 +5,7 @@ promoter gene if a TSS lies within +-1 kb, length, number of TFs, and whether th
 
 Inputs (source_data/): f_top_shared_module_edges.tsv (all module edges shared by >= 2 TFs, from edge_overlap.py),
   f_gene_symbols.tsv (GENCODE gene id -> symbol)
-Output: f_top_shared_edges_chord.{pdf,svg,png}; drawn on a 16 x 13 in canvas (large original; scale it down when placing).
+Output: top_shared_edges_chord.{pdf,svg,png}; drawn on a 16 x 13 in canvas (large original; scale it down when placing).
 """
 import math
 import sys
@@ -44,7 +44,7 @@ def main(src, out):
         if len(pick) == 10:
             break
     pd.DataFrame([dict(region1=r.region1, region2=r.region2, distance_kb=r.distance_kb, n_tfs=r.n, tfs=r.tfs,
-                       on_loop_0_7=getattr(r, "_6")) for r in pick]).to_csv(Path(out) / "f_top_shared_edges_chord_edges.tsv", sep="\t", index=False)
+                       on_loop_0_7=getattr(r, "_6")) for r in pick]).to_csv(Path(out) / "top_shared_edges_chord_edges.tsv", sep="\t", index=False)
 
     def lab(reg, g):
         if isinstance(g, str) and g:
@@ -103,7 +103,7 @@ def main(src, out):
         ribbon(ax, a1, a2, b1, b2, HUBCOL[i], alpha=0.6)
     ax.set_xlim(-1.35, 2.15)
     ax.set_ylim(-1.2, 1.2)
-    style.save(fig, out, "f_top_shared_edges_chord", bbox_inches=style.content_bbox(fig, 0.05))
+    style.save(fig, out, "top_shared_edges_chord", bbox_inches=style.content_bbox(fig, 0.05))
 
 
 if __name__ == "__main__":

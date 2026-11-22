@@ -7,7 +7,7 @@ partners in bold). Vertical bands: SE (gold) and partner elements by class.
 
 Inputs (source_data/): se_hic_10kb.npz, peakachu_{5000,10000}.loops.0.7.bedpe.gz, se_hub_edges.tsv, se_partner_bands.tsv,
   se_tf_coverage_1kb.tsv, se_chromhmm_window.tsv, se_refseq_select.json
-Output: g_se_browser.{pdf,svg,png}, about 155 mm wide (print size, same scale as the full 0.43-2.25 Mb design); labels 7 pt, ticks/legend 6 pt, minor gene names 5.5 pt.
+Output: se_browser.{pdf,svg,png}, about 155 mm wide (print size, same scale as the full 0.43-2.25 Mb design); labels 7 pt, ticks/legend 6 pt, minor gene names 5.5 pt.
 """
 import gzip
 import json
@@ -239,7 +239,7 @@ def main(src, out):
     for a_ in fig.axes:                                  # tracks share x: fix the window on all of them (no autoscale to the data range)
         a_.set_autoscalex_on(False)
     first.set_xlim(*XL)
-    style.save(fig, out, "g_se_browser", bbox_inches="tight", pad_inches=0.01)
+    style.save(fig, out, "se_browser", bbox_inches="tight", pad_inches=0.01)
 
 
 if __name__ == "__main__":

@@ -5,7 +5,7 @@ higher-order coordinated binding modules, > 25 kb; yellow). Below: only the Peak
 5 kb + 10 kb) that support at least one drawn pair under the loop-support rule (_genomics.py), in red.
 
 Inputs (source_data/): rbbp4_peak_edges.tsv.gz, rbbp4_modules.tsv, peakachu_{5000,10000}.loops.0.7.bedpe.gz
-Output: c_rbbp4_chromosomes.{pdf,svg,png}, 180 x 150 mm (print size).
+Output: rbbp4_chromosomes.{pdf,svg,png}, 180 x 150 mm (print size).
 """
 import math
 import sys
@@ -80,7 +80,7 @@ def main(src, out):
               [f"Coordinated binding pair (n = {len(pairs):,})", f"Module edge (n = {len(edges):,})", f"Hi-C loop supporting a pair (n = {n_sup:,})"],
               loc="lower right", bbox_to_anchor=(1.0, 0.02), fontsize=6, handlelength=1.4, labelspacing=0.35,
               title=f"Supporting loops: {n_sup:,} of {L.n_total:,} Peakachu loops", title_fontsize=6, alignment="left")
-    style.save(fig, out, "c_rbbp4_chromosomes")
+    style.save(fig, out, "rbbp4_chromosomes")
 
 
 if __name__ == "__main__":

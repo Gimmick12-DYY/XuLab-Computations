@@ -20,7 +20,7 @@ HERE = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(HERE.parent))
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from common import style  # noqa: E402
-from j_go_specific_vs_conserved_summary import load  # noqa: E402
+from go_specific_vs_conserved_summary import load  # noqa: E402
 
 TEAL, LT = "#2C7A6B", "#C9E3DC"
 THEMES = ["Protein folding / stress", "Cell cycle / DNA / chromatin", "Gene expression / RNA", "Immune / inflammation", "Signalling", "Metabolism",

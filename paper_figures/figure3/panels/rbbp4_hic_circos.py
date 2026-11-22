@@ -5,7 +5,7 @@ Every edge inside an RBBP4 higher-order coordinated binding module is a chord; e
 modules with every edge on a loop are gold. Ticks inside the ring = module regions.
 
 Inputs (source_data/):  rbbp4_modules.tsv, rbbp4_module_edges_on_loops.tsv
-Output: b2_rbbp4_hic_circos.{pdf,svg,png}. Drawn on a 17 x 17 in canvas (large original; scale it down when placing).
+Output: rbbp4_hic_circos.{pdf,svg,png}. Drawn on a 17 x 17 in canvas (large original; scale it down when placing).
 """
 import math
 import sys
@@ -120,7 +120,7 @@ def main(src, out):
     ax.set_aspect("equal")
     ax.axis("off")
     print(f"b2: {len(M)} modules, {len(edges)} edges, {n_sup} on a loop, {n_full} fully supported")
-    style.save(fig, out, "b2_rbbp4_hic_circos", bbox_inches=style.content_bbox(fig, 0.05))
+    style.save(fig, out, "rbbp4_hic_circos", bbox_inches=style.content_bbox(fig, 0.05))
 
 
 if __name__ == "__main__":

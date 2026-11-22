@@ -9,7 +9,7 @@ modules with any loop edge). Right: observed % of module edges on a loop vs a pe
 IQR, line = 95 % interval); filled = BH q < 0.05 (TFs with >= 100 edges).
 
 Inputs (source_data/): d_module_edge_bins_1000kb.tsv.gz, d_module_loop_coverage.tsv.gz, d_module_edge_null.npz
-Output: d_module_edges_hic_support.{pdf,svg,png}, 183 x 95 mm (print size). Heatmap cells are an embedded raster image.
+Output: module_edges_hic_support.{pdf,svg,png}, 183 x 95 mm (print size). Heatmap cells are an embedded raster image.
 """
 import sys
 from pathlib import Path
@@ -64,7 +64,7 @@ def main(src, out):
     nul = {t: Z_[f"null_{t}"] for t in tfs_null}
     E["edge_p"] = [(1 + (nul[t] >= E.edge_obs[t]).sum()) / (1 + len(nul[t])) for t in E.index]
     E["q"] = bh(E.edge_p)
-    E.to_csv(Path(out) / "d_module_edges_hic_support_null.tsv", sep="\t")
+    E.to_csv(Path(out) / "module_edges_hic_support_null.tsv", sep="\t")
 
     # heatmap: TF x 1 Mb bin, coloured by loop stratum of that TF's edges in the bin
     BD = pd.read_csv(src / "d_module_edge_bins_1000kb.tsv.gz", sep="\t")
@@ -164,7 +164,7 @@ def main(src, out):
     b.legend(h, ["Observed, q < 0.05", "Observed, n.s.", "Shuffle null"], loc="lower right", fontsize=6, handlelength=1.0, labelspacing=0.25,
              borderaxespad=0.2, facecolor="white", frameon=True, framealpha=1, edgecolor="none")
     print(f"d: {len(rows)} rows, {S.shape[1]:,} bins, {ne:,} edges; {int((E.q < 0.05).sum())} of {len(E)} TFs q < 0.05")
-    style.save(fig, out, "d_module_edges_hic_support")
+    style.save(fig, out, "module_edges_hic_support")
 
 
 if __name__ == "__main__":

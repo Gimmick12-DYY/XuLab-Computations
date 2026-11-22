@@ -1,4 +1,4 @@
-"""RBBP4 pair / module tables shared by b_rbbp4_characterization.py and b_rbbp4_square.py.
+"""RBBP4 pair / module tables shared by rbbp4_characterization.py and rbbp4_square.py.
 
 Pairs = RBBP4 first-step Cicero pairs with p <= 0.05 whose two region midpoints are > 25 kb apart (same chromosome).
 Modules = higher-order coordinated binding modules (rbbp4_modules.tsv); module edges = pairs of regions inside one module > 25 kb.

@@ -7,7 +7,7 @@ Bottom: one stacked strand of all pairs by the element classes of their two ends
 
 Inputs (source_data/): rbbp4_peak_edges.tsv.gz, rbbp4_modules.tsv, peakachu_{5000,10000}.loops.0.7.bedpe.gz,
   refseq_select_tss.tsv.gz, hek293t_chromhmm18.bed.gz, rbbp4_shuffle_null.npz
-Output: b_rbbp4_characterization.{pdf,svg,png}, 120 x 70 mm (print size).
+Output: rbbp4_characterization.{pdf,svg,png}, 120 x 70 mm (print size).
 """
 import sys
 from pathlib import Path
@@ -89,7 +89,7 @@ def main(src, out):
                columnspacing=0.8, borderaxespad=0)
     fig.text(0.02, 0.012, "P promoter, E enhancer, R repressive (ChromHMM); Rest: all other combinations", fontsize=6, color=N.dark)
     print("b_char:", [(r[0].replace(chr(10), " "), r[1], round(100 * r[2] / r[1], 1)) for r in rows])
-    style.save(fig, out, "b_rbbp4_characterization")
+    style.save(fig, out, "rbbp4_characterization")
 
 
 if __name__ == "__main__":

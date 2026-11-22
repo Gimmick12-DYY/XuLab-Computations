@@ -10,7 +10,7 @@ Dot size = number of distinct genes; dashed line = q 0.05.
 Upstream: source_scripts/go_great_regions.py, go_great_controls.py, go_great_null.py.
 
 Inputs (source_data/): go_surviving_per_tf.tsv.gz, go_per_tf_controls.tsv.gz
-Output: j_go_specific_vs_conserved_summary.{pdf,svg,png}, 200 x 82 mm (print size); j_go_specific_vs_conserved_summary_terms.tsv.
+Output: go_specific_vs_conserved_summary.{pdf,svg,png}, 200 x 82 mm (print size); go_specific_vs_conserved_summary_terms.tsv.
 """
 import sys
 from pathlib import Path
@@ -72,7 +72,7 @@ def main(src, out):
     R = pd.DataFrame(keep).reset_index(drop=True)
     pd.concat([L.assign(side="TF-specific")[["side", "tf", "term", "name", "q", "fold", "distinct_genes"]],
                R.assign(side="conserved", tf=[",".join(sorted(s)) for s in R.tfset])[["side", "tf", "term", "name", "q", "fold", "genes", "n_tfs"]]]
-              ).to_csv(Path(out) / "j_go_specific_vs_conserved_summary_terms.tsv", sep="\t", index=False)
+              ).to_csv(Path(out) / "go_specific_vs_conserved_summary_terms.tsv", sep="\t", index=False)
 
     fig = style.figure_mm(200, 82)
     a1 = fig.add_axes([0.255, 0.28, 0.2, 0.57])
@@ -105,7 +105,7 @@ def main(src, out):
     hs = [plt.scatter([], [], s=sz(n), color="#BDBDBD", lw=0) for n in (5, 20, 50)]
     fig.legend(hs, ["5", "20", "50 genes"], title="Genes", loc="lower center", bbox_to_anchor=(0.5, 0.01), ncol=3, fontsize=6,
                title_fontsize=6, handletextpad=0.3, columnspacing=1.5)
-    style.save(fig, out, "j_go_specific_vs_conserved_summary")
+    style.save(fig, out, "go_specific_vs_conserved_summary")
 
 
 if __name__ == "__main__":

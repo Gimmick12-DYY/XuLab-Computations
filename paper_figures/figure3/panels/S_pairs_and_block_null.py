@@ -17,7 +17,7 @@ HERE = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(HERE.parent))
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from common import style  # noqa: E402
-from d_module_edges_hic_support import LABS, bh, strata  # noqa: E402
+from module_edges_hic_support import LABS, bh, strata  # noqa: E402
 
 
 def nullbox(b, i, r, N):

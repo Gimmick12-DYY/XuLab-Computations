@@ -4,8 +4,8 @@ Inner ring: element classes of the two ends of each unique RBBP4 pair (p <= 0.05
 enhancer-enhancer, promoter-repressive, repressive-repressive, other combinations. Outer ring: within each class, pairs on a
 Peakachu 0.7 loop (dark) vs not (light tint). Table: % of pairs and % on a loop per class. Palette C colours.
 
-Inputs: as b_rbbp4_characterization.py (via _rbbp4.py).   Output: b_rbbp4_square.{pdf,svg,png}, 60 x 60 mm (print size).
-Also writes b_rbbp4_square_classes.tsv (n, on loop, in a module edge, per class).
+Inputs: as rbbp4_characterization.py (via _rbbp4.py).   Output: rbbp4_square.{pdf,svg,png}, 60 x 60 mm (print size).
+Also writes rbbp4_square_classes.tsv (n, on loop, in a module edge, per class).
 """
 import sys
 from pathlib import Path
@@ -37,7 +37,7 @@ def main(src, out):
     SUM = T.groupby("cls").agg(n=("loop", "size"), on_loop=("loop", "sum"), module=("module", "sum")).reindex([c[0] for c in CL6])
     SUM["pct"] = 100 * SUM.n / SUM.n.sum()
     SUM["pct_loop"] = 100 * SUM.on_loop / SUM.n
-    SUM.to_csv(Path(out) / "b_rbbp4_square_classes.tsv", sep="\t", float_format="%.3f")
+    SUM.to_csv(Path(out) / "rbbp4_square_classes.tsv", sep="\t", float_format="%.3f")
     NAMES = ["Promoter–promoter", "Promoter–enhancer", "Enhancer–enhancer", "Promoter–repressive", "Repressive–repressive", "Other combinations"]
     col = [c[2] for c in CL6]
     tint = lambda c, f=.55: tuple(np.array(to_rgb(c)) + (1 - np.array(to_rgb(c))) * f)
@@ -81,7 +81,7 @@ def main(src, out):
         tx.text(0.98, y, f"{l * 100:.0f}%", ha="right", va="center", color=N.ink)
     fig.text(0.5, 0.375, "outer ring: dark = on a Hi-C loop, light = not on a loop", ha="center", color=N.dark, fontsize=6)
     print(SUM.round(1).to_string())
-    style.save(fig, out, "b_rbbp4_square")
+    style.save(fig, out, "rbbp4_square")
 
 
 if __name__ == "__main__":

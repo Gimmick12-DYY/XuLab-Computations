@@ -1,5 +1,5 @@
 """Figure 3g-i: one shared legend strip (edge colours and line styles, element classes, 3D-model symbols, TF peak colours).
-No data input. Output: ghi_shared_legend.{pdf,svg,png}, 183 x 14 mm, Arial 6 pt.
+No data input. Output: se_shared_legend.{pdf,svg,png}, 183 x 14 mm, Arial 6 pt.
 """
 import sys
 from pathlib import Path
@@ -53,17 +53,17 @@ def main(src, out):
     for c, l in ((NODE.promoter, "Promoter"), (NODE.enhancer, "Enhancer"), (NODE.other, "Other site")):
         ax.add_patch(Circle((x + 1, y2), 0.85, color=c, lw=0))
         x = txt(x + 2.6, y2, l) + 3
-    x = txt(x + 2, y2, "3D model (h):", fontweight="bold") + 2
+    x = txt(x + 2, y2, "3D model:", fontweight="bold") + 2
     ax.plot([x, x + 4], [y2, y2], color="#A9A9A9", lw=2.4, solid_capstyle="round")
     x = txt(x + 5, y2, "Chromatin") + 3
     ax.add_patch(Circle((x + 1, y2), 0.85, color="#222222", lw=0))
     txt(x + 2.6, y2, "Promoter / other site")
 
-    x = txt(0.5, y3, "TF peaks (small spheres in h):", fontweight="bold") + 2
+    x = txt(0.5, y3, "TF peaks (small spheres in the 3D model):", fontweight="bold") + 2
     for t in TFS + ["other"]:
         ax.add_patch(Circle((x + 0.8, y3), 0.75, color=TC[t], lw=0))
         x = txt(x + 2.1, y3, t if t != "other" else "Other TFs", fontstyle="italic" if t != "other" else "normal") + 2.5
-    style.save(fig, out, "ghi_shared_legend", bbox_inches=style.content_bbox(fig, 0.02))
+    style.save(fig, out, "se_shared_legend", bbox_inches=style.content_bbox(fig, 0.02))
 
 
 if __name__ == "__main__":

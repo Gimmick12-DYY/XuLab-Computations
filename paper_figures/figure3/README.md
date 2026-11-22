@@ -24,19 +24,19 @@ A full build takes about 70 s on one core.
 | Output (`output/`) | Script (`panels/`) | Source data (`source_data/`) | Print size |
 |---|---|---|---|
 | a_coordinated_binding_schematic | none (see below) | | 183 mm |
-| b1_rbbp4_network | b1_rbbp4_network.py (original colour code, no loop overlay) | rbbp4_peak_edges, rbbp4_modules | 24 in canvas, scale down |
-| b2_rbbp4_hic_circos | b2_rbbp4_hic_circos.py | rbbp4_modules, rbbp4_module_edges_on_loops | 17 in canvas, scale down |
-| b_rbbp4_characterization | b_rbbp4_characterization.py (+ _rbbp4.py, _genomics.py) | rbbp4_*, peakachu loops, refseq_select_tss, hek293t_chromhmm18, rbbp4_shuffle_null | 120 x 70 mm |
-| b_rbbp4_square (slot option) | b_rbbp4_square.py | as b_rbbp4_characterization | 60 x 60 mm |
-| c_rbbp4_chromosomes | c_rbbp4_chromosomes.py (+ _genomics.py) | rbbp4_peak_edges, rbbp4_modules, peakachu loops | 180 x 150 mm |
-| d_module_edges_hic_support | d_module_edges_hic_support.py | d_module_edge_bins_1000kb, d_module_loop_coverage, d_module_edge_null | 183 x 95 mm |
-| e_module_genomic_class | e_module_genomic_class.py | class_annotation_counts_chromhmm, class_module_regions_chromhmm | 70 x 64 mm |
-| f_top_shared_edges_chord | f_top_shared_edges_chord.py | f_top_shared_module_edges, f_gene_symbols | 16 x 13 in canvas, scale down |
-| g_se_browser | g_se_browser.py | se_hic_10kb, peakachu loops, se_hub_edges, se_partner_bands, se_tf_coverage_1kb, se_chromhmm_window, se_refseq_select | 155 x 85 mm (chr19:0.43-1.95 Mb) |
-| h_se_3d_structure | h_se_3d_structure.py | se_rosette_render (PyMOL), se_rosette_nodes | 91 x 51 mm |
-| i_se_flower | i_se_flower.py | se_hub_edges, se_partners, se_enhancer_names | 86 x 58 mm |
-| ghi_shared_legend | ghi_shared_legend.py | none | 177 x 13 mm |
-| j_go_specific_vs_conserved_summary | j_go_specific_vs_conserved_summary.py | go_surviving_per_tf, go_per_tf_controls | 200 x 82 mm |
+| rbbp4_network | rbbp4_network.py (original colour code, no loop overlay) | rbbp4_peak_edges, rbbp4_modules | 24 in canvas, scale down |
+| rbbp4_hic_circos | rbbp4_hic_circos.py | rbbp4_modules, rbbp4_module_edges_on_loops | 17 in canvas, scale down |
+| rbbp4_characterization | rbbp4_characterization.py (+ _rbbp4.py, _genomics.py) | rbbp4_*, peakachu loops, refseq_select_tss, hek293t_chromhmm18, rbbp4_shuffle_null | 120 x 70 mm |
+| rbbp4_square (slot option) | rbbp4_square.py | as rbbp4_characterization | 60 x 60 mm |
+| rbbp4_chromosomes | rbbp4_chromosomes.py (+ _genomics.py) | rbbp4_peak_edges, rbbp4_modules, peakachu loops | 180 x 150 mm |
+| module_edges_hic_support | module_edges_hic_support.py | d_module_edge_bins_1000kb, d_module_loop_coverage, d_module_edge_null | 183 x 95 mm |
+| module_genomic_class | module_genomic_class.py | class_annotation_counts_chromhmm, class_module_regions_chromhmm | 70 x 64 mm |
+| top_shared_edges_chord | top_shared_edges_chord.py | f_top_shared_module_edges, f_gene_symbols | 16 x 13 in canvas, scale down |
+| se_browser | se_browser.py | se_hic_10kb, peakachu loops, se_hub_edges, se_partner_bands, se_tf_coverage_1kb, se_chromhmm_window, se_refseq_select | 155 x 85 mm (chr19:0.43-1.95 Mb) |
+| se_3d_structure | se_3d_structure.py | se_rosette_render (PyMOL), se_rosette_nodes | 91 x 51 mm |
+| se_flower | se_flower.py | se_hub_edges, se_partners, se_enhancer_names | 86 x 58 mm |
+| se_shared_legend | se_shared_legend.py | none | 177 x 13 mm |
+| go_specific_vs_conserved_summary | go_specific_vs_conserved_summary.py | go_surviving_per_tf, go_per_tf_controls | 200 x 82 mm |
 | hic_ets2_locus, hic_rbbp4_locus | hic_loci.py | hic_loci.json, hic_locus_<name>_{10kb.npz,peaks,genes} | 8.3 x 7.5 in, scale down |
 | supplementary/S_pairs_loop_support, S_module_edge_block_null | S_pairs_and_block_null.py | d_per_tf_null_summary, s_shuffle_null_percentiles, d_module_loop_coverage | 146 x 123 mm; 112 x 90 mm |
 | supplementary/S_rbbp4_permutation | S_rbbp4_permutation.py | rbbp4_shuffle_null | 107 x 59 mm |

@@ -6,7 +6,7 @@ This script crops the render to the square frame shared with the earlier rosette
 and labels for the SE, promoter and enhancer partners (left/right of the structure, spread to avoid overlap).
 
 Inputs (source_data/): se_rosette_render.png, se_rosette_nodes.tsv
-Output: h_se_3d_structure.{pdf,svg,png}; drawn at print size (design canvas x 0.421), labels 6 pt. The render stays raster.
+Output: se_3d_structure.{pdf,svg,png}; drawn at print size (design canvas x 0.421), labels 6 pt. The render stays raster.
 """
 import sys
 from pathlib import Path
@@ -66,7 +66,7 @@ def main(src, out):
             ax.plot([r.x, lx], [r.y, ty], color="#444444", lw=0.6 * S, zorder=3)
             ax.text(lx + (-0.04 if side_ < 0 else 0.04), ty, r.label, ha="right" if side_ < 0 else "left", va="center",
                     fontstyle="normal" if r.cls == "se" else "italic", fontweight="bold" if r.cls == "se" else "normal", color=TC[r.cls])
-    style.save(fig, out, "h_se_3d_structure", bbox_inches=style.content_bbox(fig, 0.01))
+    style.save(fig, out, "se_3d_structure", bbox_inches=style.content_bbox(fig, 0.01))
 
 
 if __name__ == "__main__":
