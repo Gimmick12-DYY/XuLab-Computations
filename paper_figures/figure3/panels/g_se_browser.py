@@ -2,11 +2,11 @@
 
 Tracks, top to bottom: wild-type HEK293T Hi-C (10 kb, ICE, log10, shown to 150 kb); Peakachu score >= 0.7 loops (5 kb + 10 kb);
 Cicero edges of the hub (colour = partner class, thick = from the SE, solid = on a Hi-C loop, dashed = Cicero only); single-cell
-TF fragment coverage (CPM, 2 kb bins, scaled per track to the hub maximum); ChromHMM classes; RefSeq Select genes (promoter
+TF fragment coverage (CPM, 1 kb bins, scaled per track to the hub maximum); ChromHMM classes; RefSeq Select genes (promoter
 partners in bold). Vertical bands: SE (gold) and partner elements by class.
 
 Inputs (source_data/): se_hic_10kb.npz, peakachu_{5000,10000}.loops.0.7.bedpe.gz, se_hub_edges.tsv, se_partner_bands.tsv,
-  se_tf_coverage_2kb.tsv, se_chromhmm_window.tsv, se_refseq_select.json
+  se_tf_coverage_1kb.tsv, se_chromhmm_window.tsv, se_refseq_select.json
 Output: g_se_browser.{pdf,svg,png}, about 155 mm wide (print size, same scale as the full 0.43-2.25 Mb design); labels 7 pt, ticks/legend 6 pt, minor gene names 5.5 pt.
 """
 import gzip
@@ -22,6 +22,7 @@ sys.path.insert(0, str(HERE.parent))
 from common import style  # noqa: E402
 
 L0, L1 = 430000, 2250000          # data window (chr19, hg38): Hi-C matrix and TF coverage bins
+BIN = 1000                        # pseudobulk TF coverage bin (user 2026-11-22: 1 kb; was 2 kb)
 XR = 1950000                      # right end of the shown window (PI 2026-11-21: right part removed; last partner at 1.926 Mb)
 W0, H = 9.75, 4.87                # design canvas of the full window, inches; positions below are design inches
 S = 0.739                         # print scale (183 mm page width incl. margins)
@@ -55,9 +56,9 @@ def main(src, out):
     E = pd.read_csv(src / "se_partner_bands.tsv", sep="\t")
     HE = pd.read_csv(src / "se_hub_edges.tsv", sep="\t")
     HE["ek"] = [("se_" + (cb if ca == "se" else ca)) if fs else "pp_" + ty for ca, cb, fs, ty in zip(HE.cls_a, HE.cls_b, HE.from_se, HE.type)]
-    Tc = pd.read_csv(src / "se_tf_coverage_2kb.tsv", sep="\t", header=None, names=["tf", "b", "n"])
-    nb = (L1 - L0) // 2000
-    ed = (L0 + np.arange(nb + 1) * 2000) / 1e6
+    Tc = pd.read_csv(src / f"se_tf_coverage_{BIN // 1000}kb.tsv", sep="\t", header=None, names=["tf", "b", "n"])
+    nb = (L1 - L0) // BIN
+    ed = (L0 + np.arange(nb + 1) * BIN) / 1e6
 
     fig = plt.figure(figsize=(W * S, H * S))
     Lx, AW = LX / W, AW0 / W
@@ -127,7 +128,7 @@ def main(src, out):
 
     # TF coverage tracks
     rh, y_t = 0.145, y3 - 0.03
-    hub = sorted(set(np.r_[(E.pos.values - L0) // 2000, (np.arange(SE0, SE1, 2000) - L0) // 2000].tolist()))
+    hub = sorted(set(np.r_[(E.pos.values - L0) // BIN, (np.arange(SE0, SE1, BIN) - L0) // BIN].tolist()))
     for k, t in enumerate(ORDER):
         y_ = y_t - (k + 1) * rh
         a_ = fig.add_axes([Lx, y_ / H, AW, (rh - 0.012) / H], sharex=first)

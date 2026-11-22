@@ -32,7 +32,7 @@ A full build takes about 70 s on one core.
 | d_module_edges_hic_support | d_module_edges_hic_support.py | d_module_edge_bins_1000kb, d_module_loop_coverage, d_module_edge_null | 183 x 95 mm |
 | e_module_genomic_class | e_module_genomic_class.py | class_annotation_counts_chromhmm, class_module_regions_chromhmm | 70 x 64 mm |
 | f_top_shared_edges_chord | f_top_shared_edges_chord.py | f_top_shared_module_edges, f_gene_symbols | 16 x 13 in canvas, scale down |
-| g_se_browser | g_se_browser.py | se_hic_10kb, peakachu loops, se_hub_edges, se_partner_bands, se_tf_coverage_2kb, se_chromhmm_window, se_refseq_select | 155 x 85 mm (chr19:0.43-1.95 Mb) |
+| g_se_browser | g_se_browser.py | se_hic_10kb, peakachu loops, se_hub_edges, se_partner_bands, se_tf_coverage_1kb, se_chromhmm_window, se_refseq_select | 155 x 85 mm (chr19:0.43-1.95 Mb) |
 | h_se_3d_structure | h_se_3d_structure.py | se_rosette_render (PyMOL), se_rosette_nodes | 91 x 51 mm |
 | i_se_flower | i_se_flower.py | se_hub_edges, se_partners, se_enhancer_names | 86 x 58 mm |
 | ghi_shared_legend | ghi_shared_legend.py | none | 177 x 13 mm |
