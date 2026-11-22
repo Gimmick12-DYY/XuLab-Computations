@@ -11,7 +11,9 @@
     V3  the reference's top 10,000 ChIP summits by signalValue (Kaya-Okur 2019 Fig 2g convention), same rows in every
         panel, sorted by ChIP centre signal.
   Arrays: <ver>_<track> (rows x 40, already in display order), plus counts.
-3 heatmap_counts.tsv: number of sites per TF and version."""
+3 heatmap_counts.tsv: number of sites per TF and version.
+4 corr_10kb_6x6.tsv: genome-wide 10 kb bins (chr1-22, X; blacklist bins dropped), Pearson of log2 CPM+1, sc raw (rows)
+  vs bulk ChIP (columns), Paired-Tag (Zhu 2021) style; from input_audit/input_audit.xlsx sheet B2 (r18_input_audit.py)."""
 import pickle
 import shutil
 import sys
@@ -29,6 +31,8 @@ B = pd.read_csv(OUT / "round2/pearson/r2p_corr_preferred_top5000_znf777.tsv", se
 M = B.iloc[6:, :6]
 M.to_csv(SD / "corr_matrix_6x6.tsv", sep="\t", float_format="%.5f")
 print(M.round(3).to_string())
+B10 = pd.read_excel(OUT / "input_audit/input_audit.xlsx", sheet_name="B2_10kb_pearson", index_col=0)
+B10.to_csv(SD / "corr_10kb_6x6.tsv", sep="\t", float_format="%.5f"); print(B10.round(3).to_string())
 
 W, NB = 1000, 40
 CTR = slice(NB // 2 - 4, NB // 2 + 4)

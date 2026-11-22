@@ -1,6 +1,7 @@
 """Fig 2 corr_matrix_6x6: summit-group Pearson r, single-cell raw (rows) vs bulk ChIP (columns), colour clipped at +-0.2
 (diverging, centred at 0; every cell annotated). Diagonal-minus-off-diagonal p from all 720 row-label permutations,
-also without CTCF (120). Input source_data/corr_matrix_6x6.tsv."""
+also without CTCF (120). Input source_data/corr_matrix_6x6.tsv.
+Supplement: the same rendering for the genome-wide 10 kb Pearson 6x6 (source_data/corr_10kb_6x6.tsv), colour +-0.6."""
 import itertools
 import sys
 from pathlib import Path
@@ -24,12 +25,17 @@ def perm_p(M):
 
 
 def main(src, out):
+    draw(src, out, "corr_matrix_6x6.tsv", "fig2_corr_matrix_6x6", 0.2, "Pearson r (colour clipped at ±0.2)", None)
+    draw(src, out, "corr_10kb_6x6.tsv", "fig2_supp_corr_10kb_6x6", 0.6, "Pearson r, genome-wide 10 kb bins",
+         "log2 CPM per 10 kb bin, genome-wide (Paired-Tag style)")
+
+
+def draw(src, out, fn, name, lim, cblabel, subtitle):
     P = style.use()
-    D = pd.read_csv(Path(src) / "corr_matrix_6x6.tsv", sep="\t", index_col=0)
+    D = pd.read_csv(Path(src) / fn, sep="\t", index_col=0)
     tfs = ["CTCF", "MAZ", "ZBTB7A", "ZIC2", "ZNF282", "ZNF777"]   # row/column order of the source table (TFS)
     M = D.values.astype(float)
     obs, p = perm_p(M); _, p5 = perm_p(M[1:, 1:])
-    lim = 0.2
     fig = style.figure_mm(89, 80)
     ax = fig.add_axes([0.25, 0.30, 0.56, 0.56])
     cm = LinearSegmentedColormap.from_list("div", DIV)
@@ -44,9 +50,10 @@ def main(src, out):
     ax.tick_params(length=0)
     for s in ax.spines.values():
         s.set_visible(False)
-    ax.set_title(f"diagonal − off-diagonal = {obs:+.3f}, p = {p:.3f}\n(without CTCF p = {p5:.3f}; 720 / 120 permutations)", fontsize=6)
+    ttl = f"diagonal − off-diagonal = {obs:+.3f}, p = {p:.3f}\n(without CTCF p = {p5:.3f}; 720 / 120 permutations)"
+    ax.set_title((subtitle + "\n" if subtitle else "") + ttl, fontsize=6)
     cax = fig.add_axes([0.84, 0.30, 0.03, 0.56])
-    cb = fig.colorbar(im, cax=cax); cb.set_ticks([-0.2, -0.1, 0, 0.1, 0.2]); cb.outline.set_linewidth(0.4)
-    cb.set_label("Pearson r (colour clipped at ±0.2)")
-    style.save(fig, out, "fig2_corr_matrix_6x6")
+    cb = fig.colorbar(im, cax=cax); cb.set_ticks(np.round(np.linspace(-lim, lim, 5), 2)); cb.outline.set_linewidth(0.4)
+    cb.set_label(cblabel)
+    style.save(fig, out, name)
     print("own r:", dict(zip(tfs, np.diag(M).round(3))), "p", round(p, 4), "noCTCF", round(p5, 4))
