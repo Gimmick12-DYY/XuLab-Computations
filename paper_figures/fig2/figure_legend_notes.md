@@ -39,6 +39,18 @@
   separate axis for each panel.
 - **Share of summits inside Mdrop5:** CTCF 95%, MAZ 97%, ZBTB7A 95%, ZIC2 93%, ZNF282 73%, ZNF777 94%.
 
+## Main heatmap proposal v2 (fig2_main_heatmap_v2, _v2_top5000, per TF _v2_<TF>; not yet chosen)
+- One shared axis for all three panels: ±1 kb at 50 bp. Bulk ChIP CPM; sc raw 5' end CPM (3-bin running mean);
+  sc imputed (Mdrop5) = the 1 kb imputed value of the genomic bin covering each 50 bp position.
+- Rows: the reference's top 10,000 ChIP summits; rows whose summit 1 kb bin is outside Mdrop5 are dropped from all three
+  panels (CTCF 4.6%, MAZ 2.9%, ZBTB7A 4.6%, ZIC2 7.1%, ZNF282 27.4%, ZNF777 6.4%); out-of-mask flank positions are 0.
+  Sorted by bulk ChIP within ±200 bp.
+- Noise reduction, identical for all three panels: consecutive sorted rows averaged in groups so ~500 rows are drawn
+  (group size 20 for CTCF and MAZ, 17 ZBTB7A, 19 ZIC2, 12 ZNF282, 12 ZNF777; 10 in the top-5,000 version), then a
+  Gaussian smoothing along each row (sigma 100 bp = 2 bins). Colour 0 to the 95th percentile of the row-averaged,
+  smoothed values per panel (turbo). The profile on top is the mean of the unsmoothed rows.
+- top5000 version: the 5,000 kept rows with the highest ChIP centre signal, same processing.
+
 ## Supplement
 - **fig2_supp_heatmap_50bp:** the same rows, with ChIP and raw at ±1 kb in 50 bp bins (raw smoothed with a 3-bin
   running mean). Imputed stays on its native ±10 kb, 1 kb grid under Mdrop5. This panel shows the sharp CTCF footprint
