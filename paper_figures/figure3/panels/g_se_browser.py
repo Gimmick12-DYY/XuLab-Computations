@@ -24,11 +24,13 @@ from common import style  # noqa: E402
 L0, L1 = 430000, 2250000          # data window (chr19, hg38): Hi-C matrix and TF coverage bins
 BIN = 1000                        # pseudobulk TF coverage bin (user 2026-11-22: 1 kb; was 2 kb)
 XR = 1950000                      # right end of the shown window (PI 2026-11-21: right part removed; last partner at 1.926 Mb)
-W0, H = 9.75, 4.87                # design canvas of the full window, inches; positions below are design inches
+W0, H0 = 9.75, 4.87               # design canvas of the full window with the Hi-C shown to 150 kb, inches
 S = 0.739                         # print scale (183 mm page width incl. margins)
 LX = 0.93                         # left margin (design inches)
 AW0 = 8.72 * (XR - L0) / (L1 - L0)   # track width: same Mb per inch as the full-window design
 W = W0 - (8.72 - AW0)
+YMAX = (XR - L0) / 2 / 1000                    # whole Hi-C triangle, up to its apex (kb; PI/user 2026-11-22)
+H = H0 + AW0 * (YMAX - 150.0) / (XR - L0) * 1000   # canvas grows by the extra triangle height; other tracks unchanged
 SE0, SE1 = 1248039, 1254347       # SEdb SE_02_1951
 XL = (L0 / 1e6, XR / 1e6)
 ORDER = ["SOX4", "NFYA", "MBD3", "E4F1", "ZNF507", "MLX", "NME2", "DR1", "GLYR1", "MTF2"]
@@ -74,7 +76,7 @@ def main(src, out):
         fig.text(0.008, y / H, t, va="center", ha="left", **kw)
 
     # Hi-C triangle
-    ymax = 150.0
+    ymax = YMAX
     hh = AW0 * ymax / (XR - L0) * 1000
     b_h = H - 0.33 - hh
     ax = fig.add_axes([Lx, b_h / H, AW, hh / H])
