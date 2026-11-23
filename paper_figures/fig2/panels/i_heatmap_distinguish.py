@@ -45,7 +45,7 @@ def main(src, out):
             if b:
                 ax.axhline(edges[b] - .5, color=P.neutral.ink, lw=0.3)
         ax.set_xticks(range(6), tfs, rotation=90, fontsize=5.5); ax.set_yticks([]); ax.xaxis.tick_top()
-        ax.set_title(f"our {lab} (column z across rows)", fontsize=6, pad=22)
+        ax.text(0.5, 1.13, f"our {lab} (column z across rows)", transform=ax.transAxes, ha="center", va="bottom", fontsize=6.5)
         for a in (ax0,):
             for b in range(1, 6):
                 a.axhline(edges[b] - .5, color=P.neutral.ink, lw=0.3)
