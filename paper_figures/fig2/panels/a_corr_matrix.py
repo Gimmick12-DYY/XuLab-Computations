@@ -27,6 +27,11 @@ def perm_p(M):
 
 def main(src, out):
     deseq2(src, out)
+    # round 9b: multi-group DESeq2 (~ TF, TF minus mean of the other 78, ashr); source r9b_e_corr.py
+    deseq2(src, out, "corr_deseq2mg_6x6.tsv", "fig2_corr_matrix_6x6_deseq2mg",
+           "DESeq2 ~TF (TF vs mean of other 78), ashr log2FC vs ChIP log2FC, consensus peaks")
+    deseq2(src, out, "corr_deseq2mg_6x6_chip1kb.tsv", "fig2_corr_matrix_6x6_deseq2mg_chip1kb",
+           "DESeq2 ~TF, ashr log2FC vs ChIP log2FC, ChIP summits ±1 kb", colz=False)
     standardised(src, out)
     dropped(src, out)
     draw(src, out, "corr_matrix_6x6.tsv", "fig2_corr_matrix_6x6", 0.2, "Pearson r (colour clipped at ±0.2)", None)
@@ -159,14 +164,16 @@ def dropped(src, out, drop=DROP):
 RECIPE = "deseq2"
 
 
-def deseq2(src, out):
-    f = Path(src) / "corr_deseq2_6x6.tsv"
+def deseq2(src, out, fn="corr_deseq2_6x6.tsv", name="fig2_corr_matrix_6x6_deseq2",
+           sub="DESeq2 shrunken log2FC (ours) vs ChIP log2FC, all consensus peaks", colz=True):
+    f = Path(src) / fn
     if not f.exists():
         return
     M = pd.read_csv(f, sep="\t", index_col=0).values.astype(float)
     lim = max(0.1, float(np.ceil(np.abs(M).max() * 10) / 10))
-    draw(src, out, f.name, "fig2_corr_matrix_6x6_deseq2", lim, f"Pearson r (colour ±{lim:g})",
-         "DESeq2 shrunken log2FC (ours) vs ChIP log2FC, all consensus peaks")
+    draw(src, out, f.name, name, lim, f"Pearson r (colour ±{lim:g})", sub)
+    if not colz:
+        return
     P = style.use()
     tfs = ["CTCF", "MAZ", "ZBTB7A", "ZIC2", "ZNF282", "ZNF777"]
     X = (M - M.mean(0, keepdims=True)) / M.std(0, keepdims=True)
@@ -184,4 +191,4 @@ def deseq2(src, out):
     ax.set_title("DESeq2 recipe, column z-score of r\n(statistics: see the plain r matrix)", fontsize=6)
     cax = fig.add_axes([0.79, 0.30, 0.03, 0.56]); cb = fig.colorbar(im, cax=cax); cb.outline.set_linewidth(0.4)
     cb.set_label("column z-score of Pearson r\n(per ChIP column)")
-    style.save(fig, out, "fig2_corr_matrix_6x6_deseq2_colz")
+    style.save(fig, out, name + "_colz")

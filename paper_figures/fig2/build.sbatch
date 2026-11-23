@@ -14,6 +14,7 @@
 #     downstream/fig2_qc/round9_deseq2/SPEC.md), run sequentially here: peaks, 79 count tasks, our matrix, 6 bulk
 #     counts + combine, 6 DESeq2 fits (8 cores), 6x6 -> source_data/corr_deseq2_6x6*.tsv (panel a draws it).
 #     Usage: sbatch --export=ALL,ROUND9=1 build.sbatch
+#   ROUND9B=1 (optional, supplement only): round 9b multi-group DESeq2 (~TF), both arms; usage as ROUND9.
 # Inputs from earlier analyses (not rerun here): round2 summit tables, round6 bigWigs, input_audit 10 kb matrix,
 # inputs/imp79_mdrop5*.npz (r20a), imputed_audit continuous scores (r9a).
 set -euo pipefail
@@ -42,6 +43,20 @@ PYEOF
   $PY r9_deseq2_c2_bulk.py combine
   for t in CTCF MAZ ZBTB7A ZIC2 ZNF282 ZNF777; do Rscript r9_deseq2_d.R $t; done
   $PY r9_deseq2_e_corr.py
+  cd ../..
+fi
+if [ "${ROUND9B:-0}" = "1" ]; then
+  # round 9b (spec downstream/fig2_qc/round9b_deseq2_multigroup/SPEC.md): uses the round 9 count matrix (run ROUND9=1
+  # first if it is missing); one DESeq2 ~TF fit per arm (8 cores here; ~hours), then the 6x6 tables.
+  module load r/4.5.0 >/dev/null 2>&1 || true
+  cd downstream/fig2_qc
+  Rscript r9b_d.R consensus
+  $PY r9b_a_regions.py
+  for i in $(seq 0 78); do $PY r9b_b_counts.py $i; done
+  for i in 0 1 2 3 4 5; do $PY r9b_c_merge.py $i; done
+  $PY r9b_c_merge.py matrix; $PY r9b_c_merge.py combine
+  Rscript r9b_d.R chip1kb
+  $PY r9b_e_corr.py
   cd ../..
 fi
 $PY paper_figures/fig2/make_fig2.py
