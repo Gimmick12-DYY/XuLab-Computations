@@ -59,3 +59,12 @@
   sqrt((1 − p)/(n p)): CTCF 0.50, ZIC2 0.45, ZNF282 0.41, MAZ / ZBTB7A / ZNF777 ≈ 0.16. Sites also differ several-fold in
   overall level (between-site SD / mean 0.7–1.7), which shows as horizontal bands; and within ±1 kb each site has only
   2–3 distinct 1 kb values, so there is no positional shape to form a funnel.
+- **fig2_main_heatmap_v4_rankgroups:** the main heatmap's sites sorted by ChIP centre signal and split into 50 equal
+  groups by ChIP rank; each drawn row is the group mean (~120–190 sites). ChIP 50 bp ±1 kb, no smoothing; raw 50 bp
+  ±1 kb (3-bin running mean from the source plus Gaussian sigma 50 bp); imputed under Mdrop5 on its own ±5 kb axis at
+  1 kb. Colour per panel 0 to the 95th percentile of the drawn rows.
+- **fig2_main_heatmap_v4_continuous:** as v4_rankgroups, but imputed = the model's continuous pseudobulk score (mean
+  predicted probability per 1 kb bin over all cells; unified/work/<tf>/predict/pseudobulk_audit_bins.npz) at the summit
+  bin ±2 kb (5 bins). Scores exist only for the audit bins, so all three panels use the covered sites: CTCF 7,484,
+  MAZ 7,798, ZBTB7A 7,037, ZIC2 6,207, ZNF282 5,024, ZNF777 5,036. Its colour runs from the 5th to the 95th
+  percentile, because the score has a high baseline (~0.15–0.25).
