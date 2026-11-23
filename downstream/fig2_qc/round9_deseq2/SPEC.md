@@ -25,3 +25,11 @@ alternative (fig2_corr_matrix_6x6_deseq2, _colz), not the main panel, until the 
 6. **Rendering.** Plain r and column z-score, in the style of fig2_corr_matrix_6x6 (paper_figures/fig2, RECIPE =
    "deseq2"); added to build.sbatch.
 Scripts: downstream/fig2_qc/r9_deseq2_*.
+
+## Execution changes (no method change), 2026-11-23
+- DESeq2 fits (step d) run with BiocParallel MulticoreParam(8) (8 CPUs, 8 h limit) for DESeq(), results() and
+  lfcShrink(apeglm); the model, size factors, shrinkage type and thresholds are unchanged.
+- Bulk ChIP counting (step 4 inputs) runs as 6 parallel per-BAM bedtools multicov jobs plus a combine step
+  (r9_deseq2_c2_bulk.py), with the same options as before. Our count matrix (counts.mtx, samples.tsv) was already
+  written by the first step-c job, which was cancelled during its bulk counting.
+- Consensus peaks: 718,577; samples: 199 (58 TFs with library replicates, 21 TFs with 3 random cell splits).
