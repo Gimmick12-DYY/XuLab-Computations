@@ -89,7 +89,7 @@ for setname, tfs in (("main", ["CTCF", "ZBTB7A", "ZIC2", "ZNF282"]), ("znf777", 
     for t in tfs:
         x = counts(load5(t), c, s, e); five.clear()
         p = pool_x - x
-        enr.append(np.log2(((x + 0.5) / TOT[t]) / ((p + 0.5) / (PTOT - TOT[t]))))
+        enr.append(np.log2((x / TOT[t] * 1e6 + 1) / (p / (PTOT - TOT[t]) * 1e6 + 1)))   # CPM + 1 (spec correction)
     enr = np.column_stack(enr)
     mid = np.array([off[ci][0] for ci in c]) + ((s + e) // 2) // 1000
     impp = []

@@ -23,3 +23,9 @@ remove regions shared by all 4, and show our data side by side to see whether th
 - **Table per block.** Mean (B) and fraction present (A, C) for each of our 4 TFs. Expected if our data match: in each
   single-ChIP block, the matching TF has the highest value.
 Scripts: downstream/fig2_qc/r10_presence.py; paper_figures/fig2/panels/f_presence.py.
+
+## Correction (2026-11-23, after the first run, before interpretation)
+The (B) formula log2(((x + 0.5) / T_tf) / ((p + 0.5) / T_pool)) puts the pseudocount on read counts of very different
+libraries (T_pool is ~80x T_tf), so a region with no reads in either scores log2(T_pool / T_tf) ~ +6 instead of 0, which
+inflates low-coverage regions. (B) is replaced by log2((CPM_tf + 1) / (CPM_pool + 1)) with CPM = reads / total x 1e6;
+a region with no reads now scores 0. Nothing else changes.

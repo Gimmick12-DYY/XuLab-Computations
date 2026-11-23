@@ -1,7 +1,7 @@
 """Fig 2 peak-presence heatmap (round 10; source downstream/fig2_qc/r10_presence.py, spec round10_presence/SPEC.md).
 Rows = union of 4 bulk ChIPs' summit +-250 bp regions minus those present in all 4, grouped by presence pattern
 (single-ChIP blocks, then pairs, then triples), ordered within a block by summed ChIP signal. Columns:
-  Bulk ChIP presence (4) | our peak presence (A, lab MACS2 q<0.05) | our signal (B, log2 enrichment over the leave-one-out
+  Bulk ChIP presence (4) | our peak presence (A, lab MACS2 q<0.05) | our signal (B, log2((CPM_tf + 1) / (CPM_pool + 1)) over the leave-one-out
   79-TF pool) | imputed presence (C, Mdrop5, >= 95th percentile)
 Rows averaged in consecutive groups within each block (group size = ceil(total / 600); at least one drawn row per block),
 so presence columns show the fraction present (white 0 to black 1); (B) diverging, centred at 0, capped at the 95th
