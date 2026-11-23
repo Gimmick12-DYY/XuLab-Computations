@@ -7,3 +7,6 @@ Cutoffs 0.05 to 0.80 in steps of 0.05. Summary: mean, median, min, 25th, 75th, m
 
 ## Amendment 2 (2026-11-23, user: y = median genes, x = gene score)
 The figure shows only the median number of genes per TF (over the 63 TFs) at each |score| cutoff 0.05-0.80 (log y; cutoffs where the median is 0 are not drawn). Tables unchanged.
+
+## Amendment 3 (2026-11-23, replaces the plan in Amendment 2, which was not applied: m55.py is unchanged)
+Separate figure "median_genes_per_TF_by_score" from the existing m55 table (no new analysis): bar chart, x = |score| cutoff 0.05-0.80 (16 bars), y = median genes per TF over the 63 TFs, linear from 0, value above each bar; the genes_left_per_TF_by_score_cutoff line figure is kept.
