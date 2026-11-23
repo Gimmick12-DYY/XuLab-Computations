@@ -10,6 +10,9 @@ M <- readMM(file.path(o9, "counts.mtx")); S <- read.delim(file.path(o9, "samples
 cnt <- as.matrix(M); storage.mode(cnt) <- "integer"; colnames(cnt) <- S$sample
 cd <- data.frame(row.names = S$sample, group = factor(ifelse(S$tf == tf, "tf", "rest"), levels = c("rest", "tf")))
 dds <- DESeqDataSetFromMatrix(cnt, cd, ~ group)
+# every peak has a zero in at least one of the 199 samples, so the default median-of-ratios size factors are undefined;
+# DESeq2's sfType = "poscounts" (geometric means over positive counts) is DESeq2's own estimator for sparse counts.
+dds <- estimateSizeFactors(dds, type = "poscounts")
 dds <- DESeq(dds, quiet = TRUE, parallel = ncpu > 1, BPPARAM = bp)
 res <- results(dds, name = "group_tf_vs_rest", parallel = ncpu > 1, BPPARAM = bp)
 sh <- lfcShrink(dds, coef = "group_tf_vs_rest", type = "apeglm", quiet = TRUE, parallel = ncpu > 1, BPPARAM = bp)

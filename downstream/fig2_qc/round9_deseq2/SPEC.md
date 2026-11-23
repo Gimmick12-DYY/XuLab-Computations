@@ -33,3 +33,6 @@ Scripts: downstream/fig2_qc/r9_deseq2_*.
   (r9_deseq2_c2_bulk.py), with the same options as before. Our count matrix (counts.mtx, samples.tsv) was already
   written by the first step-c job, which was cancelled during its bulk counting.
 - Consensus peaks: 718,577; samples: 199 (58 TFs with library replicates, 21 TFs with 3 random cell splits).
+- Size factors: the first DESeq2 attempt stopped because every peak has a zero count in at least one of the 199
+  samples, so DESeq2's default median-of-ratios size factors cannot be computed. DESeq2's own sparse-data estimator
+  (estimateSizeFactors type = "poscounts") is used instead; everything else is unchanged.
