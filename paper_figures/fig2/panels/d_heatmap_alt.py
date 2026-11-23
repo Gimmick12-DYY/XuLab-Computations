@@ -64,8 +64,8 @@ def panel_div(fig, cell, R, title, n):
     for sp_ in ("top", "right"):
         ax.spines[sp_].set_visible(True)
     cax = fig.add_subplot(g[3]); cb = fig.colorbar(im, cax=cax, orientation="horizontal")
-    cb.set_ticks([-lim, 0, lim]); cb.outline.set_linewidth(0.3); cb.ax.tick_params(labelsize=5, length=1.2, pad=1)
-    cb.set_label(f"log2 signal / own flank (2–5 kb)\n{n:,} sites", fontsize=5, labelpad=1)
+    cb.set_ticks([-lim, 0, lim]); cb.set_ticklabels([f"{-lim:g}", "0", f"{lim:g}"]); cb.outline.set_linewidth(0.3); cb.ax.tick_params(labelsize=5, length=1.2, pad=1)
+    cb.set_label(f"log2 / flank\n{n:,} sites", fontsize=5, labelpad=1)
 
 
 def panel_imp5kb(fig, cell, X, title, n):
