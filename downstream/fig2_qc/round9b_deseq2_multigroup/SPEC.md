@@ -33,3 +33,7 @@ Output is an alternative (fig2_corr_matrix_6x6_deseq2mg, _colz), not the main pa
    (fig2_corr_matrix_6x6_deseq2mg, _colz); the secondary arm as fig2_corr_matrix_6x6_deseq2mg_chip1kb. Optional block
    in paper_figures/fig2/build.sbatch (ROUND9B=1).
 Scripts: downstream/fig2_qc/r9b_*. No changes after results.
+
+## Status (2026-11-23 21:21Z)
+Cancelled by the user before any result (jobs 10526767, 10526769-10526774 scancelled; fit had not finished). The user
+asked to find differential peaks on the ChIP data only first (round 11). Code kept for the record.
