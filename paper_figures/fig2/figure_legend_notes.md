@@ -20,21 +20,21 @@
 - The statistics belong to the unstandardised matrix: diagonal − off-diagonal = +0.151, p = 0.006 (720 permutations);
   without CTCF p = 0.033 (120). Row standardisation cannot create a diagonal; it only rescales each row.
 
-## Main: peak heatmap (fig2_main_heatmap; per TF fig2_main_heatmap_<TF>; chosen 2026-11-23)
-- One shared axis for all three panels: ±1 kb at 50 bp. Bulk ChIP CPM; sc raw 5' end CPM (3-bin running mean);
-  sc imputed (Mdrop5) = the 1 kb imputed value of the genomic bin covering each 50 bp position.
-- Rows: the reference's top 10,000 ChIP summits; rows whose summit 1 kb bin is outside Mdrop5 are dropped from all three
-  panels (CTCF 4.6%, MAZ 2.9%, ZBTB7A 4.6%, ZIC2 7.1%, ZNF282 27.4%, ZNF777 6.4%); out-of-mask flank positions are 0.
-  Sorted by bulk ChIP within ±200 bp.
-- Noise reduction, identical for all three panels: consecutive sorted rows averaged in groups so ~500 rows are drawn
-  (group size 20 for CTCF and MAZ, 17 ZBTB7A, 19 ZIC2, 12 ZNF282, 12 ZNF777), then a
-  Gaussian smoothing along each row (sigma 100 bp = 2 bins). Colour 0 to the 95th percentile of the row-averaged,
-  smoothed values per panel (turbo). The profile on top is the mean of the unsmoothed rows.
-
-- Rows are the reference's top 10,000 ChIP summits by signalValue (fewer when the file has fewer peaks: ZBTB7A 8,400,
-  ZNF282 7,989, ZNF777 6,223), minus the out-of-mask rows above. Mdrop5 = 1 kb bins with mean ATAC CPM > 0.0781542
-  over the two pooled HEK293T ATAC-seq bigwigs; imputed includes the raw-positive cells kept by the imputation
-  (keep_raw). Each panel has its own colour bar, unit and number of sites underneath; the profile row has its own y-axis.
+## Main: peak heatmap (fig2_main_heatmap; per TF fig2_main_heatmap_<TF>; hybrid chosen 2026-11-23)
+- Sites: the reference's top 10,000 ChIP summits by signalValue (ZBTB7A 8,400, ZNF282 7,989, ZNF777 6,223 when the file
+  has fewer), minus sites whose summit 1 kb bin is outside the Mdrop5 accessibility mask (CTCF 4.6%, MAZ 2.9%, ZBTB7A
+  4.6%, ZIC2 7.1%, ZNF282 27.4%, ZNF777 6.4%); kept sites: CTCF 9,535, MAZ 9,709, ZBTB7A 8,011, ZIC2 9,289,
+  ZNF282 5,803, ZNF777 5,827. One sort for all panels: bulk ChIP signal within ±200 bp, highest at the top, so the
+  three panels align by ChIP rank from top to bottom.
+- Bulk ChIP and sc raw: ±1 kb at 50 bp (ChIP CPM; raw 5' end CPM with a 3-bin running mean). Consecutive sorted sites
+  averaged in groups so ~500 rows are drawn (group size 20 CTCF and MAZ, 17 ZBTB7A, 19 ZIC2, 12 ZNF282 and ZNF777),
+  then a Gaussian smoothing along each row (sigma 100 bp). Colour 0 to the 95th percentile of the drawn rows.
+- sc imputed: Mdrop5-masked imputed (fraction of cells positive per 1 kb bin; model calls inside the mask plus the
+  raw-positive cells kept by the imputation), on its own axis "±5 kb, 1 kb bins" (11 bins). The same sorted sites are
+  split into 50 equal groups by ChIP rank (~120–190 sites per row); no smoothing. Colour 0 to the 95th percentile.
+- Profile row: the mean over all sites of each panel's unsmoothed signal; own y-axis per panel. Each panel has its own
+  colour bar, unit and number of sites underneath.
+- Mdrop5 = 1 kb bins with mean ATAC CPM > 0.0781542 over the two pooled HEK293T ATAC-seq bigwigs.
 
 ## Supplement
 - **fig2_supp_heatmap_premask:** the same processing as the main heatmap, with the genome-wide pre-mask imputation

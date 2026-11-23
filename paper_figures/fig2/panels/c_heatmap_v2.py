@@ -105,11 +105,6 @@ def build(src, out, tfs, name, w_mm, h_mm, ncol, rows, top=None, premask=False):
 
 
 def main(src, out):
+    """Supplement only; the main heatmap (hybrid) is built in e_heatmap_binned.py with this module's ChIP/raw panels."""
     style.use()
-    rows = {}
-    build(src, out, TFS, "fig2_main_heatmap", 183, 235, 3, rows)
-    for t in TFS:
-        build(src, out, [t], f"fig2_main_heatmap_{t}", 89, 120, 1, {})
     build(src, out, TFS, "fig2_supp_heatmap_premask", 183, 235, 3, {}, premask=True)
-    pd.DataFrame(rows.values()).to_csv(Path(src) / "heatmap_main_rows.tsv", sep="\t", index=False, float_format="%.4f")
-    print(pd.DataFrame(rows.values()).round(3).to_string())

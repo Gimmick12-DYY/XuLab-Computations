@@ -7,7 +7,10 @@ drawn row = the mean over its group (~120-190 sites). Colour per panel 0 to the 
   fig2_main_heatmap_v4_continuous : the same, but imputed = the model's continuous pseudobulk score (mean predicted
       probability per 1 kb bin over cells) at the summit bin +-2 kb (5 bins), available only for the audit bins, so all
       three panels use only the sites covered by those bins (n shown under each panel). The model score has a high
-      baseline (~0.15-0.25), so this panel's colour runs from its 5th to its 95th percentile (stated on the colour bar)."""
+      baseline (~0.15-0.25), so this panel's colour runs from its 5th to its 95th percentile (stated on the colour bar).
+  fig2_main_heatmap (+ per TF; MAIN) : ChIP and raw exactly as the v2 main heatmap (all sites, rows averaged to ~500 drawn,
+      Gaussian sigma 100 bp, colour 0-95th pct); imputed as v4_rankgroups (50 ChIP-rank groups, +-5 kb at 1 kb). Same sites
+      and order in all panels; only the row grouping of the imputed panel differs (user choice 2026-11-23)."""
 import importlib.util
 import sys
 from pathlib import Path
@@ -78,8 +81,12 @@ def build(src, out, name, mode, tfs=TFS, w=183, h=235, ncol=3):
         n = len(T["ChIP"])
         r, c = divmod(k, ncol)
         sub = gs[r, c].subgridspec(1, 3, wspace=0.32)
-        panel(fig, sub[0], T["ChIP"], "Bulk ChIP", "CPM", n, XS, W, "±1 kb, 50 bp")
-        panel(fig, sub[1], T["raw"], "sc raw", "CPM", n, XS, W, "±1 kb, 50 bp", sigma_bins=1)
+        if mode == "mixed":   # ChIP and raw exactly as the v2 main heatmap; imputed as v4_rankgroups
+            V2.panel(fig, sub[0], T["ChIP"], "Bulk ChIP", "CPM", n)
+            V2.panel(fig, sub[1], T["raw"], "sc raw", "CPM", n)
+        else:
+            panel(fig, sub[0], T["ChIP"], "Bulk ChIP", "CPM", n, XS, W, "±1 kb, 50 bp")
+            panel(fig, sub[1], T["raw"], "sc raw", "CPM", n, XS, W, "±1 kb, 50 bp", sigma_bins=1)
         panel(fig, sub[2], imp, it, iu, n, ixs, ih, il, vmin_pct=5 if mode == "continuous" else None)
         pos = gs[r, c].get_position(fig)
         fig.text((pos.x0 + pos.x1) / 2, pos.y1 + (0.02 if nrow > 1 else 0.05), f"{t} ({CELL[t]} ChIP)", ha="center", fontsize=7, fontweight="bold")
@@ -90,3 +97,6 @@ def main(src, out):
     style.use()
     build(src, out, "fig2_main_heatmap_v4_rankgroups", "rank")
     build(src, out, "fig2_main_heatmap_v4_continuous", "continuous")
+    build(src, out, "fig2_main_heatmap", "mixed")          # main panel (hybrid, chosen 2026-11-23)
+    for t in TFS:
+        build(src, out, f"fig2_main_heatmap_{t}", "mixed", tfs=[t], w=89, h=120, ncol=1)
