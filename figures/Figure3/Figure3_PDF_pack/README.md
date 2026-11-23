@@ -18,8 +18,8 @@ Rebuilt 2026-11-21 directly by matplotlib from the panel scripts in Longleaf `Xu
 | h_se_3d_structure.pdf | h – SE 3D structure |
 | i_se_flower.pdf | i – SE network (flower) |
 | ghi_shared_legend.pdf | legend shared by g, h, i |
-| hic_ets2_locus.pdf | Hi-C locus: WT HEK293T Hi-C 10 kb triangle with A–B / A–C / B–C contacts, coordinated binding edges of an ETS2 3-region MCC (ACBD6 promoter – distal – LINC01732 promoter), TF counts, genes |
-| hic_rbbp4_locus.pdf | Hi-C locus, RBBP4 version: 3-region RBBP4 MCC C00057 on chr1 (distal – THBS3 promoter – FDPS promoter), all edges on Hi-C loops |
+| hic_ets2_locus.pdf | Hi-C locus (alternative): WT HEK293T Hi-C 10 kb triangle with A–B / A–C / B–C contacts, coordinated binding edges of an ETS2 3-region MCC (ACBD6 promoter – distal – LINC01732 promoter), TF counts, genes |
+| hic_rbbp4_locus.pdf | Hi-C locus (main panel, chosen 2026-11-23), RBBP4 FDPS/THBS3: 3-region RBBP4 MCC C00057 on chr1 (distal – THBS3 promoter – FDPS promoter), all edges on Hi-C loops |
 | j_go_specific_vs_conserved_summary.pdf | j – GO terms of TF-specific vs conserved MCC elements |
 | supplementary/go_per_tf_great_terms.pdf | GO term x TF matrix (all TFs with terms) |
 | supplementary/j_gene_set_dotplot.pdf | earlier pooled promoter GO comparison |
