@@ -109,6 +109,8 @@ def main():
         "--out-dir", type=Path,
         default=ROOT / "unified/work/ctcf/impute_atac_cpm_drop5",
     )
+    ap.add_argument("--cpm-cache", type=Path, default=None,
+                    help="read-only per-bin ATAC CPM cache (.npy); default = <out-dir>/bin_atac_mean_cpm.npy")
     args = ap.parse_args()
     tracks = [
         ROOT / "downstream/tracks/atac_bulk_sources/2_GSE283384_pooled_CPM.bw",
@@ -121,7 +123,7 @@ def main():
     chroms, starts, ends = parse_regions(regions)
     print(f"[regions] n={len(regions):,}", flush=True)
 
-    cache = args.out_dir / "bin_atac_mean_cpm.npy"
+    cache = args.cpm_cache or (args.out_dir / "bin_atac_mean_cpm.npy")
     args.out_dir.mkdir(parents=True, exist_ok=True)
     if cache.is_file():
         cpm = np.load(cache)
