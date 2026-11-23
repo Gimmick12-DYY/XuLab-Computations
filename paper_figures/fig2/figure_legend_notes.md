@@ -44,3 +44,18 @@
 - **fig2_supp_corr_6x6_imputed_mdrop5 (and _added):** the main-matrix recipe (same 180 summit groups, same bulk values)
   with imputed single-cell tracks under Mdrop5 at 1 kb: summit bin vs the bins 2–5 kb away, relative to the
   leave-one-out 78-TF imputed pool; all calls, or model-added calls only. No diagonal (p = 0.70 for both).
+
+## Alternatives (not the main panel; same rows, order, row grouping and smoothing as the main heatmap)
+- **fig2_main_heatmap_v3_imp5kb:** ChIP and raw as the main (±1 kb, 50 bp); imputed on its own ±5 kb axis at its native
+  1 kb resolution (11 bins), axis labelled "±5 kb, 1 kb bins".
+- **fig2_main_heatmap_v3_rownorm:** imputed row-normalised: (x + pc) / (flank + pc), flank = mean of the 1 kb bins 2–5 kb
+  from the summit on both sides, pc = 5th percentile of the nonzero per-site flank means; ratios averaged in the row
+  groups, shown as log2 on a diverging map (symmetric at the 95th percentile of |log2|, 0.5 steps). The log2 diverging
+  display was chosen over a turbo ratio so that enrichment and depletion read symmetrically. _rownorm_all applies the same
+  normalisation to ChIP and raw (raw flank per 50 bp = CPM per kb / 20).
+- **Why imputed looks noisy (numbers):** the per-site value is the fraction of cells positive in one 1 kb bin. Median
+  positive cells in the summit bin per site: CTCF 3 (of 10,410 cells imputed; 20% of sites have 0), ZIC2 5 (4,896),
+  ZNF282 5 (2,959), MAZ 38 (3,968), ZBTB7A 40 (7,005), ZNF777 39 (3,400). Median per-site binomial CV,
+  sqrt((1 − p)/(n p)): CTCF 0.50, ZIC2 0.45, ZNF282 0.41, MAZ / ZBTB7A / ZNF777 ≈ 0.16. Sites also differ several-fold in
+  overall level (between-site SD / mean 0.7–1.7), which shows as horizontal bands; and within ±1 kb each site has only
+  2–3 distinct 1 kb values, so there is no positional shape to form a funnel.
