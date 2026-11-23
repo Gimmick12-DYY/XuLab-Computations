@@ -26,7 +26,7 @@ def main(src, out):
     P = style.use()
     z = np.load(f); tfs = [str(t) for t in z["tfs"]]; gb = z["gblk"]; n = z["block_n"]; stt = z["stats"]
     fig = style.figure_mm(150, 210)
-    hx, hy, hw, hh = 0.17, 0.42, 0.78, 0.50
+    hx, hy, hw, hh = 0.17, 0.42, 0.78, 0.46
     ax0 = fig.add_axes([hx, hy, 0.055, hh])
     ch = z["chip"].copy()
     for b in range(6):   # scale the ChIP column within each block (different ChIPs)
@@ -45,7 +45,7 @@ def main(src, out):
             if b:
                 ax.axhline(edges[b] - .5, color=P.neutral.ink, lw=0.3)
         ax.set_xticks(range(6), tfs, rotation=90, fontsize=5.5); ax.set_yticks([]); ax.xaxis.tick_top()
-        ax.text(0.5, 1.13, f"our {lab} (column z across rows)", transform=ax.transAxes, ha="center", va="bottom", fontsize=6.5)
+        ax.text(0.5, 1.115, f"our {lab} (column z across rows)", transform=ax.transAxes, ha="center", va="bottom", fontsize=6.5)
         for a in (ax0,):
             for b in range(1, 6):
                 a.axhline(edges[b] - .5, color=P.neutral.ink, lw=0.3)
