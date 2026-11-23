@@ -136,13 +136,39 @@ def span_label(c):
     return f"{ch.pop()}:{s / 1e6:.1f}–{e / 1e6:.1f} Mb" if len(ch) == 1 else f"{len(ch)} chromosomes"
 
 
-def build(edges_path, modules_path):
+def load_genes(tss_path, regions):
+    """Region -> RefSeq Select genes whose TSS lies within the region +-1 kb (promoter regions only)."""
+    T = pd.read_csv(tss_path, sep="\t")
+    by = {c: (g.tss.to_numpy(), g.gene.to_numpy()) for c, g in T.sort_values(["chrom", "tss"]).groupby("chrom")}
+    out = {}
+    for r in regions:
+        c, s, e = parse(r)
+        if c in by:
+            pos, gn = by[c]
+            i, j = np.searchsorted(pos, s - 1000), np.searchsorted(pos, e + 1000, side="right")
+            if j > i:
+                out[r] = sorted(set(gn[i:j]))
+    return out
+
+
+def gene_label(c, genes, H, k=2):
+    """Genes of the k best-connected promoter regions in the component (degree in the pair graph, ties alphabetical)."""
+    prom = sorted((r for r in c if genes.get(r)), key=lambda r: (-H.degree(r), genes[r][0]))
+    top = []
+    for r in prom:
+        for g in genes[r]:
+            if g not in top:
+                top.append(g)
+    return ", ".join(top[:k]) + ("…" if len(top) > k else "")
+
+
+def build(edges_path, modules_path, min_comp=MIN_COMP):
     """Graph, modules, components >= MIN_COMP and the packed layout (seeded, reproducible)."""
     random.seed(SEED)
     ig.set_random_number_generator(random)
     G = load_graph(edges_path)
     modules = load_modules(modules_path)
-    comps = sorted((sorted(c) for c in nx.connected_components(G) if len(c) >= MIN_COMP), key=lambda c: (-len(c), c[0]))
+    comps = sorted((sorted(c) for c in nx.connected_components(G) if len(c) >= min_comp), key=lambda c: (-len(c), c[0]))
     keep = set().union(*map(set, comps))
     H = G.subgraph(keep)
     locs, radii = [], []
@@ -152,7 +178,7 @@ def build(edges_path, modules_path):
         radii.append(max((x * x + y * y) ** 0.5 for x, y in loc.values()) + NODE_SEP * 0.8)
     cx, cy = pack_discs(radii)
     pos = {v: (x + cx[i], y + cy[i]) for i, loc in enumerate(locs) for v, (x, y) in loc.items()}
-    return dict(G=G, H=H, modules=modules, comps=comps, keep=keep, pos=pos, radii=np.array(radii), cx=cx, cy=cy)
+    return dict(min_comp=min_comp, G=G, H=H, modules=modules, comps=comps, keep=keep, pos=pos, radii=np.array(radii), cx=cx, cy=cy)
 
 
 def draw_coloured(ax, B, nodes, s_node, lw_mod, lw_grey, s_hinge_lw):
@@ -187,23 +213,26 @@ def draw_coloured(ax, B, nodes, s_node, lw_mod, lw_grey, s_hinge_lw):
     return len(live), sum(n_mod[v] > 1 for v in mn)
 
 
-def draw_all(edges_path, modules_path, out, name):
-    """Every component >= 10 regions on one 24 x 24 in canvas, the 24 largest labelled (original RBBP4 panel)."""
+def draw_all(edges_path, modules_path, out, name, min_comp=MIN_COMP, tss_path=None, tf=None, top=24):
+    """Every component >= min_comp regions on one 24 x 24 in canvas, the `top` largest labelled (original RBBP4 panel).
+    tss_path: label with the genes of the two best-connected promoter regions + span + region count; tf: one-line summary on top."""
     from common import style
     style.use()
     import matplotlib.pyplot as plt
     from matplotlib.lines import Line2D
-    B = build(edges_path, modules_path)
+    B = build(edges_path, modules_path, min_comp)
+    genes = load_genes(tss_path, B["keep"]) if tss_path else None
     fig, ax = plt.subplots(figsize=(24, 24))
-    n_live, _ = draw_coloured(ax, B, B["keep"], s_node=28, lw_mod=2.3, lw_grey=0.6, s_hinge_lw=0.9)
+    n_live, n_hinge = draw_coloured(ax, B, B["keep"], s_node=28, lw_mod=2.3, lw_grey=0.6, s_hinge_lw=0.9)
     rows = []
     for i, c in enumerate(B["comps"]):
-        lab = span_label(c).replace("–", "-") + f"\n{len(c)} reg"
-        rows.append((i + 1, len(c), lab.split("\n")[0]))
-        if i < 24:
-            ax.text(B["cx"][i], B["cy"][i] + B["radii"][i] + 0.12, lab, ha="center", va="bottom", fontsize=6.5, color=INK, zorder=6,
-                    linespacing=1.15, bbox=dict(boxstyle="round,pad=0.15", facecolor="white", edgecolor="none", alpha=0.75))
-    pd.DataFrame(rows, columns=["rank", "n_regions", "label"]).to_csv(Path(out) / f"{name}_components.tsv", sep="\t", index=False)
+        g = gene_label(c, genes, B["H"]) if genes is not None else ""
+        lab = (f"{g}\n" if g else "") + span_label(c) + f"\n{len(c)} regions" if genes is not None else span_label(c).replace("–", "-") + f"\n{len(c)} reg"
+        rows.append((i + 1, len(c), span_label(c), g))
+        if i < top:
+            ax.text(B["cx"][i], B["cy"][i] + B["radii"][i] + 0.12, lab, ha="center", va="bottom", fontsize=6.5 if genes is None else 9, color=INK,
+                    zorder=6, linespacing=1.15, bbox=dict(boxstyle="round,pad=0.15", facecolor="white", edgecolor="none", alpha=0.75))
+    pd.DataFrame(rows, columns=["rank", "n_regions", "label", "genes"]).to_csv(Path(out) / f"{name}_components.tsv", sep="\t", index=False)
     handles = [Line2D([0], [0], color="#E8433F", lw=2.4, label="one higher-order coordinated binding module"),
                Line2D([0], [0], color="#33B5E5", lw=2.4, label="another module"),
                Line2D([0], [0], marker="o", color="none", markerfacecolor="#EDA320", markeredgecolor="#111111", markeredgewidth=0.8,
@@ -215,7 +244,13 @@ def draw_all(edges_path, modules_path, out, name):
     ax.set_aspect("equal")
     ax.axis("off")
     ax.legend(handles=handles, loc="lower right", fontsize=11, labelcolor=INK)
-    print(f"{name}: {B['G'].number_of_nodes()} nodes, {len(B['comps'])} components >= {MIN_COMP}, {n_live} modules")
+    H = B["H"]
+    if tf:
+        ax.set_title(f"{tf}: {len(H):,} regions · {H.number_of_edges():,} pairs · {len(B['comps']):,} networks ≥{min_comp} regions"
+                     f" (of {B['G'].number_of_nodes():,} regions in the pair graph) · {n_live:,} higher-order coordinated binding modules"
+                     f" · {n_hinge:,} hinge regions · labels = {top} largest networks", fontsize=13, color=INK, loc="left")
+    print(f"{name}: {B['G'].number_of_nodes()} nodes, {len(B['comps'])} components >= {min_comp} ({len(H)} regions, {H.number_of_edges()} pairs), "
+          f"{n_live} modules, {n_hinge} hinge regions")
     style.save(fig, out, name, bbox_inches="tight", pad_inches=0.05)
 
 

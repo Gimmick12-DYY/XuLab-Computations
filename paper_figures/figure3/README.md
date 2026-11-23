@@ -26,6 +26,7 @@ A full build takes about 70 s on one core.
 | a_coordinated_binding_schematic | none (see below) | | 183 mm |
 | rbbp4_network | rbbp4_network.py (original colour code, no loop overlay; drawing code in _network.py) | rbbp4_peak_edges, rbbp4_modules | 24 in canvas, scale down |
 | ets2_network | ets2_network.py (overview of all ETS2 networks + coloured zoom of 12; drawing code in _network.py) | ets2_peak_edges, ets2_modules | 183 x 92 mm |
+| ets2_network_genome | ets2_network_genome.py (every ETS2 network >= 30 regions, original RBBP4 network style, 24 largest labelled with genes; drawing code in _network.py) | ets2_peak_edges, ets2_modules, refseq_select_tss | 24 in canvas, scale down |
 | rbbp4_hic_circos | rbbp4_hic_circos.py | rbbp4_modules, rbbp4_module_edges_on_loops | 17 in canvas, scale down |
 | rbbp4_characterization | rbbp4_characterization.py (+ _rbbp4.py, _genomics.py) | rbbp4_*, peakachu loops, refseq_select_tss, hek293t_chromhmm18, rbbp4_shuffle_null | 120 x 70 mm |
 | rbbp4_square (slot option) | rbbp4_square.py | as rbbp4_characterization | 60 x 60 mm |
