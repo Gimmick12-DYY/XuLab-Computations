@@ -37,7 +37,7 @@ def main(src, out):
     med = np.median(null["null"], axis=0)                 # columns: pairs, module edges (> 25 kb)
     NULL = {"Pairs": med[0], "3-region": med[1], "4-region": med[1]}
     SZ = ["3", "4", "≥5"]
-    rows = [("Pairs", len(pairs), int(ploop.sum()))] + [(f"{s}-region\nmodule edges", int(M.edges[M.sz == s].sum()), int(M.loop[M.sz == s].sum())) for s in SZ]
+    rows = [("Pairs", len(pairs), int(ploop.sum()))] + [(f"{s}-region\nMCC edges", int(M.edges[M.sz == s].sum()), int(M.loop[M.sz == s].sum())) for s in SZ]
     rows = [r for r in rows if r[1] > 0]
     pc = D["pair_class"].value_counts()
     seg = [(lab, int(pc.get(k, 0))) for k, lab in SHOW]
@@ -87,7 +87,7 @@ def main(src, out):
     fig.legend([plt.Rectangle((0, 0), 1, 1, color=SEGC[lab]) for lab, _ in seg], [f"{lab} {fmt(x)}" for (lab, _), x in zip(seg, pct)],
                loc="lower left", bbox_to_anchor=(0.02, 0.07), ncol=7, fontsize=6.5, handlelength=0.8, handleheight=0.8, handletextpad=0.3,
                columnspacing=0.8, borderaxespad=0)
-    fig.text(0.02, 0.012, "P promoter, E enhancer, R repressive (ChromHMM); Rest: all other combinations", fontsize=6, color=N.dark)
+    fig.text(0.02, 0.012, "MCC, Multi-region Coordinated Cluster; P promoter, E enhancer, R repressive (ChromHMM); Rest: all other combinations", fontsize=6, color=N.dark)
     print("b_char:", [(r[0].replace(chr(10), " "), r[1], round(100 * r[2] / r[1], 1)) for r in rows])
     style.save(fig, out, "rbbp4_characterization")
 

@@ -25,7 +25,7 @@ from go_specific_vs_conserved_summary import load  # noqa: E402
 TEAL, LT = "#2C7A6B", "#C9E3DC"
 THEMES = ["Protein folding / stress", "Cell cycle / DNA / chromatin", "Gene expression / RNA", "Immune / inflammation", "Signalling", "Metabolism",
           "Development / differentiation", "Organ physiology (muscle, heart, kidney, gut)", "Neural", "Cell organization / transport / adhesion", "Other"]
-STL = {3: "terms", 2: "tested, none", 1: "too few elements (< 20)", 0: "no module elements"}
+STL = {3: "terms", 2: "tested, none", 1: "too few elements (< 20)", 0: "no MCC elements"}
 
 
 def main(src, out):
@@ -86,7 +86,7 @@ def main(src, out):
     for t in DROP:
         grp.setdefault(why(t), []).append(t)
     note = f"Not shown (no term on either side; status of all {len(PANEL)} TFs in S_go_tf_status.tsv):\n" + "\n".join(
-        {"tested, no term": "Tested, no significant term", "< 20 elements": "Fewer than 20 elements, not tested", "no module elements": "No module elements"}[k]
+        {"tested, no term": "Tested, no significant term", "< 20 elements": "Fewer than 20 elements, not tested", "no module elements": "No Multi-region Coordinated Cluster (MCC) elements"}[k]
         + f" ({len(grp[k])}): " + ", ".join(sorted(grp[k])) for k in ("tested, no term", "< 20 elements", "no module elements") if k in grp)
 
     ti = {t: i for i, t in enumerate(terms.term)}

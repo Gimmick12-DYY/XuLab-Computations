@@ -233,10 +233,10 @@ def draw_all(edges_path, modules_path, out, name, min_comp=MIN_COMP, tss_path=No
             ax.text(B["cx"][i], B["cy"][i] + B["radii"][i] + 0.12, lab, ha="center", va="bottom", fontsize=6.5 if genes is None else 9, color=INK,
                     zorder=6, linespacing=1.15, bbox=dict(boxstyle="round,pad=0.15", facecolor="white", edgecolor="none", alpha=0.75))
     pd.DataFrame(rows, columns=["rank", "n_regions", "label", "genes"]).to_csv(Path(out) / f"{name}_components.tsv", sep="\t", index=False)
-    handles = [Line2D([0], [0], color="#E8433F", lw=2.4, label="one higher-order coordinated binding module"),
-               Line2D([0], [0], color="#33B5E5", lw=2.4, label="another module"),
+    handles = [Line2D([0], [0], color="#E8433F", lw=2.4, label=("one MCC" if tf else "one Multi-region Coordinated Cluster (MCC)")),
+               Line2D([0], [0], color="#33B5E5", lw=2.4, label="another MCC"),
                Line2D([0], [0], marker="o", color="none", markerfacecolor="#EDA320", markeredgecolor="#111111", markeredgewidth=0.8,
-                      markersize=8, label="hinge (shared by ≥2 modules)"),
+                      markersize=8, label="hinge (shared by ≥2 MCCs)"),
                Line2D([0], [0], color=GREY, lw=1.2, label="surrounding pair")]
     P_ = np.array(list(B["pos"].values()))
     ax.set_xlim(P_[:, 0].min() - 0.6, P_[:, 0].max() + 0.6)
@@ -247,7 +247,7 @@ def draw_all(edges_path, modules_path, out, name, min_comp=MIN_COMP, tss_path=No
     H = B["H"]
     if tf:
         ax.set_title(f"{tf}: {len(H):,} regions · {H.number_of_edges():,} pairs · {len(B['comps']):,} networks ≥{min_comp} regions"
-                     f" (of {B['G'].number_of_nodes():,} regions in the pair graph) · {n_live:,} higher-order coordinated binding modules"
+                     f" (of {B['G'].number_of_nodes():,} regions in the pair graph) · {n_live:,} Multi-region Coordinated Clusters (MCCs)"
                      f" · {n_hinge:,} hinge regions · labels = {top} largest networks", fontsize=13, color=INK, loc="left")
     print(f"{name}: {B['G'].number_of_nodes()} nodes, {len(B['comps'])} components >= {min_comp} ({len(H)} regions, {H.number_of_edges()} pairs), "
           f"{n_live} modules, {n_hinge} hinge regions")
@@ -342,10 +342,10 @@ def draw_zoom(edges_path, modules_path, out, name, tf, w_mm=183.0, h_mm=92.0):
     for (xa, ya), (xb, yb) in (((x0 + side, y0 + side), (0, 1)), ((x0 + side, y0), (0, 0))):
         fig.add_artist(ConnectionPatch((xa, ya), (xb, yb), coordsA=ov.transData, coordsB=zm.transAxes, color="#8C8C8C", lw=0.5))
 
-    handles = [Line2D([0], [0], color="#E8433F", lw=1.2, label="one higher-order coordinated binding module"),
-               Line2D([0], [0], color="#33B5E5", lw=1.2, label="another module"),
+    handles = [Line2D([0], [0], color="#E8433F", lw=1.2, label="one Multi-region Coordinated Cluster (MCC)"),
+               Line2D([0], [0], color="#33B5E5", lw=1.2, label="another MCC"),
                Line2D([0], [0], marker="o", color="none", markerfacecolor="#EDA320", markeredgecolor="#111111", markeredgewidth=0.4,
-                      markersize=3.5, label="hinge (shared by ≥2 modules)"),
+                      markersize=3.5, label="hinge (shared by ≥2 MCCs)"),
                Line2D([0], [0], color=GREY, lw=0.8, label="surrounding pair")]
     fig.legend(handles=handles, loc="lower center", bbox_to_anchor=(140.5 / w_mm, 0.0), ncol=2, frameon=False, fontsize=6,
                handlelength=1.4, columnspacing=1.0, labelcolor=INK)

@@ -33,10 +33,10 @@ def main(src, out):
     H = pd.read_csv(src / "class_module_regions_chromhmm.tsv.gz", sep="\t")
     H["cls"] = H.cls.replace(MERGE)
     H["bin"] = pd.cut(H.n_tfs, [0, 1, 2, 4, 9, 100], labels=["1", "2", "3–4", "5–9", "≥10"])
-    bars = {"all Cicero peaks": A.groupby("class").peaks.sum(), "all module regions": A.groupby("class").clique_regions.sum()}
-    ns = {"all Cicero peaks": A.peaks.sum(), "all module regions": A.clique_regions.sum()}
+    bars = {"all Cicero peaks": A.groupby("class").peaks.sum(), "all Multi-region Coordinated\nCluster (MCC) regions": A.groupby("class").clique_regions.sum()}
+    ns = {"all Cicero peaks": A.peaks.sum(), "all Multi-region Coordinated\nCluster (MCC) regions": A.clique_regions.sum()}
     for b, d in H.groupby("bin", observed=True):
-        lab = f"in modules of {b} TF{'s' if b != '1' else ''}"
+        lab = f"in MCCs of {b} TF{'s' if b != '1' else ''}"
         bars[lab], ns[lab] = d.cls.value_counts(), len(d)
     B = pd.DataFrame(bars).reindex(CLASSES).fillna(0)
     B = B / B.sum()

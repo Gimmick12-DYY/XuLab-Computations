@@ -64,9 +64,9 @@ def module_edges(f):
     return ME
 rows = {}
 R4 = tf_pairs(X / "cobinding/work/RBBP4_sweep_k50_i10000_s555/RBBP4.peak_edges.tsv"); rows["RBBP4 pairs"] = Counter(pcls(p, q) for p, q in R4.values()); RAW["RBBP4 pairs"] = Counter(raw(p, q) for p, q in R4.values())
-for nm, d in (("RBBP4 module edges", module_edges(X / "cobinding/results/RBBP4_sweep_k50_i10000_s555/cliques.tsv")),
+for nm, d in (("RBBP4 MCC edges", module_edges(X / "cobinding/results/RBBP4_sweep_k50_i10000_s555/cliques.tsv")),
               ("ETS2 pairs", tf_pairs(X / "cobinding/work/ourrun_k50/ETS2/ETS2.peak_edges.tsv")),
-              ("ETS2 module edges", module_edges(X / "cobinding/results/ourrun_k50/ETS2/cliques.tsv"))):
+              ("ETS2 MCC edges", module_edges(X / "cobinding/results/ourrun_k50/ETS2/cliques.tsv"))):
     rows[nm] = Counter(pcls(p, q) for p, q in d.values()); RAW[nm] = Counter(raw(p, q) for p, q in d.values())
 allc = Counter(rows["RBBP4 pairs"]); ntf = 1
 for f in sorted(glob.glob(str(X / "cobinding/work/ourrun_k50/*/*.peak_edges.tsv"))):
@@ -85,7 +85,7 @@ T = pd.DataFrame(rows).T.reindex(columns=ORDER).fillna(0).astype(int); T["n"] = 
 P = T[ORDER].div(T.n, axis=0) * 100; T.join(P.add_suffix(" %").round(2)).to_csv(OUT / "pair_classes.tsv", sep="\t")
 pd.DataFrame(RAW).T.fillna(0).astype(int).to_csv(OUT / "pair_classes_all_combinations.tsv", sep="\t")
 print("TFs pooled:", ntf); print(pd.DataFrame(RAW).T.fillna(0).astype(int).to_string()); print("states not in the table:", dict(UNKNOWN) or "none"); print(T.join(P.round(1).add_suffix("%")).to_string())
-MM = 1 / 25.4; W, Hh = 84, 62; fig = plt.figure(figsize=(W * MM, Hh * MM)); ax = fig.add_axes([28 / W, 13 / Hh, 54 / W, 47 / Hh])
+MM = 1 / 25.4; W, Hh = 84, 66; fig = plt.figure(figsize=(W * MM, Hh * MM)); ax = fig.add_axes([28 / W, 17 / Hh, 54 / W, 47 / Hh])
 for i, (nm, r) in enumerate(P.iterrows()):
     left = 0
     for k, c in zip(ORDER, COL):
@@ -99,5 +99,6 @@ for i, nm in enumerate(P.index):
 ax.set_xlim(0, 1); ax.set_xticks([0, .5, 1]); ax.set_xticklabels(["0", "50", "100"]); ax.set_xlabel("% of interactions", fontsize=6, labelpad=1); ax.tick_params(axis="x", length=2, pad=1)
 for sp in ("left", "top", "right"): ax.spines[sp].set_visible(False)
 hs = [plt.Rectangle((0, 0), 1, 1, color=c) for c in COL]
-fig.legend(hs, ORDER, loc="lower center", bbox_to_anchor=(0.5, 0.0), ncol=7, fontsize=6, frameon=False, handlelength=0.8, handleheight=0.8, handletextpad=0.25, columnspacing=0.7, borderaxespad=0.2)
+fig.legend(hs, ORDER, loc="lower center", bbox_to_anchor=(0.5, 3.2 / Hh), ncol=7, fontsize=6, frameon=False, handlelength=0.8, handleheight=0.8, handletextpad=0.25, columnspacing=0.7, borderaxespad=0.2)
+fig.text(0.5, 1.0 / Hh, "MCC, Multi-region Coordinated Cluster", ha="center", va="bottom", fontsize=6, color="#7F7F7F")
 for ext in ("png", "svg", "pdf"): fig.savefig(OUT / f"pair_classes.{ext}", dpi=600 if ext == "png" else None)

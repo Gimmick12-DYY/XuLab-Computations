@@ -82,14 +82,14 @@ def main(src, out):
     a1.scatter(-np.log10(L.q), y[:len(L)], s=sz(L.distinct_genes), color=LT, edgecolors=TEAL, linewidths=0.7, zorder=3)
     a1.set_yticks(y[:len(L)])
     a1.set_yticklabels([f"{short(n, 60)}  ({t})" for n, t in zip(L.name, L.tf)], fontsize=6.5)
-    a1.set_title("TF-specific module elements (1–2 TFs)", fontsize=7, pad=5)
+    a1.set_title("TF-specific Multi-region Coordinated Cluster (MCC) elements (1–2 TFs)", fontsize=7, pad=5)
     a2.scatter(-np.log10(R.q), y[:len(R)], s=sz(R.genes), color=TEAL, lw=0, zorder=3)
     for i, (f, n, g) in enumerate(zip(-np.log10(R.q), R.n_tfs, R.genes)):
         a2.annotate(f"{n} TF" + ("s" if n > 1 else ""), (f, i), xytext=(np.sqrt(sz(g)) / 2 + 2.5, 0), textcoords="offset points",
                     va="center", ha="left", fontsize=6, color=GREY)
     a2.set_yticks(y[:len(R)])
     a2.set_yticklabels([short(n, 60) for n in R.name], fontsize=6.5)
-    a2.set_title("Conserved module elements (≥3 TFs)", fontsize=7, pad=5)
+    a2.set_title("Conserved MCC elements (≥3 TFs)", fontsize=7, pad=5)
     a1.set_xlim(0, max(-np.log10(L.q.min()), -np.log10(R.q.min())) * 1.3)
     tk = [t for t in (2, 3, 4, 5, 6, 8, 10, 12, 14, 16) if t <= a1.get_xlim()[1]]
     for ax in (a1, a2):

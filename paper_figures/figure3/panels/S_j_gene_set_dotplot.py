@@ -62,7 +62,7 @@ def main(src, out):
     fig = style.figure_mm(183, 66)
     W = 0.22
     axs = [fig.add_axes([0.245, 0.24, W, 0.62]), fig.add_axes([0.73, 0.24, W, 0.62])]
-    for ax, T, ttl in ((axs[0], SP, "TF-specific module genes"), (axs[1], CO, "Conserved module genes")):
+    for ax, T, ttl in ((axs[0], SP, "TF-specific Multi-region Coordinated Cluster (MCC) genes"), (axs[1], CO, "Conserved MCC genes")):
         y = np.arange(len(T))
         x = -np.log10(T.p.values)
         sig = (T.q < 0.05).values

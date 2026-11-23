@@ -21,7 +21,7 @@ def main(src, out):
     z = np.load(src / "rbbp4_shuffle_null.npz")
     null, obs, n = z["null"] * 100, z["obs"] * 100, z["n"]
     fig, axes = plt.subplots(1, 2, figsize=(116 * style.MM, 56 * style.MM), gridspec_kw=dict(wspace=0.32))
-    for ax, j, what in zip(axes, (0, 1), ("pairs", "module edges")):
+    for ax, j, what in zip(axes, (0, 1), ("pairs", "MCC edges")):
         v = null[:, j]
         ge = int((v >= obs[j]).sum())
         p = (1 + ge) / (1 + len(v))
@@ -38,7 +38,7 @@ def main(src, out):
         ax.set_ylabel("shuffles")
         ax.set_xlim(right=obs[j] + 2)
         ptxt = f"p < 1e-4: {ge} of {len(v):,} shuffles ≥ observed" if p < 1e-4 * 1.0001 else f"p = {p:.2g}: {ge} of {len(v):,} shuffles ≥ observed"
-        ax.set_title(f"RBBP4 {what} >25 kb (n = {int(n[j]):,})\n{ptxt}", loc="left", fontsize=7)
+        ax.set_title((f"RBBP4 {what} >25 kb (n = {int(n[j]):,})" if j == 0 else f"RBBP4 Multi-region Coordinated Cluster\n(MCC) edges >25 kb (n = {int(n[j]):,})") + f"\n{ptxt}", loc="left", fontsize=7)
     style.save(fig, Path(out) / "supplementary", "S_rbbp4_permutation", bbox_inches="tight", pad_inches=0.02)
 
 

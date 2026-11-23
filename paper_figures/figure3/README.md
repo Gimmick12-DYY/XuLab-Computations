@@ -57,20 +57,20 @@ not rebuilt here.
 `source_data/MANIFEST.tsv` lists every input with its origin (pipeline output path in this repo, or the workstation path for
 tables made there), the script that made it, and its sha256. `prepare_source_data.py` copies pipeline outputs unchanged and
 derives a few small tables (per-edge shuffle nulls stacked per TF, null percentiles, Hi-C locus windows, GO term themes, gene
-symbols). `source_scripts/` holds the analysis scripts that make the Figure 3-specific tables (module-edge bins, GO tests, the
-RBBP4 locus screen, GO robustness checks); the per-edge module null comes from
+symbols). `source_scripts/` holds the analysis scripts that make the Figure 3-specific tables (Multi-region Coordinated Cluster (MCC)-edge bins, GO tests, the
+RBBP4 locus screen, GO robustness checks); the per-edge MCC null comes from
 `figures/fig3_v6/checks/module_edge_null_check.py` and the ATAC-matched control from `figures/fig3_v7/checks/atac_matched_null/`;
 the other pipelines live in `cobinding/`, `hic/` and `results_3d_model/`.
 
 Shared definitions (`panels/_genomics.py`): a pair is on a Hi-C loop when each end, extended by +-30 kb, overlaps a different
-anchor of one Peakachu score >= 0.7 loop (5 kb loops first, then 10 kb; wild-type HEK293T, GSE216399); pairs and module edges
+anchor of one Peakachu score >= 0.7 loop (5 kb loops first, then 10 kb; wild-type HEK293T, GSE216399); pairs and MCC edges
 count when their region midpoints are > 25 kb apart.
 
 ## Reproducibility notes
 
 - b1 layout: force-directed per component with a fixed seed and nodes in sorted order. The earlier slide version used an
   unseeded layout, so node positions differ from it; nodes, edges, colours and labels are the same.
-- Ties are broken explicitly: d rows with equal module counts alphabetically; j terms with equal q by higher fold enrichment;
+- Ties are broken explicitly: d rows with equal MCC counts alphabetically; j terms with equal q by higher fold enrichment;
   the GO supplementary matrix keeps table order for equal q. Earlier versions left ties to the platform's sort routine.
 - d heatmap columns are clustered (Jaccard, average linkage) with many tied distances; their order can differ from the earlier
   version, the cells are the same.

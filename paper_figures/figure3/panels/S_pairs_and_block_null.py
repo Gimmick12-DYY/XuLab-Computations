@@ -105,9 +105,9 @@ def main(src, out):
     ax.set_yticks(y)
     ax.set_yticklabels(Pt.index, fontsize=5)
     ax.set_ylim(-0.7, len(Pt) - 0.3)
-    ax.set_xlabel("Modules with ≥1 edge >25 kb")
+    ax.set_xlabel("Multi-region Coordinated Clusters (MCCs)\nwith ≥1 edge >25 kb")
     ax.tick_params(axis="y", length=0, pad=1.5)
-    ax.legend(title="Module edges on a loop", loc="lower right", fontsize=6, title_fontsize=6, handlelength=1.0, handleheight=0.8,
+    ax.legend(title="MCC edges on a loop", loc="lower right", fontsize=6, title_fontsize=6, handlelength=1.0, handleheight=0.8,
               labelspacing=0.25, borderaxespad=0.2, alignment="left")
     for i, tf in enumerate(Pt.index):
         if tf not in E.index:
@@ -121,7 +121,7 @@ def main(src, out):
         sig = E.q[tf] < 0.05
         b.scatter([E.edge_obs[tf] * 100], [i], s=5, color=N.ink if sig else "white", edgecolors=N.ink, linewidths=0 if sig else 0.5, zorder=3)
     b.set_xlim(12, max(E.edge_obs.max() * 100, max(Q.loc[("module_edges_block", t)].p97_5 for t in E.index)) + 1)
-    b.set_xlabel("Module edges >25 kb on a loop (%)")
+    b.set_xlabel("MCC edges >25 kb on a loop (%)")
     b.xaxis.grid(True, color=N.faint, lw=0.4)
     b.set_axisbelow(True)
     b.tick_params(axis="y", left=False, labelleft=False)

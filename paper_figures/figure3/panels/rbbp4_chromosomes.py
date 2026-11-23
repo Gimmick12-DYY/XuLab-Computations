@@ -77,7 +77,7 @@ def main(src, out):
     ax.tick_params(axis="x", colors=INK)
     ax.text(-7.5, y_of[CH[0]] + 0.42, "pairs ↑   loops ↓", fontsize=5.5, color="#555555", ha="left", va="center")
     ax.legend([Line2D([], [], color=c, lw=1.2) for c in (PAIRC, MODC, LOOPC)],
-              [f"Coordinated binding pair (n = {len(pairs):,})", f"Module edge (n = {len(edges):,})", f"Hi-C loop supporting a pair (n = {n_sup:,})"],
+              [f"Coordinated binding pair (n = {len(pairs):,})", f"Multi-region Coordinated Cluster (MCC) edge (n = {len(edges):,})", f"Hi-C loop supporting a pair (n = {n_sup:,})"],
               loc="lower right", bbox_to_anchor=(1.0, 0.02), fontsize=6, handlelength=1.4, labelspacing=0.35,
               title=f"Supporting loops: {n_sup:,} of {L.n_total:,} Peakachu loops", title_fontsize=6, alignment="left")
     style.save(fig, out, "rbbp4_chromosomes")

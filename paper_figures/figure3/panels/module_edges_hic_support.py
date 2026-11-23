@@ -107,7 +107,7 @@ def main(src, out):
     hm.set_xlim(-0.5, S.shape[1] - 0.5)
     hm.set_xticks([])
     ne, nl_ = int(BD.n_edges.sum()), int(BD.n_loop.sum())
-    hm.set_xlabel(f"Module edges >25 kb, 1 Mb bins (n = {S.shape[1]:,}, clustered)\n{ne:,} edges, {100 * nl_ / ne:.0f}% on a loop")
+    hm.set_xlabel(f"MCC edges >25 kb, 1 Mb bins (n = {S.shape[1]:,}, clustered)\n{ne:,} edges, {100 * nl_ / ne:.0f}% on a loop")
     hm.tick_params(axis="y", length=0, pad=1.5)
     for sp in ("top", "right", "bottom"):
         hm.spines[sp].set_visible(False)
@@ -137,8 +137,8 @@ def main(src, out):
     hm.set_yticklabels(Pt.index, fontsize=5)
     hm.set_ylim(-0.7, len(Pt) - 0.3)
     ax.tick_params(axis="y", left=False, labelleft=False)
-    ax.set_xlabel("Modules with ≥1 edge >25 kb")
-    ax.legend(title="Module edges on a loop\n(per module in bars, per bin in heatmap)", loc="lower right", fontsize=6, title_fontsize=6,
+    ax.set_xlabel("MCCs with ≥1 edge >25 kb")
+    ax.legend(title="Multi-region Coordinated Cluster\n(MCC) edges on a loop\n(per MCC in bars, per bin in heatmap)", loc="lower right", fontsize=6, title_fontsize=6,
               handlelength=1.0, handleheight=0.8, labelspacing=0.25, borderaxespad=0.2, alignment="left")
 
     for i, tf in enumerate(Pt.index):
@@ -154,7 +154,7 @@ def main(src, out):
         sig = E.q[tf] < 0.05
         b.scatter([E.edge_obs[tf] * 100], [i], s=5, color=N.ink if sig else "white", edgecolors=N.ink, linewidths=0 if sig else 0.5, zorder=3)
     b.set_xlim(12, max(E.edge_obs.max() * 100, max(np.percentile(nul[t] * 100, 97.5) for t in E.index)) + 1)
-    b.set_xlabel("Module edges >25 kb on a loop (%)")
+    b.set_xlabel("MCC edges >25 kb on a loop (%)")
     b.xaxis.grid(True, color=N.faint, lw=0.4)
     b.set_axisbelow(True)
     b.tick_params(axis="y", left=False, labelleft=False)

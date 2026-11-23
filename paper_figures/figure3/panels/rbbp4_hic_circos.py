@@ -106,12 +106,12 @@ def main(src, out):
 
     n_sup = sum(1 for k in edges if k in res)
     ax.text(0, 0.08, "RBBP4", ha="center", va="center", fontsize=26, fontweight="bold", color=INK)
-    ax.text(0, -0.04, f"{len(M):,} modules · {len(edges):,} coordinated binding edges", ha="center", fontsize=13, color="#5C626B")
+    ax.text(0, -0.04, f"{len(M):,} Multi-region Coordinated Clusters (MCCs) · {len(edges):,} coordinated binding edges", ha="center", fontsize=13, color="#5C626B")
     ax.text(0, -0.12, f"{n_sup:,} edges on a Hi-C loop", ha="center", fontsize=13, color="#5C626B")
-    ax.text(0, -0.20, f"{n_full:,} modules with every edge on a loop", ha="center", fontsize=13, color="#B38600")
-    ax.legend(handles=[Line2D([0], [0], color=TF_OTHER, lw=1.2, alpha=0.7, label="RBBP4 module edge"),
-                       Line2D([0], [0], color=TF_SUP, lw=2.2, label="RBBP4 module edge on a loop"),
-                       Line2D([0], [0], color=GOLD, lw=3, label=f"module with every edge on a loop ({n_full})"),
+    ax.text(0, -0.20, f"{n_full:,} MCCs with every edge on a loop", ha="center", fontsize=13, color="#B38600")
+    ax.legend(handles=[Line2D([0], [0], color=TF_OTHER, lw=1.2, alpha=0.7, label="RBBP4 MCC edge"),
+                       Line2D([0], [0], color=TF_SUP, lw=2.2, label="RBBP4 MCC edge on a loop"),
+                       Line2D([0], [0], color=GOLD, lw=3, label=f"MCC with every edge on a loop ({n_full})"),
                        Line2D([0], [0], color=LOOP5, lw=7, alpha=0.7, label="Peakachu 5 kb loop (underneath)"),
                        Line2D([0], [0], color=LOOP10, lw=7, alpha=0.7, label="Peakachu 10 kb loop (underneath)")],
               loc="lower right", fontsize=11)
