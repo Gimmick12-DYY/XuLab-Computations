@@ -8,3 +8,6 @@ Per peak set x padding x rule: links, Perturb-seq targets, links in both, recall
 
 ## Amendment 1 (2026-11-23, user: "I just want to see the precision and recall" without the shuffle)
 m57_raw.py: the same peak sets, link rule, paddings, responders and TF sets, observed recall and precision only (no shuffle), plus precision over chance; written first to stage1_q_cutoff_recall_precision_raw.xlsx. The shuffle run (job 10492811) continues and fills stage1_q_cutoff_precision_recall.xlsx later.
+
+## Amendment 2 (2026-11-23, user: "maybe we are too strict on the Perturb-seq cutoff side?"; written before any number)
+m57_looser.py, observed only (no shuffle): Perturb-seq targets = top 50 / 40 / 30 / 20 / 10 / 5 / 2 / 1 % of |score| within the TF, and up-only / down-only (top / bottom X % of the signed score). Peak sets top 10,000 (main), top 5,000, q <= 0.05, q <= 0.01; padding 10 kb (main), 0, 50 kb; 63 TFs. Pooled links, targets, in both, recall, precision, precision over chance; per-TF median and IQR of recall and precision for top 10,000 / 10 kb. Band table (top 10,000 / 10 kb): share of genes linked in |score| percentile bands 0-50, 50-60, 60-70, 70-80, 80-90, 90-95, 95-98, 98-99, 99-100, pooled over TFs. Check: top 10,000 / 10 kb in both = 22,328 / 11,536 / 4,933 / 2,613 at top 10 / 5 / 2 / 1 % (m56).
