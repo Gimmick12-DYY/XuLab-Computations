@@ -1,4 +1,4 @@
-"""Fig 2 main heatmap, proposal v2 (closer to Kaya-Okur et al. 2019 Fig 2): one shared axis, +-1 kb at 50 bp.
+"""Fig 2 main heatmap (v2, chosen 2026-11-23; style of Kaya-Okur et al. 2019 Fig 2): one shared axis, +-1 kb at 50 bp.
   Bulk ChIP: CPM, 50 bp bins.  sc raw: 5' ends CPM, 50 bp bins, 3-bin running mean.
   sc imputed (MASK = "Mdrop5"): the 1 kb imputed value of the genomic bin covering each 50 bp position (from K_impM),
     (no extra smoothing beyond the shared noise reduction below).
@@ -9,8 +9,8 @@
     (group size = ceil(n / 500), e.g. 20 for 10,000 sites), then a Gaussian smoothing along each row (sigma = 100 bp =
     2 bins). Colour per panel 0 to the 95th percentile of the row-averaged, smoothed values (turbo). The profile on top
     is the mean of the unsmoothed rows.
-Outputs fig2_main_heatmap_v2 (top 10,000 sites), fig2_main_heatmap_v2_top5000 (the 5,000 rows with the highest ChIP
-centre signal), and per-TF fig2_main_heatmap_v2_<TF>."""
+Outputs fig2_main_heatmap (top 10,000 sites, all TFs), per-TF fig2_main_heatmap_<TF>, and the supplement
+fig2_supp_heatmap_premask (same processing, imputed = genome-wide pre-mask K_impB, no rows dropped)."""
 import sys
 from pathlib import Path
 
@@ -29,12 +29,16 @@ GROUP = [1]
 XS = np.arange(-W, W, STEP) + STEP // 2
 
 
-def tracks(z):
-    keep = z["K_maskM"][:, 10].astype(bool)
+def tracks(z, premask=False):
     s = z["K_summit"].astype(np.int64)
     k = (s[:, None] + XS[None, :]) // 1000 - (s // 1000)[:, None] + 10
-    imp = np.take_along_axis(z["K_impM"].astype(np.float32), k, 1)
-    imp = np.where(np.take_along_axis(z["K_maskM"], k, 1), imp, 0)
+    if premask:
+        keep = np.ones(len(s), bool)
+        imp = np.take_along_axis(z["K_impB"].astype(np.float32), k, 1)
+    else:
+        keep = z["K_maskM"][:, 10].astype(bool)
+        imp = np.take_along_axis(z["K_impM"].astype(np.float32), k, 1)
+        imp = np.where(np.take_along_axis(z["K_maskM"], k, 1), imp, 0)
     T = {"ChIP": z["V3_ChIP"].astype(np.float32), "raw": z["V3_raw"].astype(np.float32), "imputed": imp}
     return {k_: v[keep] for k_, v in T.items()}, keep
 
@@ -79,14 +83,14 @@ def panel(fig, cell, X, title, unit, n):
     cb.set_label(f"{unit}\n{n:,} sites", fontsize=5, labelpad=1)
 
 
-def build(src, out, tfs, name, w_mm, h_mm, ncol, rows, top=None):
+def build(src, out, tfs, name, w_mm, h_mm, ncol, rows, top=None, premask=False):
     fig = style.figure_mm(w_mm, h_mm)
     nrow = int(np.ceil(len(tfs) / ncol))
     gs = fig.add_gridspec(nrow, ncol, wspace=0.14, hspace=0.14, left=0.03 if ncol > 1 else 0.08, right=0.985,
                           top=0.95 if nrow > 1 else 0.90, bottom=0.03 if nrow > 1 else 0.05)
     for k, t in enumerate(tfs):
         z = np.load(Path(src) / f"heatmaps_{t}.npz")
-        T, keep = tracks(z)
+        T, keep = tracks(z, premask)
         if top:
             T = {k_: v[:top] for k_, v in T.items()}
         rows[t] = dict(TF=t, top_chip_summits=len(keep), kept_inside_mask=int(keep.sum()), dropped_share=float(1 - keep.mean()),
@@ -103,11 +107,9 @@ def build(src, out, tfs, name, w_mm, h_mm, ncol, rows, top=None):
 def main(src, out):
     style.use()
     rows = {}
-    build(src, out, TFS, "fig2_main_heatmap_v2", 183, 235, 3, rows)
-    r5 = {}
-    build(src, out, TFS, "fig2_main_heatmap_v2_top5000", 183, 235, 3, r5, top=5000)
-    print(pd.DataFrame(r5.values()).round(3).to_string())
+    build(src, out, TFS, "fig2_main_heatmap", 183, 235, 3, rows)
     for t in TFS:
-        build(src, out, [t], f"fig2_main_heatmap_v2_{t}", 89, 120, 1, {})
-    pd.DataFrame(rows.values()).to_csv(Path(src) / "heatmap_v2_rows.tsv", sep="\t", index=False, float_format="%.4f")
+        build(src, out, [t], f"fig2_main_heatmap_{t}", 89, 120, 1, {})
+    build(src, out, TFS, "fig2_supp_heatmap_premask", 183, 235, 3, {}, premask=True)
+    pd.DataFrame(rows.values()).to_csv(Path(src) / "heatmap_main_rows.tsv", sep="\t", index=False, float_format="%.4f")
     print(pd.DataFrame(rows.values()).round(3).to_string())
