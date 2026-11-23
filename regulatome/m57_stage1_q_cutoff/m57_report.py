@@ -39,7 +39,7 @@ for rule, lab in (("promoter + all distal ABC (0 kb rule)", "ABC only (promoter 
     r = AD[AD.rule == rule].iloc[0]; add("Link rule, top 5 %", lab, 10000, r["median genes per TF"], r["links"], T5[0], 35343, r["top 5% either: in both"], r["top 5% either: recall (%)"], r["top 5% either: precision (%)"], int((r["links"] == 0)))
 for n in (100, 250, 500, 1000, 2000):
     r = RK[(RK.ranking == "strongest linked peak signalValue") & (RK["top N genes per TF"].astype(str) == str(n)) & (RK.targets == "top 5%") & (RK.direction == "either")].iloc[0]
-    add("Strongest linked genes per TF (current rule, by peak signalValue), top 5 %", f"top {n:,} genes per TF", 10000, float(min(n, 2892)) if n < 2000 else np.nan, r["links"], T5[0], 35343, r["in both"], r["recall (%)"], r["precision (%)"], 0)
+    add("Strongest linked genes per TF (current rule, by peak signalValue), top 5 %", f"top {n:,} genes per TF", 10000, float(n), r["links"], T5[0], 35343, r["in both"], r["recall (%)"], r["precision (%)"], 0)
 for cls, lab in (("(1) promoter of the gene", "own promoter"), ("(2) distal ABC, nearest bound element 0-10 kb", "distal ABC < 10 kb"), ("(2) distal ABC, nearest bound element 10-50 kb", "distal ABC 10-50 kb"),
                  ("(2) distal ABC, nearest bound element 50-200 kb", "distal ABC 50-200 kb"), ("(2) distal ABC, nearest bound element > 200 kb", "distal ABC > 200 kb"), ("(3) 10 kb window only", "10 kb window only")):
     r = LT[(LT["class"] == cls) & (LT.targets == "top 5%") & (LT.direction == "either")].iloc[0]
@@ -59,6 +59,6 @@ NOTES = pd.DataFrame({"block": ["definitions", "headline", "Perturb-seq rule, sa
 with pd.ExcelWriter(f"{O}/stage1_precision_recall_report.xlsx") as w:
     REP.to_excel(w, sheet_name="report", index=False); PT.to_excel(w, sheet_name="per_TF", index=False); NOTES.to_excel(w, sheet_name="notes", index=False)
 pd.set_option("display.width", 330); pd.set_option("display.max_columns", 20); pd.set_option("display.max_colwidth", 60)
-print(REP.round(2).to_string(index=False))
+print(REP.drop(columns=["block"]).round(2).to_string(index=False))
 for c in ("recall %", "precision %"): v = PT[c]; print(c, "median", round(v.median(), 2), "IQR", round(v.quantile(.25), 2), "-", round(v.quantile(.75), 2), "min", round(v.min(), 2), v.loc[v.idxmin()] if False else PT.loc[v.idxmin(), "TF"], "max", round(v.max(), 2), PT.loc[v.idxmax(), "TF"])
 print("done")
