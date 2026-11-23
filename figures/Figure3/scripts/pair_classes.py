@@ -4,9 +4,9 @@ inside one higher-order module, >25 kb, unique), ETS2 pairs and module edges (sa
 same pairs for every TF with Cicero output, ourrun_k50 + RBBP4, each pair counted once per TF), Hi-C loops (Peakachu score >= 0.7, WT HEK293T,
 5 kb + 10 kb loop lists, each listed loop once).
 Element class of each end: promoter (P) = RefSeq Select TSS within the region +-1 kb; otherwise the HEK293T 18-state ChromHMM state at the
-region midpoint: enhancer E (EnhA1/A2/G1/G2/Wk/Biv), repressor R (ReprPC/ReprPCWk/Het/ZNF/Rpts), other O (TssA/TssFlnk/TssFlnkU/TssFlnkD/
+region midpoint (now: any state within the peak +-1 kb, see PAD below): enhancer E (EnhA1/A2/G1/G2/Wk/Biv), repressor R (ReprPC/ReprPCWk/Het/ZNF/Rpts), other O (TssA/TssFlnk/TssFlnkU/TssFlnkD/
 TssBiv outside TSS +-1 kb, Tx, TxWk, Quies, or no state). Categories: P-P, P-E, P-R, P-O, E-E, R-R, Rest (E-R, E-O, R-O, O-O).
-Padding sensitivity (env PAD = "mid" default, or bp >= 0): non-promoter elements are E if any E segment overlaps the element +-PAD,
+Element rule (env PAD = bp >= 0, default 1000 = the panel since 2026-11-23; "mid" = the earlier midpoint rule): non-promoter elements are E if any E segment overlaps the element +-PAD,
 else R if any R segment does, else O (PRIO=RE swaps E and R). Hi-C loop anchors always use the midpoint rule. PLOT=0 skips the figure.
   python pair_classes.py <outdir>   (Longleaf, hic env; inputs in checks/pair_class_inputs)"""
 import glob, gzip, json, os, re, sys
@@ -32,7 +32,8 @@ for ln in gzip.open(CI / "HEK293T_chromHMM18.bed.gz", "rt"):
     f = ln.split("\t"); H[f[0]].append((int(f[1]), int(f[2]), f[3]))
 HS = {c: (np.array([a for a, _, _ in sorted(v)]), np.array([b for _, b, _ in sorted(v)]), [s for _, _, s in sorted(v)]) for c, v in H.items()}
 memo = {}
-PAD = os.environ.get("PAD", "mid"); PRIO = os.environ.get("PRIO", "ER"); MIDPOINT = [False]
+PAD = os.environ.get("PAD", "1000")   # panel rule since 2026-11-23: peak +-1 kb, enhancer first
+PRIO = os.environ.get("PRIO", "ER"); MIDPOINT = [False]
 def ecls(c, s, e):
     k = (c, s, e, MIDPOINT[0])
     if k in memo: return memo[k]
