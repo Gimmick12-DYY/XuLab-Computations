@@ -3,6 +3,7 @@
 also without CTCF (120). Input source_data/corr_matrix_6x6.tsv.
 Supplement: the same rendering for the genome-wide 10 kb Pearson 6x6 (source_data/corr_10kb_6x6.tsv), colour +-0.6."""
 import itertools
+import math
 import sys
 from pathlib import Path
 
@@ -26,6 +27,7 @@ def perm_p(M):
 
 def main(src, out):
     standardised(src, out)
+    dropped(src, out)
     draw(src, out, "corr_matrix_6x6.tsv", "fig2_corr_matrix_6x6", 0.2, "Pearson r (colour clipped at ±0.2)", None)
     draw(src, out, "corr_10kb_6x6.tsv", "fig2_supp_corr_10kb_6x6", 0.6, "Pearson r, genome-wide 10 kb bins",
          "log2 CPM per 10 kb bin, genome-wide (Paired-Tag style)")
@@ -111,3 +113,42 @@ def standardised(src, out, which=STANDARDIZE):
         print(w, "own rank per", "row" if w != "colz" else "column", dict(zip(tfs, rank)))
         print(pd.DataFrame(X, [f"{t} sc" for t in tfs], [f"{t} ChIP" for t in tfs]).round(2).to_string())
     return res
+
+
+# ---- reduced matrices: drop TFs (both the sc row and the ChIP column), then re-standardise over what remains ----
+DROP = ["MAZ"]
+
+
+def dropped(src, out, drop=DROP):
+    P = style.use()
+    allt = ["CTCF", "MAZ", "ZBTB7A", "ZIC2", "ZNF282", "ZNF777"]
+    M0 = pd.read_csv(Path(src) / "corr_matrix_6x6.tsv", sep="\t", index_col=0).values.astype(float)
+    keep = [i for i, t in enumerate(allt) if t not in drop]
+    tfs = [allt[i] for i in keep]
+    M = M0[np.ix_(keep, keep)]
+    k = len(tfs)
+    obs, p = perm_p(M); obs1, p1 = perm_p(M[1:, 1:])
+    tag = "no" + "".join(drop)
+    spec = {"r": (M, 0.2, "Pearson r (colour clipped at ±0.2)"),
+            "rowz": ((M - M.mean(1, keepdims=True)) / M.std(1, keepdims=True), 2.0, f"row z-score of Pearson r\n(per sc row, {k}×{k})"),
+            "colz": ((M - M.mean(0, keepdims=True)) / M.std(0, keepdims=True), 2.0, f"column z-score of Pearson r\n(per ChIP column, {k}×{k})")}
+    for w, (X, lim, lab) in spec.items():
+        fig = style.figure_mm(89, 80)
+        ax = fig.add_axes([0.24, 0.30, 0.52, 0.56])
+        im = ax.imshow(np.clip(X, -lim, lim), cmap=LinearSegmentedColormap.from_list("div", DIV), vmin=-lim, vmax=lim)
+        for i in range(k):
+            for j in range(k):
+                ax.text(j, i, f"{X[i, j]:+.2f}", ha="center", va="center", fontsize=6,
+                        color="white" if abs(X[i, j]) > 0.75 * lim else P.neutral.ink)
+            ax.add_patch(Rectangle((i - .5, i - .5), 1, 1, fill=False, ec=P.neutral.ink, lw=0.8))
+        ax.set_xticks(range(k), [f"{t} ChIP\n({CELL[t]})" for t in tfs], rotation=90)
+        ax.set_yticks(range(k), [f"{t} sc" for t in tfs]); ax.tick_params(length=0)
+        for s in ax.spines.values():
+            s.set_visible(False)
+        cax = fig.add_axes([0.79, 0.30, 0.03, 0.56]); cb = fig.colorbar(im, cax=cax); cb.outline.set_linewidth(0.4); cb.set_label(lab)
+        style.save(fig, out, f"fig2_corr_matrix_{k}x{k}_{tag}_{w}")
+        rr = [int(1 + (X[i] > X[i, i]).sum()) for i in range(k)]; rc = [int(1 + (X[:, i] > X[i, i]).sum()) for i in range(k)]
+        print(w, "own rank per row", dict(zip(tfs, rr)), "per column", dict(zip(tfs, rc)))
+        print(pd.DataFrame(X, [f"{t} sc" for t in tfs], [f"{t} ChIP" for t in tfs]).round(3).to_string())
+    print(f"{k}x{k} without {drop}: diag-off {obs:+.4f}, p = {p:.4f} ({int(round(p * math.factorial(k)))}/{math.factorial(k)});"
+          f" without CTCF diag-off {obs1:+.4f}, p = {p1:.4f} ({int(round(p1 * math.factorial(k - 1)))}/{math.factorial(k - 1)}; minimum 1/{math.factorial(k - 1)})")
