@@ -26,6 +26,7 @@ def perm_p(M):
 
 
 def main(src, out):
+    deseq2(src, out)
     standardised(src, out)
     dropped(src, out)
     draw(src, out, "corr_matrix_6x6.tsv", "fig2_corr_matrix_6x6", 0.2, "Pearson r (colour clipped at ±0.2)", None)
@@ -152,3 +153,35 @@ def dropped(src, out, drop=DROP):
         print(pd.DataFrame(X, [f"{t} sc" for t in tfs], [f"{t} ChIP" for t in tfs]).round(3).to_string())
     print(f"{k}x{k} without {drop}: diag-off {obs:+.4f}, p = {p:.4f} ({int(round(p * math.factorial(k)))}/{math.factorial(k)});"
           f" without CTCF diag-off {obs1:+.4f}, p = {p1:.4f} ({int(round(p1 * math.factorial(k - 1)))}/{math.factorial(k - 1)}; minimum 1/{math.factorial(k - 1)})")
+
+
+# ---- alternative recipe: DESeq2 differential peaks (round 9; source r9_deseq2_e_corr.py) ----
+RECIPE = "deseq2"
+
+
+def deseq2(src, out):
+    f = Path(src) / "corr_deseq2_6x6.tsv"
+    if not f.exists():
+        return
+    M = pd.read_csv(f, sep="\t", index_col=0).values.astype(float)
+    lim = max(0.1, float(np.ceil(np.abs(M).max() * 10) / 10))
+    draw(src, out, f.name, "fig2_corr_matrix_6x6_deseq2", lim, f"Pearson r (colour ±{lim:g})",
+         "DESeq2 shrunken log2FC (ours) vs ChIP log2FC, all consensus peaks")
+    P = style.use()
+    tfs = ["CTCF", "MAZ", "ZBTB7A", "ZIC2", "ZNF282", "ZNF777"]
+    X = (M - M.mean(0, keepdims=True)) / M.std(0, keepdims=True)
+    fig = style.figure_mm(89, 80)
+    ax = fig.add_axes([0.24, 0.30, 0.52, 0.56])
+    im = ax.imshow(np.clip(X, -2, 2), cmap=LinearSegmentedColormap.from_list("div", DIV), vmin=-2, vmax=2)
+    for i in range(6):
+        for j in range(6):
+            ax.text(j, i, f"{X[i, j]:+.2f}", ha="center", va="center", fontsize=6, color="white" if abs(X[i, j]) > 1.5 else P.neutral.ink)
+        ax.add_patch(Rectangle((i - .5, i - .5), 1, 1, fill=False, ec=P.neutral.ink, lw=0.8))
+    ax.set_xticks(range(6), [f"{t} ChIP\n({CELL[t]})" for t in tfs], rotation=90)
+    ax.set_yticks(range(6), [f"{t} sc" for t in tfs]); ax.tick_params(length=0)
+    for s_ in ax.spines.values():
+        s_.set_visible(False)
+    ax.set_title("DESeq2 recipe, column z-score of r\n(statistics: see the plain r matrix)", fontsize=6)
+    cax = fig.add_axes([0.79, 0.30, 0.03, 0.56]); cb = fig.colorbar(im, cax=cax); cb.outline.set_linewidth(0.4)
+    cb.set_label("column z-score of Pearson r\n(per ChIP column)")
+    style.save(fig, out, "fig2_corr_matrix_6x6_deseq2_colz")
