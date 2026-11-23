@@ -9,7 +9,7 @@ Rebuilt 2026-11-21 directly by matplotlib from the panel scripts in Longleaf `Xu
 | b1_rbbp4_network.pdf | b (option 1) – RBBP4 network |
 | b2_rbbp4_hic_circos.pdf | b (option 1) – RBBP4 Hi-C loop circos |
 | b_rbbp4_characterization.pdf | b (option 2) – RBBP4 pairs/module sizes with Hi-C support + pair classes |
-| rbbp4_pair_classes.pdf | RBBP4 pair classes (P–P, P–E, E–E, P–R, R–R, other): 100% stacked bars for RBBP4 pairs, RBBP4 module edges, all TFs (68 TFs with pairs, pooled) and Hi-C loops |
+| pair_classes.pdf | Pair classes (P–P, P–E, P–R, P–O, E–E, R–R, Rest): 100% stacked bars for RBBP4 pairs and module edges, ETS2 pairs and module edges, all TFs (68 TFs with pairs, pooled) and Hi-C loops |
 | c_rbbp4_chromosomes.pdf | c – RBBP4 pairs and module edges along all chromosomes, supporting loops |
 | d_module_edges_hic_support.pdf | d – module edges in 1 Mb bins + modules with loop edges + shuffle null |
 | e_module_genomic_class.pdf | e – genomic class of module regions |
@@ -24,7 +24,7 @@ Rebuilt 2026-11-21 directly by matplotlib from the panel scripts in Longleaf `Xu
 | supplementary/go_per_tf_great_terms.pdf | GO term x TF matrix (all TFs with terms) |
 | supplementary/j_gene_set_dotplot.pdf | earlier pooled promoter GO comparison |
 
-RBBP4 pair classes (rbbp4_pair_classes) is the chosen RBBP4 panel (2026-11-22); b1, b2 and b_rbbp4_characterization are kept for now as alternatives.
+Pair classes (pair_classes, 2026-11-23; was rbbp4_pair_classes) is the chosen pair-class panel; b1, b2 and b_rbbp4_characterization are kept for now as alternatives.
 Raster parts (embedded images, everything else vector): d – heatmap cells; g – Hi-C contact triangle; h – 3D structure render; hic_ets2_locus and hic_rbbp4_locus – Hi-C contact triangle (600 dpi).
 Place g, h, i at 100% (drawn at print size); b1, b2, c and f are large originals and can be scaled down.
 Figure legend notes: `Figure3/figure_legend_notes.md`.
