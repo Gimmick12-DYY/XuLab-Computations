@@ -22,7 +22,13 @@ for p in "ENCFF139DCW:$X/data/ENCFF139DCW.bam" "ENCFF085SQS:$X/data/MAZ_HEK293.b
 done
 # ZNF282 rep 2 (GSM2466516): ENA fastq, aligned exactly as rep 1
 if [ ! -s SRR5197099.hg38.bam ]; then
-  [ -s SRR5197099.fastq.gz ] || curl -sSL -o SRR5197099.fastq.gz "https://ftp.sra.ebi.ac.uk/vol1/fastq/SRR519/009/SRR5197099/SRR5197099.fastq.gz"
+  # resumable download with retries; md5 checked against ENA's file report (execution change after an SSL drop)
+  want=$(curl -s "https://www.ebi.ac.uk/ena/portal/api/filereport?accession=SRR5197099&result=read_run&fields=fastq_md5" | tail -1 | cut -f1)
+  for k in 1 2 3 4 5 6; do
+    [ "$(md5sum SRR5197099.fastq.gz 2>/dev/null | cut -d" " -f1)" = "$want" ] && break
+    curl -sSL -C - --retry 5 -o SRR5197099.fastq.gz "https://ftp.sra.ebi.ac.uk/vol1/fastq/SRR519/009/SRR5197099/SRR5197099.fastq.gz" || sleep 30
+  done
+  [ "$(md5sum SRR5197099.fastq.gz | cut -d" " -f1)" = "$want" ] && echo "SRR5197099 fastq md5 OK"
   bowtie2 --very-sensitive-local -p 8 -x /proj/seq/data/hg38_UCSC/Sequence/Bowtie2Index/genome -U SRR5197099.fastq.gz 2> SRR5197099.bowtie2.log \
     | samtools view -b -@ 8 - | samtools sort -@ 8 -o SRR5197099.hg38.bam -
   samtools index -@ 8 SRR5197099.hg38.bam; cat SRR5197099.bowtie2.log
