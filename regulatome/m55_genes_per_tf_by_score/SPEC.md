@@ -1,0 +1,3 @@
+# m55: genes left per TF at each per-gene score level (spec, 2026-11-23, written before any number)
+User: "I want to know on average how many genes will be left for each TF at each gene score level."
+Input: m53 full-precision paper per-gene score, 63 TFs x 11,226-11,227 genes (own gene removed). For |score| cutoffs 0.05 to 1.00 in steps of 0.05: per TF the number of genes with |score| >= cutoff (and split up / down by sign); across the 63 TFs mean, median, 25th / 75th percentile, min, max, TFs with 0 and with < 10 genes; mean per cell tertile (25-42 / 43-73 / 74-216 top-25% cells). One figure: x = |score| cutoff, y = genes per TF (log scale), median with IQR band and min-max range, mean as a second line. Per-TF table (63 x cutoffs). Descriptive; no Stage 1 overlap.
