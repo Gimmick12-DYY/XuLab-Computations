@@ -30,6 +30,11 @@ def main(src, out):
     # round 9b: multi-group DESeq2 (~ TF, TF minus mean of the other 78, ashr); source r9b_e_corr.py
     deseq2(src, out, "corr_deseq2mg_6x6.tsv", "fig2_corr_matrix_6x6_deseq2mg",
            "DESeq2 ~TF (TF vs mean of other 78), ashr log2FC vs ChIP log2FC, consensus peaks")
+    # round 11: ChIP-only DESeq2 differential peaks, summit-group recipe; source r11_f_corr.py
+    deseq2(src, out, "corr_chipdeseq2_6x6.tsv", "fig2_corr_matrix_6x6_chipdeseq2",
+           "ChIP-differential peaks (DESeq2 ~ChIP, ashr), summit groups; sc raw at ZNF777 depth")
+    deseq2(src, out, "corr_chipdeseq2_6x6_imputed.tsv", "fig2_corr_matrix_6x6_chipdeseq2_imputed",
+           "ChIP-differential peaks (DESeq2 ~ChIP, ashr), summit groups; sc imputed, Mdrop5")
     deseq2(src, out, "corr_deseq2mg_6x6_chip1kb.tsv", "fig2_corr_matrix_6x6_deseq2mg_chip1kb",
            "DESeq2 ~TF, ashr log2FC vs ChIP log2FC, ChIP summits ±1 kb", colz=False)
     standardised(src, out)
