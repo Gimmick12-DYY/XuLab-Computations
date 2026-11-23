@@ -1,4 +1,4 @@
-# m56: Stage 1 with the top 5 % per TF rule on E-distance-gated TFs, recall and precision (spec, 2026-11-23, written before any number)
+# m56: Stage 1 with the top 5 % per TF rule (all 63 TFs main; E-distance gate as a side check), recall and precision (spec, 2026-11-23, written before any number)
 User (thread, 2026-11-23): use the within-TF top 5 % rule (top 2 % as sensitivity), gate the TFs on E-distance, report both precision and recall; top 10,000 lab peaks and padding as before.
 Responders: per TF, genes in the top 5 % (main) / 2 % (sensitivity) of |score| within the TF (m53 full-precision paper per-gene score; percentile = 100 (average rank - 0.5) / n); direction lists: top X % of the signed score (up) and bottom X % (down).
 TFs: E-distance q < 0.05 (m51 Part A, 11,228-gene version, BH over 63 TFs) = 57 TFs (main); all 63 for comparison; within the 57: without NRF1 / E4F1 / DNMT1, and the non-broad TFs (m45 grouping).
@@ -7,3 +7,6 @@ Per rule x TF set x padding: TFs, Perturb-seq genes, our links, in both; recall 
 
 ## Amendment 1 (2026-11-23, before any number; first submission 10492259 cancelled before output)
 Series top 10 / 5 / 2 / 1 % (5 % main). TF sets: 57 E-distance-gated (main, as agreed in the thread), all 63, 55 non-broad (m45 grouping), without NRF1 / E4F1 / DNMT1 (of the 63). Per-TF sheet: every TF x padding (0 / 10 / 50 kb) at top 5 %, sorted by observed / shuffle at 10 kb. One workbook stage1_percentile_precision_recall.xlsx with sheets pooled, up_down, per_TF_top5, leave_one_out, notes.
+
+## Amendment 2 (2026-11-23, correction before any number was reported)
+The agreed rule (thread, 17:02Z) is the top 5 % per TF on ALL 63 TFs; the E-distance gate was not part of what was agreed. Main set = all 63 TFs; the 57 E-distance-gated TFs are a side check only, labelled as such. Leave-one-TF-out over the 63 TFs. Module renamed m56_stage1_top5pct (from m56_stage1_top5pct_gated). Job 10492386 (gated main, leave-one-out over 57) is superseded by the rerun.
