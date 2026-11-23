@@ -10,3 +10,6 @@ The figure shows only the median number of genes per TF (over the 63 TFs) at eac
 
 ## Amendment 3 (2026-11-23, replaces the plan in Amendment 2, which was not applied: m55.py is unchanged)
 Separate figure "median_genes_per_TF_by_score" from the existing m55 table (no new analysis): bar chart, x = |score| cutoff 0.05-0.80 (16 bars), y = median genes per TF over the 63 TFs, linear from 0, value above each bar; the genes_left_per_TF_by_score_cutoff line figure is kept.
+
+## Amendment 4 (2026-11-23, user: "How does gene score relate with fold change?"; written before any number)
+Over the 63 TFs x genes (Stage 1 pairs): Spearman of score with log2FC (pseudocount 0.1, m50) and of |score| with |log2FC|; per |score| band of 0.05 (0-0.05 ... 0.75-0.80, >= 0.80) and per cutoff |score| >= 0.05 ... 0.80: pairs, median and IQR of |log2FC| and as % change; the same median split by NTC expression tercile (from the matched-shuffle expression deciles: 1-3 / 4-7 / 8-10). Table only (m55_score_vs_fc.py).
