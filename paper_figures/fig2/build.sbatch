@@ -8,6 +8,7 @@
 #   r21  corr matrix table + heatmap arrays (V1/V2/V3, 50 bp)      r23  1 kb grid arrays (K_*)
 #   r24  Mdrop5-masked imputed arrays (K_impM)                      r27  continuous model scores (K_cont)
 #   r25  imputed summit-group 6x6 (Mdrop5)                          r28  CTCF clustered example
+#   r10  peak-presence heatmap source (4 ChIPs, main + ZNF777 variant)
 #   make_fig2.py  all panels (main, supplement, alternatives); files are overwritten in place
 #   ROUND9=1 (optional, supplement only; ~2-3 h): round 9 DESeq2 differential-peak 6x6 (r9_deseq2_*, spec
 #     downstream/fig2_qc/round9_deseq2/SPEC.md), run sequentially here: peaks, 79 count tasks, our matrix, 6 bulk
@@ -25,6 +26,7 @@ $PY downstream/fig2_qc/r24_fig2_mask_source.py
 $PY downstream/fig2_qc/r27_cont_source.py
 $PY downstream/fig2_qc/r25_imputed_corr.py
 $PY downstream/fig2_qc/r28_ctcf_clusters.py
+$PY downstream/fig2_qc/r10_presence.py
 if [ "${ROUND9:-0}" = "1" ]; then
   module load r/4.5.0 >/dev/null 2>&1 || true
   cd downstream/fig2_qc
