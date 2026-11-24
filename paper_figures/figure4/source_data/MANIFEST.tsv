@@ -46,3 +46,5 @@ input:denovo_RBBP4	/work/users/d/y/dyy12/XuLab/complex_screen/pair_motif_composi
 input:denovo_ZNF644	/work/users/d/y/dyy12/XuLab/complex_screen/pair_motif_composite/per_tf_raw/results/ZNF644/L10/homerMotifs.all.motifs	complex_screen/pair_motif_composite/run_tf.sbatch (HOMER de novo)	e3a2f20fdb77102383c47f04cc12f7b0b4c5452cd3540bb3d7af8a53702fdaa7
 input:denovo_ZNF644	/work/users/d/y/dyy12/XuLab/complex_screen/pair_motif_composite/per_tf_raw/results/ZNF644/L12/homerMotifs.all.motifs	complex_screen/pair_motif_composite/run_tf.sbatch (HOMER de novo)	7c6aa27cb0a54b490c12cc7c7aabe867073997b44a176bfea2f15163f4b80ef6
 input:denovo_ZNF644	/work/users/d/y/dyy12/XuLab/complex_screen/pair_motif_composite/per_tf_raw/results/ZNF644/L8/homerMotifs.all.motifs	complex_screen/pair_motif_composite/run_tf.sbatch (HOMER de novo)	fec78f1ce3e200c4772c65f7d5c7badff9f180d29fd6111a01fdf6e189b10cb8
+c_denovo_words.tsv	derived	figure4/prepare_denovo_words.py	a2520a802223f6e5e6291c5dec4bfb961957b85deb7de8a185136b79ab6b6dae
+c_denovo_words_matrices.tsv	derived	figure4/prepare_denovo_words.py	e4ec6469259189c4929549c8749b9b86b298473aa2a2928dc766bcdab95f521d
