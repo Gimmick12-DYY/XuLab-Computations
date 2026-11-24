@@ -10,6 +10,7 @@ Rebuilt 2026-11-21 directly by matplotlib from the panel scripts in Longleaf `Xu
 | b2_rbbp4_hic_circos.pdf | b (option 1) – RBBP4 Hi-C loop circos |
 | b_rbbp4_characterization.pdf | b (option 2) – RBBP4 pairs/module sizes with Hi-C support + pair classes |
 | pair_classes.pdf | Pair classes (P–P, P–E, P–R, P–O, E–E, R–R, Rest): 100% stacked bars for RBBP4 pairs and Multi-region Coordinated Cluster (MCC) edges, ETS2 pairs and MCC edges, all TFs (68 TFs with pairs, pooled) and Hi-C loops |
+| pair_classes_rbbp4.pdf | Pair classes, RBBP4 only: the two RBBP4 rows of pair_classes (RBBP4 pairs, RBBP4 MCC edges), same style and bar size |
 | c_rbbp4_chromosomes.pdf | c – RBBP4 pairs and MCC edges along all chromosomes, supporting loops |
 | d_module_edges_hic_support.pdf | d – MCC edges in 1 Mb bins + MCCs with loop edges + shuffle null |
 | e_module_genomic_class.pdf | e – genomic class of MCC regions |

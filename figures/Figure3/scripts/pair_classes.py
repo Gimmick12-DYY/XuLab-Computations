@@ -8,6 +8,8 @@ region midpoint (now: any state within the peak +-1 kb, see PAD below): enhancer
 TssBiv outside TSS +-1 kb, Tx, TxWk, Quies, or no state). Categories: P-P, P-E, P-R, P-O, E-E, R-R, Rest (E-R, E-O, R-O, O-O).
 Element rule (env PAD = bp >= 0, default 1000 = the panel since 2026-11-23; "mid" = the earlier midpoint rule): non-promoter elements are E if any E segment overlaps the element +-PAD,
 else R if any R segment does, else O (PRIO=RE swaps E and R). Hi-C loop anchors always use the midpoint rule. PLOT=0 skips the figure.
+Row subset: env ROWS = comma-separated row names (e.g. "RBBP4 pairs,RBBP4 MCC edges") and STEM = output name (default pair_classes);
+the figure keeps the same bar thickness, column widths and legend, only shorter.
   python pair_classes.py <outdir>   (Longleaf, hic env; inputs in checks/pair_class_inputs)"""
 import glob, gzip, json, os, re, sys
 from collections import defaultdict, Counter
@@ -99,11 +101,14 @@ rows["Hi-C loops"] = lc; MIDPOINT[0] = False
 ORDER = ["P–P", "P–E", "P–R", "P–O", "E–E", "R–R", "Rest"]; COL = ["#1F3F8F", "#7A9CCB", "#6A51A3", "#A9C0D6", "#E8821E", "#55606E", "#DCDCDC"]
 DARK = ("P–P", "P–R", "R–R")
 T = pd.DataFrame(rows).T.reindex(columns=ORDER).fillna(0).astype(int); T["n"] = T.sum(1)
-P = T[ORDER].div(T.n, axis=0) * 100; T.join(P.add_suffix(" %").round(2)).to_csv(OUT / "pair_classes.tsv", sep="\t")
+STEM = os.environ.get("STEM", "pair_classes")
+if os.environ.get("ROWS"): T = T.loc[os.environ["ROWS"].split(",")]
+P = T[ORDER].div(T.n, axis=0) * 100; T.join(P.add_suffix(" %").round(2)).to_csv(OUT / f"{STEM}.tsv", sep="\t")
 pd.DataFrame(RAW).T.fillna(0).astype(int).to_csv(OUT / "pair_classes_all_combinations.tsv", sep="\t")
 pd.DataFrame(ELEM).T.reindex(columns=["P", "E", "R", "O"]).fillna(0).astype(int).to_csv(OUT / "pair_classes_element_classes.tsv", sep="\t")
 print("TFs pooled:", ntf); print(pd.DataFrame(RAW).T.fillna(0).astype(int).to_string()); print("states not in the table:", dict(UNKNOWN) or "none"); print(T.join(P.round(1).add_suffix("%")).to_string())
-MM = 1 / 25.4; W, Hh = 84, 66; fig = plt.figure(figsize=(W * MM, Hh * MM)); ax = fig.add_axes([28 / W, 17 / Hh, 54 / W, 47 / Hh])
+AXH = 47 / 6 * len(P)   # 47 mm for the six rows: same bar thickness for any row subset
+MM = 1 / 25.4; W, Hh = 84, 19 + AXH; fig = plt.figure(figsize=(W * MM, Hh * MM)); ax = fig.add_axes([28 / W, 17 / Hh, 54 / W, AXH / Hh])
 for i, (nm, r) in enumerate(P.iterrows()):
     left = 0
     for k, c in zip(ORDER, COL):
@@ -119,4 +124,4 @@ for sp in ("left", "top", "right"): ax.spines[sp].set_visible(False)
 hs = [plt.Rectangle((0, 0), 1, 1, color=c) for c in COL]
 fig.legend(hs, ORDER, loc="lower center", bbox_to_anchor=(0.5, 3.2 / Hh), ncol=7, fontsize=6, frameon=False, handlelength=0.8, handleheight=0.8, handletextpad=0.25, columnspacing=0.7, borderaxespad=0.2)
 fig.text(0.5, 1.0 / Hh, "MCC, Multi-region Coordinated Cluster", ha="center", va="bottom", fontsize=6, color="#7F7F7F")
-for ext in (("png", "svg", "pdf") if os.environ.get("PLOT", "1") != "0" else ()): fig.savefig(OUT / f"pair_classes.{ext}", dpi=600 if ext == "png" else None)
+for ext in (("png", "svg", "pdf") if os.environ.get("PLOT", "1") != "0" else ()): fig.savefig(OUT / f"{STEM}.{ext}", dpi=600 if ext == "png" else None)
