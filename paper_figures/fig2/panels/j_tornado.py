@@ -29,7 +29,7 @@ def tornado(z, cols, name, xt, title, src_n):
     w = (Rr - L) / n
     for j, (X, ttl, cm) in enumerate(cols):
         nz = X[np.isfinite(X) & (X > 0)]; vmax = float(np.percentile(nz, 98)) if len(nz) else 1.0
-        axp = fig.add_axes([L + j * w + 0.004, 0.80, w - 0.008, 0.08])
+        axp = fig.add_axes([L + j * w + 0.004, 0.80, w - 0.008, 0.09])
         x = np.arange(X.shape[1])
         for b in range(6):
             axp.plot(x, np.nanmean(X[blk == b], 0), color=BLK[b], lw=0.6)
@@ -42,14 +42,14 @@ def tornado(z, cols, name, xt, title, src_n):
         im = ax.imshow(Xm, aspect="auto", cmap=cmc, vmin=0, vmax=vmax, interpolation="nearest", rasterized=True)
         for e in edges[1:-1]:
             ax.axhline(e - .5, color="#1A1A1A", lw=0.4)
-        ax.set_yticks([]); ax.set_xticks([0, (X.shape[1] - 1) / 2, X.shape[1] - 1], xt, fontsize=4.5); ax.tick_params(axis="x", length=1, pad=1)
+        ax.set_yticks([]); ax.set_xticks([0, (X.shape[1] - 1) / 2, X.shape[1] - 1], xt if j == 0 else ["", "0", ""], fontsize=4.5); ax.tick_params(axis="x", length=1, pad=1)
         if j == 0:
             for b in range(6):
                 ax.text(-0.08, 1 - (edges[b] + edges[b + 1]) / 2 / edges[-1], f"{tfs[b]}\ndiff. peaks\n(n = {edges[b + 1] - edges[b]:,})",
                         transform=ax.transAxes, ha="right", va="center", fontsize=5.5, color=BLK[b])
         cax = ax.inset_axes([0.1, -0.07, 0.8, 0.012]); cb = fig.colorbar(im, cax=cax, orientation="horizontal")
         cb.outline.set_linewidth(0.3); cb.set_ticks([0, vmax]); cb.set_ticklabels(["0", f"{vmax:.2g}"]); cb.ax.tick_params(labelsize=4.5, length=1, pad=1)
-    fig.text(0.55, 0.985, title, ha="center", va="top", fontsize=7)
+    fig.text(0.55, 0.955, title, ha="center", va="top", fontsize=7)
     style.save(fig, src_n[0], name, raster_dpi=600)
 
 
