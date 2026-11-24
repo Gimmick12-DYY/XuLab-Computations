@@ -7,7 +7,7 @@ than three specific motifs is filled with the next HOMER motif that is not Tn5 b
 Logos are built from our own instances: FIMO (p <= 1e-4) matches of the source motif in both TFs' foreground sites, both halves, best match per
 site, counted per position; then trimmed to the informative core (positions with IC >= 0.5, at most one weak position inside).
 
-Writes source_data/c_shared_motifs.tsv (one row per logo), source_data/c_logo_counts.tsv (per logo and position, A/C/G/T counts) and
+Writes source_data/c_shared_motifs.tsv (one row per logo), source_data/c_logo_counts.tsv (per logo, per site set both / A / B, and position: A/C/G/T counts; same core trim for all three) and
 source_data/MANIFEST.tsv (file, origin, made_by, sha256), including sha256 of every upstream input.
   python prepare_source_data.py
 """
@@ -161,6 +161,7 @@ def main():
             mf = OUT / "_tmp_motif.meme"
             mf.write_text(meme)
             C = np.zeros((len(M), 4))
+            CT = {}
             n_inst = 0
             for t in (a, b):
                 pool = PM / ("recall/pools/raw_lab" if src == "H" else "recall/pools_noart/raw_lab") / t
@@ -170,6 +171,7 @@ def main():
                 sh(f"module load bedtools >/dev/null 2>&1; bedtools getfasta -fi {GENOME} -bed - -fo {fa}", inp="".join(p.read_text() for p in beds))
                 d = pd.read_csv(io.StringIO(sh(f"module load meme/5.5.7 >/dev/null 2>&1; fimo --thresh 1e-4 --text --verbosity 1 {mf} {fa}")), sep="\t")
                 d.columns = [c.strip("#").strip() for c in d.columns]
+                CT[t] = np.zeros((len(M), 4))
                 if len(d):
                     d = d.sort_values("p-value").drop_duplicates("sequence_name")
                     for s_ in d.matched_sequence:
@@ -177,6 +179,7 @@ def main():
                         if len(s_) == len(M) and set(s_) <= set("ACGT"):
                             for i, ch in enumerate(s_):
                                 C[i, "ACGT".index(ch)] += 1
+                                CT[t][i, "ACGT".index(ch)] += 1
                             n_inst += 1
                 fa.unlink()
             mf.unlink()
@@ -186,10 +189,12 @@ def main():
             rows.append(dict(pair=pair, rank=rank, consensus=consensus(P[s0:s1]), generic=bool(tag), generic_note=tag,
                              source="HOMER" if src == "H" else "JASPAR/HOCOMOCO v12/Codebook",
                              source_motif=m if src == "H" else alt.get(name2id[m], m), n_instances=n_inst,
-                             p_max_of_4=10 ** max(lp.values()),
+                             n_instances_A=int(CT[a].sum(1).max()), n_instances_B=int(CT[b].sum(1).max()), p_max_of_4=10 ** max(lp.values()),
                              **{f"p_{who}_{pt}": 10 ** lp[(t, pt)] for who, t in (("A", a), ("B", b)) for pt in ("disc", "val")}, tf_A=a, tf_B=b))
             for i in range(s0, s1):
-                counts.append(dict(pair=pair, rank=rank, position=i - s0 + 1, A=C[i, 0], C=C[i, 1], G=C[i, 2], T=C[i, 3]))
+                counts.append(dict(pair=pair, rank=rank, sites="both", position=i - s0 + 1, A=C[i, 0], C=C[i, 1], G=C[i, 2], T=C[i, 3]))
+                for who, t in (("A", a), ("B", b)):
+                    counts.append(dict(pair=pair, rank=rank, sites=who, position=i - s0 + 1, A=CT[t][i, 0], C=CT[t][i, 1], G=CT[t][i, 2], T=CT[t][i, 3]))
     pd.DataFrame(rows).to_csv(OUT / "c_shared_motifs.tsv", sep="\t", index=False)
     pd.DataFrame(counts).to_csv(OUT / "c_logo_counts.tsv", sep="\t", index=False)
     man = [("c_shared_motifs.tsv", "derived", "figure4/prepare_source_data.py"), ("c_logo_counts.tsv", "derived", "figure4/prepare_source_data.py")]

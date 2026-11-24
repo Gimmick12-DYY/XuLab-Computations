@@ -20,6 +20,6 @@ python check_outputs.py           # PDFs: embedded TrueType Arial + extractable 
 | c, shared enriched motifs | `panels/c_shared_motifs.py` | `c_shared_motifs.tsv`, `c_logo_counts.tsv` | `complex_screen/pair_motif_composite` (pair table `motif_tables/pair_shared_motifs_p005.tsv`, HOMER known on `recall/homer/raw_lab`, FIMO enrichment in `motif_valid/`) |
 
 Panel c: rows RBBP4-ZNF644, ADNP-MTF2, DR1-NFYA; three shared motifs per pair (p <= 0.05 in both TFs on discovery and held-out
-chromosomes; generic and Tn5-background motifs excluded, dagger = generic filler when a pair has fewer than three). Logos come from our
-own FIMO instances in both TFs' binding sites and are labelled by consensus only; the line under each logo is the largest of the four p-values.
+chromosomes; generic and Tn5-background motifs excluded, dagger = generic filler when a pair has fewer than three). Each motif shows two logos in parallel, one from each TF's own
+FIMO instances in its binding sites, labelled by the consensus of both; the line under each logo is the largest of the four p-values.
 Logo letters are drawn as shapes (they are data marks); all other text is live text.
