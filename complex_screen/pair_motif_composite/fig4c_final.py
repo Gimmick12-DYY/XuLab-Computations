@@ -86,8 +86,13 @@ def instances(src, m, a, b):
     return C, len(seqs)
 IUPAC = {frozenset("AG"): "R", frozenset("CT"): "Y", frozenset("GC"): "S", frozenset("AT"): "W", frozenset("GT"): "K", frozenset("AC"): "M"}
 def trim_ic(P):
+    # core = the block of informative positions (IC >= 0.5) with at most 1 uninformative position between them and the largest total IC
     ic = 2 + (P * np.log2(np.maximum(P, 1e-9))).sum(1); keep = np.flatnonzero(ic >= .5)
-    return (keep[0], keep[-1] + 1) if len(keep) else (0, len(P))
+    if not len(keep): return (0, len(P))
+    blocks, st = [], keep[0]
+    for x, y in zip(keep[:-1], keep[1:]):
+        if y - x > 2: blocks.append((st, x + 1)); st = y
+    blocks.append((st, keep[-1] + 1)); return max(blocks, key=lambda bl: ic[bl[0]:bl[1]].sum())
 def consensus(P):
     out = []
     for r in P:
